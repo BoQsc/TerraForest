@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bvnio3udnpn3h"
+path="res://.godot/imported/Plasma Rifle 1 - Kaino.wav-97e6530540e7fb56e4e029e0a1670fd0.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Plasma Rifle 1 - Kaino.wav"
+dest_files=["res://.godot/imported/Plasma Rifle 1 - Kaino.wav-97e6530540e7fb56e4e029e0a1670fd0.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

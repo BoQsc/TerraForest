@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://s7k655xd0msy"
+path="res://.godot/imported/Big Confirm 2 - Kaino.wav-ae183b29c0bc2c09d0559c7e7409d89c.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Big Confirm 2 - Kaino.wav"
+dest_files=["res://.godot/imported/Big Confirm 2 - Kaino.wav-ae183b29c0bc2c09d0559c7e7409d89c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

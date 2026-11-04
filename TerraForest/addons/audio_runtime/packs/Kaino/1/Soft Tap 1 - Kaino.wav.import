@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://d37fhhrdm7ij8"
+path="res://.godot/imported/Soft Tap 1 - Kaino.wav-bb3b31fbcfd45d3475bfbed047810e13.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Soft Tap 1 - Kaino.wav"
+dest_files=["res://.godot/imported/Soft Tap 1 - Kaino.wav-bb3b31fbcfd45d3475bfbed047810e13.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

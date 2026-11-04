@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cybbr4yybokjc"
+path="res://.godot/imported/Rooster Crow 2 - Kaino.wav-fbf5c5183cf52ab6342ed97f06bb7022.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Rooster Crow 2 - Kaino.wav"
+dest_files=["res://.godot/imported/Rooster Crow 2 - Kaino.wav-fbf5c5183cf52ab6342ed97f06bb7022.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

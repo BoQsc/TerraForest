@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cgnkjufhr6tk0"
+path="res://.godot/imported/Wolf Howl 2 - Kaino.wav-69a19dd193a5c1f578b5a29955a32ef2.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Wolf Howl 2 - Kaino.wav"
+dest_files=["res://.godot/imported/Wolf Howl 2 - Kaino.wav-69a19dd193a5c1f578b5a29955a32ef2.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

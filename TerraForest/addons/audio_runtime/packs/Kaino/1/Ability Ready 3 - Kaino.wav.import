@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bqv2xjr0osefr"
+path="res://.godot/imported/Ability Ready 3 - Kaino.wav-d6b2827026830f172937869b5bfcb732.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Ability Ready 3 - Kaino.wav"
+dest_files=["res://.godot/imported/Ability Ready 3 - Kaino.wav-d6b2827026830f172937869b5bfcb732.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

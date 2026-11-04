@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dwy77m014ptlc"
+path="res://.godot/imported/Sniper Rifle 1 - Kaino.wav-55d35155d4207d74867dd3ceffeefba3.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Sniper Rifle 1 - Kaino.wav"
+dest_files=["res://.godot/imported/Sniper Rifle 1 - Kaino.wav-55d35155d4207d74867dd3ceffeefba3.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

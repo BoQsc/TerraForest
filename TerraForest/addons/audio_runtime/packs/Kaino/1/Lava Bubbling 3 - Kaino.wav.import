@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://buuvfh1hrh5px"
+path="res://.godot/imported/Lava Bubbling 3 - Kaino.wav-8ab9495451c4cc3374d6693e24f193eb.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Lava Bubbling 3 - Kaino.wav"
+dest_files=["res://.godot/imported/Lava Bubbling 3 - Kaino.wav-8ab9495451c4cc3374d6693e24f193eb.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

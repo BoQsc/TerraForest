@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://vrrkg1l32dk2"
+path="res://.godot/imported/Sword Stab 2 - Kaino.wav-3727c72bf1886df8b4cf47f1da49faf6.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Sword Stab 2 - Kaino.wav"
+dest_files=["res://.godot/imported/Sword Stab 2 - Kaino.wav-3727c72bf1886df8b4cf47f1da49faf6.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

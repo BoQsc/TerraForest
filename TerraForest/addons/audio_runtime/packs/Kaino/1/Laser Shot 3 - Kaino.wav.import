@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://carib150gkar7"
+path="res://.godot/imported/Laser Shot 3 - Kaino.wav-fed748fd67c9d5f56ab8bf6c0d60289c.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Laser Shot 3 - Kaino.wav"
+dest_files=["res://.godot/imported/Laser Shot 3 - Kaino.wav-fed748fd67c9d5f56ab8bf6c0d60289c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

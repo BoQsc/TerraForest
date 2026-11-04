@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bm0bckjoontrr"
+path="res://.godot/imported/Rest at Camp 3 - Kaino.wav-ebffb963aa7e14d2d191bc7925ad0af4.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Rest at Camp 3 - Kaino.wav"
+dest_files=["res://.godot/imported/Rest at Camp 3 - Kaino.wav-ebffb963aa7e14d2d191bc7925ad0af4.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

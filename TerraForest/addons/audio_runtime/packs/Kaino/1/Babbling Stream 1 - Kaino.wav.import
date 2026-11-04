@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://m5eg4ppbv4ip"
+path="res://.godot/imported/Babbling Stream 1 - Kaino.wav-b43d398ec2d38c2739ed9d6577cba1d2.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Babbling Stream 1 - Kaino.wav"
+dest_files=["res://.godot/imported/Babbling Stream 1 - Kaino.wav-b43d398ec2d38c2739ed9d6577cba1d2.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

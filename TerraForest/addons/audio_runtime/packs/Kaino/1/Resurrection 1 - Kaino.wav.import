@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://d2kr1tdq6h5a0"
+path="res://.godot/imported/Resurrection 1 - Kaino.wav-d29dfcb354a7d8a64298ccd241ab773e.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Resurrection 1 - Kaino.wav"
+dest_files=["res://.godot/imported/Resurrection 1 - Kaino.wav-d29dfcb354a7d8a64298ccd241ab773e.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

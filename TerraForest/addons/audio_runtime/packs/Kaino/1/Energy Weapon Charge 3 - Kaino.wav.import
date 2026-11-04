@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://di5txtmimc1xv"
+path="res://.godot/imported/Energy Weapon Charge 3 - Kaino.wav-56c52d42f7f9ef2f962f8c6e277f378f.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Energy Weapon Charge 3 - Kaino.wav"
+dest_files=["res://.godot/imported/Energy Weapon Charge 3 - Kaino.wav-56c52d42f7f9ef2f962f8c6e277f378f.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

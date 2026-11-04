@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dkjpknns5ond3"
+path="res://.godot/imported/Insect Swarm 1 - Kaino.wav-17a8e00d414b291237a07ac5910b2328.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Insect Swarm 1 - Kaino.wav"
+dest_files=["res://.godot/imported/Insect Swarm 1 - Kaino.wav-17a8e00d414b291237a07ac5910b2328.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

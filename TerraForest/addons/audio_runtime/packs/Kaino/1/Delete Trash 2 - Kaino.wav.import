@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bk0f43q6jjutj"
+path="res://.godot/imported/Delete Trash 2 - Kaino.wav-ff48c60547b7abc3562bd7cbaf9d4b70.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Delete Trash 2 - Kaino.wav"
+dest_files=["res://.godot/imported/Delete Trash 2 - Kaino.wav-ff48c60547b7abc3562bd7cbaf9d4b70.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

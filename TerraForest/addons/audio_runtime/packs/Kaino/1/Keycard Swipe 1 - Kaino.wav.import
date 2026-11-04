@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cdtkw7vdkpoae"
+path="res://.godot/imported/Keycard Swipe 1 - Kaino.wav-d301b393b8f4f3c8eb4b7424b2f9e20f.sample"
+
+[deps]
+
+source_file="res://addons/audio_runtime/packs/Kaino/1/Keycard Swipe 1 - Kaino.wav"
+dest_files=["res://.godot/imported/Keycard Swipe 1 - Kaino.wav-d301b393b8f4f3c8eb4b7424b2f9e20f.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
