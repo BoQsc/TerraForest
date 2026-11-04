@@ -6834,6 +6834,10 @@ loaded by runtime: visible existing meshes/fallback, one native use at gesture
 completion, cancellation and original inventory/drop ownership are implemented.
 [Integration checks and the separate trader-UI check limit](evidence/item_use/integration/README.md).
 [Hand-pose issue / required next review](../issues/generic-item-hand-pose/README.md).
-The articulated revision remains outside runtime pending player review; return
-on review of fingers, wrist and support-hand movement. Closed-book/whole-food
+The [articulated revision 02 preview](evidence/item_use/revision02/README.md)
+is authored separately: subtle finger readjustments, wrist flex/roll and a free-hand
+approach. Its 28 scoped checks pass across 555 poses; earlier contact failures are
+retained. It remains outside runtime pending player review; return on feedback
+about hand readability, timing and body motion, then rerun live checks before
+promotion. Closed-book/whole-food
 presentation is still the simple scope; page turning/biting are not claimed.

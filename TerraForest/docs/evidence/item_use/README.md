@@ -6,6 +6,8 @@ user requested retaining/integrating this baseline while trying to improve it.
 Original source/preview commit: `bc5de4ae`. The runtime copy preserves these exact
 animation bytes. [Integration evidence and remaining art work](integration/README.md).
 This page retains the original candidate preview/checks from before integration.
+[The separate revision 02 preview](revision02/README.md) adds wrist/finger motion
+and a free-hand approach; it is awaiting review and has not replaced this baseline.
 
 ![Book, bread and neutral object preview](Generic-item.preview.gif)
 

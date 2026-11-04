@@ -1,0 +1,19 @@
+{
+  "bones": 59,
+  "clips": {
+    "FP_Item_Equip": {
+      "length": 0.600000023841858,
+      "tracks": 707
+    },
+    "FP_Item_Hold": {
+      "length": 2.40000009536743,
+      "tracks": 707
+    },
+    "FP_Item_Use": {
+      "length": 1.60000002384186,
+      "tracks": 707
+    }
+  },
+  "rest_error": 0.000000240274005136598,
+  "save_error": 0
+}

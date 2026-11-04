@@ -1,6 +1,6 @@
 # Generic held-item hand posing
 
-- Status: Baseline integrated; articulated revision in progress, player review pending.
+- Status: Baseline integrated; articulated revision 02 authored, player review pending.
 - Updated: 2026-11-04. Original baseline source/preview: `bc5de4ae`.
 - User review: Idea is great, but the arm/hand looks like a static stick. Requested committing/integrating that baseline and trying to improve it.
 - Symptom: Almost-fixed fingers and an exactly neutral wrist make the palm-up lift read as a rigid platform.
@@ -25,10 +25,17 @@ pending use. [Integration and scoped checks](../../docs/evidence/item_use/integr
 
 ## Remaining / resume here
 
-Improve finger readjustments, wrist articulation and free-hand support while
-preserving the integrated baseline. Render the revised book/food/object motion
-in first person and close-up, inspect actual hand/object contact and arm posing,
-then obtain player review before promotion. Passing geometric checks does not
+Revision 02 adds finger readjustments, wrist articulation and a free-hand
+approach, preserving the integrated baseline (`26f332e1`). Its 28 scoped checks
+pass across 555 poses; wider contact checks exposed earlier clipping/separation
+and the failed logs are preserved. [Revised preview, exact checks and limits](../../docs/evidence/item_use/revision02/README.md).
+
+![Revision 02 book use](../../docs/evidence/item_use/revision02/book-use.png)
+
+Same neutral stage/camera arrangement as the baseline; this is the revised
+candidate's use pose with the free hand approaching beneath the closed book.
+Obtain player review of hand readability, finger/wrist motion and timing before
+promotion, then rerun live-world checks. Passing geometric checks does not
 resolve the reported rigid appearance. Dedicated eating/page-turning and broad
 third-person art acceptance remain separate. Reopen here on feedback.
 

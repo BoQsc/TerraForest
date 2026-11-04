@@ -1,0 +1,41 @@
+TerraForest generic-item hold/use revision 02 — 2026-11-04
+SPDX-License-Identifier: CC0-1.0
+
+To the extent possible under law, the contributors dedicate the new original
+FP_Item_Hold, FP_Item_Equip and FP_Item_Use motion, cradle-pose data, neutral
+box demonstration geometry and review images/video to the public domain under
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+Asset paths:
+  addons/characters/authoring/Human.item_use_v2.blend
+  addons/characters/authoring/Human.item_use_v2.glb
+  addons/characters/authoring/Human.item_use_v2.res
+  addons/characters/authoring/Human.item_use_v2.json
+  docs/evidence/item_use/revision02/ (new motion/neutral proxy and review derivatives)
+
+Creator: OpenAI Codex / TerraForest contributors, original AI-assisted authoring
+at the maintainer's request: an articulated improvement to the retained generic-item baseline,
+with finger readjustments, wrist motion and a free-hand approach. This revision
+awaits review and is not the integrated runtime baseline. Exact request, source hash, trajectories and Blender
+version are in Human.item_use_v2.json. No external motion capture, animation pack,
+model, texture or reference image was imported.
+
+The existing Human.torch.blend supplies the R11 rig/body, repaired hand weights,
+arm roll reference. These inherited portions retain
+their original notices and provenance in addons/characters/LICENSE.txt,
+docs/LICENSE_INVENTORY.md and authoring/WOODEN_TORCH.md. They are not relicensed
+by this new-motion dedication. The editable .blend/.glb retain rig/body context;
+the compact .res contains only animation tracks and support metadata.
+
+The preview reuses the existing CC0 book and bread meshes:
+  addons/player_runtime/art/consumables/214.res
+  addons/player_runtime/art/consumables/218.res
+Their original geometry and provenance remain identified in the adjacent
+consumables/provenance.json and tools/bake_consumables.gd. The neutral box is
+original demonstration geometry defined in tools/preview_item_use_v2.gd; it is
+not a new registered inventory item. No source consumable asset was modified.
+
+External authoring tools are the existing Blender, Godot and FFmpeg. No tool
+runtime is distributed. New standalone author/conversion/preview/test/encoding
+code is separately marked 0BSD. Review only: the runtime library remains an exact copy of candidate 01.
+This revision changes no production dispatch, rewards, inventory or saved state.
