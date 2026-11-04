@@ -26,6 +26,10 @@ func run()->void:
 	audition.notes_edit.text="Dry, short footstep for compacted dirt."
 	audition.sync_note()
 	check(audition.notes_edit!=null and audition.note_for(audition.files[0])=="Dry, short footstep for compacted dirt.","per-sound note is stored")
+	check(not audition.file_boxes[audition.files[0]].visible,"noted sound leaves the Sounds tab")
+	audition.set_sound_view("noted")
+	check(audition.file_boxes[audition.files[0]].visible and audition.sound_noted_tab.text=="NOTED (1)","noted sound appears in the Noted tab")
+	audition.set_sound_view("sounds")
 	var deferred_path:String=audition.files[1]
 	audition.file_later_buttons[deferred_path].pressed.emit()
 	check(not audition.file_boxes[deferred_path].visible,"Later removes the selected pack sound from the main list")

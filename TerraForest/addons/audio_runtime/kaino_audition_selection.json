@@ -30,10 +30,22 @@
 		"res://addons/audio_runtime/packs/Kaino/1/Scanner Ping 2 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Scanner Ping 3 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Seagull Cry 1 - Kaino.wav",
-		"res://addons/audio_runtime/packs/Kaino/1/Seagull Cry 2 - Kaino.wav"
+		"res://addons/audio_runtime/packs/Kaino/1/Seagull Cry 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Thunder Crack 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Toilet Flush 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Wolf Howl 1 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Wolf Howl 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Power Drill 1 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Power Drill 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Cat Meow 1 - Kaino.wav"
 	],
 	"notes": {
-		"res://addons/audio_runtime/packs/Kaino/1/Sniper Rifle 1 - Kaino.wav": "Great for rifle or sniper rifle, but we do not have yet real use."
+		"res://addons/audio_runtime/packs/Kaino/1/Pickaxe on Stone 1 - Kaino.wav": "Great for pickaxe stone or coal  mining",
+		"res://addons/audio_runtime/packs/Kaino/1/Sniper Rifle 1 - Kaino.wav": "Great for rifle or sniper rifle, but we do not have yet real use.",
+		"res://addons/audio_runtime/packs/Kaino/1/Stone Crumble 1 - Kaino.wav": "Great for digging ground mostly dirt",
+		"res://addons/audio_runtime/packs/Kaino/1/Stone Crumble 2 - Kaino.wav": "Great for digging ground mostly dirt",
+		"res://addons/audio_runtime/packs/Kaino/1/Stone Crumble 3 - Kaino.wav": "Great for digging ground mostly dirt end sound destruction.",
+		"res://addons/audio_runtime/packs/Kaino/1/Zombie Groan 1 - Kaino.wav": "both zombie groan 1 and 2 should be only used mixed and probably might be good enough for zombies."
 	},
 	"pack": "Kaino",
 	"rejected_sounds": [
@@ -53,7 +65,15 @@
 		"res://addons/audio_runtime/packs/Kaino/1/Plasma Rifle 3 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Punch 2 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Rockfall 1 - Kaino (1).wav",
-		"res://addons/audio_runtime/packs/Kaino/1/Chopping Wood 3 - Kaino.wav"
+		"res://addons/audio_runtime/packs/Kaino/1/Chopping Wood 3 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Wood Snap 1 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Wood Snap 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Wood Snap 3 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Rockfall 2 - Kaino (1).wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Rifle Shot 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 1 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 3 - Kaino.wav"
 	],
 	"schema": 1,
 	"selection": {}

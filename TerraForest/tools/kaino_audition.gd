@@ -44,8 +44,10 @@ var event_search: LineEdit
 var hide_occupied: CheckButton
 var sound_tab: Button
 var sound_later_tab: Button
+var sound_noted_tab: Button
 var sound_rejected_tab: Button
 var show_later_sounds := false
+var show_noted_sounds := false
 var show_rejected_sounds := false
 var file_count: Label
 var slot_count: Label
@@ -246,6 +248,10 @@ func build_files_panel() -> Control:
 	sound_later_tab.toggle_mode = true
 	sound_later_tab.pressed.connect(set_sound_view.bind(true))
 	sound_tabs.add_child(sound_later_tab)
+	sound_noted_tab = button("NOTED (0)", Vector2(110, 30))
+	sound_noted_tab.toggle_mode = true
+	sound_noted_tab.pressed.connect(set_sound_view.bind("noted"))
+	sound_tabs.add_child(sound_noted_tab)
 	sound_rejected_tab = button("NOT GREAT (0)", Vector2(130, 30))
 	sound_rejected_tab.toggle_mode = true
 	sound_rejected_tab.pressed.connect(set_sound_view.bind("rejected"))
@@ -589,15 +595,21 @@ func filter_files() -> void:
 		if row == null: continue
 		var deferred := deferred_sounds.has(path)
 		var rejected := rejected_sounds.has(path)
+		var noted := not str(notes.get(path, "")).strip_edges().is_empty()
 		var in_view: bool
-		if show_rejected_sounds: in_view = rejected
+		if show_noted_sounds: in_view = noted
+		elif show_rejected_sounds: in_view = rejected
 		elif show_later_sounds: in_view = deferred and not rejected
-		else: in_view = not deferred and not rejected
+		else: in_view = not deferred and not rejected and not noted
 		var box: Control = file_boxes.get(path, row)
 		box.visible = in_view and (query.is_empty() or query in path.get_file().to_lower())
 		if box.visible: visible += 1
 	file_count.text = "%d / %d files" % [visible, files.size()]
 	if sound_later_tab != null: sound_later_tab.text = "LATER (%d)" % deferred_sounds.size()
+	var noted_count := 0
+	for path: String in files:
+		if not str(notes.get(path, "")).strip_edges().is_empty(): noted_count += 1
+	if sound_noted_tab != null: sound_noted_tab.text = "NOTED (%d)" % noted_count
 	if sound_rejected_tab != null: sound_rejected_tab.text = "NOT GREAT (%d)" % rejected_sounds.size()
 
 func first_visible_file() -> String:
@@ -609,9 +621,11 @@ func first_visible_file() -> String:
 func set_sound_view(value: Variant) -> void:
 	var mode := ("later" if value else "sounds") if value is bool else str(value)
 	show_later_sounds = mode == "later"
+	show_noted_sounds = mode == "noted"
 	show_rejected_sounds = mode == "rejected"
 	if sound_tab != null: sound_tab.button_pressed = mode == "sounds"
 	if sound_later_tab != null: sound_later_tab.button_pressed = mode == "later"
+	if sound_noted_tab != null: sound_noted_tab.button_pressed = mode == "noted"
 	if sound_rejected_tab != null: sound_rejected_tab.button_pressed = mode == "rejected"
 	filter_files()
 	var current_box: Control = file_boxes.get(selected_file)
@@ -671,6 +685,10 @@ func sync_note() -> void:
 	if file_rows.has(selected_file):
 		file_rows[selected_file].tooltip_text = selected_file + ("\n\nNOTE: " + note if not note.is_empty() else "")
 	save_status.text = "Unsaved notes"
+	filter_files()
+	if file_boxes.has(selected_file) and not file_boxes[selected_file].visible:
+		var next := first_visible_file()
+		if not next.is_empty(): select_file(next, false)
 	schedule_autosave()
 
 func note_for(path: String) -> String:
