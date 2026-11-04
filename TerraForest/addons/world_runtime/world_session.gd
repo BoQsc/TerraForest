@@ -9,6 +9,8 @@ var transitioning:=false
 var cover:CanvasLayer
 var last_error:=""
 var stage_timings:Dictionary={}
+var continue_started_ms:=0
+var continue_consumed:=false
 func _enter_tree()->void:
 	# The host exists before browser, loading, generation and gameplay scenes.
 	Presentation.migrate_boot_settings()
@@ -37,6 +39,19 @@ static func obtain(tree:SceneTree)->Node:
 		host=load("res://addons/world_runtime/world_session.gd").new();host.name="WorldSession";tree.root.add_child.call_deferred(host)
 	tree.root.gui_embed_subwindows=true
 	return host
+func take_continue_request(arguments:PackedStringArray)->bool:
+	if continue_consumed or not last_error.is_empty() or "--continue-last" not in arguments:return false
+	continue_consumed=true;return true
+func begin_continue()->void:
+	continue_started_ms=preload("res://addons/world_runtime/loading_timer.gd").unix_milliseconds()
+	if not is_instance_valid(cover):
+		cover=preload("res://addons/world_runtime/generation_screen.gd").new();add_child(cover)
+	cover.panel.reset(continue_started_ms,0)
+	cover.panel.show_progress("Loading your world","Finding last played world…",0)
+	cover.cancel_button.hide()
+func dismiss_continue()->void:
+	continue_started_ms=0
+	if is_instance_valid(cover):cover.queue_free();cover=null
 func open_world(command:PackedStringArray)->bool:
 	if transitioning:return false
 	var arguments:=Options.user_arguments(command)
@@ -45,10 +60,11 @@ func open_world(command:PackedStringArray)->bool:
 	var generation:="--generation-handoff" in arguments
 	var baseline:=94.0 if generation else 0.0
 	var range:=.48 if generation else 8.0
-	var started_ms:=preload("res://addons/world_runtime/loading_timer.gd").unix_milliseconds()
+	var started_ms:=continue_started_ms if continue_started_ms>0 else preload("res://addons/world_runtime/loading_timer.gd").unix_milliseconds()
 	for argument:String in arguments:
 		if argument.begins_with("--loading-started-ms="):started_ms=int(argument.trim_prefix("--loading-started-ms="))
-	cover=preload("res://addons/world_runtime/generation_screen.gd").new();add_child(cover)
+	if not is_instance_valid(cover):
+		cover=preload("res://addons/world_runtime/generation_screen.gd").new();add_child(cover)
 	cover.panel.reset(started_ms,baseline)
 	cover.panel.show_progress("Loading your world","Loading game resources…",baseline)
 	await get_tree().process_frame
@@ -75,12 +91,12 @@ func open_world(command:PackedStringArray)->bool:
 	game.loading_panel.reset(started_ms,baseline+range)
 	# The game's loading UI now owns presentation; keep the cover across the gap.
 	if is_instance_valid(cover):cover.queue_free();cover=null
-	transitioning=false;return true
+	continue_started_ms=0;transitioning=false;return true
 func _failed(reason:String)->void:
 	last_error=reason;transitioning=false;Options.reset()
 	var scene:=get_tree().current_scene
-	if is_instance_valid(scene) and scene.scene_file_path=="res://demo/worlds.tscn":scene.notice.text=reason
-	if is_instance_valid(cover):cover.queue_free();cover=null
+	if is_instance_valid(scene) and scene.scene_file_path=="res://demo/worlds.tscn":scene.filter_list();scene.notice.text=reason
+	dismiss_continue()
 	await get_tree().process_frame
 func reject_world(game:Node,code:int)->void:
 	last_error="World initialization failed (%d). Previous saved data is protected."%code
@@ -88,5 +104,5 @@ func reject_world(game:Node,code:int)->void:
 	await get_tree().process_frame
 	if is_instance_valid(game):game.terrain.shutdown()
 	transitioning=false
-	if is_instance_valid(cover):cover.queue_free();cover=null
+	dismiss_continue()
 	get_tree().change_scene_to_file("res://demo/worlds.tscn")

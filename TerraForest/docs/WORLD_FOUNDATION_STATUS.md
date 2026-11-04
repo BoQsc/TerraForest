@@ -1,5 +1,17 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Last World startup presentation — 2026-11-04
+
+The Last World route now presents loading before its asynchronous save scan,
+then retains the same cover into game-resource loading. Empty/missing/error
+cases reveal the browser; the startup request is consumed once. Source and
+executable presentation checks pass 11 each. [Evidence and remaining review](../issues/last-world-startup/README.md).
+User desktop/Steam visual confirmation remains open. Revisit on a visible browser
+frame with first-frame captures and exact launch arguments/source-PCK identity.
+The nine generator-policy and two preview assertions reproduced on the pre-change
+browser remain failed outside this fix; update those contracts before claiming
+the whole browser suite passes. Catalog/load-time performance is not newly qualified.
+
 ## Zombie gait continuity — 2026-11-04
 
 Relaxed/alert walk changes now retain their shared foot phase. Short native

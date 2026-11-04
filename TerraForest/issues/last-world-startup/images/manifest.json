@@ -1,0 +1,16 @@
+[
+  {
+    "file": "loading-first-frame.png",
+    "source": "reports/continue_last_presentation/20261104T220302873705Z/first_loading_frame.png",
+    "sha256": "8508947dc9cd89b4f86496490f93f407cc38857dc721112af11291f543c31a36",
+    "scope": "2026-11-04 UTC run; source Forward+ 1920x1080; isolated fixture; current evidence, not before/after",
+    "provenance": "Diagnostic capture of TerraForest; existing game asset terms preserved."
+  },
+  {
+    "file": "no-save-fallback.png",
+    "source": "reports/continue_last_presentation/20261104T220302873705Z/empty_fallback.png",
+    "sha256": "8a02b0049ec861da87fe5d574b6c2ba12ef197131e90a612a8c113476d6770ba",
+    "scope": "2026-11-04 UTC run; source Forward+ 1920x1080; isolated fixture; current evidence, not before/after",
+    "provenance": "Diagnostic capture of TerraForest; existing game asset terms preserved."
+  }
+]

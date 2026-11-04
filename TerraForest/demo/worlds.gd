@@ -80,6 +80,8 @@ func button(parent: Node,text: String,action: Callable) -> Button:
 func _ready() -> void:
 	preload("res://addons/world_runtime/session_options.gd").reset()
 	session=preload("res://addons/world_runtime/world_session.gd").obtain(get_tree())
+	continue_pending=session.take_continue_request(OS.get_cmdline_user_args())
+	if continue_pending:session.begin_continue()
 	get_tree().auto_accept_quit=false
 	Engine.max_fps=60;DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE)
@@ -127,26 +129,27 @@ func _ready() -> void:
 	library=WorldLibrary.new();add_child(library)
 	library.catalog_ready.connect(_catalog_ready)
 	library.details_ready.connect(_saved_details_ready)
-	continue_pending="--continue-last" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	refresh()
 	if not session.last_error.is_empty():notice.text=session.last_error;session.last_error=""
 func continue_last_world() -> void:
 	# A Steam entry carries one fixed command line, so "continue" is decided here
-	# instead of by an argument naming a slot: the list is already newest first.
+	# instead of by an argument naming a slot: the catalog is newest first.
 	if library.loading:continue_pending=true;return
 	var arguments:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	if slots.is_empty():
+		session.dismiss_continue();filter_list()
 		notice.text="No saved world to continue."
 		if "--continue-report" in arguments:
 			print("continue-last: no saved world");get_tree().quit(1)
 		return
-	filter_field.clear();filter_list()
-	if worlds.item_count>0:worlds.select(0)
 	if "--continue-report" in arguments:
 		# Verification hook: says which world the flag resolves to, then exits.
 		print("continue-last: "+slots[0]);get_tree().quit(0)
 		return
-	launch_selected(false)
+	var result:=Launch.command(slots[0],false,Launch.INTEGRATED_PRESET,1703,true)
+	if not result.ok:
+		session.dismiss_continue();filter_list();notice.text=result.reason;return
+	_open_game(result.args)
 func show_credits()->void:
 	if credits_dialog==null:
 		credits_dialog=CreditsDialog.new();credits_dialog.theme=theme;add_child(credits_dialog)
@@ -162,10 +165,11 @@ func refresh() -> void:
 	notice.text="Finding saved worlds…"
 	library.refresh(show_preparation.button_pressed,["played","created","name"][sort_order.selected])
 func _catalog_ready(found:PackedStringArray)->void:
-	slots=found;filter_list()
-	if notice.text=="Finding saved worlds…":notice.text="%d saved worlds. Save from the Actions menu or with F5 while playing."%slots.size()
+	slots=found
 	if continue_pending:
-		continue_pending=false;continue_last_world.call_deferred()
+		continue_pending=false;continue_last_world.call_deferred();return
+	filter_list()
+	if notice.text=="Finding saved worlds…":notice.text="%d saved worlds. Save from the Actions menu or with F5 while playing."%slots.size()
 func filter_list() -> void:
 	var selected:=""
 	if not worlds.get_selected_items().is_empty():selected=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))

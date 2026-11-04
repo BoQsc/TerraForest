@@ -1,0 +1,44 @@
+{
+  "scope": "Last World first-frame presentation and dispatch/fallback; no user save initialized by fixture. Exact desktop click and whole-world loading acceptance remain separate.",
+  "checks": {
+    "source": {
+      "report": "reports/continue_last_presentation/20261104T220302873705Z",
+      "passed": true,
+      "diagnostics": [],
+      "checks": 11,
+      "failures": 0
+    },
+    "executable": {
+      "report": "reports/continue_last_presentation/20261104T220428554458Z",
+      "passed": true,
+      "diagnostics": [],
+      "checks": 11,
+      "failures": 0,
+      "pack_sha256": "c9abe34cd9d097756cef1af7630167299c58c7e1bd4b8c9151a28a44728dd816"
+    },
+    "first_harness_failure": {
+      "report": "reports/checks/20261104T215948854254Z",
+      "passed": false,
+      "diagnostics": [
+        "FAIL continue selects newest saved world without using browser selection controls",
+        "FAIL continue skips browser thumbnails and selected-world detail work",
+        "FAIL failed world return does not automatically retry continue-last"
+      ]
+    }
+  },
+  "existing_failures": {
+    "policy_before": "reports/continue_baseline_policy",
+    "policy_current": "reports/checks/20261104T220129179900Z",
+    "policy_assertions": 9,
+    "preview_before": "reports/continue_baseline_preview",
+    "preview_current": "reports/checks/20261104T215807146047Z",
+    "preview_assertions": 2
+  },
+  "files": {
+    "addons/world_runtime/world_session.gd": "8ea5f806c6cd4c203df877e763bfa519d7f65f2cf378dd6c13236e1520b32cdd",
+    "demo/worlds.gd": "503fecddae1823c6bdc30eadebeda27a3e09b39841a2ff3f65906862867b2094",
+    "tests/continue_last_presentation.gd": "ffdea58624aa4fda0b071bc5e6aa87d1ba7d86575517dd8bb6345c4d62413ec8",
+    "tools/check_continue_last.py": "516946bebbfc635d018c1f7027cb9a9d4b9a850f0824cd11040ecd73171f7b23",
+    "dist/TerraForest.pck": "c9abe34cd9d097756cef1af7630167299c58c7e1bd4b8c9151a28a44728dd816"
+  }
+}
