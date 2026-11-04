@@ -2,6 +2,7 @@
   "inputs": [
     "TerraForest/tools/kaino_audition.gd",
     "TerraForest/tools/kaino_audition.tscn",
+    "TerraForest/tools/kaino_event_catalog.gd",
     "TerraForest/addons/audio_runtime/kaino_audition_map.gd",
     "TerraForest/addons/audio_runtime/wav_decoder.gd",
     "TerraForest/addons/audio_runtime/catalog.gd",

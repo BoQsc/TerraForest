@@ -7,6 +7,11 @@ const PACK_ROOT := "res://addons/audio_runtime/packs/Kaino"
 const MANIFEST := "res://addons/audio_runtime/packs/nox/pack.audio.module.json"
 const TextInputFocus := preload("res://addons/player_runtime/text_input_focus.gd")
 const WavDecoder := preload("res://addons/audio_runtime/wav_decoder.gd")
+const EventCatalog := preload("res://tools/kaino_event_catalog.gd")
+const HUMAN_MODEL := "res://addons/characters/runtime/assets/Human.r11.glb"
+const ZOMBIE_MODEL := "res://addons/characters/runtime/assets/Zombie.r4.glb"
+const VEHICLE_SCENE := "res://vehicle_demo/scenes/car.tscn"
+const TOOL_MODEL := "res://addons/characters/runtime/assets/Torch.glb"
 const INK := Color(0.91, 0.95, 0.90)
 const MUTED := Color(0.54, 0.66, 0.63)
 const FAINT := Color(0.33, 0.43, 0.41)
@@ -20,13 +25,30 @@ var mapping_path := "res://addons/audio_runtime/kaino_audition_selection.json"
 var files: Array[String] = []
 var slots: Array[Dictionary] = []
 var mapping: Dictionary = {}
+var notes: Dictionary = {}
+var deferred_sounds: Dictionary = {}
+var rejected_sounds: Dictionary = {}
 var file_rows: Dictionary = {}
+var file_boxes: Dictionary = {}
+var file_later_buttons: Dictionary = {}
+var file_reject_buttons: Dictionary = {}
 var slot_rows: Dictionary = {}
 var selected_file := ""
 var selected_slot := ""
 var audio_player: AudioStreamPlayer
+var autosave_timer: Timer
 var search: LineEdit
+var notes_edit: TextEdit
+var loading_notes := false
+var event_search: LineEdit
+var hide_occupied: CheckButton
+var sound_tab: Button
+var sound_later_tab: Button
+var sound_rejected_tab: Button
+var show_later_sounds := false
+var show_rejected_sounds := false
 var file_count: Label
+var slot_count: Label
 var selected_file_label: Label
 var selected_slot_label: Label
 var status: Label
@@ -34,12 +56,26 @@ var save_status: Label
 var play_slot_button: Button
 var assign_button: Button
 var clear_button: Button
+var preview_container: SubViewportContainer
+var preview_viewport: SubViewport
+var preview_stage: Node3D
+var preview_model_root: Node3D
+var preview_model: Node3D
+var preview_camera: Camera3D
+var preview_animation_player: AnimationPlayer
+var preview_label: Label
+var preview_kind := ""
 
 func _ready() -> void:
 	get_window().title = "Kaino SFX Audition — TerraForest"
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_ready_audio()
+	autosave_timer = Timer.new()
+	autosave_timer.one_shot = true
+	autosave_timer.wait_time = 0.65
+	autosave_timer.timeout.connect(save_mapping)
+	add_child(autosave_timer)
 	scan_files(PACK_ROOT)
 	files.sort()
 	parse_slots()
@@ -47,7 +83,8 @@ func _ready() -> void:
 	build_ui()
 	populate_rows()
 	if not files.is_empty(): select_file(files[0], false)
-	if not slots.is_empty(): select_slot(str(slots[0].id))
+	var initial := first_visible_slot()
+	if not initial.is_empty(): select_slot(initial)
 
 func scan_files(folder: String) -> void:
 	var dir := DirAccess.open(folder)
@@ -59,25 +96,47 @@ func scan_files(folder: String) -> void:
 		scan_files(folder.path_join(child))
 
 func parse_slots() -> void:
+	var known := {}
 	var path := ProjectSettings.globalize_path(MANIFEST)
-	if not FileAccess.file_exists(path): return
-	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-	if not data is Dictionary: return
-	for row: Variant in data.get("sounds", []):
-		if not row is Dictionary or str(row.get("id", "")).is_empty(): continue
-		var label := str(row.get("event", row.id))
-		var matches: Variant = row.get("match", {})
-		if matches is Dictionary:
-			for key: Variant in matches:
-				label += "  ·  " + str(matches[key])
-		slots.append({"id": str(row.id), "label": label, "event": str(row.get("event", ""))})
+	if FileAccess.file_exists(path):
+		var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if data is Dictionary:
+			for row: Variant in data.get("sounds", []):
+				if not row is Dictionary or str(row.get("id", "")).is_empty(): continue
+				var id := str(row.id)
+				var event := str(row.get("event", ""))
+				var label := event
+				var matches: Variant = row.get("match", {})
+				if matches is Dictionary:
+					for key: Variant in matches:
+						label += "  ·  " + str(matches[key])
+				var preview := "player" if event.begins_with("movement") else ("fire" if event == "fire.burn" else "world")
+				var animation := ""
+				if event == "movement.footstep" and matches is Dictionary:
+					animation = "Run" if str(matches.get("gait", "")) == "run" else "Walk"
+				slots.append({"id": id, "label": label, "event": event, "group": "Player" if preview == "player" else "World", "preview": preview, "animation": animation})
+				known[id] = true
+	for event: Dictionary in EventCatalog.EVENTS:
+		var id := str(event.id)
+		if known.has(id): continue
+		slots.append(event.duplicate(true))
+		known[id] = true
 
 func load_mapping() -> void:
 	var path := ProjectSettings.globalize_path(mapping_path)
 	if not FileAccess.file_exists(path): return
 	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-	if data is Dictionary and data.get("selection", {}) is Dictionary:
-		mapping = (data.selection as Dictionary).duplicate(true)
+	if data is Dictionary:
+		if data.get("selection", {}) is Dictionary:
+			mapping = (data.selection as Dictionary).duplicate(true)
+		if data.get("notes", {}) is Dictionary:
+			notes = (data.notes as Dictionary).duplicate(true)
+		if data.get("deferred_sounds", []) is Array:
+			for deferred_path: Variant in data.deferred_sounds:
+				deferred_sounds[str(deferred_path)] = true
+		if data.get("rejected_sounds", []) is Array:
+			for rejected_path: Variant in data.rejected_sounds:
+				rejected_sounds[str(rejected_path)] = true
 
 func style(fill: Color, border: Color, radius: int = 8) -> StyleBoxFlat:
 	var out := StyleBoxFlat.new()
@@ -175,6 +234,22 @@ func build_files_panel() -> Control:
 	search.clear_button_enabled = true
 	search.text_changed.connect(func(_value: String) -> void: filter_files())
 	column.add_child(search)
+	var sound_tabs := HBoxContainer.new()
+	sound_tabs.add_theme_constant_override("separation", 6)
+	column.add_child(sound_tabs)
+	sound_tab = button("SOUNDS", Vector2(110, 30))
+	sound_tab.toggle_mode = true
+	sound_tab.button_pressed = true
+	sound_tab.pressed.connect(set_sound_view.bind(false))
+	sound_tabs.add_child(sound_tab)
+	sound_later_tab = button("LATER (0)", Vector2(110, 30))
+	sound_later_tab.toggle_mode = true
+	sound_later_tab.pressed.connect(set_sound_view.bind(true))
+	sound_tabs.add_child(sound_later_tab)
+	sound_rejected_tab = button("NOT GREAT (0)", Vector2(130, 30))
+	sound_rejected_tab.toggle_mode = true
+	sound_rejected_tab.pressed.connect(set_sound_view.bind("rejected"))
+	sound_tabs.add_child(sound_rejected_tab)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -184,6 +259,14 @@ func build_files_panel() -> Control:
 	list.add_theme_constant_override("separation", 3)
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(list)
+	column.add_child(label("NOTES · SELECTED SOUND", 11, MINT, true))
+	notes_edit = TextEdit.new()
+	TextInputFocus.configure(notes_edit)
+	notes_edit.placeholder_text = "Describe what this sound is good for, its mood, or the event it belongs to…"
+	notes_edit.custom_minimum_size.y = 96
+	notes_edit.text_changed.connect(sync_note)
+	column.add_child(notes_edit)
+	column.add_child(label("Notes save with the selection; later they can guide automatic assignment.", 10, FAINT))
 	return panel
 
 func build_slots_panel() -> Control:
@@ -193,7 +276,41 @@ func build_slots_panel() -> Control:
 	column.add_theme_constant_override("separation", 8)
 	panel.add_child(column)
 	column.add_child(label("GAME EVENT SLOTS", 14, MINT, true))
-	column.add_child(label("Select a slot on the right, then choose a file and assign it.", 11, MUTED))
+	column.add_child(label("Select an event to see its mini scene; choose a file and assign it.", 11, MUTED))
+	var preview_panel := PanelContainer.new()
+	preview_panel.custom_minimum_size.y = 252
+	preview_panel.add_theme_stylebox_override("panel", style(PANEL_DEEP, LINE, 8))
+	column.add_child(preview_panel)
+	var preview_column := VBoxContainer.new()
+	preview_column.add_theme_constant_override("separation", 4)
+	preview_panel.add_child(preview_column)
+	preview_container = SubViewportContainer.new()
+	preview_container.custom_minimum_size.y = 220
+	preview_container.stretch = true
+	preview_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	preview_column.add_child(preview_container)
+	build_preview()
+	preview_label = label("Select an event for a mini-scene preview", 10, MUTED)
+	preview_column.add_child(preview_label)
+	var filters := HBoxContainer.new()
+	filters.add_theme_constant_override("separation", 8)
+	column.add_child(filters)
+	event_search = LineEdit.new()
+	TextInputFocus.configure(event_search)
+	event_search.placeholder_text = "Filter game events or entity…"
+	event_search.clear_button_enabled = true
+	event_search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	event_search.text_changed.connect(func(_value: String) -> void: filter_slots())
+	filters.add_child(event_search)
+	hide_occupied = CheckButton.new()
+	hide_occupied.text = "Hide occupied"
+	hide_occupied.button_pressed = true
+	hide_occupied.tooltip_text = "Hide slots that already have an assigned sound."
+	hide_occupied.toggled.connect(func(_value: bool) -> void: filter_slots())
+	filters.add_child(hide_occupied)
+	slot_count = label("", 10, MUTED)
+	slot_count.custom_minimum_size.x = 100
+	filters.add_child(slot_count)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -204,6 +321,154 @@ func build_slots_panel() -> Control:
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(list)
 	return panel
+
+func build_preview() -> void:
+	preview_viewport = SubViewport.new()
+	preview_viewport.size = Vector2i(900, 220)
+	preview_viewport.own_world_3d = true
+	preview_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	preview_viewport.transparent_bg = false
+	preview_container.add_child(preview_viewport)
+	preview_stage = Node3D.new()
+	preview_viewport.add_child(preview_stage)
+	var environment := WorldEnvironment.new()
+	environment.environment = Environment.new()
+	environment.environment.background_mode = Environment.BG_COLOR
+	environment.environment.background_color = Color("#071212")
+	environment.environment.ambient_light_color = Color("#8bb7a4")
+	environment.environment.ambient_light_energy = 0.42
+	preview_stage.add_child(environment)
+	var light := DirectionalLight3D.new()
+	light.rotation_degrees = Vector3(-38, -28, 0)
+	light.light_color = Color("#ffe2b0")
+	light.light_energy = 1.25
+	light.shadow_enabled = true
+	preview_stage.add_child(light)
+	var ground := MeshInstance3D.new()
+	var ground_mesh := BoxMesh.new()
+	ground_mesh.size = Vector3(9, 0.12, 9)
+	ground.mesh = ground_mesh
+	ground.position.y = -0.08
+	var ground_material := StandardMaterial3D.new()
+	ground_material.albedo_color = Color("#26352c")
+	ground_material.roughness = 0.9
+	ground.material_override = ground_material
+	preview_stage.add_child(ground)
+	preview_model_root = Node3D.new()
+	preview_stage.add_child(preview_model_root)
+	preview_camera = Camera3D.new()
+	preview_camera.fov = 38
+	preview_camera.current = true
+	preview_stage.add_child(preview_camera)
+
+func update_preview(id: String) -> void:
+	var slot := {}
+	for candidate: Dictionary in slots:
+		if str(candidate.id) == id:
+			slot = candidate
+			break
+	if slot.is_empty() or preview_model_root == null: return
+	for child: Node in preview_model_root.get_children(): child.free()
+	preview_model = null
+	preview_animation_player = null
+	preview_kind = str(slot.get("preview", "world"))
+	preview_label.text = "Preview · " + str(slot.get("label", id))
+	var model_path := ""
+	var target := Vector3(0, 0.8, 0)
+	var camera_position := Vector3(0, 1.6, 4.2)
+	var desired_animation := str(slot.get("animation", "Idle"))
+	if preview_kind == "vehicle":
+		model_path = VEHICLE_SCENE
+		camera_position = Vector3(0, 2.7, 8.0)
+		target = Vector3(0, 1.0, 0)
+	elif preview_kind == "zombie":
+		model_path = ZOMBIE_MODEL
+		camera_position = Vector3(0, 1.7, 4.5)
+		target = Vector3(0, 0.9, 0)
+	elif preview_kind == "player" or preview_kind == "npc":
+		model_path = HUMAN_MODEL
+		camera_position = Vector3(0, 1.5, 3.7)
+		target = Vector3(0, 0.9, 0)
+	elif preview_kind == "tool" or preview_kind == "weapon":
+		model_path = TOOL_MODEL
+		camera_position = Vector3(0, 0.6, 1.8)
+		target = Vector3(0, 0.25, 0)
+	if not model_path.is_empty():
+		var packed := load(model_path) as PackedScene
+		if packed != null:
+			preview_model = packed.instantiate() as Node3D
+			if preview_model != null:
+				preview_model_root.add_child(preview_model)
+				play_preview_animation(preview_model, desired_animation)
+	if preview_model == null:
+		make_preview_placeholder(preview_kind)
+	preview_camera.position = camera_position
+	preview_camera.look_at(target, Vector3.UP)
+
+func play_preview_animation(model: Node3D, desired: String) -> void:
+	var player := model.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if player == null: return
+	preview_animation_player = player
+	var names := player.get_animation_list()
+	if names.is_empty(): return
+	var animation := desired if desired in names else String(names[0])
+	var resource := player.get_animation(animation)
+	if resource != null: resource.loop_mode = Animation.LOOP_LINEAR
+	player.play(animation)
+	player.seek(0.15, true)
+
+func make_preview_placeholder(kind: String) -> void:
+	preview_model = Node3D.new()
+	preview_model_root.add_child(preview_model)
+	if kind == "world" or kind == "fire":
+		var fire := MeshInstance3D.new()
+		var flame := CylinderMesh.new()
+		flame.top_radius = 0.05
+		flame.bottom_radius = 0.42
+		flame.height = 1.25
+		fire.mesh = flame
+		fire.position.y = 0.63
+		var material := StandardMaterial3D.new()
+		material.albedo_color = Color("#e88a35")
+		material.emission_enabled = true
+		material.emission = Color("#ff7b22")
+		material.emission_energy_multiplier = 1.8
+		fire.material_override = material
+		preview_model.add_child(fire)
+		var light := OmniLight3D.new()
+		light.light_color = Color("#ff9d42")
+		light.light_energy = 1.2
+		light.omni_range = 4
+		light.position.y = 1
+		preview_model.add_child(light)
+	elif kind == "ui":
+		var panel := MeshInstance3D.new()
+		var box := BoxMesh.new()
+		box.size = Vector3(1.7, 0.9, 0.08)
+		panel.mesh = box
+		panel.position.y = 0.55
+		var material := StandardMaterial3D.new()
+		material.albedo_color = Color("#17352f")
+		material.emission_enabled = true
+		material.emission = Color("#1d7660")
+		material.emission_energy_multiplier = 0.35
+		panel.material_override = material
+		preview_model.add_child(panel)
+	else:
+		var body := MeshInstance3D.new()
+		var capsule := CapsuleMesh.new()
+		capsule.radius = 0.3
+		capsule.height = 1.15
+		body.mesh = capsule
+		body.position.y = 0.58
+		var material := StandardMaterial3D.new()
+		material.albedo_color = Color("#c18b55")
+		body.material_override = material
+		preview_model.add_child(body)
+
+func _process(delta: float) -> void:
+	if preview_model_root != null:
+		preview_model_root.rotation.y += delta * 0.45
 
 func build_actions() -> Control:
 	var panel := make_panel()
@@ -241,13 +506,30 @@ func populate_rows() -> void:
 	var file_list := find_child("FileList", true, false) as VBoxContainer
 	if file_list != null:
 		for path: String in files:
+			var row_box := HBoxContainer.new()
+			row_box.add_theme_constant_override("separation", 4)
 			var row := button(path.get_file(), Vector2(0, 32))
 			row.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			row.text = path.get_file()
 			row.tooltip_text = path
 			row.pressed.connect(select_file.bind(path, true))
-			file_list.add_child(row)
+			row_box.add_child(row)
+			var defer := button("LATER", Vector2(68, 32))
+			defer.tooltip_text = "Move this Kaino sound to the Later tab"
+			defer.pressed.connect(toggle_sound_later.bind(path))
+			row_box.add_child(defer)
+			var reject := button("NOT GREAT", Vector2(92, 32))
+			reject.tooltip_text = "Mark this sound as not great / won't use"
+			reject.pressed.connect(toggle_sound_rejected.bind(path))
+			row_box.add_child(reject)
+			file_list.add_child(row_box)
 			file_rows[path] = row
+			file_boxes[path] = row_box
+			file_later_buttons[path] = defer
+			file_reject_buttons[path] = reject
+			defer.text = "RESTORE" if deferred_sounds.has(path) else "LATER"
+			reject.text = "RESTORE" if rejected_sounds.has(path) else "NOT GREAT"
 	var slot_list := find_child("SlotList", true, false) as VBoxContainer
 	if slot_list != null:
 		for slot: Dictionary in slots:
@@ -260,20 +542,43 @@ func populate_rows() -> void:
 			refresh_slot(str(slot.id))
 	file_count.text = "%d files" % files.size()
 	if search != null: filter_files()
+	if hide_occupied != null: filter_slots()
 
 func refresh_slot(id: String) -> void:
 	if not slot_rows.has(id): return
 	var label_text := ""
+	var group := ""
 	for slot: Dictionary in slots:
 		if str(slot.id) == id:
 			label_text = str(slot.label)
+			group = str(slot.get("group", ""))
 			break
 	var assigned := ""
 	if mapping.has(id) and not str(mapping[id]).is_empty():
 		assigned = "   [" + str(mapping[id]).get_file() + "]"
 	var row: Button = slot_rows[id]
-	row.text = label_text + assigned
+	row.text = ("[" + group + "]  " if not group.is_empty() else "") + label_text + assigned
 	row.modulate = Color(0.82, 1.0, 0.88) if id == selected_slot else Color.WHITE
+
+func filter_slots() -> void:
+	if hide_occupied == null: return
+	var query := event_search.text.strip_edges().to_lower() if event_search != null else ""
+	var visible := 0
+	for slot: Dictionary in slots:
+		var id := str(slot.id)
+		var row: Button = slot_rows.get(id)
+		if row == null: continue
+		var occupied := mapping.has(id) and not str(mapping[id]).is_empty()
+		var text := str(slot.get("label", "")) + " " + str(slot.get("group", ""))
+		row.visible = not (hide_occupied.button_pressed and occupied) and (query.is_empty() or query in text.to_lower() or query in id.to_lower())
+		if row.visible: visible += 1
+	slot_count.text = "%d / %d" % [visible, slots.size()]
+
+func first_visible_slot() -> String:
+	for slot: Dictionary in slots:
+		var row: Button = slot_rows.get(str(slot.id))
+		if row != null and row.visible: return str(slot.id)
+	return ""
 
 func filter_files() -> void:
 	if search == null: return
@@ -282,25 +587,103 @@ func filter_files() -> void:
 	for path: String in files:
 		var row: Button = file_rows.get(path)
 		if row == null: continue
-		row.visible = query.is_empty() or query in path.get_file().to_lower()
-		if row.visible: visible += 1
+		var deferred := deferred_sounds.has(path)
+		var rejected := rejected_sounds.has(path)
+		var in_view: bool
+		if show_rejected_sounds: in_view = rejected
+		elif show_later_sounds: in_view = deferred and not rejected
+		else: in_view = not deferred and not rejected
+		var box: Control = file_boxes.get(path, row)
+		box.visible = in_view and (query.is_empty() or query in path.get_file().to_lower())
+		if box.visible: visible += 1
 	file_count.text = "%d / %d files" % [visible, files.size()]
+	if sound_later_tab != null: sound_later_tab.text = "LATER (%d)" % deferred_sounds.size()
+	if sound_rejected_tab != null: sound_rejected_tab.text = "NOT GREAT (%d)" % rejected_sounds.size()
+
+func first_visible_file() -> String:
+	for path: String in files:
+		var box: Control = file_boxes.get(path)
+		if box != null and box.visible: return path
+	return ""
+
+func set_sound_view(value: Variant) -> void:
+	var mode := ("later" if value else "sounds") if value is bool else str(value)
+	show_later_sounds = mode == "later"
+	show_rejected_sounds = mode == "rejected"
+	if sound_tab != null: sound_tab.button_pressed = mode == "sounds"
+	if sound_later_tab != null: sound_later_tab.button_pressed = mode == "later"
+	if sound_rejected_tab != null: sound_rejected_tab.button_pressed = mode == "rejected"
+	filter_files()
+	var current_box: Control = file_boxes.get(selected_file)
+	if current_box == null or not current_box.visible:
+		var next := first_visible_file()
+		if not next.is_empty(): select_file(next, false)
+
+func toggle_sound_later(path: String) -> void:
+	if deferred_sounds.has(path): deferred_sounds.erase(path)
+	else: deferred_sounds[path] = true
+	if deferred_sounds.has(path): rejected_sounds.erase(path)
+	if file_later_buttons.has(path):
+		var defer: Button = file_later_buttons[path]
+		defer.text = "RESTORE" if deferred_sounds.has(path) else "LATER"
+	if file_reject_buttons.has(path):
+		file_reject_buttons[path].text = "RESTORE" if rejected_sounds.has(path) else "NOT GREAT"
+	filter_files()
+	if selected_file == path and not file_boxes[path].visible:
+		var next := first_visible_file()
+		if not next.is_empty(): select_file(next, false)
+	save_status.text = "Unsaved changes"
+	status.text = ("Restored · " if not deferred_sounds.has(path) else "Moved to Later · ") + path.get_file()
+	schedule_autosave()
+
+func toggle_sound_rejected(path: String) -> void:
+	if rejected_sounds.has(path): rejected_sounds.erase(path)
+	else:
+		rejected_sounds[path] = true
+		deferred_sounds.erase(path)
+	if file_reject_buttons.has(path):
+		file_reject_buttons[path].text = "RESTORE" if rejected_sounds.has(path) else "NOT GREAT"
+	if file_later_buttons.has(path):
+		file_later_buttons[path].text = "RESTORE" if deferred_sounds.has(path) else "LATER"
+	filter_files()
+	if selected_file == path and not file_boxes[path].visible:
+		var next := first_visible_file()
+		if not next.is_empty(): select_file(next, false)
+	save_status.text = "Unsaved changes"
+	status.text = ("Restored · " if not rejected_sounds.has(path) else "Marked Not great · ") + path.get_file()
+	schedule_autosave()
 
 func select_file(path: String, autoplay: bool = true) -> void:
 	selected_file = path
 	for key: String in file_rows:
 		file_rows[key].modulate = Color(0.82, 1.0, 0.88) if key == path else Color.WHITE
 	selected_file_label.text = "Selected file:  " + path.get_file()
+	loading_notes = true
+	notes_edit.text = str(notes.get(path, ""))
+	loading_notes = false
 	if autoplay: play_file(path)
+
+func sync_note() -> void:
+	if loading_notes or selected_file.is_empty(): return
+	var note := notes_edit.text.strip_edges()
+	if note.is_empty(): notes.erase(selected_file)
+	else: notes[selected_file] = note
+	if file_rows.has(selected_file):
+		file_rows[selected_file].tooltip_text = selected_file + ("\n\nNOTE: " + note if not note.is_empty() else "")
+	save_status.text = "Unsaved notes"
+	schedule_autosave()
+
+func note_for(path: String) -> String:
+	return str(notes.get(path, "")).strip_edges()
 
 func select_slot(id: String) -> void:
 	selected_slot = id
 	for key: String in slot_rows: refresh_slot(key)
 	var assigned := "No file assigned"
 	if mapping.has(id): assigned = str(mapping[id]).get_file()
-	selected_slot_label = null
 	play_slot_button.disabled = not mapping.has(id)
 	status.text = "Slot selected · " + assigned
+	update_preview(id)
 
 func play_selected() -> void:
 	if selected_file.is_empty():
@@ -382,26 +765,39 @@ func assign_selected() -> void:
 	mapping[selected_slot] = selected_file
 	refresh_slot(selected_slot)
 	play_slot_button.disabled = false
+	filter_slots()
 	status.text = "Assigned · " + selected_file.get_file() + " → " + selected_slot
 	save_status.text = "Unsaved changes"
+	schedule_autosave()
 
 func clear_slot() -> void:
 	if selected_slot.is_empty(): return
 	mapping.erase(selected_slot)
 	refresh_slot(selected_slot)
 	play_slot_button.disabled = true
+	filter_slots()
 	save_status.text = "Unsaved changes"
 	status.text = "Cleared · " + selected_slot
+	schedule_autosave()
+
+func schedule_autosave() -> void:
+	if autosave_timer != null: autosave_timer.start()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		if autosave_timer != null: autosave_timer.stop()
+		save_mapping()
+		get_tree().quit()
 
 func save_mapping() -> void:
 	var file := FileAccess.open(mapping_path, FileAccess.WRITE)
 	if file == null:
 		save_status.text = "Could not write " + mapping_path
 		return
-	file.store_string(JSON.stringify({"schema": 1, "pack": "Kaino", "selection": mapping}, "\t"))
+	file.store_string(JSON.stringify({"schema": 1, "pack": "Kaino", "selection": mapping, "notes": notes, "deferred_sounds": deferred_sounds.keys(), "rejected_sounds": rejected_sounds.keys()}, "\t"))
 	file.close()
 	save_status.text = "Saved · " + mapping_path.get_file()
-	status.text = "Selection saved to " + mapping_path
+	status.text = "Selection, notes and deferred sounds saved to " + mapping_path
 
 func _ready_audio() -> void:
 	audio_player = AudioStreamPlayer.new()

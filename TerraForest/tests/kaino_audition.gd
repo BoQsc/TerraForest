@@ -13,23 +13,65 @@ func check(condition:bool,message:String)->bool:
 func run()->void:
 	audition=load("res://tools/kaino_audition.tscn").instantiate()
 	audition.mapping_path="user://kaino_audition_test.json"
+	if FileAccess.file_exists(ProjectSettings.globalize_path(audition.mapping_path)):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(audition.mapping_path))
 	root.add_child(audition)
 	await process_frame
 	await process_frame
 	check(audition.files.size()>0,"Kaino WAV files discovered")
 	check(audition.slots.size()>0,"actual game sound slots loaded")
+	check(audition.hide_occupied.button_pressed,"occupied slots are hidden by default")
+	check(audition.slots.any(func(slot):return str(slot.id)=="vehicle.engine.loop") and audition.slots.any(func(slot):return str(slot.id)=="npc.zombie.attack"),"entity event catalog covers vehicles and NPCs")
+	audition.select_file(audition.files[0],false)
+	audition.notes_edit.text="Dry, short footstep for compacted dirt."
+	audition.sync_note()
+	check(audition.notes_edit!=null and audition.note_for(audition.files[0])=="Dry, short footstep for compacted dirt.","per-sound note is stored")
+	var deferred_path:String=audition.files[1]
+	audition.file_later_buttons[deferred_path].pressed.emit()
+	check(not audition.file_boxes[deferred_path].visible,"Later removes the selected pack sound from the main list")
+	audition.set_sound_view(true)
+	check(audition.file_boxes[deferred_path].visible and audition.sound_later_tab.text=="LATER (1)","deferred pack sound appears in the Later tab")
+	audition.set_sound_view(false)
+	audition.select_file(audition.files[0],false)
+	await create_timer(.8).timeout
+	var autosaved:Variant=JSON.parse_string(FileAccess.get_file_as_string(ProjectSettings.globalize_path(audition.mapping_path)))
+	check(autosaved is Dictionary and deferred_path in autosaved.get("deferred_sounds",[]),"defer action autosaves selection state")
+	var rejected_path:String=audition.files[2]
+	audition.file_reject_buttons[rejected_path].pressed.emit()
+	check(not audition.file_boxes[rejected_path].visible,"Not great removes the pack sound from the main list")
+	audition.set_sound_view("rejected")
+	check(audition.file_boxes[rejected_path].visible and audition.sound_rejected_tab.text=="NOT GREAT (1)","rejected pack sound appears in the Not great tab")
+	audition.set_sound_view("sounds")
+	audition.select_file(audition.files[0],false)
 	if audition.files.is_empty() or audition.slots.is_empty():
 		await finish()
 		return
 	audition.select_file(audition.files[0],true)
 	await create_timer(.15).timeout
 	check(audition.audio_player.stream!=null and audition.audio_player.playing,"selected Kaino file starts playback")
-	audition.select_slot(str(audition.slots[0].id))
+	var slot_id:String=audition.first_visible_slot()
+	audition.select_slot(slot_id)
+	check(not slot_id.is_empty() and audition.preview_model!=null,"selected event builds a looping mini-scene preview")
+	check(audition.preview_animation_player!=null and audition.preview_animation_player.is_playing(),"mini-scene animation is running")
+	audition.select_slot("vehicle.engine.loop")
+	check(audition.preview_kind=="vehicle" and audition.preview_model!=null,"vehicle event builds a vehicle mini-scene")
+	audition.select_slot("npc.zombie.attack")
+	check(audition.preview_kind=="zombie" and audition.preview_model!=null and audition.preview_animation_player!=null,"NPC event builds an animated zombie mini-scene")
+	audition.select_slot(slot_id)
 	audition.assign_selected()
-	check(str(audition.mapping.get(audition.selected_slot,""))==audition.files[0],"selected slot records selected file")
+	check(str(audition.mapping.get(audition.selected_slot,""))==audition.files[0] and not audition.slot_rows[audition.selected_slot].visible,"selected slot records file and is hidden while occupied")
+	audition.hide_occupied.button_pressed=false
+	audition.filter_slots()
+	check(audition.slot_rows[audition.selected_slot].visible,"occupied slot can be revealed by toggle")
+	audition.hide_occupied.button_pressed=true
+	audition.filter_slots()
 	audition.save_mapping()
 	await process_frame
 	check(FileAccess.file_exists(ProjectSettings.globalize_path(audition.mapping_path)),"selection mapping is written")
+	var saved:Variant=JSON.parse_string(FileAccess.get_file_as_string(ProjectSettings.globalize_path(audition.mapping_path)))
+	check(saved is Dictionary and str(saved.get("notes",{}).get(audition.files[0],""))=="Dry, short footstep for compacted dirt.","note is persisted with the selection")
+	check(saved is Dictionary and deferred_path in saved.get("deferred_sounds",[]),"deferred pack sound is persisted")
+	check(saved is Dictionary and rejected_path in saved.get("rejected_sounds",[]),"rejected pack sound is persisted")
 	var catalog=preload("res://addons/audio_runtime/catalog.gd").new()
 	var prepared:bool=catalog.prepare(PackedStringArray(["res://addons/audio_runtime/packs/nox/pack.audio.module.json"]))
 	var applied:int=preload("res://addons/audio_runtime/kaino_audition_map.gd").apply(catalog,audition.mapping_path) if prepared else 0
