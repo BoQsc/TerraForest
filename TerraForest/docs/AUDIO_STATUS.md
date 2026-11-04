@@ -24,6 +24,9 @@ See the [addon/API/content guide](../addons/audio_runtime/README.md),
   cache without delaying playback. See [footstep delay](../issues/footstep-delay/README.md).
 - Forest-cell/roof-based ambience and bounded existing nearby fire placements,
   plus visible held torch sound. Mixer controls for addon playback.
+- Held torch level reduced by 6 dB on 2026-11-04, on creation and moving-loop
+  updates; placed-fire levels retain their pack settings. User listening review
+  of the revised mix remains open in the existing listening-acceptance row below.
 
 ## Required follow-up
 

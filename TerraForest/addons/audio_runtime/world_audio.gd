@@ -3,6 +3,7 @@ extends Node3D
 ## Single-player presentation adapter. Timer work is independent of world size.
 const Runtime = preload("res://addons/audio_runtime/audio_runtime.gd")
 const Cadence = preload("res://addons/audio_runtime/footstep_cadence.gd")
+const HELD_TORCH_GAIN_DB := -6.0
 var cadence := Cadence.new()
 var game: Node
 var audio: Node3D
@@ -167,7 +168,10 @@ func soundscape() -> void:
 	for key: String in fire_handles.keys():
 		if not wanted.has(key): audio.stop(fire_handles[key]); fire_handles.erase(key)
 	for key: String in wanted:
-		if fire_handles.has(key) and not audio.update_loop(fire_handles[key], wanted[key]): fire_handles.erase(key)
+		var gain_db := HELD_TORCH_GAIN_DB if key == "held-torch" else 0.0
+		if fire_handles.has(key) and not audio.update_loop(fire_handles[key], wanted[key], gain_db): fire_handles.erase(key)
 		if not fire_handles.has(key):
 			var handle: int = audio.start_loop("fire.burn", {"position": wanted[key]})
-			if handle > 0: fire_handles[key] = handle
+			if handle > 0:
+				fire_handles[key] = handle
+				audio.update_loop(handle, wanted[key], gain_db)

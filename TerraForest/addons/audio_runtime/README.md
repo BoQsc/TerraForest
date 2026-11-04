@@ -46,6 +46,12 @@ adapter; a visible held torch also requests the small-fire loop. No global model
 or tree enumeration runs during play. There is no dependency on the optional
 house-light addon: matching models are used only if present.
 
+The held torch uses a -6 dB caller trim on both loop creation and updates, so
+the bundled fire definition plays it at -18 dB before spatial attenuation and
+bus controls. Placed fires retain the pack's gain. Replacement fire packs also
+receive the held-item trim. This level was lowered on 2026-11-04; listening
+acceptance remains part of the audio follow-up.
+
 ## Content and mods
 
 The bundled pack is `packs/nox/pack.audio.module.json`. Despite the export-friendly
