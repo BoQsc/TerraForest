@@ -1,4 +1,12 @@
 {
+  "res://addons/characters/runtime/held_item.gd": [
+    "res://addons/player_runtime/art/consumables/214.res",
+    "res://addons/player_runtime/art/consumables/215.res",
+    "res://addons/player_runtime/art/consumables/216.res",
+    "res://addons/player_runtime/art/consumables/217.res",
+    "res://addons/player_runtime/art/consumables/218.res",
+    "res://addons/player_runtime/art/consumables/219.res"
+  ],
   "res://addons/characters/runtime/house_sleepers.gd": [
     "res://addons/structures/expansion_catalog.gd"
   ],
@@ -15,6 +23,9 @@
     "res://addons/characters/runtime/assets/Human.hammer.res",
     "res://addons/characters/runtime/assets/Human.shovel.res",
     "res://addons/characters/runtime/assets/Human.torch.res",
+    "res://addons/characters/runtime/assets/Human.torch_attack.res",
+    "res://addons/characters/runtime/assets/Human.item_hold.res",
+    "res://addons/characters/runtime/held_item.gd",
     "res://addons/characters/runtime/assets/Human.bucket.res",
     "res://addons/volumetric_water/bucket_model.gd",
     "res://addons/characters/runtime/assets/Torch.glb",
@@ -112,14 +123,17 @@
   ],
   "res://addons/player_runtime/destruction_effects.gd": [],
   "res://addons/player_runtime/developer_bag.gd": [
-    "res://addons/player_runtime/item_icons.gd"
+    "res://addons/player_runtime/item_icons.gd",
+    "res://addons/player_runtime/text_input_focus.gd",
+    "res://addons/player_runtime/item_catalog.gd"
   ],
   "res://addons/player_runtime/developer_hud.gd": [
     "res://addons/world_runtime/mouse_ownership.gd"
   ],
   "res://addons/player_runtime/developer_shapes.gd": [
     "res://addons/structures/shape_catalog.gd",
-    "res://addons/player_runtime/shape_icons.gd"
+    "res://addons/player_runtime/shape_icons.gd",
+    "res://addons/player_runtime/text_input_focus.gd"
   ],
   "res://addons/player_runtime/developer_spawn.gd": [],
   "res://addons/player_runtime/durability_catalog.gd": [
@@ -181,6 +195,7 @@
     "res://addons/world_runtime/mouse_ownership.gd"
   ],
   "res://addons/player_runtime/player_hud.gd": [
+    "res://addons/player_runtime/text_input_focus.gd",
     "res://addons/world_runtime/mouse_ownership.gd",
     "res://addons/player_runtime/item_catalog.gd",
     "res://addons/player_runtime/progression_rules.gd",
@@ -220,6 +235,7 @@
   "res://addons/player_runtime/salvage_catalog.gd": [],
   "res://addons/player_runtime/salvage_mesh.gd": [],
   "res://addons/player_runtime/session_menu.gd": [
+    "res://addons/player_runtime/text_input_focus.gd",
     "res://addons/world_runtime/mouse_ownership.gd",
     "res://addons/player_runtime/usage_panel.gd",
     "res://addons/structures/building_lod.gd",
@@ -254,6 +270,7 @@
   "res://addons/player_runtime/terrain_placement_preview.gd": [
     "res://addons/player_runtime/terrain_placement_preview.gdshader"
   ],
+  "res://addons/player_runtime/text_input_focus.gd": [],
   "res://addons/player_runtime/tool_view.gd": [
     "res://addons/characters/runtime/human_view.gd"
   ],
@@ -272,6 +289,8 @@
   ],
   "res://addons/player_runtime/trader_panel.gd": [
     "res://addons/player_runtime/trader_inventory.gd",
+    "res://addons/player_runtime/text_input_focus.gd",
+    "res://addons/player_runtime/item_catalog.gd",
     "res://addons/player_runtime/item_icons.gd",
     "res://addons/player_runtime/window_navigation.gd",
     "res://addons/player_runtime/trade_list.gd"
@@ -300,6 +319,7 @@
     "res://addons/player_runtime/progression_rules.gd"
   ],
   "res://addons/player_runtime/world_drop_target.gd": [],
+  "res://addons/player_runtime/world_item_use.gd": [],
   "res://addons/presentation/fullscreen_policy.gd": [],
   "res://addons/structures/bridge_catalog.gd": [],
   "res://addons/structures/building_lod.gd": [
@@ -337,6 +357,7 @@
   ],
   "res://addons/structures/construction_palette.gd": [
     "res://addons/structures/shape_catalog.gd",
+    "res://addons/player_runtime/text_input_focus.gd",
     "res://addons/player_runtime/shape_orientations.gd",
     "res://addons/player_runtime/building_assemblies.gd",
     "res://addons/player_runtime/shape_icons.gd"
@@ -853,6 +874,7 @@
     "res://addons/player_runtime/construction_inventory.gd",
     "res://addons/player_runtime/combat_world.gd",
     "res://addons/player_runtime/world_attack.gd",
+    "res://addons/player_runtime/world_item_use.gd",
     "res://addons/player_runtime/tool_view.gd",
     "res://addons/player_runtime/player_view.gd",
     "res://addons/player_runtime/first_person_view.gd",
