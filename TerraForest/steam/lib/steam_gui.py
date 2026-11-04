@@ -92,6 +92,7 @@ class App:
         self.queue = queue.Queue()
         self.root = None
         self.code = 1
+        self.error = ''
 
     # -- window ---------------------------------------------------------
     def build(self):
@@ -155,6 +156,8 @@ class App:
             code = self.module.main()
         except SystemExit as exc:
             code = exc.code if isinstance(exc.code, int) else 1
+            if not isinstance(exc.code, (int, type(None))):
+                self.queue.put(('error', str(exc.code)))
         except Exception as exc:  # noqa: BLE001 - reported in the window
             self.queue.put(('error', f'{type(exc).__name__}: {exc}'))
             code = 2
@@ -182,6 +185,7 @@ class App:
             elif kind == 'abort':
                 self.stage.configure(text=f'Stopped: {message[1]}')
             elif kind == 'error':
+                self.error = message[1]
                 self.stage.configure(text=f'Failed: {message[1]}')
             elif kind == 'exit':
                 finished = True
@@ -195,6 +199,8 @@ class App:
         text = {0: 'Finished.', 3: 'Cancelled - nothing was written.'}.get(
             self.code, f'Stopped (code {self.code}).')
         self.stage.configure(text=text)
+        if self.error:
+            self.note.configure(text=self.error)
         self.cancel_button.grid_remove()
         self.go_button.configure(text='Close', command=self.root.destroy,
                                  state='normal')

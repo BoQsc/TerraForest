@@ -1,5 +1,32 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Steam executable discovery - 2026-11-04
+
+Source-checkout installer discovery now covers both Steam Windows executable
+names, registry/standard/explicit Steam roots, modern and legacy library metadata,
+manifest installation directories, `GODOT_EXE` and native PATH executables.
+First-copy dry runs inspect the source rather than requiring the unwritten target;
+the GUI retains the underlying failure reason. Original AI-assisted tooling and
+regression code is 0BSD; no third-party code, assets or dependencies were imported.
+
+Verification: 46 Python tests pass (18 new Steam regressions). A live read-only
+dry run with `GODOT_EXE` removed found the installed direct Steam engine, planned
+both entries, artwork and desktop links with a missing temporary target, and left
+the live shortcuts file's SHA-256 unchanged. A separate temporary copy passed icon
+stamping/resource verification and ran `--headless --version`, reporting
+`4.7.2.stable.steam.ed1daf0bf` with exit 0. No live Steam restart was performed.
+
+Remaining: exported-build discovery retains the inherited executable-only copy;
+deployment of separate PCK/native companion files is not implemented or validated.
+Accounts with no existing `shortcuts.vdf`, non-Windows installation and a full
+second-machine restart/install are also unverified/unsupported in this scope.
+These require additional deployment/account handling and an end-to-end test on a
+fresh copied checkout before claiming universal installation. Return when adding
+packaged distribution or onboarding a fresh Steam account; close with companion
+file completeness checks, successful launch of both entries, preserved unrelated
+shortcuts and a verified Steam restart. Use the installed editor route meanwhile.
+See [installer behavior and prerequisites](../steam/README.md).
+
 ## Held-item G drop standard - 2026-11-04
 
 Original-size option installed: **ESC → Player → Original-size dropped items**

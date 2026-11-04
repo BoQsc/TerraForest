@@ -81,7 +81,7 @@ CREATE_NEW_PROCESS_GROUP = 0x00000200
 
 
 def steam_roots():
-    """Steam install directories from the registry, most specific first."""
+    """Steam roots from the registry, then the standard installation folders."""
     found = []
     for hive, key, value in ((winreg.HKEY_CURRENT_USER, r'Software\Valve\Steam', 'SteamPath'),
                              (winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\WOW6432Node\Valve\Steam',
@@ -94,6 +94,12 @@ def steam_roots():
             continue
         if path not in found:
             found.append(path)
+    for variable in ('ProgramFiles(x86)', 'ProgramFiles'):
+        base = os.environ.get(variable)
+        if base:
+            path = Path(base)/'Steam'
+            if path.is_dir() and path not in found:
+                found.append(path)
     return found
 
 

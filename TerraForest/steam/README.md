@@ -3,8 +3,8 @@
 Everything that decides how TerraForest appears in Steam lives here, so the choices are
 visible and reviewable before anything touches `shortcuts.vdf` or the Steam grid folder.
 
-The three tools live here too, next to the resources they apply. `manifest.json` and
-`artwork/` are not read by the installer yet — they are the source of truth to wire up next.
+The three tools live here too, next to the resources they apply. The installer reads
+`manifest.json` for tags and artwork mappings; `--artwork` installs the images.
 The placeholders are real images at Steam's exact sizes, so replacing them is a drop-in.
 
 `artwork/` is generated from `brand/brand.json` (`python steam/brand/make_brand_artwork.py`);
@@ -20,6 +20,57 @@ edit the brand, not the PNGs.
 
 All three are run from the project root, e.g. `python steam/lib/install_to_steam.py --dry-run`.
 The shared `shortcuts.vdf` engine stays in `steam/lib/steam_shortcuts.py`.
+
+### Finding Godot on another computer
+
+The installer requires an existing local executable. It does not download Godot or
+export the project. For running from project source, install **Godot Engine** in
+Steam; export templates are not needed for this route.
+
+An existing project-root `TerraForest.exe` is kept unless `--force` is passed.
+When a copy is needed, `--source PATH` selects it explicitly. Automatic discovery
+checks, in order:
+
+1. `dist/TerraForest.exe` (the existing exported-build fallback).
+2. `GODOT_EXE`, including a quoted path or environment variables in the path.
+3. The `--steam PATH` root, registry Steam roots and standard Program Files Steam
+   folders, including their `steamapps/libraryfolders.vdf` libraries.
+4. Native `godot.exe` / `godot4.exe` found on PATH. Command wrappers are not copied.
+
+Steam discovery handles both modern and legacy library files, escaped paths,
+spaces, and the Godot app manifest's installation directory. It recognizes
+`godot.windows.opt.tools.64.exe`, `Godot Engine.exe`, and versioned
+`Godot*_win64*.exe` files; the direct engine is preferred over the Steam launcher.
+Invalid or absent automatic candidates fall through to the next location.
+
+For a standalone Godot installation:
+
+```powershell
+$env:GODOT_EXE = 'C:\Tools\Godot\Godot_v4.7-stable_win64.exe'
+python steam/lib/install_to_steam.py --dry-run --no-log
+# Or select the executable for this run only:
+python steam/lib/install_to_steam.py --source 'C:\Tools\Godot\Godot_v4.7-stable_win64.exe'
+```
+
+A dry run works before the first copy exists: it inspects the selected source's
+icon and plans the Steam, artwork and desktop changes without writing them. Add
+`--no-log` to suppress the run log too. A source icon mismatch means stamping is
+planned; it does not by itself fail the dry run. Dry runs do not verify that a
+future write or Steam restart will succeed. Missing-source errors explain the
+Godot installation, environment and explicit-source options in both the console
+and the double-click window.
+
+The exported-build fallback still copies only the executable; it does not deploy
+separate PCK files or native libraries. Use an installed Godot editor for this
+source-checkout installer until exported companion-file deployment is implemented
+and tested. This tooling targets Windows; a Steam account must already have a
+`shortcuts.vdf` file.
+
+Regression suite (temporary fixtures; no Steam restart):
+
+```text
+python -u -B -m unittest discover -s tests -t tests -p "test_*.py"
+```
 
 ### Layout
 
@@ -52,14 +103,14 @@ One Tk window does both jobs: it explains the non-Steam shortcut and the Steam r
 then draws the same bar the console build draws - identical weights, the measured drift
 through the 24 s window wait, 99 before 100 - with the stage line and the live note under
 it. Cancel writes nothing; when the run ends the button becomes Close and the window
-reports `Finished.` or the exit code.
+reports `Finished.` or the exit code, retaining the actual failure reason below it.
 
 Flags still work, e.g. `pythonw steam/install_to_steam.pyw --last-world --artwork`.
 Without a display the launcher falls back to the headless tool.
 
 ### Dependencies
 
-Nothing has to be installed by hand. The install chain imports only the standard library
+Godot and Python must already be installed. The install chain imports only the standard library
 (`ctypes`, `winreg`, `subprocess`, `zlib`, `queue`, `threading`, ...) plus `tkinter` for the
 window and Pillow for the icon tool, and `ensure_deps.py` covers the last one:
 

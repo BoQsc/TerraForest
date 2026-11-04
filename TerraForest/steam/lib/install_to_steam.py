@@ -27,7 +27,6 @@ ICON = ROOT/'steam'/'app_icon'/'terraforest.ico'
 MANIFEST = ROOT/'steam'/'manifest.json'
 ARTWORK = ROOT/'steam'/'artwork'
 BROWSER_SCENE = 'res://demo/worlds.tscn'
-GODOT_RELATIVE = Path('steamapps')/'common'/'Godot Engine'/'Godot Engine.exe'
 
 
 def load(name, path):
@@ -45,34 +44,34 @@ app_icon = load('set_app_icon', ROOT/'steam'/'app_icon'/'set_app_icon.py')
 steam_tool = load('steam_shortcuts', ROOT/'steam'/'lib'/'steam_shortcuts.py')
 log_tool = load('install_log', ROOT/'steam'/'lib'/'install_log.py')
 confirm_tool = load('steam_confirm', ROOT/'steam'/'lib'/'steam_confirm.py')
+source_tool = load('exe_source', ROOT/'steam'/'lib'/'exe_source.py')
 
 
-def godot_sources():
+def godot_sources(steam=None):
     """Candidate source executables: the exported build first, then Godot itself."""
-    found = [ROOT/'dist'/'TerraForest.exe']
-    for steam in steam_tool.steam_roots():
-        found.append(steam/GODOT_RELATIVE)
-        folders = steam/'steamapps'/'libraryfolders.vdf'
-        if not folders.is_file():
-            continue
-        text = folders.read_text('utf-8', 'replace')
-        for line in text.splitlines():
-            if '"path"' in line:
-                path = line.split('"')
-                if len(path) >= 4:
-                    found.append(Path(path[3])/GODOT_RELATIVE)
+    roots = ([steam] if steam else []) + steam_tool.steam_roots()
+    found = source_tool.source_candidates(ROOT, roots)
     return [p for p in found if p.is_file()]
 
 
 def prepare(source, force, dry_run):
     """Copy the source executable to TerraForest.exe when needed."""
-    if TARGET.exists() and not force:
+    if TARGET.is_file() and not force:
         print(f'copy     : kept {TARGET.name} ({TARGET.stat().st_size:,} bytes); '
               'use --force to re-copy')
         return False
     if source is None:
-        raise SystemExit(f'{TARGET.name} is missing and no source executable was found; '
-                         'pass --source PATH')
+        raise SystemExit('No source executable was found. Install Godot Engine in Steam '
+                         '(any library), set GODOT_EXE to your Godot executable, or pass '
+                         '--source "C:\\path\\to\\Godot.exe". '
+                         'Steam has not been changed.')
+    if not source.is_file():
+        raise SystemExit(f'{source}: source executable does not exist. '
+                         'Choose an existing Godot executable with --source or GODOT_EXE. '
+                         'Steam has not been changed.')
+    if source.resolve() == TARGET.resolve():
+        print(f'copy     : source is already {TARGET.name}; no copy needed')
+        return False
     if dry_run:
         print(f'copy     : would copy {source} -> {TARGET.name}')
         return False
@@ -81,15 +80,17 @@ def prepare(source, force, dry_run):
     return True
 
 
-def stamp(dry_run):
+def stamp(dry_run, executable=None):
     """Apply the icon and verify the resources, reusing the app_icon tool."""
     if not ICON.is_file():
         raise SystemExit(f'{ICON}: icon missing; run steam/app_icon/make_app_icon.py')
     if dry_run:
-        problems, count, _ = app_icon.check(TARGET, ICON)
+        inspected = executable or TARGET
+        problems, count, _ = app_icon.check(inspected, ICON)
         state = 'already matches' if not problems else f'{len(problems)} problem(s)'
-        print(f'icon     : would stamp {ICON.name} ({count} images); current copy {state}')
-        return not problems
+        print(f'icon     : would stamp {ICON.name} ({count} images); {inspected.name} {state}')
+        # A different source icon is precisely what stamping will replace.
+        return True
     payload, count, kept = app_icon.patch(TARGET, ICON)
     problems, _, _ = app_icon.check(TARGET, ICON)
     print(f'icon     : {count} images stamped, .rsrc {payload} bytes, '
@@ -230,12 +231,13 @@ def main():
 
 def deploy(args):
     """The actual install, run inside the log context."""
-    source = args.source or next(iter(godot_sources()), None)
+    source = args.source or next(iter(godot_sources(args.steam)), None)
     print(f'source   : {source or "<none found>"}')
     prepare(source, args.force, args.dry_run)
-    if not TARGET.is_file():
+    if not args.dry_run and not TARGET.is_file():
         raise SystemExit(f'{TARGET.name}: nothing to stamp; no source was copied')
-    if not stamp(args.dry_run):
+    inspected = source if args.dry_run and (args.force or not TARGET.is_file()) else TARGET
+    if not stamp(args.dry_run, inspected):
         raise SystemExit('icon stamping failed; the shortcut was not touched')
     names = [args.name] + ([f'{args.name} Last World'] if args.last_world else [])
     shortcut = shortcut_file(args.steam, args.account)
@@ -247,9 +249,10 @@ def deploy(args):
         code = install_artwork(shortcut, names, args.dry_run)
     if code == 0 and args.desktop:
         desktop = load('add_desktop_shortcuts', ROOT/'steam'/'add_desktop_shortcuts.py')
-        code = desktop.create_shortcuts(args.desktop_folder, args.dry_run)
+        code = desktop.create_shortcuts(args.desktop_folder, args.dry_run, exe=TARGET)
     if code == 0:
-        print('done     : TerraForest is prepared and registered')
+        print('done     : dry run complete; nothing changed' if args.dry_run
+              else 'done     : TerraForest is prepared and registered')
     return code
 
 

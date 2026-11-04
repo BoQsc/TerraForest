@@ -114,7 +114,7 @@ def remove_shortcuts(folder=None, dry_run=False):
 def create_shortcuts(folder=None, dry_run=False, launch='auto', exe=None):
     """Write both .lnk files with the same plan main() uses; for other tools to call."""
     executable = exe or PROJECT/f'{project_name()}.exe'
-    if not executable.is_file():
+    if not dry_run and not executable.is_file():
         raise SystemExit(f'{executable}: missing; run install_to_steam.py first')
     target = folder or desktop_folder()
     name = project_name()
