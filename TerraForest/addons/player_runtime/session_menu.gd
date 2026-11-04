@@ -88,7 +88,10 @@ func _ready() -> void:
 	var graphics:=page("Graphics")
 	label(graphics,"Graphics").add_theme_font_size_override("font_size",22)
 	fullscreen_toggle=CheckButton.new();fullscreen_toggle.text="Fullscreen (off: windowed)"
-	fullscreen_toggle.toggled.connect(func(enabled:bool):game.Presentation.set_fullscreen(game.get_window(),enabled,not game.temporary_world));graphics.add_child(fullscreen_toggle)
+	fullscreen_toggle.toggled.connect(func(enabled:bool):game.Presentation.set_fullscreen(game.get_window(),enabled));graphics.add_child(fullscreen_toggle)
+	var host:=get_tree().root.get_node_or_null("WorldSession")
+	if host!=null and host.has_signal("presentation_changed"):
+		host.presentation_changed.connect(func(enabled:bool):fullscreen_toggle.set_pressed_no_signal(enabled))
 	building_lod_toggle=CheckButton.new();building_lod_toggle.text="Building distance detail (LOD)"
 	building_lod_toggle.tooltip_text="Reduce distant building geometry conservatively. Near detail, individual blocks and collision stay unchanged."
 	building_lod_toggle.toggled.connect(func(enabled:bool):preload("res://addons/structures/building_lod.gd").set_enabled(game.structures.blocks,enabled,not game.temporary_world));graphics.add_child(building_lod_toggle)

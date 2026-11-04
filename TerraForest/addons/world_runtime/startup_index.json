@@ -238,6 +238,7 @@
   "res://addons/player_runtime/storage.gd": [
     "res://addons/world_runtime/mouse_ownership.gd",
     "res://addons/player_runtime/container_rules.gd",
+    "res://addons/player_runtime/window_navigation.gd",
     "res://addons/player_runtime/town_loot.gd",
     "res://addons/player_runtime/inventory_grid.gd"
   ],
@@ -259,12 +260,18 @@
   "res://addons/player_runtime/town_loot.gd": [
     "res://addons/player_runtime/salvage_catalog.gd"
   ],
-  "res://addons/player_runtime/trade_list.gd": [],
-  "res://addons/player_runtime/trader_inventory.gd": [],
+  "res://addons/player_runtime/trade_list.gd": [
+    "res://addons/player_runtime/trade_row.gd"
+  ],
+  "res://addons/player_runtime/trade_row.gd": [],
+  "res://addons/player_runtime/trader_inventory.gd": [
+    "res://addons/player_runtime/durability_catalog.gd"
+  ],
   "res://addons/player_runtime/trader_panel.gd": [
     "res://addons/player_runtime/trader_inventory.gd",
-    "res://addons/player_runtime/trade_list.gd",
-    "res://addons/player_runtime/item_icons.gd"
+    "res://addons/player_runtime/item_icons.gd",
+    "res://addons/player_runtime/window_navigation.gd",
+    "res://addons/player_runtime/trade_list.gd"
   ],
   "res://addons/player_runtime/trader_ride.gd": [
     "res://addons/player_runtime/trader_inventory.gd",
@@ -284,6 +291,7 @@
     "res://addons/characters/runtime/human_view.gd"
   ],
   "res://addons/player_runtime/usage_panel.gd": [],
+  "res://addons/player_runtime/window_navigation.gd": [],
   "res://addons/player_runtime/world_attack.gd": [
     "res://addons/player_runtime/durability_catalog.gd",
     "res://addons/player_runtime/progression_rules.gd"
@@ -588,6 +596,7 @@
     "res://demo/world_launch.gd",
     "res://addons/world_runtime/loading_timer.gd",
     "res://addons/world_runtime/world_recipe.gd",
+    "res://addons/presentation/fullscreen_policy.gd",
     "res://addons/world_runtime/scene_job.gd",
     "res://addons/world_runtime/session_options.gd",
     "res://addons/world_runtime/generation_progress.gd",
@@ -888,7 +897,8 @@
   ],
   "res://demo/world_launch.gd": [
     "res://addons/world_runtime/world_presentation.gd",
-    "res://addons/world_runtime/world_recipe.gd"
+    "res://addons/world_runtime/world_recipe.gd",
+    "res://addons/presentation/fullscreen_policy.gd"
   ],
   "res://demo/world_locations.gd": [
     "res://addons/volumetric_terrain/generated_layout.gd",

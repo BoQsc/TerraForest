@@ -1,0 +1,190 @@
+{
+  "source_run": "reports/checks/20261104T010843706484Z/run.json",
+  "pack_run": {
+    "command": [
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+      "--main-pack",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+      "--max-fps",
+      "60",
+      "--log-file",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\windowed_pack\\engine.log",
+      "--script",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\windowed_pack\\driver.gd",
+      "--",
+      "--session-evidence-dir=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/windowed_pack"
+    ],
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "2c67bca4be463346457e5bc7ed5bcb71edcf86dd565a5966cd21bf2f086f9c54",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "184e9a14ae9efb49c53282af43b4c9b41563ce57d7f47cf85226e3df1953e39e",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "335a2623649f714f2884760b775883e34a9be0bd31d0aa497fbff7702c8cb4b6",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d6140f83f6aaf6002011a392297181a42b43fab7ebccea9acd9b33e97c294da9"
+    },
+    "pack_sha256": "b2cf4535e0727de402c4e539e257dbc87b2eb44b9f771e3ca5f2e8f7ced56cb5",
+    "exe_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 29768,
+      "exit_code": 0,
+      "resources": {
+        "samples": 51,
+        "gpu_samples": 51,
+        "peak_private_commit_bytes": 2871209984,
+        "peak_working_set_bytes": 1594486784,
+        "peak_dedicated_gpu_bytes": 1187319808,
+        "checks": {
+          "ram": {
+            "bytes": 2871209984,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1187319808,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "free_space_warning_bytes": 10737418240,
+          "minimum_free_bytes": 2147483648,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 30.77606930001639,
+      "passed": true,
+      "cache_retention": {
+        "managed": false
+      }
+    }
+  },
+  "boot": {
+    "records": [
+      {
+        "label": "source",
+        "command": [
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+          "--max-fps",
+          "60",
+          "--quit-after",
+          "120",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\windowed_boot\\source.log"
+        ],
+        "exit_code": 0,
+        "samples": 241,
+        "undecorated_samples": 0,
+        "errors": [],
+        "passed": true,
+        "first_observation": {
+          "seconds": 0.475,
+          "caption": true,
+          "rect": [
+            311,
+            117,
+            1609,
+            884
+          ]
+        },
+        "last_observation": {
+          "seconds": 3.251,
+          "caption": true,
+          "rect": [
+            311,
+            117,
+            1609,
+            884
+          ]
+        }
+      },
+      {
+        "label": "pack",
+        "command": [
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+          "--main-pack",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+          "--max-fps",
+          "60",
+          "--quit-after",
+          "120",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\windowed_boot\\pack.log"
+        ],
+        "exit_code": 0,
+        "samples": 239,
+        "undecorated_samples": 0,
+        "errors": [],
+        "passed": true,
+        "first_observation": {
+          "seconds": 0.455,
+          "caption": true,
+          "rect": [
+            311,
+            117,
+            1609,
+            884
+          ]
+        },
+        "last_observation": {
+          "seconds": 3.187,
+          "caption": true,
+          "rect": [
+            311,
+            117,
+            1609,
+            884
+          ]
+        }
+      }
+    ],
+    "player_graphics_sha256_unchanged": "030bd0ea44197adf3704f32dea7cb950b77e9accd6fd689f5b2f5058d46edb54",
+    "exe_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+    "pack_sha256": "b2cf4535e0727de402c4e539e257dbc87b2eb44b9f771e3ca5f2e8f7ced56cb5",
+    "detailed_observations": "reports/windowed_boot/result.json"
+  },
+  "mode_cycles": "WINDOW_MODES failures=0",
+  "python_checks": "10 tests passed: test_worlds_launcher, test_run_godot_check",
+  "retained_failed_attempt": "reports/checks/20261104T010509177703Z/run.json",
+  "source_samples": 1515,
+  "source_checks": 22,
+  "package_samples": 1464,
+  "package_checks": 22,
+  "user_review": "Pending"
+}

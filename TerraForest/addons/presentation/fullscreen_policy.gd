@@ -1,7 +1,22 @@
 extends RefCounted
 ## Startup/UI policy only. No simulation work or per-frame loop.
 const RESOLUTION := Vector2i(1920, 1080)
+const SESSION_PREFERENCE := "terraforest/window_mode_preference"
 static func settings_path()->String:return ProjectSettings.get_setting("terraforest/graphics_settings_path","user://graphics.cfg")
+
+static func fullscreen_enabled()->bool:
+	var preference:Dictionary=ProjectSettings.get_setting(SESSION_PREFERENCE,{})
+	if preference.get("path") == settings_path():return bool(preference.fullscreen)
+	var settings:=ConfigFile.new()
+	if not settings_path().is_empty() and settings.load(settings_path())==OK:
+		return bool(settings.get_value("graphics","fullscreen",true))
+	return true
+
+static func launch_arguments()->PackedStringArray:
+	return PackedStringArray(["--fullscreen" if fullscreen_enabled() else "--windowed","--resolution","1920x1080" if fullscreen_enabled() else "1280x720"])
+
+static func toggle(window:Window)->void:
+	set_fullscreen(window,not fullscreen_enabled())
 
 static func apply(window: Window) -> void:
 	window.content_scale_size = RESOLUTION
@@ -11,23 +26,27 @@ static func apply(window: Window) -> void:
 	if DisplayServer.get_name() != "headless":
 		# Use Windows' composed fullscreen path, including on hybrid-GPU laptops.
 		# Apply synchronization AFTER the window transition recreates presentation.
-		var settings:=ConfigFile.new()
-		var fullscreen:=true
-		if not settings_path().is_empty() and settings.load(settings_path())==OK:fullscreen=bool(settings.get_value("graphics","fullscreen",true))
-		set_fullscreen(window,fullscreen,false)
+		# A stage/focus change must not restore a minimized application.
+		if window.mode != Window.MODE_MINIMIZED:
+			set_fullscreen(window,fullscreen_enabled(),false)
 		restore_vsync()
 
 static func set_fullscreen(window:Window,enabled:bool,persist:bool=true)->void:
 	if DisplayServer.get_name()=="headless":return
+	# Keep even non-persisted choices for the lifetime of this process. Reapplying
+	# presentation during a scene change must not read an older disk preference.
+	ProjectSettings.set_setting(SESSION_PREFERENCE,{"path":settings_path(),"fullscreen":enabled})
+	var id:=window.get_window_id()
 	var mode:=DisplayServer.WINDOW_MODE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED
-	if DisplayServer.window_get_mode()!=mode and (enabled or DisplayServer.window_get_mode()!=DisplayServer.WINDOW_MODE_MAXIMIZED):
+	if not enabled:window.borderless=false
+	if DisplayServer.window_get_mode(id)!=mode and (enabled or DisplayServer.window_get_mode(id)!=DisplayServer.WINDOW_MODE_MAXIMIZED):
 		window.mode=Window.MODE_FULLSCREEN if enabled else Window.MODE_WINDOWED
 		if not enabled:
 			window.borderless=false
-			if DisplayServer.window_get_mode() in [DisplayServer.WINDOW_MODE_FULLSCREEN,DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN]:
+			if DisplayServer.window_get_mode(id) in [DisplayServer.WINDOW_MODE_FULLSCREEN,DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN]:
 				window.mode=Window.MODE_MAXIMIZED
-			var usable:=DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen())
-			if DisplayServer.window_get_mode()==DisplayServer.WINDOW_MODE_WINDOWED:
+			var usable:=DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen(id))
+			if DisplayServer.window_get_mode(id)==DisplayServer.WINDOW_MODE_WINDOWED:
 				window.size=Vector2i(mini(1280,usable.size.x-80),mini(720,usable.size.y-80))
 				window.position=usable.position+(usable.size-window.size)/2
 	restore_vsync()

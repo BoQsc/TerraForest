@@ -21,6 +21,10 @@ func run()->void:
 		print("PASS " if ok else "FAIL ","fullscreen returns on the same native window ",cycle)
 		if not ok:failures+=1
 	Policy.set_fullscreen(root,false,true)
+	Policy.set_fullscreen(root,true,false);Policy.apply(root)
+	if not Policy.fullscreen_enabled() or DisplayServer.window_get_mode()!=DisplayServer.WINDOW_MODE_FULLSCREEN:failures+=1
+	print("PASS " if Policy.fullscreen_enabled() else "FAIL ","non-persisted toggle survives stage policy without rereading older saved choice")
+	Policy.set_fullscreen(root,false,true)
 	var resized:=[0];var listener:=func():resized[0]+=1
 	root.size_changed.connect(listener);Policy.apply(root)
 	for frame in 3:await process_frame

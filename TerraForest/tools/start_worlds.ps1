@@ -35,7 +35,7 @@ if ($iconExit -ne 0) {
     exit $iconExit
 }
 Write-Host 'Opening TerraForest world browser...'
-& $engine --path $projectRoot --log-file $gameLog --fullscreen --resolution 1920x1080 --max-fps 60 res://demo/worlds.tscn | Out-Host
+& $engine --path $projectRoot --log-file $gameLog --max-fps 60 res://demo/worlds.tscn | Out-Host
 $gameExit = $LASTEXITCODE
 if ($null -eq $gameExit) { throw 'Godot did not return an exit status.' }
 if ($gameExit -ne 0) { Write-Host "TerraForest exited with an error (exit $gameExit). See $gameLog" }

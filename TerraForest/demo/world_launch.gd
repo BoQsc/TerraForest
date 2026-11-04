@@ -95,7 +95,7 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 			preparation.append("--world-recipe="+Marshalls.raw_to_base64(recipe))
 		return {"ok":true,"prepare":true,"args":preparation}
 
-	var args:=engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","res://demo/world.tscn","--","--world-slot="+slot,"--ground-cover","--actors","--vehicle-fleet","--max-fps=60"])
+	var args:=engine_prefix()+preload("res://addons/presentation/fullscreen_policy.gd").launch_arguments()+PackedStringArray(["--max-fps","60","res://demo/world.tscn","--","--world-slot="+slot,"--ground-cover","--actors","--vehicle-fleet","--max-fps=60"])
 	if create:args.append_array(PackedStringArray(["--world-generator="+str(generator),"--world-seed="+str(seed)]))
 	if preparation_slot(slot):args.append("--snapshot-readonly")
 	if gameplay:args.append("--gameplay-construction")
@@ -108,4 +108,4 @@ static func recovery_command(slot:String)->Dictionary:
 
 static func photograph_command(slot:String,directory:String="user://worlds")->Dictionary:
 	if not valid_slot(slot) or preparation_slot(slot) or not FileAccess.file_exists(directory.path_join(slot+".trw")):return {"ok":false,"reason":"Select a published saved world first."}
-	return {"ok":true,"args":engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--script","res://addons/world_runtime/capture_world_previews.gd","--","--snapshot-readonly","--temporary","--world-slot="+slot,"--ground-cover"])}
+	return {"ok":true,"args":engine_prefix()+preload("res://addons/presentation/fullscreen_policy.gd").launch_arguments()+PackedStringArray(["--max-fps","60","--script","res://addons/world_runtime/capture_world_previews.gd","--","--snapshot-readonly","--temporary","--world-slot="+slot,"--ground-cover"])}

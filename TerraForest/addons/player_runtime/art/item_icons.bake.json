@@ -14,7 +14,7 @@
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "8aface772bf7136615d5843eab6a88556c6a2fc3a65b33772ff7f6dd90e0b60a",
-        "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
+        "res://project.godot": "97a4bf1bc9c50339d67fd03e517855a5171ecdf4cdc50449eb0f49e4ce2d67d6",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
@@ -31,7 +31,7 @@
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "8aface772bf7136615d5843eab6a88556c6a2fc3a65b33772ff7f6dd90e0b60a",
-        "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
+        "res://project.godot": "97a4bf1bc9c50339d67fd03e517855a5171ecdf4cdc50449eb0f49e4ce2d67d6",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
@@ -101,7 +101,7 @@
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "8aface772bf7136615d5843eab6a88556c6a2fc3a65b33772ff7f6dd90e0b60a",
-        "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
+        "res://project.godot": "97a4bf1bc9c50339d67fd03e517855a5171ecdf4cdc50449eb0f49e4ce2d67d6",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
@@ -127,7 +127,7 @@
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "8aface772bf7136615d5843eab6a88556c6a2fc3a65b33772ff7f6dd90e0b60a",
-        "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
+        "res://project.godot": "97a4bf1bc9c50339d67fd03e517855a5171ecdf4cdc50449eb0f49e4ce2d67d6",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }

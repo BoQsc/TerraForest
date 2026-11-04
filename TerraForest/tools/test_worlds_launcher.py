@@ -63,6 +63,8 @@ class Engine {
         self.assertLess(trace.index('icons\n'), trace.index('game\n'))
         self.assertIn('--path\n'+str(self.project)+'\n', trace)
         self.assertIn('res://demo/worlds.tscn', trace)
+        self.assertNotIn('--fullscreen\n', trace)
+        self.assertNotIn('--resolution\n', trace)
         self.assertIn(str(self.project/'reports/worlds_icons.log'), trace)
         self.assertIn(str(self.project/'reports/worlds_game.log'), trace)
 

@@ -1,5 +1,19 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Windowed mode across stages - 2026-11-04
+
+[Windowed-mode issue](../issues/windowed-mode/README.md): the persistent host owns
+the graphics choice and F11 across browser, generation/loading, gameplay, dialogs
+and returns. Boot and normal launch paths no longer force fullscreen before the
+saved preference can apply. Source and actual-executable/PCK transitions each pass 22 assertions with zero
+violations across 1,515/1,464 observed frames; repeated mode cycles and ten launcher
+checks pass. Source/pack fresh starts have 241/239 decorated native-window samples
+and zero undecorated samples. Export gates pass; installed PCK `b2cf4535`, 14
+matching DLLs. Agent image inspection passes; user desktop review remains.
+The retained first run also exposed the existing derived-cache `include_hidden`
+API error; the focused presentation fixture disables caching, leaving that
+compatibility issue open for a normal cached reproduction and correction.
+
 ## Trader rifle handoff and empty-trigger reload - 2026-11-03
 
 Installed usability follow-up: [Ranger issue](../issues/ranger-assault-rifle/README.md).

@@ -1,15 +1,29 @@
 # SPDX-License-Identifier: 0BSD
 extends Node
+signal presentation_changed(fullscreen:bool)
 # Persistent host: scenes may change, the root Window and graphics device do not.
 const Options=preload("res://addons/world_runtime/session_options.gd")
 const MeshHandoff=preload("res://addons/world_runtime/generation_mesh_handoff.gd")
+const Presentation=preload("res://addons/presentation/fullscreen_policy.gd")
 var transitioning:=false
 var cover:CanvasLayer
 var last_error:=""
 var stage_timings:Dictionary={}
+func _enter_tree()->void:
+	# The host exists before browser, loading, generation and gameplay scenes.
+	Presentation.apply(get_window())
 func _ready()->void:
+	get_tree().scene_changed.connect(_restore_presentation)
+	get_window().focus_entered.connect(_restore_presentation.call_deferred)
 	get_tree().scene_changed.connect(_attach_optional_audio)
 	_attach_optional_audio.call_deferred()
+func _restore_presentation()->void:
+	Presentation.apply(get_window())
+func _input(event:InputEvent)->void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode==KEY_F11:
+		Presentation.toggle(get_window())
+		presentation_changed.emit(Presentation.fullscreen_enabled())
+		get_viewport().set_input_as_handled()
 func _attach_optional_audio()->void:
 	var world:=get_tree().current_scene
 	var path:="res://addons/audio_runtime/world_audio.gd"

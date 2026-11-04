@@ -1,0 +1,23 @@
+[
+  {
+    "file": "source-generation.png",
+    "source": "reports/windowed_stages/generation_windowed.png",
+    "sha256": "1253f7a8c5c6d83662908e2bedf803034ca41289264c25d2a8d4c635dd02698a",
+    "caption": "Source, default seed 1703, native generation before cancellation; render viewport only. Agent inspected.",
+    "provenance": "Original runtime capture of this repository; inherited project code/asset notices remain applicable. No external image imported."
+  },
+  {
+    "file": "packaged-browser-native.png",
+    "source": "reports/windowed_boot/pack_native.png",
+    "sha256": "c2754bfa8e1e55171e55adc1c07017634f3f642262cc5b456a5978e0daec7be4",
+    "caption": "Actual main executable with installed PCK, fresh saved-windowed startup; native OS title bar and window controls. Agent inspected.",
+    "provenance": "Original runtime capture of this repository; inherited project code/asset notices remain applicable. No external image imported."
+  },
+  {
+    "file": "packaged-graphics.png",
+    "source": "reports/windowed_pack/gameplay_windowed.png",
+    "sha256": "c053da98e03bcba64d2d877fa89061c230bfefe0e95de354459bc5afd236353f",
+    "caption": "Actual executable/PCK, isolated woodland seed 1703, ESC Graphics off after F11 and UI round trips; render viewport only. Agent inspected.",
+    "provenance": "Original runtime capture of this repository; inherited project code/asset notices remain applicable. No external image imported."
+  }
+]

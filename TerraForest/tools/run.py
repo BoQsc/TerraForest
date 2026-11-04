@@ -45,7 +45,7 @@ def launch_details(args, extra):
     selected = args.generator is not None or args.seed is not None
     slot = args.slot or (f'generated_g{generator}_s{seed}' if selected else 'world')
     command = [str(engine), '--path', str(ROOT), '--rendering-method', args.renderer,
-               '--fullscreen', '--resolution', '1920x1080', '--max-fps', '60',
+               '--max-fps', '60',
                f'res://demo/{args.scene}.tscn', '--', f'--world-generator={generator}',
                f'--world-seed={seed}', f'--world-slot={slot}',
                *([f'--block-textures={args.block_textures}'] if args.block_textures else []),

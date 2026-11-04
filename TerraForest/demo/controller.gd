@@ -606,8 +606,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_E: material_id = 1 + material_id % 3
 			KEY_F:
 				radius = 4.0 if radius < 4 else (16.0 if radius < 16 else (64.0 if radius < 64 else 1.0))
-			KEY_F11:
-				Presentation.set_fullscreen(get_window(),DisplayServer.window_get_mode() not in [DisplayServer.WINDOW_MODE_FULLSCREEN,DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN],not temporary_world)
 			KEY_F2: next_site()
 			KEY_F3: build_proof()
 			KEY_F4: next_biome()

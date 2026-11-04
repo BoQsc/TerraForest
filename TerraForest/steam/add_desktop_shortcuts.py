@@ -146,7 +146,7 @@ def launch_arguments(slot=None):
     base = ['--path', str(PROJECT)]
     if slot is None:
         return base
-    return base + ['--fullscreen', '--resolution', '1920x1080', '--max-fps', '60',
+    return base + ['--max-fps', '60',
                    WORLD_SCENE, '--', f'--world-slot={slot}'] + WORLD_ARGS
 
 
