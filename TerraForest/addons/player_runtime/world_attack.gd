@@ -13,8 +13,8 @@ signal impact_preparing(from:Vector3,to:Vector3)
 signal contact_effect(target:Dictionary)
 const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
 const Progression=preload("res://addons/player_runtime/progression_rules.gd")
-const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15},5:{"stone":15,"wood":5,"other":10}}
-const ZOMBIE_IMPACTS={0:"unarmed",1:"melee",2:"cutting",3:"melee",4:"melee",5:"melee"}
+const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15},5:{"stone":15,"wood":5,"other":10},6:{"stone":5,"wood":5,"other":10}}
+const ZOMBIE_IMPACTS={0:"unarmed",1:"melee",2:"cutting",3:"melee",4:"melee",5:"melee",6:"melee"}
 const BARE_HAND_REACH := 1.65
 func reach() -> float:return BARE_HAND_REACH if game.equipped_tool==0 else 3.5
 func prepare(world: Node) -> bool:

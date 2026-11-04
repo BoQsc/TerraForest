@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS runtime dispatch uses the reviewed library without changing its animation data
+PASS one non-looping 1.1 second candidate
+PASS no damage, audio, methods or gameplay event tracks
+PASS wrists stay within 35 degrees at all 133 keys/half-keys
+PASS arm joints remain continuous through the fast strike
+PASS CPU-skinned hand clears the curved handle within 0.5 mm tolerance
+PASS runtime hand attachment keeps the rigid fitted grip
+PASS all five fingertips remain close to the handle
+PASS first and last poses match the existing carry without a jump
+PASS hips, feet and root retain carry pose without root motion
+PASS crown has a distinct strike stroke between pullback and proposed contact
+PASS elbow stays below the shoulder and upper arm avoids the rejected high roll
+PASS actual skinned shoulder/sleeve triangles avoid severe collapse and stretch
+PASS bounded torso and free-hand follow-through supports the strike
+PASS torch carries at least 1.5 m/s through the contact neighborhood
+TORCH_ATTACK_CANDIDATE {"approval":"First-person integration accepted 2026-11-04; third-person art remains deferred; scoped engineering checks only","body_error":0.000000178917687776448,"checks":15,"endpoint_error":0.000000933859780616331,"failures":0,"finger_radii":{"RightHand":0.0251897666603327,"RightHandIndex1":0.0337930172681808,"RightHandIndex2":0.0302513893693686,"RightHandIndex3":0.0240263547748327,"RightHandMiddle1":0.0347675643861294,"RightHandMiddle2":0.0292070936411619,"RightHandMiddle3":0.0239681024104357,"RightHandPinky1":0.0232598260045052,"RightHandPinky2":0.0238703228533268,"RightHandPinky3":0.0240040682256222,"RightHandRing1":0.0367609709501266,"RightHandRing2":0.0306388437747955,"RightHandRing3":0.0239757802337408,"RightHandThumb1":0.0261785238981247,"RightHandThumb2":0.0237354040145874,"RightHandThumb3":0.023410877212882},"frames":[],"free_hand_motion_m":0.0479360073804855,"grip_error":0.000000358325678462279,"hand_vertices":1091,"max_joint_half_key_degrees":2.92462659811399,"max_wrist_degrees":29.42128573664,"maximum_joint":{"bone":"RightForeArm","degrees":2.92462659811399,"frame":23.0},"maximum_shoulder_edge_ratio":1.63764974334334,"maximum_upper_arm_turn_degrees":39.372464961093,"minimum_clearance_m":0.00022321491314883,"minimum_contact_speed_m_s":2.35616125166416,"minimum_elbow_drop_m":0.0984247922897339,"minimum_shoulder_edge_ratio":0.595619959234811,"minimum_shoulder_triangle_area_ratio":0.334474271829115,"rejected_baseline":false,"sample_count":133,"shoulder_triangles":389,"torso_turn_degrees":6.38475624885625}

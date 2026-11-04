@@ -21,6 +21,7 @@ const PICKAXE_LOCOMOTION = preload("res://addons/characters/runtime/assets/Human
 const HAMMER = preload("res://addons/characters/runtime/assets/Human.hammer.res")
 const SHOVEL = preload("res://addons/characters/runtime/assets/Human.shovel.res")
 const TORCH = preload("res://addons/characters/runtime/assets/Human.torch.res")
+const TORCH_ATTACK = preload("res://addons/characters/runtime/assets/Human.torch_attack.res")
 const BUCKET = preload("res://addons/characters/runtime/assets/Human.bucket.res")
 const BUCKET_MODEL = preload("res://addons/volumetric_water/bucket_model.gd")
 const EQUIPMENT = {6:preload("res://addons/characters/runtime/assets/Torch.glb"),3:preload("res://addons/characters/runtime/assets/Hammer.glb"),5:preload("res://addons/characters/runtime/assets/Shovel.glb")}
@@ -42,7 +43,7 @@ var swing_clip:=""
 var contact_seconds:=0.0
 var contact_sent:=false
 # Contact poses in the authored clips (seconds on the animation timeline).
-const CONTACTS={"FP_Unarmed_Punch":28.0/60.0,"FP_Pickaxe_Fresh_Swing":50.0/60.0,"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Hammer_Swing":28.0/60.0,"FP_Shovel_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
+const CONTACTS={"FP_Unarmed_Punch":28.0/60.0,"FP_Pickaxe_Fresh_Swing":50.0/60.0,"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Hammer_Swing":28.0/60.0,"FP_Shovel_Swing":34.0/60.0,"FP_Torch_Swing":26.0/60.0,"FP_Place_Relaxed":13.0/30.0}
 var body: CharacterBody3D
 var third_person:=false
 var crouched:=false
@@ -115,6 +116,7 @@ func _ready() -> void:
 	animation_player.add_animation_library("shovel", SHOVEL)
 	animation_player.add_animation_library("bucket", BUCKET)
 	animation_player.add_animation_library("torch", TORCH)
+	animation_player.add_animation_library("torch_attack", TORCH_ATTACK)
 	animation_player.add_animation_library("crouch",CROUCH)
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip

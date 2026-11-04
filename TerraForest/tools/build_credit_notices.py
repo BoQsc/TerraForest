@@ -7,6 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "assets/credits/notices.json"
 NOTICES = [
+    ("torch_attack", "Original torch strike animation", "CC0 1.0 motion / 0BSD code", "addons/characters/runtime/assets/Human.torch_attack.LICENSE.txt",
+     "Original torch strike motion with retained inherited rig/carry provenance. First-person integration accepted; third-person presentation remains unfinished."),
     ("nox_audio", "NOX Essentials sound recordings", "CC0 1.0", "addons/audio_runtime/packs/nox/NOTICE.txt",
      "Selected footsteps, forest ambience and a small-fire loop by Nox_Sound_Design. The retained notice records the source, CC0 evidence, archive identity and runtime conversions."),
     ("ranger", "Original Ranger assault rifle", "CC0 1.0 assets / 0BSD code", "addons/characters/runtime/assets/Ranger.LICENSE.txt",

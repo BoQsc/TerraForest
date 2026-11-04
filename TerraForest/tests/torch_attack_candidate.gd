@@ -8,7 +8,7 @@ func run()->void:
 	var tools:=preload("res://addons/player_runtime/tool_view.gd").new();root.add_child(tools)
 	tools.set_process(false);tools.equip(6)
 	var view:Node3D=tools.human;view.set_process(false);view.torch_effects.set_burning(false)
-	check(view.swing_profile().is_empty(),"review candidate does not enable gameplay attacks")
+	check(view.swing_profile().get("clip")=="FP_Torch_Swing" and FileAccess.get_sha256("res://addons/characters/runtime/assets/Human.torch_attack.res")==FileAccess.get_sha256("res://addons/characters/authoring/Human.torch_attack.res"),"runtime dispatch uses the reviewed library without changing its animation data")
 	var baseline:=OS.get_cmdline_user_args().has("--rejected-baseline")
 	var library:AnimationLibrary=load("res://reports/torch_attack/rejected01.res" if baseline else "res://addons/characters/authoring/Human.torch_attack.res")
 	view.animation_player.add_animation_library("attack_review",library)
@@ -135,7 +135,7 @@ func run()->void:
 	var contact_speed:=INF
 	for sample in range(49,55):contact_speed=minf(contact_speed,heads[sample].distance_to(heads[sample-1])*120)
 	check(contact_speed>1.5,"torch carries at least 1.5 m/s through the contact neighborhood")
-	var report:={"checks":checks,"failures":failures,"sample_count":133,"hand_vertices":vertices.size(),"max_wrist_degrees":max_wrist,"max_joint_half_key_degrees":max_step,"minimum_clearance_m":clearance,"grip_error":grip_error,"endpoint_error":seam,"body_error":body_error,"finger_radii":closest,"frames":frames,"approval":"Player review pending; scoped engineering checks only"}
+	var report:={"checks":checks,"failures":failures,"sample_count":133,"hand_vertices":vertices.size(),"max_wrist_degrees":max_wrist,"max_joint_half_key_degrees":max_step,"minimum_clearance_m":clearance,"grip_error":grip_error,"endpoint_error":seam,"body_error":body_error,"finger_radii":closest,"frames":frames,"approval":"First-person integration accepted 2026-11-04; third-person art remains deferred; scoped engineering checks only"}
 	report.merge({"minimum_contact_speed_m_s":contact_speed,"minimum_elbow_drop_m":minimum_elbow_drop,"maximum_upper_arm_turn_degrees":maximum_arm_turn,"torso_turn_degrees":torso_turn,"free_hand_motion_m":free_hand_motion,"shoulder_triangles":shoulder_triangles.size(),"minimum_shoulder_triangle_area_ratio":minimum_triangle_area,"minimum_shoulder_edge_ratio":minimum_edge_ratio,"maximum_shoulder_edge_ratio":maximum_edge_stretch,"rejected_baseline":baseline})
 	DirAccess.make_dir_recursive_absolute("res://reports/torch_attack")
 	FileAccess.open("res://reports/torch_attack/"+("rejected01-checks.json" if baseline else "checks.json"),FileAccess.WRITE).store_string(JSON.stringify(report,"  ")+"\n")

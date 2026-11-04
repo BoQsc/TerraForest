@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS temporary native world and entry sequence ready
+PASS native inventory owns a torch
+PASS ordinary gameplay belt equips the torch
+PASS torch keyed equip completes before attack
+PASS gameplay selects the reviewed clip/contact/duration
+PASS real concrete target installed
+PASS normal shared ray query finds concrete
+PASS left mouse starts visible windup without damage or inventory mutation
+PASS early contact callback cannot apply torch damage
+PASS actual windup remains harmless
+PASS torch reaches one live contact
+PASS frame-26 contact applies exactly five native concrete damage
+PASS existing non-durable torch remains owned and lit after its hit
+PASS recovery blocks an overlapping torch swing
+PASS full recovery ends without a duplicate hit
+PASS torch cancellation windup starts: equipment
+PASS cancelled torch produces no ghost hit: equipment
+PASS torch cancellation windup starts: inventory
+PASS cancelled torch produces no ghost hit: inventory
+PASS torch cancellation windup starts: focus
+PASS cancelled torch produces no ghost hit: focus
+PASS miss fixture starts its ordinary torch swing
+PASS live aim at contact can miss without another target mutation
+PASS last held torch swing finishes after release
+PASS held left mouse produces one native hit per full torch cycle
+PASS zombie fixture admits on actual streamed ground
+PASS live torch ray finds the real zombie
+PASS torch zombie strike starts without immediate damage
+PASS one animation contact applies ten base melee damage to the zombie
+PASS blunt strike retains existing torch durability policy
+[TerrainRewrite] Temporary test world: save skipped
+PASS temporary world shuts down cleanly without saving user data
+TORCH_ATTACK_WORLD checks=31 failures=0

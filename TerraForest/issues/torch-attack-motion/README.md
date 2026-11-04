@@ -1,8 +1,9 @@
 # Torch attack arm deformation and motion
 
-- Status: Improved-partial; revision 02 awaiting player review.
+- Status: Integrated for first person; third-person presentation remains unfinished.
 - Updated: 2026-11-04. Rejected candidate: `b7acbe0c`; revision is in the commit adding this issue.
 - User review: Candidate 01 was imperfect; frame review identified shoulder/upper-arm collapse, a first-person forearm bulge, a weak stroke, frozen support motion and stop-start timing. Player requested a fix.
+- Integration decision: 2026-11-04 — user requested integration of revision 02 for first-person use and explicitly deferred third-person fixes.
 - Symptom: The elbow rises above the shoulder and twists the sleeve sharply during the strike; recovery unwinds the limb awkwardly.
 
 ## Images
@@ -34,13 +35,24 @@ shoulder/sleeve triangles. The rejected candidate fails four expanded checks.
 Detailed measurements, logs and limitations are in
 [revision 02](../../docs/evidence/torch_attack/revision02/README.md).
 
+The reviewed library is now copied byte-for-byte into runtime assets and loaded
+by the normal tool presenter. Hold left mouse to attack: one live target query
+at frame 26 (0.433 s), then recovery through 1.10 s. Shared world melee applies
+5 base damage to stone/wood and 10 to other targets/zombies, with ordinary
+progression modifiers. Zombie impacts use the existing blunt melee adapter.
+Torch durability remains unchanged (no wear/fuel consumption); no ignition,
+burning status or fire spread is added. Equip, hidden tools, inventory and focus
+changes use existing cancellation. [Integration checks and in-world evidence](../../docs/evidence/torch_attack/integration/README.md).
+
 ## Remaining / resume here
 
-Player acceptance of the revised animation is pending. Return on visual feedback
-with the offending time/view; inspect the actual deformed shoulder and complete
-stroke, not only grip consistency. Inherited sleeve/skin finish and the upright
-billboard flame remain. Gameplay attack dispatch/contact/cancellation and
-equipment-transition verification follow acceptance and are not implemented.
+Third-person attack art is explicitly deferred at the user's request. The shared
+rig currently plays the same functional clip in third person; it is not approved
+as finished third-person presentation. Return when that art pass is requested:
+rework full-body arm/shoulder, torso and sleeve appearance, capture multi-angle
+third-person playback, retain first-person approval and contact timing, and get
+explicit third-person review. Inherited sleeve/skin finish and the upright flame
+remain. The user can also reopen first-person motion with an exact time/view.
 The [existing carry-hand review](../torch-hand-deformation/README.md) remains open.
 
 ## Reproduce / history

@@ -6804,7 +6804,7 @@ The [footstep onset correction](../issues/footstep-delay/README.md) reduces the
 initial travel threshold and removes the terrain-worker playback wait; player
 listening acceptance remains pending.
 
-## Torch attack candidate — 2026-11-04
+## Torch attack integration — 2026-11-04
 
 A separate 1.10-second torch strike is authored for player review, with an
 editable Blender source and first-person/side preview. Candidate 01 was rejected
@@ -6813,6 +6813,11 @@ arm roll, and adds continuous strike timing and torso/free-arm support. All 15
 scoped checks pass across 133 poses, including actual shoulder/sleeve skin; the
 rejected baseline fails four expanded checks. [Revised preview and evidence](evidence/torch_attack/revision02/README.md);
 [issue, comparison and remaining review](../issues/torch-attack-motion/README.md).
-Player visual acceptance is pending; return on acceptance or requested changes.
-Gameplay dispatch/contact integration and its runtime checks follow acceptance
-and remain unimplemented. Existing carry-hand review also remains open.
+User requested revision 02 integration for first-person use and explicitly
+deferred third-person fixes. The runtime now loads the unchanged reviewed clip;
+hold left mouse for blunt melee with one contact at 0.433 s and 1.10 s total
+recovery. [Gameplay qualification](evidence/torch_attack/integration/README.md)
+covers real block/zombie damage, cancellation and held input. Third-person uses
+the shared functional clip but remains unapproved art: resume on a requested
+third-person art pass, retain first-person/contact behavior, and obtain
+multi-angle playback acceptance. Existing carry-hand review also remains open.

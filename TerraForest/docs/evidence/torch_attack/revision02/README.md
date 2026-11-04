@@ -1,8 +1,11 @@
 # Torch attack revision 02 — 2026-11-04
 
-Status: improved; player visual acceptance pending. Replaces the rejected first
-draft for review, while preserving [candidate 01](../README.md) and its images.
-Gameplay is still unchanged. [Issue and comparison](../../../../issues/torch-attack-motion/README.md).
+Status: accepted for first-person integration at the user's request on
+2026-11-04; third-person presentation explicitly deferred. Replaces the rejected
+first draft while preserving [candidate 01](../README.md) and its images.
+These captures/checks describe the review milestone before gameplay integration.
+[Integration evidence](../integration/README.md) and
+[issue / third-person follow-up](../../../../issues/torch-attack-motion/README.md).
 
 ![Revised motion, normal speed then half speed](Torch-attack.preview.gif)
 
@@ -49,12 +52,12 @@ deformation; it is not a current candidate test failure.
 
 ## Remaining / reproduce
 
-Player review of the revised arc, timing and arm appearance remains required.
-The inherited low-poly character/sleeve finish and upright billboard flame
-remain visible. These scoped bounds do not establish universal anatomy or art
-approval. On acceptance, separately implement and test gameplay dispatch,
-contact, cancellation and equipment transitions. There is no damage, target
-response, fire spread, new audio, native build or package export in this pass.
+The user requested first-person integration; gameplay dispatch/contact,
+cancellation and equipment transitions are now qualified in the linked record.
+Third-person art still requires a future pass and explicit review. The inherited
+low-poly character/sleeve finish and upright flame remain. These scoped bounds
+do not establish universal anatomy or third-person art approval. No fire spread,
+new audio, native build or package export is included in this task.
 
 Use the author/import/test/render/encode commands in the [original record](../README.md#reproduce).
 The encoder now writes to this revision directory, leaving rejected evidence

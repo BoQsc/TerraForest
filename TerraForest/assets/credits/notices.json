@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "torch_attack",
+      "title": "Original torch strike animation",
+      "license": "CC0 1.0 motion / 0BSD code",
+      "source": "addons/characters/runtime/assets/Human.torch_attack.LICENSE.txt",
+      "summary": "Original torch strike motion with retained inherited rig/carry provenance. First-person integration accepted; third-person presentation remains unfinished.",
+      "text": "TerraForest torch strike — 2026-11-04\nSPDX-License-Identifier: CC0-1.0\n\nTo the extent possible under law, the contributors dedicate the new original\nFP_Torch_Swing animation to the public domain under CC0-1.0:\nhttps://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nRuntime path: addons/characters/runtime/assets/Human.torch_attack.res\nCreator: OpenAI Codex / TerraForest contributors, original AI-assisted motion\nauthored at the maintainer's request. No external motion capture, animation\npack, model or texture was imported. First-person integration was requested\non 2026-11-04 after revision 02; third-person art remains explicitly deferred.\n\nEditable sources and full provenance: addons/characters/authoring/\nHuman.torch_attack.blend, Human.torch_attack.glb, Human.torch_attack.json and\nHuman.torch_attack.LICENSE.txt. The runtime library is copied byte-for-byte\nfrom the reviewed revision 02 .res, verified against its evidence SHA-256 by\ntools/import_torch_attack.gd -- --promote-approved-first-person.\n\nThe original rig, carry endpoint, fitted grip and inherited character provenance\nretain their existing grants in addons/characters/LICENSE.txt and\ndocs/LICENSE_INVENTORY.md. This dedication applies only to the new motion, and\ndoes not relicense inherited portions. The .res contains pose tracks only;\nneither mesh art nor external tool runtimes are bundled in this resource.\nAuthoring uses the existing external Blender and Godot. New generation,\nconversion, runtime and validation code is separately marked 0BSD."
+    },
+    {
       "id": "nox_audio",
       "title": "NOX Essentials sound recordings",
       "license": "CC0 1.0",

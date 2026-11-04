@@ -1,0 +1,37 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS actual world starts with universal pickup providers
+PASS Player physical-drop option defaults enabled
+PASS Player original-size drop option defaults enabled
+PASS rifle enters native inventory
+PASS firearm hint exposes the standard drop key
+PASS keyboard repeat never drops
+PASS Ctrl+G never drops
+PASS G in flight keeps the item and never changes flight mode
+PASS G cannot discard items while dead
+PASS unfocused G preserves inventory
+PASS session menu consumes G without dropping
+PASS real G drops the rifle exactly once and never toggles flight
+PASS universal drop renders in one native batched mesh
+PASS real G launch falls through actual-world native physics
+PASS rifle recollects through actual-world reach checks
+PASS real gameplay G admits the authored-size pickaxe with matching clearance
+PASS authored-size dropped tool remains reachable for recovery
+PASS original-size tools also use valid full bounds with physics disabled
+PASS static original-size tool recovery remains reachable
+PASS Player original-size checkbox restores compact mode
+PASS coins enter inventory
+PASS coin stack moves to backpack
+PASS typing G enters text without dropping selected item
+PASS G with a selected backpack slot does not drop anything
+PASS G in the developer backpack does not drop or toggle flight
+PASS G on the developer toolbelt does not drop or toggle flight
+PASS Player checkbox disables physics for new drops
+PASS gameplay G drops exactly one held coin after equipping it
+PASS disabled option uses the original static ground pickup
+PASS drop evidence image saves outside packaged resources
+PASS physical-drop setting capture saves
+[TerrainRewrite] Temporary test world: save skipped
+PASS world shuts down cleanly
+DROP_KEY_STANDARD checks=32 failures=0

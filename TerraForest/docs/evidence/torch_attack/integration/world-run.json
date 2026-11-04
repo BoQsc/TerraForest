@@ -1,0 +1,129 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261104T151006500238Z\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/torch_attack_world.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_4fbc58105a294ea0a7a7c6734690e5f9",
+    "--derived-cache=user://torch_attack_world_4fbc58105a294ea0a7a7c6734690e5f9"
+  ],
+  "cache": "user://torch_attack_world_4fbc58105a294ea0a7a7c6734690e5f9",
+  "utc": "20261104T151006500238Z",
+  "timeout": 180.0,
+  "required_text": "TORCH_ATTACK_WORLD checks=",
+  "headless": false,
+  "persistent": false,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": false,
+  "revision": "300b04bc3f611058f5c5d6fbbc3519d4636f1127",
+  "worktree_changes": [
+    " M TerraForest/addons/characters/runtime/human_view.gd",
+    " M TerraForest/addons/player_runtime/art/drops/current_tools.bake.json",
+    " M TerraForest/addons/player_runtime/art/item_icons.bake.json",
+    " M TerraForest/addons/player_runtime/player_hud.gd",
+    " M TerraForest/addons/player_runtime/session_menu.gd",
+    " M TerraForest/addons/player_runtime/world_attack.gd",
+    " M TerraForest/assets/credits/notices.json",
+    " M TerraForest/tests/attack_animation_timing.gd",
+    " M TerraForest/tests/torch_attack_candidate.gd",
+    " M TerraForest/tests/wooden_torch.gd",
+    " M TerraForest/tests/wooden_torch_world.gd",
+    " M TerraForest/tools/build_credit_notices.py",
+    " M TerraForest/tools/import_torch_attack.gd",
+    "?? TerraForest/addons/characters/runtime/assets/Human.torch_attack.LICENSE.txt",
+    "?? TerraForest/addons/characters/runtime/assets/Human.torch_attack.res",
+    "?? TerraForest/tests/torch_attack_world.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "3afb702a8ac2291cf3c2f10c0e789834f7e3bdfc6d9c137ca9ab910ac9fd58cd",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "2c67bca4be463346457e5bc7ed5bcb71edcf86dd565a5966cd21bf2f086f9c54",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "184e9a14ae9efb49c53282af43b4c9b41563ce57d7f47cf85226e3df1953e39e",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "85b9e3cf0282d6cddb2ecfd3595dd85183e5b6363b365deddf0f1eea2e7979f7",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "75484c882431821d8996fdab7e73012bde180b2518913f5faf3f7a02af4226dc"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 38644,
+    "exit_code": 0,
+    "resources": {
+      "samples": 63,
+      "gpu_samples": 62,
+      "peak_private_commit_bytes": 2758549504,
+      "peak_working_set_bytes": 1519890432,
+      "peak_dedicated_gpu_bytes": 1203720192,
+      "checks": {
+        "ram": {
+          "bytes": 2758549504,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1203720192,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "limits": {
+        "schema": 1,
+        "vram_warning_bytes": 3758096384,
+        "vram_limit_bytes": 4294967296,
+        "ram_warning_bytes": 4294967296,
+        "ram_limit_bytes": 6442450944,
+        "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+        "redistributable_warning_bytes": 4000000000,
+        "redistributable_limit_bytes": 5000000000,
+        "derived_cache_total_bytes": 3221225472,
+        "failed_test_cache_bytes": 1073741824,
+        "saved_world_warning_bytes": 10737418240,
+        "free_space_warning_bytes": 10737418240,
+        "minimum_free_bytes": 2147483648,
+        "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+      },
+      "errors": [],
+      "exceeded": false,
+      "telemetry_complete": true,
+      "within_sampled_limits": true,
+      "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+    },
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 38.684114899951965,
+    "passed": true,
+    "cache_retention": {
+      "managed": true,
+      "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\torch_attack_world_4fbc58105a294ea0a7a7c6734690e5f9",
+      "retained_bytes": 0,
+      "failed_cache_bytes": 1073704696,
+      "failed_cache_budget_bytes": 1073741824,
+      "evicted_derived_bytes": 0,
+      "over_budget": false,
+      "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+    }
+  }
+}

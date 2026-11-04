@@ -1,0 +1,87 @@
+{
+  "status": "First-person source integration verified; third-person presentation explicitly deferred",
+  "user_decision": "I might approve it for first person, but third person will need fixing in the future. So integrate torch attack",
+  "date": "2026-11-04",
+  "reviewed_resource_sha256": "85c684e700670686c21b20ec1c4b669deb1561c926294c5d268e5bc55bf63569",
+  "contact_seconds": 0.43333333333333335,
+  "duration_seconds": 1.1,
+  "damage_base": {
+    "stone": 5,
+    "wood": 5,
+    "other_and_zombie": 10
+  },
+  "torch_wear_policy": "Existing non-durable item unchanged; no fuel or fire-status additions",
+  "results": [
+    {
+      "name": "animation_timing",
+      "checks": 39,
+      "failures": 0,
+      "source_log": "reports/torch_attack_timing.log",
+      "retained_log": "logs/animation_timing.log"
+    },
+    {
+      "name": "animation_skin",
+      "checks": 15,
+      "failures": 0,
+      "source_log": "reports/torch_integration_torch_attack_candidate.log",
+      "retained_log": "logs/animation_skin.log"
+    },
+    {
+      "name": "torch_carry",
+      "checks": 28,
+      "failures": 0,
+      "source_log": "reports/torch_integration_wooden_torch.log",
+      "retained_log": "logs/torch_carry.log"
+    },
+    {
+      "name": "carry_hand_deformation",
+      "checks": 36,
+      "failures": 0,
+      "source_log": "reports/torch_integration_torch_hand_deformation.log",
+      "retained_log": "logs/carry_hand_deformation.log"
+    },
+    {
+      "name": "universal_drop",
+      "checks": 440,
+      "failures": 0,
+      "source_log": "reports/torch_integration_universal_item_drop.log",
+      "retained_log": "logs/universal_drop.log"
+    },
+    {
+      "name": "physical_drop",
+      "checks": 77,
+      "failures": 0,
+      "source_log": "reports/torch_integration_physical_item_drops.log",
+      "retained_log": "logs/physical_drop.log"
+    },
+    {
+      "name": "g_input",
+      "checks": 32,
+      "failures": 0,
+      "source_log": "reports/checks/20261104T150758820939Z/console.log",
+      "retained_log": "logs/g_input.log"
+    },
+    {
+      "name": "world",
+      "checks": 31,
+      "failures": 0,
+      "source_log": "reports/checks/20261104T151006500238Z/console.log",
+      "retained_log": "logs/world.log"
+    }
+  ],
+  "initial_world_fixture": {
+    "checks": 25,
+    "failures": 1,
+    "reason": "Fixture had zombies disabled at initial admission. Corrected fixture then passed actual zombie damage; final run also passed held input.",
+    "retained_log": "logs/initial_world_fixture.log"
+  },
+  "credits": {
+    "notices": 18,
+    "freshness": "passed"
+  },
+  "receipts": "icon and shape checks current; drop bake inputs refreshed; output meshes unchanged",
+  "runtime_bundle": "Declared characters addon dependency file list includes runtime animation and adjacent notice",
+  "editor_import": "Passed with existing temporary Kaino raw-audio exclusion; marker removed afterward; no unrelated WAV qualification",
+  "deployment": "No native rebuild, package export or installed-game update claimed",
+  "remaining": "Dedicated third-person art pass and multi-angle player review; existing carry-hand review remains open"
+}

@@ -1,0 +1,43 @@
+{
+  "checks": 31,
+  "failures": 0,
+  "impacts": [
+    {
+      "accepted": true,
+      "clip": "FP_Torch_Swing",
+      "id": 1,
+      "position": 0.433333333333333
+    },
+    {
+      "accepted": false,
+      "clip": "FP_Torch_Swing",
+      "id": 5,
+      "position": 0.433333333333333
+    },
+    {
+      "accepted": true,
+      "clip": "FP_Torch_Swing",
+      "id": 6,
+      "position": 0.433333333333333
+    },
+    {
+      "accepted": true,
+      "clip": "FP_Torch_Swing",
+      "id": 7,
+      "position": 0.433333333333333
+    },
+    {
+      "accepted": true,
+      "clip": "FP_Torch_Swing",
+      "id": 8,
+      "position": 0.433333333333333
+    },
+    {
+      "accepted": true,
+      "clip": "FP_Torch_Swing",
+      "id": 9,
+      "position": 0.433333333333333
+    }
+  ],
+  "scope": "Actual source-world left mouse, native block/zombie damage at animation contact and cancellation; no user saves or third-person art approval."
+}

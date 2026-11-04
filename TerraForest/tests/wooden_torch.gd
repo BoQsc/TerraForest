@@ -30,7 +30,8 @@ func run()->void:
 		records[suffix]={"grip_error":grip_error,"finger_error":finger_error,"maximum_hand_step_degrees":max_step}
 	tools.equip(6)
 	for frame in 60:view._process(1.0/120)
-	check(tools.attack_profile().is_empty() and not tools.begin_attack(91),"torch does not silently punch, mine or damage targets")
+	check(tools.attack_profile().get("clip")=="FP_Torch_Swing" and tools.begin_attack(91),"torch dispatches its integrated strike instead of another tool's action")
+	tools.cancel_attack()
 	check(view.body_mesh.mesh==view.unarmed_body_mesh,"torch uses corrected hand skin weights")
 	for row in [[Vector3(0,0,5.5),"Walk"],[Vector3(0,0,9.9),"Run"],[Vector3(0,4,3),"Jump"],[Vector3.ZERO,"Idle"]]:
 		body.velocity=row[0];view._process(.12);check(view.active_clip=="FP_Torch_"+row[1],"velocity dispatches torch "+row[1])

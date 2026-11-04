@@ -24,7 +24,7 @@ func run()->void:
 	hud.refresh();hud.equip_item(6)
 	var view=game.tool_view.human
 	verify(game.equipped_tool==6 and view.current==6 and view.torch_effects.burning and not game.structure_mode,"ordinary inventory selection holds and lights the torch")
-	verify(not game.world_attack.attack() and game.tool_view.attack_profile().is_empty(),"torch cannot trigger a hidden combat or digging action")
+	verify(game.tool_view.attack_profile().get("clip")=="FP_Torch_Swing" and game.world_attack.TOOLS.has(6),"crafted torch has its integrated authored melee action")
 	var point:Vector3=game.player.position+Vector3.UP*.3
 	var dropped:Dictionary=game.pickups.drop_stack(inventory,hud.active_slot,inventory.snapshot().revision,point,1)
 	verify(dropped.ok and amount(6)==0,"torch drops into the native collectible store")

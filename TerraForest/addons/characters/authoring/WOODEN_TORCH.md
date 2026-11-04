@@ -40,9 +40,20 @@ Item 6 is craftable for one Wood (102) and two Plant (204), or available from th
 existing Dev Bag. It lights automatically while held and supports native
 inventory, container and pickup persistence. Old inventories are not topped up.
 This pass does not implement fuel depletion, ignition controls, underwater
-extinguishing, fire damage/spread, torch melee or sound. Dropped torches are static
+extinguishing, fire damage/spread or sound. Dropped torches are static
 unlit collectibles. Those systems need separate gameplay decisions if requested.
 
 The rebuilt hands await player review. Engineering checks do not imply visual
 acceptance. Current comparison and preview: `issues/torch-hand-deformation/README.md`.
 Original, rejected hand evidence remains in `docs/evidence/wooden_torch/README.md`.
+
+## Torch melee — 2026-11-04
+
+Revision 02 of `Human.torch_attack.*` is integrated at the user's request for
+first-person use. Its runtime library is `runtime/assets/Human.torch_attack.res`.
+Hold left mouse for a 1.10-second strike, with live target contact at frame 26
+(0.433 s). It uses ordinary blunt melee, not fire damage. Existing torch
+durability/fuel behavior is unchanged. Third-person art is explicitly deferred;
+the shared rig plays the same functional clip until a dedicated art pass.
+See `docs/evidence/torch_attack/integration/README.md` and
+`issues/torch-attack-motion/README.md` for verification and remaining work.

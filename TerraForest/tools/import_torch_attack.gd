@@ -5,6 +5,16 @@ const CARRY=preload("res://addons/characters/runtime/assets/Human.torch.res")
 const OUTPUT="res://addons/characters/authoring/Human.torch_attack.res"
 func _initialize()->void:run.call_deferred()
 func run()->void:
+	if OS.get_cmdline_user_args().has("--promote-approved-first-person"):
+		# Promotion copies the reviewed library byte-for-byte. Regenerating a GLB
+		# is a separate authoring operation and cannot silently replace approval.
+		var evidence:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://docs/evidence/torch_attack/revision02/evidence.json"))
+		var expected:String=evidence.sha256["addons/characters/authoring/Human.torch_attack.res"]
+		if FileAccess.get_sha256(OUTPUT)!=expected:push_error("Torch candidate differs from reviewed revision 02");quit(1);return
+		var target_path:="res://addons/characters/runtime/assets/Human.torch_attack.res"
+		var copy_error:=DirAccess.copy_absolute(ProjectSettings.globalize_path(OUTPUT),ProjectSettings.globalize_path(target_path))
+		print("TORCH_ATTACK_PROMOTE error=",copy_error," sha256=",FileAccess.get_sha256(target_path))
+		quit(0 if copy_error==OK else 1);return
 	var document:=GLTFDocument.new();var state:=GLTFState.new()
 	var error:=document.append_from_file("res://addons/characters/authoring/Human.torch_attack.glb",state)
 	if error!=OK:push_error("Torch attack decode failed");quit(1);return

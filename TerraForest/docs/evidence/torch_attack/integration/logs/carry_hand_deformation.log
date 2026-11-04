@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Idle: both wrists remain within 35 degrees at every key and half-key
+PASS Idle: arms, forearms and wrists have no roll flips
+PASS Idle: actual hand skin clears the curved wooden shaft (0.5 mm tolerance)
+PASS Idle: every distal finger pad stays close to the handle
+SKIN Idle wrist=21.6830912183658 radius=0.02326011285186 by_bone={ "RightHandMiddle3": 0.02396812848747, "RightHandRing1": 0.03676458820701, "RightHandMiddle2": 0.02920706756413, "RightHandMiddle1": 0.0347710698843, "RightHand": 0.02519137598574, "RightHandPinky1": 0.02326011285186, "RightHandRing3": 0.02397580072284, "RightHandPinky3": 0.02400407753885, "RightHandIndex1": 0.03379616141319, "RightHandIndex3": 0.02402636036277, "RightHandThumb1": 0.02619013004005, "RightHandThumb2": 0.0237353798002, "RightHandThumb3": 0.02341097593307, "RightHandIndex2": 0.03025144524872, "RightHandRing2": 0.03063889034092, "RightHandPinky2": 0.02387047931552 }
+PASS Walk: both wrists remain within 35 degrees at every key and half-key
+PASS Walk: arms, forearms and wrists have no roll flips
+PASS Walk: actual hand skin clears the curved wooden shaft (0.5 mm tolerance)
+PASS Walk: every distal finger pad stays close to the handle
+SKIN Walk wrist=21.6830912183658 radius=0.02325976081192 by_bone={ "RightHandMiddle3": 0.02396810986102, "RightHandRing1": 0.03676414862275, "RightHandMiddle2": 0.02920706756413, "RightHandMiddle1": 0.0347708389163, "RightHand": 0.02519106306136, "RightHandPinky1": 0.02325976081192, "RightHandRing3": 0.02397561073303, "RightHandPinky3": 0.0240041539073, "RightHandIndex1": 0.03379595652223, "RightHandIndex3": 0.02402643673122, "RightHandThumb1": 0.02618956193328, "RightHandThumb2": 0.02373541332781, "RightHandThumb3": 0.02341096848249, "RightHandIndex2": 0.0302515514195, "RightHandRing2": 0.03063879907131, "RightHandPinky2": 0.02387035265565 }
+PASS Run: both wrists remain within 35 degrees at every key and half-key
+PASS Run: arms, forearms and wrists have no roll flips
+PASS Run: actual hand skin clears the curved wooden shaft (0.5 mm tolerance)
+PASS Run: every distal finger pad stays close to the handle
+SKIN Run wrist=21.6830912183658 radius=0.02325969003141 by_bone={ "RightHandMiddle3": 0.02396814152598, "RightHandRing1": 0.03676380589604, "RightHandMiddle2": 0.02920709364116, "RightHandMiddle1": 0.03477040678263, "RightHand": 0.02519080415368, "RightHandPinky1": 0.02325969003141, "RightHandRing3": 0.02397579327226, "RightHandPinky3": 0.02400419302285, "RightHandIndex1": 0.03379587084055, "RightHandIndex3": 0.02402645908296, "RightHandThumb1": 0.02618922106922, "RightHandThumb2": 0.02373546734452, "RightHandThumb3": 0.02341095916927, "RightHandIndex2": 0.03025157004595, "RightHandRing2": 0.03063887357712, "RightHandPinky2": 0.02387043274939 }
+PASS Jump: both wrists remain within 35 degrees at every key and half-key
+PASS Jump: arms, forearms and wrists have no roll flips
+PASS Jump: actual hand skin clears the curved wooden shaft (0.5 mm tolerance)
+PASS Jump: every distal finger pad stays close to the handle
+SKIN Jump wrist=21.6830912183658 radius=0.02326009981334 by_bone={ "RightHandMiddle3": 0.02396813035011, "RightHandRing1": 0.03676455840468, "RightHandMiddle2": 0.02920712344348, "RightHandMiddle1": 0.0347710326314, "RightHand": 0.02519138343632, "RightHandPinky1": 0.02326009981334, "RightHandRing3": 0.02397568896413, "RightHandPinky3": 0.02400413714349, "RightHandIndex1": 0.03379612416029, "RightHandIndex3": 0.02402633428574, "RightHandThumb1": 0.02619013935328, "RightHandThumb2": 0.02373538725078, "RightHandThumb3": 0.02341099642217, "RightHandIndex2": 0.03025147132576, "RightHandRing2": 0.03063887357712, "RightHandPinky2": 0.02387046255171 }
+PASS Crouch: both wrists remain within 35 degrees at every key and half-key
+PASS Crouch: arms, forearms and wrists have no roll flips
+PASS Crouch: actual hand skin clears the curved wooden shaft (0.5 mm tolerance)
+PASS Crouch: every distal finger pad stays close to the handle
+SKIN Crouch wrist=21.6830895108185 radius=0.02325886115432 by_bone={ "RightHandMiddle3": 0.02396830916405, "RightHandRing1": 0.03676418960094, "RightHandMiddle2": 0.02920739538968, "RightHandMiddle1": 0.03477063030005, "RightHand": 0.02519031055272, "RightHandPinky1": 0.02325886115432, "RightHandRing3": 0.02397596463561, "RightHandPinky3": 0.02400445751846, "RightHandIndex1": 0.03379540517926, "RightHandIndex3": 0.0240264814347, "RightHandThumb1": 0.02618983760476, "RightHandThumb2": 0.02373560518026, "RightHandThumb3": 0.02341138198972, "RightHandIndex2": 0.0302516259253, "RightHandRing2": 0.03063915669918, "RightHandPinky2": 0.02387075126171 }
+PASS Equip: both wrists remain within 35 degrees at every key and half-key
+PASS Equip: arms, forearms and wrists have no roll flips
+PASS Equip: actual hand skin clears the curved wooden shaft (0.5 mm tolerance)
+PASS Equip: every distal finger pad stays close to the handle
+SKIN Equip wrist=21.6830912183658 radius=0.02326016128063 by_bone={ "RightHandMiddle3": 0.02396817319095, "RightHandRing1": 0.03676467016339, "RightHandMiddle2": 0.02920714952052, "RightHandMiddle1": 0.03477135300636, "RightHand": 0.02518884278834, "RightHandPinky1": 0.02326016128063, "RightHandRing3": 0.02397578023374, "RightHandPinky3": 0.02400402911007, "RightHandIndex1": 0.03379618376493, "RightHandIndex3": 0.02402636781335, "RightHandThumb1": 0.02617482841015, "RightHandThumb2": 0.02373547852039, "RightHandThumb3": 0.02341100387275, "RightHandIndex2": 0.03025138936937, "RightHandRing2": 0.03063884750009, "RightHandPinky2": 0.02387039735913 }
+PASS item 0 to torch: equip blend does not fold the wrist
+PASS item 1 to torch: equip blend does not fold the wrist
+PASS item 2 to torch: equip blend does not fold the wrist
+PASS item 3 to torch: equip blend does not fold the wrist
+PASS item 5 to torch: equip blend does not fold the wrist
+PASS item 401 to torch: equip blend does not fold the wrist
+BLEND Walk bend=9.10875991392287 drift=0.00000024073563 position=0.00000024073563 rotation=0.03956468118525
+PASS motion blend into Walk: wrist alignment and fixed grip survive interpolation
+BLEND Run bend=10.2671275537585 drift=0.00000035793818 position=0.00000035793818 rotation=0.03956468118525
+PASS motion blend into Run: wrist alignment and fixed grip survive interpolation
+BLEND Jump bend=10.0855281916535 drift=0.0000002430306 position=0.0000002430306 rotation=0.03956468118525
+PASS motion blend into Jump: wrist alignment and fixed grip survive interpolation
+BLEND Idle bend=7.32098351188142 drift=0.00000035770546 position=0.00000035770546 rotation=0.03956468118525
+PASS motion blend into Idle: wrist alignment and fixed grip survive interpolation
+BLEND Crouch bend=7.32326394129056 drift=0.0000002430306 position=0.0000002430306 rotation=0.03956468118525
+PASS motion blend into Crouch: wrist alignment and fixed grip survive interpolation
+BLEND Idle bend=7.32098351188142 drift=0.00000024314477 position=0.00000024314477 rotation=0.03956468118525
+PASS motion blend into Idle: wrist alignment and fixed grip survive interpolation
+TORCH_HAND_DEFORMATION checks=36 failures=0
