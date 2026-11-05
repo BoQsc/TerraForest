@@ -44,7 +44,11 @@ func run()->void:
 	await process_frame;await process_frame
 	check(not capture.captured,"automatic photograph waits for the entry camera to finish")
 	game.presentation_ready=true
-	await until(func():return capture.captured)
+	var frames:=0
+	while not capture.captured and frames<600:frames+=1;await process_frame
+	check(capture.captured,"automatic photograph reads the first workable frame")
+	await until(func():return capture.readbacks>=2)
+	check(capture.readbacks>=2 and not capture.published,"a settled frame replaces the opening frame once before any save")
 	check(capture.image!=null and not capture.published and not FileAccess.file_exists(folder.path_join("arrival_fixture.preview/arrival.png")),"unsaved arrival stays in memory until a successful save")
 	check(hud.visible and game.is_processing(),"capture restores HUD and game processing")
 	var canonical:=FileAccess.open(folder.path_join("arrival_fixture.trw"),FileAccess.WRITE);canonical.store_string("canonical bytes must not change");canonical.close()

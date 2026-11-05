@@ -1,7 +1,7 @@
 # Missing world photographs in browser and loading
 
 - Status: Fixed for reproduced availability case; source/package checks pass; player review pending.
-- Updated: 2026-11-05.
+- Updated: 2026-11-05 (settled-frame timing).
 - User review: Reports that loading backgrounds and selection images are absent; follow-up visual review pending.
 - Symptom: Recent saved worlds show blank photograph areas, including the early resource-loading screen.
 
@@ -28,6 +28,24 @@ capture, modal waiting, metadata and canonical hashes, and actual rendered pixel
 in the browser and early cover for all five UI sets. `--flow` verifies a real
 world's automatic arrival survives save/return, plus open/reopen/manual-photo/
 cancel flows. Add `--pack` to test the installed resources.
+
+## Timing of the automatic frame
+
+The first reproduction generated a world with `generation_job.gd`, launched it
+with `--generation-handoff`, and received `PhotoProbe.preview/arrival.png`
+automatically; a normal reopen without the handoff regenerated it after the
+image was deleted, and the browser then displayed it as that world's photograph.
+
+Two weaknesses remained. The frame was read on the first ready frame, while
+terrain and newly spawned vegetation were still streaming, and a capture that
+found the loading cover, a modal or a still-loading world was dropped for the
+whole session. `arrival_photograph.gd` now stores the first workable frame
+immediately, so a save-and-return cannot outrun it, and then replaces it once
+with a settled readback taken after 30 frames with no loading or modal. A
+skipped or empty capture is retried every 0.5 s (bounded to 60 s) instead of
+being dropped. The photograph still never invents a frame: it is read from the
+real viewport and only after the entry camera, cover and dialogs are gone, and
+an existing photograph is never recaptured.
 
 Source and package photo-display checks pass 24 each; real source world flow
 passes 25 and package flow 26 (including the added early-cover assertion).
