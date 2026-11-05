@@ -22,6 +22,25 @@ Revisit if the reported world still shows resets: capture clip/cursor, awareness
 and route transitions around the event, then extend the real-body regression.
 Terrain foot IK, dense mine crowding and animation art approval remain separate.
 
+## Larger-building residents — 2026-11-05
+
+New worlds now assign three persistent sleepers to large two-storey houses,
+town halls, schools, warehouses, police, medical and research buildings; factories
+and apartments receive four. Existing church occupancy and the starting sanctuary
+remain. User explicitly chose new worlds only: no load-time registration or saved
+building retrofit is added. Stable authored identities preserve injury, waking and
+death across retirement/save/reload, with no refill loop.
+
+Groups use the existing sixteen-body encounter ceiling; ordinary surface pools
+remain six. Near hidden authored residents can be admitted behind complete opaque
+cover, and far unseen idle/sleeping residents can retire to make room. Perception,
+route, collider and memory caps are unchanged. Source physical checks cover every
+new type/four rotations; normal browser generation and fresh-process persistence
+are checked. See [the building population issue](../issues/building-zombie-population/README.md)
+for exact source/package receipts, earlier failures and pending user review.
+Broader crowd performance and existing cross-floor AI limitations remain open;
+return on visible spawn-in, missing groups or a cleared building refilling.
+
 ## Zombie sustained response and sleeper ambushes — 2026-11-05
 
 The user rejected the route-only follow-up as well and requested a full engagement

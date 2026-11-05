@@ -37,6 +37,7 @@ func run()->void:
 	var game=current_scene;game.background_fps=60;game.app_focused=true;game.set_physics_process(false)
 	game.zombies.update(0,game.player.global_position,false)
 	var store:RefCounted=game.zombies.population.store
+	if not restoration:await verify_large_buildings(game,store)
 	var anchors:Array=[]
 	for identity in range(2501,int(store.statistics().slots)+1):
 		var record:Dictionary=store.resident(identity)
@@ -98,6 +99,45 @@ func run()->void:
 		check(not actor.alive and store.resident(selected.id).state==2,"clearing the house records permanent resident death")
 	check(Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED and preload("res://addons/world_runtime/mouse_ownership.gd").captures==0,"integrated house check never captures the desktop pointer")
 	await finish()
+
+func verify_large_buildings(game:Node,store:RefCounted)->void:
+	var options:Dictionary=game.world_recipe.store.decode(game.world_recipe.store.capture_snapshot())
+	var worker:=Thread.new()
+	worker.start(preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(1703,29,true,true,"user://generation_plans",options))
+	while worker.is_alive():await process_frame
+	var generated:Dictionary=worker.wait_to_finish()
+	var lots:Array=[]
+	for site:Dictionary in generated.get("sites",[]):lots.append_array(site.lots)
+	var planned:Dictionary=preload("res://addons/characters/runtime/house_sleepers.gd").plan(lots,1703)
+	if not check(generated.get("ok",false) and planned.ok and not planned.buildings.is_empty(),"normal UI recipe actually includes larger-building resident groups"):return
+	var bytes:PackedByteArray=store.capture_snapshot();var sanctuary:=Vector3(bytes.decode_float(16),bytes.decode_float(20),bytes.decode_float(24))
+	var positions:Dictionary={}
+	for anchor:Dictionary in planned.anchors:positions[anchor.key]=anchor.position
+	var receipt:Array=[]
+	for building:Dictionary in planned.buildings:
+		var identities:PackedInt64Array=store.authored_identities(building.keys)
+		var actual:=0;var expected:=0;var correct:bool=identities.size()==building.keys.size()
+		for index in identities.size():
+			var offset:Vector3=positions[building.keys[index]]-sanctuary;offset.y=0
+			if offset.length()>=40:expected+=1
+			if identities[index]>0:
+				actual+=1;correct=correct and store.resident(identities[index]).anchor==building.keys[index]
+		check(correct and actual==expected and building.keys.size()>=3,"generated %s has its persistent small group (%d residents, %d sanctuary exemptions)"%[building.building,actual,building.keys.size()-expected])
+		receipt.append({"building":building.building,"origin":building.origin,"expected":expected,"actual":actual,"ids":identities})
+	FileAccess.open(folder.path_join("large_buildings.json"),FileAccess.WRITE).store_string(JSON.stringify(receipt,"  "))
+	for row:Dictionary in receipt:
+		if row.building!="warehouse_w1" or row.actual<3:continue
+		var first:Dictionary=store.resident(row.ids[0])
+		game.teleport(first.position+Vector3(0,0,10),first.position.y)
+		if not check(await wait_for(func():return not game.loading_active,90),"normal loading prepares the new warehouse group"):break
+		var present:Array=game.zombies.residents.filter(func(actor:Node):return row.ids.has(int(actor.get_meta("world_zombie_id",0))))
+		check(present.size()==row.actual and present.all(func(actor:Node):return actor.sleeper_active()),"all three warehouse residents enter normal scene residency together")
+		check(game.zombies.residency_limit==16,"authored building group uses the existing bounded encounter pool")
+		if not present.is_empty():
+			var camera:=Camera3D.new();game.add_child(camera);camera.current=true
+			camera.position=present[0].position+Vector3(3,1.6,3);camera.look_at(present[0].position+Vector3.UP*.6)
+			await photograph("warehouse_resident");camera.free();game.camera.current=true
+		break
 func finish()->void:
 	if game_ready():
 		current_scene.shutdown_requested=true

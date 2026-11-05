@@ -67,9 +67,9 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		token -= 1; waiting = false; sampled = false
 		initial_complete = false
 		last_focus = focus; queue = store.nearby(focus, RADIUS)
-		# Coal-mine authored keys reserve enough bounded bodies for the ten-person
-		# station and three side encounters. Ordinary surface admission stays six.
-		host.residency_limit=host.ENCOUNTER_LIMIT if queue.any(func(row:Dictionary):return (int(row.anchor)&(1<<42))!=0) else host.LIMIT
+		# Mines and larger-building groups share the existing sixteen-body pool.
+		# Ordinary surface admission stays six; dormant residents remain persistent.
+		host.residency_limit=host.ENCOUNTER_LIMIT if queue.any(func(row:Dictionary):return (int(row.anchor)&((1<<42)|(1<<41)))!=0) else host.LIMIT
 		queue=queue.filter(func(record:Dictionary):return record.anchor!=0)+queue.filter(func(record:Dictionary):return record.anchor==0)
 		cursor = 0; examined = 0; admitted = 0; began = Time.get_ticks_msec()
 		game.terrain.changed_since_save = true
@@ -99,17 +99,19 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		return false
 	var offset := point - focus; offset.y = 0
 	var authored:bool=record.anchor!=0
-	if not during_loading and (offset.length() < (8.0 if authored else 40.0) or (host.spawn_visible.is_valid() and host.spawn_visible.call(point + Vector3.UP) and (not authored or not _occluded(point)))):
-		cursor += 1; examined += 1
-		return false
+	if not during_loading:
+		var visible:bool=host.spawn_visible.is_valid() and host.spawn_visible.call(point+Vector3.UP)
+		# Nearby indoor residents can enter only behind complete opaque cover.
+		# A distance-only rejection could leave an approached building empty.
+		if (authored and (offset.length()<8.0 or visible) and not _occluded(point)) or (not authored and (offset.length()<40.0 or visible)):
+			cursor+=1;examined+=1;return false
 	if host.residents.size()>=host.residency_limit:
 		var replacement:=-1
-		var farthest:=40.0
+		var farthest:=maxf(32.,offset.length()+8.)
 		if authored:
 			for index in host.residents.size():
 				var resident:Node3D=host.residents[index]
-				var saved:Dictionary=store.resident(resident.get_meta("world_zombie_id",0))
-				if not resident.alive or saved.get("anchor",0)!=0 or host.awareness.status(resident.get_instance_id()).state not in ["idle","wander"]:continue
+				if not resident.alive or host.awareness.status(resident.get_instance_id()).state not in ["idle","wander","sleeping"]:continue
 				var distance:=resident.global_position.distance_to(focus)
 				if distance>farthest and host.spawn_visible.is_valid() and not host.spawn_visible.call(resident.global_position+Vector3.UP):replacement=index;farthest=distance
 		if replacement<0:cursor+=1;examined+=1;return false

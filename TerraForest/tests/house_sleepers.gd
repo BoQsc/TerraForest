@@ -67,6 +67,20 @@ func run()->void:
 		if homes.HOMES.has(str(lot.asset.get_meta("expansion_id",""))):print("HOME_CANDIDATE ",lot.origin," rotation=",lot.rotation," key=",homes.key(lot.origin,lot.rotation))
 	var actual:Dictionary=homes.plan(actual_lots,1703)
 	check(generated.get("ok",false) and actual.ok and not actual.anchors.is_empty(),"default production recipe actually contains authored sleepers")
+	var styles:Array=preload("res://demo/world_creation_panel.gd").STYLES
+	for style:Dictionary in styles:
+		var values:Array=style.values
+		var options:Dictionary=load("res://addons/world_runtime/world_recipe.gd").DEFAULTS.duplicate()
+		options.merge({"biome":values[0],"settlements":values[1]+1,"districts":values[2]+1,"network":values[3],"trails":values[4]},true)
+		options.introduction=1 if style.name=="Frontier expedition" else 0
+		var recipe_plan:Dictionary=load("res://addons/world_runtime/world_generation_plan.gd").build(1703,29,true,true,"user://generation_plans",options)
+		if not recipe_plan.get("ok",false):
+			print("BUILDING_GROUP_PRESET_UNFIT ",style.name," ",recipe_plan.get("reason",""));continue
+		var recipe_lots:Array=[]
+		for site:Dictionary in recipe_plan.get("sites",[]):recipe_lots.append_array(site.lots)
+		var residents:Dictionary=homes.plan(recipe_lots,1703)
+		check(recipe_plan.get("ok",false) and residents.ok and residents.anchors.size()<=256 and not residents.buildings.is_empty(),"normal preset plans bounded larger-building groups: "+str(style.name))
+		print("BUILDING_GROUP_PRESET ",style.name," anchors=",residents.get("anchors",[]).size()," groups=",residents.get("buildings",[]).size())
 	finish()
 func finish()->void:
 	print("HOUSE_SLEEPERS checks=",checks," failures=",failures)

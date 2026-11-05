@@ -276,7 +276,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 	if profiling_enabled:update_phase_us["steering"]=Time.get_ticks_usec()-measured_begin
 
 func _update_spacing() -> void:
-	# At most six actors: 30 ordered neighbour checks, with no world scan.
+	# Six ordinary actors or sixteen authored encounter actors; no world scan.
 	for index in residents.size():
 		var zombie = residents[index]
 		zombie.crowd_steering = Vector3.ZERO

@@ -1,0 +1,341 @@
+{
+  "date": "2026-11-05",
+  "scope": "New worlds only, explicitly selected by user. No saved-world migration or load-time group registration. Existing sanctuary and permanent resident deaths retained.",
+  "policy": {
+    "three": [
+      "house_c1",
+      "town_hall_t1",
+      "school_s2",
+      "warehouse_w1",
+      "storage_s1",
+      "police_p1",
+      "medical_h1",
+      "research_r1"
+    ],
+    "four": [
+      "factory_f1",
+      "apartments_a3"
+    ],
+    "unchanged": "Existing ten church anchors; small cottage selection; trader/sanctuary protection",
+    "ordinary_active_limit": 6,
+    "authored_active_limit": 16,
+    "authored_record_capacity": 256
+  },
+  "provenance": "Original Codex-assisted code, tests and tools for this request, 0BSD. Anchors are original code-native placements in existing approved geometry. No external code or assets imported; existing notices retained.",
+  "physical_source": {
+    "report": "reports/checks/20261105T101445805871Z",
+    "result": "reports/building_residents/result.json",
+    "checks": 674,
+    "failures": 0,
+    "anchors": 128,
+    "scope": "Ten types/four rotations; actual furnished geometry, indoor roof/support, seated pose and full guarded wake. Distinct buildings avoid key collisions."
+  },
+  "fresh_process_source": {
+    "report": "reports/checks/20261105T101506780957Z",
+    "checks": 3,
+    "failures": 0
+  },
+  "source_home_visibility": {
+    "report": "reports/checks/20261105T101508224471Z",
+    "scope": "Existing actual-home/four rotations pose/wake and occlusion/removed floor checks; see engine log for check count."
+  },
+  "all_normal_presets": {
+    "report": "reports/checks/20261105T102445120953Z",
+    "checks": 34,
+    "failures": 0,
+    "groups_by_style": {
+      "Forest frontier": 3,
+      "Connected countryside": 3,
+      "Market towns": 10,
+      "City region experimental": 5,
+      "Regional belt experimental": 20,
+      "Frontier expedition": 17
+    },
+    "anchors_by_style": [
+      19,
+      21,
+      45,
+      28,
+      83,
+      70
+    ],
+    "scope": "Seed1703; all six preset options reconstructed exactly, including introduction enabled only for Frontier expedition."
+  },
+  "source_normal_browser": {
+    "report": "reports/house_sleepers/20261105T101609049628Z",
+    "phases": {
+      "create": 30,
+      "restore": 13,
+      "cleared": 9,
+      "admission": 10
+    },
+    "failures": 0,
+    "scope": "Normal Frontier expedition Generate & play, saved group identities for all buildings, original sleeper wake/damage, fresh-process dead resident/hidden readmission. No developer generation recipe switches."
+  },
+  "pack_clearance": {
+    "report": "reports/building_residents/20261105T104342869805Z",
+    "phases": {
+      "create": 674,
+      "restore": 3
+    },
+    "passed": true
+  },
+  "pack_normal_browser": {
+    "report": "reports/house_sleepers/20261105T104417334785Z",
+    "scope": "Normal browser-generated Frontier expedition, saved groups, all three warehouse residents enter normal live residency together, existing sixteen-body ceiling, fresh-process restored/dead/hidden admission. All four phases pass.",
+    "groups": [
+      {
+        "actual": 0,
+        "building": "house_c1",
+        "expected": 0,
+        "ids": [
+          0,
+          0,
+          0
+        ],
+        "origin": "(1058, 52, 323)"
+      },
+      {
+        "actual": 3,
+        "building": "house_c1",
+        "expected": 3,
+        "ids": [
+          2501,
+          2534,
+          2550
+        ],
+        "origin": "(1837, 41, 998)"
+      },
+      {
+        "actual": 3,
+        "building": "town_hall_t1",
+        "expected": 3,
+        "ids": [
+          2529,
+          2545,
+          2561
+        ],
+        "origin": "(1056, 45, 494)"
+      },
+      {
+        "actual": 3,
+        "building": "school_s2",
+        "expected": 3,
+        "ids": [
+          2518,
+          2533,
+          2549
+        ],
+        "origin": "(1042, 38, 573)"
+      },
+      {
+        "actual": 3,
+        "building": "warehouse_w1",
+        "expected": 3,
+        "ids": [
+          2517,
+          2532,
+          2548
+        ],
+        "origin": "(989, 36, 624)"
+      },
+      {
+        "actual": 3,
+        "building": "storage_s1",
+        "expected": 3,
+        "ids": [
+          2531,
+          2547,
+          2563
+        ],
+        "origin": "(1774, 47, 1720)"
+      },
+      {
+        "actual": 4,
+        "building": "factory_f1",
+        "expected": 4,
+        "ids": [
+          2523,
+          2539,
+          2555,
+          2566
+        ],
+        "origin": "(1839, 43, 1719)"
+      },
+      {
+        "actual": 3,
+        "building": "research_r1",
+        "expected": 3,
+        "ids": [
+          2528,
+          2544,
+          2560
+        ],
+        "origin": "(1781, 44, 1790)"
+      },
+      {
+        "actual": 3,
+        "building": "police_p1",
+        "expected": 3,
+        "ids": [
+          2524,
+          2540,
+          2556
+        ],
+        "origin": "(1843, 43, 1786)"
+      },
+      {
+        "actual": 3,
+        "building": "medical_h1",
+        "expected": 3,
+        "ids": [
+          2525,
+          2541,
+          2557
+        ],
+        "origin": "(1780, 43, 1847)"
+      },
+      {
+        "actual": 4,
+        "building": "apartments_a3",
+        "expected": 4,
+        "ids": [
+          2526,
+          2542,
+          2558,
+          2567
+        ],
+        "origin": "(1845, 43, 1850)"
+      },
+      {
+        "actual": 3,
+        "building": "storage_s1",
+        "expected": 3,
+        "ids": [
+          2530,
+          2546,
+          2562
+        ],
+        "origin": "(1826, 45, 1325)"
+      },
+      {
+        "actual": 4,
+        "building": "factory_f1",
+        "expected": 4,
+        "ids": [
+          2519,
+          2535,
+          2551,
+          2564
+        ],
+        "origin": "(1867, 43, 1324)"
+      },
+      {
+        "actual": 3,
+        "building": "research_r1",
+        "expected": 3,
+        "ids": [
+          2527,
+          2543,
+          2559
+        ],
+        "origin": "(1818, 44, 1389)"
+      },
+      {
+        "actual": 3,
+        "building": "police_p1",
+        "expected": 3,
+        "ids": [
+          2520,
+          2536,
+          2552
+        ],
+        "origin": "(1877, 43, 1391)"
+      },
+      {
+        "actual": 3,
+        "building": "medical_h1",
+        "expected": 3,
+        "ids": [
+          2521,
+          2537,
+          2553
+        ],
+        "origin": "(1823, 43, 1452)"
+      },
+      {
+        "actual": 4,
+        "building": "apartments_a3",
+        "expected": 4,
+        "ids": [
+          2522,
+          2538,
+          2554,
+          2565
+        ],
+        "origin": "(1879, 43, 1455)"
+      }
+    ],
+    "passed": true,
+    "phases": {
+      "create": {
+        "passed": true,
+        "summary": "HOUSE_SLEEPERS_WORLD checks=33 failures=0",
+        "sampled_limits": true
+      },
+      "restore": {
+        "passed": true,
+        "summary": "HOUSE_SLEEPERS_WORLD checks=13 failures=0",
+        "sampled_limits": true
+      },
+      "cleared": {
+        "passed": true,
+        "summary": "HOUSE_SLEEPERS_WORLD checks=9 failures=0",
+        "sampled_limits": true
+      },
+      "admission": {
+        "passed": true,
+        "summary": "HOUSE_SLEEPERS_WORLD checks=10 failures=0",
+        "sampled_limits": true
+      }
+    }
+  },
+  "retained_failures": [
+    {
+      "report": "reports/checks/20261105T101130157984Z",
+      "checks": 674,
+      "failures": 3,
+      "meaning": "One school point was outside a covered interior for two rotations; moved to a checked indoor classroom point. Fixture reused the same origin for different building types, causing a final duplicate-key check failure; fixture now uses distinct origins. Passing physical receipt supersedes these cases."
+    },
+    {
+      "report": "reports/house_sleepers/20261105T101545131148Z",
+      "meaning": "New fixture variable needed an explicit bool type; parse corrected before passing source/browser runs."
+    },
+    {
+      "report": "reports/checks/20261105T102145782932Z",
+      "checks": 34,
+      "failures": 5,
+      "meaning": "Preset helper incorrectly kept introduction enabled for every style; native validation rejected those options. Corrected helper matches actual UI introduction setting; all six then pass."
+    }
+  ],
+  "limits": [
+    "Player placement/difficulty acceptance pending.",
+    "Only new worlds; existing empty buildings remain empty as explicitly requested.",
+    "Forty-metre starting sanctuary can exempt an otherwise large building.",
+    "Stored groups exceed active bodies; only six ordinary/sixteen authored actors simulate together.",
+    "All six preset population plans checked for seed1703; arbitrary seed fitting/terrain/building acceptance and large-crowd performance are not universally qualified.",
+    "Existing cross-floor routing/tight crawling limitations remain separate from population."
+  ],
+  "resume": "On missing groups or spawn-in, capture world/seed/building, authored keys, native state/death, admission queue/capacity, frustum/occlusion and floor/readiness. Reproduce in normal browser-created worlds and fresh-process reload; never refill to hide dead residents.",
+  "pack_sha256": "1f4ff73c2913f3747473104f704c386f94230494c1d4bd557d250593e5027133",
+  "retained_generated_worlds": [
+    {
+      "slot": "SleeperHomes_1703_a0a087c5",
+      "archive": "reports/house_sleepers/20261105T101609049628Z/saved_world"
+    },
+    {
+      "slot": "SleeperHomes_1703_3524fd12",
+      "archive": "reports/house_sleepers/20261105T104417334785Z/saved_world"
+    }
+  ]
+}

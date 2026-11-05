@@ -127,8 +127,10 @@ physics query, callback, reset or reconstruction. These are not a total frame or
 large-population performance guarantee. Motion guards and bounded perception are
 accounted separately from planning; do not hide their cost in the work count.
 
-Zombie navigation retains at most six routes and evaluates at most 30 ordered
-neighbour pairs per tick. Moving targets use bounded goal updates rather than
+Zombie residency retains six ordinary bodies or at most sixteen authored encounter
+bodies (mines and larger-building groups), with at most 240 ordered neighbour
+pairs per tick. Far unseen idle/sleeping bodies can retire to admit a nearer
+authored group; synchronize their persistent identity first and never refill deaths. Moving targets use bounded goal updates rather than
 restarting searches every frame. Finish a planning query before consuming queued
 moving-goal updates. Local followers refresh near the old goal (3 m), after a
 storey change (>2.5 m), or after a >4 m diversion with >1 m body progress; regional

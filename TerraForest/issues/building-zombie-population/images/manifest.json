@@ -1,0 +1,15 @@
+[
+  {
+    "file": "generated-warehouse.png",
+    "source": "reports/house_sleepers/20261105T104417334785Z/warehouse_resident.png",
+    "sha256": "707ac3734dbb275a38804a99015bc2aae373211957ec33dea7f3d3ddc5bdf9f5",
+    "seed": 1703,
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "scope": "Current exported-build normal-browser generated warehouse. One seated resident visible; pillar occludes the foreground. Three-body count comes from identity assertions, not visible image count. Inspected; player review pending.",
+    "provenance": "Diagnostic capture of TerraForest; inherited environment/character terms preserved. No external material imported."
+  }
+]

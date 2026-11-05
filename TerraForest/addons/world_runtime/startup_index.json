@@ -8,7 +8,8 @@
     "res://addons/player_runtime/art/consumables/219.res"
   ],
   "res://addons/characters/runtime/house_sleepers.gd": [
-    "res://addons/structures/expansion_catalog.gd"
+    "res://addons/structures/expansion_catalog.gd",
+    "res://addons/structures/city_catalog.gd"
   ],
   "res://addons/characters/runtime/human_view.gd": [
     "res://addons/characters/runtime/assets/Human.r11.glb",

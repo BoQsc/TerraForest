@@ -1946,7 +1946,7 @@ func _additional_loading_ready() -> bool:
 	if not zombies.population.advance(player.global_position, true):
 		var population_state: Dictionary = zombies.population.status()
 		loading_stage_percent=94;loading_stage_text="Loading world inhabitants"
-		loading_work_text="Zombies: %d active / %d limit · %d / %d nearby positions checked · terrain sampling %s" % [population_state.active,zombies.LIMIT,population_state.examined,population_state.candidates,"pending" if population_state.sample_pending else "ready"]
+		loading_work_text="Zombies: %d active / %d limit · %d / %d nearby positions checked · terrain sampling %s" % [population_state.active,zombies.residency_limit,population_state.examined,population_state.candidates,"pending" if population_state.sample_pending else "ready"]
 		return false
 	if world_vehicle.fleet_enabled:
 		var prototypes_ready:bool=world_vehicle.activation.prepare_from_saved(self)
