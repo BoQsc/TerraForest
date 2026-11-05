@@ -130,6 +130,12 @@ func build_card(index: int) -> void:
 	bar.size = Vector2(2, CARD_H - 48)
 	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bar)
+	var top_rule := ColorRect.new()
+	top_rule.color = Color(1, 1, 1, 0.07)
+	top_rule.position = Vector2(CARD_X + 1, y)
+	top_rule.size = Vector2(CARD_W - 2, 1)
+	top_rule.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(top_rule)
 	cards.append({
 		"panel": panel,
 		"skin": skin,
@@ -138,6 +144,7 @@ func build_card(index: int) -> void:
 		"status": status_label,
 		"state": state_label,
 		"bar": bar,
+		"rule": top_rule,
 	})
 
 
@@ -185,8 +192,11 @@ func select(index: int) -> void:
 		var is_selected := i == selected
 		skin.bg_color = Color(0.055, 0.13, 0.115, 0.85) if is_selected else Color(0.03, 0.075, 0.07, 0.55)
 		skin.border_color = Color(KIT.MINT.r, KIT.MINT.g, KIT.MINT.b, 0.5) if is_selected else Color(1, 1, 1, 0.045)
+		skin.set_border_width_all(1 if is_selected else 0)
 		var bar: ColorRect = entry.bar
 		bar.visible = is_selected
+		var rule: ColorRect = entry.rule
+		rule.color = Color(KIT.MINT.r, KIT.MINT.g, KIT.MINT.b, 0.4) if is_selected else Color(1, 1, 1, 0.07)
 		var name_label: Label = entry.name
 		var meta_label: Label = entry.meta
 		var status_label: Label = entry.status
