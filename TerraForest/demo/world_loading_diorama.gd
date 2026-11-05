@@ -6,9 +6,8 @@ extends Control
 
 const SAMPLE_SEED := 8841229
 const GLOBE_CENTER := Vector2(520, 552)
-const RING_RADIUS := 352.0
-const SEA_LEVEL := 0.03
-const RELIEF := 0.13
+const RING_RADIUS := 336.0
+const SEA_LEVEL := 0.07
 const RAIL_LEFT := 1030.0
 const RAIL_WIDTH := 806.0
 const STEP_TOP := 512.0
@@ -22,12 +21,12 @@ const MINT := Color("#7ed9b4")
 const RULE := Color(1, 1, 1, 0.10)
 
 const STEPS := [
-	{"title": "World recipe", "detail": "8841229 · temperate basin", "at": 0.03},
-	{"title": "Carving terrain", "detail": "heightfield · 4 096 chunks", "at": 0.26},
-	{"title": "Painting biomes", "detail": "grassland · old growth · wetland", "at": 0.44},
-	{"title": "Planting forest", "detail": "24 861 trees placed", "at": 0.68},
-	{"title": "Raising landmarks", "detail": "settlements, roads, camps", "at": 0.86},
-	{"title": "Streaming your camp", "detail": "spawn check and first frame", "at": 1.0},
+	{"title": "World recipe", "detail": "8841229 · temperate basin", "work": "RECIPE LOCKED", "at": 0.03},
+	{"title": "Carving terrain", "detail": "heightfield · 4 096 chunks", "work": "4 096 / 4 096 CHUNKS", "at": 0.26},
+	{"title": "Painting biomes", "detail": "grassland · old growth · wetland", "work": "18 / 18 BIOMES", "at": 0.44},
+	{"title": "Planting forest", "detail": "24 861 trees placed", "work": "24 861 / 32 000 TREES", "at": 0.68},
+	{"title": "Raising landmarks", "detail": "settlements, roads, camps", "work": "3 / 7 SITES PLACED", "at": 0.86},
+	{"title": "Streaming your camp", "detail": "spawn check and first frame", "work": "1 / 3 STREAMS READY", "at": 1.0},
 ]
 
 var display_font: SystemFont
@@ -68,16 +67,26 @@ class StarField extends Control:
 
 	func _draw() -> void:
 		for point in points:
+			if point.x > 0.5:
+				continue
 			var position := Vector2(point.x * size.x, point.y * size.y * 0.94)
 			var twinkle := 0.55 + 0.45 * sin(clock * (0.5 + point.z * 0.9) + point.z * 21.0)
 			var alpha := (0.08 + 0.30 * point.z) * twinkle
+			alpha *= lerpf(1.0, 0.35, smoothstep(0.40, 0.5, point.x))
 			draw_circle(position, 0.7 + 1.1 * point.z, Color(0.83, 0.94, 0.89, alpha))
 
 
 class ProgressRing extends Control:
-	var value := 0.0
+	var value := 0.0:
+		set(new_value):
+			if value != new_value:
+				value = new_value
+				queue_redraw()
 	var radius := 372.0
-	var pulse := 0.0
+	var pulse := 0.0:
+		set(new_value):
+			pulse = new_value
+			queue_redraw()
 	var accent := Color("#7ed9b4")
 
 	func _ready() -> void:
@@ -86,26 +95,28 @@ class ProgressRing extends Control:
 
 	func _draw() -> void:
 		var center := size * 0.5
-		draw_arc(center, radius, 0.0, TAU, 220, Color(1, 1, 1, 0.055), 1.0, true)
+		draw_arc(center, radius, 0.0, TAU, 220, Color(1, 1, 1, 0.1), 1.0, true)
+		draw_arc(center, radius - 18.0, 0.0, TAU, 200, Color(1, 1, 1, 0.05), 1.0, true)
 		for i in 60:
 			var angle := TAU * float(i) / 60.0 - PI * 0.5
 			var major := i % 5 == 0
 			var length := 9.0 if major else 4.0
 			var reached := float(i) / 60.0 <= value
-			var color := Color(1, 1, 1, 0.16 if major else 0.07)
+			var color := Color(1, 1, 1, 0.22 if major else 0.09)
 			if reached:
-				color = Color(accent.r, accent.g, accent.b, 0.75 if major else 0.4)
+				color = Color(accent.r, accent.g, accent.b, 0.85 if major else 0.45)
 			var direction := Vector2(cos(angle), sin(angle))
 			draw_line(center + direction * (radius + 12.0), center + direction * (radius + 12.0 + length), color, 1.0, true)
 		var segments := 96
+		var completion := smoothstep(0.9, 1.0, value)
 		for i in segments:
 			var t0 := float(i) / segments
 			if t0 > value:
 				break
 			var t1 := minf(float(i + 1) / segments, value)
 			var color := accent
-			color.a = lerpf(0.05, 0.95, pow(t0, 0.75))
-			draw_arc(center, radius, -PI * 0.5 + TAU * t0, -PI * 0.5 + TAU * t1, 6, color, 2.6, true)
+			color.a = lerpf(lerpf(0.45, 0.95, pow(t0, 0.6)), 0.7, completion)
+			draw_arc(center, radius, -PI * 0.5 + TAU * t0, -PI * 0.5 + TAU * t1, 6, color, 3.4, true)
 		if value > 0.001:
 			var head := -PI * 0.5 + TAU * value
 			var point := center + Vector2(cos(head), sin(head)) * radius
@@ -143,8 +154,8 @@ class SegmentBar extends Control:
 					var partial := (value - t) * float(count)
 					draw_rect(Rect2(rect.position, Vector2(rect.size.x * partial, rect.size.y)), accent)
 			else:
-				draw_rect(rect, Color(1, 1, 1, 0.085))
-		if value > 0.01:
+				draw_rect(rect, Color(1, 1, 1, 0.13))
+		if value > 0.01 and value < 0.995:
 			var head := Vector2(value * size.x, size.y * 0.5)
 			draw_circle(head, 7.0 + sin(clock * 3.0), Color(accent.r, accent.g, accent.b, 0.18))
 
@@ -170,7 +181,11 @@ class LeafMark extends Control:
 
 
 class StepDot extends Control:
-	var state := 0
+	var state := 0:
+		set(value):
+			if state != value:
+				state = value
+				queue_redraw()
 	var pulse := 0.0
 	var accent := Color("#7ed9b4")
 
@@ -205,7 +220,7 @@ class StepRail extends Control:
 	func _draw() -> void:
 		for i in count - 1:
 			var top := float(i) * step_height + 35.0
-			draw_line(Vector2(10, top), Vector2(10, top + step_height - 22.0), Color(1, 1, 1, 0.09), 1.0)
+			draw_line(Vector2(10, top), Vector2(10, top + step_height - 22.0), Color(1, 1, 1, 0.22), 1.0)
 
 
 func _ready() -> void:
@@ -294,14 +309,14 @@ func build_background() -> void:
 	var bloom := TextureRect.new()
 	bloom.texture = gradient_texture(
 		PackedFloat32Array([0.0, 0.42, 1.0]),
-		PackedColorArray([Color(0.20, 0.62, 0.50, 0.30), Color(0.10, 0.34, 0.29, 0.10), Color(0.03, 0.10, 0.09, 0.0)]),
+		PackedColorArray([Color(0.20, 0.62, 0.50, 0.34), Color(0.10, 0.34, 0.29, 0.12), Color(0.03, 0.10, 0.09, 0.0)]),
 		true
 	)
 	bloom.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	bloom.stretch_mode = TextureRect.STRETCH_SCALE
 	bloom.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bloom.position = GLOBE_CENTER - Vector2(640, 640)
-	bloom.size = Vector2(1280, 1280)
+	bloom.position = GLOBE_CENTER - Vector2(750, 750)
+	bloom.size = Vector2(1500, 1500)
 	add_child(bloom)
 	stars = StarField.new()
 	stars.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -321,7 +336,7 @@ func make_noise(seed_value: int, frequency: float, octaves: int, gain: float) ->
 
 
 func build_globe() -> void:
-	noise_land = make_noise(SAMPLE_SEED, 1.15, 5, 0.52)
+	noise_land = make_noise(SAMPLE_SEED, 1.0, 5, 0.52)
 	noise_warp = make_noise(SAMPLE_SEED + 7717, 0.72, 2, 0.5)
 	noise_detail = make_noise(SAMPLE_SEED + 19283, 2.9, 4, 0.55)
 	var container := SubViewportContainer.new()
@@ -343,21 +358,26 @@ func build_globe() -> void:
 	environment.background_color = Color(0, 0, 0, 0)
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.ambient_light_color = Color("#9ad9c6")
-	environment.ambient_light_energy = 0.45
+	environment.ambient_light_energy = 0.35
 	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	environment.tonemap_white = 2.0
 	world.environment = environment
 	viewport.add_child(world)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-26, -42, 0)
-	sun.light_energy = 2.1
-	sun.light_color = Color("#ffe9c9")
+	sun.light_energy = 1.4
+	sun.light_color = Color("#fff0d8")
 	viewport.add_child(sun)
 	var fill := DirectionalLight3D.new()
 	fill.rotation_degrees = Vector3(-6, 132, 0)
-	fill.light_energy = 0.45
+	fill.light_energy = 0.35
 	fill.light_color = Color("#7fd3c4")
 	viewport.add_child(fill)
+	var rim := DirectionalLight3D.new()
+	rim.rotation_degrees = Vector3(-12, 206, 0)
+	rim.light_energy = 0.5
+	rim.light_color = Color("#9fe8d0")
+	viewport.add_child(rim)
 	planet_pivot = Node3D.new()
 	planet_pivot.rotation_degrees = Vector3(-7, 0, 15)
 	viewport.add_child(planet_pivot)
@@ -366,13 +386,14 @@ func build_globe() -> void:
 	var land := MeshInstance3D.new()
 	land.mesh = build_land_mesh()
 	land.material_override = land_material()
+	land.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	planet.add_child(land)
 	var ocean := MeshInstance3D.new()
-	ocean.mesh = sphere_mesh(0.9945, 192, 96)
+	ocean.mesh = sphere_mesh(1.0015, 192, 96)
 	ocean.material_override = ocean_material()
 	planet.add_child(ocean)
 	var shell := MeshInstance3D.new()
-	shell.mesh = sphere_mesh(1.038, 96, 48)
+	shell.mesh = sphere_mesh(1.05, 96, 48)
 	shell.material_override = atmosphere_material()
 	shell.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	planet.add_child(shell)
@@ -381,7 +402,7 @@ func build_globe() -> void:
 	camera.fov = 32.0
 	camera.near = 0.05
 	camera.far = 40.0
-	camera.look_at_from_position(Vector3(0, 0.22, 4.85), Vector3(0, 0.02, 0), Vector3.UP)
+	camera.look_at_from_position(Vector3(0, 0.22, 6.3), Vector3(0, 0.02, 0), Vector3.UP)
 	camera.current = true
 	viewport.add_child(camera)
 
@@ -398,33 +419,59 @@ func sphere_mesh(radius: float, radial_segments: int, rings: int) -> SphereMesh:
 func elevation(direction: Vector3) -> float:
 	var warp := noise_warp.get_noise_3dv(direction * 0.85) * 0.32
 	var continent := noise_land.get_noise_3dv(direction * 1.05 + Vector3(warp, warp * 0.7, warp * 0.35))
-	var detail := noise_detail.get_noise_3dv(direction * 3.2) * 0.2
+	var detail := noise_detail.get_noise_3dv(direction * 3.2) * 0.13
 	var ridge := maxf(0.0, noise_detail.get_noise_3dv(direction * 1.85))
 	return continent * 0.82 + detail + ridge * ridge * 0.5 + 0.02
 
 
+func shape_elevation(direction: Vector3) -> float:
+	var warp := noise_warp.get_noise_3dv(direction * 0.85) * 0.32
+	var continent := noise_land.get_noise_3dv(direction * 1.05 + Vector3(warp, warp * 0.7, warp * 0.35))
+	var ridge := maxf(0.0, noise_detail.get_noise_3dv(direction * 1.85))
+	return continent * 0.82 + ridge * ridge * 0.38 + 0.02
+
+
+func relief(gauge: float) -> float:
+	if gauge <= 0.0:
+		return gauge * 0.08
+	return 0.055 * (1.0 - exp(-gauge / 0.3))
+
+
 func land_color(gauge: float, direction: Vector3) -> Color:
-	var shade := 0.93 + 0.13 * noise_warp.get_noise_3dv(direction * 5.5)
+	var shade := 0.95 + 0.08 * noise_warp.get_noise_3dv(direction * 5.5)
 	var color: Color
-	if gauge < 0.02:
-		color = Color("#c9b98d")
-	elif gauge < 0.10:
-		color = Color("#7fa955")
-	elif gauge < 0.20:
-		color = Color("#4d7a41")
-	elif gauge < 0.28:
-		color = Color("#5d6c4b")
-	elif gauge < 0.38:
-		color = Color("#7d7f70")
+	if gauge < 0.05:
+		color = Color("#37603a")
+	elif gauge < 0.16:
+		color = Color("#2b4e30")
+	elif gauge < 0.30:
+		color = Color("#26452c")
+	elif gauge < 0.42:
+		color = Color("#33523a")
 	else:
-		color = Color("#e6ebe2")
-	var polar := smoothstep(0.74, 0.95, absf(direction.y))
-	color = color.lerp(Color("#eef2ec"), polar * 0.92)
-	return Color(color.r * shade, color.g * shade, color.b * shade)
+		color = Color("#3d5240")
+	var canopy := 0.98 + 0.04 * noise_detail.get_noise_3dv(direction * 7.5)
+	color = Color(color.r * shade * canopy, color.g * shade * canopy, color.b * shade * canopy)
+	var polar := smoothstep(0.92, 1.0, absf(direction.y)) * 0.35
+	color = color.lerp(Color("#d7e6e6"), polar)
+	var relief_shade := hillshade(direction)
+	return Color(color.r * relief_shade, color.g * relief_shade, color.b * relief_shade)
+
+
+func hillshade(direction: Vector3) -> float:
+	const SUN := Vector3(-0.6, 0.55, 0.58)
+	var tangent := SUN - direction * SUN.dot(direction)
+	if tangent.length_squared() < 0.000001:
+		return 1.0
+	tangent = tangent.normalized()
+	var step := 0.014
+	var ahead := elevation((direction + tangent * step).normalized())
+	var behind := elevation((direction - tangent * step).normalized())
+	return clampf(1.0 + (behind - ahead) * 2.0, 0.92, 1.06)
 
 
 func build_land_mesh() -> ArrayMesh:
-	var source := sphere_mesh(1.0, 168, 84).get_mesh_arrays()
+	var source := sphere_mesh(1.0, 240, 120).get_mesh_arrays()
 	var vertices: PackedVector3Array = source[Mesh.ARRAY_VERTEX]
 	var indices: PackedInt32Array = source[Mesh.ARRAY_INDEX]
 	var surface := SurfaceTool.new()
@@ -433,7 +480,7 @@ func build_land_mesh() -> ArrayMesh:
 		var direction := vertex.normalized()
 		var height := elevation(direction)
 		surface.set_color(land_color(height - SEA_LEVEL, direction))
-		surface.add_vertex(direction * (1.0 + (height - SEA_LEVEL) * RELIEF))
+		surface.add_vertex(direction * (1.0018 + relief(shape_elevation(direction) - SEA_LEVEL)))
 	for index in indices:
 		surface.add_index(index)
 	surface.generate_normals()
@@ -450,9 +497,10 @@ func land_material() -> StandardMaterial3D:
 
 func ocean_material() -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
-	material.albedo_color = Color("#0e3a3c")
-	material.metallic = 0.35
-	material.roughness = 0.22
+	material.albedo_color = Color("#1a4d55")
+	material.metallic = 0.0
+	material.roughness = 0.35
+	material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	return material
 
 
@@ -462,14 +510,15 @@ func atmosphere_material() -> StandardMaterial3D:
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	material.cull_mode = BaseMaterial3D.CULL_FRONT
-	material.albedo_color = Color(0.36, 0.80, 0.68, 0.15)
+	material.albedo_color = Color(0.36, 0.80, 0.68, 0.26)
 	return material
 
 
 func tree_material() -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
-	material.albedo_color = Color("#2f5137")
+	material.albedo_color = Color("#33553a")
 	material.roughness = 0.95
+	material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	return material
 
 
@@ -484,7 +533,7 @@ func cone_mesh() -> CylinderMesh:
 
 
 func scatter_trees() -> void:
-	const LIMIT := 2400
+	const LIMIT := 2200
 	var multimesh := MultiMesh.new()
 	multimesh.transform_format = MultiMesh.TRANSFORM_3D
 	multimesh.mesh = cone_mesh()
@@ -498,13 +547,16 @@ func scatter_trees() -> void:
 		var radius := sqrt(maxf(0.0, 1.0 - y * y))
 		var theta := golden * float(i)
 		var direction := Vector3(cos(theta) * radius, y, sin(theta) * radius)
-		var gauge := elevation(direction) - SEA_LEVEL
-		if gauge < 0.03 or gauge > 0.24 or absf(direction.y) > 0.72:
+		direction = (direction + Vector3(rng.randf_range(-1, 1), rng.randf_range(-1, 1), rng.randf_range(-1, 1)) * 0.006).normalized()
+		var gauge := shape_elevation(direction) - SEA_LEVEL
+		if gauge < 0.025 or gauge > 0.3 or absf(direction.y) > 0.74:
+			continue
+		if noise_detail.get_noise_3dv(direction * 2.6) < -0.04:
 			continue
 		if placed >= LIMIT:
 			break
-		var scale := 0.008 + rng.randf() * 0.009
-		var origin := direction * (1.0 + gauge * RELIEF + scale * 1.1)
+		var scale := 0.0032 + rng.randf() * 0.003
+		var origin := direction * (1.0018 + relief(gauge) + scale * 1.1)
 		var basis := Basis(Quaternion(Vector3.UP, direction)).scaled(Vector3.ONE * scale)
 		multimesh.set_instance_transform(placed, Transform3D(basis, origin))
 		placed += 1
@@ -551,7 +603,7 @@ func build_rail() -> void:
 	lock.add_child(tag)
 
 	var kicker := label(spaced("PREPARING NEW WORLD"), 11, MINT, body_font)
-	kicker.position = Vector2(RAIL_LEFT, 234)
+	kicker.position = Vector2(RAIL_LEFT, 226)
 	add_child(kicker)
 	var title := label("ALDERGROVE HOLLOW", 60, INK, display_font)
 	title.position = Vector2(RAIL_LEFT - 3, 252)
@@ -570,7 +622,7 @@ func build_rail() -> void:
 			separator.size = Vector2(1, 44)
 			separator.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			add_child(separator)
-		var key := label(spaced(facts[i][0]), 9, DIM, body_font)
+		var key := label(spaced(facts[i][0]), 9, Color(0.55, 0.63, 0.59), body_font)
 		key.position = Vector2(x, 400)
 		add_child(key)
 		var value := label(facts[i][1], 15, INK, mono_font if facts[i][2] else body_font)
@@ -604,8 +656,8 @@ func build_rail() -> void:
 		add_child(detail)
 		rows.append({"at": STEPS[i].at, "title": heading, "detail": detail, "dot": dot})
 
-	percent_label = label("0%", 46, INK, mono_font)
-	percent_label.position = Vector2(RAIL_LEFT - 2, 838)
+	percent_label = label("0%", 52, INK, display_font)
+	percent_label.position = Vector2(RAIL_LEFT - 3, 834)
 	add_child(percent_label)
 	clock_label = label("", 13, MUTED, mono_font)
 	clock_label.position = Vector2(RAIL_LEFT, 866)
@@ -613,10 +665,10 @@ func build_rail() -> void:
 	clock_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	add_child(clock_label)
 
-	stage_label = label("", 10, DIM, body_font)
+	stage_label = label("", 11, Color(0.70, 0.77, 0.73, 0.9), body_font)
 	stage_label.position = Vector2(RAIL_LEFT, 906)
 	add_child(stage_label)
-	work_label = label("", 10, DIM, mono_font)
+	work_label = label("", 10, Color(0.64, 0.71, 0.67, 0.8), mono_font)
 	work_label.position = Vector2(RAIL_LEFT, 906)
 	work_label.size = Vector2(RAIL_WIDTH, 20)
 	work_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -629,11 +681,18 @@ func build_rail() -> void:
 
 
 func build_footer() -> void:
-	var caption := label(spaced("ALDERGROVE HOLLOW · SEED 8841229"), 10, Color(1, 1, 1, 0.28), body_font)
-	caption.position = Vector2(GLOBE_CENTER.x - 300.0, 946)
+	var caption := label(spaced("TERRAFORMED FROM SEED 8841229"), 10, Color(1, 1, 1, 0.52), body_font)
+	caption.position = Vector2(GLOBE_CENTER.x - 300.0, 952)
 	caption.size = Vector2(600, 20)
 	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(caption)
+
+	var divider := ColorRect.new()
+	divider.color = Color(1, 1, 1, 0.05)
+	divider.position = Vector2(970, 96)
+	divider.size = Vector2(1, 900)
+	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(divider)
 
 	var note := label("Field note — game trails north of the creek lead to the hollow.", 13, Color(0.87, 0.90, 0.84, 0.72), body_font)
 	note.position = Vector2(RAIL_LEFT, 1002)
@@ -647,8 +706,8 @@ func build_footer() -> void:
 	key_skin.set_corner_radius_all(3)
 	key_skin.set_content_margin_all(3)
 	key.add_theme_stylebox_override("panel", key_skin)
-	key.custom_minimum_size = Vector2(34, 22)
-	key.position = Vector2(1744, 1002)
+	key.custom_minimum_size = Vector2(38, 22)
+	key.position = Vector2(1740, 1002)
 	add_child(key)
 	var key_text := label("ESC", 10, MUTED, mono_font)
 	key_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -658,7 +717,7 @@ func build_footer() -> void:
 	cancel.position = Vector2(1786, 1006)
 	add_child(cancel)
 
-	var marker := label(spaced("MOCKUP · PRESENTATION PREVIEW"), 9, Color(1, 1, 1, 0.22), body_font)
+	var marker := label(spaced("MOCKUP · PRESENTATION PREVIEW"), 9, Color(1, 1, 1, 0.32), body_font)
 	marker.position = Vector2(0, 44)
 	marker.size = Vector2(1864, 18)
 	marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -679,11 +738,15 @@ func _process(delta: float) -> void:
 
 func apply() -> void:
 	var value := clampf(progress, 0.0, 1.0)
+	var finished := value >= 0.999
 	ring.value = value
 	bar.value = value
 	percent_label.text = "%d%%" % int(round(value * 100.0))
 	var remaining := maxf(0.0, (1.0 - value) * 24.0)
-	clock_label.text = "≈ %d s remaining   ·   %s elapsed" % [int(ceil(remaining)), format_clock(clock)]
+	if finished:
+		clock_label.text = "READY   ·   %s elapsed" % format_clock(clock)
+	else:
+		clock_label.text = "%d s remaining   ·   %s elapsed" % [int(ceil(remaining)), format_clock(clock)]
 	var active := 0
 	for i in rows.size():
 		if value >= float(rows[i].at):
@@ -694,21 +757,26 @@ func apply() -> void:
 		var dot: StepDot = row.dot
 		var heading: Label = row.title
 		var detail: Label = row.detail
-		if value >= float(row.at):
+		if finished or value >= float(row.at):
 			dot.state = 2
-			heading.add_theme_color_override("font_color", Color(MUTED.r, MUTED.g, MUTED.b, 0.62))
-			detail.add_theme_color_override("font_color", Color(DIM.r, DIM.g, DIM.b, 0.55))
+			heading.add_theme_color_override("font_color", Color(0.72, 0.78, 0.74, 0.58))
+			detail.add_theme_color_override("font_color", Color(0.64, 0.71, 0.67, 0.6))
 		elif i == active:
 			dot.state = 1
 			heading.add_theme_color_override("font_color", INK)
 			detail.add_theme_color_override("font_color", MUTED)
 		else:
 			dot.state = 0
-			heading.add_theme_color_override("font_color", Color(1, 1, 1, 0.24))
-			detail.add_theme_color_override("font_color", Color(1, 1, 1, 0.14))
+			heading.add_theme_color_override("font_color", Color(1, 1, 1, 0.3))
+			detail.add_theme_color_override("font_color", Color(1, 1, 1, 0.26))
 		dot.pulse = clock
-	stage_label.text = spaced(str(STEPS[active].title).to_upper())
-	work_label.text = spaced(str(STEPS[active].detail))
+	if finished:
+		active = rows.size() - 1
+		stage_label.text = spaced("WORLD READY")
+		work_label.text = spaced("ENTER THE FOREST")
+	else:
+		stage_label.text = spaced(str(STEPS[active].title).to_upper())
+		work_label.text = spaced(str(STEPS[active].work))
 
 
 func format_clock(seconds: float) -> String:
