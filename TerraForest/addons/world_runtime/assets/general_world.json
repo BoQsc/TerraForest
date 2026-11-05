@@ -1,0 +1,30 @@
+{
+  "file": "general_world.png",
+  "purpose": "Bundled stand-in picture shown when a saved world has no photograph of its own. It is never counted as that world's photograph.",
+  "source_slot": "window_flow_5402474451510809",
+  "source_file": "user://worlds/window_flow_5402474451510809.preview/north.png",
+  "view": "north",
+  "seed": 1703,
+  "generator": 1,
+  "region_terrain": false,
+  "gameplay": false,
+  "world_saved": "2026-11-05 16:54:47 local file time",
+  "created_by": "tests/window_session_flow.gd -> Launch.command(slot, create=true, generator=1, seed=1703, gameplay=false)",
+  "recipe": {
+    "biome": 0,
+    "settlements": 3,
+    "districts": 2,
+    "network": 2,
+    "trails": 2,
+    "road_grid": 3,
+    "material_veins": 1,
+    "introduction": 1,
+    "note": "world_recipe.DEFAULTS at creation time; the flow world's presentation.json stored only last_played and preview_count, so this recipe is the browser default rather than a recorded value."
+  },
+  "photographed_by": "World selector 'Create / refresh photographs' (addons/world_runtime/capture_world_previews_task.gd), aerial view at a generated place",
+  "reduced_to": "1280x720 bilinear from the original 1920x1080 north.png",
+  "reproduce": [
+    "godot --headless --path TerraForest --script res://addons/world_runtime/generation_job.gd -- --destination=<slot> --seed=1703 --generator=1 --settlement-layout=connected",
+    "open <slot> once so it is saved, then use Create / refresh photographs and keep north.png"
+  ]
+}

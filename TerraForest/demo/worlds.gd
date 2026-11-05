@@ -36,6 +36,7 @@ var filter_field: LineEdit
 var show_preparation:CheckBox
 var sort_order:OptionButton
 var saved_picture:TextureRect
+var saved_caption:Label
 var saved_details:Label
 var saved_title:Label
 var preview_view:TextureRect
@@ -156,17 +157,20 @@ func filter_list() -> void:
 	else:
 		library.select("")
 		saved_title.text="No matching worlds";saved_picture.texture=null;saved_details.text=""
+		if saved_caption!=null:saved_caption.visible=false
 func show_saved_details(index:int)->void:
 	if index<0 or index>=worlds.item_count:return
 	var slot:=str(worlds.get_item_metadata(index))
 	if library.selected_slot!=slot or not library.cache.has(slot):
 		saved_picture.texture=null;saved_details.text="Loading world details…"
+		if saved_caption!=null:saved_caption.visible=false
 	saved_title.text=slot
 	saved_title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
 	library.select(slot)
 func _saved_details_ready(slot:String,data:Dictionary,picture:Texture2D)->void:
 	if slot!=library.selected_slot:return
 	saved_picture.texture=picture
+	if saved_caption!=null:saved_caption.visible=bool(data.get("placeholder",false))
 	var lines:=PackedStringArray()
 	for entry in [["created","Created"],["last_played","Last played"],["saved","Last saved"]]:
 		var value:int=int(data.get(entry[0],0))

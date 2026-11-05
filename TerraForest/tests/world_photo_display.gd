@@ -59,6 +59,18 @@ func run()->void:
 	await process_frame
 	check(FileAccess.get_sha256(folder.path_join("arrival_fixture.preview/arrival.png"))==first_hash,"existing photographs are preserved without repeated captures")
 	game.free()
+	var bare:=folder.path_join("bare_only")
+	DirAccess.make_dir_recursive_absolute(bare)
+	var bare_save:=FileAccess.open(bare.path_join("bare_fixture.trw"),FileAccess.WRITE);bare_save.store_string("bare fixture");bare_save.close()
+	FileAccess.open(bare.path_join("bare_fixture.presentation.json"),FileAccess.WRITE).store_string(JSON.stringify({"seed":9,"created":1793000000}))
+	var bare_browser=load("res://demo/worlds.gd").new();bare_browser.preview_mode=true;root.add_child(bare_browser);bare_browser.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bare_browser.library=load("res://demo/world_library.gd").new();bare_browser.library.directory=bare;bare_browser.add_child(bare_browser.library)
+	bare_browser.library.catalog_ready.connect(bare_browser._catalog_ready);bare_browser.library.details_ready.connect(bare_browser._saved_details_ready);bare_browser.refresh()
+	await until(func():return bare_browser.saved_picture.texture!=null)
+	await process_frame;await RenderingServer.frame_post_draw
+	var bare_pixel:=root.get_texture().get_image().get_pixelv(bare_browser.saved_picture.get_global_rect().get_center())
+	check(bare_browser.saved_picture.texture!=null and bare_pixel.v>0.02 and bare_browser.saved_caption.visible and bare_browser.saved_caption.text=="No world picture yet","world selector draws the general picture with centred caption when no photograph exists")
+	bare_browser.free()
 	for mode:String in ["temporary","readonly"]:
 		game=GameProbe.new();game.temporary_world=mode=="temporary";game.terrain.backend.readonly_snapshot=mode=="readonly";root.add_child(game);game.add_child(game.terrain)
 		capture=load("res://addons/world_runtime/arrival_photograph.gd").new();capture.directory=folder;game.add_child(capture);capture.attach(game);capture.request();await process_frame
@@ -80,6 +92,7 @@ func run()->void:
 		check(loading.picture.texture!=null and pixel.b>0.3 and pixel.r<0.3,"resource-loading cover visibly displays the same world photograph: "+id)
 		if not output.is_empty():root.get_texture().get_image().save_png(output.path_join(id+"_photo_loading.png"))
 		check(Pictures.image_for("missing",folder)==null,"world without a photograph has an explicit empty result: "+id)
+		check(Pictures.display_image("missing",folder)!=null and not Pictures.has_photograph("missing",folder),"world without a photograph shows the general picture without counting it: "+id)
 		session.cover=null;loading.free();browser.free()
 	Registry.session_id=original
 	print("WORLD_PHOTO_DISPLAY checks=",checks," failures=",failures," fixture=",folder)

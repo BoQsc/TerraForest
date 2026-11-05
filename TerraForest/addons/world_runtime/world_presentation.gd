@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 # Small launcher metadata only; never part of authoritative world storage.
+# Bundled stand-in for worlds without a photograph of their own. Provenance:
+# assets/general_world.json (window_flow world, seed 1703, generator 1).
+const GENERAL_IMAGE:="res://addons/world_runtime/assets/general_world.png"
+static var general_cache:Image
 static func metadata(slot:String,directory:String="user://worlds")->Dictionary:
  if not slot.is_valid_identifier() or slot.length()>48:return {}
  var path:=directory.path_join(slot+".presentation.json")
@@ -55,6 +59,28 @@ static func read_image(slot:String,directory:String="user://worlds",maximum:Vect
 static func image_for(slot:String,directory:String="user://worlds")->Texture2D:
  var picture:=read_image(slot,directory,Vector2i.ZERO,true)
  return ImageTexture.create_from_image(picture) if picture!=null else null
+
+## The general picture is displayed like a photograph but never counts as one,
+## so a world still receives its own arrival capture when it has none.
+static func general_image(maximum:Vector2i=Vector2i.ZERO)->Image:
+ if general_cache==null and FileAccess.file_exists(GENERAL_IMAGE):general_cache=Image.load_from_file(GENERAL_IMAGE)
+ if general_cache==null:return null
+ var picture:Image=general_cache.duplicate()
+ if maximum.x>0 and maximum.y>0:
+  var factor:=minf(1.,minf(float(maximum.x)/picture.get_width(),float(maximum.y)/picture.get_height()))
+  if factor<1.:picture.resize(maxi(1,roundi(picture.get_width()*factor)),maxi(1,roundi(picture.get_height()*factor)),Image.INTERPOLATE_BILINEAR)
+ return picture
+
+static func display_image(slot:String,directory:String="user://worlds",maximum:Vector2i=Vector2i.ZERO)->Image:
+ var picture:=read_image(slot,directory,maximum)
+ return picture if picture!=null else general_image(maximum)
+
+static func display_texture(slot:String,directory:String="user://worlds")->Texture2D:
+ var picture:=display_image(slot,directory)
+ return ImageTexture.create_from_image(picture) if picture!=null else null
+
+static func has_photograph(slot:String,directory:String="user://worlds")->bool:
+ return read_image(slot,directory,Vector2i(1,1))!=null
 
 # Explicit snapshots only: no per-frame readback or extra gameplay viewport.
 static func capture(game:Node,viewport:Viewport,path:String)->Error:

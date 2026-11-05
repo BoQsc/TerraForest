@@ -70,7 +70,10 @@ func _process(_delta:float)->void:
 	_start_next()
 
 static func _read_details(slot:String,folder:String)->Dictionary:
-	return {"details":Presentation.details(slot,folder),"image":Presentation.read_image(slot,folder,THUMBNAIL_SIZE)}
+	var details:=Presentation.details(slot,folder)
+	var photograph:=Presentation.read_image(slot,folder,THUMBNAIL_SIZE)
+	details["placeholder"]=photograph==null
+	return {"details":details,"image":photograph if photograph!=null else Presentation.general_image(THUMBNAIL_SIZE)}
 
 func _exit_tree()->void:
 	if worker!=null:worker.wait_to_finish();worker=null

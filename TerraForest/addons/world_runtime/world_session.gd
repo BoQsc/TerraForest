@@ -53,7 +53,7 @@ func dismiss_continue()->void:
 	continue_started_ms=0
 	if is_instance_valid(cover):cover.queue_free();cover=null
 func set_world_photograph(slot:String,directory:String="user://worlds")->void:
-	if is_instance_valid(cover):cover.picture.texture=preload("res://addons/world_runtime/world_presentation.gd").image_for(slot,directory)
+	if is_instance_valid(cover):cover.picture.texture=preload("res://addons/world_runtime/world_presentation.gd").display_texture(slot,directory)
 func open_world(command:PackedStringArray)->bool:
 	if transitioning:return false
 	var arguments:=Options.user_arguments(command)

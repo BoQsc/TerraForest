@@ -29,7 +29,9 @@ static func build(host:Control)->void:
 	host.worlds=ItemList.new();host.worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;host.worlds.size_flags_horizontal=Control.SIZE_EXPAND_FILL;host.worlds.custom_minimum_size=Vector2(300,250);library_row.add_child(host.worlds)
 	var detail_column:=VBoxContainer.new();detail_column.custom_minimum_size.x=380;detail_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;library_row.add_child(detail_column)
 	host.saved_title=host.heading(detail_column,"Select a world",24)
-	host.saved_picture=TextureRect.new();host.saved_picture.custom_minimum_size=Vector2(380,200);host.saved_picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;host.saved_picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;detail_column.add_child(host.saved_picture)
+	var picture_holder:=Control.new();picture_holder.custom_minimum_size=Vector2(380,200);detail_column.add_child(picture_holder)
+	host.saved_picture=TextureRect.new();host.saved_picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);host.saved_picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;host.saved_picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;picture_holder.add_child(host.saved_picture)
+	host.saved_caption=Label.new();host.saved_caption.text="No world picture yet";host.saved_caption.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);host.saved_caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;host.saved_caption.vertical_alignment=VERTICAL_ALIGNMENT_CENTER;host.saved_caption.add_theme_font_size_override("font_size",20);host.saved_caption.add_theme_color_override("font_color",Color(1,1,1));host.saved_caption.add_theme_color_override("font_outline_color",Color(0,0,0,0.85));host.saved_caption.add_theme_constant_override("outline_size",6);host.saved_caption.visible=false;picture_holder.add_child(host.saved_caption)
 	host.saved_details=host.heading(detail_column,"",18);host.saved_details.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	host.worlds.item_selected.connect(host.show_saved_details)
 	host.button(saved,"Open selected world",func():host.launch_selected(false))
