@@ -1,0 +1,22 @@
+{
+  "inputs": [
+    "TerraForest/addons/ui_sets/sets/campfire/set.tres",
+    "TerraForest/addons/ui_sets/sets/diorama/set.tres",
+    "TerraForest/addons/ui_sets/sets/survey/set.tres",
+    "TerraForest/addons/ui_sets/sets/expedition/set.tres",
+    "TerraForest/addons/ui_sets/sets/shipped/set.tres",
+    "TerraForest/addons/ui_sets/registry.gd",
+    "TerraForest/tests/ui_sets.gd"
+  ],
+  "steps": [
+    {
+      "kind": "tests",
+      "command": {
+        "program": "python",
+        "args": ["tools/check_ui_sets.py"],
+        "workdir": "TerraForest",
+        "timeout": 300000
+      }
+    }
+  ]
+}
