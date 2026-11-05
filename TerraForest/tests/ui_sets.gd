@@ -22,7 +22,11 @@ func run()->void:
 	var catalog:=Registry.discover()
 	check(catalog.size()==5 and Registry.diagnostics.is_empty(),"all preserved sets are discovered from manifests")
 	check(not Registry.activate("missing").ok and Registry.session_id=="shipped","unknown activation preserves the current set")
-	check(not Registry.activate("diorama").ok and Registry.session_id=="shipped","reference-only sample stages cannot become live progress")
+	for id:String in ["diorama","campfire"]:
+		var reference:Resource=catalog[id]
+		var resolved:Resource=Registry.resolve(reference)
+		check(reference.preview!=resolved.runtime_preview,"loading reference stays separate from its live adapter: "+id)
+		check(Registry.activate(id).ok and Registry.active().id==id,"loading-only design activates through the working adapters: "+id)
 	var custom=Set.new();custom.id="fixture_plugin";custom.title="Plugin fixture";custom.base=Registry.DEFAULT;custom.preview=Registry.DEFAULT.preview;custom.preview_pages=Registry.DEFAULT.preview_pages;custom.runtime_enabled=true
 	var directory:=folder.path_join("plugin");DirAccess.make_dir_recursive_absolute(directory)
 	ResourceSaver.save(custom,directory.path_join("set.tres"))
@@ -30,7 +34,7 @@ func run()->void:
 	check(plugins.has("fixture_plugin") and Registry.validate(plugins.fixture_plugin,true).is_empty(),"a new folder/manifest inherits working adapters without a registry edit")
 	custom.base=Resource.new()
 	check(not Registry.validate(custom,true).is_empty(),"invalid inheritance fails before touching active preferences")
-	for id:String in ["shipped","survey","expedition"]:
+	for id:String in ["shipped","survey","expedition","diorama","campfire"]:
 		check(Registry.activate(id).ok and Registry.active().id==id,"functional set activates: "+id)
 		var browser=load("res://demo/worlds.gd").new();browser.preview_mode=true;root.add_child(browser)
 		check(browser.library==null and browser.preparation_pid<0 and browser.photograph_pid<0 and not browser.is_processing(),"mockup browser cannot read saves or start background jobs: "+id)
@@ -50,7 +54,7 @@ func run()->void:
 	prefs.load(Registry.preference_path)
 	check(prefs.get_value("unrelated","preserved")==123,"activation preserves other preferences")
 	Registry.session_id=""
-	check(Registry.selected_id()=="expedition","selected set restores from disk without a session override")
+	check(Registry.selected_id()=="campfire","selected set restores from disk without a session override")
 	Registry.session_id="removed_plugin"
 	check(Registry.active().id=="shipped","missing plugin restores the working Classic set")
 	Registry.session_id="shipped"

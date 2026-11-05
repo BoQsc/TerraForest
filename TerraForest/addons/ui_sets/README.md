@@ -19,14 +19,16 @@ no world-library scan, generation task or photograph job is started.
 | `shipped` | Current browser/create/generation/loading | Original working controls and loading modules |
 | `survey` | `demo/world_survey/mockup.tscn` | Existing functional layouts with Survey typography/palette |
 | `expedition` | `demo/world_screens/mockup.tscn` | Existing functional layouts with Planet typography/palette and reusable loading planet |
-| `diorama` | `demo/world_loading_diorama.tscn` | Reference only; representative stages are not live progress |
-| `campfire` | `demo/world_loading_mockup.tscn` | Reference only; representative values are not live progress |
+| `diorama` | `demo/world_loading_diorama.tscn` | Existing functional layouts with Diorama typography/palette; the animated loading layout is not ported |
+| `campfire` | `demo/world_loading_mockup.tscn` | Existing functional layouts with Campfire typography/palette; the loading layout is not ported |
 
-**The full Survey/Planet reference layouts are not claimed as ported.** Their live
-adapters intentionally reuse the working controls. A designer can replace a
-specific view module later while retaining the controller and the exact reference.
-Loading-only designs cannot be activated as complete live suites until adapters
-are supplied and `runtime_enabled` is explicitly enabled.
+**No reference layout is claimed as ported.** All five sets activate: their live
+adapters intentionally reuse the working controls and measured progress, while the
+preserved scenes stay available as exact references. A designer can replace a
+specific view module later while retaining the controller and the reference.
+Activation of `campfire` or `diorama` therefore never presents their sample stages
+as real progress; it applies their typography and palette to the working browser,
+creation form and loading panel.
 
 ## Add a set without editing the registry
 
