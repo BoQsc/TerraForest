@@ -36,16 +36,27 @@ with `--generation-handoff`, and received `PhotoProbe.preview/arrival.png`
 automatically; a normal reopen without the handoff regenerated it after the
 image was deleted, and the browser then displayed it as that world's photograph.
 
-Two weaknesses remained. The frame was read on the first ready frame, while
-terrain and newly spawned vegetation were still streaming, and a capture that
-found the loading cover, a modal or a still-loading world was dropped for the
-whole session. `arrival_photograph.gd` now stores the first workable frame
-immediately, so a save-and-return cannot outrun it, and then replaces it once
-with a settled readback taken after 30 frames with no loading or modal. A
-skipped or empty capture is retried every 0.5 s (bounded to 60 s) instead of
-being dropped. The photograph still never invents a frame: it is read from the
-real viewport and only after the entry camera, cover and dialogs are gone, and
-an existing photograph is never recaptured.
+Two weaknesses remained. The frame was read on the first ready frame, and a
+capture that found the loading cover, a modal or a still-loading world was
+dropped for the whole session.
+
+The earliest moment that makes sense is the first frame after the loading layer
+is hidden (`loading_active=false`), which is where the controller calls
+`arrival_photograph.request()`. `capture_image` hides every CanvasLayer, so a
+readback taken earlier would silently store still-streaming terrain under a
+hidden loader rather than the world the player is about to see. The capture
+therefore waits for the session cover, modals and the entry camera, reads
+exactly one frame, and retries every 0.5 s (bounded to 60 s) if that frame is
+blocked or empty. It never invents a frame and never recaptures an existing
+photograph, so one picture per world is the stored result.
+
+Measured on a real generated world (generator 29, seed 2, generation handoff):
+`ARRIVAL_PHOTO capture_ms=3247 published_ms=3792 attempts=0 readbacks=1`, with
+`ARRIVAL_WAIT cover=false popup=false entry=true windows=[]` before it. The whole
+3.2 s wait is the entry/wake presentation finishing, not the loader and not a
+modal; the PNG encode adds about 0.45 s. That is the earliest frame where the
+world, rather than the loading cover or the fly-in, is what the photograph would
+contain.
 
 Source and package photo-display checks pass 24 each; real source world flow
 passes 25 and package flow 26 (including the added early-cover assertion).
