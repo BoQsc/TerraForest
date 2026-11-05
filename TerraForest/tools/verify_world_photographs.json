@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    "TerraForest/addons/world_runtime/arrival_photograph.gd",
+    "TerraForest/addons/world_runtime/world_presentation.gd",
+    "TerraForest/demo/world_library.gd",
+    "TerraForest/demo/worlds.gd",
+    "TerraForest/tests/world_photo_display.gd"
+  ],
+  "steps": [
+    {
+      "kind": "tests",
+      "command": {
+        "program": "python",
+        "args": ["tools/check_ui_sets.py", "--photographs"],
+        "workdir": "TerraForest",
+        "timeout": 600000
+      }
+    }
+  ]
+}
