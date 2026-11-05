@@ -22,28 +22,34 @@ Revisit if the reported world still shows resets: capture clip/cursor, awareness
 and route transitions around the event, then extend the real-body regression.
 Terrain foot IK, dense mine crowding and animation art approval remain separate.
 
-## Zombie close threats and sleeper ambushes — 2026-11-04
+## Zombie sustained response and sleeper ambushes — 2026-11-05
 
-Playtest follow-up reopened standing behavior. Wander/search had reused the
-terrain-only outdoor floor probe, rejecting 17/17 valid furnished-room goals.
-The separate room-floor selector now resolves those points below ceilings;
-ordinary outdoor admission retains its original policy. Source/executable room
-checks and a real ten-sleeper mine/Fly diagnostic are linked in the issue.
-Mine residents pursued and attacked on foot; Fly was confirmed to globally
-suspend behavior. The user is unsure whether Fly was active, so the exact mine
-stall remains open. On the next on-foot reproduction, retain gate/intent/route/
-motion-rejection traces and replay that position read-only before claiming it fixed.
+Repeated playtest rejection led to a broader rework. Moving-player target updates
+were restarting unfinished searches; ten separate local obstacle searches also
+repeated the same expensive collision probes. Searches now finish before queued
+retargeting, and obstacle paths share the existing regional graph early. The
+same acquired-target wall fixture improves from 0/10 moving to 10/10 with contact.
+Direct corridors remain local; geometry guards and planning/node caps remain.
 
-Sleepers cautiously recognize a nearby unobstructed player, rise faster through
-their existing clearance guards, then pursue a visible target immediately.
-Ordinary zombies retain distant temperament but react promptly to close threats
-and accepted damage. Last-sighting, blocked-route and search expiry still allow
-escape. Authored sleeper temperament survives awake save/reload.
-[Changes, verification and retained failures](../issues/zombie-aggression/README.md).
-Player balance/animation review and dense coal-mine pursuit remain open: revisit
-on outdoor/house/mine playtest feedback, then tune the declared encounter fields
-and repeat the physical sensing/combat, sleeper safety and house reload checks.
-Native route budgets and existing broader navigation acceptance are unchanged.
+Recognition is faster, confirmed sight renews interest, brief occlusion retains
+the last clue, and audible updates/investigation/search maintain pressure.
+Rotating overdue perception gives all 16 residents service at 20 Hz with the same
+two-probe cap. Directional sleeper caution, faster guarded rise, stronger chase
+and retaliation replace the earlier weaker tuning; finite unseen/search/blocked
+expiry still permits escape. Fly no longer freezes the entire zombie host.
+
+Normal-perception moving-player tests pass in actual furnished rooms and the
+owned ten-sleeper mine station: all ten move and six attack while the player
+travels 5.15 m. The executable repeat has ten moving/seven attacking and 3.43 m
+of player travel. Source and packaged results, prior failures and exact scope are in
+[the existing issue](../issues/zombie-aggression/README.md).
+
+Player balance/animation review, arbitrary doorway crowding, distant streaming
+and whole-world performance remain open. The broader regional tower-stair query
+times out separately; its current/baseline comparison is retained in the issue.
+Resume with frontier/storey evidence and an actual bounded multi-flight journey.
+Revisit any standing resident with gate/intent/route/motion-rejection traces;
+passing scoped encounters does not override further playtest feedback.
 
 ## Steam installation consistency - 2026-11-04
 

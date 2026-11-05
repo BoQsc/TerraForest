@@ -26,6 +26,8 @@ var awareness_status:Dictionary={}
 # Explicit navigation/animation fixture override; normal gameplay uses perception.
 var force_pursuit:=false
 var _sense_clock:Dictionary={}
+var _sense_cursor:=0
+var _alarm_clock:Dictionary={}
 var _roam_revision:Dictionary={}
 var navigator: Node3D
 var navigation_status: Dictionary={}
@@ -75,7 +77,7 @@ func clear() -> void:
 	for obstacle in _obstacles.values():
 		if is_instance_valid(obstacle):obstacle.queue_free()
 	_obstacles.clear();_obstacle_clock.clear()
-	_sense_clock.clear();_roam_revision.clear();awareness_status.clear()
+	_sense_clock.clear();_roam_revision.clear();awareness_status.clear();_alarm_clock.clear();_sense_cursor=0
 	if awareness!=null:awareness.clear()
 	if navigator!=null:navigator.clear()
 	if navigation_interest.is_valid():navigation_interest.call(PackedVector3Array())
@@ -150,6 +152,19 @@ func _update_navigation(delta: float, available: bool) -> void:
 	# Refresh only when the recipient body changes: assignment invalidates routes.
 	if excluded!=_navigation_exclusions:
 		navigator.set_exclusions(excluded);_navigation_exclusions=excluded
+	# Fair bounded service: a low update rate or a crowded station must not let
+	# the first residents consume every probe forever.
+	var probes:Dictionary={}
+	for zombie:CharacterBody3D in residents:
+		if available and zombie.alive and zombie.process_mode!=Node.PROCESS_MODE_DISABLED:
+			var id:int=zombie.get_instance_id();_sense_clock[id]=float(_sense_clock.get(id,0.0))-delta
+	var count:=residents.size()
+	for offset in count:
+		var index:=(_sense_cursor+offset)%count
+		var zombie:CharacterBody3D=residents[index];var id:int=zombie.get_instance_id()
+		if not available or not zombie.alive or zombie.process_mode==Node.PROCESS_MODE_DISABLED or float(_sense_clock.get(id,0.0))>0:continue
+		probes[id]=true;_sense_clock[id]=.1
+		if probes.size()==2:_sense_cursor=(index+1)%count;break
 	var sight_budget:=2
 	for zombie in residents:
 		var id:int=zombie.get_instance_id()
@@ -159,9 +174,8 @@ func _update_navigation(delta: float, available: bool) -> void:
 			intent={"state":"chase","goal":target.global_position,"moving":true,"combat":true}
 		else:
 			if active:
-				_sense_clock[id]=float(_sense_clock.get(id,0.0))-delta
-				if float(_sense_clock[id])<=0 and sight_budget>0:
-					sight_budget-=1;_sense_clock[id]=0.15
+				if probes.has(id):
+					sight_budget-=1
 					var seen:bool=awareness.wants_sight(id,zombie.global_position,zombie.global_basis.z,target.global_position)
 					if seen:
 						var eye:Vector3=zombie.global_position+Vector3.UP*(0.45 if zombie._crawling else 1.35)
@@ -172,12 +186,20 @@ func _update_navigation(delta: float, available: bool) -> void:
 						var sight_bounds:=AABB(eye,Vector3.ZERO).expand(player_eye).grow(0.1)
 						seen=readiness.is_valid() and bool(readiness.call(sight_bounds)) and get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(eye,player_eye,7,excluded)).is_empty()
 					awareness.observe(id,target.global_position,seen,zombie.global_position.distance_to(target.global_position))
-					if not seen and noise_speed>1.0:awareness.hear(id,zombie.global_position,target.global_position,12.0 if noise_speed>7.0 else 7.0)
+					if not seen and noise_speed>1.0:awareness.hear(id,zombie.global_position,target.global_position,12.0 if noise_speed>6.0 else 8.0 if noise_speed>3.0 else 3.0)
 			intent=awareness.advance(id,zombie.global_position,minf(delta,0.1),active,navigator.state(id))
 			if intent.is_empty():continue
 			if active and intent.state in ["wander","search"] and _roam_revision.get(id,-1)!=intent.revision:
 				_roam_revision[id]=intent.revision
-				awareness.accept_roam(id,supported_roam_point(intent.goal,not zombie._crawling))
+				var destination:=supported_roam_point(intent.goal,not zombie._crawling)
+				if not destination.is_finite():
+					# A quiet room may be smaller than a surface roaming radius. Try
+					# bounded shorter goals before abandoning the current clue.
+					var offset:Vector3=intent.goal-zombie.global_position
+					for fraction:float in [.5,.25]:
+						destination=supported_roam_point(zombie.global_position+offset*fraction,not zombie._crawling)
+						if destination.is_finite():break
+				awareness.accept_roam(id,destination)
 				intent=awareness.status(id)
 		if active and zombie.sleeper_active() and intent.state=="sleeping" and zombie.sleeper.phase!="sleeping":
 			awareness.provoke(id,zombie.global_position);intent=awareness.status(id)
@@ -186,6 +208,13 @@ func _update_navigation(delta: float, available: bool) -> void:
 			zombie.sleeper.wake()
 			if zombie.sleeper.phase=="ready" and intent.wake_ready and awareness.finish_waking(id):
 				zombie.sleeper.finish();intent=awareness.status(id)
+		_alarm_clock[id]=maxf(0.,float(_alarm_clock.get(id,0.))-(delta if active else 0.))
+		if active and intent.state=="chase" and bool(intent.get("visible",false)) and awareness_status.get(id,{}).get("state","")!="chase" and float(_alarm_clock[id])<=0:
+			_alarm_clock[id]=4.
+			# Only an actual sighting broadcasts a local clue; listeners cannot
+			# propagate an alarm by hearing it, or reveal a hidden player's motion.
+			for peer:CharacterBody3D in residents:
+				if peer!=zombie and peer.alive and peer.process_mode!=Node.PROCESS_MODE_DISABLED:awareness.hear(peer.get_instance_id(),peer.global_position,zombie.global_position,8.)
 		awareness_status[id]=intent
 		if intent.has("chase_speed_multiplier"):zombie.chase_speed_multiplier=float(intent.chase_speed_multiplier)
 		zombie.awareness_state=intent.state
@@ -276,7 +305,7 @@ func _retire(index: int,keep_corpse:bool=false) -> void:
 	if population != null:population.sync(zombie)
 	_corpse_age.erase(zombie.get_instance_id())
 	var id:int=zombie.get_instance_id()
-	awareness.remove_agent(id);awareness_status.erase(id);_sense_clock.erase(id);_roam_revision.erase(id)
+	awareness.remove_agent(id);awareness_status.erase(id);_sense_clock.erase(id);_roam_revision.erase(id);_alarm_clock.erase(id)
 	navigator.remove_agent(id);_obstacle_clock.erase(id)
 	if _obstacles.has(id):
 		if is_instance_valid(_obstacles[id]):_obstacles[id].queue_free()

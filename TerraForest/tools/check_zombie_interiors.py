@@ -14,6 +14,7 @@ from run_godot_check import execute, verify_pack_native
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--executable', action='store_true')
+    parser.add_argument('--moving-target', action='store_true')
     args = parser.parse_args()
     config, _ = parse_args([])
     folder = ROOT / 'reports/zombie_interior_pursuit' / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
@@ -27,6 +28,8 @@ def main():
     command = [str(engine), '--path', str(ROOT / 'dist' if args.executable else ROOT), '--windowed', '--position', '-2400,-1600', '--resolution', '1280x720', '--max-fps', '60', '--log-file', str(folder / 'engine.log'), '--script', str(script), '--', '--interior-output=' + folder.as_posix()]
     if args.executable:
         command[1:1] = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')]
+    if args.moving_target:
+        command.append('--moving-target')
     original = subprocess.Popen
 
     def nonactivating(*arguments, **keywords):

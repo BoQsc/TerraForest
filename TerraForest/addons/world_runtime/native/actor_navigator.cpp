@@ -74,7 +74,14 @@ bool NativeActorNavigator::set_agent(int64_t id,const Vector3 &feet,const Vector
     const bool regional_update=std::abs(agent->requested.y-agent->aimed.y)>2.5||
         ((state==ActorRoute::FOLLOWING||state==ActorRoute::ARRIVED)&&
         (agent->position.distance_to(agent->planned_from)>4||agent->position.distance_to(agent->goal)<4));
-    const bool retarget=!agent->active || (agent->age>=.4 && change && (!agent->regional||regional_update)) ||
+    // Queue the latest observation while planning. Resetting a search every
+    // 0.4 s can starve every actor behind an obstacle when the recipient moves.
+    // Once following, keep useful validated progress until the end is near,
+    // the recipient changes storey, or a substantial diversion warrants it.
+    const bool local_update=agent->position.distance_to(agent->goal)<3||
+        std::abs(agent->requested.y-agent->aimed.y)>2.5||
+        (agent->requested.distance_to(agent->aimed)>4&&agent->position.distance_to(agent->planned_from)>1);
+    const bool retarget=!agent->active || (state!=ActorRoute::PLANNING && agent->age>=.4 && change && (agent->regional?regional_update:local_update)) ||
         ((agent->regional?agent->journey.state:agent->route.state)==ActorRoute::ARRIVED && agent->requested.distance_to(agent->goal)>.2);
     agent->active=true;
     if(retarget){
@@ -108,7 +115,10 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
     graph_.requests=pending;
     for(auto &agent:agents_){
         agent.age+=delta;if(!agent.active)continue;
-        if(!agent.regional&&(agent.route.state==ActorRoute::BLOCKED||agent.route.state==ActorRoute::SEARCH_LIMIT)){
+        // Direct corridors stay cheap/local. As soon as an obstacle requires
+        // graph search, share the regional surface cache instead of repeating
+        // the same expensive sampled edges independently for every pursuer.
+        if(!agent.regional&&(agent.route.expansions>0||agent.route.state==ActorRoute::BLOCKED||agent.route.state==ActorRoute::SEARCH_LIMIT)){
             agent.regional=true;agent.journey.invalidate();
         }
         if(agent.regional)agent.journey.prepare(agent.position,agent.goal,agent.profile,delta);

@@ -52,5 +52,18 @@
     ],
     "status": "current furnished-prefab evidence; different cases, not before/after",
     "provenance": "Diagnostic capture of TerraForest; inherited asset terms preserved."
+  },
+  {
+    "file": "moving-pursuit-wall.png",
+    "source": "reports/zombie_pressure/20261105T081218068609Z/moving_pursuit_600.png",
+    "sha256": "2b051af4a5989e3343b6159e917f201b300510fd4e171369ce18e9920561585f",
+    "build": "2026-11-05 source sustained-pressure rework",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "status": "inspected isolated route progress evidence; acquired target; player review pending",
+    "provenance": "Diagnostic capture of TerraForest; original fixture code 0BSD, inherited character asset terms preserved."
   }
 ]

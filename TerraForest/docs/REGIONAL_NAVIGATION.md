@@ -5,7 +5,8 @@ Selected walking journeys verified, 2026-10-23. This extends
 
 `NativeActorNavigator` now owns a shared, derived surface graph for its external
 characters. Nearby level targets retain `ActorRoute`; targets farther than 12 m,
-different storeys, or exhausted local searches use the regional graph. Both tiers
+different storeys, or local searches encountering an obstacle use the regional
+graph as soon as their first graph expansion begins. Direct corridors stay local. Both tiers
 use the identical native support, capsule sweep, step and hazard evaluator. Standing zombies explicitly use their controller's 45-degree floor capability
 (normal Y >=0.7072); legacy walkers and crawlers retain >=0.85. A physical 32-degree
 ascent/contact and rejected 46-degree ascent qualify the standing profile boundary.
@@ -71,7 +72,12 @@ living bodies retain identity while waiting for publication.
 Regional moving targets keep their committed search while it plans, then refresh
 after four metres of progress or on the final approach. A storey change can
 retarget earlier. This avoids restarting a large search every pursuit tick.
-Continuous moving-target endurance remains an explicit acceptance gate.
+The 2026-11-05 pursuit rework also preserves unfinished local queries and shares
+obstacle sampling early: a twelve-second ten-body moving-goal fixture improves
+from 0/10 moving to 10/10. Normal-perception moving-player checks pass in furnished
+rooms and the actual owned mine; source/executable receipts are in
+[the zombie issue](../issues/zombie-aggression/README.md). Longer continuous
+moving-target endurance remains an explicit acceptance gate.
 
 Selected evidence is complete in [regional navigation evidence](evidence/regional_navigation/README.md):
 actual saved tower and cave round trips, closed-door clearance/destruction, edited
@@ -81,7 +87,7 @@ front/foot-centre treads and floor snapping. Gravity cannot undo a verified rise
 advance; no jump, unsupported traversal or wall/ceiling bypass is authorized.
 
 Cold queries still take roughly10-17s in the selected outbound cases. Faster cold
-planning, full96m pressure/travel, current owned-mine and broader seeds/buildings,
+planning, full96m pressure/travel, broader owned-mine layouts and seeds/buildings,
 continuous moving-target endurance and heterogeneous crowds remain unqualified.
 Automatic ladder/jump links and tight crawler passages need separate capability
 and interaction checks. Door removal still needs fresh-process compound persistence.
@@ -94,3 +100,9 @@ and the readiness-index update. The historical journeys above are not current
 qualification of this fixture. Return to its present tower geometry/support and
 route trace; require the full fixture and actual street-to-floor journey to pass.
 [Comparison receipts](../issues/runtime-performance/README.md).
+
+2026-11-05 recheck: the same tower assertions still fail (18 checks / 2 failures)
+with both the pre-pursuit-change native library at `510c3a15` and the current one.
+The ninety-second query remains planning below the first floor. This remains an
+open support/frontier investigation; the short mine/room pursuit passes do not
+qualify it. Comparison reports are retained in the zombie issue evidence.

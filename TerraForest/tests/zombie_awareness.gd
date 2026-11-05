@@ -32,6 +32,7 @@ func _initialize()->void:
 	check(brain.wants_sight(1,Vector3.ZERO,Vector3.BACK,Vector3(0,0,-30)),"engaged tracking has range and bearing hysteresis")
 	brain.observe(1,Vector3(0,0,12),false)
 	brain.observe(1,Vector3(20,0,20),false)
+	run_for(brain,.8,Vector3.ZERO)
 	check(brain.status(1).state=="investigate" and brain.status(1).goal==Vector3(0,0,12) and not brain.status(1).combat,"lost sight commits to last seen position without tracking the hidden player")
 	var frozen:Dictionary=brain.status(1)
 	for i in 300:brain.advance(1,Vector3.ZERO,1.0/60,false,"following")

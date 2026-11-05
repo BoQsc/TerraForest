@@ -8,13 +8,24 @@ var cases:Array=[]
 var checks:=0
 var failures:=0
 var folder:="res://reports/zombie_interior_pursuit"
+var moving_body:CharacterBody3D
+var endpoint_a:Vector3
+var endpoint_b:Vector3
+var motion_clock:=0.
 func check(ok:bool,label:String)->void:
 	checks+=1
 	if not ok:failures+=1
 	print(("PASS " if ok else "FAIL ")+label)
 func _initialize()->void:run.call_deferred()
 func tick()->void:
-	if driving:host.update(1./60.,host.target.global_position,true)
+	if driving:
+		if is_instance_valid(moving_body):
+			motion_clock+=1./60.
+			var goal:=endpoint_a.lerp(endpoint_b,(sin(motion_clock*.9)+1.)*.5)
+			var offset:=goal-moving_body.position;offset.y=0
+			moving_body.velocity=offset.normalized()*minf(1.2,offset.length()*60.)+Vector3.DOWN*.1
+			moving_body.move_and_slide()
+		host.update(1./60.,host.target.global_position,true)
 func frames(count:int)->void:
 	for frame in count:await physics_frame
 func run()->void:
@@ -65,17 +76,30 @@ func run()->void:
 		if "--projection-only" in OS.get_cmdline_user_args():
 			host.clear();stage.free();await frames(3);continue
 		if candidates.is_empty():host.clear();stage.free();await frames(3);continue
-		host.target.position=candidates[0];host.hear_noise(host.target.position,7.);driving=true
+		host.target.position=candidates[0]
+		var player_travel:=0.;var previous_player:Vector3=host.target.global_position
+		if "--moving-target" in OS.get_cmdline_user_args():
+			endpoint_a=candidates[0];endpoint_b=endpoint_a
+			var direction:Vector3=endpoint_a-anchor.position;direction=direction.normalized()
+			for candidate:Vector3 in candidates:
+				var offset:Vector3=candidate-anchor.position
+				if offset.normalized().dot(direction)>.999 and candidate.distance_to(endpoint_a)>endpoint_b.distance_to(endpoint_a):endpoint_b=candidate
+			moving_body=CharacterBody3D.new();moving_body.collision_layer=2;moving_body.collision_mask=7|(1<<16);stage.add_child(moving_body);moving_body.position=endpoint_a
+			var collider:=CollisionShape3D.new();var shape:=CapsuleShape3D.new();shape.radius=.34;shape.height=1.8;collider.shape=shape;collider.position.y=.9;moving_body.add_child(collider)
+			host.target.reparent(moving_body);host.target.position=Vector3.ZERO;motion_clock=0
+		host.hear_noise(host.target.global_position,7.);driving=true
 		var rows:Array=[];var start:Vector3=zombie.position
 		for frame in 60*20:
 			await frames(1)
+			player_travel+=host.target.global_position.distance_to(previous_player);previous_player=host.target.global_position
 			if frame%30==0:
-				var row:Dictionary={"tick":frame,"position":zombie.position,"velocity":zombie.velocity,"state":zombie.state,"intent":host.awareness.status(zombie.get_instance_id()),"route":host.navigator.status(zombie.get_instance_id()),"target":host.target.position,"behavior":zombie.behavior_enabled,"process_mode":zombie.process_mode}
+				var row:Dictionary={"tick":frame,"position":zombie.position,"velocity":zombie.velocity,"state":zombie.state,"intent":host.awareness.status(zombie.get_instance_id()),"route":host.navigator.status(zombie.get_instance_id()),"target":host.target.global_position,"behavior":zombie.behavior_enabled,"process_mode":zombie.process_mode}
 				rows.append(row)
 				if frame%120==0:print("INTERIOR_TRACE ",house," ",JSON.stringify(row))
-		var summary:Dictionary={"house":house,"start":start,"target":host.target.position,"displacement":zombie.position.distance_to(start),"damage":host.target.damage_received,"rows":rows}
+		var summary:Dictionary={"house":house,"start":start,"target":host.target.global_position,"player_travel":player_travel,"displacement":zombie.position.distance_to(start),"damage":host.target.damage_received,"rows":rows}
 		cases.append(summary);print("INTERIOR_SUMMARY ",house," displacement=",summary.displacement," damage=",summary.damage)
 		check(summary.displacement>.4 and summary.damage>0,house+": normal awakened resident pursues and attacks through furnished collision")
+		if "--moving-target" in OS.get_cmdline_user_args():check(player_travel>.25,house+": target body physically moves through furnished collision")
 		if DisplayServer.get_name()!="headless":
 			var camera:=Camera3D.new();stage.add_child(camera);camera.current=true;camera.position=zombie.position+Vector3(1.2,1.2,1.4);camera.look_at(zombie.position+Vector3.UP*.8)
 			await RenderingServer.frame_post_draw

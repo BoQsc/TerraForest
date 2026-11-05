@@ -951,7 +951,7 @@ func _tick_navigation(delta:float,goal:Vector3,stop_distance:float)->void:
 		direction = (direction.normalized() + crowd_steering).normalized()
 		_face_direction(direction, delta, 0.75 if _crawling else 1.0)
 		var speed := get_crawl_speed() if _crawling else walk_speed * get_walk_multiplier()
-		if not _crawling and awareness_state=="chase":speed*=chase_speed_multiplier
+		if not _crawling and awareness_state in ["chase","investigate","search"]:speed*=chase_speed_multiplier
 		if speed <= 0.0001:
 			state = "crawl_idle" if _crawling else "idle"
 			_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
@@ -1415,7 +1415,7 @@ func get_walk_multiplier() -> float:
 	return multiplier
 
 func _standing_walk_clip() -> String:
-	if dragging_walk and _r4_enabled and awareness_state=="chase":return "Zombie_Alert_Walk"
+	if dragging_walk and _r4_enabled and awareness_state in ["chase","investigate","search"]:return "Zombie_Alert_Walk"
 	return "Zombie_Walk_Drag_Right" if dragging_walk and _r4_enabled else "Zombie_Walk"
 
 func _standing_walk_reference_speed() -> float:

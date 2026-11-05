@@ -1,0 +1,258 @@
+{
+  "date": "2026-11-05",
+  "status": "Scoped source and executable verification; repeated playtest rejection remains the reason for rework; new player balance review pending.",
+  "scope": "Sustained cognition, fair two-probe perception, guarded directional sleeper caution, moving-goal completion and early shared obstacle search; no source save mutation.",
+  "provenance": "Original OpenAI Codex-assisted code/tests/tools for maintainer request, 0BSD. Original encounter tuning CC0-1.0. No new external code, assets or animation imported; existing notices retained.",
+  "moving_route_comparison": {
+    "baseline": {
+      "report": "reports/checks/20261105T075104598939Z",
+      "moved": 0,
+      "total": 10,
+      "damage": 0,
+      "meaning": "New cognition plus pre-change navigator; explicit acquired-target override isolates planning, not recognition."
+    },
+    "intermediate_failed": {
+      "report": "reports/checks/20261105T075359522149Z",
+      "moved": 0,
+      "total": 10,
+      "meaning": "Letting unfinished local queries finish was insufficient with ten independent geometry searches."
+    },
+    "source": {
+      "report": "reports/zombie_pressure/20261105T081218068609Z",
+      "passed": true,
+      "executable": false,
+      "script_sha256": "4fe011318343d8cca908f0293630e9908e96a4764f96f230c5e03b80cfedb2bf",
+      "summary": {
+        "checks": 22,
+        "failures": 0,
+        "moved": 10,
+        "engaged_at_20hz": 16
+      },
+      "resources": {
+        "peak_private_commit_bytes": 1079902208,
+        "peak_dedicated_gpu_bytes": 395579392,
+        "within_sampled_limits": true,
+        "telemetry_complete": true
+      }
+    },
+    "executable": {
+      "report": "reports/zombie_pressure/20261105T082210990964Z",
+      "passed": true,
+      "executable": true,
+      "script_sha256": "4fe011318343d8cca908f0293630e9908e96a4764f96f230c5e03b80cfedb2bf",
+      "summary": {
+        "checks": 22,
+        "failures": 0,
+        "moved": 10,
+        "engaged_at_20hz": 16
+      },
+      "resources": {
+        "peak_private_commit_bytes": 1077018624,
+        "peak_dedicated_gpu_bytes": 404426752,
+        "within_sampled_limits": true,
+        "telemetry_complete": true
+      }
+    }
+  },
+  "source_rooms": {
+    "report": "reports/zombie_interior_pursuit/20261105T082423638464Z",
+    "passed": true,
+    "executable": false,
+    "script_sha256": "267b82e185c18ac906ff8509b964c212a3283c3daf9bd38e9b035bff68a01f45",
+    "summary": {
+      "checks": 23,
+      "failures": 0,
+      "cases": [
+        {
+          "house": "cottage_a2",
+          "displacement": 1.04403853416443,
+          "damage": 156.6,
+          "player_travel": 2.74561966804322
+        },
+        {
+          "house": "house_c1",
+          "displacement": 3.02426195144653,
+          "damage": 138.0,
+          "player_travel": 5.07392758212518
+        }
+      ]
+    },
+    "resources": {
+      "peak_private_commit_bytes": 1477394432,
+      "peak_dedicated_gpu_bytes": 661970944,
+      "within_sampled_limits": true,
+      "telemetry_complete": true
+    }
+  },
+  "executable_rooms": {
+    "report": "reports/zombie_interior_pursuit/20261105T082508311478Z",
+    "passed": true,
+    "executable": true,
+    "script_sha256": "267b82e185c18ac906ff8509b964c212a3283c3daf9bd38e9b035bff68a01f45",
+    "summary": {
+      "checks": 23,
+      "failures": 0,
+      "cases": [
+        {
+          "house": "cottage_a2",
+          "displacement": 1.04403853416443,
+          "damage": 156.6,
+          "player_travel": 2.74561966804322
+        },
+        {
+          "house": "house_c1",
+          "displacement": 3.02426195144653,
+          "damage": 138.0,
+          "player_travel": 5.07392758212518
+        }
+      ]
+    },
+    "resources": {
+      "peak_private_commit_bytes": 1475784704,
+      "peak_dedicated_gpu_bytes": 661970944,
+      "within_sampled_limits": true,
+      "telemetry_complete": true
+    }
+  },
+  "source_mine": {
+    "report": "reports/checks/20261105T080438439120Z",
+    "result": "reports/zombie_pressure/mine_moving/result.json",
+    "summary": {
+      "checks": 7,
+      "failures": 0,
+      "moved": 10,
+      "attackers": 6,
+      "player_travel": 5.1455152615672,
+      "source_unchanged": true
+    }
+  },
+  "executable_mine": {
+    "report": "reports/zombie_pressure/20261105T082313430284Z",
+    "passed": true,
+    "executable": true,
+    "script_sha256": "307c43d2c6b4fff908ffae08976fd1c2350919c59195d602027a34f0332163a3",
+    "summary": {
+      "checks": 7,
+      "failures": 0,
+      "moved": 10,
+      "attackers": 7,
+      "player_travel": 3.43397409841418,
+      "source_unchanged": true,
+      "damage": 535.8
+    },
+    "resources": {
+      "peak_private_commit_bytes": 3561144320,
+      "peak_dedicated_gpu_bytes": 1474899968,
+      "within_sampled_limits": true,
+      "telemetry_complete": true
+    }
+  },
+  "executable_gait": {
+    "report": "reports/zombie_gait_continuity/20261105T082553651219Z",
+    "passed": true,
+    "executable": true,
+    "script_sha256": "3a286361d587bb44608668d178e112811385ef278b514be9064f06af4b2609fc",
+    "summary": {
+      "checks": 15,
+      "failures": 0
+    },
+    "resources": {
+      "peak_private_commit_bytes": 1051844608,
+      "peak_dedicated_gpu_bytes": 393474048,
+      "within_sampled_limits": true,
+      "telemetry_complete": true
+    }
+  },
+  "other_checks": [
+    {
+      "test": "debug awareness",
+      "report": "reports/checks/20261105T075656642236Z",
+      "checks": 34,
+      "failures": 0
+    },
+    {
+      "test": "release awareness",
+      "report": "reports/zombie_awareness_release.json",
+      "checks": 34,
+      "failures": 0
+    },
+    {
+      "test": "encounter profiles",
+      "report": "reports/checks/20261105T075657693582Z",
+      "checks": 59,
+      "failures": 0
+    },
+    {
+      "test": "behavior including blocked-sight attack safety",
+      "report": "reports/checks/20261105T080856337025Z",
+      "checks": 18,
+      "failures": 0
+    },
+    {
+      "test": "navigation wall, moving goal, stairs, blocked, water and unavailable",
+      "report": "reports/checks/20261105T080532694139Z",
+      "checks": 15,
+      "failures": 0
+    },
+    {
+      "test": "actor route sampling",
+      "report": "reports/checks/20261105T081002749366Z",
+      "checks": 10,
+      "failures": 0
+    },
+    {
+      "test": "actor route contract",
+      "report": "reports/checks/20261105T081006603523Z",
+      "checks": 14,
+      "failures": 0
+    },
+    {
+      "test": "physical aggression",
+      "report": "reports/zombie_aggression/20261105T081234326685Z",
+      "checks": 43,
+      "failures": 0
+    },
+    {
+      "test": "guarded sleeper runtime / fresh-process restore",
+      "report": "reports/zombie_sleepers/20261105T081305269845Z",
+      "checks": 52,
+      "failures": 0
+    }
+  ],
+  "regional_tower_failure": {
+    "current": "reports/checks/20261105T081228074646Z",
+    "baseline": "reports/checks/20261105T081924909536Z",
+    "baseline_revision": "510c3a15523980329b2594024264d1668c44c6ec",
+    "baseline_copy": "reports/zombie_pressure/regional_baseline.json",
+    "checks_each": 18,
+    "failures_each": 2,
+    "failure": "Upper-floor tower query still planning at 90 seconds; no path across three storeys. Other 16 assertions pass. Pre-existing on baseline; not resolved by the current pursuit fix."
+  },
+  "retained_setup_failures": [
+    {
+      "report": "reports/checks/20261105T080710724735Z",
+      "meaning": "Initial test-driver parse error, explicit integer type fixed before passing runs."
+    },
+    {
+      "reports": [
+        "reports/zombie_pressure/20261105T081934912027Z",
+        "reports/zombie_interior_pursuit/20261105T081935748389Z"
+      ],
+      "meaning": "Package preflight rejected temporarily swapped baseline native library; application did not launch. Current library restored in finally, matching package runs then pass."
+    }
+  ],
+  "artifacts": {
+    "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "afa7a91e2b36ef02f080cc992eb20bae00ce79e9167c332b033efc2d97a3fb75",
+    "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "a613b544d29ad7c9cf8875b5a99504d1b6b0aa14f16ec751d4fc0d1bb5d9056b",
+    "dist/TerraForest.pck": "5af8f04d5bd26241410a86eabb520b71d543725b43e4e571ba3f2a528aefd90a"
+  },
+  "limits": [
+    "Player difficulty/animation approval pending.",
+    "Twelve-second isolated acquired-target route fixture is not long-duration pursuit or natural perception evidence.",
+    "Actual mine test uses owned CoalMine_1703_f63d8917, normal perception, on-foot movement and read-only save; it is one station, not arbitrary mines.",
+    "Tower multi-flight query remains a baseline failure.",
+    "Arbitrary doorway crowds, full residency domain, distant streaming, broader seeds and sustained performance remain unqualified.",
+    "Sampled resource budgets are regression checks, not instantaneous GPU/driver peak guarantees."
+  ],
+  "resume": "If standing returns, retain actor identity, availability/perception/intent/route/motion-rejection and reproduce in actual moving-player geometry. Independently resume tower support/frontier diagnosis; require a complete bounded multi-flight journey."
+}

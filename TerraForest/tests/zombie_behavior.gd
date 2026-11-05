@@ -69,7 +69,7 @@ func run()->void:
 	encounters.population_enabled=false;zombie=encounters.spawn_at(Vector3.ZERO);active=true;await ticks(30)
 	check(zombie.awareness_state=="chase","second fixture obtains real sight before hiding")
 	var last_seen:Vector3=encounters.awareness.status(zombie.get_instance_id()).goal
-	var wall:=box(Vector3(0,2,4),Vector3(100,4,.4));await ticks(30)
+	var wall:=box(Vector3(0,2,4),Vector3(100,4,.4));await ticks(60)
 	check(zombie.awareness_state=="investigate" and zombie.target==null,"solid wall loses sight and cancels player combat target")
 	player.position=Vector3(12,0,8);await ticks(30)
 	check(encounters.awareness.status(zombie.get_instance_id()).goal.distance_to(last_seen)<.1,"hidden movement does not update the remembered position")

@@ -129,8 +129,14 @@ accounted separately from planning; do not hide their cost in the work count.
 
 Zombie navigation retains at most six routes and evaluates at most 30 ordered
 neighbour pairs per tick. Moving targets use bounded goal updates rather than
-restarting searches every frame. Far targets and different storeys use complete
-regional searches; projected 12 m pursuit horizons are removed. A bounded regional
+restarting searches every frame. Finish a planning query before consuming queued
+moving-goal updates. Local followers refresh near the old goal (3 m), after a
+storey change (>2.5 m), or after a >4 m diversion with >1 m body progress; regional
+followers retain their existing 4 m progress/end policy. Goal changes still pass
+the 0.4-second throttle. Direct corridors remain local; the first local graph
+expansion promotes an obstacle query to the existing shared regional cache,
+avoiding repeated per-actor geometry sampling. Far targets and different storeys
+also use complete regional searches; projected 12 m pursuit horizons are removed. A bounded regional
 query still does not establish reachability beyond its declared resident domain.
 
 Expose `planning`, `following`, `arrived`, `blocked`, `unavailable` and

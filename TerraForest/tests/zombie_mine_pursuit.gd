@@ -54,8 +54,18 @@ func run()->void:
 	check(game.zombies.residents.size()==10,"actual mine fixture admits all ten authored station sleepers")
 	var starts:Array[Vector3]=[]
 	for actor:CharacterBody3D in game.zombies.residents:starts.append(actor.position)
+	var player_travel:=0.;var previous_player:Vector3=game.player.position
+	var moving_player:bool="--moving-player" in OS.get_cmdline_user_args()
+	if moving_player:game.session_menu.developer_hud.mouse_access=true
 	for frame in 60*12:
+		if moving_player and frame>=180 and frame<540:
+			var destination:Vector3=point+Layouts.turn(Vector3(0,0,3 if frame<360 else -3),site.rotation)
+			var offset:Vector3=destination-game.player.position;offset.y=0
+			game.yaw=atan2(-offset.x,-offset.z);game.player.rotation.y=game.yaw
+			game.controls.set_key(KEY_W,offset.length()>.3,Time.get_ticks_usec())
+		elif moving_player:game.controls.clear(Time.get_ticks_usec())
 		await physics_frame;game.app_focused=true
+		player_travel+=game.player.position.distance_to(previous_player);previous_player=game.player.position
 		if frame%60==0:
 			var actors:Array=[]
 			for zombie:CharacterBody3D in game.zombies.residents:
@@ -70,21 +80,18 @@ func run()->void:
 		if actor.get_behavior_snapshot().contact_count>0:attackers+=1
 	check(moved==10,"all ten awake station residents make actual pursuit progress")
 	check(attackers>=3 and target.damage_received>0,"multiple mine residents land authored attacks on the solid player")
+	game.controls.clear(Time.get_ticks_usec());game.session_menu.developer_hud.mouse_access=false
+	if moving_player:check(player_travel>1,"mine acceptance uses actual on-foot player movement through the crowd")
 	game.fly=true
 	for frame in 3:await physics_frame;game.app_focused=true
-	var frozen:Array=[]
-	for actor:CharacterBody3D in game.zombies.residents:frozen.append({"position":actor.position,"intent":game.zombies.awareness.status(actor.get_instance_id())})
+	var flight_damage:float=target.damage_received
 	for frame in 60:await physics_frame;game.app_focused=true
-	var paused:=true
-	for index in game.zombies.residents.size():
-		var actor:CharacterBody3D=game.zombies.residents[index]
-		paused=paused and actor.position==frozen[index].position and game.zombies.awareness.status(actor.get_instance_id())==frozen[index].intent
-	check(paused,"existing Fly gate freezes all zombie awareness and body behavior")
+	check(game.zombies.residents.all(func(actor:CharacterBody3D):return actor.behavior_enabled) and target.damage_received>flight_damage,"Fly no longer globally switches off nearby zombie behavior")
 	game.fly=false;var damage_before:float=target.damage_received
 	for frame in 120:await physics_frame;game.app_focused=true
-	check(target.damage_received>damage_before,"leaving Fly restores attacks through the normal world update")
+	check(target.damage_received>damage_before,"attacks continue after leaving Fly through the normal world update")
 	var unchanged:=before==FileAccess.get_sha256("user://worlds/"+slot+".trw")
 	check(unchanged,"prepared mine save remains unchanged during read-only diagnostics")
-	FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"moved":moved,"attackers":attackers,"damage":target.damage_received,"rows":rows,"source_unchanged":unchanged},"  "))
+	FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"moved":moved,"attackers":attackers,"damage":target.damage_received,"player_travel":player_travel,"rows":rows,"source_unchanged":unchanged},"  "))
 	game.shutdown_requested=true;game.free();await process_frame
 	print("ZOMBIE_MINE_PURSUIT done checks=",checks," failures=",failures);quit(1 if failures else 0)

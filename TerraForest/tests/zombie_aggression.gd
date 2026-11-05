@@ -64,7 +64,7 @@ func native_contract()->void:
 		brain.observe(1,Vector3(0,0,-1.5),true,1.5);brain.advance(1,Vector3.ZERO,1./60.,true,"following")
 	check(brain.status(1).combat and brain.status(1).interest_seconds>20,"obvious close threat cannot exhaust interest while still seen")
 	brain.observe(1,Vector3(0,0,-1.5),false,1.5)
-	for frame in 60*13:brain.advance(1,Vector3.ZERO,1./60.,true,"following")
+	for frame in 60*21:brain.advance(1,Vector3.ZERO,1./60.,true,"following")
 	check(brain.status(1).state in ["idle","wander"],"close engagement remains escapable after sight is broken")
 	brain.provoke(1,Vector3(0,0,-8))
 	check(brain.wants_sight(1,Vector3.ZERO,Vector3.BACK,Vector3(0,0,-8)),"retaliation checks behind the zombie without waiting for a blind turn")
@@ -92,7 +92,7 @@ func native_contract()->void:
 	brain.observe(1,Vector3(8,0,8),false,11)
 	for frame in 60*13:brain.advance(1,Vector3.ZERO,1./60.,true,"following")
 	check(brain.status(1).state=="investigate" and brain.status(1).goal==Vector3(0,0,4),"sleeper retains its last sighting longer without tracking hidden coordinates")
-	for frame in 60*5:brain.advance(1,Vector3.ZERO,1./60.,true,"following")
+	for frame in 60*16:brain.advance(1,Vector3.ZERO,1./60.,true,"following")
 	check(brain.status(1).state in ["idle","wander"],"sleeper memory still expires within a bounded chase")
 
 func run()->void:

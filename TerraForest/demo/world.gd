@@ -1654,7 +1654,7 @@ func _physics_process(delta: float) -> void:
 		pickups.step_physics(delta,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and app_focused and not session_menu.pauses_world() and not player_hud.inventory_open and not player_view.entry.active,_actor_collision_ready)
 	player_life.step(delta)
 	var measured_begin:=Time.get_ticks_usec()
-	zombies.update(delta,player.global_position,not player_life.dead and not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.pauses_world() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
+	zombies.update(delta,player.global_position,not player_life.dead and not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.pauses_world() and not player_hud.inventory_open and not world_vehicle.driving and app_focused)
 	terrain._record_stage("zombie update",(Time.get_ticks_usec()-measured_begin)/1000.0)
 	measured_begin=Time.get_ticks_usec()
 	actors.update_simulation(delta,terrain.focus,not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit,_actor_collision_ready)

@@ -1,13 +1,69 @@
 # Passive zombies and sleeper ambushes
 
-- Status: Reopened by playtest; indoor floor-selection fix verified / exact mine stall still unconfirmed.
-- Updated: 2026-11-04. Fix: native awareness, guarded waking and encounter tuning.
+- Status: Substantial response/navigation rework verified in scoped encounters; player balance review pending.
+- Updated: 2026-11-05. Fix: sustained awareness, fair perception, moving-goal planning and encounter tuning.
 - User review: Follow-up reports awake sleepers still mostly standing inside houses/mine. Earlier response/wake changes did not establish complete behavior acceptance.
 - Symptom: Sleepers ignored a silent nearby player, rose slowly and failed to commit; ordinary zombies could disregard attacks or an obvious close threat.
 
 ## Changes
 
-### Repeated standing after waking — 2026-11-04 follow-up
+### Sustained pressure and moving-player stalls — 2026-11-05
+
+Repeated playtest feedback rejected the earlier response changes. The new moving
+player/obstacle fixture reproduced a deeper problem: all ten acquired pursuers
+stood still. Updates to the moving goal discarded unfinished searches every
+0.4 seconds. Allowing those searches to finish was necessary but insufficient:
+ten independent local searches repeated expensive collision sampling. Obstacle
+searches now enter the existing shared regional graph early. Open corridors
+retain the local direct-path fast path; following actors keep useful validated
+progress before refreshing a materially changed goal. Budgets and body collision
+guards are unchanged. In the same twelve-second moving-goal fixture, movement
+improved from **0/10 to 10/10**, with actual attacks reaching the target. This
+fixture explicitly acquires the target to isolate navigation; it is not perception
+evidence.
+
+Ordinary recognition now takes 0.15–0.35 seconds, with 0.08-second recognition of
+an obvious close threat. Visible sightings renew interest instead of triggering
+an arbitrary visible-target timeout. Brief lost sight retains the last confirmed
+clue for 0.75 seconds; investigation and search then keep an urgent gait. New
+audible footsteps can refresh an investigation, with a bounded cooldown. A
+confirmed acquisition supplies nearby residents a local sound clue, without
+relaying a hidden player's location or creating a hearing-only alarm chain.
+
+Perception remains limited to two probes per update, now in rotating overdue
+order: **16/16 residents acquire the player at 20 Hz**. Previously early residents
+could consume every probe at a low update rate. Quiet idle/wander pauses are
+shorter, and failed full-radius room goals get two bounded shorter supported
+candidates. Navigation still validates every accepted route.
+
+Sleepers check ahead within 4.5 metres and all bearings only within 1.5 metres;
+their posed-head ray must remain unobstructed through 0.25 seconds of caution.
+This is directional caution, with no automatic spherical wake through walls.
+Guarded rises run at 2× speed and still require physical completion. Sleeper
+pursuit uses a 3× walk multiplier. Ordinary chase uses 2.2–2.6×; close/provoked
+responses use 2.8–3×. Original animation data and gait continuity are preserved.
+The unchanged save schema retains authored sleeper identity after waking.
+
+Fly no longer suspends the entire host. Menus, death, focus, collision readiness
+and other existing suspension gates still apply. Height/reach, attack contact,
+blocked-route expiry and finite unseen/search memory remain enforced.
+
+The actual owned mine fixture now moves the on-foot player through the station
+with normal perception: **all ten sleepers move, six land attacks, player travel
+5.15 m** in source. The rebuilt executable repeats this with ten moving, seven
+attacking and 3.43 m of player travel. Furnished cottage and upper-floor house checks also move a physical
+player capsule with normal perception. [Current evidence and retained failures](pressure-evidence.json)
+separate these encounters from the isolated moving-route fixture.
+
+![Moving target pursuit around a wall](images/moving-pursuit-wall.png)
+
+Rendered route fixture after ten seconds, Forward+ 1920×1080. White capsule marks
+the moving target; several pursuers have rounded the wall and reached it. Image
+inspected for geometry and pose only; the trace proves movement and damage.
+Earlier/rejected evidence remains below. Player difficulty/animation acceptance
+is still pending.
+
+### Historical floor-selection follow-up — 2026-11-04
 
 The normal-host wander/search path reused the outdoor admission floor probe:
 collision mask 1 (terrain), with a start four metres above the requested point.
@@ -28,9 +84,8 @@ The actual mine has a separate global gate in `demo/world.gd`: Fly mode passes
 `pursue=false` to the entire zombie host. This freezes awareness/behavior even
 after provocation. In the read-only mine fixture, all ten authored sleepers
 advanced and all ten landed attacks on foot; enabling Fly froze their bodies and
-intent, and disabling it restored attacks. That existing Fly policy was not
-changed. The user is unsure whether Fly was enabled, so it cannot yet be claimed
-as the cause of every reported mine stall.
+intent, and disabling it restored attacks. That diagnostic established the old Fly policy, not the cause of every reported
+mine stall. The 2026-11-05 rework above removes that global suspension.
 
 [Follow-up evidence](interior-evidence.json): furnished-floor/pursuit checks,
 normal full-world mine update and Fly transition, and the existing behavior
@@ -48,7 +103,7 @@ Forward+ 1920×1080. Inspected current contact poses, not an AI before/after
 comparison or broad navigation approval. Trace assertions establish actual
 movement and damage. Provenance is appended to the existing image manifest.
 
-### Earlier response and waking work
+### Historical response and waking work — superseded tuning
 
 Sleepers check a stationary player within 2.5 m using a ray from their actual
 posed head. About 0.4 seconds of uninterrupted, ready, unobstructed sight triggers
@@ -120,21 +175,20 @@ production admission and fixture selection are unchanged. Original failed phase:
 
 ## Remaining / resume here
 
-The exact reported mine stall remains open unless it is established to be the
-Fly pause. Return trigger: a resident standing idle during on-foot, closed-menu,
-focused play. Capture availability gates, awareness state/goal, native route and
-motion rejection, actor identity and geometry; replay that position in the
-read-only mine fixture. Moving-player, doorway/chokepoint crowding and all-world
-performance remain unqualified. Do not treat the stationary ten-body fixture or
-the floor-selector fix as universal resolution.
+Player balance review remains open after the repeated rejection of earlier tuning.
+Return on outdoor, house or mine playtest feedback; retain actor identity,
+perception/availability, awareness goal/state, native route and motion rejection
+if a resident again stands without responding during active play. Replay that
+position in the moving-player fixture before claiming a universal fix.
 
-Player review of outdoor encounters, house surprises and the ten-zombie coal-mine
-station is needed to judge difficulty and persistence. Return on feedback that
-sensing, rise speed, chase speed or memory is too weak/strong; tune explicit fields
-in `addons/characters/runtime/assets/zombie.encounters.json` and repeat aggression,
-sleeper safety and generated-house checks. Dense mine crowding and broader
-navigation/performance acceptance retain the limits in
-[the navigation standard](../../docs/NAVIGATION_STANDARD.md).
+Long tower-stair planning, arbitrary doorway/chokepoint crowds, distant streaming
+and all-world performance are not established by these ten/sixteen-body checks.
+The broader regional-navigation regression's tower case and baseline comparison
+are recorded in the current evidence; retain the failure independently of the
+passing local stairs/mine cases. Resume it with route frontier and supported
+storey traces. Close with an actual multi-flight journey and bounded planning,
+not a larger timeout or direct movement around a failed route.
+
 The transient house-admission failure should be revisited if it reproduces;
 retain selected/admitted identities and loading/publication timing on the next
 failure before attributing it to capacity or streaming.

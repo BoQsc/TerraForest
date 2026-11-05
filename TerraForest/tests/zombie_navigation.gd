@@ -10,6 +10,7 @@ var active:=false
 var missing_route:=false
 var wet_band:=false
 var peak_work:=0
+var budget_ok:=true
 var trace:Array=[]
 var camera:Camera3D
 var state_matches:=true
@@ -29,6 +30,7 @@ func tick_manager()->void:
 		var identity:int=zombie.get_instance_id()
 		state_matches=state_matches and encounters.navigator.state(identity)==encounters.navigator.status(identity).state
 	peak_work=maxi(peak_work,int(encounters.navigation_status.get("route_work",0)))
+	budget_ok=budget_ok and encounters.navigation_status.route_work<=encounters.navigation_status.route_work_limit and encounters.navigation_status.route_work_limit<=48
 func ticks(count:int)->void:
 	for tick in count:await physics_frame
 func run()->void:
@@ -61,8 +63,9 @@ func run()->void:
 		if target.damage_received>0:break
 	check(target.damage_received>0,"zombie routes around a wall and reaches actual attack contact")
 	check(not clipped,"route and body never cross the solid wall")
-	check(peak_work<=12,"zombie pool shares twelve native route work units")
-	check(encounters.navigator.status(zombie.get_instance_id()).node_limit==2048,"same bounded ActorRoute core supplies node limit")
+	check(budget_ok,"zombie pool respects existing local/regional work budgets on every tick")
+	var route:Dictionary=encounters.navigator.status(zombie.get_instance_id())
+	check(route.nodes<=route.node_limit and route.node_limit==(16384 if route.planner=="regional" else 2048),"shared native planner retains its declared node bounds")
 	var before:float=target.damage_received
 	player.position=Vector3(2.5,0,3)
 	for tick in Engine.physics_ticks_per_second*9:
