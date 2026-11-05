@@ -1,0 +1,28 @@
+{
+  "inputs": [
+    "TerraForest/demo/world_screens/kit.gd",
+    "TerraForest/demo/world_screens/planet.gd",
+    "TerraForest/demo/world_screens/select.gd",
+    "TerraForest/demo/world_screens/generate.gd",
+    "TerraForest/demo/world_screens/loading.gd",
+    "TerraForest/demo/world_screens/mockup.gd",
+    "TerraForest/demo/world_screens/mockup.tscn",
+    "TerraForest/tools/preview_world_screens.gd"
+  ],
+  "steps": [
+    {
+      "kind": "interaction",
+      "command": {
+        "program": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+        "args": [
+          "--windowed",
+          "--resolution", "1920x1080",
+          "--rendering-method", "forward_plus",
+          "--script", "res://tools/preview_world_screens.gd"
+        ],
+        "workdir": "TerraForest",
+        "timeout": 240000
+      }
+    }
+  ]
+}
