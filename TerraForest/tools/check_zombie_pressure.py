@@ -19,8 +19,9 @@ def main():
     parser.add_argument('--close-resident', type=int, help='Replay next to a specific saved resident')
     parser.add_argument('--route-response', action='store_true', help='Physical narrow-aisle retaliation and elevated corridor regression')
     parser.add_argument('--commitment', action='store_true', help='Sustained engagement, physical recovery and repeated-hit retaliation')
+    parser.add_argument('--replan-latency', action='store_true', help='Validated waypoint continuity during moving-goal recalculation and hit reactions')
     args = parser.parse_args()
-    if sum(bool(value) for value in [args.mine_slot, args.replay_slot, args.route_response, args.commitment]) > 1:
+    if sum(bool(value) for value in [args.mine_slot, args.replay_slot, args.route_response, args.commitment, args.replan_latency]) > 1:
         parser.error('Select only one encounter mode')
     if args.close_resident and not args.replay_slot:
         parser.error('--close-resident requires --replay-slot')
@@ -28,7 +29,7 @@ def main():
     folder = ROOT / 'reports/zombie_pressure' / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder.mkdir(parents=True)
     engine = ROOT / 'TerraForest.exe' if args.executable else config.godot
-    test = 'zombie_mine_pursuit' if args.mine_slot else 'zombie_saved_response' if args.replay_slot else 'zombie_route_response' if args.route_response else 'zombie_commitment' if args.commitment else 'zombie_pressure'
+    test = 'zombie_mine_pursuit' if args.mine_slot else 'zombie_saved_response' if args.replay_slot else 'zombie_route_response' if args.route_response else 'zombie_commitment' if args.commitment else 'zombie_replan_latency' if args.replan_latency else 'zombie_pressure'
     script = ROOT / ('tests/' + test + '.gd')
     record = dict(executable=args.executable, script_sha256=hashlib.sha256(script.read_bytes()).hexdigest(), **revision_metadata())
     if args.executable:
@@ -54,7 +55,7 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        marker = 'ZOMBIE_MINE_PURSUIT done' if args.mine_slot else 'ZOMBIE_SAVED_RESPONSE done' if args.replay_slot else 'ZOMBIE_ROUTE_RESPONSE checks=' if args.route_response else 'ZOMBIE_COMMITMENT checks=' if args.commitment else 'ZOMBIE_PRESSURE checks='
+        marker = 'ZOMBIE_MINE_PURSUIT done' if args.mine_slot else 'ZOMBIE_SAVED_RESPONSE done' if args.replay_slot else 'ZOMBIE_ROUTE_RESPONSE checks=' if args.route_response else 'ZOMBIE_COMMITMENT checks=' if args.commitment else 'ZOMBIE_REPLAN_LATENCY checks=' if args.replan_latency else 'ZOMBIE_PRESSURE checks='
         result = execute(command, folder, 200 if args.replay_slot else 180 if args.mine_slot else 60, marker, require_resource_budget=True)
     finally:
         subprocess.Popen = original

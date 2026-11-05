@@ -135,7 +135,14 @@ restarting searches every frame. Finish a planning query before consuming queued
 moving-goal updates. Local followers refresh near the old goal (3 m), after a
 storey change (>2.5 m), or after a >4 m diversion with >1 m body progress; regional
 followers retain their existing 4 m progress/end policy. Goal changes still pass
-the 0.4-second throttle. Direct corridors remain local; the first local graph
+the 0.4-second throttle. When refreshing a moving goal, an external walker may
+finish only its next waypoint from the previous complete route (at most 2.5 m).
+The replacement starts at that fixed join; no partial new samples authorize
+motion. Every step still uses live guards. Edit/profile/exclusion/water changes,
+missing coverage or failed motion stop/discard the retained step. One second of
+physical blockage releases it; waiting at the join for a valid query is distinct.
+Short zombie hit/action pauses retain planning while the character owns motion.
+ Direct corridors remain local; the first local graph
 expansion promotes an obstacle query to the existing shared regional cache,
 avoiding repeated per-actor geometry sampling. Far targets and different storeys
 also use complete regional searches; projected 12 m pursuit horizons are removed. A bounded regional

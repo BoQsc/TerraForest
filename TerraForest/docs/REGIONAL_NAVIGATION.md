@@ -78,6 +78,17 @@ authorizes walking through the leaf. Other walls, floors, protected objects and
 unbreakable doors remain solid. Encounter suspension releases interests; unready
 living bodies retain identity while waiting for publication.
 
+A moving-goal refresh can continue to the next already-validated waypoint from
+its previous complete path, within 2.5 m. The replacement plans from that fixed
+join, so the body cannot outrun its new start or be sent back to the old one.
+New partial paths remain unpublished. At the join it waits for the full query.
+Geometry/profile/exclusion/water invalidation clears continuation; unavailable or
+failed routes stop it, and every retained step still checks live motion safety.
+Physical blockage releases the retained point after one second. Keeping a query
+alive through a brief hit reaction avoids rebuilding it after the animation.
+This reduces refresh interruptions; it does not improve the cold tower frontier
+or establish a bound on complex first-route latency.
+
 Regional moving targets keep their committed search while it plans, then refresh
 after four metres of progress or on the final approach. A storey change can
 retarget earlier. This avoids restarting a large search every pursuit tick.

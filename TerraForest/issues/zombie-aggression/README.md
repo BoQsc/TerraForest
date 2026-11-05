@@ -5,6 +5,34 @@
 - User review: Follow-up reports awake sleepers still mostly standing inside houses/mine. Earlier response/wake changes did not establish complete behavior acceptance.
 - Symptom: Sleepers ignored a silent nearby player, rose slowly and failed to commit; ordinary zombies could disregard attacks or an obvious close threat.
 
+## Recalculation pauses — 2026-11-05 follow-up
+
+User feedback: zombies take too long to recalculate and act. The focused baseline
+reproduces losing movement when the moving target causes a replacement query,
+and navigation becoming idle while a hit animation runs. The live response trace
+also contains ordinary roaming/following actors and one pursuing actor; it does
+not establish that every live stop is this defect.
+
+The navigator now finishes only the next waypoint of its prior complete path,
+within 2.5 m, while calculating the replacement from that fixed join. It waits at
+the join if the full query is not ready; the new partial query supplies no motion.
+Live motion checks still run on every step. Geometry/profile/exclusion/water
+invalidation clears continuation, missing/failed paths stop it, and a physically
+blocked retained point expires after one second. A replacement cannot send the
+body back to a moving former start. Brief hit/action pauses retain active planning;
+the animation/controller still decides when the physical body can move.
+
+No planning work limit, 750 us cooperative deadline, capsule envelope, support
+sampling, collision mask, interaction permission, memory or damage rule is relaxed.
+The existing focused/crowd/room/commitment checks remain required, along with edit,
+unavailable and physically blocked continuation cases in the new 14-check regression.
+[Latency receipts, baseline and limitations](latency-evidence.json).
+
+Cold complex initial routes and the separately failing tower fixture remain open;
+this is a correction for interrupted recalculation and retaliation, not a universal
+planning-time guarantee. Revisit long first-route reports with frontier/support and
+body timing rather than raising timeouts or allowing unvalidated pursuit.
+
 ## Changes
 
 ### Engagement drive and tactical recovery — latest 2026-11-05 rework

@@ -34,13 +34,13 @@ bool NativeActorNavigator::configure(int capacity){
 }
 void NativeActorNavigator::set_water_depth(const Callable &depth){
     if(depth==water_depth_)return;water_depth_=depth;graph_.clear();
-    for(auto &agent:agents_){agent.route.water_depth=depth;agent.route.invalidate();agent.journey.invalidate();}
+    for(auto &agent:agents_){agent.continuing=false;agent.route.water_depth=depth;agent.route.invalidate();agent.journey.invalidate();}
 }
 void NativeActorNavigator::set_exclusions(const TypedArray<RID> &ids){
     if(ids.size()>64)return;exclusions_=ids.duplicate();
     graph_.clear();
     TypedArray<RID> planning=exclusions_.duplicate();planning.append_array(interactions_);
-    for(auto &agent:agents_){agent.ray->set_exclude(planning);agent.shape->set_exclude(planning);agent.motion_ray->set_exclude(exclusions_);agent.motion_shape->set_exclude(exclusions_);agent.route.invalidate();agent.journey.invalidate();}
+    for(auto &agent:agents_){agent.continuing=false;agent.ray->set_exclude(planning);agent.shape->set_exclude(planning);agent.motion_ray->set_exclude(exclusions_);agent.motion_shape->set_exclude(exclusions_);agent.route.invalidate();agent.journey.invalidate();}
 }
 void NativeActorNavigator::set_interactions(const TypedArray<RID> &ids){
     if(ids.size()>64||ids==interactions_)return;interactions_=ids.duplicate();set_exclusions(exclusions_);
@@ -68,9 +68,9 @@ bool NativeActorNavigator::set_agent(int64_t id,const Vector3 &feet,const Vector
         // small conservative tolerance. Legacy actors retain their .85 default.
         agent->route.minimum_floor_normal=profile==0?.7072:.85;
         agent->motion_shape->set_shape(shape);
-        agent->route.invalidate();agent->journey.invalidate();agent->age=1;
+        agent->continuing=false;agent->route.invalidate();agent->journey.invalidate();agent->age=1;
     }
-    if(!active){agent->active=false;agent->route.invalidate();agent->journey.invalidate();agent->goal=agent->position;return true;}
+    if(!active){agent->active=false;agent->continuing=false;agent->route.invalidate();agent->journey.invalidate();agent->goal=agent->position;return true;}
     const auto state=agent->regional?agent->journey.state:agent->route.state;
     const bool change=agent->requested.distance_to(agent->aimed)>.75;
     const bool regional_update=std::abs(agent->requested.y-agent->aimed.y)>2.5||
@@ -83,15 +83,25 @@ bool NativeActorNavigator::set_agent(int64_t id,const Vector3 &feet,const Vector
     const bool local_update=agent->position.distance_to(agent->goal)<3||
         std::abs(agent->requested.y-agent->aimed.y)>2.5||
         (agent->requested.distance_to(agent->aimed)>4&&agent->position.distance_to(agent->planned_from)>1);
-    const bool retarget=!agent->active || (state!=ActorRoute::PLANNING && agent->age>=.4 && change && (agent->regional?regional_update:local_update)) ||
-        ((agent->regional?agent->journey.state:agent->route.state)==ActorRoute::ARRIVED && agent->requested.distance_to(agent->goal)>.2);
-    agent->active=true;
+    const bool retarget=!agent->active || (!agent->continuing && ((state!=ActorRoute::PLANNING && agent->age>=.4 && change && (agent->regional?regional_update:local_update)) ||
+        (state==ActorRoute::ARRIVED && agent->requested.distance_to(agent->goal)>.2)));
     if(retarget){
-        Vector3 offset=agent->requested-agent->position;offset.y=0;
-        agent->regional=offset.length()>12||std::abs(agent->requested.y-agent->position.y)>.5;
-        agent->goal=agent->requested;agent->planned_from=agent->position;
+        // Preserve only the next waypoint of a previously COMPLETE route.
+        // Plan from that fixed join, so a moving body cannot invalidate the
+        // replacement or be sent back to its obsolete starting position.
+        agent->continuing=false;
+        if(agent->active&&state==ActorRoute::FOLLOWING){
+            const Vector3 next=agent->regional?agent->journey.target(agent->position):agent->route.target(agent->position);
+            const double distance=agent->position.distance_to(next);
+            if(distance>.04&&distance<=2.5){agent->continuation=next;agent->continuing=true;agent->continuation_progress=agent->position;agent->continuation_stuck=0;}
+        }
+        const Vector3 origin=agent->continuing?agent->continuation:agent->position;
+        Vector3 offset=agent->requested-origin;offset.y=0;
+        agent->regional=offset.length()>12||std::abs(agent->requested.y-origin.y)>.5;
+        agent->goal=agent->requested;agent->planned_from=origin;
         agent->age=0;agent->aimed=agent->requested;agent->route.invalidate();agent->journey.invalidate();
     }
+    agent->active=true;
     return true;
 }
 void NativeActorNavigator::remove_agent(int64_t id){
@@ -101,7 +111,7 @@ void NativeActorNavigator::clear(){agents_.clear();cursor_=0;graph_.clear();}
 void NativeActorNavigator::invalidate(const AABB &bounds){
     // Cache entries may participate in any pursuit. A publication mutation
     // resets the derived graph atomically, never the authoritative world data.
-    graph_.clear();for(auto &agent:agents_){agent.route.invalidate(bounds);agent.journey.invalidate();}
+    graph_.clear();for(auto &agent:agents_){agent.continuing=false;agent.route.invalidate(bounds);agent.journey.invalidate();}
 }
 Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,const Callable &admission){
     Dictionary out;out["ok"]=false;out["route_work"]=0;out["route_work_limit"]=12;
@@ -117,14 +127,28 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
     graph_.requests=pending;
     for(auto &agent:agents_){
         agent.age+=delta;if(!agent.active)continue;
+        if(agent.continuing){
+            Vector3 remaining=agent.continuation-agent.position;remaining.y=0;
+            Vector3 progress=agent.position-agent.continuation_progress;progress.y=0;
+            if((remaining.length()<=.04&&std::abs(agent.continuation.y-agent.position.y)<=.3)||progress.length()>=.05){agent.continuation_progress=agent.position;agent.continuation_stuck=0;}
+            else agent.continuation_stuck+=delta;
+            if(agent.continuation_stuck>1){
+                agent.continuing=false;agent.planned_from=agent.position;agent.route.invalidate();agent.journey.invalidate();
+            }
+        }
         // Direct corridors stay cheap/local. As soon as an obstacle requires
         // graph search, share the regional surface cache instead of repeating
         // the same expensive sampled edges independently for every pursuer.
         if(!agent.regional&&(agent.route.expansions>0||agent.route.state==ActorRoute::BLOCKED||agent.route.state==ActorRoute::SEARCH_LIMIT)){
             agent.regional=true;agent.journey.invalidate();
         }
-        if(agent.regional)agent.journey.prepare(agent.position,agent.goal,agent.profile,delta);
-        else {agent.route.prepare(agent.position,agent.goal,delta);agent.route.moved(agent.position,delta);}
+        const Vector3 origin=agent.continuing?agent.continuation:agent.position;
+        // The new planner has not taken ownership of physical movement until
+        // the old validated waypoint is reached. Do not count this as a stall.
+        const auto planning_state=agent.regional?agent.journey.state:agent.route.state;
+        const double elapsed=agent.continuing&&planning_state==ActorRoute::FOLLOWING?0:delta;
+        if(agent.regional)agent.journey.prepare(origin,agent.goal,agent.profile,elapsed);
+        else {agent.route.prepare(origin,agent.goal,elapsed);agent.route.moved(origin,elapsed);}
     }
     int work=0,limit=12;size_t idle=0;
     for(auto &agent:agents_)agent.route.readiness_cache=&readiness_cache_;
@@ -147,13 +171,25 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
     out["graph_cache_hits"]=int64_t(graph_.hits);out["streaming_requests"]=graph_.requests.size();
     out["planning_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-started);out["agents"]=int(agents_.size());return out;
 }
-Vector3 NativeActorNavigator::steering_target(int64_t id){auto *agent=find(id);return agent?(agent->regional?agent->journey.target(agent->position):agent->route.target(agent->position))-CENTRE:Vector3(INFINITY,INFINITY,INFINITY);}
+Vector3 NativeActorNavigator::steering_target(int64_t id){
+    auto *agent=find(id);if(!agent)return Vector3(INFINITY,INFINITY,INFINITY);
+    if(agent->continuing){
+        const auto state=agent->regional?agent->journey.state:agent->route.state;
+        if(state!=ActorRoute::PLANNING&&state!=ActorRoute::FOLLOWING&&state!=ActorRoute::ARRIVED)return agent->position-CENTRE;
+        Vector3 offset=agent->continuation-agent->position;offset.y=0;
+        if(offset.length()>.04||std::abs(agent->continuation.y-agent->position.y)>.3)return agent->continuation-CENTRE;
+        if(state==ActorRoute::PLANNING)return agent->position-CENTRE;
+        agent->continuing=false;
+    }
+    return (agent->regional?agent->journey.target(agent->position):agent->route.target(agent->position))-CENTRE;
+}
 bool NativeActorNavigator::guard_motion(int64_t id,const Vector3 &direction,double travel){
     auto *agent=find(id);if(!agent || !direction.is_finite() || !std::isfinite(travel) || travel<0 || travel>.5 || !readiness_.is_valid())return false;
     Vector3 heading=direction;heading.y=0;if(heading.length_squared()<.00001)return true;
     Vector3 to=agent->position+heading.normalized()*real_t(std::max(.02,travel));
     const bool allowed=agent->route.permits_motion(get_world_3d()->get_direct_space_state(),agent->position,to,readiness_,admission_,agent->motion_ray,agent->motion_shape);
     agent->motion_rejection=agent->route.edge_failure();
+    if(!allowed&&agent->continuing){agent->continuing=false;agent->planned_from=agent->position;agent->route.invalidate();agent->journey.invalidate();}
     if(!allowed&&agent->regional&&String(agent->motion_rejection)=="steep_support")agent->journey.reject_motion();
     return allowed;
 }
@@ -167,6 +203,8 @@ Dictionary NativeActorNavigator::status(int64_t id){
     auto *agent=find(id);Dictionary out;if(!agent){out["state"]="sleeping";return out;}
     out=agent->regional?agent->journey.status(graph_):agent->route.status();if(!agent->active)out["state"]="idle";
     out["planner"]=agent->regional?"regional":"local";
+    out["continuing_previous_path"]=agent->continuing;
+    if(agent->continuing)out["continuation_target"]=agent->continuation-CENTRE;
     out["conditional_door_count"]=interactions_.size();
     out["motion_rejection"]=agent->motion_rejection;
     out["minimum_floor_normal_y"]=agent->route.minimum_floor_normal;

@@ -9,7 +9,10 @@ namespace terraforest {
 class NativeActorNavigator : public godot::Node3D {
     GDCLASS(NativeActorNavigator,godot::Node3D)
     struct Agent {
-        int64_t id=0;int profile=0;bool active=false,regional=false;
+        int64_t id=0;int profile=0;bool active=false,regional=false,continuing=false;
+        godot::Vector3 continuation;
+        godot::Vector3 continuation_progress;
+        double continuation_stuck=0;
         double age=1;godot::Vector3 position,goal,requested,aimed,planned_from;
         ActorRoute route;
         const char *motion_rejection="none";

@@ -1,3 +1,22 @@
+## Zombie recalculation pauses — 2026-11-05
+
+The player reports long delays while zombies recalculate and act. A new regression
+reproduces stopping on moving-goal replacement and navigation deactivation during
+hit reactions. External navigation now retains only the next validated waypoint
+from its prior complete path, plans from that fixed join, and waits there if the
+replacement is not finished. No partial new route is traversed. Live movement,
+collision/readiness, edit/profile/water/exclusion invalidation and a one-second
+blocked-continuation limit remain mandatory. Hit/action animation still owns the
+body while planning remains active. Work/node/query/deadline limits are unchanged.
+
+Source continuation/retaliation, crowded moving goals, furnished pursuit and
+commitment checks pass; final source/package receipts are tracked in
+[the existing zombie issue](../issues/zombie-aggression/README.md). Player review
+remains open. This corrects repeated refresh pauses, not the separately open cold
+multi-flight tower search. Return on remaining slow first routes with timing,
+query/goal, body progress and readiness evidence; the historical 10–17 s cold
+cases and tower failure remain unqualified.
+
 ## World photograph availability — 2026-11-05
 
 Recent worlds can have empty `.preview` folders because optional three-view

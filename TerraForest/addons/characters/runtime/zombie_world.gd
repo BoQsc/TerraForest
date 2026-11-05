@@ -253,7 +253,9 @@ func _update_navigation(delta: float, available: bool) -> void:
 		var goal:Vector3=obstacle.approach_point if is_instance_valid(obstacle) else intent.goal
 		var combat_target:=is_instance_valid(zombie.target)
 		var distance:Vector3=(zombie.target.global_position if combat_target else goal)-zombie.global_position;distance.y=0
-		var needs_route:bool=active and intent.moving and zombie._active_action.is_empty() and zombie._hit_timer<=0 and (distance.length()>(1.0 if combat_target else 0.6) or (combat_target and not zombie.navigation_attack_clear))
+		# Movement/attack animation owns whether the body can move this tick.
+		# Keep its planner alive through brief hit/action pauses, ready to resume.
+		var needs_route:bool=active and intent.moving and (distance.length()>(1.0 if combat_target else 0.6) or (combat_target and not zombie.navigation_attack_clear))
 		navigator.set_agent(id,zombie.global_position,goal,1 if zombie._crawling else 0,needs_route)
 	if profiling_enabled:
 		update_phase_us["intent"]=Time.get_ticks_usec()-measured_begin
