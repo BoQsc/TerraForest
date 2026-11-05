@@ -1,0 +1,27 @@
+{
+  "inputs": [
+    "TerraForest/demo/world_survey/kit.gd",
+    "TerraForest/demo/world_survey/worlds.gd",
+    "TerraForest/demo/world_survey/create.gd",
+    "TerraForest/demo/world_survey/loading.gd",
+    "TerraForest/demo/world_survey/mockup.gd",
+    "TerraForest/demo/world_survey/mockup.tscn",
+    "TerraForest/tools/preview_world_survey.gd"
+  ],
+  "steps": [
+    {
+      "kind": "interaction",
+      "command": {
+        "program": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+        "args": [
+          "--windowed",
+          "--resolution", "1920x1080",
+          "--rendering-method", "forward_plus",
+          "--script", "res://tools/preview_world_survey.gd"
+        ],
+        "workdir": "TerraForest",
+        "timeout": 240000
+      }
+    }
+  ]
+}
