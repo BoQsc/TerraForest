@@ -38,7 +38,7 @@ pursuit, teleport, noclip or movement through unready collision.
 | Profile | Physical body | Conservative route envelope | Step capability |
 | --- | --- | --- | --- |
 | Settlement walker | centred upright capsule, radius 0.35 m, height 1.8 m | same | 0.30 m |
-| Standing zombie | feet-origin capsule, radius 0.24 m, height 1.74 m | upright capsule, radius 0.35 m, height 1.8 m | 0.30 m using native grounded movement |
+| Standing zombie | feet-origin capsule, radius 0.24 m, height 1.74 m | upright capsule, radius 0.24 m, height 1.8 m | 0.30 m using native grounded movement |
 | Crawling zombie | horizontal 1.2 m capsule behind mouth | upright capsule, radius 0.75 m, height 1.8 m | no positive step |
 
 The crawling envelope covers turning its long proxy, but is deliberately
@@ -150,6 +150,14 @@ preserve the resident identity, position and anatomical state in the native worl
 population. Retirement is not death or a new encounter opportunity. Nearby
 residents must be admitted before loading releases player input; no elapsed-play
 spawn/refill loop is permitted. Dormant residents do not simulate navigation.
+
+Zombie engagement is independent of route success. A stalled/blocked encounter
+can abandon that destination for a short tactical reposition on its current
+storey, with a separate full native route and all usual guards. This explicit
+action has a two-second duration and three-second recovery cooldown; it never
+moves on a failed/partial route or establishes whole-world connectivity. Missing
+coverage around the actor still suspends it. Failed search endpoints preserve
+engagement and retry under a bounded clock rather than clearing target memory.
 
 ## Interaction policy
 

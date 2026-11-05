@@ -60,7 +60,9 @@ bool NativeActorNavigator::set_agent(int64_t id,const Vector3 &feet,const Vector
     }
     agent->position=feet+CENTRE;agent->requested=goal+CENTRE;
     if(agent->profile!=profile){
-        Ref<CapsuleShape3D> shape;shape.instantiate();shape->set_height(1.8);shape->set_radius(profile==0?.35:.75);
+        // Standing routes must fit the actual 0.24 m body. The former 0.35 m
+        // radius rejected physically usable aisles; height remains conservative.
+        Ref<CapsuleShape3D> shape;shape.instantiate();shape->set_height(1.8);shape->set_radius(profile==0?.24:.75);
         agent->shape->set_shape(shape);agent->profile=profile;agent->route.maximum_step=profile==0?.3:0;
         // Match the standing controller's 45-degree floor capability, with a
         // small conservative tolerance. Legacy actors retain their .85 default.

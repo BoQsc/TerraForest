@@ -94,7 +94,9 @@ func run()->void:
 	check(searched and zombie.target==null,"body reaches a reachable last sighting and searches without a combat target")
 	sample(zombie,"search");await capture("search")
 	await ticks(60*7)
-	check(zombie.awareness_state in ["idle","wander"],"finished physical search returns to ordinary wandering")
+	check(encounters.awareness.status(zombie.get_instance_id()).urgent,"one completed search continues while target memory is fresh")
+	await ticks(60*15)
+	check(zombie.awareness_state in ["idle","wander"],"expired evidence eventually returns physical search to ordinary wandering")
 	active=false;encounters.clear();await ticks(3);player.position=Vector3.ZERO;await ticks(3)
 	encounters.spawn_visible=func(_point:Vector3):return true
 	for i in 200:encounters.update(.1,Vector3.ZERO,true)

@@ -12,6 +12,15 @@ use the identical native support, capsule sweep, step and hazard evaluator. Stan
 ascent/contact and rejected 46-degree ascent qualify the standing profile boundary.
 There is one physical body/motor owner. No generator recipe or saved world schema changes.
 
+Before expanding the graph, a regional query now validates a complete straight
+corridor in half-metre quanta with the same native evaluator. It publishes no
+partial path; obstruction switches to graph search and missing coverage remains
+unavailable. The 96 m X/Z domain bounds the corridor to 273 positions. This
+avoids graph work for open slopes/distant line-of-travel targets. Standing
+external routes use the physical 0.24 m body radius with conservative 1.8 m height;
+legacy settlement routes remain 0.35 m and crawlers 0.75 m. Their dry-footprint
+checks and all work/node/deadline caps are unchanged.
+
 The graph is sampled from live collision, not inferred from building names or
 road artwork. Vertices retain supported height as well as X/Z and profile.
 Coincident horizontal positions on separate floors or inside/beyond a cave roof

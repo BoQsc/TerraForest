@@ -106,6 +106,7 @@ var _shape_cache: Dictionary = {}
 var _attack_timer := 0.0
 var _attack_sent := false
 var _hit_timer := 0.0
+var _stagger_cooldown := 0.0
 var _current_clip := ""
 var _route_gait_pause := 0.0
 var _manual_clip := ""
@@ -835,6 +836,7 @@ func _physics_r4(delta: float) -> void:
 	if animation_advancing:
 		animation_player.advance(delta)
 	_action_cooldown = maxf(_action_cooldown - delta, 0.0)
+	_stagger_cooldown = maxf(_stagger_cooldown - delta, 0.0)
 	var was_hit := _hit_timer > 0.0
 	_hit_timer = maxf(_hit_timer - delta, 0.0)
 	velocity.x = move_toward(velocity.x, 0.0, delta * 4.0)
@@ -934,6 +936,7 @@ func _tick_navigation(delta:float,goal:Vector3,stop_distance:float)->void:
 		var direction := offset
 		if is_instance_valid(navigator):
 			if not navigation_target.is_finite() or global_position.distance_to(navigation_target)<0.025:
+				if awareness_state in ["chase","investigate","search","reposition"]:_face_direction(offset,delta)
 				velocity.x=0;velocity.z=0;state="crawl_idle" if _crawling else "idle"
 				_route_gait_pause += delta
 				# Waypoint handoffs and short replans stop the body, not the gait
@@ -951,7 +954,7 @@ func _tick_navigation(delta:float,goal:Vector3,stop_distance:float)->void:
 		direction = (direction.normalized() + crowd_steering).normalized()
 		_face_direction(direction, delta, 0.75 if _crawling else 1.0)
 		var speed := get_crawl_speed() if _crawling else walk_speed * get_walk_multiplier()
-		if not _crawling and awareness_state in ["chase","investigate","search"]:speed*=chase_speed_multiplier
+		if not _crawling and awareness_state in ["chase","investigate","search","reposition"]:speed*=chase_speed_multiplier
 		if speed <= 0.0001:
 			state = "crawl_idle" if _crawling else "idle"
 			_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
@@ -1415,7 +1418,7 @@ func get_walk_multiplier() -> float:
 	return multiplier
 
 func _standing_walk_clip() -> String:
-	if dragging_walk and _r4_enabled and awareness_state in ["chase","investigate","search"]:return "Zombie_Alert_Walk"
+	if dragging_walk and _r4_enabled and awareness_state in ["chase","investigate","search","reposition"]:return "Zombie_Alert_Walk"
 	return "Zombie_Walk_Drag_Right" if dragging_walk and _r4_enabled else "Zombie_Walk"
 
 func _standing_walk_reference_speed() -> float:
@@ -1555,13 +1558,16 @@ func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZER
 		die(impulse)
 	else:
 		if _r4_enabled:
-			_cancel_attack()
-			cancel_traversal()
 			if sleeper_active():sleeper.wake();return
 			if _crawl_transition:
 				return
-			_hit_timer = _action_duration("Zombie_Crawl_Hit", 0.5) if _crawling else 0.45
-			_play_animation("Zombie_Crawl_Hit" if _crawling else "Zombie_Hit", true)
+			# Accepted damage always provokes and damages anatomy. Repeated light
+			# blows must not restart stagger/cancel retaliation every fraction of a
+			# second. Severing, death and physical firearm impacts keep their paths.
+			if _stagger_cooldown<=0:
+				_cancel_attack();cancel_traversal();_stagger_cooldown=1.8
+				_hit_timer = _action_duration("Zombie_Crawl_Hit", 0.5) if _crawling else 0.45
+				_play_animation("Zombie_Crawl_Hit" if _crawling else "Zombie_Hit", true)
 		else:
 			_hit_timer = 0.45
 			_play_animation("Zombie_Hit", true)

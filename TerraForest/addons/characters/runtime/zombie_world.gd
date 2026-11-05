@@ -41,6 +41,12 @@ var _resident_capsule: CapsuleShape3D
 var geometry_template:RefCounted
 var profiling_enabled:=false
 var update_phase_us:Dictionary={}
+var _response_trace_left:=0.
+var _response_trace_clock:=0.
+var _response_trace_rows:Array=[]
+var response_context:Dictionary={}
+var trace_responses:=false
+var response_trace_path:="user://diagnostics/zombie_response.json"
 @export_file("*.json") var encounter_profiles_path:="res://addons/characters/runtime/assets/zombie.encounters.json"
 var encounter_profiles:Dictionary={}
 
@@ -82,6 +88,7 @@ func clear() -> void:
 	if navigator!=null:navigator.clear()
 	if navigation_interest.is_valid():navigation_interest.call(PackedVector3Array())
 	_corpse_age.clear()
+	_response_trace_left=0.;_response_trace_rows.clear()
 	if population != null:population.reset_stream()
 
 func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) -> void:
@@ -120,6 +127,11 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 			_retire(index)
 	if profiling_enabled:update_phase_us["residency"]=Time.get_ticks_usec()-measured_begin
 	_update_navigation(delta,available and pursue)
+	if _response_trace_left>0:
+		_response_trace_left=maxf(0.,_response_trace_left-delta);_response_trace_clock-=delta
+		if _response_trace_clock<=0:
+			_response_trace_clock=1.
+			_record_response_trace(available and pursue)
 	if profiling_enabled:measured_begin=Time.get_ticks_usec()
 	if navigation_interest.is_valid() and (population == null or not population.busy()):navigation_interest.call(navigator.interest_points() if available and pursue else PackedVector3Array())
 	_update_spacing()
@@ -189,7 +201,10 @@ func _update_navigation(delta: float, available: bool) -> void:
 					if not seen and noise_speed>1.0:awareness.hear(id,zombie.global_position,target.global_position,12.0 if noise_speed>6.0 else 8.0 if noise_speed>3.0 else 3.0)
 			intent=awareness.advance(id,zombie.global_position,minf(delta,0.1),active,navigator.state(id))
 			if intent.is_empty():continue
-			if active and intent.state in ["wander","search"] and _roam_revision.get(id,-1)!=intent.revision:
+			if active and intent.state in ["wander","search","reposition"] and _roam_revision.get(id,-1)!=intent.revision:
+				# A tactical recovery is a new destination/action, not another
+				# observation of a moving target. Release the abandoned query once.
+				if intent.state=="reposition":navigator.remove_agent(id)
 				_roam_revision[id]=intent.revision
 				var destination:=supported_roam_point(intent.goal,not zombie._crawling)
 				if not destination.is_finite():
@@ -219,7 +234,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 		if intent.has("chase_speed_multiplier"):zombie.chase_speed_multiplier=float(intent.chase_speed_multiplier)
 		zombie.awareness_state=intent.state
 		zombie.behavior_goal=intent.goal if intent.moving else Vector3.INF
-		var may_break_door:bool=intent.state in ["chase","investigate"]
+		var may_break_door:bool=intent.state in ["chase","investigate","reposition"]
 		_obstacle_clock[id]=float(_obstacle_clock.get(id,0.0))-(delta if active else 0.0)
 		var obstacle:Node3D=_obstacles.get(id)
 		if is_instance_valid(obstacle) and (not active or not may_break_door or not obstacle.available()):
@@ -393,8 +408,23 @@ func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false) -> 
 		if is_instance_valid(navigator):navigator.remove_agent(id)
 		if is_instance_valid(awareness):awareness.remove_agent(id))
 	zombie.damaged.connect(func(_part:String,_health:float):
-		if zombie.alive and is_instance_valid(target):awareness.provoke(id,target.global_position))
+		if zombie.alive and is_instance_valid(target):
+			awareness.provoke(id,target.global_position)
+			if trace_responses:
+				_response_trace_left=6.;_response_trace_clock=0.;_response_trace_rows.clear())
 	return zombie
+
+func _record_response_trace(available:bool)->void:
+	# One bounded local receipt after a real hit makes a further standing report
+	# diagnosable in its actual saved geometry. Never touch a world/save file.
+	var actors:Array=[]
+	for actor:CharacterBody3D in residents:
+		actors.append({"identity":actor.get_meta("world_zombie_id",0),"position":actor.global_position,"velocity":actor.velocity,"state":actor.state,"behavior":actor.behavior_enabled,"process":actor.process_mode,"action":actor._active_action,"hit_seconds":actor._hit_timer,"intent":awareness.status(actor.get_instance_id()),"route":navigator.status(actor.get_instance_id())})
+	_response_trace_rows.append({"player":target.global_position,"available":available,"context":response_context.duplicate(),"actors":actors})
+	if _response_trace_rows.size()>7:_response_trace_rows.pop_front()
+	DirAccess.make_dir_recursive_absolute(response_trace_path.get_base_dir())
+	var file:=FileAccess.open(response_trace_path,FileAccess.WRITE)
+	if file!=null:file.store_string(JSON.stringify({"schema":1,"rows":_response_trace_rows},"  "))
 
 func configure_encounter(zombie:CharacterBody3D,descriptor:Dictionary)->bool:
 	if zombie not in residents or not zombie.alive:return false

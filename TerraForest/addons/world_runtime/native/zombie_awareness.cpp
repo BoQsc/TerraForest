@@ -26,20 +26,33 @@ void NativeZombieAwareness::_bind_methods(){
 }
 NativeZombieAwareness::Agent *NativeZombieAwareness::find(int64_t id){for(auto &a:agents_)if(a.id==id)return &a;return nullptr;}
 double NativeZombieAwareness::random(Agent &a){a.random^=a.random<<13;a.random^=a.random>>17;a.random^=a.random<<5;return double(a.random)/4294967296.0;}
-void NativeZombieAwareness::rest(Agent &a){a.state=IDLE;a.visible=false;a.remaining=a.profile.idle_min+random(a)*(a.profile.idle_max-a.profile.idle_min);a.blocked=0;a.confidence=0;a.interest=0;a.provoked=false;++a.revision;}
+void NativeZombieAwareness::rest(Agent &a){a.state=IDLE;a.visible=false;a.remaining=a.profile.idle_min+random(a)*(a.profile.idle_max-a.profile.idle_min);a.blocked=0;a.confidence=0;a.interest=0;a.provoked=false;a.stationary=a.recovery_cooldown=0;a.search_pending=false;a.has_progress_anchor=false;++a.revision;}
 void NativeZombieAwareness::roam(Agent &a,const Vector3 &feet,bool search){
     const double angle=random(a)*6.283185307179586,radius=search?2+random(a)*2:a.profile.roam_min+random(a)*(a.profile.roam_max-a.profile.roam_min);
-    const Vector3 origin=search?a.last_seen:feet;
+    const Vector3 origin=feet;
     a.goal=origin+Vector3(real_t(std::sin(angle)*radius),0,real_t(std::cos(angle)*radius));
     // Stay in the local neighbourhood instead of drifting indefinitely.
     if(!search&&a.goal.distance_to(a.home)>24)a.goal=feet.lerp(a.home,real_t(.5));
+    if(search)a.goal.y=feet.y;
+    a.search_origin=feet;a.search_pending=false;a.search_retry=.5;
     a.state=search?SEARCH:WANDER;a.remaining=search?std::min(15.0,a.profile.search*(a.ambusher?1.5:1)):28;a.blocked=0;++a.revision;
 }
+void NativeZombieAwareness::reposition(Agent &a,const Vector3 &feet){
+    Vector3 toward=a.last_seen-feet;toward.y=0;
+    if(toward.length_squared()<.01)toward=Vector3(0,0,1);
+    toward.normalize();
+    const double side=random(a)<.5?-1:1;
+    const Vector3 lateral(-toward.z,0,toward.x);
+    a.goal=feet+(lateral*side+toward*.25).normalized()*real_t(1.2+random(a)*.8);
+    a.search_origin=feet;a.state=REPOSITION;a.remaining=2.;a.stationary=a.blocked=0;
+    a.search_pending=false;a.recovery_cooldown=3.;++a.revision;
+}
 Dictionary NativeZombieAwareness::describe(const Agent &a){
-    static const char *names[]={"idle","wander","chase","investigate","search","suspicious","sleeping","waking"};
+    static const char *names[]={"idle","wander","chase","investigate","search","suspicious","sleeping","waking","reposition"};
     Dictionary out;out["state"]=names[a.state];out["goal"]=a.goal;out["revision"]=a.revision;
-    out["moving"]=a.state==WANDER||a.state==CHASE||a.state==INVESTIGATE||a.state==SEARCH;out["combat"]=a.state==CHASE;out["visible"]=a.visible;
-    out["urgent"]=a.state==CHASE||a.state==INVESTIGATE||a.state==SEARCH;
+    out["moving"]=a.state==WANDER||a.state==CHASE||a.state==INVESTIGATE||a.state==SEARCH||a.state==REPOSITION;out["combat"]=a.state==CHASE;out["visible"]=a.visible;
+    out["urgent"]=a.state==CHASE||a.state==INVESTIGATE||a.state==SEARCH||a.state==REPOSITION;
+    out["stationary_seconds"]=a.stationary;out["search_pending"]=a.search_pending;
     out["profile"]=a.profile.name;out["walk_speed"]=a.profile.walk_speed;
     out["chase_speed_multiplier"]=std::max(a.profile.chase_multiplier,a.ambusher?a.profile.sleeper_speed:(a.provoked||a.close_visible)?a.profile.provoked_speed:1.0);
     out["wake_speed"]=a.profile.wake_speed;out["ambusher"]=a.ambusher;out["provoked"]=a.provoked;
@@ -129,11 +142,11 @@ bool NativeZombieAwareness::wants_sight(int64_t id,const Vector3 &feet,const Vec
     }
     // A nearby visible threat may break disinterest, but walls still require a host ray.
     if(a->ignore>0&&distance>a->profile.near_sense*a->profile.near_sense)return false;
-    double range=(a->state==CHASE||a->state==INVESTIGATE||a->state==SEARCH||a->state==WAKING)?a->profile.tracking:a->profile.sight;
+    double range=(a->state==CHASE||a->state==INVESTIGATE||a->state==SEARCH||a->state==WAKING||a->state==REPOSITION)?a->profile.tracking:a->profile.sight;
     Vector3 offset=player-feet;if(offset.length_squared()>range*range)return false;
     if(offset.length_squared()<=a->profile.near_sense*a->profile.near_sense)return true;
     offset.y=0;Vector3 facing=forward;facing.y=0;
-    return a->state==CHASE||a->state==WAKING||a->state==INVESTIGATE||a->state==SEARCH||a->provoked||offset.normalized().dot(facing.normalized())>=.342;
+    return a->state==CHASE||a->state==WAKING||a->state==INVESTIGATE||a->state==SEARCH||a->state==REPOSITION||a->provoked||offset.normalized().dot(facing.normalized())>=.342;
 }
 void NativeZombieAwareness::observe(int64_t id,const Vector3 &player,bool visible,double distance){
     auto *a=find(id);if(!a||!player.is_finite()||!std::isfinite(distance))return;
@@ -151,7 +164,11 @@ void NativeZombieAwareness::observe(int64_t id,const Vector3 &player,bool visibl
     if(a->close_visible)a->ignore=0;
     a->visible=visible&&a->ignore<=0;
     if(a->visible){
-        a->last_seen=player;a->goal=player;a->unseen=0;
+        a->last_seen=player;a->unseen=0;
+        // Seeing the recipient does not cancel a short, validated attempt to
+        // get unstuck. Melee proximity can interrupt it immediately.
+        if(a->state==REPOSITION&&distance>1.6){a->interest=std::max(a->interest,a->profile.pursuit);return;}
+        a->goal=player;
         if(a->state==IDLE||a->state==WANDER||a->state==SUSPICIOUS){
             if(a->profile.notice>0&&!a->provoked){a->state=SUSPICIOUS;return;}
             a->interest=a->profile.pursuit;
@@ -170,15 +187,23 @@ void NativeZombieAwareness::provoke(int64_t id,const Vector3 &player){
 }
 bool NativeZombieAwareness::hear(int64_t id,const Vector3 &feet,const Vector3 &source,double radius){
     auto *a=find(id);
-    if(!a||a->ignore>0||a->sound_cooldown>0||a->state==CHASE||!feet.is_finite()||!source.is_finite()||!std::isfinite(radius)||radius<=0||radius>14)return false;
+    if(!a||a->sound_cooldown>0||a->state==CHASE||!feet.is_finite()||!source.is_finite()||!std::isfinite(radius)||radius<=0||radius>14)return false;
     const double reach=radius*a->profile.hearing;if(feet.distance_squared_to(source)>reach*reach)return false;
     a->sound_cooldown=.8;
+    a->ignore=0;
     if(a->state==SLEEPING||a->state==WAKING){wake(*a,source,false);return true;}
-    a->visible=false;a->last_seen=a->goal=source;a->unseen=0;a->remaining=a->profile.forget;a->state=INVESTIGATE;a->interest=a->profile.pursuit;return true;
+    a->last_seen=source;a->unseen=0;a->interest=std::max(a->interest,a->profile.pursuit);
+    if(a->state==REPOSITION)return true;
+    a->visible=false;a->goal=source;a->remaining=a->profile.forget;a->state=INVESTIGATE;return true;
 }
 bool NativeZombieAwareness::accept_roam(int64_t id,const Vector3 &supported){
-    auto *a=find(id);if(!a||(a->state!=WANDER&&a->state!=SEARCH))return false;
-    if(!supported.is_finite()){rest(*a);return false;}a->goal=supported;return true;
+    auto *a=find(id);if(!a||(a->state!=WANDER&&a->state!=SEARCH&&a->state!=REPOSITION))return false;
+    if(!supported.is_finite()){
+        if(a->state==WANDER)rest(*a);
+        else {a->goal=a->search_origin;a->search_pending=true;a->remaining=0;}
+        return false;
+    }
+    a->goal=supported;return true;
 }
 Dictionary NativeZombieAwareness::advance(int64_t id,const Vector3 &feet,double delta,bool active,const String &route_state){
     auto *a=find(id);if(!a||!feet.is_finite()||!std::isfinite(delta)||delta<=0||delta>.1)return {};
@@ -196,25 +221,43 @@ Dictionary NativeZombieAwareness::advance(int64_t id,const Vector3 &feet,double 
         if(a->confidence>=std::min(a->profile.notice,a->close_visible?a->profile.close_notice:a->profile.notice)){a->state=CHASE;a->interest=a->profile.pursuit;a->unseen=0;}
         return describe(*a);
     }
-    if(a->state==CHASE||a->state==INVESTIGATE||a->state==SEARCH){
+    a->recovery_cooldown=std::max(0.0,a->recovery_cooldown-delta);
+    a->search_retry=std::max(0.0,a->search_retry-delta);
+    const bool engaged=a->state==CHASE||a->state==INVESTIGATE||a->state==SEARCH||a->state==REPOSITION;
+    if(engaged){
+        // Motivation follows evidence, not success of one route or random point.
         a->interest=std::max(0.0,a->interest-delta);
-        if(a->interest<=0){a->ignore=a->profile.ignore;rest(*a);return describe(*a);}
+        if(a->visible)a->unseen=0;else a->unseen+=delta;
+        const double memory=std::min(30.0,a->profile.forget*(a->ambusher?1.35:1));
+        if(!a->visible&&(a->unseen>=memory||a->interest<=0)){
+            a->ignore=a->profile.ignore;rest(*a);return describe(*a);
+        }
+        if(!a->has_progress_anchor||a->progress_anchor.distance_to(feet)>.08){
+            a->progress_anchor=feet;a->has_progress_anchor=true;a->stationary=0;
+        }else if(route_state=="planning"||route_state=="following"||route_state=="unavailable"||route_state=="blocked"||route_state=="search_limit")a->stationary+=delta;
+        else a->stationary=0;
+        a->blocked=(route_state=="blocked"||route_state=="search_limit")?a->blocked+delta:0;
+        if(a->state==REPOSITION){
+            if(a->remaining<=0||feet.distance_to(a->goal)<.6||a->blocked>.5){
+                a->state=a->visible?CHASE:INVESTIGATE;a->goal=a->last_seen;a->stationary=a->blocked=0;++a->revision;
+            }
+            return describe(*a);
+        }
+        const bool needs_recovery=a->blocked>.5||a->stationary>1.5;
+        if(needs_recovery&&a->recovery_cooldown<=0&&feet.distance_to(a->last_seen)>1.6){
+            reposition(*a,feet);return describe(*a);
+        }
+        if(a->state==CHASE){
+            if(!a->visible&&a->unseen>=a->profile.sight_grace){a->state=INVESTIGATE;a->goal=a->last_seen;++a->revision;}
+        }else if(a->state==INVESTIGATE){
+            if(feet.distance_to(a->goal)<.8)roam(*a,feet,true);
+        }else if(a->state==SEARCH){
+            if(a->search_retry<=0&&(a->search_pending||a->remaining<=0||feet.distance_to(a->goal)<.65||a->blocked>.5))roam(*a,feet,true);
+        }
+        return describe(*a);
     }
     a->blocked=(route_state=="blocked"||route_state=="search_limit")?a->blocked+delta:0;
-    if(a->state==CHASE){
-        if(!a->visible){
-            a->unseen+=delta;
-            if(a->unseen>=a->profile.sight_grace){a->state=INVESTIGATE;a->goal=a->last_seen;++a->revision;}
-        }
-        if(feet.distance_to(a->last_seen)>64||a->blocked>6){a->ignore=a->profile.ignore;rest(*a);}
-    }else if(a->state==INVESTIGATE){
-        a->unseen+=delta;
-        if(a->unseen>=std::min(30.0,a->profile.forget*(a->ambusher?1.35:1))||a->blocked>4){a->ignore=3;rest(*a);}
-        else if(feet.distance_to(a->goal)<.8)roam(*a,feet,true);
-    }else if(a->state==SEARCH){
-        a->unseen+=delta;
-        if(a->remaining<=0||a->unseen>=std::min(30.0,a->profile.forget*(a->ambusher?1.35:1))||a->blocked>2){a->ignore=3;rest(*a);}
-    }else if(a->state==WANDER){
+    if(a->state==WANDER){
         if(feet.distance_to(a->goal)<.65||a->remaining<=0||a->blocked>2)rest(*a);
     }else if(a->remaining<=0)roam(*a,feet,false);
     return describe(*a);

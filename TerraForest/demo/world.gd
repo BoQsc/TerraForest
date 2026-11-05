@@ -323,6 +323,7 @@ func _ready() -> void:
 	player.platform_floor_layers &= ~zombies.RAGDOLL_LAYER
 	if zombies.enabled:player.collision_mask |= zombies.CHARACTER_LAYER
 	zombies.target=zombie_target
+	zombies.trace_responses=not ProjectSettings.get_setting("terraforest/offscreen_session",false)
 	zombies.world_geometry=structures.blocks
 	zombies.spawn_visible=func(point:Vector3):return get_viewport().get_camera_3d().is_position_in_frustum(point)
 	zombies.readiness=_actor_collision_ready
@@ -1654,6 +1655,8 @@ func _physics_process(delta: float) -> void:
 		pickups.step_physics(delta,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and app_focused and not session_menu.pauses_world() and not player_hud.inventory_open and not player_view.entry.active,_actor_collision_ready)
 	player_life.step(delta)
 	var measured_begin:=Time.get_ticks_usec()
+	if zombies._response_trace_left>0:
+		zombies.response_context={"dead":player_life.dead,"entry":player_view.entry.active,"loading":loading_active,"shutdown":shutdown_requested,"world_ready":terrain.world_ready,"pending_edit":terrain.pending_edit,"menu":session_menu.pauses_world(),"inventory":player_hud.inventory_open,"driving":world_vehicle.driving,"focused":app_focused}
 	zombies.update(delta,player.global_position,not player_life.dead and not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.pauses_world() and not player_hud.inventory_open and not world_vehicle.driving and app_focused)
 	terrain._record_stage("zombie update",(Time.get_ticks_usec()-measured_begin)/1000.0)
 	measured_begin=Time.get_ticks_usec()

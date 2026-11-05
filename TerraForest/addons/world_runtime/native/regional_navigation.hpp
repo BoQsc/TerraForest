@@ -33,6 +33,10 @@ class RegionalRoute {
     std::map<int,int> visited_;
     std::priority_queue<Entry> open_;
     std::vector<godot::Vector3> path_;
+    // A complete straight corridor is cheaper than an open-surface graph search.
+    // Keep unpublished samples separate: partial progress never authorizes motion.
+    std::vector<godot::Vector3> direct_samples_;
+    bool direct_=true;
     godot::Vector3 start_,goal_,expected_,progress_anchor_;
     int expanding_=-1,direction_=0,profile_=0,stalls_=0;
     size_t waypoint_=0;

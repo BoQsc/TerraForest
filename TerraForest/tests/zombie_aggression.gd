@@ -72,10 +72,11 @@ func native_contract()->void:
 	check(brain.status(1).combat and brain.status(1).chase_speed_multiplier>=1.8,"confirmed attacker gets immediate committed retaliation")
 	for frame in 60*7:
 		brain.observe(1,Vector3(0,0,-8),true,8);brain.advance(1,Vector3.ZERO,1./60.,true,"blocked")
-	check(brain.status(1).ignore_seconds>0,"retaliation still gives up on a physically blocked route")
+	check(brain.status(1).urgent and brain.status(1).ignore_seconds==0,"physical blockage cannot erase retaliation while the player remains visible")
 	check(brain.wants_sight(1,Vector3.ZERO,Vector3.BACK,Vector3(0,0,1)),"close threat is eligible to break blocked pursuit cooldown")
+	var retained_goal:Vector3=brain.status(1).goal
 	brain.observe(1,Vector3(0,0,1),false,1)
-	check(not brain.status(1).combat and brain.status(1).ignore_seconds>0,"occluded proximity cannot break cooldown")
+	check(not brain.status(1).visible and brain.status(1).goal==retained_goal,"occluded proximity cannot reveal a hidden player's new position")
 	brain.observe(1,Vector3(0,0,1),true,1)
 	for frame in 16:brain.advance(1,Vector3.ZERO,1./60.,true,"following")
 	check(brain.status(1).combat and brain.status(1).ignore_seconds==0,"actually visible close threat restores engagement")
@@ -91,7 +92,8 @@ func native_contract()->void:
 	check(brain.finish_waking(1) and brain.status(1).combat and brain.status(1).goal==Vector3(0,0,4),"wake handshake directly targets a currently seen player")
 	brain.observe(1,Vector3(8,0,8),false,11)
 	for frame in 60*13:brain.advance(1,Vector3.ZERO,1./60.,true,"following")
-	check(brain.status(1).state=="investigate" and brain.status(1).goal==Vector3(0,0,4),"sleeper retains its last sighting longer without tracking hidden coordinates")
+	if brain.status(1).state=="reposition":brain.advance(1,brain.status(1).goal,1./60.,true,"arrived")
+	check(brain.status(1).urgent and brain.status(1).goal==Vector3(0,0,4),"completed recovery returns to the last sighting without tracking hidden coordinates")
 	for frame in 60*16:brain.advance(1,Vector3.ZERO,1./60.,true,"following")
 	check(brain.status(1).state in ["idle","wander"],"sleeper memory still expires within a bounded chase")
 

@@ -24,6 +24,32 @@ Terrain foot IK, dense mine crowding and animation art approval remain separate.
 
 ## Zombie sustained response and sleeper ambushes — 2026-11-05
 
+The user rejected the route-only follow-up as well and requested a full engagement
+rework. Navigation/search failure no longer clears motivation or starts an ignore-
+player cooldown. Explicit bounded tactical recovery chooses a validated current-
+storey destination after stalled progress; fresh sight does not cancel that action
+every probe. Search retries preserve evidence, and finite unseen memory still
+permits escape. Awake close sight covers six metres with actual occlusion; sleeper
+caution remains directional. A 1.8-second stagger retrigger cooldown allows
+retaliation while repeated blows still damage anatomy. Waiting bodies turn toward
+their goal. Source/executable commitment, physical recovery and repeated-hit tests
+pass, alongside existing safety/navigation/contact checks. Current evidence and
+remaining player review are linked in the issue; earlier scoped success did not
+satisfy the user's playtest.
+
+Further playtest still rejects standing behavior, including hit reaction followed
+by standing. The exact live event remains open. An isolated clone of the user's
+actual sleeper-houses save confirms active actors waiting in regional planning;
+a nearby saved resident can already attack, so that close test is not a full
+reproduction. Follow-up corrections match the route radius to the actual 0.24 m
+body and validate complete regional straight corridors before graph expansion.
+A physical narrow-aisle retaliation and an open elevated route pass; the latter
+uses three updates versus baseline 38. No partial/failed route authorizes motion.
+Actual-hit diagnostics retain six seconds of gates/body/awareness/routes locally;
+inspect that receipt if standing returns. See current response evidence in the
+existing issue. Cross-building/tower-stair queries still need bounded complete
+journeys; passing close cases must not close the user's repeated report.
+
 Repeated playtest rejection led to a broader rework. Moving-player target updates
 were restarting unfinished searches; ten separate local obstacle searches also
 repeated the same expensive collision probes. Searches now finish before queued

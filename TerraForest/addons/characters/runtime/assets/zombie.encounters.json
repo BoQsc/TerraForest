@@ -1,13 +1,13 @@
 {
   "version": 1,
   "license": "CC0-1.0",
-  "provenance": "Original TerraForest encounter tuning, authored with OpenAI Codex 2026-11-01; sustained-pressure rework requested 2026-11-05. CC0-1.0 original data; no third-party data copied. https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+  "provenance": "Original TerraForest encounter tuning, authored with OpenAI Codex 2026-11-01; evidence-driven engagement and retaliation rework requested 2026-11-05. CC0-1.0 original data; no third-party data copied. https://creativecommons.org/publicdomain/zero/1.0/legalcode",
   "profiles": {
     "shambler": {
       "id": "shambler",
       "sight_range": 24,
       "tracking_range": 38,
-      "near_sense_range": 4,
+      "near_sense_range": 6,
       "notice_seconds": 0.35,
       "pursuit_seconds": 36,
       "forget_seconds": 20,
@@ -33,7 +33,7 @@
       "id": "roamer",
       "sight_range": 28,
       "tracking_range": 42,
-      "near_sense_range": 4,
+      "near_sense_range": 6,
       "notice_seconds": 0.25,
       "pursuit_seconds": 42,
       "forget_seconds": 24,
@@ -59,7 +59,7 @@
       "id": "restless",
       "sight_range": 30,
       "tracking_range": 46,
-      "near_sense_range": 4,
+      "near_sense_range": 6,
       "notice_seconds": 0.15,
       "pursuit_seconds": 48,
       "forget_seconds": 28,

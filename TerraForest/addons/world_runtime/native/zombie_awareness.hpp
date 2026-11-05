@@ -10,7 +10,7 @@ namespace terraforest {
 // Bounded session-local intent. Physics, navigation and contact keep their owners.
 class NativeZombieAwareness : public godot::RefCounted {
     GDCLASS(NativeZombieAwareness,godot::RefCounted)
-    enum State { IDLE, WANDER, CHASE, INVESTIGATE, SEARCH, SUSPICIOUS, SLEEPING, WAKING };
+    enum State { IDLE, WANDER, CHASE, INVESTIGATE, SEARCH, SUSPICIOUS, SLEEPING, WAKING, REPOSITION };
     struct Profile {
         godot::String name="legacy";
         double sight=32,tracking=44,near_sense=5,notice=0,pursuit=30,forget=18,search=6,ignore=10;
@@ -20,9 +20,11 @@ class NativeZombieAwareness : public godot::RefCounted {
     };
     struct Agent {
         int64_t id=0;uint32_t random=1;State state=IDLE;
-        godot::Vector3 home,goal,last_seen;
+        godot::Vector3 home,goal,last_seen,search_origin,progress_anchor;
         double remaining=1,unseen=0,blocked=0,ignore=0,confidence=0,interest=0,wake_elapsed=0,sound_cooldown=0;
         bool visible=false,provoked=false,ambusher=false,close_visible=false;int revision=0,sleep_pose=0;
+        double stationary=0,recovery_cooldown=0,search_retry=0;
+        bool search_pending=false,has_progress_anchor=false;
         Profile profile;
     };
     std::vector<Agent> agents_;
@@ -32,6 +34,7 @@ class NativeZombieAwareness : public godot::RefCounted {
     static void rest(Agent &agent);
     static void roam(Agent &agent,const godot::Vector3 &feet,bool search);
     static void wake(Agent &agent,const godot::Vector3 &source,bool provoked);
+    static void reposition(Agent &agent,const godot::Vector3 &feet);
     static godot::Dictionary describe(const Agent &agent);
 protected:
     static void _bind_methods();

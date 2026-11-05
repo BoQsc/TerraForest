@@ -61,6 +61,7 @@ int RegionalGraph::candidate(int from,const Vector3 &origin,int profile,int dire
 void RegionalRoute::begin(Vector3 start,Vector3 goal,int profile){
     start_=expected_=progress_anchor_=start;goal_=goal;profile_=profile;nodes_.clear();visited_.clear();open_={};path_.clear();
     expanding_=-1;direction_=0;waypoint_=0;retry_=stuck_=0;waiting_=false;finishing_=false;finish_samples_.clear();expansions=0;
+    direct_=true;direct_samples_.clear();direct_samples_.push_back(start);
     height_weight_=goal.y>start.y+.5?16:2;
     nodes_.push_back({-1,-1,0});open_.push({estimate(start,goal,height_weight_),0});state=ActorRoute::PLANNING;
     if(std::abs(goal.x-start.x)>RADIUS||std::abs(goal.z-start.z)>RADIUS||std::abs(goal.y-start.y)>64)state=ActorRoute::SEARCH_LIMIT;
@@ -103,6 +104,23 @@ void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirec
     const Callable &readiness,const Callable &admission,const Ref<PhysicsRayQueryParameters3D> &ray,
     const Ref<PhysicsShapeQueryParameters3D> &shape){
     if(state!=ActorRoute::PLANNING||!space)return;
+    if(direct_){
+        const Vector3 from=direct_samples_.back();
+        const double remaining=planar(from,goal_);
+        Vector3 next=goal_;next.y=from.y;
+        if(remaining>.5)next=from+(next-from)*(.5/remaining);
+        if(validator.sample_motion(space,from,next,readiness,admission,ray,shape)){
+            if(rejected_edge(from,next)){direct_=false;direct_samples_.clear();return;}
+            if(remaining>.5||std::abs(next.y-goal_.y)<.3){
+                direct_samples_.push_back(next);
+                if(remaining<=.5){path_.swap(direct_samples_);direct_samples_.clear();waypoint_=1;state=ActorRoute::FOLLOWING;}
+                return;
+            }
+        }else if(validator.edge_unavailable()){
+            graph.request(next);state=ActorRoute::UNAVAILABLE;retry_=.1;waiting_=true;return;
+        }
+        direct_=false;direct_samples_.clear();return;
+    }
     if(expanding_<0){
         int stale=0;
         while(!open_.empty()&&nodes_[open_.top().node].closed){open_.pop();if(++stale==12)return;}
@@ -184,6 +202,7 @@ Dictionary RegionalRoute::status(const RegionalGraph &graph)const{
     static const char *names[]={"idle","planning","following","arrived","blocked","unavailable","search_limit"};
     Dictionary out;out["state"]=names[state];out["nodes"]=int(nodes_.size());out["expansions"]=expansions;
     out["node_limit"]=QUERY_LIMIT;out["radius_m"]=RADIUS;out["waypoints"]=int(path_.size());out["waypoint_index"]=int(waypoint_);
+    out["direct_planning"]=direct_&&state==ActorRoute::PLANNING;out["direct_samples"]=int(direct_samples_.size());
     out["stuck_seconds"]=stuck_;out["replans"]=stalls_;out["graph_nodes"]=int(graph.vertices.size());out["graph_node_limit"]=RegionalGraph::NODE_LIMIT;
     out["rejected_waypoints"]=int(rejected_.size());out["rejected_waypoint_limit"]=16;
     out["graph_cache_hits"]=int64_t(graph.hits);out["graph_revision"]=int64_t(graph.revision);out["complete_path"]=!path_.empty();

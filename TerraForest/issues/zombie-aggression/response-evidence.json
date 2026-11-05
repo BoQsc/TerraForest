@@ -1,0 +1,279 @@
+{
+  "date": "2026-11-05",
+  "status": "Engagement/retaliation rework verified in declared fixtures; user acceptance remains pending after rejection of earlier fixes.",
+  "provenance": "Original Codex-assisted implementation/tests/tools for maintainer request, 0BSD; original encounter tuning CC0-1.0. Existing character/animation/engine/native dependency terms retained. No new external material imported.",
+  "rejected_live_case": {
+    "report": "reports/zombie_saved_response/rejected_live.json",
+    "user_feedback": "It still does not greatly resolve it. I feel you should rework completely now; zombies lose interest quickly and do not care about a nearby player.",
+    "meaning": "Live receipt has active gates and residents waiting in planning across storeys. It does not prove every reported stop has one cause, nor qualify the previous route-only fix.",
+    "running_binary": "TerraForest/TerraForest.exe --path TerraForest res://demo/worlds.tscn -- --continue-last",
+    "native": "source debug world_runtime DLL, actual loaded module verified"
+  },
+  "changes": [
+    "Engagement follows remembered evidence; a failed random search/recovery point no longer calls rest and clears provocation.",
+    "Blocked navigation does not make a visible threat uninteresting or start a forced ignore cooldown.",
+    "Stalled engagement chooses an explicit short same-storey tactical reposition, supported and routed by the existing native owner. Fresh sight updates the clue without cancelling this action; melee proximity can interrupt it.",
+    "Failed searches retry under a bounded clock; completing one search does not end fresh engagement. Finite unseen memory still permits escape.",
+    "Six-metre awake close sight remains occlusion/readiness gated; sleeper directional caution stays unchanged.",
+    "1.8-second stagger retrigger cooldown allows retaliation through repeated light hits; all accepted damage/anatomical loss/death and firearm physical reaction paths retained.",
+    "Standing route radius matches the actual 0.24 m body; conservative height/hazard/support/sweep rules retained.",
+    "Complete regional straight-corridor validation avoids unnecessary graph work on open slopes. No partial route is published, and unavailable coverage stops motion.",
+    "Latest actual-hit receipt records up to seven samples/six seconds in user://diagnostics/zombie_response.json; no world writes."
+  ],
+  "commitment_source": {
+    "report": "reports/zombie_pressure/20261105T093810538803Z",
+    "test": "zombie_commitment",
+    "executable": false,
+    "passed": true,
+    "scope": "assertion regression",
+    "script_sha256": "cd6b47927d8a0bdd2c40c6b7b4219051cf600838a91eefba7efb811e85af23ae",
+    "summary": {
+      "checks": 13,
+      "failures": 0,
+      "recovery_travel": 2.35337609425187,
+      "recovery_extent": 2.34783101081848,
+      "retaliation_damage": 38.4,
+      "zombie_health": 150.0
+    },
+    "sampled_resources": {
+      "peak_private_commit_bytes": 777293824,
+      "peak_dedicated_gpu_bytes": 153927680,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "commitment_executable": {
+    "report": "reports/zombie_pressure/20261105T093824569328Z",
+    "test": "zombie_commitment",
+    "executable": true,
+    "passed": true,
+    "scope": "assertion regression",
+    "script_sha256": "cd6b47927d8a0bdd2c40c6b7b4219051cf600838a91eefba7efb811e85af23ae",
+    "summary": {
+      "checks": 13,
+      "failures": 0,
+      "recovery_travel": 1.56602928042412,
+      "recovery_extent": 1.56418943405151,
+      "retaliation_damage": 38.4,
+      "zombie_health": 150.0
+    },
+    "sampled_resources": {
+      "peak_private_commit_bytes": 775266304,
+      "peak_dedicated_gpu_bytes": 153927680,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "pressure_executable": {
+    "report": "reports/zombie_pressure/20261105T093449434858Z",
+    "test": "zombie_pressure",
+    "executable": true,
+    "passed": true,
+    "scope": "assertion regression",
+    "script_sha256": "15e1edfd5e410086598fc4ce36674ebc550710a1efed14cf46adc6421010c993",
+    "summary": {
+      "checks": 22,
+      "failures": 0,
+      "moved": 10,
+      "engaged_at_20hz": 16
+    },
+    "sampled_resources": {
+      "peak_private_commit_bytes": 1077719040,
+      "peak_dedicated_gpu_bytes": 404426752,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "route_response_executable": {
+    "report": "reports/zombie_pressure/20261105T093506390531Z",
+    "test": "zombie_route_response",
+    "executable": true,
+    "passed": true,
+    "scope": "assertion regression",
+    "script_sha256": "432bf9c5e276f627aaf96f2f0079be2f35bb0c51cfc0f6afd95ef9c13ee5abf1",
+    "summary": {
+      "checks": 11,
+      "failures": 0,
+      "corridor_ticks": 3
+    },
+    "sampled_resources": {
+      "peak_private_commit_bytes": 783089664,
+      "peak_dedicated_gpu_bytes": 153927680,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "interiors_executable": {
+    "report": "reports/zombie_interior_pursuit/20261105T093516554201Z",
+    "test": null,
+    "executable": true,
+    "passed": true,
+    "scope": null,
+    "script_sha256": "267b82e185c18ac906ff8509b964c212a3283c3daf9bd38e9b035bff68a01f45",
+    "summary": {
+      "checks": 23,
+      "failures": 0
+    },
+    "sampled_resources": {
+      "peak_private_commit_bytes": 1476186112,
+      "peak_dedicated_gpu_bytes": 661970944,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "mine_executable": {
+    "report": "reports/zombie_pressure/20261105T093603238256Z",
+    "test": "zombie_mine_pursuit",
+    "executable": true,
+    "passed": true,
+    "scope": "assertion regression",
+    "script_sha256": "f63b89ebe21c77c367fa8a57d57e5cec2c29cab2ccb5ea6375b866094928ad08",
+    "summary": {
+      "checks": 7,
+      "failures": 0,
+      "moved": 10,
+      "attackers": 6,
+      "damage": 455.4,
+      "player_travel": 3.42524727201089,
+      "source_unchanged": true
+    },
+    "sampled_resources": {
+      "peak_private_commit_bytes": 3566288896,
+      "peak_dedicated_gpu_bytes": 1474899968,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "gait_executable": {
+    "report": "reports/zombie_gait_continuity/20261105T093443967933Z",
+    "test": null,
+    "executable": true,
+    "passed": true,
+    "scope": null,
+    "script_sha256": "3a286361d587bb44608668d178e112811385ef278b514be9064f06af4b2609fc",
+    "summary": {
+      "checks": 15,
+      "failures": 0
+    },
+    "sampled_resources": {
+      "peak_private_commit_bytes": 1105870848,
+      "peak_dedicated_gpu_bytes": 393474048,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "latest_saved_diagnostic": {
+    "report": "reports/zombie_pressure/20261105T092852357426Z",
+    "clone": {
+      "created": true,
+      "slot": "ZombieResponse_rework_20261105",
+      "source_slot": "SleeperHomes_1703_dfd9e98e",
+      "source_sha256": "75706ac8cfc5f497366ea1da46049c18e61278486235b438efe3699ef27c55e6",
+      "map_cache_copied": false
+    },
+    "scope": "Diagnostic completion, no behavior assertion gate. Uses actual latest saved residents and original target adapter; player damage connection disconnected only in fixture to prevent test death. Repeated scripted provocation is diagnosis, not normal play acceptance. Several actors make tactical movement; one conservative crawler remains blocked. Cross-storey completion is not established."
+  },
+  "other_checks": [
+    {
+      "test": "debug awareness",
+      "report": "reports/checks/20261105T092605386416Z",
+      "checks": 34,
+      "failures": 0
+    },
+    {
+      "test": "release awareness",
+      "report": "reports/zombie_awareness_release.json",
+      "checks": 34,
+      "failures": 0
+    },
+    {
+      "test": "profiles",
+      "report": "reports/checks/20261105T092218996686Z",
+      "checks": 59,
+      "failures": 0
+    },
+    {
+      "test": "physical behavior and finite search escape",
+      "report": "reports/checks/20261105T092629285356Z",
+      "checks": 19,
+      "failures": 0
+    },
+    {
+      "test": "physical aggression",
+      "report": "reports/zombie_aggression/20261105T092727820666Z",
+      "checks": 43,
+      "failures": 0
+    },
+    {
+      "test": "sleeper runtime plus fresh-process restore",
+      "report": "reports/zombie_sleepers/20261105T092422681646Z",
+      "checks": 52,
+      "failures": 0
+    },
+    {
+      "test": "navigation wall, stairs, water, blocked, unavailable",
+      "report": "reports/checks/20261105T093455143660Z",
+      "checks": 15,
+      "failures": 0
+    },
+    {
+      "test": "physical damage regions, limbs and corpses",
+      "report": "reports/checks/20261105T093644854086Z",
+      "checks": 39,
+      "failures": 0
+    }
+  ],
+  "route_only_history": {
+    "baseline": "reports/zombie_route_response/baseline.json",
+    "baseline_receipt": "reports/checks/20261105T085317090580Z",
+    "baseline_corridor_updates": 38,
+    "corrected_corridor_updates": 3,
+    "meaning": "Prior planner could take a detour around a physically usable narrow aisle; baseline did still reach attacks. Corrected aisle uses its available width. Open-slope complete corridor has zero graph expansions. This route-only change was subsequently rejected by user playtest and is not the full engagement fix."
+  },
+  "retained_failures": [
+    {
+      "report": "reports/checks/20261105T092217812683Z",
+      "checks": 34,
+      "failures": 3,
+      "disposition": "Old assertions required one failed search/blocked visible pursuit to discard interest. Updated to the requested persistent behavior; revised suite passes."
+    },
+    {
+      "report": "reports/checks/20261105T092307917057Z",
+      "checks": 18,
+      "failures": 1,
+      "disposition": "Old search assertion required disinterest at seven seconds. Added explicit fresh-search persistence and later evidence-expiry checks; revised suite has 19 passing assertions."
+    },
+    {
+      "report": "reports/zombie_aggression/20261105T092351556860Z",
+      "checks": 43,
+      "failures": 3,
+      "disposition": "Old blocked cooldown and fixed-action-goal expectations updated. Recovery returns to the actual last clue, not hidden coordinates; revised suite passes."
+    },
+    {
+      "report": "reports/checks/20261105T090522347722Z",
+      "checks": 18,
+      "failures": 2,
+      "disposition": "Pre-existing synthetic tower upper-floor/storey query failure remains open. Engagement changes do not establish tower connectivity."
+    },
+    {
+      "report": "reports/checks/20261105T085118861839Z",
+      "checks": 7,
+      "failures": 2,
+      "disposition": "Initial test ramp had incorrect one-sided concave collision. Replaced with a solid slope; no production relaxation for that setup failure."
+    }
+  ],
+  "setup_limits": "Direct replay of the running user save was locked; copied only after user closed it. Temporary baseline comparison restoration also encountered another mockup process holding the DLL, then cached build reuse retained baseline output. Explicit relink restored both current libraries before final source/package receipts. No claimed passing current receipt uses the baseline DLL.",
+  "artifacts": {
+    "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "b4aec51ef912300a2ded40b2dfbb756c21ad47ed1970810200fba0e7ce2d3018",
+    "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "13d1e34d627266d2f83150988534c0d4cc1e8ae80a7d207d1f9a66e529b279fb",
+    "dist/TerraForest.pck": "179cedc249d9cf97a8bbb86db67ae589b5db9ea066042e10a3ac951c0f883670"
+  },
+  "remaining": [
+    "User playtest acceptance of the new engagement rework.",
+    "Synthetic tower multi-flight query and arbitrary cross-building navigation; tactical recovery is not a substitute for complete whole-world navigation qualification.",
+    "Tight crawling geometry and unsupported/blocked actors remain bounded by declared capabilities.",
+    "Representative large crowds, distant streaming and sustained whole-world performance remain unqualified; sampled process budgets are not frame-time/hardware compatibility guarantees."
+  ],
+  "resume": "On another standing/disinterest report, read the actual-hit receipt and preserve identity, availability, native route/motion rejection, engagement state and exact geometry. Replay that concrete state without fresh test-body substitution. Resume tower frontier/support diagnosis independently.",
+  "diagnostic_archive": "reports/zombie_saved_response/fixtures_20261105_response"
+}

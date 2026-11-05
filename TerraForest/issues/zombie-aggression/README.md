@@ -1,13 +1,101 @@
 # Passive zombies and sleeper ambushes
 
-- Status: Substantial response/navigation rework verified in scoped encounters; player balance review pending.
+- Status: Engagement/retaliation rework verified in scoped source and executable checks; user acceptance pending after repeated rejected playtests.
 - Updated: 2026-11-05. Fix: sustained awareness, fair perception, moving-goal planning and encounter tuning.
 - User review: Follow-up reports awake sleepers still mostly standing inside houses/mine. Earlier response/wake changes did not establish complete behavior acceptance.
 - Symptom: Sleepers ignored a silent nearby player, rose slowly and failed to commit; ordinary zombies could disregard attacks or an obvious close threat.
 
 ## Changes
 
-### Sustained pressure and moving-player stalls — 2026-11-05
+### Engagement drive and tactical recovery — latest 2026-11-05 rework
+
+The user rejected the route-only follow-up too, saying the zombies still lose
+interest and do not care about a nearby player. That feedback supersedes earlier
+scoped success claims. The live receipt confirms active awareness and planning
+waits in the houses world; it does not establish a universal perception failure.
+The behavior now separates engagement, route execution and combat reaction:
+
+- A rejected search/recovery endpoint preserves the clue, provocation and alert
+  state. Search retries are bounded instead of calling `rest()` immediately.
+- A blocked route no longer starts an ignore-player cooldown. When an engaged
+  body makes no progress for 1.5 seconds, or reports blockage for 0.5 seconds, it
+  can choose a short tactical reposition on its current storey. The host releases
+  that abandoned query once and validates the new destination with the same
+  support, occupancy, readiness and native full-route guards. Reposition is an
+  explicit action, not a direct-motion fallback or a claim of whole-world routing.
+- Fresh sight updates the clue without cancelling the two-second recovery action
+  at every probe. Melee proximity can interrupt recovery immediately. A three-
+  second recovery cooldown bounds churn; reaching the waypoint resumes pursuit
+  or investigation of the latest actual clue. Missing local collision still
+  suspends the body.
+- Investigation/search retain motivation until evidence expires. Finishing one
+  search radius or failing a route cannot erase it. Finite unseen memory and
+  actual loss of evidence still allow escape; ordinary/sleeper memory tuning is
+  retained. Fresh audible evidence can break disinterest, with the same sound
+  cooldown and hearing radius limits.
+- Awake close awareness covers six metres in all directions, still requiring a
+  ready, unobstructed sight ray. Sleeper directional caution remains unchanged.
+- Ordinary hit stagger has a 1.8-second retrigger cooldown. Every accepted hit
+  still damages anatomy and provokes; death, severing and firearm physical
+  reactions retain their paths. Repeated light blows can no longer restart
+  stagger and cancel every retaliation contact. Waiting engaged bodies also turn
+  toward their intended destination while their native route is pending.
+
+The commitment regression checks memory through rejected/blocked routes, evidence
+renewal, finite escape, physical recovery toward an unreachable elevated target,
+no attacks across the height gap, and retaliation during thirty real hits. Source
+and executable both pass. Narrow-aisle/corridor, crowd perception, actual mine,
+furnished-room, gait, sleeper safety and damage-region checks are retained in
+[the current evidence](response-evidence.json). Existing assertions that required
+blocked visible threats or one failed search to become uninteresting were updated
+to the explicitly requested behavior; their original failures remain recorded.
+
+Full navigation through arbitrary buildings, the synthetic tower-stair failure,
+tight crawling passages and user balance acceptance remain open. The new actual-
+hit receipt is still the return trigger if the standing/disinterest report recurs.
+
+### Rejected route-only follow-up — 2026-11-05
+
+The user again reports most residents standing and confirms that a hit produces
+a reaction followed by more standing. The running process was checked: it used
+this checkout and its current debug AI library, with the Last World route. This
+was not established to be an old installation. The active save was
+`SleeperHomes_1703_dfd9e98e`, not the owned mine used by earlier checks.
+
+A stable, isolated clone replays actual saved residents without overwriting that
+save. With menus/loading/focus/death gates clear, several provoked actors wait in
+regional planning. A nearby upper-floor resident does pursue and attack even
+before this correction. Thus the exact live report is not fully reproduced by
+that close approach; the saved replay is diagnosis, not universal acceptance.
+
+Two concrete navigation restrictions are corrected:
+
+- Standing route/motion checks used a 0.35 m radius for a 0.24 m physical body.
+  They now use the actual body radius, retaining conservative 1.8 m height and
+  existing support, step, dry-footprint and swept-collision checks. A 60 cm aisle
+  can be traversed directly instead of forcing a detour around its walls.
+- Targets beyond 12 m or with >0.5 m height difference immediately used regional
+  graph search. Regional queries now first validate a complete straight corridor
+  in half-metre scheduler quanta. On a 26 m open slope this takes three updates
+  and zero graph expansions (baseline 38 updates). Samples are unpublished until
+  the complete path is valid; a wall falls back to the same graph search, and
+  unavailable collision still stops movement. This is not direct movement on a
+  failed/partial route. The 96 m query domain bounds this extra sample list to
+  at most 273 positions; work/node/deadline budgets are unchanged.
+
+The real cloned save also records an outdoor resident reaching attack contact;
+random wandering differs between runs, so this is not a paired timing comparison.
+Actors separated by buildings and the tower-stair failure remain outside that
+success. [Current receipts, baseline and retained failures](response-evidence.json).
+
+Normal gameplay now retains the latest six seconds after a hit in
+`user://diagnostics/zombie_response.json`: availability gates, actual identities,
+body/attack state, awareness and native routes. It holds at most seven samples,
+performs no extra perception/route queries and never writes world data. Fixture
+hosts do not enable it by default. If standing persists, inspect this actual-play
+receipt before changing recognition/tuning again.
+
+### Earlier sustained-pressure rework — 2026-11-05
 
 Repeated playtest feedback rejected the earlier response changes. The new moving
 player/obstacle fixture reproduced a deeper problem: all ten acquired pursuers
