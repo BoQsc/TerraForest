@@ -157,20 +157,36 @@ func filter_list() -> void:
 	else:
 		library.select("")
 		saved_title.text="No matching worlds";saved_picture.texture=null;saved_details.text=""
-		if saved_caption!=null:saved_caption.visible=false
+		_caption().visible=false
+## The general-picture caption belongs to the selector, not to one UI set's
+## builder, so it exists whichever set is installed.
+func _caption()->Label:
+	if saved_caption!=null and is_instance_valid(saved_caption):return saved_caption
+	saved_caption=Label.new();saved_caption.text="No world picture yet"
+	saved_caption.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	saved_caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;saved_caption.vertical_alignment=VERTICAL_ALIGNMENT_CENTER
+	saved_caption.add_theme_font_size_override("font_size",20)
+	saved_caption.add_theme_color_override("font_color",Color(1,1,1))
+	saved_caption.add_theme_color_override("font_outline_color",Color(0,0,0,0.85))
+	saved_caption.add_theme_constant_override("outline_size",6)
+	saved_caption.visible=false
+	if saved_picture!=null and is_instance_valid(saved_picture):saved_picture.add_child(saved_caption)
+	else:add_child(saved_caption)
+	return saved_caption
+
 func show_saved_details(index:int)->void:
 	if index<0 or index>=worlds.item_count:return
 	var slot:=str(worlds.get_item_metadata(index))
 	if library.selected_slot!=slot or not library.cache.has(slot):
 		saved_picture.texture=null;saved_details.text="Loading world details…"
-		if saved_caption!=null:saved_caption.visible=false
+		_caption().visible=false
 	saved_title.text=slot
 	saved_title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
 	library.select(slot)
 func _saved_details_ready(slot:String,data:Dictionary,picture:Texture2D)->void:
 	if slot!=library.selected_slot:return
 	saved_picture.texture=picture
-	if saved_caption!=null:saved_caption.visible=bool(data.get("placeholder",false))
+	_caption().visible=bool(data.get("placeholder",false))
 	var lines:=PackedStringArray()
 	for entry in [["created","Created"],["last_played","Last played"],["saved","Last saved"]]:
 		var value:int=int(data.get(entry[0],0))
