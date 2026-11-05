@@ -2,6 +2,9 @@
 extends Control
 ## Standalone world-loading mockup: a seeded planet diorama beside an editorial
 ## loading rail. Presentation only - sample data, mock progress, no gameplay hook.
+## Deliberately detached from the shipped loader: the game still loads through
+## addons/world_runtime/generation_screen.gd (loading_background/details/panel.gd)
+## with real coordinator stages, photographs, diagnostics and cancellation.
 ## Run res://demo/world_loading_diorama.tscn on its own to preview it.
 
 const SAMPLE_SEED := 8841229
