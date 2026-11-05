@@ -50,5 +50,44 @@
     "caption": "Planet functional loading background with measured panel and original diagnostics",
     "scope": "Inspected source-rendered UI layout; controlled preview/progress data, not player approval or an actual measured loading percentage.",
     "provenance": "Diagnostic capture of TerraForest. Original UI/scene code 0BSD and original new module manifests/scenes CC0-1.0; inherited referenced assets retain their terms."
+  },
+  {
+    "file": "activation_survey_create.png",
+    "source": "reports/ui_sets/20261105T115502730396Z/live_create_studio.png",
+    "sha256": "cdd36a62694812ce00a01cd8b0b3987aa5024f773f4392ade49cad205b27db79",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "caption": "Survey live composition: actual recipe controls beside the sample survey; isolated studio preview",
+    "scope": "Inspected functional adaptation; controlled fixture data, not player visual acceptance or a complete generation workflow.",
+    "provenance": "TerraForest diagnostic capture; original code 0BSD, original new UI manifests CC0-1.0; inherited referenced asset terms retained."
+  },
+  {
+    "file": "activation_planet_loading.png",
+    "source": "reports/ui_sets/20261105T115502730396Z/expedition_loading.png",
+    "sha256": "068edeff3093724ff345970c764e4d25140d4442e7a175c03788e8b01d49a34e",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "caption": "Planet live loading composition; actual progress API with controlled 71 percent input",
+    "scope": "Inspected functional adaptation; controlled fixture data, not player visual acceptance or a complete generation workflow.",
+    "provenance": "TerraForest diagnostic capture; original code 0BSD, original new UI manifests CC0-1.0; inherited referenced asset terms retained."
+  },
+  {
+    "file": "activation_campfire_loading.png",
+    "source": "reports/ui_sets/20261105T115502730396Z/campfire_loading.png",
+    "sha256": "af63b8443470acbcdf1f08107b0df25cbe11ebd1be01199106e22f927b62c881",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "caption": "Campfire live composition with tip card and full-width measured footer; no photograph in this test",
+    "scope": "Inspected functional adaptation; controlled fixture data, not player visual acceptance or a complete generation workflow.",
+    "provenance": "TerraForest diagnostic capture; original code 0BSD, original new UI manifests CC0-1.0; inherited referenced asset terms retained."
   }
 ]

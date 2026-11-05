@@ -1,11 +1,13 @@
-[gd_resource type="Resource" load_steps=9 format=3]
+[gd_resource type="Resource" load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://addons/ui_sets/ui_set.gd" id="1"]
 [ext_resource type="PackedScene" path="res://demo/world_loading_mockup.tscn" id="2"]
 [ext_resource type="Resource" path="res://addons/ui_sets/sets/shipped/set.tres" id="3"]
 [ext_resource type="Script" path="res://addons/ui_sets/themed_browser.gd" id="4"]
-[ext_resource type="Script" path="res://addons/ui_sets/themed_panel.gd" id="5"]
-[ext_resource type="Script" path="res://addons/ui_sets/themed_background.gd" id="6"]
+[ext_resource type="Script" path="res://addons/ui_sets/campfire_panel.gd" id="5"]
+[ext_resource type="Script" path="res://addons/ui_sets/campfire_background.gd" id="6"]
+
+[ext_resource type="Script" path="res://addons/ui_sets/campfire_details.gd" id="7"]
 
 [sub_resource type="SystemFont" id="HeadingFont"]
 font_names = PackedStringArray("Georgia", "DejaVu Serif")
@@ -18,11 +20,12 @@ font_names = PackedStringArray("Segoe UI", "DejaVu Sans")
 script = ExtResource("1")
 id = "campfire"
 title = "Campfire loading"
-description = "Preserved campfire loading reference. Live adapter uses the actual browser, generation actions and measured loading widgets with the campfire palette; the loading layout itself is not ported."
+description = "Campfire loading layout with the saved-world photograph, campfire emblem, travel tip and measured progress. Browser and creation inherit Classic controls."
 preview = ExtResource("2")
 runtime_enabled = true
 base = ExtResource("3")
 browser_view = ExtResource("4")
+loading_details = ExtResource("7")
 loading_panel = ExtResource("5")
 loading_background = ExtResource("6")
 accent = Color(0.5450980392156862, 0.8745098039215686, 0.7176470588235294, 1)

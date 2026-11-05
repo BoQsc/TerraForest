@@ -13,9 +13,10 @@ func _ready()->void:
 	browser.saved_title.text="Amber Bay"
 	browser.saved_details.text="Preview data · seed 1703\nSaved-world actions are disabled in this preview."
 	browser.preview_due_ms=-1;browser.preview_status.text="Sample survey · planning disabled in preview"
+	browser.seed_field.value=2
 	browser.preview_view.texture=preload("res://addons/ui_sets/reference_media.gd").texture("res://demo/world_survey/assets/survey_map.png")
 	if browser.preview_view.texture!=null:
-		browser.seed_field.value=2;browser.preview_empty.hide();browser.preview_due_ms=-1
+		browser.preview_empty.hide();browser.preview_due_ms=-1
 		browser.preview_metrics.text="Sample survey · seed 2 · no live planning job"
 	loading=load("res://addons/world_runtime/generation_screen.gd").new();add_child(loading)
 	loading.panel.preferences_path="";loading.cancel_button.disabled=true

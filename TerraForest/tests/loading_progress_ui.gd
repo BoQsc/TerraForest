@@ -37,15 +37,20 @@ func run()->void:
  screen.diagnostics.refresh()
  await RenderingServer.frame_post_draw
  var rect:Rect2=screen.panel.get_global_rect();var bar:Rect2=screen.panel.bar.get_global_rect()
- check(absf(bar.get_center().x-root.size.x*0.5)<2 and bar.position.y>root.size.y*0.65 and bar.size.x>root.size.x*0.5 and bar.size.x<root.size.x*0.65 and bar.size.y>=18 and bar.size.y<=22 and rect.size.y<180 and rect.end.y<=root.size.y-8 and screen.cancel_button.get_global_rect().end.y<root.size.y,"compact bar centered near bottom at full resolution")
+ var bar_height:=8 if screen.panel.get_script()==preload("res://addons/ui_sets/survey_panel.gd") else 18
+ check(absf(bar.get_center().x-root.size.x*0.5)<2 and bar.position.y>root.size.y*0.65 and bar.size.x>root.size.x*0.5 and bar.size.x<root.size.x*0.65 and bar.size.y>=bar_height and bar.size.y<=bar_height+4 and rect.size.y<190 and rect.end.y<=root.size.y-8 and screen.cancel_button.get_global_rect().end.y<root.size.y,"compact measured bar centered near bottom at full resolution")
  var clock:Rect2=screen.panel.clock_label.get_global_rect()
  check(clock.end.x<screen.cancel_button.get_global_rect().position.x and clock.position.x>screen.panel.title.get_global_rect().end.x,"elapsed and estimate fit in header without overlap")
  check(screen.panel.find_children("*","CheckButton",true,false).is_empty(),"loading screen has no Compact toggle")
  check(screen.background.shade.color.a==0.5 and screen.background.shade.get_index()>screen.picture.get_index(),"generation dims the photograph underneath the UI")
  check(screen.panel.clock_label.text.contains("Elapsed") and screen.panel.clock_label.text.contains("Est. remaining"),"both timers are visible beside bar from startup")
  var logo:Rect2=screen.diagnostics.wordmark.get_global_rect()
- check(absf(logo.get_center().x-root.size.x*0.5)<2 and logo.get_center().y>root.size.y*0.3 and logo.get_center().y<root.size.y*0.47,"wordmark is centered slightly above middle")
- check(screen.diagnostics.panel.get_global_rect().end.y<rect.position.y and logo.end.y<screen.diagnostics.panel.get_global_rect().position.y,"wordmark, technical panel and bottom bar do not overlap")
+ check(absf(logo.get_center().x-root.size.x*0.5)<2 and logo.get_center().y>root.size.y*0.25 and logo.get_center().y<root.size.y*0.47,"wordmark is centered above middle")
+ if screen.diagnostics.has_method("toggle_details"):
+  check(not screen.diagnostics.panel.visible,"editorial loading starts with developer details collapsed")
+  screen.diagnostics.toggle_details();await process_frame
+  check(screen.diagnostics.panel.visible and screen.diagnostics.panel.get_global_rect().end.y<rect.position.y,"expanded diagnostic counters remain above the progress controls")
+ else:check(screen.diagnostics.panel.get_global_rect().end.y<rect.position.y and logo.end.y<screen.diagnostics.panel.get_global_rect().position.y,"wordmark, technical panel and bottom bar do not overlap")
  check(screen.diagnostics.live.text.contains("stage_fraction = 0.56") and screen.diagnostics.history.text.contains("Photographing"),"raw work details and measured stage history are shown")
  root.get_texture().get_image().save_png("res://reports/loading_progress_generation.png")
  var progress_before:float=screen.panel.bar.value

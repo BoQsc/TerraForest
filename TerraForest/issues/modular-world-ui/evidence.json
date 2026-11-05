@@ -1,6 +1,6 @@
 {
   "date": "2026-11-05",
-  "status": "Implemented and installed; source and executable verification complete for declared scope; user review pending.",
+  "status": "Activation corrected and exported; source/package regression checks pass; player visual review pending.",
   "scope": "World selection, creation, generation, Last World cover and gameplay loading presentation. HUD/inventory/in-game menus excluded by user reply World screens first.",
   "provenance": "Original Codex-assisted code/tests/tools, 0BSD. Original new Resource manifests/scenes CC0-1.0. Existing referenced views/art/planet terms retained. No external code, media or font files downloaded. See addons/ui_sets/ORIGIN.txt.",
   "registry": {
@@ -16,13 +16,18 @@
     "runtime_ids": [
       "shipped",
       "survey",
+      "expedition",
+      "diorama",
+      "campfire"
+    ],
+    "reference_only_ids": [],
+    "live_layout_limit": "Distinct functional Survey/Planet library compositions and shared real recipe controls arranged with the survey on the left. Planet/Diorama measured rail and portrait; Campfire tip card/full-width footer; Survey compact footer and stage rail. Not pixel-identical ports: actual ItemList/form tabs/current stages replace reference sample rows and metadata. Diorama/Campfire inherit Classic browser/forms.",
+    "previous_runtime_ids": [
+      "shipped",
+      "survey",
       "expedition"
     ],
-    "reference_only_ids": [
-      "campfire",
-      "diorama"
-    ],
-    "live_layout_limit": "Survey and Planet live adapters reuse working Classic browser/form layouts with palette/type and a reusable planet loading portrait. Their full target reference layouts are preserved but not claimed as ported."
+    "previous_live_layout_limit": "Survey and Planet live adapters reuse working Classic browser/form layouts with palette/type and a reusable planet loading portrait. Their full target reference layouts are preserved but not claimed as ported."
   },
   "source_registry": {
     "report": "reports/ui_sets/20261105T112303360274Z",
@@ -205,15 +210,14 @@
   "export_retry": "First export attempt stopped before refreshing the pack, without a useful child error. Each asset-bake step then passed individually; required gates and subsequent complete export passed. No failing pack was installed.",
   "preservation": "Original mockup layouts and scenes retained. Only Survey kit photo loading and Campfire texture-crop media access changed to use shared portable helper. Original images not copied into bundle from user saves/reports.",
   "remaining": [
-    "Player visual/usability acceptance.",
-    "Exact Survey/Planet reference layout ports onto live controller contracts.",
-    "Actual-progress adapters for Diorama/Campfire before complete suite activation.",
-    "In-game HUD/menu modularization remains out of scope.",
-    "Large plugin collections and sustained preview graphics performance unqualified beyond current five sets and sampled process budgets."
+    "Player visual/usability acceptance, including pixel-level art refinement of functional adaptations.",
+    "In-game HUD/inventory/menus remain outside the user-requested scope.",
+    "Large plugin collections, long-run graphics budgets and broad intermittent GUI stress are not newly qualified.",
+    "This follow-up checks measured generation/cancel presentation and normal world flow; it does not newly run a full integrated-region generation cycle for every set."
   ],
   "resume": "Add/change only set manifests and relevant view modules; run registry plus real open/save/reopen/return/loading/cancellation contracts for new live adapters. Preserve reference scenes and report incomplete art ports explicitly.",
   "artifacts": {
-    "dist/TerraForest.pck": "c7817717ad1e54e849b90cc9aac010f686fd1486529647e64fcdf038b6a26e6b"
+    "dist/TerraForest.pck": "1bcb9c59e2cd0cde0511247e0c34dc66aad7a1426ed0224a05eba493355d5ecb"
   },
   "owned_flow_world_archives": [
     {
@@ -236,6 +240,124 @@
         "window_flow_5b1d303ecb48336e"
       ],
       "archive": "reports/ui_sets/20261105T112211042933Z/saved_worlds"
+    },
+    {
+      "slots": [
+        "window_flow_3b1dd533c8250015",
+        "window_flow_4f4b73790816a299"
+      ],
+      "archive": "reports/ui_sets/20261105T115358770076Z/saved_worlds"
+    },
+    {
+      "slots": [
+        "window_flow_984dd5555a1eacee",
+        "window_flow_29d0989e975b20f6"
+      ],
+      "archive": "reports/ui_sets/20261105T115821024902Z/saved_worlds"
     }
-  ]
+  ],
+  "previous_status": "Implemented and installed; source and executable verification complete for declared scope; user review pending.",
+  "previous_remaining": [
+    "Player visual/usability acceptance.",
+    "Exact Survey/Planet reference layout ports onto live controller contracts.",
+    "Actual-progress adapters for Diorama/Campfire before complete suite activation.",
+    "In-game HUD/menu modularization remains out of scope.",
+    "Large plugin collections and sustained preview graphics performance unqualified beyond current five sets and sampled process budgets."
+  ],
+  "previous_artifacts": {
+    "dist/TerraForest.pck": "c7817717ad1e54e849b90cc9aac010f686fd1486529647e64fcdf038b6a26e6b"
+  },
+  "activation_followup": {
+    "user_report": "Neither of mockups are activating when clicked. Preference inspection showed Survey selected; prior adapters still used Classic layouts.",
+    "cause": "Palette-only adapters did not activate the displayed compositions. Studio persisted a preference but stayed on the reference preview until Back to worlds.",
+    "changes": [
+      "Activate saves then immediately opens the selected live browser.",
+      "Live Survey/Planet library and creation compositions; actual measured loading layouts for all enabled sets.",
+      "Original references retained; raw developer counters/history remain expandable by ribbon/F1.",
+      "Preview seed is applied before assigning the sample texture, preventing invalidation from clearing the preview map."
+    ],
+    "source_registry": {
+      "report": "reports/ui_sets/20261105T120044553095Z",
+      "passed": true,
+      "script_sha256": "4030cd0c72ae5ab918583cfdb193b1152a9443de25d999ae7091981c0b0d414c",
+      "pack_sha256": null,
+      "summary": [
+        "UI_SETS checks=72 failures=0"
+      ]
+    },
+    "pack_registry": {
+      "report": "reports/ui_sets/20261105T120032720049Z",
+      "passed": true,
+      "script_sha256": "4030cd0c72ae5ab918583cfdb193b1152a9443de25d999ae7091981c0b0d414c",
+      "pack_sha256": "1bcb9c59e2cd0cde0511247e0c34dc66aad7a1426ed0224a05eba493355d5ecb",
+      "summary": [
+        "UI_SETS checks=72 failures=0"
+      ]
+    },
+    "source_loading": {
+      "report": "reports/ui_sets/20261105T115248380802Z",
+      "passed": true,
+      "script_sha256": "634f841b75d74c51d094629a8aa216339cd228bf0ad0a00be5a73e8c8993db4f",
+      "pack_sha256": null,
+      "summary": [
+        "LOADING_PROGRESS_UI failures=0"
+      ]
+    },
+    "pack_loading": {
+      "report": "reports/ui_sets/20261105T115802187706Z",
+      "passed": true,
+      "script_sha256": "634f841b75d74c51d094629a8aa216339cd228bf0ad0a00be5a73e8c8993db4f",
+      "pack_sha256": "1bcb9c59e2cd0cde0511247e0c34dc66aad7a1426ed0224a05eba493355d5ecb",
+      "summary": [
+        "LOADING_PROGRESS_UI failures=0"
+      ]
+    },
+    "source_flow": {
+      "report": "reports/ui_sets/20261105T115358770076Z",
+      "passed": true,
+      "script_sha256": "bbdf37c1258fadab4f02fe2a61c57de65837be431816a335108a6a53d0b30d34",
+      "pack_sha256": null,
+      "summary": [
+        "WINDOW_SESSION_FLOW checks=24 failures=0 slots=[\"window_flow_3b1dd533c8250015\", \"window_flow_4f4b73790816a299\"]"
+      ]
+    },
+    "pack_flow": {
+      "report": "reports/ui_sets/20261105T115821024902Z",
+      "passed": true,
+      "script_sha256": "e1a9b3258d79bc7e9de0324b61ea8cc7c66e24a94ce404fab8ad9f34f0bd685c",
+      "pack_sha256": "1bcb9c59e2cd0cde0511247e0c34dc66aad7a1426ed0224a05eba493355d5ecb",
+      "summary": [
+        "WINDOW_SESSION_FLOW checks=24 failures=0 slots=[\"window_flow_984dd5555a1eacee\", \"window_flow_29d0989e975b20f6\"]"
+      ]
+    },
+    "pack_continue": {
+      "report": "reports/continue_last_presentation/20261105T115942663323Z",
+      "passed": true,
+      "script_sha256": "ffdea58624aa4fda0b071bc5e6aa87d1ba7d86575517dd8bb6345c4d62413ec8",
+      "pack_sha256": "1bcb9c59e2cd0cde0511247e0c34dc66aad7a1426ed0224a05eba493355d5ecb",
+      "summary": [
+        "CONTINUE_LAST_PRESENTATION checks=11 failures=0"
+      ]
+    },
+    "export_gate": "reports/building_standards/20261105T115605134536Z",
+    "retained_failures": [
+      {
+        "report": "reports/ui_sets/20261105T114934501824Z",
+        "reason": "Initial adapter parse failure: dynamic host methods needed explicit local types; corrected before successful checks."
+      },
+      {
+        "report": "reports/ui_sets/20261105T114958787726Z",
+        "reason": "Static resize signal callable persisted across browser instances; moved fit ownership into a per-canvas Node, which disconnects on free."
+      },
+      {
+        "report": "reports/ui_sets/20261105T115934346605Z",
+        "reason": "Fixed eight-frame GUI test did not observe Expedition transition (71/72); replaced fixed frame assumption with bounded five-second scene wait. Final source and package pass 72/72; no engine error accompanied the earlier miss."
+      }
+    ],
+    "artifacts": {
+      "dist/TerraForest.pck": "1bcb9c59e2cd0cde0511247e0c34dc66aad7a1426ed0224a05eba493355d5ecb"
+    },
+    "user_preferences": "Original user preference remains active=survey; checks used report-local preference files.",
+    "visuals": "New live layouts inspected at 1920x1080 Forward+; original rejected palette-only comparisons preserved. User art approval remains pending."
+  }
 }

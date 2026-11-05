@@ -36,10 +36,19 @@ func run()->void:
 	check(not Registry.validate(custom,true).is_empty(),"invalid inheritance fails before touching active preferences")
 	for id:String in ["shipped","survey","expedition","diorama","campfire"]:
 		check(Registry.activate(id).ok and Registry.active().id==id,"functional set activates: "+id)
-		var browser=load("res://demo/worlds.gd").new();browser.preview_mode=true;root.add_child(browser)
+		var browser=load("res://demo/worlds.gd").new();browser.preview_mode=true;root.add_child(browser);browser.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		check(browser.library==null and browser.preparation_pid<0 and browser.photograph_pid<0 and not browser.is_processing(),"mockup browser cannot read saves or start background jobs: "+id)
 		check(browser.ui_set.id==id and browser.worlds!=null and browser.generate_button!=null and browser.preparation_panel!=null,"live adapters provide all browser/create bindings: "+id)
 		check(browser.selected_options()==preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS,"presentation set preserves actual generation recipe: "+id)
+		if id in ["survey","expedition"]:
+			check(browser.get_meta("ui_layout","") in ["survey","planet"],"reference composition is used by the live browser: "+id)
+			browser.saved_title.text="Sample world";browser.saved_details.text="Preview data · no save opened";browser.worlds.add_item("Sample world")
+			await process_frame;await process_frame
+			if DisplayServer.get_name()!="headless":
+				await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(folder.path_join(id+"_browser.png"))
+			browser.world_tabs.current_tab=1
+			await process_frame;await process_frame
+			check(browser.preview_view.get_global_rect().end.x<browser.name_field.get_global_rect().position.x,"actual survey and recipe occupy the reference's left/right columns: "+id)
 		browser.free()
 		var screen=load("res://addons/world_runtime/generation_screen.gd").new();root.add_child(screen)
 		screen.panel.reset();screen.update_stage("Baking destructible sidewalk plates",500,1000)
@@ -47,9 +56,18 @@ func run()->void:
 		screen.panel.show_progress("Loading your world","Contact preparation",71)
 		screen.panel.show_progress("Loading your world","Late sample",50)
 		check(screen.panel.bar.value==71 and screen.diagnostics!=null and screen.cancel_button.disabled,"progress, diagnostics and action guards are retained: "+id)
+		if id!="shipped":
+			check(not screen.diagnostics.panel.visible,"technical details start collapsed: "+id)
+			screen.diagnostics.ribbon.pressed.emit();screen.diagnostics.refresh()
+			check(screen.diagnostics.panel.visible and screen.diagnostics.live.text.contains("completed = 500"),"details toggle exposes actual counters: "+id)
+			screen.diagnostics.ribbon.pressed.emit()
+		if id in ["expedition","diorama"]:check(is_equal_approx(screen.background.ring.value,0.71),"planet ring follows measured progress: "+id)
 		if DisplayServer.get_name()!="headless":
 			await process_frame;await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png(folder.path_join(id+"_loading.png"))
+		screen.cancel_path=folder.path_join(id+"_cancel.request");screen.cancel_button.disabled=false
+		screen.cancel_button.pressed.emit();screen.update_stage("World generation complete",0,0)
+		check(FileAccess.file_exists(screen.cancel_path) and screen.cancellation_requested and screen.detail.text=="Cancelling generation…" and screen.panel.bar.value==71,"live cancel writes its request and protects cancellation state: "+id)
 		screen.free();await process_frame
 	prefs.load(Registry.preference_path)
 	check(prefs.get_value("unrelated","preserved")==123,"activation preserves other preferences")
@@ -75,6 +93,23 @@ func run()->void:
 	var activated=load("res://demo/worlds.gd").new();activated.preview_mode=true;root.add_child(activated)
 	check(activated.ui_set.id=="survey","next browser instance consumes the studio selection")
 	activated.free()
-	studio.free();Registry.session_id=original_id;Registry.preference_path=original_path;await process_frame
+	studio.free()
+	# Exercise an actual GUI click and scene replacement, rather than just emitting
+	# the preference callback. Each installed design must return to its live browser.
+	for id:String in ["survey","expedition","diorama","campfire","shipped"]:
+		var live_studio=load("res://addons/ui_sets/studio.tscn").instantiate();root.add_child(live_studio);current_scene=live_studio
+		live_studio.chooser.select(live_studio.ids.find(id));live_studio.refresh_preview()
+		await process_frame;await process_frame
+		var point:Vector2=live_studio.activate_button.get_global_rect().get_center()
+		var motion:=InputEventMouseMotion.new();motion.position=point;motion.global_position=point;root.push_input(motion)
+		for pressed:bool in [true,false]:
+			var click:=InputEventMouseButton.new();click.position=point;click.global_position=point;click.button_index=MOUSE_BUTTON_LEFT;click.pressed=pressed;root.push_input(click);await process_frame
+		var deadline:=Time.get_ticks_msec()+5000
+		while (current_scene==null or current_scene==live_studio) and Time.get_ticks_msec()<deadline:await process_frame
+		var live_browser=current_scene
+		if live_browser==live_studio:print("ACTIVATION_DIAGNOSTIC set=",id," status=",live_studio.status.text," button=",live_studio.activate_button.get_global_rect()," pressed=",live_studio.activate_button.button_pressed," disabled=",live_studio.activate_button.disabled)
+		check(is_instance_valid(live_browser) and live_browser.scene_file_path=="res://demo/worlds.tscn" and live_browser.ui_set.id==id,"clicking Activate opens the selected live world screens: "+id)
+		if is_instance_valid(live_browser):current_scene=null;live_browser.free()
+	Registry.session_id=original_id;Registry.preference_path=original_path;await process_frame
 	FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures},"  "))
 	print("UI_SETS checks=",checks," failures=",failures);quit(1 if failures else 0)

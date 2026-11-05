@@ -11,15 +11,21 @@ browser, creation, shared generation/Last World and gameplay loading adapters.
 World state, native jobs, measured progress and cancellation stay with their
 existing owners. Adding a folder/manifest requires no registry dispatch edit.
 
-Classic, Survey and Planet have working adapters; Survey/Planet currently reuse
-the functional layouts with their palette/type and Planet portrait. Their exact
-reference-layout ports remain open; Diorama/Campfire are review-only until real
-progress adapters exist. User chose world screens first, so HUD/inventory/menu
-migration is excluded. Source/package receipts, preserved image comparisons and
-resume criteria are in [the UI issue](../issues/modular-world-ui/README.md).
-Revisit on missing/invalid plugins, preview actions touching live world state or
-broken world transitions, using the same normal open/save/reopen/cancel/loading
-checks before accepting a new adapter. Player visual review remains separate.
+The player rejected palette-only activation as looking unchanged. Activation
+now opens the chosen world screens immediately. Survey/Planet have distinct live
+library compositions, a survey beside actual recipe controls, and measured loading
+footers/rails; Diorama/Campfire have their own live loading compositions and inherit
+Classic browser/forms. Diagnostics start collapsed and expand through F1/ribbon.
+The preserved sample references remain intact. Live adaptations deliberately use
+real ItemList/form controls and current coordinator stages, rather than inventing
+the reference's sample metadata/stages. Pixel-identical art approval remains open.
+
+User chose world screens first, so HUD/inventory/menu migration is excluded.
+Source/package receipts, rejected palette-only comparisons and new images are in
+[the UI issue](../issues/modular-world-ui/README.md). Revisit on missing/invalid
+plugins, preview actions touching live state or broken world transitions. Require
+actual activation clicks plus normal open/save/reopen/cancel/loading checks.
+Player visual review remains separate from those engineering checks.
 
 ## Last World startup presentation — 2026-11-04
 

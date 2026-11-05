@@ -11,6 +11,7 @@ var activate_button:Button
 var viewport:SubViewport
 var preview:Node
 var ids:Array=[]
+signal activated(id:String)
 func _ready()->void:
 	get_tree().auto_accept_quit=true
 	preload("res://addons/world_runtime/mouse_ownership.gd").set_mode(self,Input.MOUSE_MODE_VISIBLE)
@@ -74,4 +75,8 @@ func refresh_preview()->void:
 func activate_selected()->void:
 	if ids.is_empty():return
 	var result:=Registry.activate(ids[chooser.selected])
-	status.text="Activated · applies when returning to worlds" if result.ok else result.reason
+	if not result.ok:status.text=result.reason;return
+	status.text="Activated · "+Registry.active().title
+	activated.emit(Registry.active().id)
+	# Only navigate a real studio scene. Embedded test/preview instances stay isolated.
+	if get_tree().current_scene==self:get_tree().change_scene_to_file.call_deferred("res://demo/worlds.tscn")

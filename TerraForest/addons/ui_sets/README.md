@@ -2,8 +2,9 @@
 
 Open **UI sets** from the world browser, or launch
 `res://addons/ui_sets/studio.tscn`. Select a set, choose a reference or live-adapter
-preview, and switch its page. **Activate set** saves the preference; **Back to
-worlds** applies it. Classic remains the default and is always recoverable.
+preview, and switch its page. **Activate set** saves the preference and immediately
+opens that set's live world screens. **Back to worlds** exits without changing the
+selection. Classic remains the default and is always recoverable.
 No world regeneration or saved-world modification is involved.
 
 The original designs remain in their original folders. The studio does not edit
@@ -17,18 +18,20 @@ no world-library scan, generation task or photograph job is started.
 | Set ID | Preserved reference | Live presentation |
 | --- | --- | --- |
 | `shipped` | Current browser/create/generation/loading | Original working controls and loading modules |
-| `survey` | `demo/world_survey/mockup.tscn` | Existing functional layouts with Survey typography/palette |
-| `expedition` | `demo/world_screens/mockup.tscn` | Existing functional layouts with Planet typography/palette and reusable loading planet |
-| `diorama` | `demo/world_loading_diorama.tscn` | Existing functional layouts with Diorama typography/palette; the animated loading layout is not ported |
-| `campfire` | `demo/world_loading_mockup.tscn` | Existing functional layouts with Campfire typography/palette; the loading layout is not ported |
+| `survey` | `demo/world_survey/mockup.tscn` | Photograph beside the library, actual survey left of recipe controls, compact measured loading footer and collapsed diagnostics |
+| `expedition` | `demo/world_screens/mockup.tscn` | Planet/library composition, survey and recipe controls, measured loading rail beside the animated planet |
+| `diorama` | `demo/world_loading_diorama.tscn` | Animated planet and measured loading rail; inherits the Classic browser/form |
+| `campfire` | `demo/world_loading_mockup.tscn` | Photograph, wordmark, campfire tip card and full-width measured loading footer; inherits the Classic browser/form |
 
-**No reference layout is claimed as ported.** All five sets activate: their live
-adapters intentionally reuse the working controls and measured progress, while the
-preserved scenes stay available as exact references. A designer can replace a
-specific view module later while retaining the controller and the reference.
-Activation of `campfire` or `diorama` therefore never presents their sample stages
-as real progress; it applies their typography and palette to the working browser,
-creation form and loading panel.
+All five sets activate through functional presentation modules. Original scenes
+remain exact design references. Live compositions use actual library data, recipe
+controls and measured progress; reference-only sample metadata and invented stage
+counts are not carried into gameplay. These are functional adaptations, not
+pixel-identical copies: the library uses the working ItemList, recipe categories
+remain tabs, and loading shows the coordinator's actual current stage. The planet
+is a decorative portrait, not a visualization of generated terrain. Developer
+counters remain available through the ribbon or F1. Designers can replace any
+view module while retaining the controller and preserved reference.
 
 ## Add a set without editing the registry
 
@@ -82,8 +85,9 @@ fields (`worlds`, saved-detail controls, filter/sort, recipe controls, preview,
 preparation actions, notice, gameplay and credits). Alternate full layouts must
 provide those bindings and connect actions to host methods. The creation view
 binds the existing `world_creation_panel.gd` fields/semantics; its recipe helpers
-remain authoritative. Themed browser adapters share those modules rather than
-copying generation logic.
+remain authoritative. Editorial adapters compose those controls in the Survey/Planet layouts rather
+than copying generation logic. `design_canvas.gd` fits the composition to the
+window; library facts scroll when longer than their available space.
 
 Loading panels retain `reset`, `show_progress`, `show_work`, `show_idle`,
 `stop_timer`, `timing_snapshot`, `set_compact_width`; fields include `title`,
@@ -102,7 +106,7 @@ Godot code; the preview isolation is about UI actions, not a code sandbox.
 
 ## Verification
 
-- `python TerraForest/tools/check_ui_sets.py`: registry, inheritance, isolated previews, activation/fallback and measured progress.
+- `python TerraForest/tools/check_ui_sets.py`: registry, inheritance, isolated previews, actual GUI activation clicks and scene transitions for all five sets, layout bindings, fallback and measured progress.
 - Add `--flow`: actual browser/open/save/reopen/return and photographs with Survey active.
 - Add `--loading`: live loading/counters/diagnostics and layout with Survey active.
 - Add `--pack` for the current exported executable/PCK.

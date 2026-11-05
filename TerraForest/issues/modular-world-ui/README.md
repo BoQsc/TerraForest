@@ -1,8 +1,8 @@
 # Modular world-screen UI and mockup studio
 
-- Status: Implemented and installed; source/executable checks pass; player review pending.
+- Status: Activation corrected and installed; source/exported checks pass; player review pending.
 - Updated: 2026-11-05.
-- User review: Requested preserved, selectable, pluggable mockup/UI sets. Explicit scope: world screens first.
+- User review: Requested preserved, selectable, pluggable mockup/UI sets. Explicit scope: world screens first. Rejected palette-only activation: neither mockup appeared to activate.
 - Symptom: Current world UI was built inside controllers; alternatives were unrelated standalone mockups without discovery or activation.
 
 ## Changes
@@ -12,8 +12,9 @@ controller retains library data, recipes, actions and async jobs. Five manifest
 Resources register the original Classic, Planet, Survey, Diorama and Campfire
 references. The studio discovers folders and presents the reference or isolated
 live-adapter preview, with page names and canvas sizes declared in each manifest.
-The world browser provides the **UI sets** entry and **Back to worlds** applies
-an explicit activation. Selection persists independently of world saves; removing
+The world browser provides the **UI sets** entry. **Activate set** now saves the
+selection and immediately opens the selected world screens. Selection persists
+independently of world saves; removing
 or invalidating a selected module falls back to Classic.
 
 Working browser/creation/generation/Last World/gameplay loading hosts resolve
@@ -22,12 +23,21 @@ and override only its own modules; no set-ID dispatch table needs editing. The
 registry validates identity, inheritance, role base types and required APIs before
 activation. [Authoring contract and examples](../../addons/ui_sets/README.md).
 
-Three runtime choices are provided: Classic, Survey and Planet. **Survey and
-Planet live adapters reuse the functional layouts with their palette/type, and
-Planet reuses its loading portrait. Their complete reference layouts are not
-claimed as ported.** The full references stay available for design work. Diorama
-and Campfire remain reference-only because their sample stages are not connected
-to real progress. They cannot silently become live loading displays.
+All five choices have working adapters. The earlier implementation saved a
+preference but only themed Classic layouts, leaving the studio unchanged after
+activation. That did not meet the requested switching behavior. The follow-up
+adds Survey/Planet library compositions and map-left/recipe-right creation,
+compact Survey loading with a stage rail, Planet/Diorama loading with an animated
+portrait beside the measured rail, and Campfire loading with its tip card and
+full-width footer. Loading diagnostics collapse into a ribbon; F1 or clicking
+expands the original counters and measured history.
+
+These are functional adaptations, not pixel-identical reference ports. Live lists
+use ItemList, recipe categories use the actual form tabs, and loading displays
+real current stages instead of the references' invented counts/metadata. Planet
+portraits are decorative, not generated-terrain previews. Diorama/Campfire are
+loading-only designs and inherit Classic browser/forms. Original reference scenes
+remain intact and can still be previewed without changing the active set.
 
 Preview input is isolated; the actual Classic view is constructed in a sample
 controller mode without the library or generation/photo jobs. Original layouts
@@ -39,12 +49,20 @@ report folder is bundled to fill those missing samples.
 ## Images and verification
 
 [Exact checks and retained failures](evidence.json). Source/executable checks
-cover discovery/inheritance, persistence/fallback, all three working adapters,
+cover discovery/inheritance, persistence/fallback, all five working adapters,
 real generation option defaults, monotonic measured loading and isolated gallery
 previews. Real Survey open/save/reopen/return/photographs run in one native window.
 Live loading/diagnostics and Last World startup cover the shared production hosts.
+The new regression injects actual mouse press/release events into Activate and
+requires a transition into each selected live browser, rather than only checking
+the saved preference. It also checks map/form columns, expanded counters and real
+cancel requests. Final source/package suites pass 72 each; Survey world flows pass
+24 each, live loading passes in both, and packaged Last World passes 11. One earlier
+fixed-frame transition miss is retained in evidence; the final test waits up to
+five seconds for the actual scene transition.
 
-Images below are captured from the actual studio. They distinguish reference
+The earlier images below are retained as rejected palette-only comparisons. New
+follow-up images are appended after them. They distinguish reference
 mockups from the functional adapters; image inspection is scoped layout evidence,
 not a declaration that all original art targets have shipped.
 
@@ -68,13 +86,29 @@ Planet adapter retains the working loading panel and diagnostic owner. Percentag
 is a controlled test input, not a fabricated runtime progress animation. All images
 inspected; [source/hash/provenance](images/manifest.json).
 
+## Activation follow-up images
+
+![Survey live creation composition](images/activation_survey_create.png)
+
+Actual recipe widgets beside the survey, with explicitly labelled sample state in
+an isolated preview; no generation job. The original layout remains above.
+
+![Planet live loading composition](images/activation_planet_loading.png)
+
+Animated portrait beside the real measured-progress API. The 71% is a controlled
+regression input, not an elapsed-time animation or actual generation run.
+
+![Campfire live loading composition](images/activation_campfire_loading.png)
+
+Campfire tip card and full-width measured footer. The test has no world photograph;
+the real host supplies the saved/generated photograph when available.
+
 ## Remaining / resume here
 
-Player visual/usability review remains pending. Full reference-layout ports for
-Survey/Planet and real-progress adapters for loading-only designs remain explicit
-art/integration work. Resume them by replacing individual view modules against
-the documented controller contract and requiring the same open/generate/cancel/
-load/save/reopen checks. In-game HUD, inventory and menus are outside this change
+Player visual/usability review remains pending. Pixel-identical reference art is
+not claimed. Resume further layout refinement by replacing individual view modules
+against the documented controller contract and requiring the same open/generate/
+cancel/load/save/reopen checks. In-game HUD, inventory and menus are outside this change
 at the user's direction. Larger plugin collections and long-run graphics budgets
 are not broadly qualified by five-set previews.
 
