@@ -8,7 +8,7 @@ const WorldsScreen := preload("res://demo/world_survey/worlds.gd")
 const CreateScreen := preload("res://demo/world_survey/create.gd")
 const LoadingScreen := preload("res://demo/world_survey/loading.gd")
 
-const TABS := ["MY WORLDS", "CREATE + GENERATION", "LOADING"]
+const TABS := ["MY WORLDS", "CREATE", "LOADING"]
 
 var screens: Array[Control] = []
 var tabs: Array[Button] = []
@@ -29,26 +29,26 @@ func _ready() -> void:
 
 
 func build_tabs() -> void:
-	var width := 300.0
-	var start := 960.0 - width * float(TABS.size()) * 0.5
+	var width := 190.0
+	var start := 1856.0 - width * float(TABS.size()) - 8.0
 	for i in TABS.size():
 		var button := Button.new()
 		button.flat = true
 		button.focus_mode = Control.FOCUS_NONE
 		button.text = "%d   %s" % [i + 1, KIT.spaced(TABS[i])]
 		button.add_theme_font_override("font", KIT.body_font())
-		button.add_theme_font_size_override("font_size", 10)
+		button.add_theme_font_size_override("font_size", 9)
 		button.add_theme_color_override("font_color", Color(1, 1, 1, 0.28))
 		button.add_theme_color_override("font_hover_color", KIT.INK)
-		button.position = Vector2(start + float(i) * width, 1030)
-		button.size = Vector2(width, 22)
+		button.position = Vector2(start + float(i) * width, 6)
+		button.size = Vector2(width, 24)
 		button.pressed.connect(show_screen.bind(i))
 		add_child(button)
 		tabs.append(button)
 		var underline := ColorRect.new()
 		underline.color = KIT.ACCENT
-		underline.position = Vector2(start + float(i) * width + width * 0.5 - 24.0, 1054)
-		underline.size = Vector2(48, 2)
+		underline.position = Vector2(start + float(i) * width + width * 0.5 - 20.0, 30)
+		underline.size = Vector2(40, 2)
 		underline.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		add_child(underline)
 		underlines.append(underline)
