@@ -7,7 +7,9 @@ extends Control
 
 const KIT := preload("res://demo/world_survey/kit.gd")
 
-const SURVEY_FALLBACK := "res://reports/entry_fly_in/browser/01_aerial.png"
+## Captured with the game's own planner (tools/capture_survey_map.gd):
+## world_generation_plan.preview(seed 2, generator 29, frontier recipe).
+const SURVEY_MAP := "res://demo/world_survey/assets/survey_map.png"
 
 const RECIPES := [
 	"Forest frontier",
@@ -66,41 +68,43 @@ func build_survey() -> void:
 	var frame := KIT.panel(self, 64, 248, 920, 648, KIT.PANEL, KIT.BORDER, 8)
 	KIT.text_at(self, KIT.spaced("LIVE REGIONAL SURVEY"), 12, KIT.ACCENT, KIT.body_font(), 84, 266)
 	KIT.right_text_at(self, "2 × 2 km", 12, KIT.MUTED, KIT.mono_font(), 964, 266, 160)
-	KIT.right_text_at(self, "N ↑", 14, KIT.INK, KIT.mono_font(), 930, 288, 70)
-	var preview := preview_photo()
-	var picture := KIT.photo_frame(self, 84, 300, 880, 442, str(preview.path), 0.25)
-	var grid := KIT.SurveyGrid.new()
-	grid.position = Vector2(84, 300)
-	grid.size = Vector2(880, 442)
-	grid.spacing = 73.0
-	add_child(grid)
-	KIT.text_at(self, "Preview photograph · " + str(preview.slot), 10, Color(0.9, 0.95, 0.92, 0.7), KIT.body_font(), 96, 314)
+	# The game's own 256 x 256 plan render (world_generation_plan.preview) for
+	# seed 2 and the frontier recipe: settlements, roads, trails, lakes, rock.
+	var map := KIT.photo_frame(self, 84, 300, 452, 452, SURVEY_MAP, 0.0)
+	if map != null:
+		map.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+
 	var legend := [
-		["■ Woodland", Color("#4c6940")],
-		["■ Asphalt", Color("#626669")],
-		["■ Dirt trails", Color("#95856c")],
-		["■ Water", Color("#76b8d0")],
-		["■ Roofs / rock", Color("#99938a")],
+		["Woodland", Color("#4c6940")],
+		["Asphalt", Color("#626669")],
+		["Dirt trails", Color("#95856c")],
+		["Water", Color("#76b8d0")],
+		["Roofs / rock", Color("#99938a")],
 	]
-	var x := 84.0
-	for item in legend:
-		var entry_label := KIT.text_at(self, str(item[0]), 13, item[1], KIT.body_font(), x, 760)
-		x += entry_label.get_minimum_size().x + 22.0
-	KIT.text_at(self, "READY TO PLAN  ·  Native terrain fitting  ·  Cached generation", 14, KIT.ACCENT, KIT.body_font(), 84, 792)
+	KIT.text_at(self, KIT.spaced("LEGEND"), 9, KIT.DIM, KIT.body_font(), 566, 302)
+	for i in legend.size():
+		var swatch := ColorRect.new()
+		swatch.color = legend[i][1]
+		swatch.position = Vector2(566, 330 + i * 30)
+		swatch.size = Vector2(12, 12)
+		swatch.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(swatch)
+		KIT.text_at(self, str(legend[i][0]), 13, KIT.MUTED, KIT.body_font(), 590, 326 + i * 30)
+	KIT.rule(self, 566, 500, 396)
+	KIT.text_at(self, KIT.spaced("PLAN"), 9, KIT.DIM, KIT.body_font(), 566, 514)
+	KIT.text_at(self, "15 buildings", 16, KIT.INK, KIT.body_font(), 566, 536)
+	KIT.text_at(self, "1.23 km regional roads  ·  1.12 km trails", 13, KIT.MUTED, KIT.body_font(), 566, 564)
+	KIT.text_at(self, "2 settlements / 2 districts  ·  4 trails", 13, KIT.MUTED, KIT.body_font(), 566, 588)
+	KIT.text_at(self, "Placement plan cached for generation.", 12, KIT.DIM, KIT.body_font(), 566, 616)
+	KIT.rule(self, 566, 646, 396)
+	KIT.text_at(self, "READY TO PLAN", 12, KIT.ACCENT, KIT.body_font(), 566, 662)
+	KIT.text_at(self, "Native terrain fitting  ·  Cached generation", 12, KIT.MUTED, KIT.body_font(), 566, 684)
+	KIT.text_at(self, "World plan · north is up · 2 km × 2 km", 12, KIT.MUTED, KIT.body_font(), 84, 766)
 	var status := KIT.label("The preview uses the actual placement plan, not a decorative map. Existing worlds are never changed.", 13, KIT.MUTED, KIT.body_font())
-	status.position = Vector2(84, 818)
-	status.size = Vector2(880, 44)
+	status.position = Vector2(84, 792)
+	status.size = Vector2(452, 60)
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(status)
-
-
-func preview_photo() -> Dictionary:
-	for slot in ["Amber_Bay", "Calm_Haven", "Bright_Forest"]:
-		for view in ["road", "north", "market"]:
-			var path := "user://worlds/%s.preview/%s.png" % [slot, view]
-			if FileAccess.file_exists(path):
-				return {"path": path, "slot": slot}
-	return {"path": SURVEY_FALLBACK, "slot": "reference"}
 
 
 func build_form() -> void:
@@ -115,7 +119,7 @@ func build_form() -> void:
 
 	KIT.text_at(self, "Name & seed", 20, KIT.INK, KIT.display_font(), 1016, 380)
 	field(1016, 412, 520, 40, "Mossy_Hollow", false, false)
-	field(1548, 412, 168, 40, "Seed 1703", false, false)
+	field(1548, 412, 168, 40, "Seed 2", false, false)
 	button(1724, 412, 132, 40, "SHUFFLE", false)
 
 	KIT.text_at(self, "Landscape & biomes", 20, KIT.INK, KIT.display_font(), 1016, 468)
@@ -139,7 +143,7 @@ func build_form() -> void:
 
 
 func build_generation() -> void:
-	var panel := KIT.panel(self, 64, 916, 1792, 116, Color(0.05, 0.12, 0.13, 0.96), Color(KIT.ACCENT.r, KIT.ACCENT.g, KIT.ACCENT.b, 0.5), 8)
+	var panel := KIT.panel(self, 64, 908, 1792, 108, Color(0.05, 0.12, 0.13, 0.96), Color(KIT.ACCENT.r, KIT.ACCENT.g, KIT.ACCENT.b, 0.5), 8)
 	KIT.text_at(self, "Generating Mossy_Hollow", 18, KIT.INK, KIT.display_font(), 84, 928)
 	KIT.text_at(self, "%s  ·  %d / %d" % [STAGE, STAGE_COMPLETED, STAGE_TOTAL], 14, KIT.MUTED, KIT.body_font(), 84, 958)
 	KIT.right_text_at(self, "%d%%" % PERCENT, 30, KIT.ACCENT, KIT.display_font(), 1608, 924, 220)
@@ -150,8 +154,8 @@ func build_generation() -> void:
 	meter.position = Vector2(84, 986)
 	meter.size = Vector2(1600, 8)
 	add_child(meter)
-	KIT.text_at(self, WORK, 11, KIT.DIM, KIT.mono_font(), 84, 1002)
-	button(1700, 992, 136, 34, "CANCEL", false)
+	KIT.text_at(self, WORK, 11, KIT.DIM, KIT.mono_font(), 84, 1000)
+	button(1700, 952, 136, 34, "CANCEL", false)
 
 
 func field(x: float, y: float, width: float, height: float, caption: String, muted: bool, chevron: bool = true) -> void:

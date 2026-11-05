@@ -107,20 +107,20 @@ func build_panel() -> void:
 
 
 func build_details() -> void:
-	KIT.panel(self, 96, 900, 1728, 120, Color(0.015, 0.035, 0.04, 0.9), Color(1, 1, 1, 0.08), 6)
-	KIT.text_at(self, "DEVELOPER DETAILS   ·   elapsed 19.4 s   ·   current stage 6.1 s   ·   refresh 4 Hz", 11, KIT.ACCENT, KIT.mono_font(), 120, 912)
-	KIT.text_at(self, "LIVE WORK / raw counters", 9, KIT.DIM, KIT.mono_font(), 120, 936)
-	KIT.text_at(self, "COMPLETED STAGES / measured elapsed time", 9, KIT.DIM, KIT.mono_font(), 640, 936)
-	KIT.text_at(self, "SESSION / hardware and log", 9, KIT.DIM, KIT.mono_font(), 1200, 936)
-	var y := 952.0
+	KIT.panel(self, 96, 32, 1728, 120, Color(0.015, 0.035, 0.04, 0.9), Color(1, 1, 1, 0.08), 6)
+	KIT.text_at(self, "DEVELOPER DETAILS   ·   elapsed 19.4 s   ·   current stage 6.1 s   ·   refresh 4 Hz", 11, KIT.ACCENT, KIT.mono_font(), 120, 44)
+	KIT.text_at(self, "LIVE WORK / raw counters", 9, KIT.DIM, KIT.mono_font(), 120, 68)
+	KIT.text_at(self, "COMPLETED STAGES / measured elapsed time", 9, KIT.DIM, KIT.mono_font(), 640, 68)
+	KIT.text_at(self, "SESSION / hardware and log", 9, KIT.DIM, KIT.mono_font(), 1200, 68)
+	var y := 84.0
 	for line in LIVE:
 		KIT.text_at(self, str(line), 11, Color("#d5e3dd"), KIT.mono_font(), 120, y)
 		y += 15.0
-	y = 952.0
+	y = 84.0
 	for line in HISTORY:
 		KIT.text_at(self, str(line), 11, Color("#d5e3dd"), KIT.mono_font(), 640, y)
 		y += 15.0
-	y = 952.0
+	y = 84.0
 	for line in SESSION:
 		KIT.text_at(self, str(line), 11, Color("#d5e3dd"), KIT.mono_font(), 1200, y)
 		y += 15.0

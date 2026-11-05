@@ -18,13 +18,20 @@ godot --windowed --resolution 1920x1080 --rendering-method forward_plus \
       --script res://tools/preview_world_survey.gd
 ```
 
+Recapture the survey map from the game's planner (rewrites
+`demo/world_survey/assets/survey_map.png` and prints the plan figures):
+
+```
+godot --headless --path TerraForest --script res://tools/capture_survey_map.gd
+```
+
 ## Screens and their sources
 
 | Screen | Source of truth | What is real | What is representative |
 | --- | --- | --- | --- |
 | My worlds (`worlds.gd`) | `demo/worlds.gd`, `demo/world_library.gd`, `addons/world_runtime/world_presentation.gd` | Saved slots read from `user://worlds` (currently Amber_Bay, Bright_Forest, Calm_Haven), `presentation.json` seed/generator/options, generator -> landscape names, `.trw` modification time as "Last saved", each world's `.preview/north|road|market.png` photographs, sort/filter and browser actions | Selection is static; buttons do not launch or refresh |
-| Create world + generation (`create.gd`) | `demo/world_creation_panel.gd`, `addons/world_runtime/progress_meter.gd` | Recipe names and descriptions, landscape/settlement option labels, building-grid fit, survey legend and status copy, real generation stage name spanning 42-62% in `progress_meter.gd` | Stage counters, elapsed/remaining, work string; the survey shows a world photograph because the in-process plan render is not available as a file |
-| Loading (`loading.gd`) | `addons/world_runtime/progress_meter.gd`, `loading_panel.gd`, `loading_details.gd` | Loading stage names and captions, the 0/15/20-75/75 stops, "final 6% belongs to playback", coverage/probe/work counters format, the developer readout layout | The specific counters and timings, which the game reports live at runtime |
+| Create world + generation (`create.gd`) | `demo/world_creation_panel.gd`, `addons/world_runtime/progress_meter.gd`, `world_generation_plan.gd` | Recipe names and descriptions, landscape/settlement option labels, building-grid fit, survey legend and status copy; the survey image is the game's own 256 x 256 plan render captured with `world_generation_plan.preview()` (seed 2, generator 29, frontier recipe) together with its real plan figures - 15 buildings, 1.23 km regional roads, 1.12 km trails, 2 settlements / 2 districts | Stage counters, elapsed/remaining and work string for the generation panel; the plan figures are fixed to that captured plan |
+| Loading (`loading.gd`) | `addons/world_runtime/progress_meter.gd`, `loading_panel.gd`, `loading_details.gd` | Loading stage names and captions, the 0/15/20-75/75 stops, "final 6% belongs to playback", coverage/probe/work counters format, the developer readout (now at the top of the screen) | The specific counters and timings, which the game reports live at runtime |
 
 ## Status
 

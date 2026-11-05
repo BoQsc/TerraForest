@@ -18,8 +18,14 @@ func _initialize() -> void:
 
 
 func run() -> void:
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUTPUT))
-	FileAccess.open(OUTPUT.path_join(".gdignore"), FileAccess.WRITE).store_string("")
+	var output := OUTPUT
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--out="):
+			output = argument.trim_prefix("--out=")
+			if not output.begins_with("res://") and not output.begins_with("user://"):
+				output = "res://" + output
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
+	FileAccess.open(output.path_join(".gdignore"), FileAccess.WRITE).store_string("")
 	var mockup: Control = load(SCENE).instantiate()
 	root.add_child(mockup)
 	for shot in SHOTS:
@@ -28,7 +34,7 @@ func run() -> void:
 		for frame in 10:
 			await process_frame
 		var picture := root.get_texture().get_image()
-		var path := OUTPUT.path_join(str(shot.name) + ".png")
+		var path := output.path_join(str(shot.name) + ".png")
 		picture.save_png(path)
 		print("saved ", ProjectSettings.globalize_path(path), " ", picture.get_width(), "x", picture.get_height())
 	quit()
