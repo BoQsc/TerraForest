@@ -1,0 +1,112 @@
+{
+  "date": "2026-11-05",
+  "status": "Installed and committed after source/package checks; player visual review pending.",
+  "report": "World images are absent during loading and in saved-world selection.",
+  "confirmed_causes": [
+    "Recent normal worlds had no PNGs because destination photography had been made optional to avoid generation delays. The twelve most recent saves inspected had zero north/road/market PNGs. SleeperHomes_1703_dfd9e98e metadata reported preview_count=0.",
+    "WorldSession resource cover never assigned a saved-world photograph; gameplay loading assigned one only later."
+  ],
+  "fix": [
+    "Shared read_image discovery/fallback for north, road, market, arrival. Worker-sized stable thumbnails; randomized full-size loading image with fallback to other readable candidates.",
+    "Set the selected world photograph on the existing resource-loading cover before yielding; Last World reuses that cover after catalog selection.",
+    "Capture one normal player-view frame after readiness, entry/waking and UI closure when a writable world lacks a photograph. Preserve existing images; exclude headless, temporary, readonly and SubViewport worlds.",
+    "Read back once without HUD/held tools, restore visibility/processing, retain the Image through off-thread PNG encoding. An unsaved arrival stays in memory until successful save; publish only presentation sidecars.",
+    "Join pending encoding on teardown, so save-and-return publishes the arrival before the next browser reads it."
+  ],
+  "source_photo_display": {
+    "report": "reports/ui_sets/20261105T121950047240Z",
+    "passed": true,
+    "pack_sha256": null,
+    "script_sha256": "15453038e856f2ab03faa87db3c54a49bf0fbfba9d309ccabc8cb2d890ba0c6d",
+    "summary": [
+      "WORLD_PHOTO_DISPLAY checks=24 failures=0 fixture=user://photo_check_6a2104d5b9f2"
+    ]
+  },
+  "pack_photo_display": {
+    "report": "reports/ui_sets/20261105T122401869542Z",
+    "passed": true,
+    "pack_sha256": "7cd2033e144504259dfea305409d85edb471e6bfe2d450ae8a00a726975adc09",
+    "script_sha256": "15453038e856f2ab03faa87db3c54a49bf0fbfba9d309ccabc8cb2d890ba0c6d",
+    "summary": [
+      "WORLD_PHOTO_DISPLAY checks=24 failures=0 fixture=user://photo_check_e4038a1af582"
+    ]
+  },
+  "source_real_flow": {
+    "report": "reports/ui_sets/20261105T121955097982Z",
+    "passed": true,
+    "pack_sha256": null,
+    "script_sha256": "bbdf37c1258fadab4f02fe2a61c57de65837be431816a335108a6a53d0b30d34",
+    "summary": [
+      "WINDOW_SESSION_FLOW checks=25 failures=0 slots=[\"window_flow_588721e3b36fd8ec\", \"window_flow_81c9b987a2b68872\"]"
+    ]
+  },
+  "pack_real_flow": {
+    "report": "reports/ui_sets/20261105T122407866560Z",
+    "passed": true,
+    "pack_sha256": "7cd2033e144504259dfea305409d85edb471e6bfe2d450ae8a00a726975adc09",
+    "script_sha256": "5d22bd869e37987708bcd618a2992a96e1800ed164a29c7a9c14357f594e8e89",
+    "summary": [
+      "WINDOW_SESSION_FLOW checks=26 failures=0 slots=[\"window_flow_f848c5e9a0ac0eb8\", \"window_flow_e623670598a7217d\"]"
+    ]
+  },
+  "pack_last_world": {
+    "report": "reports/continue_last_presentation/20261105T122541734777Z",
+    "passed": true,
+    "pack_sha256": "7cd2033e144504259dfea305409d85edb471e6bfe2d450ae8a00a726975adc09",
+    "script_sha256": "ffdea58624aa4fda0b071bc5e6aa87d1ba7d86575517dd8bb6345c4d62413ec8",
+    "summary": [
+      "CONTINUE_LAST_PRESENTATION checks=11 failures=0"
+    ]
+  },
+  "flow_scope": "Source 25 checks; packaged 26 includes an added synchronous resource-cover texture assertion and rendered early-cover capture. Both perform actual auto-arrival/save/return/reopen/manual-refresh/cancel with a disposable native world. Diagnostic camera disables entry without persisting any preference. Controlled photo display separately verifies the readiness callback waits for entry and modals.",
+  "export_gate": "reports/building_standards/20261105T122208227610Z",
+  "retained_trials": [
+    {
+      "report": "reports/checks/20261105T121128878185Z",
+      "result": "First worker prototype crashed (3221225477): Image released before native PNG encoding finished. Retained Image until worker join. Initial fake-game processing assertion also needed an explicit running fixture."
+    },
+    {
+      "report": "reports/ui_sets/20261105T121243624476Z",
+      "result": "25 functional checks passed, but inspection rejected a captured embedded confirmation. Added modal wait and popup frame rejection. Earlier pass was not clean-image approval."
+    },
+    {
+      "report": "reports/ui_sets/20261105T121606117820Z",
+      "result": "25 functional checks passed, but inspection rejected entry fly-in/hint in the new arrival. Added actual world camera/UI readiness callback. The browser comparison also selected an older fixture; later checks explicitly select their owned slot."
+    },
+    {
+      "report": "reports/ui_sets/20261105T121914046736Z",
+      "result": "23/24: fixture canonical hash race from an unclosed test FileAccess. Explicitly close before hashing; final source/package 24/24."
+    }
+  ],
+  "owned_world_archives": [
+    {
+      "report": "reports/ui_sets/20261105T121955097982Z",
+      "slots": [
+        "window_flow_588721e3b36fd8ec",
+        "window_flow_81c9b987a2b68872"
+      ],
+      "files": 16
+    },
+    {
+      "report": "reports/ui_sets/20261105T122407866560Z",
+      "slots": [
+        "window_flow_f848c5e9a0ac0eb8",
+        "window_flow_e623670598a7217d"
+      ],
+      "files": 16
+    }
+  ],
+  "earlier_owned_world_archives": [
+    "reports/ui_sets/20261105T121243624476Z/fixture_archive.json",
+    "reports/ui_sets/20261105T121606117820Z/fixture_archive.json"
+  ],
+  "artifacts": {
+    "dist/TerraForest.pck": "7cd2033e144504259dfea305409d85edb471e6bfe2d450ae8a00a726975adc09"
+  },
+  "remaining": [
+    "A world without an image has a plain first opening; normal play/save creates an arrival for later browser visits/loads. Before Last World knows its slot the catalog-search cover is neutral.",
+    "Existing worlds were not bulk-opened, regenerated or rephotographed. Older PNGs are preserved; manual three-view refresh remains optional.",
+    "Player visual review and weak-hardware readback/encoding timing are not qualified by these scoped checks."
+  ],
+  "provenance": "Original Codex-assisted new code/tests 0BSD. Diagnostic captures retain referenced game-art provenance; no external assets/code/fonts imported. Source images and hashes in images/manifest.json."
+}

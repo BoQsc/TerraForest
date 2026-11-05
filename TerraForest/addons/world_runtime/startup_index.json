@@ -561,6 +561,9 @@
   "res://addons/world_runtime/actor_world.gd": [
     "res://addons/world_runtime/actor_mesh.gd"
   ],
+  "res://addons/world_runtime/arrival_photograph.gd": [
+    "res://addons/world_runtime/world_presentation.gd"
+  ],
   "res://addons/world_runtime/capture_world_previews_task.gd": [
     "res://addons/world_runtime/scene_task.gd",
     "res://addons/world_runtime/loading_diagnostics.gd",
@@ -818,6 +821,7 @@
     "res://demo/brush_stroke.gd",
     "res://addons/world_runtime/world_presentation.gd",
     "res://addons/world_runtime/loading_timer.gd",
+    "res://addons/world_runtime/arrival_photograph.gd",
     "res://addons/world_runtime/progress_meter.gd",
     "res://addons/world_runtime/loading_diagnostics.gd"
   ],

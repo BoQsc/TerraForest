@@ -1,0 +1,62 @@
+[
+  {
+    "file": "rejected_modal.png",
+    "source": "reports/ui_sets/20261105T121243624476Z/saved_worlds/window_flow_76c8e0a83aea717c.preview/arrival.png",
+    "sha256": "69408012b0f24f81ce34868feb5612e2653b364d38f7dfbcc4c85d995022daf4",
+    "caption": "Rejected first capture: embedded confirmation dialog remained visible. Added modal waiting and frame rejection.",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "provenance": "TerraForest diagnostic capture. Existing referenced game-art terms retained; new implementation/test code 0BSD."
+  },
+  {
+    "file": "rejected_entry.png",
+    "source": "reports/ui_sets/20261105T121606117820Z/saved_worlds/window_flow_8e812f0bbf9c98e2.preview/arrival.png",
+    "sha256": "27e16b35063f41bf5ff7cbfd6159f377e86f796cd2ffd50c4059aded5c89faf4",
+    "caption": "Rejected second capture: entry camera and Entering world hint. Added the actual world presentation-readiness callback.",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "provenance": "TerraForest diagnostic capture. Existing referenced game-art terms retained; new implementation/test code 0BSD."
+  },
+  {
+    "file": "automatic_photo_selector.png",
+    "source": "reports/ui_sets/20261105T121955097982Z/automatic_photo_selector.png",
+    "sha256": "49df6347cbfce99e26d419f9f13ffc20b935ff9373004824823763365251d21a",
+    "caption": "Real source world, generator 1 seed 1703: clean automatic arrival displayed by Survey after save/return. Diagnostic camera skips entry without persisting preferences.",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "provenance": "TerraForest diagnostic capture. Existing referenced game-art terms retained; new implementation/test code 0BSD."
+  },
+  {
+    "file": "photo_cover_fixture.png",
+    "source": "reports/ui_sets/20261105T121950047240Z/survey_photo_loading.png",
+    "sha256": "8b0ddf1d9d022929e71d519e20f019d8cace77ad836f1699006eddccd3ffac0e",
+    "caption": "Controlled blue-image fixture, Survey: rendered background pixels prove the early cover consumes a saved PNG. This is not world art acceptance.",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "provenance": "TerraForest diagnostic capture. Existing referenced game-art terms retained; new implementation/test code 0BSD."
+  },
+  {
+    "file": "automatic_photo_loading.png",
+    "source": "reports/ui_sets/20261105T122407866560Z/automatic_photo_loading.png",
+    "sha256": "5dff5680242cdfce6df153f8a7106db88637434d88103884c1242c8801358446",
+    "caption": "Packaged real-world reopen, generator 1 seed 1703: automatic arrival is visible during resource loading before gameplay scene startup completes.",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "provenance": "TerraForest diagnostic capture. Existing game-art terms retained; new implementation/test code 0BSD."
+  }
+]

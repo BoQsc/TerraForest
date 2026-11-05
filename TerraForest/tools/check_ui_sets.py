@@ -16,13 +16,14 @@ def main():
     parser.add_argument('--pack', action='store_true')
     parser.add_argument('--flow', action='store_true', help='Exercise real open/save/reopen/return and photographs with Survey active')
     parser.add_argument('--loading', action='store_true', help='Check live measured loading, diagnostics and layout with Survey active')
+    parser.add_argument('--photographs', action='store_true', help='Check automatic arrival capture and rendered browser/loading photographs in every set')
     args = parser.parse_args()
-    if args.flow and args.loading:
+    if sum([args.flow, args.loading, args.photographs]) > 1:
         parser.error('Select one check')
     config, _ = parse_args([])
     folder = ROOT / 'reports/ui_sets' / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder.mkdir(parents=True)
-    script = ROOT / ('tests/ui_set_session_flow.gd' if args.flow else 'tests/loading_progress_ui.gd' if args.loading else 'tests/ui_sets.gd')
+    script = ROOT / ('tests/ui_set_session_flow.gd' if args.flow else 'tests/loading_progress_ui.gd' if args.loading else 'tests/world_photo_display.gd' if args.photographs else 'tests/ui_sets.gd')
     if args.pack and args.flow:
         parent = folder / 'window_session_flow.gd'
         parent.write_bytes((ROOT / 'tests/window_session_flow.gd').read_bytes())
@@ -50,11 +51,11 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        marker = 'WINDOW_SESSION_FLOW checks=' if args.flow else 'LOADING_PROGRESS_UI failures=' if args.loading else 'UI_SETS checks='
+        marker = 'WINDOW_SESSION_FLOW checks=' if args.flow else 'LOADING_PROGRESS_UI failures=' if args.loading else 'WORLD_PHOTO_DISPLAY checks=' if args.photographs else 'UI_SETS checks='
         result = execute(command, folder, 260 if args.flow else 120 if args.loading else 100, marker, require_resource_budget=True)
     finally:
         subprocess.Popen = original
-    record.update(command=command, result=result, flow=args.flow, loading=args.loading)
+    record.update(command=command, result=result, flow=args.flow, loading=args.loading, photographs=args.photographs)
     (folder / 'run.json').write_text(json.dumps(record, indent=2) + '\n', encoding='utf-8')
     print(('PASS ' if result['passed'] else 'FAIL ') + str(folder))
     return 0 if result['passed'] else 1

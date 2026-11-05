@@ -36,6 +36,10 @@ func open_world(slot:String,create:bool,generator:int,seed_value:int,gameplay:bo
 	if not command.ok:return false
 	command.args.append("--no-zombies")
 	browser._open_game(command.args)
+	if not create:
+		var cover:CanvasLayer=root.get_node("WorldSession").cover
+		check(is_instance_valid(cover) and cover.picture.texture!=null,"saved photograph is assigned before resource loading yields its first frame")
+		await photograph("automatic_photo_loading")
 	var ready:bool=await wait_for(game_ready,60)
 	if not ready:
 		print("SESSION_OPEN_DIAGNOSTIC scene=",current_scene," options=",Options.arguments()," transitioning=",root.get_node("WorldSession").transitioning)
@@ -52,6 +56,7 @@ func run()->void:
 	var slot:="window_flow_"+Crypto.new().generate_random_bytes(8).hex_encode();slots.append(slot)
 	if not check(await open_world(slot,true,1,1703,true),"selector opens a new playable world in place"):await finish();return
 	var game=current_scene
+	game.player_view.entry.set_enabled(false,false) # This check owns its camera; no user preference is saved.
 	check(game.terrain.save_slot==slot and game.terrain.backend.world_generator==1 and game.terrain.backend.world_seed==1703,"session profile reaches terrain worker")
 	check(game.construction_inventory.gameplay and game.ground_enabled and game.world_vehicle.fleet_enabled,"gameplay and streamed systems receive session flags")
 	game.session_menu.set_open(true);game.session_menu.confirmation.dialog_text="Embedded confirmation";game.session_menu.confirmation.popup_centered()
@@ -64,6 +69,11 @@ func run()->void:
 	await process_frame
 	check(old_game.get_ref()==null and not ProjectSettings.has_setting(Options.KEY),"old world is freed and per-session arguments are cleared")
 	check(FileAccess.file_exists("user://worlds/"+slot+".trw"),"world save is published before returning")
+	check(FileAccess.file_exists("user://worlds/"+slot+".preview/arrival.png"),"first playable arrival is photographed automatically before save-and-return finishes")
+	for index in current_scene.worlds.item_count:
+		if current_scene.worlds.get_item_metadata(index)==slot:current_scene.worlds.select(index);current_scene.show_saved_details(index);break
+	await wait_for(func():return current_scene.saved_picture.texture!=null)
+	await photograph("automatic_photo_selector")
 	if not check(await open_world(slot,false,4,42,false),"saved world reopens without restarting the game"):await finish();return
 	check(current_scene.terrain.backend.world_generator==1 and current_scene.terrain.backend.world_seed==1703 and not current_scene.construction_inventory.gameplay,"saved generation identity and newly selected play mode are independent")
 	if not check(await leave(),"second return releases save ownership"):await finish();return

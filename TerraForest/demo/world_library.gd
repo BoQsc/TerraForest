@@ -70,20 +70,7 @@ func _process(_delta:float)->void:
 	_start_next()
 
 static func _read_details(slot:String,folder:String)->Dictionary:
-	var image:Image=null
-	# Stable photograph while browsing; full-resolution loading backgrounds keep
-	# their existing selection policy. Source PNGs and saved worlds are untouched.
-	if slot.is_valid_identifier() and slot.length()<=48:
-		for view:String in ["north","road","market"]:
-			var path:=folder.path_join(slot+".preview").path_join(view+".png")
-			if not FileAccess.file_exists(path):continue
-			image=Image.load_from_file(path)
-			if image==null or image.is_empty():
-				image=null;continue
-			var scale:=minf(1.0,minf(float(THUMBNAIL_SIZE.x)/image.get_width(),float(THUMBNAIL_SIZE.y)/image.get_height()))
-			if scale<1.0:image.resize(maxi(1,roundi(image.get_width()*scale)),maxi(1,roundi(image.get_height()*scale)),Image.INTERPOLATE_BILINEAR)
-			break
-	return {"details":Presentation.details(slot,folder),"image":image}
+	return {"details":Presentation.details(slot,folder),"image":Presentation.read_image(slot,folder,THUMBNAIL_SIZE)}
 
 func _exit_tree()->void:
 	if worker!=null:worker.wait_to_finish();worker=null

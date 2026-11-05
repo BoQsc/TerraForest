@@ -52,6 +52,8 @@ func begin_continue()->void:
 func dismiss_continue()->void:
 	continue_started_ms=0
 	if is_instance_valid(cover):cover.queue_free();cover=null
+func set_world_photograph(slot:String,directory:String="user://worlds")->void:
+	if is_instance_valid(cover):cover.picture.texture=preload("res://addons/world_runtime/world_presentation.gd").image_for(slot,directory)
 func open_world(command:PackedStringArray)->bool:
 	if transitioning:return false
 	var arguments:=Options.user_arguments(command)
@@ -65,6 +67,8 @@ func open_world(command:PackedStringArray)->bool:
 		if argument.begins_with("--loading-started-ms="):started_ms=int(argument.trim_prefix("--loading-started-ms="))
 	if not is_instance_valid(cover):
 		cover=preload("res://addons/world_runtime/generation_screen.gd").new();add_child(cover)
+	for argument:String in arguments:
+		if argument.begins_with("--world-slot="):set_world_photograph(argument.trim_prefix("--world-slot="));break
 	cover.panel.reset(started_ms,baseline)
 	cover.panel.show_progress("Loading your world","Loading game resources…",baseline)
 	await get_tree().process_frame

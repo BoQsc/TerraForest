@@ -1,3 +1,19 @@
+## World photograph availability — 2026-11-05
+
+Recent worlds can have empty `.preview` folders because optional three-view
+photography no longer blocks generation. The resource-loading cover also omitted
+existing photographs until gameplay initialization. The follow-up assigns the
+selected world's image to that early cover and shares image discovery between
+browser thumbnails and loading (`north`, `road`, `market`, then `arrival`).
+
+Normal writable play now captures one clean arrival frame after readiness when
+no photograph exists. It waits for entry/waking and modal dialogs, preserves existing pictures,
+and encodes PNG off-thread after a successful save; temporary/read-only worlds
+are excluded. This adds no destination traversal or world-generation photo stage.
+A world with no image still cannot show a real photograph on its first opening;
+the next visit can use the new frame. Player review and weak-hardware timing
+remain separate. [Checks, images and remaining work](../issues/world-photograph-availability/README.md).
+
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
 ## Modular world UI sets — 2026-11-05

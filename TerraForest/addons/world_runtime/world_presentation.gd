@@ -26,7 +26,7 @@ static func record_photographs(slot:String,directory:String="user://worlds")->bo
  if not FileAccess.file_exists(directory.path_join(slot+".trw")):return false
  var state:=metadata(slot,directory)
  var count:=0
- for name:String in ["north","road","market"]:
+ for name:String in ["north","road","market","arrival"]:
   if FileAccess.file_exists(directory.path_join(slot+".preview/"+name+".png")):count+=1
  state["preview_count"]=count
  var path:=directory.path_join(slot+".presentation.json")
@@ -35,19 +35,33 @@ static func record_photographs(slot:String,directory:String="user://worlds")->bo
  file.store_string(JSON.stringify(state));file.close()
  return DirAccess.rename_absolute(path+".tmp",path)==OK
 
-static func image_for(slot:String,directory:String="user://worlds")->Texture2D:
+static func read_image(slot:String,directory:String="user://worlds",maximum:Vector2i=Vector2i.ZERO,random_order:bool=false)->Image:
  if not slot.is_valid_identifier() or slot.length()>48:return null
  var candidates:PackedStringArray=[]
- for name in ["north","road","market"]:
+ for name in ["north","road","market","arrival"]:
   var path:=directory.path_join(slot+".preview").path_join(name+".png")
   if FileAccess.file_exists(path):candidates.append(path)
- if candidates.is_empty():return null
- var picture:=Image.load_from_file(candidates[randi()%candidates.size()])
- if picture==null or picture.is_empty():return null
- return ImageTexture.create_from_image(picture)
+ if random_order and candidates.size()>1:
+  var first:=randi()%candidates.size();var chosen:=candidates[first];candidates.remove_at(first);candidates.insert(0,chosen)
+ for path:String in candidates:
+  var picture:=Image.load_from_file(path)
+  if picture==null or picture.is_empty():continue
+  if maximum.x>0 and maximum.y>0:
+   var factor:=minf(1.,minf(float(maximum.x)/picture.get_width(),float(maximum.y)/picture.get_height()))
+   if factor<1.:picture.resize(maxi(1,roundi(picture.get_width()*factor)),maxi(1,roundi(picture.get_height()*factor)),Image.INTERPOLATE_BILINEAR)
+  return picture
+ return null
 
-# Offline capture only: no per-frame readback or extra gameplay viewport.
+static func image_for(slot:String,directory:String="user://worlds")->Texture2D:
+ var picture:=read_image(slot,directory,Vector2i.ZERO,true)
+ return ImageTexture.create_from_image(picture) if picture!=null else null
+
+# Explicit snapshots only: no per-frame readback or extra gameplay viewport.
 static func capture(game:Node,viewport:Viewport,path:String)->Error:
+ var picture:Image=await capture_image(game,viewport)
+ return picture.save_png(path) if picture!=null else ERR_UNAVAILABLE
+
+static func capture_image(game:Node,viewport:Viewport)->Image:
  var layers:Array=[]
  var processing:bool=game.is_processing()
  game.set_process(false)
@@ -57,14 +71,20 @@ static func capture(game:Node,viewport:Viewport,path:String)->Error:
  for child:Node in game.find_children("*","CanvasLayer",true,false):
   if child.visible:layers.append(child);child.hide()
  await RenderingServer.frame_post_draw
- var picture:Image=viewport.get_texture().get_image()
+ if not is_instance_valid(game) or not is_instance_valid(viewport):return null
+ var picture:Image=null if popup_visible(game) else viewport.get_texture().get_image()
  # Preserve every rendered pixel (1920x1080 under the fullscreen policy).
  # PNG is lossless; the loading background displays this image at native size.
- var result:=picture.save_png(path)
- for layer:CanvasLayer in layers:layer.show()
- if tool!=null:tool.visible=tool_visible
+ for layer:CanvasLayer in layers:
+  if is_instance_valid(layer):layer.show()
+ if is_instance_valid(tool):tool.visible=tool_visible
  game.set_process(processing)
- return result
+ return picture
+
+static func popup_visible(game:Node)->bool:
+ for window:Window in game.find_children("*","Window",true,false):
+  if window.visible:return true
+ return false
 
 # Informational sidecars only. Missing old metadata stays unknown, never inferred
 # from the generator currently selected in the create-world UI.

@@ -104,11 +104,28 @@ a process-local activation wins when changing sets in the studio. Source and PCK
 use the same resource contract. A newly installed custom script is ordinary local
 Godot code; the preview isolation is about UI actions, not a code sandbox.
 
+## World photographs
+
+Browser and loading modules use the saved world's optional photographs, never the
+mockup's sample picture. Shared lookup tries `north`, `road`, `market`, then the
+automatic `arrival` frame. Browser thumbnails are resized on the catalog worker;
+loading uses the full PNG. The resource-loading cover receives the selected
+world's photograph before game resources load, including the Last World path.
+
+When no photograph exists, normal writable play captures one HUD-free arrival
+frame after readiness and modal dialogs. PNG encoding runs off-thread and only
+presentation sidecars are published after a successful save. Existing photos and
+canonical save bytes are preserved. Temporary/read-only/offscreen capture worlds
+are excluded. The first opening without a photo can still be plain; subsequent
+visits use the arrival. **Create / refresh photographs** remains available for the
+three destination views. This does not add a photo traversal to generation.
+
 ## Verification
 
 - `python TerraForest/tools/check_ui_sets.py`: registry, inheritance, isolated previews, actual GUI activation clicks and scene transitions for all five sets, layout bindings, fallback and measured progress.
 - Add `--flow`: actual browser/open/save/reopen/return and photographs with Survey active.
 - Add `--loading`: live loading/counters/diagnostics and layout with Survey active.
+- Add `--photographs` for automatic capture, modal/HUD exclusion, canonical-save preservation and rendered photo display in every set.
 - Add `--pack` for the current exported executable/PCK.
 
 [Issue and retained evidence](../../issues/modular-world-ui/README.md) track exact

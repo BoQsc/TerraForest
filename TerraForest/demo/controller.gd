@@ -133,6 +133,7 @@ var loading_label: Label
 var loading_progress: ProgressBar
 var loading_diagnostics:Control
 var loading_diagnostics_next_us:=0
+var arrival_photograph:Node
 var loading_panel: PanelContainer
 var loading_stage_percent:=75.0
 var loading_stage_text:="Checking nearby objects"
@@ -352,6 +353,10 @@ func _setup_loading() -> void:
 	loading_from_generation="--generation-handoff" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	loading_panel.reset(preload("res://addons/world_runtime/loading_timer.gd").requested_start() if loading_from_generation else 0,94 if loading_from_generation else 0)
 	loading_panel.show_progress("Loading your world","Reading saved world data",94 if loading_from_generation else 0)
+	arrival_photograph=preload("res://addons/world_runtime/arrival_photograph.gd").new();add_child(arrival_photograph);arrival_photograph.attach(self,_arrival_photograph_ready)
+
+func _arrival_photograph_ready()->bool:
+	return true
 
 func _loading_reload() -> void:
 	_begin_loading("Reloading world")
@@ -419,6 +424,7 @@ func _update_loading() -> void:
 	travel_blocked_s = 0.0
 	_clear_motion()
 	_message("Nearby terrain is ready")
+	arrival_photograph.request()
 	if "--human-playtest" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		DisplayServer.window_set_title("TerraForest — Human checkpoint 2026-10-09" if "--playtest-checkpoint" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) else "TerraForest — Human playtest (%s)" % ["temporary world" if temporary_world else "saved world"])
 		print("HUMAN_PLAYTEST_READY ", JSON.stringify({"presentation":Presentation.measurement(get_window()),"vsync":DisplayServer.window_get_vsync_mode(),"fps_cap":Engine.max_fps,"temporary":temporary_world,"slot":terrain.save_slot,"save_path":ProjectSettings.globalize_path(terrain.backend.save_path),"snapshot_terrain":terrain.backend.snapshot_terrain,"regional_terrain":terrain.backend.region_terrain}))

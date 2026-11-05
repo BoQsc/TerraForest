@@ -1874,6 +1874,9 @@ func _update_loading() -> void:
 		player_hud.equip_first_tool_if_unselected()
 		_restore_gameplay_mouse()
 
+func _arrival_photograph_ready()->bool:
+	return not player_view.entry.pending and not player_view.entry.active and not player_view.entry.waking and not session_menu.visible_ui() and not player_hud.inventory_open and not world_map.opened and not trader.ui.opened
+
 func _additional_loading_diagnostics() -> Dictionary:
 	# Constant-sized summaries. Never copy instance buffers or scan the world.
 	return {
