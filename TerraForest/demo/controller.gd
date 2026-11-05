@@ -342,7 +342,9 @@ func _setup_loading() -> void:
 	var preview_slot:String=terrain.save_slot
 	for arg:String in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		if arg.begins_with("--world-slot="):preview_slot=arg.trim_prefix("--world-slot=")
-	picture.texture=preload("res://addons/world_runtime/world_presentation.gd").image_for(preview_slot)
+	# Same fallback as the early cover: a world without photographs keeps the
+	# general picture through the in-game loading screen instead of going black.
+	picture.texture=preload("res://addons/world_runtime/world_presentation.gd").display_texture(preview_slot)
 	loading_diagnostics=load("res://addons/ui_sets/registry.gd").create("loading_details")
 	loading_layer.add_child(loading_diagnostics)
 	loading_panel=load("res://addons/ui_sets/registry.gd").create("loading_panel")
