@@ -149,10 +149,7 @@ static func surface(parent: Control, x: float, y: float, width: float, height: f
 
 
 static func photo(path: String) -> Texture2D:
-	var image := Image.load_from_file(ProjectSettings.globalize_path(path))
-	if image == null:
-		return null
-	return ImageTexture.create_from_image(image)
+	return preload("res://addons/ui_sets/reference_media.gd").texture(path)
 
 
 static func photo_frame(parent: Control, x: float, y: float, width: float, height: float, path: String, dim: float = 0.0) -> TextureRect:

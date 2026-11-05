@@ -14,10 +14,10 @@ var cancellation_requested:=false
 func _ready()->void:
  preload("res://addons/world_runtime/mouse_ownership.gd").set_mode(self,Input.MOUSE_MODE_VISIBLE)
  layer=120
- background=preload("res://addons/world_runtime/loading_background.gd").new();add_child(background)
+ background=load("res://addons/ui_sets/registry.gd").create("loading_background");add_child(background)
  picture=background.picture
- diagnostics=preload("res://addons/world_runtime/loading_details.gd").new();add_child(diagnostics)
- panel=preload("res://addons/world_runtime/loading_panel.gd").new();add_child(panel)
+ diagnostics=load("res://addons/ui_sets/registry.gd").create("loading_details");add_child(diagnostics)
+ panel=load("res://addons/ui_sets/registry.gd").create("loading_panel");add_child(panel)
  detail=panel.detail;title=panel.title;cancel_button=panel.action
  panel.reset(preload("res://addons/world_runtime/loading_timer.gd").requested_start())
  panel.show_progress("Generating your world","Planning terrain and locations…",0)

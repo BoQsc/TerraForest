@@ -1,0 +1,54 @@
+[
+  {
+    "file": "shipped_studio.png",
+    "source": "reports/ui_sets/20261105T112029253135Z/shipped_studio.png",
+    "sha256": "73a9db953d98a1acb24dca7f5d0ee8c72dc1069b45f77ccb7a49e3c69ff57162",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "caption": "Classic preserved preview in the shared studio",
+    "scope": "Inspected source-rendered UI layout; controlled preview/progress data, not player approval or an actual measured loading percentage.",
+    "provenance": "Diagnostic capture of TerraForest. Original UI/scene code 0BSD and original new module manifests/scenes CC0-1.0; inherited referenced assets retain their terms."
+  },
+  {
+    "file": "survey_studio.png",
+    "source": "reports/ui_sets/20261105T112029253135Z/survey_studio.png",
+    "sha256": "3e04ec47b201c75be8c1b939054300fdea9d7220639c2e7ed947d692e94df738",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "caption": "Preserved Survey reference, separate from its live adapter",
+    "scope": "Inspected source-rendered UI layout; controlled preview/progress data, not player approval or an actual measured loading percentage.",
+    "provenance": "Diagnostic capture of TerraForest. Original UI/scene code 0BSD and original new module manifests/scenes CC0-1.0; inherited referenced assets retain their terms."
+  },
+  {
+    "file": "live_create_studio.png",
+    "source": "reports/ui_sets/20261105T112029253135Z/live_create_studio.png",
+    "sha256": "79fda5dc8c34f253d392c268089efe246af8b120ba4643e62eb856fde63c2e6e",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "caption": "Survey live-adapter preview using the actual creation form",
+    "scope": "Inspected source-rendered UI layout; controlled preview/progress data, not player approval or an actual measured loading percentage.",
+    "provenance": "Diagnostic capture of TerraForest. Original UI/scene code 0BSD and original new module manifests/scenes CC0-1.0; inherited referenced assets retain their terms."
+  },
+  {
+    "file": "expedition_loading.png",
+    "source": "reports/ui_sets/20261105T112029253135Z/expedition_loading.png",
+    "sha256": "d446afbe364c95579622e7fef52d2c66152bdb71f4fdecff2ddf2ff8d7aa259d",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "caption": "Planet functional loading background with measured panel and original diagnostics",
+    "scope": "Inspected source-rendered UI layout; controlled preview/progress data, not player approval or an actual measured loading percentage.",
+    "provenance": "Diagnostic capture of TerraForest. Original UI/scene code 0BSD and original new module manifests/scenes CC0-1.0; inherited referenced assets retain their terms."
+  }
+]

@@ -335,16 +335,16 @@ func _setup_hud() -> void:
 func _setup_loading() -> void:
 	loading_layer.layer = 50
 	add_child(loading_layer)
-	var background=preload("res://addons/world_runtime/loading_background.gd").new()
+	var background=load("res://addons/ui_sets/registry.gd").create("loading_background")
 	background.name="LoadingBackground";loading_layer.add_child(background)
 	var picture:TextureRect=background.picture
 	var preview_slot:String=terrain.save_slot
 	for arg:String in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		if arg.begins_with("--world-slot="):preview_slot=arg.trim_prefix("--world-slot=")
 	picture.texture=preload("res://addons/world_runtime/world_presentation.gd").image_for(preview_slot)
-	loading_diagnostics=preload("res://addons/world_runtime/loading_details.gd").new()
+	loading_diagnostics=load("res://addons/ui_sets/registry.gd").create("loading_details")
 	loading_layer.add_child(loading_diagnostics)
-	loading_panel=preload("res://addons/world_runtime/loading_panel.gd").new()
+	loading_panel=load("res://addons/ui_sets/registry.gd").create("loading_panel")
 	loading_layer.add_child(loading_panel)
 	loading_label=loading_panel.detail;loading_progress=loading_panel.bar
 	loading_panel.action.text="Save and quit"

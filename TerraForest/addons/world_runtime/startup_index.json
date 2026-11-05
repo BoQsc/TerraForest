@@ -637,20 +637,12 @@
   "res://addons/world_runtime/generation_screen.gd": [
     "res://addons/world_runtime/progress_meter.gd",
     "res://addons/world_runtime/mouse_ownership.gd",
-    "res://addons/world_runtime/loading_background.gd",
-    "res://addons/world_runtime/loading_details.gd",
-    "res://addons/world_runtime/loading_panel.gd",
     "res://addons/world_runtime/loading_timer.gd"
   ],
   "res://addons/world_runtime/introduction_spawn.gd": [
     "res://addons/structures/expansion_catalog.gd"
   ],
-  "res://addons/world_runtime/loading_background.gd": [],
-  "res://addons/world_runtime/loading_details.gd": [],
   "res://addons/world_runtime/loading_diagnostics.gd": [],
-  "res://addons/world_runtime/loading_panel.gd": [
-    "res://addons/world_runtime/loading_timer.gd"
-  ],
   "res://addons/world_runtime/loading_timer.gd": [],
   "res://addons/world_runtime/location_capture.gd": [
     "res://addons/volumetric_terrain/mesh_codec.gd"
@@ -824,10 +816,7 @@
     "res://addons/volumetric_terrain/runtime_assets.gd",
     "res://demo/controller_state.gd",
     "res://demo/brush_stroke.gd",
-    "res://addons/world_runtime/loading_background.gd",
     "res://addons/world_runtime/world_presentation.gd",
-    "res://addons/world_runtime/loading_details.gd",
-    "res://addons/world_runtime/loading_panel.gd",
     "res://addons/world_runtime/loading_timer.gd",
     "res://addons/world_runtime/progress_meter.gd",
     "res://addons/world_runtime/loading_diagnostics.gd"

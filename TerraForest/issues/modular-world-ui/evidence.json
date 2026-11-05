@@ -1,0 +1,241 @@
+{
+  "date": "2026-11-05",
+  "status": "Implemented and installed; source and executable verification complete for declared scope; user review pending.",
+  "scope": "World selection, creation, generation, Last World cover and gameplay loading presentation. HUD/inventory/in-game menus excluded by user reply World screens first.",
+  "provenance": "Original Codex-assisted code/tests/tools, 0BSD. Original new Resource manifests/scenes CC0-1.0. Existing referenced views/art/planet terms retained. No external code, media or font files downloaded. See addons/ui_sets/ORIGIN.txt.",
+  "registry": {
+    "discovery_roots": [
+      "res://addons/ui_sets/sets",
+      "res://ui_sets",
+      "user://ui_sets"
+    ],
+    "manifest": "set.tres using addons/ui_sets/ui_set.gd",
+    "data_driven_preview": "Named pages, canvas size, reference and runtime preview scenes come from manifest Resources.",
+    "inheritance": "Missing adapters inherit from a base set, bounded to eight acyclic levels. Runtime roles validated before activation.",
+    "selection": "Explicit activation persists independently in user://ui_sets.cfg; missing/invalid module falls back to shipped; tests use separate report-local preferences.",
+    "runtime_ids": [
+      "shipped",
+      "survey",
+      "expedition"
+    ],
+    "reference_only_ids": [
+      "campfire",
+      "diorama"
+    ],
+    "live_layout_limit": "Survey and Planet live adapters reuse working Classic browser/form layouts with palette/type and a reusable planet loading portrait. Their full target reference layouts are preserved but not claimed as ported."
+  },
+  "source_registry": {
+    "report": "reports/ui_sets/20261105T112303360274Z",
+    "passed": true,
+    "pack": false,
+    "flow": false,
+    "loading": false,
+    "summary": [
+      "UI_SETS checks=33 failures=0"
+    ],
+    "script_sha256": "71a4678e78abc68dd9ccce1b35dcb5b084b5322456bfee3c30bf367e741d4c33",
+    "pack_sha256": null,
+    "sampled_resources": {
+      "peak_private_commit_bytes": 1434320896,
+      "peak_dedicated_gpu_bytes": 393846784,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "pack_registry": {
+    "report": "reports/ui_sets/20261105T112256933391Z",
+    "passed": true,
+    "pack": true,
+    "flow": false,
+    "loading": false,
+    "summary": [
+      "UI_SETS checks=33 failures=0"
+    ],
+    "script_sha256": "71a4678e78abc68dd9ccce1b35dcb5b084b5322456bfee3c30bf367e741d4c33",
+    "pack_sha256": "c7817717ad1e54e849b90cc9aac010f686fd1486529647e64fcdf038b6a26e6b",
+    "sampled_resources": {
+      "peak_private_commit_bytes": 1478565888,
+      "peak_dedicated_gpu_bytes": 393846784,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "source_flow": {
+    "report": "reports/ui_sets/20261105T110845623063Z",
+    "passed": true,
+    "pack": false,
+    "flow": true,
+    "loading": false,
+    "summary": [
+      "WORLD_PREVIEWS failures=0",
+      "WINDOW_SESSION_FLOW checks=24 failures=0 slots=[\"window_flow_3c8be148ad437412\", \"window_flow_88f3bfe7dd0d31d1\"]"
+    ],
+    "script_sha256": "bbdf37c1258fadab4f02fe2a61c57de65837be431816a335108a6a53d0b30d34",
+    "pack_sha256": null,
+    "sampled_resources": {
+      "peak_private_commit_bytes": 3474288640,
+      "peak_dedicated_gpu_bytes": 1473806336,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "pack_flow": {
+    "report": "reports/ui_sets/20261105T112211042933Z",
+    "passed": true,
+    "pack": true,
+    "flow": true,
+    "loading": false,
+    "summary": [
+      "WORLD_PREVIEWS failures=0",
+      "WINDOW_SESSION_FLOW checks=24 failures=0 slots=[\"window_flow_66bad2b98c5ceec1\", \"window_flow_5b1d303ecb48336e\"]"
+    ],
+    "script_sha256": "408699076cbf7e5c17eb2b375eb21af725f7888a7776c187364bdd77d2c9702c",
+    "pack_sha256": "c7817717ad1e54e849b90cc9aac010f686fd1486529647e64fcdf038b6a26e6b",
+    "sampled_resources": {
+      "peak_private_commit_bytes": 3459960832,
+      "peak_dedicated_gpu_bytes": 1473798144,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "source_loading": {
+    "report": "reports/ui_sets/20261105T110902407204Z",
+    "passed": true,
+    "pack": false,
+    "flow": false,
+    "loading": true,
+    "summary": [
+      "LOADING_PROGRESS_UI failures=0"
+    ],
+    "script_sha256": "e9097537bfbcb3f15d2f07b868544b76ee0c441c5b4c8e32ccd0c9879beed4d8",
+    "pack_sha256": null,
+    "sampled_resources": {
+      "peak_private_commit_bytes": 2795040768,
+      "peak_dedicated_gpu_bytes": 1201741824,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "pack_loading": {
+    "report": "reports/ui_sets/20261105T112330268687Z",
+    "passed": true,
+    "pack": true,
+    "flow": false,
+    "loading": true,
+    "summary": [
+      "LOADING_PROGRESS_UI failures=0"
+    ],
+    "script_sha256": "0141174e444f87a1f5d58b9343c602989108df482a7215e7fb2b5da109c95b14",
+    "pack_sha256": "c7817717ad1e54e849b90cc9aac010f686fd1486529647e64fcdf038b6a26e6b",
+    "sampled_resources": {
+      "peak_private_commit_bytes": 2595692544,
+      "peak_dedicated_gpu_bytes": 1201483776,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "source_last_world": {
+    "report": "reports/continue_last_presentation/20261105T110924671384Z",
+    "passed": true,
+    "pack": false,
+    "flow": null,
+    "loading": null,
+    "summary": [
+      "CONTINUE_LAST_PRESENTATION checks=11 failures=0"
+    ],
+    "script_sha256": "ffdea58624aa4fda0b071bc5e6aa87d1ba7d86575517dd8bb6345c4d62413ec8",
+    "pack_sha256": null,
+    "sampled_resources": {
+      "peak_private_commit_bytes": 870424576,
+      "peak_dedicated_gpu_bytes": 187621376,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "pack_last_world": {
+    "report": "reports/continue_last_presentation/20261105T112348864988Z",
+    "passed": true,
+    "pack": true,
+    "flow": null,
+    "loading": null,
+    "summary": [
+      "CONTINUE_LAST_PRESENTATION checks=11 failures=0"
+    ],
+    "script_sha256": "ffdea58624aa4fda0b071bc5e6aa87d1ba7d86575517dd8bb6345c4d62413ec8",
+    "pack_sha256": "c7817717ad1e54e849b90cc9aac010f686fd1486529647e64fcdf038b6a26e6b",
+    "sampled_resources": {
+      "peak_private_commit_bytes": 872927232,
+      "peak_dedicated_gpu_bytes": 187621376,
+      "telemetry_complete": true,
+      "within_sampled_limits": true
+    }
+  },
+  "source_latest_rendered": "reports/ui_sets/20261105T112029253135Z",
+  "export_gate": "reports/building_standards/20261105T112054603155Z",
+  "retained_failures": [
+    {
+      "report": "reports/probe_ui_sets.log",
+      "disposition": "Initial extracted builder needed explicit Label types; fixed before assertion checks. No design data changed."
+    },
+    {
+      "report": "reports/checks/20261105T110411015867Z",
+      "disposition": "Rendered loading test waits for frame_post_draw and cannot run headless. Corrected launcher uses offscreen graphical validation."
+    },
+    {
+      "report": "reports/checks/20261105T110531346067Z",
+      "disposition": "Window-session test was mistakenly run headless: embedded-window assertion failed and rendering wait could not complete. Owned process stopped; graphical source and package flows pass."
+    },
+    {
+      "report": "reports/ui_sets/20261105T110645168558Z",
+      "disposition": "Loading test assumed synchronous world _ready; added bounded wait for actual loading panel instead of calling Nil. Subsequent source/package loading passes."
+    },
+    {
+      "report": "reports/ui_sets/20261105T111419179334Z",
+      "disposition": "31 assertions passed but runner correctly rejected raw/imported image errors from old reference functions. Import-aware media loading and optional local photograph handling fixed; final package clean."
+    },
+    {
+      "report": "reports/ui_sets/20261105T111544736282Z",
+      "disposition": "Loading fixture unconditionally opened a docs-only photograph excluded from PCK. Fixture now uses it only when present; actual user photographs still exercised by world flow."
+    },
+    {
+      "report": "reports/ui_sets/20261105T111703491096Z",
+      "disposition": "Optional raw local screenshot had stale .import metadata with a missing .ctex. Media helper now checks imported target availability and falls back to the original raw file; source and final package pass."
+    }
+  ],
+  "export_retry": "First export attempt stopped before refreshing the pack, without a useful child error. Each asset-bake step then passed individually; required gates and subsequent complete export passed. No failing pack was installed.",
+  "preservation": "Original mockup layouts and scenes retained. Only Survey kit photo loading and Campfire texture-crop media access changed to use shared portable helper. Original images not copied into bundle from user saves/reports.",
+  "remaining": [
+    "Player visual/usability acceptance.",
+    "Exact Survey/Planet reference layout ports onto live controller contracts.",
+    "Actual-progress adapters for Diorama/Campfire before complete suite activation.",
+    "In-game HUD/menu modularization remains out of scope.",
+    "Large plugin collections and sustained preview graphics performance unqualified beyond current five sets and sampled process budgets."
+  ],
+  "resume": "Add/change only set manifests and relevant view modules; run registry plus real open/save/reopen/return/loading/cancellation contracts for new live adapters. Preserve reference scenes and report incomplete art ports explicitly.",
+  "artifacts": {
+    "dist/TerraForest.pck": "c7817717ad1e54e849b90cc9aac010f686fd1486529647e64fcdf038b6a26e6b"
+  },
+  "owned_flow_world_archives": [
+    {
+      "slots": [
+        "window_flow_3c8be148ad437412",
+        "window_flow_88f3bfe7dd0d31d1"
+      ],
+      "archive": "reports/ui_sets/20261105T110845623063Z/saved_worlds"
+    },
+    {
+      "slots": [
+        "window_flow_959895c90f92e889",
+        "window_flow_44a46238b56bed99"
+      ],
+      "archive": "reports/ui_sets/20261105T111425964658Z/saved_worlds"
+    },
+    {
+      "slots": [
+        "window_flow_66bad2b98c5ceec1",
+        "window_flow_5b1d303ecb48336e"
+      ],
+      "archive": "reports/ui_sets/20261105T112211042933Z/saved_worlds"
+    }
+  ]
+}

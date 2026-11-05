@@ -5,6 +5,8 @@ const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
 const Launch=preload("res://demo/world_launch.gd")
 const CreditsDialog=preload("res://demo/credits_dialog.gd")
 const WorldLibrary=preload("res://demo/world_library.gd")
+var preview_mode:=false
+var ui_set:Resource
 var library:WorldLibrary
 var continue_pending:=false
 var worlds: ItemList
@@ -78,59 +80,27 @@ func heading(parent: Node,text: String,size: int=24) -> Label:
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=48;out.pressed.connect(action);parent.add_child(out);return out
 func _ready() -> void:
-	preload("res://addons/world_runtime/session_options.gd").reset()
-	session=preload("res://addons/world_runtime/world_session.gd").obtain(get_tree())
-	continue_pending=session.take_continue_request(OS.get_cmdline_user_args())
-	if continue_pending:session.begin_continue()
-	get_tree().auto_accept_quit=false
-	Engine.max_fps=60;DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
-	Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE)
-	preload("res://demo/world_creation_panel.gd").apply_theme(self)
-	var background:=ColorRect.new();background.color=Color("0b171d");background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);add_child(background)
-	var margin:=MarginContainer.new();margin.add_theme_constant_override("margin_left",48);margin.add_theme_constant_override("margin_right",48);margin.add_theme_constant_override("margin_top",24);margin.add_theme_constant_override("margin_bottom",20);add_child(margin)
-	get_viewport().size_changed.connect(_fit_browser.bind(margin));_fit_browser(margin)
-	var panel:=VBoxContainer.new();panel.add_theme_constant_override("separation",14);margin.add_child(panel)
-	var branding:=HBoxContainer.new();panel.add_child(branding)
-	var identity:=VBoxContainer.new();identity.size_flags_horizontal=Control.SIZE_EXPAND_FILL;identity.add_theme_constant_override("separation",2);branding.add_child(identity)
-	var title:=heading(identity,"TERRAFOREST",32);title.add_theme_color_override("font_color",Color("91d5b4"))
-	var tagline:=heading(identity,"An open-source world-building project",15);tagline.add_theme_color_override("font_color",Color("9bafad"))
-	heading(branding,"WORLDS / YOUR NEXT CHAPTER",16)
-	var workspace:=ScrollContainer.new();workspace.size_flags_vertical=Control.SIZE_EXPAND_FILL;workspace.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;panel.add_child(workspace)
-	var columns:=TabContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.size_flags_horizontal=Control.SIZE_EXPAND_FILL;workspace.add_child(columns)
-	world_tabs=columns
-	columns.tab_changed.connect(func(index:int):
-		if index==1 and preview_view!=null and preview_view.texture==null:preview_due_ms=Time.get_ticks_msec()+PREVIEW_DELAY_MS)
-	var saved:=VBoxContainer.new();saved.name="My worlds";saved.custom_minimum_size.x=850;saved.add_theme_constant_override("separation",16);columns.add_child(saved)
-	heading(saved,"Saved worlds")
-	sort_order=OptionButton.new();sort_order.add_item("Last played · newest first");sort_order.add_item("Created · newest first");sort_order.add_item("Name");sort_order.item_selected.connect(func(_index:int):refresh());saved.add_child(sort_order)
-	sort_order.tooltip_text="Older worlds without recorded dates fall back to their last save time."
-	var filters:=HBoxContainer.new();saved.add_child(filters)
-	filter_field=LineEdit.new();TextInputFocus.configure(filter_field);filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
-	show_preparation=CheckBox.new();show_preparation.text="Generation drafts (developer, read-only)";show_preparation.visible="--developer-worlds" in OS.get_cmdline_user_args();show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
-	var library_row:=HBoxContainer.new();library_row.add_theme_constant_override("separation",28);library_row.size_flags_vertical=Control.SIZE_EXPAND_FILL;saved.add_child(library_row)
-	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.size_flags_horizontal=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size=Vector2(300,250);library_row.add_child(worlds)
-	var detail_column:=VBoxContainer.new();detail_column.custom_minimum_size.x=380;detail_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;library_row.add_child(detail_column)
-	saved_title=heading(detail_column,"Select a world",24)
-	saved_picture=TextureRect.new();saved_picture.custom_minimum_size=Vector2(380,200);saved_picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;saved_picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;detail_column.add_child(saved_picture)
-	saved_details=heading(detail_column,"",18);saved_details.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	worlds.item_selected.connect(show_saved_details)
-	button(saved,"Open selected world",func():launch_selected(false))
-	var library_actions:=HBoxContainer.new();saved.add_child(library_actions)
-	button(library_actions,"Refresh saved worlds",refresh)
-	photograph_button=button(library_actions,"Create / refresh photographs",refresh_photographs)
-	photograph_cancel=button(library_actions,"Cancel photographs",cancel_photographs);photograph_cancel.hide()
-	button(library_actions,"Recover interrupted publication",show_recovery)
-	preload("res://demo/world_creation_panel.gd").build(self,columns)
-	gameplay=CheckBox.new();gameplay.text="Gameplay material costs (uncheck for free editor)";gameplay.button_pressed=true;panel.add_child(gameplay)
-	var bottom:=HBoxContainer.new();bottom.alignment=BoxContainer.ALIGNMENT_END;panel.add_child(bottom)
-	notice=heading(bottom,"",16);notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;notice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-	credits_button=button(bottom,"Credits & licenses",show_credits)
-	button(bottom,"Quit",request_quit)
+	if not preview_mode:
+		preload("res://addons/world_runtime/session_options.gd").reset()
+		session=preload("res://addons/world_runtime/world_session.gd").obtain(get_tree())
+		continue_pending=session.take_continue_request(OS.get_cmdline_user_args())
+		if continue_pending:session.begin_continue()
+		get_tree().auto_accept_quit=false
+		Engine.max_fps=60;DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
+		Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE)
+	ui_set=preload("res://addons/ui_sets/registry.gd").active()
+	ui_set.browser_view.build(self)
+	if preview_mode:
+		set_process(false);return
 	library=WorldLibrary.new();add_child(library)
 	library.catalog_ready.connect(_catalog_ready)
 	library.details_ready.connect(_saved_details_ready)
 	refresh()
 	if not session.last_error.is_empty():notice.text=session.last_error;session.last_error=""
+func open_ui_studio()->void:
+	if preparation_pid>=0 or photograph_pid>=0:
+		notice.text="Finish or cancel the current world job before changing UI sets.";return
+	get_tree().change_scene_to_file("res://addons/ui_sets/studio.tscn")
 func continue_last_world() -> void:
 	# A Steam entry carries one fixed command line, so "continue" is decided here
 	# instead of by an argument naming a slot: the catalog is newest first.
@@ -369,6 +339,7 @@ func request_quit()->void:
 	cancel_preparation()
 	quit_pending=cancel_pending
 func _notification(what:int)->void:
+	if preview_mode:return
 	if what==NOTIFICATION_WM_CLOSE_REQUEST:request_quit()
 
 func selected_preview_key()->String:

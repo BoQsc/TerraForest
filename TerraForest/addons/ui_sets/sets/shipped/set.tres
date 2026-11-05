@@ -1,0 +1,25 @@
+[gd_resource type="Resource" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://addons/ui_sets/ui_set.gd" id="1"]
+[ext_resource type="PackedScene" path="res://addons/ui_sets/shipped_preview.tscn" id="2"]
+[ext_resource type="Script" path="res://addons/ui_sets/sets/shipped/browser.gd" id="3"]
+[ext_resource type="Script" path="res://demo/world_creation_panel.gd" id="4"]
+[ext_resource type="Script" path="res://addons/world_runtime/loading_panel.gd" id="5"]
+[ext_resource type="Script" path="res://addons/world_runtime/loading_background.gd" id="6"]
+[ext_resource type="Script" path="res://addons/world_runtime/loading_details.gd" id="7"]
+
+[resource]
+script = ExtResource("1")
+id = "shipped"
+title = "Classic · current shipped UI"
+description = "Preserved working world browser, creation form, generation and loading presentation. The preview uses the same view modules with isolated sample state."
+preview = ExtResource("2")
+runtime_enabled = true
+browser_view = ExtResource("3")
+creation_view = ExtResource("4")
+loading_panel = ExtResource("5")
+loading_background = ExtResource("6")
+loading_details = ExtResource("7")
+preview_pages = PackedStringArray("Saved worlds", "Create world", "Generation", "Loading")
+runtime_preview = ExtResource("2")
+runtime_preview_pages = PackedStringArray("Saved worlds", "Create world", "Generation", "Loading")

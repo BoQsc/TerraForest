@@ -1,0 +1,33 @@
+[gd_resource type="Resource" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://addons/ui_sets/ui_set.gd" id="1"]
+[ext_resource type="PackedScene" path="res://demo/world_screens/mockup.tscn" id="2"]
+[ext_resource type="Resource" path="res://addons/ui_sets/sets/shipped/set.tres" id="3"]
+[ext_resource type="Script" path="res://addons/ui_sets/themed_browser.gd" id="4"]
+[ext_resource type="Script" path="res://addons/ui_sets/themed_panel.gd" id="5"]
+[ext_resource type="Script" path="res://addons/ui_sets/planet_background.gd" id="6"]
+
+[sub_resource type="SystemFont" id="HeadingFont"]
+font_names = PackedStringArray("Georgia", "DejaVu Serif")
+font_weight = 700
+
+[sub_resource type="SystemFont" id="BodyFont"]
+font_names = PackedStringArray("Segoe UI", "DejaVu Sans")
+
+[resource]
+script = ExtResource("1")
+id = "expedition"
+title = "Planet expedition"
+description = "Preserved three-screen planet reference. Live adapter keeps the working browser/forms and applies this palette; loading adds its planet portrait."
+preview = ExtResource("2")
+runtime_enabled = true
+base = ExtResource("3")
+browser_view = ExtResource("4")
+loading_panel = ExtResource("5")
+loading_background = ExtResource("6")
+accent = Color(0.49411764705882355, 0.8509803921568627, 0.7058823529411765, 1)
+background = Color(0.03529411764705882, 0.0784313725490196, 0.07450980392156863, 1)
+panel_color = Color(0.08235294117647059, 0.1607843137254902, 0.1411764705882353, 1)
+heading_font = SubResource("HeadingFont")
+body_font = SubResource("BodyFont")
+preview_pages = PackedStringArray("Selection", "Creation / generation", "Loading")

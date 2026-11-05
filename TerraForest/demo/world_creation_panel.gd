@@ -135,7 +135,7 @@ static func build(host:Control,tabs:TabContainer)->void:
  label(legend,"■ Roofs / rock",14,Color("99938a"))
  host.preview_metrics=label(map_column,"READY TO PLAN  ·  Native terrain fitting  ·  Cached generation",16,ACCENT);host.preview_metrics.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
  host.preview_status=paragraph(map_column,"The preview uses the actual placement plan, not a decorative map. Existing worlds are never changed.",17)
- host.preparation_panel=preload("res://addons/world_runtime/loading_panel.gd").new();host.preparation_panel.embedded=true;page.add_child(host.preparation_panel)
+ host.preparation_panel=load("res://addons/ui_sets/registry.gd").create("loading_panel");host.preparation_panel.embedded=true;page.add_child(host.preparation_panel)
  host.preparation_panel.show_idle()
  host.recipe_summary=host.preparation_panel.work
  host.generate_button=host.preparation_panel.action;host.generate_button.text="Generate & play"

@@ -73,8 +73,8 @@ func _ready() -> void:
 
 func texture_crop(path: String, region: Rect2) -> AtlasTexture:
 	var atlas := AtlasTexture.new()
-	var image := Image.load_from_file(ProjectSettings.globalize_path(path))
-	atlas.atlas = ImageTexture.create_from_image(image)
+	atlas.atlas = preload("res://addons/ui_sets/reference_media.gd").texture(path)
+	if atlas.atlas==null:return null
 	atlas.region = region
 	return atlas
 

@@ -1,0 +1,17 @@
+TerraForest world UI sets
+
+Original implementation, adapters, resources, scenes and documentation authored
+with OpenAI Codex on 2026-11-05 for the maintainer's request for preserved,
+selectable, pluggable UI mockups and live world-screen presentation modules.
+
+Original .gd and tool/test code: 0BSD, under the project's contribution policy.
+Original .tres manifests and .tscn scenes in addons/ui_sets/: CC0-1.0 under the
+same policy. https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+The Classic browser builder is an extraction of TerraForest's existing original
+0BSD demo/worlds.gd presentation. Existing creation/loading presenters and the
+world_screens, world_survey, world_loading_mockup and world_loading_diorama
+references retain their original paths, terms and provenance. References do not
+relicense those files. No external code, artwork or fonts were downloaded.
+SystemFont selects fonts provided by the host OS; no font files are bundled.
+Planet adapter reuses the existing world_screens/planet.gd component.

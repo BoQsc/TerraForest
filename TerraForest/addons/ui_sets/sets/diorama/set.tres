@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://addons/ui_sets/ui_set.gd" id="1"]
+[ext_resource type="PackedScene" path="res://demo/world_loading_diorama.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "diorama"
+title = "Planet loading diorama"
+description = "Preserved animated loading-only reference. Not a live UI set: sample stages must be connected to actual progress before activation."
+preview = ExtResource("2")
+runtime_enabled = false
+preview_pages = PackedStringArray("Loading reference")

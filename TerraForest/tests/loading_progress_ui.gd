@@ -11,7 +11,8 @@ func _initialize()->void:
 func run()->void:
  var screen=preload("res://addons/world_runtime/generation_screen.gd").new();root.add_child(screen)
  screen.panel.set_compact_width(true,false)
- screen.use_photograph("res://docs/evidence/generation_lifecycle/source_generation/generation_loading.png")
+ var evidence_photo:="res://docs/evidence/generation_lifecycle/source_generation/generation_loading.png"
+ if FileAccess.file_exists(evidence_photo):screen.use_photograph(evidence_photo)
  # Use the actual raw world photograph rather than a prior UI capture when available.
  var raw:="user://worlds/lifecycle_bundle_20261023T163819.preview/north.png"
  if FileAccess.file_exists(raw):screen.use_photograph(raw)
@@ -80,6 +81,9 @@ func run()->void:
  check(screen.detail.text=="Cancelling generation…","cancel state cannot be overwritten")
  screen.free()
  var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
+ var startup_deadline:=Time.get_ticks_msec()+30000
+ while game.loading_panel==null and Time.get_ticks_msec()<startup_deadline:await process_frame
+ if game.loading_panel==null:check(false,"asynchronous startup creates loading presentation");game.free();quit(1);return
  game.loading_panel.set_compact_width(true,false)
  # Keep the actual loading flow; record only stage changes and one live frame.
  var elapsed_samples:Array=[]
