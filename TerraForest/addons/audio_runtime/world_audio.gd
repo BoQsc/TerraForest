@@ -25,6 +25,8 @@ var pending: Dictionary = {}
 var last_surface := ""
 var surface_cache: Dictionary = {}
 var suspended := false
+var zombie_hooks: Dictionary = {}
+var last_driving := false
 
 func attach(host: Node) -> void:
 	game = host; name = "WorldAudio"
@@ -50,8 +52,40 @@ func initialize() -> void:
 		surfaces[collection.get_instance_id()] = "metal" if "metal" in key or "iron" in key else ("wood" if material == "wood" or "wood" in key or "floor" in key else "rock")
 		if ("fireplace" in key or "standing_torch" in key or "campfire" in key) and fire_collections.size() < 8: fire_collections.append(collection)
 	game.terrain.density_ray_received.connect(receive_surface)
+	if game.player_life.has_signal("damaged"): game.player_life.damaged.connect(hurt)
 	add_controls()
 	reset_world()
+
+## Gameplay events the audition maps: each one plays whatever the selection
+## chose for that id, or the pack's own admitted sound.
+func play_event(id: String, point: Vector3) -> void:
+	if audio == null or not audio.enabled or not point.is_finite(): return
+	audio.emit_event(id, {"position": point})
+
+func hurt(_amount: float) -> void:
+	play_event("player.hurt", game.player.global_position)
+
+func hook_zombies() -> void:
+	if not game.zombies.enabled: return
+	for zombie in game.zombies.residents:
+		if not is_instance_valid(zombie): continue
+		var key: int = zombie.get_instance_id()
+		if zombie_hooks.has(key): continue
+		zombie_hooks[key] = true
+		if zombie.has_signal("attack_contact"):
+			zombie.attack_contact.connect(func(_action: String, _damage: float, point: Vector3) -> void: play_event("npc.zombie.attack", point))
+		if zombie.has_signal("damaged"):
+			zombie.damaged.connect(func(_part: String, _remaining: float) -> void: play_event("npc.zombie.hit", zombie.global_position))
+		if zombie.has_signal("died"):
+			zombie.died.connect(func() -> void: play_event("npc.zombie.death", zombie.global_position))
+
+func track_vehicle_door() -> void:
+	var driving: bool = game.world_vehicle.driving
+	if driving == last_driving: return
+	last_driving = driving
+	var car: Node = game.world_vehicle.car
+	var point: Vector3 = car.global_position if is_instance_valid(car) else game.player.global_position
+	play_event("vehicle.door.open" if driving else "vehicle.door.close", point)
 
 func add_controls() -> void:
 	var menu: CanvasLayer = game.session_menu
@@ -86,6 +120,8 @@ func tick() -> void:
 		return
 	if epoch != game.terrain.epoch: reset_world()
 	audio.listener = game.camera.global_position
+	hook_zombies()
+	track_vehicle_door()
 	if not active() or not audio.enabled:
 		if not suspended: reset_world()
 		suspended = true; return

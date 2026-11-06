@@ -401,6 +401,193 @@
       "priority": 40,
       "limit": 8,
       "loop": true
+    },
+    {
+      "id": "npc.zombie.attack",
+      "event": "npc.zombie.attack",
+      "files": [
+        "dirt_walk_01.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 70,
+      "limit": 4,
+      "range": 26
+    },
+    {
+      "id": "npc.zombie.hit",
+      "event": "npc.zombie.hit",
+      "files": [
+        "dirt_walk_02.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 70,
+      "limit": 4,
+      "range": 26
+    },
+    {
+      "id": "npc.zombie.death",
+      "event": "npc.zombie.death",
+      "files": [
+        "dirt_walk_03.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 70,
+      "limit": 2,
+      "range": 30
+    },
+    {
+      "id": "player.hurt",
+      "event": "player.hurt",
+      "files": [
+        "dirt_walk_04.wav.bin"
+      ],
+      "gain_db": -4,
+      "priority": 90,
+      "limit": 2,
+      "range": 12
+    },
+    {
+      "id": "vehicle.door.open",
+      "event": "vehicle.door.open",
+      "files": [
+        "dirt_run_01.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 60,
+      "limit": 2,
+      "range": 18
+    },
+    {
+      "id": "vehicle.door.close",
+      "event": "vehicle.door.close",
+      "files": [
+        "dirt_run_02.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 60,
+      "limit": 2,
+      "range": 18
+    },
+    {
+      "id": "vehicle.horn",
+      "event": "vehicle.horn",
+      "files": [
+        "dirt_run_03.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 60,
+      "limit": 2,
+      "range": 40
+    },
+    {
+      "id": "weapon.impact",
+      "event": "weapon.impact",
+      "files": [
+        "dirt_run_04.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 75,
+      "limit": 4,
+      "range": 24
+    },
+    {
+      "id": "tool.pickaxe.swing",
+      "event": "tool.pickaxe.swing",
+      "files": [
+        "grass_walk_01.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 60,
+      "limit": 3,
+      "range": 16
+    },
+    {
+      "id": "tool.shovel.swing",
+      "event": "tool.shovel.swing",
+      "files": [
+        "grass_walk_02.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 60,
+      "limit": 3,
+      "range": 16
+    },
+    {
+      "id": "world.break.block",
+      "event": "world.break.block",
+      "files": [
+        "rock_walk_01.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 65,
+      "limit": 4,
+      "range": 24
+    },
+    {
+      "id": "world.place.block",
+      "event": "world.place.block",
+      "files": [
+        "rock_walk_02.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 65,
+      "limit": 4,
+      "range": 24
+    },
+    {
+      "id": "world.container.open",
+      "event": "world.container.open",
+      "files": [
+        "wood_walk_01.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 60,
+      "limit": 2,
+      "range": 14
+    },
+    {
+      "id": "player.eat",
+      "event": "player.eat",
+      "files": [
+        "grass_run_01.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 60,
+      "limit": 2,
+      "range": 10
+    },
+    {
+      "id": "player.craft",
+      "event": "player.craft",
+      "files": [
+        "wood_walk_02.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 60,
+      "limit": 2,
+      "range": 12
+    },
+    {
+      "id": "player.punch",
+      "event": "player.punch",
+      "files": [
+        "metal_walk_01.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 70,
+      "limit": 3,
+      "range": 16
+    },
+    {
+      "id": "world.rockfall",
+      "event": "world.rockfall",
+      "files": [
+        "rock_run_01.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 65,
+      "limit": 3,
+      "range": 26
     }
   ]
 }

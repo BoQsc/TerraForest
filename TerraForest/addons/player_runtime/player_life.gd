@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 const Spawn=preload("res://addons/world_runtime/introduction_spawn.gd")
+signal damaged(amount:float)
 var game:Node
 var state:RefCounted
 var dead:=false
@@ -29,6 +30,7 @@ func set_spawn(point:Vector3,heading:float)->bool:
 func damage(amount:float)->void:
 	if dead or game.loading_active or game.shutdown_requested or not game.terrain.world_ready or game.session_menu.developer or game.session_menu.pauses_world() or game.player_view.entry.pending or game.player_view.entry.active:return
 	if not state.damage(amount):return
+	damaged.emit(amount)
 	game.terrain.changed_since_save=true
 	dead=state.snapshot().dead
 	if not dead:
