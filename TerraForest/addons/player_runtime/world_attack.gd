@@ -222,12 +222,30 @@ func apply_target(t: Dictionary) -> bool:
 	if locked and result.get("opened",false):game._show_lake_notice("Lock broken · E open chest")
 	if door_lock!=null and result.get("opened",false):game._show_lake_notice("Reinforcement broken · E open door")
 	return true
-## Breakage event for the world adapter; it plays whatever the audition chose
-## for world.break.block, or the pack's own admitted sound.
+## Breakage is material specific: stone, wood, metal, dirt and vegetation each
+## get their own event so a note written for rock never plays over soil.
+func break_event(t: Dictionary) -> String:
+	var material := str(t.get("material", ""))
+	if str(t.get("surface", "")) == "dirt": return "world.break.dirt"
+	match str(t.kind):
+		"tree": return "world.break.wood"
+		"terrain":
+			match int(game.material_id):
+				2: return "world.break.wood"
+				3: return "world.break.metal"
+			return "world.break.stone"
+		"cover":
+			return "world.break.stone" if material == "stone" else "world.break.vegetation"
+		"block":
+			return "world.break.wood" if material == "wood" else "world.break.stone"
+	if material == "stone": return "world.break.stone"
+	if material == "wood": return "world.break.wood"
+	return "world.break.block"
+
 func break_sound(t: Dictionary) -> void:
 	var audio: Node = game.get_node_or_null("WorldAudio")
 	if audio == null or not audio.has_method("play_event"): return
-	audio.play_event("world.break.block", t.get("position", game.camera.global_position))
+	audio.play_event(break_event(t), t.get("position", game.camera.global_position))
 
 func destroy(t: Dictionary) -> bool:
 	match t.kind:

@@ -92,6 +92,7 @@
 	],
 	"schema": 1.0,
 	"selection": {
-		"world.break.block": "res://addons/audio_runtime/packs/Kaino/1/split/Pickaxe on Stone 3 - Kaino_hit1.wav"
+		"world.break.dirt": "res://addons/audio_runtime/packs/Kaino/1/split/Stone Crumble 1 - Kaino_hit1.wav",
+		"world.break.stone": "res://addons/audio_runtime/packs/Kaino/1/split/Pickaxe on Stone 3 - Kaino_hit1.wav"
 	}
 }

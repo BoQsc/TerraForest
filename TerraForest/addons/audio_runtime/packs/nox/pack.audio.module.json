@@ -412,6 +412,61 @@
       "priority": 65,
       "limit": 4,
       "range": 24
+    },
+    {
+      "id": "world.break.stone",
+      "event": "world.break.stone",
+      "files": [
+        "rock_walk_01.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 65,
+      "limit": 4,
+      "range": 24
+    },
+    {
+      "id": "world.break.wood",
+      "event": "world.break.wood",
+      "files": [
+        "wood_walk_01.wav.bin"
+      ],
+      "gain_db": -7,
+      "priority": 65,
+      "limit": 4,
+      "range": 22
+    },
+    {
+      "id": "world.break.metal",
+      "event": "world.break.metal",
+      "files": [
+        "metal_walk_01.wav.bin"
+      ],
+      "gain_db": -7,
+      "priority": 65,
+      "limit": 4,
+      "range": 22
+    },
+    {
+      "id": "world.break.dirt",
+      "event": "world.break.dirt",
+      "files": [
+        "dirt_walk_02.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 65,
+      "limit": 4,
+      "range": 22
+    },
+    {
+      "id": "world.break.vegetation",
+      "event": "world.break.vegetation",
+      "files": [
+        "grass_walk_01.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 60,
+      "limit": 4,
+      "range": 20
     }
   ]
 }

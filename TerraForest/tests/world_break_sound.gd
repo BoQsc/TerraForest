@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
-## The world must play the assigned breakage sound through the real adapter.
+## Breakage sounds must follow the material: stone, wood, metal, dirt, vegetation.
 
-const WANTED := "Pickaxe on Stone 3 - Kaino_hit1.wav"
+const STONE_HIT := "Pickaxe on Stone 3 - Kaino_hit1.wav"
+const DIRT_HIT := "Stone Crumble 1 - Kaino_hit1.wav"
 var checks := 0
 var failures := 0
 
@@ -33,14 +34,27 @@ func run(game) -> void:
 	if audio == null or not audio.initialized:
 		quit(1)
 		return
-	var row: Dictionary = audio.audio.catalog.sounds.get("world.break.block", {})
-	check(not row.is_empty(), "breakage event is admitted")
-	check(str(row.get("files", [""])[0]).ends_with(WANTED + ":once"), "breakage event uses the assigned sound")
-	check(game.world_attack.has_method("break_sound"), "break path emits the event")
+	var attack = game.world_attack
+	check(attack.break_event({"kind": "block", "material": "stone"}) == "world.break.stone", "stone block uses the stone break event")
+	check(attack.break_event({"kind": "block", "material": "wood"}) == "world.break.wood", "wood block uses the wood break event")
+	check(attack.break_event({"kind": "tree", "material": "wood"}) == "world.break.wood", "tree uses the wood break event")
+	check(attack.break_event({"kind": "terrain", "surface": "dirt"}) == "world.break.dirt", "dirt surface uses the dirt break event")
+	game.material_id = 1
+	check(attack.break_event({"kind": "terrain"}) == "world.break.stone", "stone terrain uses the stone break event")
+	game.material_id = 2
+	check(attack.break_event({"kind": "terrain"}) == "world.break.wood", "wood terrain uses the wood break event")
+	game.material_id = 3
+	check(attack.break_event({"kind": "terrain"}) == "world.break.metal", "metal terrain uses the metal break event")
+	check(attack.break_event({"kind": "cover", "material": "stone"}) == "world.break.stone", "stone boulder uses the stone break event")
+	check(attack.break_event({"kind": "cover", "material": "wood"}) == "world.break.vegetation", "plant cover uses the vegetation break event")
+	var stone_row: Dictionary = audio.audio.catalog.sounds.get("world.break.stone", {})
+	var dirt_row: Dictionary = audio.audio.catalog.sounds.get("world.break.dirt", {})
+	check(str(stone_row.get("files", [""])[0]).ends_with(STONE_HIT + ":once"), "stone event resolves to the assigned hit")
+	check(str(dirt_row.get("files", [""])[0]).ends_with(DIRT_HIT + ":once"), "dirt event resolves to the assigned hit")
 	audio.audio.listener = game.player.global_position
-	game.world_attack.break_sound({"position": game.player.global_position + Vector3(0, 1, 1)})
+	attack.break_sound({"kind": "block", "material": "stone", "position": game.player.global_position + Vector3(0, 1, 1)})
 	await process_frame
-	check(audio.audio.statistics().active > 0 and audio.audio.previous.has("world.break.block"), "breakage starts a voice")
+	check(audio.audio.previous.has("world.break.stone"), "stone breakage starts a voice")
 	print("WORLD_BREAK_SOUND checks=", checks, " failures=", failures)
 	game.shutdown_requested = true
 	await game.terrain.shutdown_after_edits()
