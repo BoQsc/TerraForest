@@ -158,6 +158,12 @@ func parse_slots() -> void:
 				var animation := ""
 				if event == "movement.footstep" and matches is Dictionary:
 					animation = "Run" if str(matches.get("gait", "")) == "run" else "Walk"
+				# An admitted id can still be described by the event catalog: that
+				# description carries the preview scene and animation to show.
+				var entry := catalog_entry(id)
+				if not entry.is_empty():
+					preview = str(entry.get("preview", preview))
+					animation = str(entry.get("animation", animation))
 				slots.append({"id": id, "label": label, "event": event, "group": "Player" if preview == "player" else "World", "preview": preview, "animation": animation})
 				known[id] = true
 	for event: Dictionary in EventCatalog.EVENTS:
@@ -165,6 +171,11 @@ func parse_slots() -> void:
 		if known.has(id): continue
 		slots.append(event.duplicate(true))
 		known[id] = true
+
+func catalog_entry(id: String) -> Dictionary:
+	for event: Dictionary in EventCatalog.EVENTS:
+		if str(event.id) == id: return event
+	return {}
 
 func load_mapping() -> void:
 	var path := ProjectSettings.globalize_path(mapping_path)
