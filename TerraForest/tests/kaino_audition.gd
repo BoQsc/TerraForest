@@ -82,6 +82,12 @@ func run()->void:
 	audition.select_slot(slot_id)
 	audition.assign_selected()
 	check(str(audition.mapping.get(audition.selected_slot,""))==audition.files[0] and not audition.slot_rows[audition.selected_slot].visible,"selected slot records file and is hidden while occupied")
+	# USED lists exactly the sounds chosen for a game event.
+	audition.set_sound_view("used")
+	check(audition.file_boxes[audition.files[0]].visible,"used tab shows the assigned sound")
+	check(not audition.file_boxes[audition.files[3]].visible,"used tab hides sounds that are not assigned")
+	check(audition.sound_used_tab.text=="USED (1)","used tab counts the chosen sounds")
+	audition.set_sound_view("sounds")
 	audition.hide_occupied.button_pressed=false
 	audition.filter_slots()
 	check(audition.slot_rows[audition.selected_slot].visible,"occupied slot can be revealed by toggle")

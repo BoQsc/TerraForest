@@ -46,9 +46,11 @@ var sound_tab: Button
 var sound_later_tab: Button
 var sound_noted_tab: Button
 var sound_rejected_tab: Button
+var sound_used_tab: Button
 var show_later_sounds := false
 var show_noted_sounds := false
 var show_rejected_sounds := false
+var show_used_sounds := false
 var file_count: Label
 var slot_count: Label
 var selected_file_label: Label
@@ -244,6 +246,10 @@ func build_files_panel() -> Control:
 	sound_tab.button_pressed = true
 	sound_tab.pressed.connect(set_sound_view.bind(false))
 	sound_tabs.add_child(sound_tab)
+	sound_used_tab = button("USED (0)", Vector2(110, 30))
+	sound_used_tab.toggle_mode = true
+	sound_used_tab.pressed.connect(set_sound_view.bind("used"))
+	sound_tabs.add_child(sound_used_tab)
 	sound_later_tab = button("LATER (0)", Vector2(110, 30))
 	sound_later_tab.toggle_mode = true
 	sound_later_tab.pressed.connect(set_sound_view.bind(true))
@@ -593,6 +599,7 @@ func filter_files() -> void:
 	if search == null: return
 	var query := search.text.strip_edges().to_lower()
 	var visible := 0
+	var used := used_files()
 	for path: String in files:
 		var row: Button = file_rows.get(path)
 		if row == null: continue
@@ -600,7 +607,8 @@ func filter_files() -> void:
 		var rejected := rejected_sounds.has(path)
 		var noted := not str(notes.get(path, "")).strip_edges().is_empty()
 		var in_view: bool
-		if show_noted_sounds: in_view = noted
+		if show_used_sounds: in_view = used.has(path)
+		elif show_noted_sounds: in_view = noted
 		elif show_rejected_sounds: in_view = rejected
 		elif show_later_sounds: in_view = deferred and not rejected
 		else: in_view = not deferred and not rejected and not noted
@@ -614,6 +622,15 @@ func filter_files() -> void:
 		if not str(notes.get(path, "")).strip_edges().is_empty(): noted_count += 1
 	if sound_noted_tab != null: sound_noted_tab.text = "NOTED (%d)" % noted_count
 	if sound_rejected_tab != null: sound_rejected_tab.text = "NOT GREAT (%d)" % rejected_sounds.size()
+	if sound_used_tab != null: sound_used_tab.text = "USED (%d)" % used.size()
+
+## Sounds already chosen for a game event: what the current selection uses.
+func used_files() -> Dictionary:
+	var used := {}
+	for id in mapping:
+		var path := str(mapping[id])
+		if not path.is_empty(): used[path] = true
+	return used
 
 func first_visible_file() -> String:
 	for path: String in files:
@@ -623,10 +640,12 @@ func first_visible_file() -> String:
 
 func set_sound_view(value: Variant) -> void:
 	var mode := ("later" if value else "sounds") if value is bool else str(value)
+	show_used_sounds = mode == "used"
 	show_later_sounds = mode == "later"
 	show_noted_sounds = mode == "noted"
 	show_rejected_sounds = mode == "rejected"
 	if sound_tab != null: sound_tab.button_pressed = mode == "sounds"
+	if sound_used_tab != null: sound_used_tab.button_pressed = mode == "used"
 	if sound_later_tab != null: sound_later_tab.button_pressed = mode == "later"
 	if sound_noted_tab != null: sound_noted_tab.button_pressed = mode == "noted"
 	if sound_rejected_tab != null: sound_rejected_tab.button_pressed = mode == "rejected"
@@ -795,6 +814,7 @@ func assign_selected() -> void:
 	refresh_slot(selected_slot)
 	play_slot_button.disabled = false
 	filter_slots()
+	filter_files()
 	status.text = "Assigned · " + selected_file.get_file() + " → " + selected_slot
 	save_status.text = "Unsaved changes"
 	schedule_autosave()
@@ -805,6 +825,7 @@ func clear_slot() -> void:
 	refresh_slot(selected_slot)
 	play_slot_button.disabled = true
 	filter_slots()
+	filter_files()
 	save_status.text = "Unsaved changes"
 	status.text = "Cleared · " + selected_slot
 	schedule_autosave()
