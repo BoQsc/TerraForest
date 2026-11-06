@@ -148,6 +148,11 @@ func apply_target(t: Dictionary) -> bool:
 	var hud=game.player_hud
 	var item: int=game.equipped_tool
 	if not TOOLS.has(item) or (item!=0 and hud.active_slot<0):return false
+	if t.kind=="terrain":
+		# Ask the ground what it is made of before it is gone; the answer is
+		# ready by the breaking hit.
+		var adapter: Node=game.get_node_or_null("WorldAudio")
+		if adapter!=null and adapter.has_method("prime_material"):adapter.prime_material(t.get("position",game.camera.global_position))
 	if t.kind=="model" and t.get("asset","")==game.combat.Barrel.KEY:
 		if not game.combat.damage_barrel(t.id,TOOLS[item]["other"]):return false
 		if item!=0:hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision)
@@ -230,6 +235,13 @@ func break_event(t: Dictionary) -> String:
 	match str(t.kind):
 		"tree": return "world.break.wood"
 		"terrain":
+			var surface := str(_sampled_material(t.get("position", Vector3.ZERO)))
+			match surface:
+				"dirt", "soil": return "world.break.dirt"
+				"grass", "leaves", "vegetation": return "world.break.vegetation"
+				"wood": return "world.break.wood"
+				"metal": return "world.break.metal"
+				"rock", "stone": return "world.break.stone"
 			match int(game.material_id):
 				2: return "world.break.wood"
 				3: return "world.break.metal"
@@ -241,6 +253,11 @@ func break_event(t: Dictionary) -> String:
 	if material == "stone": return "world.break.stone"
 	if material == "wood": return "world.break.wood"
 	return "world.break.block"
+
+func _sampled_material(point: Vector3) -> String:
+	var adapter: Node = game.get_node_or_null("WorldAudio")
+	if adapter == null or not adapter.has_method("material_at"): return ""
+	return str(adapter.material_at(point))
 
 func break_sound(t: Dictionary) -> void:
 	var audio: Node = game.get_node_or_null("WorldAudio")

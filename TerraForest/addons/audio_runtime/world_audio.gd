@@ -32,6 +32,8 @@ var mapping_path := KainoMap.DEFAULT_SELECTION
 var mapping_stamp := -1
 var base_files: Dictionary = {}
 var reload_seconds := 0.0
+var material_tokens: Dictionary = {}
+var material_token := 820000000
 
 func attach(host: Node) -> void:
 	game = host; name = "WorldAudio"
@@ -141,14 +143,40 @@ func footstep(position: Vector3, gait: String) -> void:
 	audio.emit_event("movement.footstep", {"position": point, "surface": surface, "gait": gait})
 
 func receive_surface(reply: Dictionary) -> void:
+	if material_tokens.has(reply.get("token", 0)):
+		var asked: Vector3 = material_tokens[reply.get("token", 0)]
+		material_tokens.erase(reply.get("token", 0))
+		if reply.get("status", "") == "hit" and reply.has("surface_material"):
+			surface_cache = {"position": reply.get("position", asked), "surface": surface_name(int(reply.surface_material), reply, "dirt"), "revision": reply.get("revision", game.terrain.native_revision)}
+		return
 	if pending.is_empty() or game.terrain.epoch != epoch or reply.get("token") != sample_token or reply.get("epoch") != epoch or reply.get("revision") != game.terrain.native_revision: return
 	if reply.get("status") != "hit" or not reply.has("surface_material") or reply.position.distance_squared_to(pending.position) > .5: return
-	var material := int(reply.surface_material)
-	var surface: String = {1: "rock", 2: "wood", 3: "metal", 4: "rock", 8: "metal", 9: "metal", 10: "dirt"}.get(material, pending.surface)
-	if material == 0 and (reply.get("surface_depth", 0) > 1.5 or reply.normal.y < .65): surface = "rock"
-	if material == 0 and pending.position.y > 175 and reply.normal.y > .8: surface = "snow"
+	var surface := surface_name(int(reply.surface_material), reply, pending.surface)
 	surface_cache = {"position": reply.position, "surface": surface, "revision": reply.revision}
 	pending.clear()
+
+func surface_name(material: int, reply: Dictionary, fallback: String) -> String:
+	var surface: String = {1: "rock", 2: "wood", 3: "metal", 4: "rock", 8: "metal", 9: "metal", 10: "dirt"}.get(material, fallback)
+	if material == 0 and (reply.get("surface_depth", 0) > 1.5 or reply.get("normal", Vector3.UP).y < .65): surface = "rock"
+	if material == 0 and float(reply.get("position", Vector3.ZERO).y) > 175 and reply.get("normal", Vector3.UP).y > .8: surface = "snow"
+	return surface
+
+## Ask the terrain what the ground is made of before it breaks; the answer lands
+## a frame or two later and is reused by material_at().
+func prime_material(point: Vector3) -> void:
+	if audio == null or not point.is_finite(): return
+	material_token += 1
+	material_tokens[material_token] = point
+	if not game.terrain.request_density_ray(point + Vector3.UP * .3, point - Vector3.UP * .5, material_token, 32, true):
+		material_tokens.erase(material_token)
+
+## The sampled surface at (or near) a point, empty when nothing fresh is known.
+func material_at(point: Vector3) -> String:
+	if surface_cache.is_empty() or not point.is_finite(): return ""
+	var sampled: Vector3 = surface_cache.get("position", Vector3.ZERO)
+	if sampled.distance_squared_to(point) > 9.0: return ""
+	if int(surface_cache.get("revision", -1)) != game.terrain.native_revision: return ""
+	return str(surface_cache.get("surface", ""))
 
 ## One event at one position, played through the audition-mapped catalog. Every
 ## emit is logged with the file it resolved to, so a silent event is visible.

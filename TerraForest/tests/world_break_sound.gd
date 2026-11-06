@@ -45,6 +45,23 @@ func run(game) -> void:
 	check(attack.break_event({"kind": "terrain"}) == "world.break.wood", "wood terrain uses the wood break event")
 	game.material_id = 3
 	check(attack.break_event({"kind": "terrain"}) == "world.break.metal", "metal terrain uses the metal break event")
+	var here: Vector3 = game.player.global_position
+	audio.surface_cache = {"position": here, "surface": "dirt", "revision": game.terrain.native_revision}
+	check(attack.break_event({"kind": "terrain", "position": here}) == "world.break.dirt", "sampled dirt ground uses the dirt break event")
+	audio.surface_cache["surface"] = "grass"
+	check(attack.break_event({"kind": "terrain", "position": here}) == "world.break.vegetation", "sampled grass ground uses the vegetation break event")
+	audio.surface_cache["surface"] = "rock"
+	check(attack.break_event({"kind": "terrain", "position": here}) == "world.break.stone", "sampled rock ground uses the stone break event")
+	audio.surface_cache["revision"] = game.terrain.native_revision - 1
+	game.material_id = 2
+	check(attack.break_event({"kind": "terrain", "position": here}) == "world.break.wood", "a stale sample falls back to the carved material")
+	audio.surface_cache = {}
+	game.material_id = 1
+	audio.surface_cache = {"position": here, "surface": "dirt", "revision": game.terrain.native_revision}
+	game._break_sound(here)
+	await process_frame
+	check(audio.audio.previous.has("world.break.dirt"), "developer removal uses the sampled material")
+	audio.surface_cache = {}
 	check(attack.break_event({"kind": "cover", "material": "stone"}) == "world.break.stone", "stone boulder uses the stone break event")
 	check(attack.break_event({"kind": "cover", "material": "wood"}) == "world.break.vegetation", "plant cover uses the vegetation break event")
 	var stone_row: Dictionary = audio.audio.catalog.sounds.get("world.break.stone", {})

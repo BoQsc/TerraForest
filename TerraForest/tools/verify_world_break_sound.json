@@ -13,7 +13,7 @@
       "kind": "tests",
       "command": {
         "program": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
-        "args": ["--path", "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest", "--windowed", "--resolution", "1280x720", "--max-fps", "60", "--script", "res://tests/world_break_sound.gd"],
+        "args": ["--path", "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest", "--windowed", "--position", "-2400,-1600", "--resolution", "1280x720", "--max-fps", "60", "--script", "res://tests/world_break_sound.gd"],
         "workdir": "TerraForest",
         "timeout": 240000
       }

@@ -789,6 +789,7 @@ func _update_edit(delta: float) -> void:
 			if stroke_buffer.push_cube(Vector3i(cell), material_id if add else 0):
 				cooldown = 0.08
 				_consume_stroke()
+				if not add: _break_sound(cell + Vector3.ONE * 0.5)
 	else:
 		var center: Vector3 = hit + normal * radius * (0.32 if add else -0.55)
 		var shape: int = 0 if tool == 3 else 1
@@ -811,6 +812,24 @@ func _update_edit(delta: float) -> void:
 				stroke_valid = true
 				cooldown = 0.05
 				_consume_stroke()
+				if not add: _break_sound(center)
+
+## Developer removal uses the sampled ground material, then the selected one.
+func _break_sound(point: Vector3) -> void:
+	var adapter := get_node_or_null("WorldAudio")
+	if adapter == null or not adapter.has_method("play_event"): return
+	if adapter.has_method("prime_material"): adapter.prime_material(point)
+	var surface: String = str(adapter.material_at(point)) if adapter.has_method("material_at") else ""
+	var id := ""
+	match surface:
+		"dirt", "soil": id = "world.break.dirt"
+		"grass", "leaves", "vegetation": id = "world.break.vegetation"
+		"wood": id = "world.break.wood"
+		"metal": id = "world.break.metal"
+		"rock", "stone": id = "world.break.stone"
+	if id.is_empty():
+		id = ["world.break.stone", "world.break.wood", "world.break.metal"][clampi(material_id - 1, 0, 2)]
+	adapter.play_event(id, point)
 
 func _brush_overlaps_player(center: Vector3, r: float) -> bool:
 	var nearest := Vector3(player.position.x, clampf(center.y, player.position.y + 0.34, player.position.y + 1.46), player.position.z)
