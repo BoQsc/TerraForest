@@ -62,6 +62,7 @@ var photograph_log:=""
 var photograph_deadline:=0
 var photograph_slot:=""
 var photograph_button:Button
+var date_column:Control
 var photograph_cancel:Button
 var preparation_pid:=-1
 var preparation_status:=""
@@ -149,6 +150,7 @@ func filter_list() -> void:
 		if filter_field.text.is_empty() or slot.to_lower().contains(filter_field.text.to_lower()):
 			worlds.add_item(("[Preparation] " if Launch.preparation_slot(slot) else "")+slot)
 			worlds.set_item_metadata(worlds.item_count-1,slot)
+	_install_date_column()
 	if worlds.item_count>0:
 		var index:=0
 		for i in worlds.item_count:
@@ -202,6 +204,24 @@ func _saved_details_ready(slot:String,data:Dictionary,picture:Texture2D)->void:
 	if saved_picture.texture==null:lines.append("No photograph yet. Use Create / refresh photographs when you want one.")
 	lines.append("Opening uses this world's saved generation settings.")
 	saved_details.text="\n".join(lines)
+## The list keeps its ItemList behaviour; the last-played column is drawn over it.
+func _install_date_column()->void:
+	if worlds==null:return
+	if date_column==null or not is_instance_valid(date_column):
+		date_column=load("res://demo/world_date_column.gd").new()
+		date_column.name="LastPlayedColumn"
+		worlds.add_child(date_column)
+		date_column.bind(worlds,Callable(self,"last_played_text"))
+	else:
+		date_column.queue_redraw()
+
+func last_played_text(slot:String)->String:
+	var stamp:=int(preload("res://addons/world_runtime/world_presentation.gd").metadata(slot).get("last_played",0))
+	if stamp<=0:return "never"
+	var offset:int=int(Time.get_time_zone_from_system().bias)*60
+	var date:Dictionary=Time.get_datetime_dict_from_unix_time(stamp+offset)
+	return "%04d-%02d-%02d"%[int(date.year),int(date.month),int(date.day)]
+
 func launch_selected(create: bool) -> void:
 	if preparation_pid>=0 or photograph_pid>=0:return
 	var slot:=name_field.text.strip_edges()
