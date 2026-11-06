@@ -18,9 +18,9 @@ func check(ok: bool, label: String) -> void:
 func read_log() -> String:
 	return FileAccess.get_file_as_string(ProjectSettings.globalize_path(LOG_PATH))
 
-func write_selection(path: String, file: String) -> void:
+func write_map(path: String, mapping: Dictionary) -> void:
 	var handle := FileAccess.open(ProjectSettings.globalize_path(path), FileAccess.WRITE)
-	handle.store_string(JSON.stringify({"schema": 1, "pack": "Kaino", "selection": {"world.break.stone": file}, "notes": {}, "deferred_sounds": [], "rejected_sounds": []}))
+	handle.store_string(JSON.stringify({"schema": 1, "pack": "Kaino", "selection": mapping, "notes": {}, "deferred_sounds": [], "rejected_sounds": []}))
 	handle.close()
 
 func _initialize() -> void:
@@ -47,16 +47,27 @@ func run(game) -> void:
 		return
 	var start_log := read_log()
 	check(start_log.contains("mapping ") and start_log.contains("entries from"), "session log records the mapping it loaded")
-	write_selection(LIVE, HIT_A)
+	write_map(LIVE, {"world.break.stone": HIT_A})
 	audio.mapping_path = LIVE
 	audio.reload_mapping(true)
 	var row: Dictionary = audio.audio.catalog.sounds.get("world.break.stone", {})
 	check(str(row.get("files", [""])[0]).ends_with(HIT_A.get_file() + ":once"), "mapping applies while the world runs")
 	await create_timer(1.2).timeout
-	write_selection(LIVE, HIT_B)
+	write_map(LIVE, {"world.break.stone": HIT_B})
 	audio.reload_mapping()
 	row = audio.audio.catalog.sounds.get("world.break.stone", {})
 	check(str(row.get("files", [""])[0]).ends_with(HIT_B.get_file() + ":once"), "a changed selection is picked up without a restart")
+	audio.audio.listener = game.player.global_position
+	var quiet: int = audio.audio.statistics().active
+	audio.play_event("world.break.wood", game.player.global_position)
+	await process_frame
+	check(audio.audio.statistics().active == quiet and read_log().contains("world.break.wood skipped"), "an unassigned wood break stays silent")
+	await create_timer(1.2).timeout
+	write_map(LIVE, {"world.break.stone": HIT_B, "world.break.wood": HIT_A})
+	audio.reload_mapping()
+	audio.play_event("world.break.wood", game.player.global_position)
+	await process_frame
+	check(audio.audio.previous.has("world.break.wood"), "wood break plays once a sound is assigned")
 	audio.audio.listener = game.player.global_position
 	game.world_attack.break_sound({"kind": "block", "material": "stone", "position": game.player.global_position + Vector3(0, 1, 1)})
 	await process_frame

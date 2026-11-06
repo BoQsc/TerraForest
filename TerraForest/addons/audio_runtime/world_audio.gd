@@ -34,6 +34,10 @@ var base_files: Dictionary = {}
 var reload_seconds := 0.0
 var material_tokens: Dictionary = {}
 var material_token := 820000000
+## These break events have no pack sound of their own: they must stay silent
+## until the developer assigns one, instead of borrowing a footstep.
+const REQUIRES_ASSIGNMENT := ["world.break.wood", "world.break.vegetation"]
+var assigned: Dictionary = {}
 
 func attach(host: Node) -> void:
 	game = host; name = "WorldAudio"
@@ -182,6 +186,9 @@ func material_at(point: Vector3) -> String:
 ## emit is logged with the file it resolved to, so a silent event is visible.
 func play_event(id: String, point: Vector3) -> void:
 	if audio == null or not point.is_finite(): return
+	if id in REQUIRES_ASSIGNMENT and not assigned.has(id):
+		note("event %s skipped: no assigned sound" % id)
+		return
 	var row: Dictionary = audio.catalog.sounds.get(id, {})
 	var files: Array = row.get("files", [])
 	note("event %s -> %s%s" % [id, str(files[0]) if not files.is_empty() else "unresolved", "" if audio.enabled else " (audio disabled)"])
@@ -212,6 +219,10 @@ func reload_mapping(force: bool = false) -> int:
 		row["files"] = (base_files[id] as Array).duplicate()
 		audio.catalog.sounds[id] = row
 	var applied: int = KainoMap.apply(audio.catalog, mapping_path)
+	assigned = {}
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(ProjectSettings.globalize_path(mapping_path))) if FileAccess.file_exists(ProjectSettings.globalize_path(mapping_path)) else null
+	if parsed is Dictionary and parsed.get("selection", {}) is Dictionary:
+		for key: Variant in parsed["selection"]: assigned[str(key)] = true
 	note("mapping %d entries from %s (stamp %d)" % [applied, mapping_path, stamp])
 	return applied
 
