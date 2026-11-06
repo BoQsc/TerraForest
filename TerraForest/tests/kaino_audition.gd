@@ -30,7 +30,9 @@ func run()->void:
 	audition.notes_edit.text="Dry, short footstep for compacted dirt."
 	audition.sync_note()
 	check(audition.notes_edit!=null and audition.note_for(audition.files[0])=="Dry, short footstep for compacted dirt.","per-sound note is stored")
-	check(not audition.file_boxes[audition.files[0]].visible,"noted sound leaves the Sounds tab")
+	audition.select_file(audition.files[1],false)
+	await process_frame
+	check(audition.file_boxes[audition.files[0]].visible and audition.file_rows[audition.files[0]].modulate.is_equal_approx(audition.NOTED_ROW_COLOR),"noted sound stays in the Sounds tab, painted blue")
 	audition.set_sound_view("noted")
 	check(audition.file_boxes[audition.files[0]].visible and audition.sound_noted_tab.text=="NOTED (1)","noted sound appears in the Noted tab")
 	audition.set_sound_view("sounds")
@@ -60,7 +62,9 @@ func run()->void:
 	check(audition.file_boxes[typed_path].visible,"editing a note keeps the sound in the list")
 	audition.notes_edit.release_focus()
 	await process_frame
-	check(not audition.file_boxes[typed_path].visible,"leaving the notes field applies the noted filter")
+	audition.select_file(audition.files[5],false)
+	await process_frame
+	check(audition.file_boxes[typed_path].visible and audition.file_rows[typed_path].modulate.is_equal_approx(audition.NOTED_ROW_COLOR),"leaving the notes field keeps the sound listed in blue")
 	check(audition.note_for(typed_path)=="dry","typed note is stored with the sound")
 	var rejected_path:String=audition.files[2]
 	audition.file_reject_buttons[rejected_path].pressed.emit()

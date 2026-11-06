@@ -38,6 +38,7 @@ var selected_slot := ""
 var audio_player: AudioStreamPlayer
 var autosave_timer: Timer
 const HISTORY_LIMIT := 40
+const NOTED_ROW_COLOR := Color(0.55, 0.75, 1.0)
 var last_saved_body := ""
 var recovery_notice := ""
 var search: LineEdit
@@ -661,7 +662,7 @@ func filter_files() -> void:
 		elif show_noted_sounds: in_view = noted
 		elif show_rejected_sounds: in_view = rejected
 		elif show_later_sounds: in_view = deferred and not rejected
-		else: in_view = not deferred and not rejected and not noted
+		else: in_view = not deferred and not rejected
 		var box: Control = file_boxes.get(path, row)
 		box.visible = in_view and (query.is_empty() or query in path.get_file().to_lower())
 		if box.visible: visible += 1
@@ -673,6 +674,15 @@ func filter_files() -> void:
 	if sound_noted_tab != null: sound_noted_tab.text = "NOTED (%d)" % noted_count
 	if sound_rejected_tab != null: sound_rejected_tab.text = "NOT GREAT (%d)" % rejected_sounds.size()
 	if sound_used_tab != null: sound_used_tab.text = "USED (%d)" % used.size()
+	paint_rows()
+
+## Noted sounds stay in the SOUNDS list, marked blue so they read as written up.
+func paint_rows() -> void:
+	for path: String in file_rows:
+		var row: Button = file_rows[path]
+		if path == selected_file: row.modulate = Color(0.82, 1.0, 0.88)
+		elif not str(notes.get(path, "")).strip_edges().is_empty(): row.modulate = NOTED_ROW_COLOR
+		else: row.modulate = Color.WHITE
 
 ## Sounds already chosen for a game event: what the current selection uses.
 func used_files() -> Dictionary:
@@ -742,8 +752,7 @@ func toggle_sound_rejected(path: String) -> void:
 func select_file(path: String, autoplay: bool = true) -> void:
 	var same := path == selected_file
 	selected_file = path
-	for key: String in file_rows:
-		file_rows[key].modulate = Color(0.82, 1.0, 0.88) if key == path else Color.WHITE
+	paint_rows()
 	selected_file_label.text = "Selected file:  " + path.get_file()
 	if not (same and notes_edit.has_focus()):
 		loading_notes = true
@@ -759,6 +768,7 @@ func sync_note() -> void:
 	if file_rows.has(selected_file):
 		file_rows[selected_file].tooltip_text = selected_file + ("\n\nNOTE: " + note if not note.is_empty() else "")
 	save_status.text = "Unsaved notes"
+	paint_rows()
 	# Autosave while typing too: focus can stay in the field for a long time.
 	schedule_autosave()
 	if notes_edit.has_focus(): return
