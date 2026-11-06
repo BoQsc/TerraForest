@@ -62,7 +62,13 @@ const INTENT := {
 	"hurt": ["player.hurt"], "death": ["player.death"], "pickup": ["player.pickup"],
 	"craft": ["player.craft"], "crafting": ["player.craft"], "equip": ["player.equip"], "drop": ["player.drop"],
 	"lockpick": ["world.lockpick"], "lock": ["world.lockpick"], "container": ["world.container.open"], "chest": ["world.container.open"],
-	"break": ["world.break.block"], "block": ["world.break.block"], "place": ["world.place.block"], "build": ["world.place.block"]
+	"break": ["world.break.block"], "block": ["world.break.block"], "place": ["world.place.block"], "build": ["world.place.block"],
+	"flesh": ["npc.zombie.hit"], "punch": ["npc.zombie.hit", "player.hurt", "weapon.impact"],
+	"swing": ["tool.axe.swing", "tool.hammer.swing", "tool.shovel.swing"],
+	"sword": ["weapon.impact"], "armor": ["weapon.impact"], "metal": ["weapon.impact"], "hits": ["weapon.impact"],
+	"rockfall": ["world.break.block"], "coal": ["tool.pickaxe.swing"], "material": ["world.break.block"], "destruction": ["world.break.block"],
+	"eating": ["player.eat"], "food": ["player.eat"],
+	"critical": ["player.hurt"], "closing": ["world.container.open"], "opening": ["vehicle.door.open"]
 }
 var last_saved_body := ""
 var recovery_notice := ""
@@ -77,6 +83,7 @@ var sound_noted_tab: Button
 var sound_rejected_tab: Button
 var sound_used_tab: Button
 var introduce_button: Button
+var summary_dialog: AcceptDialog
 var show_later_sounds := false
 var show_noted_sounds := false
 var show_rejected_sounds := false
@@ -748,24 +755,42 @@ func introduce_stage(limit: int = STAGE_SIZE) -> int:
 	var introduced := 0
 	var lines := PackedStringArray()
 	var assigned := used_files()
+	var waiting := 0
 	for path: String in files:
-		if introduced >= limit: break
 		if assigned.has(path): continue
 		var note := str(notes.get(path, "")).strip_edges()
 		if note.is_empty(): continue
 		var slot_id := best_slot_for_note(note)
-		if slot_id.is_empty(): continue
+		if slot_id.is_empty():
+			waiting += 1
+			continue
+		if introduced >= limit: continue
 		mapping[slot_id] = path
 		assigned[path] = true
 		introduced += 1
 		lines.append("%s → %s" % [path.get_file(), slot_id])
 	if introduced == 0:
 		status.text = "No noted sound matches a free event slot."
+		show_summary("Nothing introduced",
+			("%d noted sounds are still waiting. " % waiting if waiting > 0 else "Every noted sound is already introduced. ") +
+			"An event slot takes one sound, so clear a slot (CLEAR) or write the note around a word like pickaxe, shovel, punch, eating, metal, rock or rain to point at another slot.")
 	else:
 		status.text = "Introduced %d: %s" % [introduced, ", ".join(lines)]
 		save_status.text = "Unsaved changes"
+		if waiting > 0:
+			lines.append("%d more waiting for a free matching slot" % waiting)
+		show_summary("Introduced %d" % introduced, "\n".join(lines))
 	filter_slots(); filter_files(); paint_rows(); save_mapping()
+	if introduced > 0: set_sound_view("used")
 	return introduced
+
+func show_summary(title: String, text: String) -> void:
+	if summary_dialog == null or not is_instance_valid(summary_dialog):
+		summary_dialog = AcceptDialog.new()
+		add_child(summary_dialog)
+	summary_dialog.title = title
+	summary_dialog.dialog_text = text
+	summary_dialog.popup_centered(Vector2i(640, 240))
 
 func first_visible_file() -> String:
 	for path: String in files:

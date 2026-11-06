@@ -106,8 +106,14 @@ func run()->void:
 	var staged:int=audition.introduce_stage(1)
 	check(staged==1 and str(audition.mapping.get("tool.pickaxe.swing",""))==audition.files[7],"staged introduction assigns a noted sound to its slot")
 	check(audition.used_files().has(audition.files[7]),"introduced sound counts as used")
+	await process_frame
+	check(audition.summary_dialog!=null and audition.summary_dialog.title=="Introduced 1" and "tool.pickaxe.swing" in audition.summary_dialog.dialog_text,"a stage reports what it introduced")
+	audition.summary_dialog.hide()
 	var again:int=audition.introduce_stage(1)
 	check(again==0,"a stage never reuses a taken slot")
+	await process_frame
+	check(audition.summary_dialog.title=="Nothing introduced" and "waiting" in audition.summary_dialog.dialog_text,"an empty stage explains itself instead of staying silent")
+	audition.summary_dialog.hide()
 	audition.save_mapping()
 	await process_frame
 	check(FileAccess.file_exists(ProjectSettings.globalize_path(audition.mapping_path)),"selection mapping is written")
