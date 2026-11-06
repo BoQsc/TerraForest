@@ -101,6 +101,13 @@ func run()->void:
 	check(audition.slot_rows[audition.selected_slot].visible,"occupied slot can be revealed by toggle")
 	audition.hide_occupied.button_pressed=true
 	audition.filter_slots()
+	# Staged introduction: a few noted sounds enter the game at a time.
+	audition.notes[audition.files[7]]="great for pickaxe swing and mining stone"
+	var staged:int=audition.introduce_stage(1)
+	check(staged==1 and str(audition.mapping.get("tool.pickaxe.swing",""))==audition.files[7],"staged introduction assigns a noted sound to its slot")
+	check(audition.used_files().has(audition.files[7]),"introduced sound counts as used")
+	var again:int=audition.introduce_stage(1)
+	check(again==0,"a stage never reuses a taken slot")
 	audition.save_mapping()
 	await process_frame
 	check(FileAccess.file_exists(ProjectSettings.globalize_path(audition.mapping_path)),"selection mapping is written")

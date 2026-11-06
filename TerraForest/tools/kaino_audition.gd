@@ -39,6 +39,31 @@ var audio_player: AudioStreamPlayer
 var autosave_timer: Timer
 const HISTORY_LIMIT := 40
 const NOTED_ROW_COLOR := Color(0.55, 0.75, 1.0)
+const STAGE_SIZE := 3
+## Words a note uses to say what a sound is for, mapped to the slots they fit.
+const INTENT := {
+	"pickaxe": ["tool.pickaxe.swing"], "mining": ["tool.pickaxe.swing"], "mine": ["tool.pickaxe.swing"],
+	"shovel": ["tool.shovel.swing"], "dig": ["tool.shovel.swing"], "digging": ["tool.shovel.swing"], "dug": ["tool.shovel.swing"],
+	"dirt": ["tool.shovel.swing", "world.place.block"], "ground": ["tool.shovel.swing"],
+	"stone": ["tool.pickaxe.swing", "world.break.block"], "crumble": ["world.break.block"], "rock": ["world.break.block"],
+	"axe": ["tool.axe.swing"], "wood": ["tool.axe.swing"], "tree": ["tool.axe.swing"], "chopping": ["tool.axe.swing"],
+	"hammer": ["tool.hammer.swing"], "nail": ["tool.hammer.swing"], "nails": ["tool.hammer.swing"],
+	"torch": ["tool.torch.idle"],
+	"rifle": ["weapon.carbine.fire"], "sniper": ["weapon.ranger.fire"], "shot": ["weapon.carbine.fire"], "gun": ["weapon.carbine.fire"],
+	"reload": ["weapon.carbine.reload"], "magazine": ["weapon.carbine.reload"], "impact": ["weapon.impact"],
+	"engine": ["vehicle.engine.loop"], "car": ["vehicle.engine.loop"], "vehicle": ["vehicle.engine.loop"],
+	"door": ["vehicle.door.open"], "horn": ["vehicle.horn"], "brake": ["vehicle.brake"], "tire": ["vehicle.tire"],
+	"zombie": ["npc.zombie.growl"], "groan": ["npc.zombie.growl"], "growl": ["npc.zombie.growl"],
+	"attack": ["npc.zombie.attack"], "bite": ["npc.zombie.bite"],
+	"rain": ["weather.rain"], "thunder": ["weather.thunder"], "water": ["water.stream"], "stream": ["water.stream"], "lake": ["water.lake"],
+	"bird": ["animal.bird"], "crow": ["animal.crow"], "owl": ["animal.owl"], "cat": ["animal.cat"], "dog": ["animal.dog"], "wolf": ["animal.wolf"],
+	"click": ["ui.click"], "confirm": ["ui.confirm"], "button": ["ui.click"],
+	"eat": ["player.eat"], "drink": ["player.drink"], "jump": ["player.jump"], "land": ["player.land"],
+	"hurt": ["player.hurt"], "death": ["player.death"], "pickup": ["player.pickup"],
+	"craft": ["player.craft"], "crafting": ["player.craft"], "equip": ["player.equip"], "drop": ["player.drop"],
+	"lockpick": ["world.lockpick"], "lock": ["world.lockpick"], "container": ["world.container.open"], "chest": ["world.container.open"],
+	"break": ["world.break.block"], "block": ["world.break.block"], "place": ["world.place.block"], "build": ["world.place.block"]
+}
 var last_saved_body := ""
 var recovery_notice := ""
 var search: LineEdit
@@ -51,6 +76,7 @@ var sound_later_tab: Button
 var sound_noted_tab: Button
 var sound_rejected_tab: Button
 var sound_used_tab: Button
+var introduce_button: Button
 var show_later_sounds := false
 var show_noted_sounds := false
 var show_rejected_sounds := false
@@ -313,6 +339,10 @@ func build_files_panel() -> Control:
 	sound_rejected_tab.toggle_mode = true
 	sound_rejected_tab.pressed.connect(set_sound_view.bind("rejected"))
 	sound_tabs.add_child(sound_rejected_tab)
+	introduce_button = button("INTRODUCE %d" % STAGE_SIZE, Vector2(130, 30))
+	introduce_button.tooltip_text = "Assign the next few noted sounds to matching free event slots"
+	introduce_button.pressed.connect(func() -> void: introduce_stage())
+	sound_tabs.add_child(introduce_button)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -691,6 +721,51 @@ func used_files() -> Dictionary:
 		var path := str(mapping[id])
 		if not path.is_empty(): used[path] = true
 	return used
+
+func note_tokens(note: String) -> PackedStringArray:
+	var clean := note.to_lower()
+	for mark in [",", ".", ";", ":", "!", "?", "(", ")", "\"", "'", "-", "/"]:
+		clean = clean.replace(mark, " ")
+	return clean.split(" ", false)
+
+## Best free slot for a note, judged by the intent words the note uses.
+func best_slot_for_note(note: String) -> String:
+	var scores := {}
+	for token in note_tokens(note):
+		if not INTENT.has(token): continue
+		for slot_id: String in INTENT[token]:
+			if mapping.has(slot_id): continue
+			scores[slot_id] = int(scores.get(slot_id, 0)) + 1
+	var best := ""
+	var best_score := 0
+	for slot_id in scores:
+		if int(scores[slot_id]) > best_score: best = str(slot_id); best_score = int(scores[slot_id])
+	return best
+
+## Introduce the next few noted sounds into the game a stage at a time, so each
+## batch can be tested before the rest follows.
+func introduce_stage(limit: int = STAGE_SIZE) -> int:
+	var introduced := 0
+	var lines := PackedStringArray()
+	var assigned := used_files()
+	for path: String in files:
+		if introduced >= limit: break
+		if assigned.has(path): continue
+		var note := str(notes.get(path, "")).strip_edges()
+		if note.is_empty(): continue
+		var slot_id := best_slot_for_note(note)
+		if slot_id.is_empty(): continue
+		mapping[slot_id] = path
+		assigned[path] = true
+		introduced += 1
+		lines.append("%s → %s" % [path.get_file(), slot_id])
+	if introduced == 0:
+		status.text = "No noted sound matches a free event slot."
+	else:
+		status.text = "Introduced %d: %s" % [introduced, ", ".join(lines)]
+		save_status.text = "Unsaved changes"
+	filter_slots(); filter_files(); paint_rows(); save_mapping()
+	return introduced
 
 func first_visible_file() -> String:
 	for path: String in files:
