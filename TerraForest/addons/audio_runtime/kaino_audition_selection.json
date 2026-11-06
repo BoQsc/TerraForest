@@ -40,11 +40,26 @@
 		"res://addons/audio_runtime/packs/Kaino/1/Cat Meow 1 - Kaino.wav"
 	],
 	"notes": {
+		"res://addons/audio_runtime/packs/Kaino/1/Burning 2 - Kaino.wav": "Great for dirt digging accompying sound",
+		"res://addons/audio_runtime/packs/Kaino/1/Critical Hit 3 - Kaino.wav": "Good for flesh hit on zombies or other live things",
+		"res://addons/audio_runtime/packs/Kaino/1/Cup on Saucer 1 - Kaino.wav": "Good for crafting completion",
+		"res://addons/audio_runtime/packs/Kaino/1/Eating Crunch 1 - Kaino.wav": "Good for eating item food",
+		"res://addons/audio_runtime/packs/Kaino/1/Fridge Door 1 - Kaino.wav": "Good for closing container objects you interact with",
+		"res://addons/audio_runtime/packs/Kaino/1/Fridge Door 2 - Kaino.wav": "Good for opening container objects you interact with",
+		"res://addons/audio_runtime/packs/Kaino/1/Missed Swing 2 - Kaino.wav": "Good for regular swing sound not only for missed",
 		"res://addons/audio_runtime/packs/Kaino/1/Pickaxe on Stone 1 - Kaino.wav": "Great for pickaxe stone or coal  mining",
+		"res://addons/audio_runtime/packs/Kaino/1/Pickaxe on Stone 2 - Kaino.wav": "Good for",
+		"res://addons/audio_runtime/packs/Kaino/1/Pickaxe on Stone 3 - Kaino.wav": "Great for accompying breakage of material, pickaxe stone or coal  mining",
+		"res://addons/audio_runtime/packs/Kaino/1/Punch 1 - Kaino.wav": "Good enough for regular punch sound with empty hands",
+		"res://addons/audio_runtime/packs/Kaino/1/Punch 3 - Kaino.wav": "Good enough for accompying seregular punch sound with empty hands",
+		"res://addons/audio_runtime/packs/Kaino/1/Rockfall 1 - Kaino.wav": "Good as accompying sound while breaking stone/rock like material",
+		"res://addons/audio_runtime/packs/Kaino/1/Rockfall 2 - Kaino.wav": "Good as accompying sound while breaking stone/rock like material",
 		"res://addons/audio_runtime/packs/Kaino/1/Sniper Rifle 1 - Kaino.wav": "Great for rifle or sniper rifle, but we do not have yet real use.",
 		"res://addons/audio_runtime/packs/Kaino/1/Stone Crumble 1 - Kaino.wav": "Great for digging ground mostly dirt",
 		"res://addons/audio_runtime/packs/Kaino/1/Stone Crumble 2 - Kaino.wav": "Great for digging ground mostly dirt",
 		"res://addons/audio_runtime/packs/Kaino/1/Stone Crumble 3 - Kaino.wav": "Great for digging ground mostly dirt end sound destruction.",
+		"res://addons/audio_runtime/packs/Kaino/1/Sword Hits Armor 1 - Kaino.wav": "if made less loud and more dull then might be good for metal material sounds hitting",
+		"res://addons/audio_runtime/packs/Kaino/1/Sword Hits Armor 2 - Kaino.wav": "if made less loud and more dull then might be good for metal material sounds hitting",
 		"res://addons/audio_runtime/packs/Kaino/1/Zombie Groan 1 - Kaino.wav": "both zombie groan 1 and 2 should be only used mixed and probably might be good enough for zombies."
 	},
 	"pack": "Kaino",
@@ -75,6 +90,6 @@
 		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 2 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 3 - Kaino.wav"
 	],
-	"schema": 1,
+	"schema": 1.0,
 	"selection": {}
 }
