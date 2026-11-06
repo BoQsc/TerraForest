@@ -1647,6 +1647,7 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 		terrain.changed_since_save=true
 		if result.destroyed and batch.remove_instances(PackedInt64Array([identity])):
 			doors.forget(batch,identity);world_attack.durability.forget(key)
+			world_attack.break_sound({"kind":"model","material":str(entry.definition.durability.get("material","wood")),"position":centre})
 			_show_lake_notice("Zombie broke a " + entry.definition.name.to_lower())
 	return obstacle
 
