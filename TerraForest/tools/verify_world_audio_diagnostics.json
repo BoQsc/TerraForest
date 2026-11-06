@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    "TerraForest/addons/audio_runtime/world_audio.gd",
+    "TerraForest/addons/audio_runtime/audio_runtime.gd",
+    "TerraForest/addons/audio_runtime/kaino_audition_map.gd",
+    "TerraForest/addons/player_runtime/world_attack.gd",
+    "TerraForest/tests/world_audio_diagnostics.gd"
+  ],
+  "steps": [
+    {
+      "kind": "tests",
+      "command": {
+        "program": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+        "args": ["--path", "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest", "--windowed", "--resolution", "1280x720", "--max-fps", "60", "--script", "res://tests/world_audio_diagnostics.gd"],
+        "workdir": "TerraForest",
+        "timeout": 240000
+      }
+    }
+  ]
+}

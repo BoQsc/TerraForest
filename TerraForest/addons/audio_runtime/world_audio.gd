@@ -5,6 +5,9 @@ const Runtime = preload("res://addons/audio_runtime/audio_runtime.gd")
 const Cadence = preload("res://addons/audio_runtime/footstep_cadence.gd")
 const KainoMap = preload("res://addons/audio_runtime/kaino_audition_map.gd")
 const HELD_TORCH_GAIN_DB := -6.0
+const EVENT_LOG := "user://audio_events.log"
+const LOG_LIMIT := 262144
+const RELOAD_SECONDS := 1.0
 var cadence := Cadence.new()
 var game: Node
 var audio: Node3D
@@ -25,6 +28,10 @@ var pending: Dictionary = {}
 var last_surface := ""
 var surface_cache: Dictionary = {}
 var suspended := false
+var mapping_path := KainoMap.DEFAULT_SELECTION
+var mapping_stamp := -1
+var base_files: Dictionary = {}
+var reload_seconds := 0.0
 
 func attach(host: Node) -> void:
 	game = host; name = "WorldAudio"
@@ -39,7 +46,9 @@ func initialize() -> void:
 		push_warning("Audio packs rejected: " + str(audio.catalog.diagnostics))
 		var builtin := "res://addons/audio_runtime/packs/nox/pack.audio.module.json"
 		audio.prepare(PackedStringArray([builtin]) if FileAccess.file_exists(builtin) else PackedStringArray())
-	KainoMap.apply(audio.catalog)
+	for id: String in audio.catalog.sounds:
+		base_files[id] = (audio.catalog.sounds[id] as Dictionary).get("files", []).duplicate()
+	reload_mapping(true)
 	persist_settings = not game.temporary_world and not ProjectSettings.get_setting("terraforest/offscreen_session", false)
 	if persist_settings: settings.load("user://audio_preferences.cfg")
 	audio.set_enabled(bool(settings.get_value("audio", "enabled", true)))
@@ -86,6 +95,10 @@ func tick() -> void:
 		return
 	if epoch != game.terrain.epoch: reset_world()
 	audio.listener = game.camera.global_position
+	reload_seconds += timer.wait_time
+	if reload_seconds >= RELOAD_SECONDS:
+		reload_seconds = 0.0
+		reload_mapping()
 	if not active() or not audio.enabled:
 		if not suspended: reset_world()
 		suspended = true; return
@@ -137,10 +150,42 @@ func receive_surface(reply: Dictionary) -> void:
 	surface_cache = {"position": reply.position, "surface": surface, "revision": reply.revision}
 	pending.clear()
 
-## One event at one position, played through the audition-mapped catalog.
+## One event at one position, played through the audition-mapped catalog. Every
+## emit is logged with the file it resolved to, so a silent event is visible.
 func play_event(id: String, point: Vector3) -> void:
-	if audio == null or not audio.enabled or not point.is_finite(): return
+	if audio == null or not point.is_finite(): return
+	var row: Dictionary = audio.catalog.sounds.get(id, {})
+	var files: Array = row.get("files", [])
+	note("event %s -> %s%s" % [id, str(files[0]) if not files.is_empty() else "unresolved", "" if audio.enabled else " (audio disabled)"])
+	if not audio.enabled: return
 	audio.emit_event(id, {"position": point})
+
+func note(text: String) -> void:
+	var path := ProjectSettings.globalize_path(EVENT_LOG)
+	if FileAccess.file_exists(path) and FileAccess.get_file_as_string(path).length() > LOG_LIMIT:
+		DirAccess.remove_absolute(path)
+	var file := FileAccess.open(path, FileAccess.READ_WRITE)
+	if file == null: file = FileAccess.open(path, FileAccess.WRITE)
+	if file == null: return
+	file.seek_end()
+	file.store_line("%s  %s" % [Time.get_time_string_from_system(), text])
+	file.close()
+
+## The audition selection is re-read while the world runs, so an assignment
+## takes effect without restarting anything.
+func reload_mapping(force: bool = false) -> int:
+	if audio == null: return 0
+	var stamp := FileAccess.get_modified_time(ProjectSettings.globalize_path(mapping_path))
+	if not force and stamp == mapping_stamp: return 0
+	mapping_stamp = stamp
+	for id: String in base_files:
+		var row: Dictionary = audio.catalog.sounds.get(id, {})
+		if row.is_empty(): continue
+		row["files"] = (base_files[id] as Array).duplicate()
+		audio.catalog.sounds[id] = row
+	var applied: int = KainoMap.apply(audio.catalog, mapping_path)
+	note("mapping %d entries from %s (stamp %d)" % [applied, mapping_path, stamp])
+	return applied
 
 func soundscape() -> void:
 	var point: Vector3 = game.player.global_position
