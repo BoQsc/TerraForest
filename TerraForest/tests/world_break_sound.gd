@@ -70,7 +70,12 @@ func run(game) -> void:
 	var dirt_row: Dictionary = audio.audio.catalog.sounds.get("world.break.dirt", {})
 	check(str(stone_row.get("files", [""])[0]).ends_with(STONE_HIT + ":once"), "stone event resolves to the assigned hit")
 	check(str(dirt_row.get("files", [""])[0]).ends_with(DIRT_HIT + ":once"), "dirt event resolves to the assigned hit")
+	var metal_row: Dictionary = audio.audio.catalog.sounds.get("world.break.metal", {})
+	check(str(metal_row.get("files", [""])[0]).ends_with("Sword Hits Armor 1 - Kaino.wav:once"), "metal event resolves to the assigned metal hit")
 	audio.audio.listener = game.player.global_position
+	audio.play_event("world.break.metal", game.player.global_position + Vector3(0, 1, 1))
+	await process_frame
+	check(audio.audio.previous.has("world.break.metal"), "metal breakage starts a voice")
 	attack.break_sound({"kind": "block", "material": "stone", "position": game.player.global_position + Vector3(0, 1, 1)})
 	await process_frame
 	check(audio.audio.previous.has("world.break.stone"), "stone breakage starts a voice")
