@@ -137,6 +137,11 @@ func receive_surface(reply: Dictionary) -> void:
 	surface_cache = {"position": reply.position, "surface": surface, "revision": reply.revision}
 	pending.clear()
 
+## One event at one position, played through the audition-mapped catalog.
+func play_event(id: String, point: Vector3) -> void:
+	if audio == null or not audio.enabled or not point.is_finite(): return
+	audio.emit_event(id, {"position": point})
+
 func soundscape() -> void:
 	var point: Vector3 = game.player.global_position
 	# Reuse the existing forest cell index: one O(1) occupancy lookup, no tree scan.

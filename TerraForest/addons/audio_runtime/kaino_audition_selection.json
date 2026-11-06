@@ -91,5 +91,7 @@
 		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 3 - Kaino.wav"
 	],
 	"schema": 1.0,
-	"selection": {}
+	"selection": {
+		"world.break.block": "res://addons/audio_runtime/packs/Kaino/1/Pickaxe on Stone 3 - Kaino.wav"
+	}
 }

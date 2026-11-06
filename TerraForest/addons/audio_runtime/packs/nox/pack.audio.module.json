@@ -401,6 +401,17 @@
       "priority": 40,
       "limit": 8,
       "loop": true
+    },
+    {
+      "id": "world.break.block",
+      "event": "world.break.block",
+      "files": [
+        "rock_walk_01.wav.bin"
+      ],
+      "gain_db": -6,
+      "priority": 65,
+      "limit": 4,
+      "range": 24
     }
   ]
 }

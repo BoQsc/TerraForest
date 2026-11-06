@@ -211,6 +211,7 @@ func apply_target(t: Dictionary) -> bool:
 		game._show_lake_notice(rejection_reason if not rejection_reason.is_empty() else "Destruction blocked; make inventory room or wait for the world");return false
 	if not harvest.is_empty() and result.applied>0:
 		hud.award_experience(mini(12,int(result.reward_count)*2)+(8 if result.destroyed else 0))
+	if result.destroyed and accepted: break_sound(t)
 	if t.kind=="cover" and t.get("large",false) and not result.destroyed:game.ground_cover.damage_boulder(t.id,game.camera.global_position)
 	hud.show_target_damage(t.name,int(result.remaining),int(result.maximum))
 	t["destroyed"]=result.destroyed
@@ -221,6 +222,13 @@ func apply_target(t: Dictionary) -> bool:
 	if locked and result.get("opened",false):game._show_lake_notice("Lock broken · E open chest")
 	if door_lock!=null and result.get("opened",false):game._show_lake_notice("Reinforcement broken · E open door")
 	return true
+## Breakage event for the world adapter; it plays whatever the audition chose
+## for world.break.block, or the pack's own admitted sound.
+func break_sound(t: Dictionary) -> void:
+	var audio: Node = game.get_node_or_null("WorldAudio")
+	if audio == null or not audio.has_method("play_event"): return
+	audio.play_event("world.break.block", t.get("position", game.camera.global_position))
+
 func destroy(t: Dictionary) -> bool:
 	match t.kind:
 		"block":return game.combat.demolish(t.cell,game.structures.blocks.get_cell(t.cell),game.camera.global_position,2.0)
