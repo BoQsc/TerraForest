@@ -2,7 +2,7 @@
 extends SceneTree
 ## The world must play the assigned breakage sound through the real adapter.
 
-const WANTED := "Pickaxe on Stone 3 - Kaino.wav"
+const WANTED := "Pickaxe on Stone 3 - Kaino_hit1.wav"
 var checks := 0
 var failures := 0
 
