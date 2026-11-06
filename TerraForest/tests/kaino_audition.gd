@@ -13,8 +13,12 @@ func check(condition:bool,message:String)->bool:
 func run()->void:
 	audition=load("res://tools/kaino_audition.tscn").instantiate()
 	audition.mapping_path="user://kaino_audition_test.json"
-	if FileAccess.file_exists(ProjectSettings.globalize_path(audition.mapping_path)):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(audition.mapping_path))
+	var test_path:=ProjectSettings.globalize_path(audition.mapping_path)
+	for suffix in ["",".bak",".tmp"]:
+		if FileAccess.file_exists(test_path+suffix): DirAccess.remove_absolute(test_path+suffix)
+	var history:=DirAccess.open(ProjectSettings.globalize_path("user://kaino_audition_history"))
+	if history!=null:
+		for name:String in history.get_files(): history.remove(name)
 	root.add_child(audition)
 	await process_frame
 	await process_frame
@@ -100,6 +104,37 @@ func run()->void:
 	check(saved is Dictionary and str(saved.get("notes",{}).get(audition.files[0],""))=="Dry, short footstep for compacted dirt.","note is persisted with the selection")
 	check(saved is Dictionary and deferred_path in saved.get("deferred_sounds",[]),"deferred pack sound is persisted")
 	check(saved is Dictionary and rejected_path in saved.get("rejected_sounds",[]),"rejected pack sound is persisted")
+	check(FileAccess.file_exists(test_path+".bak"),"save keeps the previous selection as a backup")
+	check(not FileAccess.file_exists(test_path+".tmp"),"atomic save leaves no temporary file behind")
+	check(DirAccess.dir_exists_absolute(ProjectSettings.globalize_path("user://kaino_audition_history")),"every save is recorded in the selection history")
+	# An interrupted save must fall back to the backup instead of losing notes.
+	audition.save_mapping(true)
+	await process_frame
+	audition.save_mapping(true)
+	await process_frame
+	FileAccess.open(test_path,FileAccess.WRITE).store_string("{ not json")
+	audition.notes.clear();audition.mapping.clear();audition.deferred_sounds.clear();audition.rejected_sounds.clear()
+	audition.load_mapping()
+	check(audition.note_for(audition.files[0])=="Dry, short footstep for compacted dirt.","damaged selection file restores the backup note")
+	var repaired:Variant=JSON.parse_string(FileAccess.get_file_as_string(test_path))
+	check(repaired is Dictionary and audition.mapping.size()>0,"recovery rewrites a valid selection file")
+	# Typing then waiting for autosave must reach disk without an explicit save.
+	audition.select_file(audition.files[5],false)
+	audition.notes_edit.text="autosaved note"
+	audition.sync_note()
+	await create_timer(0.4).timeout
+	var live:Variant=JSON.parse_string(FileAccess.get_file_as_string(test_path))
+	check(live is Dictionary and str(live.get("notes",{}).get(audition.files[5],""))=="autosaved note","notes reach disk through autosave alone")
+	# Autosave must also run while the field still holds focus.
+	audition.select_file(audition.files[6],false)
+	audition.notes_edit.text="focused autosave"
+	audition.notes_edit.grab_focus()
+	audition.sync_note()
+	await create_timer(0.4).timeout
+	var focused_saved:Variant=JSON.parse_string(FileAccess.get_file_as_string(test_path))
+	check(focused_saved is Dictionary and str(focused_saved.get("notes",{}).get(audition.files[6],""))=="focused autosave","autosave runs while the notes field keeps focus")
+	audition.notes_edit.release_focus()
+	await process_frame
 	var catalog=preload("res://addons/audio_runtime/catalog.gd").new()
 	var prepared:bool=catalog.prepare(PackedStringArray(["res://addons/audio_runtime/packs/nox/pack.audio.module.json"]))
 	var applied:int=preload("res://addons/audio_runtime/kaino_audition_map.gd").apply(catalog,audition.mapping_path) if prepared else 0

@@ -75,6 +75,6 @@
 		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 2 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 3 - Kaino.wav"
 	],
-	"schema": 1.0,
+	"schema": 1,
 	"selection": {}
 }

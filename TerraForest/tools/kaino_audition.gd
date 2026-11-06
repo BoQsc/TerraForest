@@ -37,6 +37,9 @@ var selected_file := ""
 var selected_slot := ""
 var audio_player: AudioStreamPlayer
 var autosave_timer: Timer
+const HISTORY_LIMIT := 40
+var last_saved_body := ""
+var recovery_notice := ""
 var search: LineEdit
 var notes_edit: TextEdit
 var loading_notes := false
@@ -77,7 +80,7 @@ func _ready() -> void:
 	_ready_audio()
 	autosave_timer = Timer.new()
 	autosave_timer.one_shot = true
-	autosave_timer.wait_time = 0.65
+	autosave_timer.wait_time = 0.2
 	autosave_timer.timeout.connect(save_mapping)
 	add_child(autosave_timer)
 	scan_files(PACK_ROOT)
@@ -85,6 +88,9 @@ func _ready() -> void:
 	parse_slots()
 	load_mapping()
 	build_ui()
+	if not recovery_notice.is_empty():
+		status.text = recovery_notice
+		save_status.text = "Recovered · " + mapping_path.get_file()
 	populate_rows()
 	if not files.is_empty(): select_file(files[0], false)
 	var initial := first_visible_slot()
@@ -128,19 +134,63 @@ func parse_slots() -> void:
 
 func load_mapping() -> void:
 	var path := ProjectSettings.globalize_path(mapping_path)
-	if not FileAccess.file_exists(path): return
-	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-	if data is Dictionary:
-		if data.get("selection", {}) is Dictionary:
-			mapping = (data.selection as Dictionary).duplicate(true)
-		if data.get("notes", {}) is Dictionary:
-			notes = (data.notes as Dictionary).duplicate(true)
-		if data.get("deferred_sounds", []) is Array:
-			for deferred_path: Variant in data.deferred_sounds:
-				deferred_sounds[str(deferred_path)] = true
-		if data.get("rejected_sounds", []) is Array:
-			for rejected_path: Variant in data.rejected_sounds:
-				rejected_sounds[str(rejected_path)] = true
+	var text := FileAccess.get_file_as_string(path) if FileAccess.file_exists(path) else ""
+	var data: Variant = JSON.parse_string(text) if not text.is_empty() else null
+	var recovered := false
+	if not (data is Dictionary) and FileAccess.file_exists(path + ".bak"):
+		# An interrupted write leaves the last good copy in .bak.
+		data = JSON.parse_string(FileAccess.get_file_as_string(path + ".bak"))
+		recovered = data is Dictionary
+	if not (data is Dictionary):
+		data = newest_history()
+		recovered = data is Dictionary
+	if not (data is Dictionary): return
+	if data.get("selection", {}) is Dictionary:
+		mapping = (data.selection as Dictionary).duplicate(true)
+	if data.get("notes", {}) is Dictionary:
+		notes = (data.notes as Dictionary).duplicate(true)
+	if data.get("deferred_sounds", []) is Array:
+		for deferred_path: Variant in data.deferred_sounds:
+			deferred_sounds[str(deferred_path)] = true
+	if data.get("rejected_sounds", []) is Array:
+		for rejected_path: Variant in data.rejected_sounds:
+			rejected_sounds[str(rejected_path)] = true
+	if recovered:
+		recovery_notice = "Recovered the selection from a backup after an incomplete save"
+		save_mapping(true)
+	else:
+		last_saved_body = text
+
+func history_folder() -> String:
+	return ProjectSettings.globalize_path(mapping_path.get_base_dir().path_join("kaino_audition_history"))
+
+func newest_history() -> Variant:
+	var folder := DirAccess.open(history_folder())
+	if folder == null: return null
+	var names: Array = folder.get_files()
+	names.sort()
+	for index in range(names.size() - 1, -1, -1):
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(history_folder().path_join(str(names[index]))))
+		if parsed is Dictionary: return parsed
+	return null
+
+func record_history(body: String) -> void:
+	DirAccess.make_dir_recursive_absolute(history_folder())
+	var name := "selection_%s_%d.json" % [Time.get_datetime_string_from_system().replace(":", "-"), Time.get_ticks_usec()]
+	write_text(history_folder().path_join(name), body)
+	var folder := DirAccess.open(history_folder())
+	if folder == null: return
+	var names: Array = folder.get_files()
+	names.sort()
+	for index in maxi(0, names.size() - HISTORY_LIMIT):
+		folder.remove(str(names[index]))
+
+func write_text(path: String, body: String) -> bool:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null: return false
+	file.store_string(body)
+	file.close()
+	return true
 
 func style(fill: Color, border: Color, radius: int = 8) -> StyleBoxFlat:
 	var out := StyleBoxFlat.new()
@@ -709,6 +759,8 @@ func sync_note() -> void:
 	if file_rows.has(selected_file):
 		file_rows[selected_file].tooltip_text = selected_file + ("\n\nNOTE: " + note if not note.is_empty() else "")
 	save_status.text = "Unsaved notes"
+	# Autosave while typing too: focus can stay in the field for a long time.
+	schedule_autosave()
 	if notes_edit.has_focus(): return
 	apply_note_filter()
 
@@ -719,7 +771,8 @@ func apply_note_filter() -> void:
 	if file_boxes.has(selected_file) and not file_boxes[selected_file].visible:
 		var next := first_visible_file()
 		if not next.is_empty(): select_file(next, false)
-	schedule_autosave()
+	# Leaving the field is a natural checkpoint: save at once, not in 200 ms.
+	save_mapping()
 
 func note_for(path: String) -> String:
 	return str(notes.get(path, "")).strip_edges()
@@ -839,15 +892,38 @@ func _notification(what: int) -> void:
 		save_mapping()
 		get_tree().quit()
 
-func save_mapping() -> void:
-	var file := FileAccess.open(mapping_path, FileAccess.WRITE)
-	if file == null:
-		save_status.text = "Could not write " + mapping_path
+func save_mapping(force: bool = false) -> void:
+	var path := ProjectSettings.globalize_path(mapping_path)
+	var body := JSON.stringify({"schema": 1, "pack": "Kaino", "selection": mapping, "notes": notes, "deferred_sounds": deferred_sounds.keys(), "rejected_sounds": rejected_sounds.keys()}, "\t")
+	if not force and body == last_saved_body and FileAccess.file_exists(path):
+		if save_status != null: save_status.text = "Saved · " + mapping_path.get_file()
 		return
-	file.store_string(JSON.stringify({"schema": 1, "pack": "Kaino", "selection": mapping, "notes": notes, "deferred_sounds": deferred_sounds.keys(), "rejected_sounds": rejected_sounds.keys()}, "\t"))
-	file.close()
-	save_status.text = "Saved · " + mapping_path.get_file()
-	status.text = "Selection, notes and deferred sounds saved to " + mapping_path
+	# Keep the previous complete file, write the new one beside it, then swap:
+	# a crash can leave a .tmp or a .bak, never a truncated selection.
+	if FileAccess.file_exists(path):
+		var previous := FileAccess.get_file_as_string(path)
+		if JSON.parse_string(previous) is Dictionary: write_text(path + ".bak", previous)
+	var temp := path + ".tmp"
+	if not write_text(temp, body):
+		if save_status != null: save_status.text = "Could not write " + mapping_path
+		return
+	if not replace_file(temp, path):
+		write_text(path, body)
+		DirAccess.remove_absolute(temp)
+	last_saved_body = body
+	record_history(body)
+	if save_status != null: save_status.text = "Saved · " + mapping_path.get_file()
+	if status != null: status.text = "Selection, notes and deferred sounds saved to " + mapping_path
+
+func replace_file(from: String, to: String) -> bool:
+	var directory := DirAccess.open(from.get_base_dir())
+	if directory == null: return false
+	if directory.file_exists(to): directory.remove(to)
+	return directory.rename(from, to) == OK
+
+func _exit_tree() -> void:
+	if autosave_timer != null: autosave_timer.stop()
+	save_mapping()
 
 func _ready_audio() -> void:
 	audio_player = AudioStreamPlayer.new()

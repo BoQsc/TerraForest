@@ -3,6 +3,8 @@
 /TerraForest/.build/
 /TerraForest/reports/*
 !/TerraForest/reports/.gdignore
+/TerraForest/addons/audio_runtime/kaino_audition_history/
+/TerraForest/addons/audio_runtime/*.json.bak
 /TerraForest/dist/
 /TerraForest/addons/**/bin/~*.dll
 __pycache__/
