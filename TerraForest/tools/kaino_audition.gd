@@ -271,6 +271,9 @@ func build_files_panel() -> Control:
 	notes_edit.placeholder_text = "Describe what this sound is good for, its mood, or the event it belongs to…"
 	notes_edit.custom_minimum_size.y = 96
 	notes_edit.text_changed.connect(sync_note)
+	# Leaving the field is what applies the "noted" filter, so typing is never
+	# interrupted by the row moving out from under the caret.
+	notes_edit.focus_exited.connect(apply_note_filter)
 	column.add_child(notes_edit)
 	column.add_child(label("Notes save with the selection; later they can guide automatic assignment.", 10, FAINT))
 	return panel
@@ -668,13 +671,15 @@ func toggle_sound_rejected(path: String) -> void:
 	schedule_autosave()
 
 func select_file(path: String, autoplay: bool = true) -> void:
+	var same := path == selected_file
 	selected_file = path
 	for key: String in file_rows:
 		file_rows[key].modulate = Color(0.82, 1.0, 0.88) if key == path else Color.WHITE
 	selected_file_label.text = "Selected file:  " + path.get_file()
-	loading_notes = true
-	notes_edit.text = str(notes.get(path, ""))
-	loading_notes = false
+	if not (same and notes_edit.has_focus()):
+		loading_notes = true
+		notes_edit.text = str(notes.get(path, ""))
+		loading_notes = false
 	if autoplay: play_file(path)
 
 func sync_note() -> void:
@@ -685,6 +690,12 @@ func sync_note() -> void:
 	if file_rows.has(selected_file):
 		file_rows[selected_file].tooltip_text = selected_file + ("\n\nNOTE: " + note if not note.is_empty() else "")
 	save_status.text = "Unsaved notes"
+	if notes_edit.has_focus(): return
+	apply_note_filter()
+
+## A noted sound leaves the visible tab; applied when the field is left, not
+## on every keystroke, or typing would keep switching to another sound.
+func apply_note_filter() -> void:
 	filter_files()
 	if file_boxes.has(selected_file) and not file_boxes[selected_file].visible:
 		var next := first_visible_file()

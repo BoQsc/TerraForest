@@ -40,6 +40,24 @@ func run()->void:
 	await create_timer(.8).timeout
 	var autosaved:Variant=JSON.parse_string(FileAccess.get_file_as_string(ProjectSettings.globalize_path(audition.mapping_path)))
 	check(autosaved is Dictionary and deferred_path in autosaved.get("deferred_sounds",[]),"defer action autosaves selection state")
+	# Typing must stay in the notes field; the noted filter applies on leaving it.
+	var typed_path:String=audition.files[4]
+	audition.set_sound_view("sounds")
+	audition.select_file(typed_path,false)
+	audition.notes_edit.text=""
+	audition.notes_edit.grab_focus()
+	await process_frame
+	for character in "dry":
+		var typed:=InputEventKey.new()
+		typed.unicode=character.unicode_at(0);typed.keycode=character.unicode_at(0);typed.physical_keycode=character.unicode_at(0);typed.pressed=true
+		Input.parse_input_event(typed)
+		await process_frame
+	check(audition.notes_edit.text=="dry" and audition.selected_file==typed_path,"typing stays in the notes field")
+	check(audition.file_boxes[typed_path].visible,"editing a note keeps the sound in the list")
+	audition.notes_edit.release_focus()
+	await process_frame
+	check(not audition.file_boxes[typed_path].visible,"leaving the notes field applies the noted filter")
+	check(audition.note_for(typed_path)=="dry","typed note is stored with the sound")
 	var rejected_path:String=audition.files[2]
 	audition.file_reject_buttons[rejected_path].pressed.emit()
 	check(not audition.file_boxes[rejected_path].visible,"Not great removes the pack sound from the main list")
