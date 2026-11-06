@@ -64,6 +64,8 @@ func run(game) -> void:
 	audio.surface_cache = {}
 	check(attack.break_event({"kind": "cover", "material": "stone"}) == "world.break.stone", "stone boulder uses the stone break event")
 	check(attack.break_event({"kind": "cover", "material": "wood"}) == "world.break.vegetation", "plant cover uses the vegetation break event")
+	check(attack.break_event({"kind": "model", "material": "metal"}) == "world.break.metal", "metal object uses the metal break event")
+	check(attack.break_event({"kind": "actor", "material": "other"}) == "world.break.block", "an unknown material falls back to the generic event")
 	var stone_row: Dictionary = audio.audio.catalog.sounds.get("world.break.stone", {})
 	var dirt_row: Dictionary = audio.audio.catalog.sounds.get("world.break.dirt", {})
 	check(str(stone_row.get("files", [""])[0]).ends_with(STONE_HIT + ":once"), "stone event resolves to the assigned hit")

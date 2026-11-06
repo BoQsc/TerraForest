@@ -62,6 +62,10 @@ func run(game) -> void:
 	audio.play_event("world.break.wood", game.player.global_position)
 	await process_frame
 	check(audio.audio.statistics().active == quiet and read_log().contains("world.break.wood skipped"), "an unassigned wood break stays silent")
+	var quiet_generic: int = audio.audio.statistics().active
+	audio.play_event("world.break.block", game.player.global_position)
+	await process_frame
+	check(audio.audio.statistics().active == quiet_generic and read_log().contains("world.break.block skipped"), "an unassigned generic break stays silent")
 	await create_timer(1.2).timeout
 	write_map(LIVE, {"world.break.stone": HIT_B, "world.break.wood": HIT_A})
 	audio.reload_mapping()

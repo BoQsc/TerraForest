@@ -36,7 +36,7 @@ var material_tokens: Dictionary = {}
 var material_token := 820000000
 ## These break events have no pack sound of their own: they must stay silent
 ## until the developer assigns one, instead of borrowing a footstep.
-const REQUIRES_ASSIGNMENT := ["world.break.wood", "world.break.vegetation"]
+const REQUIRES_ASSIGNMENT := ["world.break.wood", "world.break.vegetation", "world.break.block"]
 var assigned: Dictionary = {}
 
 func attach(host: Node) -> void:

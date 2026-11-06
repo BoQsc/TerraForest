@@ -252,6 +252,7 @@ func break_event(t: Dictionary) -> String:
 			return "world.break.wood" if material == "wood" else "world.break.stone"
 	if material == "stone": return "world.break.stone"
 	if material == "wood": return "world.break.wood"
+	if material == "metal": return "world.break.metal"
 	return "world.break.block"
 
 func _sampled_material(point: Vector3) -> String:
