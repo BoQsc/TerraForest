@@ -34,10 +34,15 @@ var base_files: Dictionary = {}
 var reload_seconds := 0.0
 var material_tokens: Dictionary = {}
 var material_token := 820000000
-## These break events have no pack sound of their own: they must stay silent
-## until the developer assigns one, instead of borrowing a footstep.
-const REQUIRES_ASSIGNMENT := ["world.break.wood", "world.break.vegetation", "world.break.block"]
+## Sampled ground material per 2 m cell, so digging keeps remembering what the
+## ground is made of as the player moves along a slope.
+var surface_samples: Dictionary = {}
+## The generic event has no sound of its own: it stays silent until assigned,
+## instead of borrowing a footstep from another material.
+const REQUIRES_ASSIGNMENT := ["world.break.block"]
+const REPEAT_MS := 90
 var assigned: Dictionary = {}
+var last_event_ms: Dictionary = {}
 
 func attach(host: Node) -> void:
 	game = host; name = "WorldAudio"
@@ -151,7 +156,11 @@ func receive_surface(reply: Dictionary) -> void:
 		var asked: Vector3 = material_tokens[reply.get("token", 0)]
 		material_tokens.erase(reply.get("token", 0))
 		if reply.get("status", "") == "hit" and reply.has("surface_material"):
-			surface_cache = {"position": reply.get("position", asked), "surface": surface_name(int(reply.surface_material), reply, "dirt"), "revision": reply.get("revision", game.terrain.native_revision)}
+			var at: Vector3 = reply.get("position", asked)
+			var sampled := surface_name(int(reply.surface_material), reply, "dirt")
+			var revision := int(reply.get("revision", game.terrain.native_revision))
+			surface_samples[sample_key(at)] = {"surface": sampled, "revision": revision}
+			surface_cache = {"position": at, "surface": sampled, "revision": revision}
 		return
 	if pending.is_empty() or game.terrain.epoch != epoch or reply.get("token") != sample_token or reply.get("epoch") != epoch or reply.get("revision") != game.terrain.native_revision: return
 	if reply.get("status") != "hit" or not reply.has("surface_material") or reply.position.distance_squared_to(pending.position) > .5: return
@@ -174,13 +183,24 @@ func prime_material(point: Vector3) -> void:
 	if not game.terrain.request_density_ray(point + Vector3.UP * .3, point - Vector3.UP * .5, material_token, 32, true):
 		material_tokens.erase(material_token)
 
+func sample_key(point: Vector3) -> Vector3i:
+	return Vector3i((point / 2.0).floor())
+
 ## The sampled surface at (or near) a point, empty when nothing fresh is known.
 func material_at(point: Vector3) -> String:
-	if surface_cache.is_empty() or not point.is_finite(): return ""
-	var sampled: Vector3 = surface_cache.get("position", Vector3.ZERO)
-	if sampled.distance_squared_to(point) > 9.0: return ""
-	if int(surface_cache.get("revision", -1)) != game.terrain.native_revision: return ""
-	return str(surface_cache.get("surface", ""))
+	if audio == null or not point.is_finite(): return ""
+	var revision: int = game.terrain.native_revision
+	var key := sample_key(point)
+	for dx: int in [-1, 0, 1]:
+		for dz: int in [-1, 0, 1]:
+			for dy: int in [-1, 0, 1]:
+				var sample: Dictionary = surface_samples.get(key + Vector3i(dx, dy, dz), {})
+				if sample.is_empty() or int(sample.get("revision", -1)) != revision: continue
+				return str(sample.get("surface", ""))
+	if not surface_cache.is_empty() and int(surface_cache.get("revision", -1)) == revision:
+		if (surface_cache.get("position", Vector3.ZERO) as Vector3).distance_squared_to(point) <= 9.0:
+			return str(surface_cache.get("surface", ""))
+	return ""
 
 ## One event at one position, played through the audition-mapped catalog. Every
 ## emit is logged with the file it resolved to, so a silent event is visible.
@@ -189,6 +209,9 @@ func play_event(id: String, point: Vector3) -> void:
 	if id in REQUIRES_ASSIGNMENT and not assigned.has(id):
 		note("event %s skipped: no assigned sound" % id)
 		return
+	var now := Time.get_ticks_msec()
+	if now - int(last_event_ms.get(id, -1000000)) < REPEAT_MS: return
+	last_event_ms[id] = now
 	var row: Dictionary = audio.catalog.sounds.get(id, {})
 	var files: Array = row.get("files", [])
 	note("event %s -> %s%s" % [id, str(files[0]) if not files.is_empty() else "unresolved", "" if audio.enabled else " (audio disabled)"])

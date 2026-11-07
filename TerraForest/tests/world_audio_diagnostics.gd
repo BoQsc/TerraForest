@@ -58,10 +58,6 @@ func run(game) -> void:
 	row = audio.audio.catalog.sounds.get("world.break.stone", {})
 	check(str(row.get("files", [""])[0]).ends_with(HIT_B.get_file() + ":once"), "a changed selection is picked up without a restart")
 	audio.audio.listener = game.player.global_position
-	var quiet: int = audio.audio.statistics().active
-	audio.play_event("world.break.wood", game.player.global_position)
-	await process_frame
-	check(audio.audio.statistics().active == quiet and read_log().contains("world.break.wood skipped"), "an unassigned wood break stays silent")
 	var quiet_generic: int = audio.audio.statistics().active
 	audio.play_event("world.break.block", game.player.global_position)
 	await process_frame
@@ -69,9 +65,11 @@ func run(game) -> void:
 	await create_timer(1.2).timeout
 	write_map(LIVE, {"world.break.stone": HIT_B, "world.break.wood": HIT_A})
 	audio.reload_mapping()
+	var wood_row: Dictionary = audio.audio.catalog.sounds.get("world.break.wood", {})
+	check(str(wood_row.get("files", [""])[0]).ends_with(HIT_A.get_file() + ":once"), "wood follows an assignment made after load")
 	audio.play_event("world.break.wood", game.player.global_position)
 	await process_frame
-	check(audio.audio.previous.has("world.break.wood"), "wood break plays once a sound is assigned")
+	check(audio.audio.previous.has("world.break.wood"), "wood break plays with the assigned sound")
 	audio.audio.listener = game.player.global_position
 	game.world_attack.break_sound({"kind": "block", "material": "stone", "position": game.player.global_position + Vector3(0, 1, 1)})
 	await process_frame

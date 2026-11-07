@@ -40,7 +40,7 @@ func run(game) -> void:
 	check(attack.break_event({"kind": "tree", "material": "wood"}) == "world.break.wood", "tree uses the wood break event")
 	check(attack.break_event({"kind": "terrain", "surface": "dirt"}) == "world.break.dirt", "dirt surface uses the dirt break event")
 	game.material_id = 1
-	check(attack.break_event({"kind": "terrain"}) == "world.break.stone", "stone terrain uses the stone break event")
+	check(attack.break_event({"kind": "terrain"}) == "world.break.dirt", "untouched ground defaults to dirt, not stone")
 	game.material_id = 2
 	check(attack.break_event({"kind": "terrain"}) == "world.break.wood", "wood terrain uses the wood break event")
 	game.material_id = 3
@@ -72,7 +72,14 @@ func run(game) -> void:
 	check(str(dirt_row.get("files", [""])[0]).ends_with(DIRT_HIT + ":once"), "dirt event resolves to the assigned hit")
 	var metal_row: Dictionary = audio.audio.catalog.sounds.get("world.break.metal", {})
 	check(str(metal_row.get("files", [""])[0]).ends_with("Sword Hits Armor 1 - Kaino.wav:once"), "metal event resolves to the assigned metal hit")
+	var wood_row: Dictionary = audio.audio.catalog.sounds.get("world.break.wood", {})
+	var plant_row: Dictionary = audio.audio.catalog.sounds.get("world.break.vegetation", {})
+	check(str(wood_row.get("files", [""])[0]).ends_with("Chopping Wood 2 - Kaino_hit3.wav:once"), "wood event resolves to the assigned wood hit")
+	check(str(plant_row.get("files", [""])[0]).ends_with("Wood Snap 2 - Kaino_hit2.wav:once"), "vegetation event resolves to the assigned plant hit")
 	audio.audio.listener = game.player.global_position
+	audio.play_event("world.break.vegetation", game.player.global_position + Vector3(0, 1, 1))
+	await process_frame
+	check(audio.audio.previous.has("world.break.vegetation"), "vegetation breakage starts a voice")
 	audio.play_event("world.break.metal", game.player.global_position + Vector3(0, 1, 1))
 	await process_frame
 	check(audio.audio.previous.has("world.break.metal"), "metal breakage starts a voice")

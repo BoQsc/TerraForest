@@ -109,6 +109,9 @@ func resolve_contact(identity:int)->void:
 	# Resolve the live occlusion/reach query once, on the visible contact pose.
 	var selected:=target()
 	if selected.get("kind")=="terrain":game.terrain.set_interaction_target(selected.position)
+	if selected.get("kind")=="terrain":
+		var probe: Node=game.get_node_or_null("WorldAudio")
+		if probe!=null and probe.has_method("prime_material"):probe.prime_material(selected.get("position",game.camera.global_position))
 	last_hit=not selected.is_empty() and (repair_target(selected) if pending.repairing else apply_target(selected))
 	if last_hit:
 		selected.repairing=pending.repairing
@@ -216,7 +219,8 @@ func apply_target(t: Dictionary) -> bool:
 		game._show_lake_notice(rejection_reason if not rejection_reason.is_empty() else "Destruction blocked; make inventory room or wait for the world");return false
 	if not harvest.is_empty() and result.applied>0:
 		hud.award_experience(mini(12,int(result.reward_count)*2)+(8 if result.destroyed else 0))
-	if result.destroyed and accepted: break_sound(t)
+	# Every landed hit sounds, not only the one that destroys the target.
+	if accepted and (result.destroyed or int(result.get("applied", 0)) > 0): break_sound(t)
 	if t.kind=="cover" and t.get("large",false) and not result.destroyed:game.ground_cover.damage_boulder(t.id,game.camera.global_position)
 	hud.show_target_damage(t.name,int(result.remaining),int(result.maximum))
 	t["destroyed"]=result.destroyed
@@ -245,7 +249,9 @@ func break_event(t: Dictionary) -> String:
 			match int(game.material_id):
 				2: return "world.break.wood"
 				3: return "world.break.metal"
-			return "world.break.stone"
+			# Untouched ground is topsoil, not rock: stone is only claimed when
+			# the sampled surface actually says so.
+			return "world.break.dirt"
 		"cover":
 			return "world.break.stone" if material == "stone" else "world.break.vegetation"
 		"block":
