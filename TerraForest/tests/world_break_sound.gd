@@ -41,6 +41,14 @@ func run(game) -> void:
 	attack.finish_swing(7, true)
 	check(not attack.queued_click, "the remembered click is consumed when the swing ends")
 	attack.pending = {}
+	var feedback = game.player_hud.damage_feedback
+	game.player_hud.developer_belt = false
+	game.player_hud.inventory_open = false
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	game.player_hud.show_target_damage("Building block", 90, 100)
+	check(feedback.amount_label.text == "90 / 100", "the durability HUD shows the first hit value")
+	game.player_hud.show_target_damage("Wooden block", 70, 100)
+	check(feedback.name_label.text == "Wooden block" and feedback.amount_label.text == "70 / 100", "the durability HUD refreshes for the next block")
 	check(attack.break_event({"kind": "block", "material": "stone"}) == "world.break.stone", "stone block uses the stone break event")
 	check(attack.break_event({"kind": "block", "material": "wood"}) == "world.break.wood", "wood block uses the wood break event")
 	check(attack.break_event({"kind": "tree", "material": "wood"}) == "world.break.wood", "tree uses the wood break event")
