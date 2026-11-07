@@ -26,6 +26,7 @@ var timer:=0.0
 var next_shot:=0.0
 var hits:=0
 var shots:=0
+var holes:Node3D
 var explosions:=0
 var destroyed_blocks:=0
 var ammo_label:Label
@@ -40,6 +41,7 @@ func prepare(host:Node)->bool:
 	action_input_owned=func()->bool:return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 	if state==null or barrels==null:return false
 	add_child(effects);effects.blocks=game.structures.blocks;integrity.attach(game,self)
+	holes=preload("res://addons/player_runtime/bullet_holes.gd").new();add_child(holes)
 	game.tool_view.human.rifle_reload_finished.connect(finish_reload)
 	shot_audio=sound(.18,72);blast_audio=sound(.65,38);assault_audio=sound(.13,110);shot_random.randomize()
 	return game.persistence.register_component("combat",capture,restore,state,state.capture_storage_snapshot())
@@ -149,6 +151,7 @@ func step_projectiles(delta:float)->void:
 		bullet.view.look_at(end+bullet.velocity.normalized())
 func impact(hit:Dictionary,direction:Vector3,damage:int=35,block_damage:int=18)->void:
 	hits+=1
+	if holes!=null and hit.has("position"):holes.add(hit.position,hit.get("normal",-direction))
 	if hit.get("collider")==barrels:
 		damage_barrel(barrels.placement_for_body(hit.rid),damage);return
 	if hit.get("collider")==game.structures.blocks and hit.has("cell"):

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    "TerraForest/addons/player_runtime/bullet_holes.gd",
+    "TerraForest/addons/player_runtime/combat_world.gd",
+    "TerraForest/tests/bullet_holes.gd"
+  ],
+  "steps": [
+    {
+      "kind": "tests",
+      "command": {
+        "program": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+        "args": ["--path", "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest", "--windowed", "--position", "-2400,-1600", "--resolution", "1280x720", "--max-fps", "60", "--script", "res://tests/bullet_holes.gd"],
+        "workdir": "TerraForest",
+        "timeout": 240000
+      }
+    }
+  ]
+}
