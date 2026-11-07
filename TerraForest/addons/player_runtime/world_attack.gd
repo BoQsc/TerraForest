@@ -83,11 +83,12 @@ func surface_target(data:Dictionary,hit:Dictionary)->Dictionary:
 		data.position=hit.position
 		data.normal=hit.get("normal",(game.camera.global_position-hit.position).normalized())
 	return data
-func attack(repairing:bool=false) -> bool:
+## pressed marks a fresh button press. The held-button poll also calls this every
+## frame, so only a press edge may arm the click buffer - otherwise one click
+## would queue a second swing.
+func attack(repairing:bool=false,pressed:bool=false) -> bool:
 	if not pending.is_empty():
-		# Remember one click instead of dropping it: switching targets mid-swing
-		# is exactly when the next hit would otherwise be lost.
-		queued_click=true
+		if pressed: queued_click=true
 		return false
 	if game.session_menu.developer or not TOOLS.has(game.equipped_tool) or not game._model_edit_available() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED or game.session_menu.visible_ui():return false
 	if repairing and game.equipped_tool!=3:return false

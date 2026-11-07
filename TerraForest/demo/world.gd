@@ -1082,11 +1082,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			if event.pressed and _model_edit_available():
 				world_item_use.begin()
 			return
-		if event.pressed:world_attack.attack()
+		if event.pressed:world_attack.attack(false,true)
 		return
 	if not session_menu.developer and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if equipped_tool==3:
-			if event.pressed:world_attack.attack(true)
+			if event.pressed:world_attack.attack(true,true)
 			return
 		if equipped_tool in mining_rewards.TERRAIN_ITEMS:
 			if event.pressed:terrain_placement.begin_hold(self)

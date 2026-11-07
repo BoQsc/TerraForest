@@ -37,9 +37,11 @@ func run(game) -> void:
 	var attack = game.world_attack
 	attack.pending = {"identity": 7, "item": 1, "slot": 0, "epoch": game.terrain.epoch, "contacted": false, "repairing": false}
 	attack.attack()
-	check(attack.queued_click, "a click during a swing is remembered")
+	check(not attack.queued_click, "the held-button poll does not queue an extra swing")
+	attack.attack(false, true)
+	check(attack.queued_click, "a press during a swing is remembered")
 	attack.finish_swing(7, true)
-	check(not attack.queued_click, "the remembered click is consumed when the swing ends")
+	check(not attack.queued_click, "the remembered press is consumed when the swing ends")
 	attack.pending = {}
 	var feedback = game.player_hud.damage_feedback
 	game.player_hud.developer_belt = false
