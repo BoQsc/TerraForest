@@ -93,6 +93,17 @@ func run(game) -> void:
 	check(str(wood_row.get("files", [""])[0]).ends_with("Chopping Wood 2 - Kaino_hit3.wav:once"), "wood event resolves to the assigned wood hit")
 	check(str(plant_row.get("files", [""])[0]).ends_with("Wood Snap 2 - Kaino_hit2.wav:once"), "vegetation event resolves to the assigned plant hit")
 	audio.audio.listener = game.player.global_position
+	audio.play_event("world.break.stone", here + Vector3(0, 0, -40))
+	var local_voice = null
+	for entry: Dictionary in audio.audio.voices:
+		if entry.id == "world.break.stone" and entry.node.global_position.distance_to(here) < 0.01: local_voice = entry.node
+	check(local_voice != null and local_voice.global_position.distance_to(here) < 0.01, "player-caused break plays at the listener, not at the hit point")
+	await create_timer(0.35).timeout
+	var far: Vector3 = here + Vector3(0, 0, -40)
+	audio.play_event("world.break.stone", far, false)
+	var event_log := FileAccess.get_file_as_string(ProjectSettings.globalize_path("user://audio_events.log"))
+	check(event_log.contains("world.break.stone") and event_log.contains("(positional)"), "a world-caused break is emitted as positional")
+
 	audio.play_event("world.break.vegetation", game.player.global_position + Vector3(0, 1, 1))
 	await process_frame
 	check(audio.audio.previous.has("world.break.vegetation"), "vegetation breakage starts a voice")

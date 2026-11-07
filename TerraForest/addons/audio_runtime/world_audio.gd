@@ -204,7 +204,10 @@ func material_at(point: Vector3) -> String:
 
 ## One event at one position, played through the audition-mapped catalog. Every
 ## emit is logged with the file it resolved to, so a silent event is visible.
-func play_event(id: String, point: Vector3) -> void:
+## local events belong to the player's own action: they play at the listener so
+## the volume never depends on how far the hit was. Events caused elsewhere
+## pass local = false and keep their world position for distance falloff.
+func play_event(id: String, point: Vector3, local: bool = true) -> void:
 	if audio == null or not point.is_finite(): return
 	if id in REQUIRES_ASSIGNMENT and not assigned.has(id):
 		note("event %s skipped: no assigned sound" % id)
@@ -214,9 +217,9 @@ func play_event(id: String, point: Vector3) -> void:
 	last_event_ms[id] = now
 	var row: Dictionary = audio.catalog.sounds.get(id, {})
 	var files: Array = row.get("files", [])
-	note("event %s -> %s%s" % [id, str(files[0]) if not files.is_empty() else "unresolved", "" if audio.enabled else " (audio disabled)"])
+	note("event %s -> %s%s%s" % [id, str(files[0]) if not files.is_empty() else "unresolved", "" if audio.enabled else " (audio disabled)", " (local)" if local else " (positional)"])
 	if not audio.enabled: return
-	audio.emit_event(id, {"position": point})
+	audio.emit_event(id, {"position": audio.listener if local else point})
 
 func note(text: String) -> void:
 	var path := ProjectSettings.globalize_path(EVENT_LOG)

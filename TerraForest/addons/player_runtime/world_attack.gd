@@ -277,10 +277,10 @@ func _sampled_material(point: Vector3) -> String:
 	if adapter == null or not adapter.has_method("material_at"): return ""
 	return str(adapter.material_at(point))
 
-func break_sound(t: Dictionary) -> void:
+func break_sound(t: Dictionary, local: bool = true) -> void:
 	var audio: Node = game.get_node_or_null("WorldAudio")
 	if audio == null or not audio.has_method("play_event"): return
-	audio.play_event(break_event(t), t.get("position", game.camera.global_position))
+	audio.play_event(break_event(t), t.get("position", game.camera.global_position), local)
 
 func destroy(t: Dictionary) -> bool:
 	match t.kind:
