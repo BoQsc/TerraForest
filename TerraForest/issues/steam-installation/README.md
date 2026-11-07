@@ -165,6 +165,28 @@ drew the TerraForest icon for both. The windowed installer was not rerun end to 
 its desktop step is this same function, called with the same `.ico`. Appearance on
 the second computer remains unreported.
 
+### Desktop link ownership - 2026-11-07
+
+Removing the non-Steam entry in Steam left the desktop links behind: every entry was
+registered with `ShortcutPath` empty, so nothing tied the two `.lnk` files to their
+entries. Both entries now record their own link (`TerraForest.lnk`, `TerraForest Last
+World.lnk`, or the `--desktop-folder` equivalent); the installer resolves that folder
+before registering, the merge updates the field on re-registration, the post-restart
+verification compares it, and `--no-desktop` keeps it empty. The console tool gained
+`--shortcut-path` for single-entry repairs.
+
+Verification: **74 Python tests pass**, including each stored entry's link matching
+its desktop link and a case where a missing value must fail verification. Live: the
+installer wrote both entries, restarted Steam, and its post-restart check (now
+covering `ShortcutPath`) passed; the file still held both desktop paths afterwards.
+
+Steam's removal itself was not exercised in the client UI. A probe entry
+(`TerraForest Link Probe`, appid 3433057984) and its link were staged for that, then
+removed through the tool's own `--remove` path instead, so "Steam deletes the file at
+`ShortcutPath` when the entry is removed" remains an unverified premise, not a
+measured result. Close it by removing a staged entry in Steam and checking that its
+link disappears.
+
 ## Remaining / resume here
 
 Successful game launch and Last World reopen on the second computer remain
@@ -180,6 +202,7 @@ opening the actual project directory for both entries. If it still does nothing,
 retain the actual field value and Steam client build for the next investigation.
 Desktop icon appearance is corrected locally but unreported on the second computer:
 rerun the installer there and confirm both links show the TerraForest mark.
+Steam-driven link removal still needs the client-UI check described above.
 
 Exported builds with separate PCK/native companions still need complete deployment;
 automatic discovery alone does not deploy them. Return when shipping that package,
