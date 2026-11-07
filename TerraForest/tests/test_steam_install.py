@@ -281,6 +281,8 @@ class CompleteInstallTests(unittest.TestCase):
             icon, index = self.desktop.read_icon(link)
             self.assertEqual(Path(icon).resolve(), self.desktop.APP_ICON.resolve())
             self.assertEqual(index, 0)
+            # Steam deletes the file at ShortcutPath when the entry is removed.
+            self.assertEqual(Path(fields['ShortcutPath']).resolve(), link.resolve())
 
     def assert_artwork_slots(self):
         # Independent expected Steam suffixes/dimensions, not copied from the manifest.
@@ -463,6 +465,14 @@ class CompleteInstallTests(unittest.TestCase):
         wanted = [self.tool.shortcut_fields('TerraForest', folder/'TerraForest.exe')]
         file(self.shortcut, self.tool.serialize_shortcuts('shortcuts', {'0': wanted[0]}))
         with self.assertRaisesRegex(SystemExit, 'Start In directory does not exist'):
+            self.tool.verify_entries(self.shortcut, wanted)
+
+    def test_missing_desktop_link_path_cannot_pass_verification(self):
+        exe = file(self.project/'TerraForest.exe')
+        stored = self.tool.shortcut_fields('TerraForest', exe)
+        file(self.shortcut, self.tool.serialize_shortcuts('shortcuts', {'0': stored}))
+        wanted = [dict(stored, ShortcutPath=str(self.args.desktop_folder/'TerraForest.lnk'))]
+        with self.assertRaisesRegex(SystemExit, 'incorrect ShortcutPath'):
             self.tool.verify_entries(self.shortcut, wanted)
 
     def test_repair_pair_one_restart_preserves_shutdown_writes_and_replaces_native_links(self):

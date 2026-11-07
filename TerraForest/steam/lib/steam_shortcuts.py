@@ -417,7 +417,7 @@ def serialize_shortcuts(root_name, entries):
     return bytes(out)
 
 
-def shortcut_fields(name, exe, launch_options='', icon='', tags=()):
+def shortcut_fields(name, exe, launch_options='', icon='', tags=(), shortcut_path=''):
     return {
         # The documented entry format carries its own app id; Steam rewrote a
         # file whose entries lack it, dropping them, so it is always written.
@@ -429,7 +429,10 @@ def shortcut_fields(name, exe, launch_options='', icon='', tags=()):
         # system directory API. Keep executable/launch-argument quoting separate.
         'StartDir': str(exe.parent),
         'icon': str(icon),
-        'ShortcutPath': '',
+        # Steam removes the file at this path when the non-Steam entry is removed
+        # ("Remove non-Steam game"). Point it at the desktop link so a removal in
+        # Steam does not leave a dangling shortcut on the desktop.
+        'ShortcutPath': str(shortcut_path or ''),
         'LaunchOptions': launch_options,
         'IsHidden': 0,
         'AllowDesktopConfig': 1,
@@ -661,7 +664,7 @@ def set_launch_options(shortcut, name, exe, launch_options, dry_run=False, resta
 
 
 def add(shortcut, name, exe, dry_run, restart=True, force=False, launch_options='',
-        icon='', tags=()):
+        icon='', tags=(), shortcut_path=''):
     data, root, entries = load(shortcut)
     duplicate = find_entry(entries, name, exe)
     if duplicate:
@@ -673,6 +676,8 @@ def add(shortcut, name, exe, dry_run, restart=True, force=False, launch_options=
             changes['LaunchOptions'] = launch_options
         if icon and str(icon) != fields.get('icon', ''):
             changes['icon'] = str(icon)
+        if shortcut_path and str(shortcut_path) != fields.get('ShortcutPath', ''):
+            changes['ShortcutPath'] = str(shortcut_path)
         if wanted_tags and fields.get('tags', {}) != wanted_tags:
             changes['tags'] = wanted_tags
         if not changes:
@@ -694,7 +699,7 @@ def add(shortcut, name, exe, dry_run, restart=True, force=False, launch_options=
         return commit(shortcut, data, candidate,
                       f'updated  : entry {index} {", ".join(sorted(changes))}', restart, force)
     index = max((int(k) for k in entries), default=-1) + 1
-    fields = shortcut_fields(name, exe, launch_options, icon, tags)
+    fields = shortcut_fields(name, exe, launch_options, icon, tags, shortcut_path)
     updated = dict(entries)
     updated[str(index)] = fields
     # Serialised from the parsed entries rather than spliced into the original
@@ -723,8 +728,9 @@ def merge_entries(entries, wanted):
         matches_here = find_entry(updated, fields['AppName'], Path(fields['Exe'].strip('"')))
         if matches_here:
             index = next(iter(matches_here))
-            for key in ('appid', 'AppName', 'Exe', 'StartDir', 'icon', 'LaunchOptions',
-                        'tags', 'IsHidden', 'AllowDesktopConfig', 'AllowOverlay'):
+            for key in ('appid', 'AppName', 'Exe', 'StartDir', 'icon', 'ShortcutPath',
+                        'LaunchOptions', 'tags', 'IsHidden', 'AllowDesktopConfig',
+                        'AllowOverlay'):
                 updated[index][key] = fields[key]
             for duplicate in list(matches_here)[1:]:
                 del updated[duplicate]
@@ -746,6 +752,9 @@ def verify_entries(shortcut, wanted):
             if actual.get(key) != fields[key]:
                 raise SystemExit(f'{fields["AppName"]}: Steam entry has incorrect {key}; '
                                  'installation is incomplete')
+        if not same_shortcut_path(actual.get('ShortcutPath'), fields.get('ShortcutPath')):
+            raise SystemExit(f'{fields["AppName"]}: Steam entry has incorrect ShortcutPath; '
+                             'installation is incomplete')
         print(f'verified : {fields["AppName"]} appid={actual["appid"] & 0xFFFFFFFF} '
               f'options={actual["LaunchOptions"]}')
         directory = Path(actual['StartDir'])
@@ -753,6 +762,19 @@ def verify_entries(shortcut, wanted):
             raise SystemExit(f'{fields["AppName"]}: Start In directory does not exist: {directory}')
         print(f'directory: {fields["AppName"]} Start In={directory} (exists)')
     return entries
+
+
+def same_shortcut_path(left, right):
+    """Compare recorded desktop-link paths, tolerating case and separator spelling."""
+    def normalized(value):
+        text = str(value or '').strip()
+        if not text:
+            return ''
+        try:
+            return str(Path(text).resolve()).replace('/', '\\').lower()
+        except (OSError, ValueError):
+            return text.replace('/', '\\').lower()
+    return normalized(left) == normalized(right)
 
 
 def upsert_all(shortcut, wanted, dry_run=False, restart=True, force=False,
@@ -847,6 +869,8 @@ def main():
     parser.add_argument('--remove', action='store_true', help='remove the shortcut')
     parser.add_argument('--launch-options', default='',
                         help='arguments Steam passes on top of Exe (e.g. --path "<project>")')
+    parser.add_argument('--shortcut-path', default='',
+                        help='desktop link Steam removes together with this entry')
     parser.add_argument('--dry-run', action='store_true', help='report without touching Steam')
     parser.add_argument('--no-restart', action='store_true',
                         help='stop Steam for the write but leave it stopped afterwards')
@@ -881,7 +905,8 @@ def main():
     restart, force = not args.no_restart, args.force
     if args.remove:
         return remove(shortcut, args.name, exe, args.dry_run, restart, force)
-    return add(shortcut, args.name, exe, args.dry_run, restart, force, args.launch_options)
+    return add(shortcut, args.name, exe, args.dry_run, restart, force, args.launch_options,
+               shortcut_path=args.shortcut_path)
 
 
 if __name__ == '__main__':

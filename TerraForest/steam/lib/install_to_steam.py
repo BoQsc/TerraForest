@@ -119,18 +119,21 @@ def refresh_icon(path):
     shell32.SHChangeNotify(SHCNE_UPDATEITEM, SHCNF_PATHW, ctypes.c_wchar_p(str(path)), None)
 
 
-def wanted_entries(name, last_world=True):
+def wanted_entries(name, last_world=True, desktop=None):
+    """Both entries; each records the desktop link Steam removes with the entry."""
     tags = tuple(json.loads(MANIFEST.read_text('utf-8')).get('tags', ()))
     names = [(name, '')] + ([(f'{name} Last World', '--continue-last')] if last_world else [])
+    links = [desktop/f'{entry_name}.lnk' if desktop else None for entry_name, _ in names]
     return [steam_tool.shortcut_fields(entry_name, TARGET.resolve(), launch_options(suffix),
-                                       str(ICON), tags) for entry_name, suffix in names]
+                                       str(ICON), tags, str(link) if link else '')
+            for (entry_name, suffix), link in zip(names, links)]
 
 
 def register(dry_run, name, restart, force, steam, account, last_world=True, shortcut=None,
-             artwork=False):
+             artwork=False, desktop=None):
     """Add the shortcut through the Steam tool; it owns the restart and the backup."""
     shortcut = shortcut or shortcut_file(steam, account)
-    wanted = wanted_entries(name, last_world)
+    wanted = wanted_entries(name, last_world, desktop)
     apply_artwork = (lambda: install_artwork(shortcut, [entry['AppName'] for entry in wanted],
                                              dry_run)) if artwork else None
     # Steam caches custom images. Even an artwork-only repair must reopen Steam
@@ -271,6 +274,10 @@ def deploy(args):
     source = args.source or next(iter(godot_sources(args.steam)), None)
     print(f'source   : {source or "<none found>"}')
     print(f'project  : {ROOT}')
+    desktop_tool = load('add_desktop_shortcuts', ROOT/'steam'/'add_desktop_shortcuts.py')
+    links = (args.desktop_folder or desktop_tool.desktop_folder()) if args.desktop else None
+    if links:
+        print(f'links    : {links}')
     prepare(source, args.force, args.dry_run)
     if not args.dry_run and not TARGET.is_file():
         raise SystemExit(f'{TARGET.name}: nothing to stamp; no source was copied')
@@ -286,15 +293,15 @@ def deploy(args):
         artwork_plan(shortcut, names)
     code = register(args.dry_run, args.name, not args.no_restart, args.force,
                     args.steam, args.account, args.last_world, shortcut=shortcut,
-                    artwork=args.artwork)
+                    artwork=args.artwork, desktop=links)
     if code == 0 and args.artwork and not args.dry_run:
         verify_artwork(shortcut, names)
     if code == 0 and args.desktop:
-        desktop = load('add_desktop_shortcuts', ROOT/'steam'/'add_desktop_shortcuts.py')
-        code = desktop.create_shortcuts(args.desktop_folder, args.dry_run, launch='steam',
+        code = desktop_tool.create_shortcuts(links, args.dry_run, launch='steam',
                     exe=TARGET, name=args.name, shortcut=shortcut, last_world=args.last_world,
                     icon=ICON,
-                    entries=wanted_entries(args.name, args.last_world) if args.dry_run else None)
+                    entries=wanted_entries(args.name, args.last_world, links)
+                    if args.dry_run else None)
     if code == 0:
         print('done     : dry run complete; nothing changed' if args.dry_run
               else 'done     : TerraForest is prepared and registered')
