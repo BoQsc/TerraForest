@@ -7,6 +7,7 @@ var next_attack:=0
 var rejection_reason:=""
 var sequence:=0
 var pending:Dictionary={}
+var queued_click:=false
 var last_hit:=false
 signal impact_resolved(identity:int,accepted:bool)
 signal impact_preparing(from:Vector3,to:Vector3)
@@ -83,7 +84,12 @@ func surface_target(data:Dictionary,hit:Dictionary)->Dictionary:
 		data.normal=hit.get("normal",(game.camera.global_position-hit.position).normalized())
 	return data
 func attack(repairing:bool=false) -> bool:
-	if not pending.is_empty() or game.session_menu.developer or not TOOLS.has(game.equipped_tool) or not game._model_edit_available() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED or game.session_menu.visible_ui():return false
+	if not pending.is_empty():
+		# Remember one click instead of dropping it: switching targets mid-swing
+		# is exactly when the next hit would otherwise be lost.
+		queued_click=true
+		return false
+	if game.session_menu.developer or not TOOLS.has(game.equipped_tool) or not game._model_edit_available() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED or game.session_menu.visible_ui():return false
 	if repairing and game.equipped_tool!=3:return false
 	var now:=Time.get_ticks_msec()
 	if now<next_attack:return false
@@ -127,6 +133,10 @@ func finish_swing(identity:int,cancelled:bool)->void:
 	if pending.is_empty() or pending.identity!=identity:return
 	if cancelled and not pending.contacted:next_attack=0
 	pending={}
+	if queued_click:
+		queued_click=false
+		next_attack=0
+		attack.call_deferred()
 func repair_target(t:Dictionary)->bool:
 	if game.equipped_tool!=3 or t.kind not in ["block","model","vehicle"]:return false
 	if t.kind=="model" and str(t.get("asset","")).begins_with("resources/"):return false

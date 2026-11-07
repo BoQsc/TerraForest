@@ -35,6 +35,12 @@ func run(game) -> void:
 		quit(1)
 		return
 	var attack = game.world_attack
+	attack.pending = {"identity": 7, "item": 1, "slot": 0, "epoch": game.terrain.epoch, "contacted": false, "repairing": false}
+	attack.attack()
+	check(attack.queued_click, "a click during a swing is remembered")
+	attack.finish_swing(7, true)
+	check(not attack.queued_click, "the remembered click is consumed when the swing ends")
+	attack.pending = {}
 	check(attack.break_event({"kind": "block", "material": "stone"}) == "world.break.stone", "stone block uses the stone break event")
 	check(attack.break_event({"kind": "block", "material": "wood"}) == "world.break.wood", "wood block uses the wood break event")
 	check(attack.break_event({"kind": "tree", "material": "wood"}) == "world.break.wood", "tree uses the wood break event")
