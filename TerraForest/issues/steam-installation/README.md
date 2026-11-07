@@ -180,12 +180,16 @@ its desktop link and a case where a missing value must fail verification. Live: 
 installer wrote both entries, restarted Steam, and its post-restart check (now
 covering `ShortcutPath`) passed; the file still held both desktop paths afterwards.
 
-Steam's removal itself was not exercised in the client UI. A probe entry
-(`TerraForest Link Probe`, appid 3433057984) and its link were staged for that, then
-removed through the tool's own `--remove` path instead, so "Steam deletes the file at
-`ShortcutPath` when the entry is removed" remains an unverified premise, not a
-measured result. Close it by removing a staged entry in Steam and checking that its
-link disappears.
+Steam's own removal was not exercised in the client UI: the desktop automation in
+that session delivered pointer clicks to the wrong window, so no Steam menu command
+ran. A probe entry (`TerraForest Link Probe`, appid 3433057984) and its link were
+staged twice. Calling the client's own `SteamClient.Apps.RemoveShortcut` for that app
+over the DevTools protocol (no clicks) dropped it from the in-memory overview, but
+the entry returned after the client restart and the link file was never deleted, so
+that call is not a valid stand-in for the UI flow. "Steam deletes the file at
+`ShortcutPath` when the entry is removed" therefore remains unverified. Close it with
+Steam's own Remove non-Steam game command on a staged entry, then check that its link
+disappears.
 
 ## Remaining / resume here
 

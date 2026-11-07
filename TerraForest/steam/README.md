@@ -14,9 +14,10 @@ Steam launch URL and icon verified before installation reports success. Both lin
 take that icon from `steam/app_icon/terraforest.ico`: the copied executable is
 re-stamped in place at the same length, so Explorer can keep the generic icon it
 cached for that path, and a raw `.lnk` write does not refresh the desktop on its own.
-Each entry also records its own link in `ShortcutPath`, so removing the non-Steam
-game in Steam removes that desktop link too; the installer verifies the stored path
-after the restart, and `--no-desktop` leaves it empty.
+Each entry also records its own link in `ShortcutPath` (`--no-desktop` leaves it
+empty) so Steam can remove that desktop link with the entry; the installer verifies
+the stored path after the restart. Steam's own removal is not covered by the
+automated checks.
 Missing or invalid Steam registration is an error, with no silent direct-executable
 fallback.
 
