@@ -1,7 +1,7 @@
 # Steam installation consistency
 
-- Status: Artwork filename/timing correction installed; engineering checks pass, visible appearance pending. Entry/link checks pass; game launch/reopen unreported.
-- Updated: 2026-11-04. Initial discovery-only fix: `cb73d62b`; complete default/logging fix: `39a4c1d7`.
+- Status: Artwork filename/timing correction installed; engineering checks pass, visible appearance pending. Entry/link checks pass; game launch/reopen unreported. Desktop shortcut icons corrected locally 2026-11-07 (generic application icon replaced); second-computer appearance unreported.
+- Updated: 2026-11-07. Initial discovery-only fix: `cb73d62b`; complete default/logging fix: `39a4c1d7`.
 - User review: 2026-11-04: initially "Seems alright" with a second-computer log, then reported missing artwork in Steam. User scoped this follow-up to artwork; metadata work is excluded for now.
 - Symptom: The same copied checkout produced different installation results on another Windows computer.
 
@@ -135,6 +135,36 @@ The Browse Local Files menu itself was not exercised by that stored-field check.
 was closed after a client fix in 2025; that Linux report alone does not diagnose
 the user's Windows client. Menu reproduction/user confirmation remains required.
 
+### Desktop shortcut icons - 2026-11-07
+
+User reported that the desktop shortcuts from `install_to_steam.pyw` looked wrong.
+Read back from the live desktop, both links were valid shell shortcuts (display name
+without `.lnk`, type "Shortcut") targeting `rundll32.exe
+url.dll,FileProtocolHandler steam://rungameid/<id>`, with icon location
+`TerraForest.exe`, index 0. A capture of the desktop view (`SHELLDLL_DefView`) drew
+the generic Windows application icon for both, not the TerraForest mark.
+
+Cause: the executable is copied and then icon-stamped in place, and the patch keeps
+the file length, so Explorer kept the icon cached for that path - the generic
+fallback stored while the 180 MB copy was still incomplete. The installer never
+announced the write to the shell. Byte-identical exe content at a fresh path, and a
+link whose icon location was `steam/app_icon/terraforest.ico`, both drew the
+TerraForest mark; that isolates the stale per-path cache entry, not the link data or
+the stamped resources.
+
+Correction: both links take their icon from `steam/app_icon/terraforest.ico`, every
+write sends `SHCNE_UPDATEITEM`, one `SHCNE_ASSOCCHANGED` follows each run, and
+stamping refreshes the executable's own icon. `read_icon` reads the stored icon
+location back, so a wrong icon fails installation instead of passing the old
+target/argument-only check.
+
+Verification: **73 Python tests pass**, with the icon assertion added to the
+integration desktop-route check. A real `python steam/add_desktop_shortcuts.py` run
+rewrote both live links (target, arguments and icon verified) and the desktop then
+drew the TerraForest icon for both. The windowed installer was not rerun end to end;
+its desktop step is this same function, called with the same `.ico`. Appearance on
+the second computer remains unreported.
+
 ## Remaining / resume here
 
 Successful game launch and Last World reopen on the second computer remain
@@ -148,6 +178,8 @@ Browse Local Files also remains pending actual UI confirmation. Return after the
 plain Start In update or direct edit in Steam Properties; close with the menu
 opening the actual project directory for both entries. If it still does nothing,
 retain the actual field value and Steam client build for the next investigation.
+Desktop icon appearance is corrected locally but unreported on the second computer:
+rerun the installer there and confirm both links show the TerraForest mark.
 
 Exported builds with separate PCK/native companions still need complete deployment;
 automatic discovery alone does not deploy them. Return when shipping that package,

@@ -15,6 +15,7 @@ Usage:
 """
 from pathlib import Path
 import argparse
+import ctypes
 import datetime
 import hashlib
 import importlib.util
@@ -30,6 +31,8 @@ ICON = ROOT/'steam'/'app_icon'/'terraforest.ico'
 MANIFEST = ROOT/'steam'/'manifest.json'
 ARTWORK = ROOT/'steam'/'artwork'
 BROWSER_SCENE = 'res://demo/worlds.tscn'
+SHCNE_UPDATEITEM = 0x00002000
+SHCNF_PATHW = 0x0005
 
 
 def load(name, path):
@@ -96,6 +99,9 @@ def stamp(dry_run, executable=None):
         return True
     payload, count, kept = app_icon.patch(TARGET, ICON)
     problems, _, _ = app_icon.check(TARGET, ICON)
+    # The patch keeps the file length, so Explorer keeps any icon it cached for this
+    # path while the copy was still incomplete. Re-read it after stamping.
+    refresh_icon(TARGET)
     print(f'icon     : {count} images stamped, .rsrc {payload} bytes, '
           f'kept {len(kept)} other resource(s)')
     if problems:
@@ -103,6 +109,14 @@ def stamp(dry_run, executable=None):
             print(f'           FAIL {problem}')
         return False
     return True
+
+
+def refresh_icon(path):
+    """Tell the shell an executable's icon changed; raw image patches do not."""
+    shell32 = ctypes.WinDLL('shell32')
+    shell32.SHChangeNotify.argtypes = [ctypes.c_long, ctypes.c_uint, ctypes.c_void_p,
+                                       ctypes.c_void_p]
+    shell32.SHChangeNotify(SHCNE_UPDATEITEM, SHCNF_PATHW, ctypes.c_wchar_p(str(path)), None)
 
 
 def wanted_entries(name, last_world=True):
@@ -279,6 +293,7 @@ def deploy(args):
         desktop = load('add_desktop_shortcuts', ROOT/'steam'/'add_desktop_shortcuts.py')
         code = desktop.create_shortcuts(args.desktop_folder, args.dry_run, launch='steam',
                     exe=TARGET, name=args.name, shortcut=shortcut, last_world=args.last_world,
+                    icon=ICON,
                     entries=wanted_entries(args.name, args.last_world) if args.dry_run else None)
     if code == 0:
         print('done     : dry run complete; nothing changed' if args.dry_run

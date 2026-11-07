@@ -10,8 +10,12 @@ all of these together:
 Last World resolves the newest saved world when it launches. No saved world needs
 to exist during installation. Re-running the installer repairs an older partial
 installation; no extra flags are needed. A desktop shortcut is read back and its
-Steam launch URL verified before installation reports success. Missing or invalid
-Steam registration is an error, with no silent direct-executable fallback.
+Steam launch URL and icon verified before installation reports success. Both links
+take that icon from `steam/app_icon/terraforest.ico`: the copied executable is
+re-stamped in place at the same length, so Explorer can keep the generic icon it
+cached for that path, and a raw `.lnk` write does not refresh the desktop on its own.
+Missing or invalid Steam registration is an error, with no silent direct-executable
+fallback.
 
 ## One log to share
 

@@ -271,10 +271,16 @@ class CompleteInstallTests(unittest.TestCase):
     def assert_desktop_routes(self, entries):
         for name in ('TerraForest', 'TerraForest Last World'):
             fields = next(entry for entry in entries.values() if entry['AppName'] == name)
-            target, args = self.desktop.read_shortcut(self.args.desktop_folder/f'{name}.lnk')
+            link = self.args.desktop_folder/f'{name}.lnk'
+            target, args = self.desktop.read_shortcut(link)
             self.assertEqual(Path(target).resolve(), self.desktop.RUNDLL.resolve())
             self.assertEqual(args, 'url.dll,FileProtocolHandler steam://rungameid/'
                              + str(self.desktop.long_app_id(fields['appid'])))
+            # The stamped executable keeps any icon Explorer cached for its path, so
+            # the link must use the small .ico and stay distinguishable on the desktop.
+            icon, index = self.desktop.read_icon(link)
+            self.assertEqual(Path(icon).resolve(), self.desktop.APP_ICON.resolve())
+            self.assertEqual(index, 0)
 
     def assert_artwork_slots(self):
         # Independent expected Steam suffixes/dimensions, not copied from the manifest.

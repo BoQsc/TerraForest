@@ -11,6 +11,12 @@ options stop with a repair message. The installer passes its selected account's
 entries directly. `--launch native` deliberately selects executable launch;
 `--launch auto` retains the optional fallback behavior for development use.
 
+Both links take their icon from `steam/app_icon/terraforest.ico`, never from the
+executable: the exe is copied and re-stamped in place at the same size, so Explorer
+keeps whatever icon it cached for that path (observed: the generic application icon)
+until the icon cache is rebuilt. Writing a .lnk directly also bypasses the shell, so
+each write notifies Explorer and one icon-cache rebuild follows per run.
+
 *TerraForest* opens the world list. *TerraForest Last World* continues the newest
 world, chosen by the game itself (it orders saves by last played). Re-running the
 script rewrites both shortcuts in place.
@@ -39,6 +45,11 @@ WORLD_ARGS = ['--ground-cover', '--actors', '--vehicle-fleet', '--max-fps=60']
 RUNDLL = Path(os.environ.get('SystemRoot', r'C:\Windows'))/'System32'/'rundll32.exe'
 # Steam's "long" app id for a non-Steam shortcut: (shortcut app id << 32) | 0x02000000.
 SHORTCUT_APPID_FLAG = 0x02000000
+# Shortcut icon: a small file that is never rewritten, unlike the stamped executable.
+APP_ICON = PROJECT/'steam'/'app_icon'/'terraforest.ico'
+SHCNE_UPDATEITEM = 0x00002000
+SHCNE_ASSOCCHANGED = 0x08000000
+SHCNF_PATHW = 0x0005
 
 ole32 = ctypes.OleDLL('ole32')
 ole32.CoInitializeEx.argtypes = [ctypes.c_void_p, w.DWORD]
@@ -49,6 +60,8 @@ shell32 = ctypes.WinDLL('shell32')
 shell32.SHGetKnownFolderPath.argtypes = [ctypes.c_void_p, w.DWORD, w.HANDLE,
                                          ctypes.POINTER(ctypes.c_void_p)]
 shell32.SHGetKnownFolderPath.restype = ctypes.c_long
+shell32.SHChangeNotify.argtypes = [ctypes.c_long, ctypes.c_uint, ctypes.c_void_p,
+                                   ctypes.c_void_p]
 CLSCTX_INPROC_SERVER = 1
 CLSID_SHELLLINK = '{00021401-0000-0000-C000-000000000046}'
 IID_ISHELLLINKW = '{000214F9-0000-0000-C000-000000000046}'
@@ -110,12 +123,23 @@ def remove_shortcuts(folder=None, dry_run=False):
     return 0
 
 
+def refresh_shell(path):
+    """Ask Explorer to re-read one item; a raw .lnk write does not announce itself."""
+    shell32.SHChangeNotify(SHCNE_UPDATEITEM, SHCNF_PATHW, ctypes.c_wchar_p(str(path)), None)
+
+
+def flush_icon_cache():
+    """Rebuild cached icons; a stale per-path entry survives per-item updates."""
+    shell32.SHChangeNotify(SHCNE_ASSOCCHANGED, 0, None, None)
+
+
 def create_shortcuts(folder=None, dry_run=False, launch='steam', exe=None, name=None,
-                     shortcut=None, entries=None, last_world=True):
+                     shortcut=None, entries=None, last_world=True, icon=None):
     """Write both .lnk files with the same plan main() uses; for other tools to call."""
     executable = exe or PROJECT/f'{project_name()}.exe'
     if not dry_run and not executable.is_file():
         raise SystemExit(f'{executable}: missing; run install_to_steam.py first')
+    icon = Path(icon) if icon else (APP_ICON if APP_ICON.is_file() else executable)
     target = folder or desktop_folder()
     name = name or project_name()
     if entries is None and shortcut is not None:
@@ -136,12 +160,17 @@ def create_shortcuts(folder=None, dry_run=False, launch='steam', exe=None, name=
             print(f'{action:8} : {link.name} [{item["mode"]}] (dry run)')
             continue
         write_shortcut(link, item['target'], command_line(item['arguments']), PROJECT,
-                       item['description'], executable)
+                       item['description'], icon)
         actual_target, actual_arguments = read_shortcut(link)
+        actual_icon, icon_index = read_icon(link)
         expected_arguments = command_line(item['arguments'])
         if Path(actual_target).resolve() != item['target'].resolve() or actual_arguments != expected_arguments:
             raise SystemExit(f'{link}: shortcut read-back failed; installation is incomplete')
+        if Path(actual_icon).resolve() != icon.resolve() or icon_index != 0:
+            raise SystemExit(f'{link}: shortcut icon read-back failed; installation is incomplete')
         print(f'verified : {link} [{item["mode"]}] -> {actual_target} {actual_arguments}')
+    if not dry_run:
+        flush_icon_cache()
     return 0
 
 
@@ -237,10 +266,11 @@ def write_shortcut(link, target, arguments, working_directory, description, icon
     save = _vtable_method(persist, 6, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int)
     if save(persist, str(link), 1) != 0:
         raise SystemExit(f'{link}: Save failed')
+    refresh_shell(link)
 
 
-def read_shortcut(link):
-    """(target, arguments) of an existing .lnk, for checking the result."""
+def _load_link(link):
+    """IShellLinkW loaded from an existing .lnk."""
     pointer = _shell_link()
     persist = ctypes.c_void_p()
     query = _vtable_method(pointer, 0, ctypes.c_long, ctypes.c_void_p, ctypes.c_void_p)
@@ -250,6 +280,12 @@ def read_shortcut(link):
     load = _vtable_method(persist, 5, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int)
     if load(persist, str(link), 0) != 0:
         raise SystemExit(f'{link}: Load failed')
+    return pointer
+
+
+def read_shortcut(link):
+    """(target, arguments) of an existing .lnk, for checking the result."""
+    pointer = _load_link(link)
     buffer = ctypes.create_unicode_buffer(1024)
     _vtable_method(pointer, 3, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int,
                    ctypes.c_void_p, w.DWORD)(pointer, buffer, 1024, None, 0)
@@ -258,6 +294,16 @@ def read_shortcut(link):
     _vtable_method(pointer, 10, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int)(
         pointer, arguments, 4096)
     return target, arguments.value
+
+
+def read_icon(link):
+    """(icon path, index) of an existing .lnk, so a wrong icon cannot pass silently."""
+    pointer = _load_link(link)
+    icon = ctypes.create_unicode_buffer(1024)
+    index = ctypes.c_int(-1)
+    _vtable_method(pointer, 16, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int,
+                   ctypes.POINTER(ctypes.c_int))(pointer, icon, 1024, ctypes.byref(index))
+    return icon.value, index.value
 
 
 _STEAM = None
@@ -380,6 +426,9 @@ def main():
     parser.add_argument('--folder', type=Path, help='where to put the shortcuts (default: desktop)')
     parser.add_argument('--exe', type=Path, default=PROJECT/f'{project_name()}.exe',
                         help='executable the shortcuts start')
+    parser.add_argument('--icon', type=Path,
+                        default=APP_ICON if APP_ICON.is_file() else None,
+                        help='icon both links show (default: steam/app_icon/terraforest.ico)')
     parser.add_argument('--worlds-dir', type=Path, help='override the user://worlds folder')
 
     parser.add_argument('--launch', choices=('auto', 'steam', 'native'), default='steam',
@@ -390,6 +439,7 @@ def main():
     folder = args.folder or desktop_folder()
     if not args.exe.is_file():
         raise SystemExit(f'{args.exe}: missing; run install_to_steam.py first')
+    icon = args.icon if args.icon and args.icon.is_file() else args.exe
     slot = newest_world(args.worlds_dir or worlds_dir())
     name = project_name()
     plain_file, plain_fields = steam_entry(args.exe, name)
@@ -421,12 +471,18 @@ def main():
                   f'           {item["target"]} {command_line(item["arguments"])}')
             continue
         write_shortcut(link, item['target'], command_line(item['arguments']), PROJECT,
-                       item['description'], args.exe)
+                       item['description'], icon)
         target, stored = read_shortcut(link)
+        shown_icon, _ = read_icon(link)
         print(f'{action}d  : {link.name} [{item["mode"]}] -> {target}\n           {stored}')
-        if Path(target).resolve() != item['target'].resolve() or stored != command_line(item['arguments']):
+        if (Path(target).resolve() != item['target'].resolve()
+                or stored != command_line(item['arguments'])
+                or Path(shown_icon).resolve() != Path(icon).resolve()):
             print(f'warning  : {link.name} did not read back as expected', file=sys.stderr)
             status = 1
+
+    if not args.dry_run:
+        flush_icon_cache()
 
     if args.launch != 'native':
         for label, fields, wanted in (
