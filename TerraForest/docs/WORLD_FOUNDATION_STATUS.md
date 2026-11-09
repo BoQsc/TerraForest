@@ -159,6 +159,23 @@ retain clocks/limiting state, and physics-body/animation, save and render costs
 remain prerequisites for a headroom claim. Both arrival captures were inspected;
 the latest matching package and all failed/unqualified gates are linked above.
 
+[Native structures save capture](../issues/runtime-performance/structures-save-capture-2026-11-09.md)
+now moves canonical encoding/hash work to the existing ordered worker. Exact
+full/partial data, admission, queued edits, rejected saves and shutdown checks
+pass in source/release. Two packaged captures fall to 0.782/0.790 ms from observed
+legacy costs of 7.068–11.572 ms; frozen buffers release after encoding. Four
+packaged save/shutdowns exit without leak diagnostics and inspected arrival views
+match. This does not establish frame-time nonregression: repeated gameplay p99
+still varies up to 38.101 ms, and the final legacy control overlaps another
+checkout's import. A 702.654 ms control stall is mostly time before process;
+another sample has 22.080 ms physics and 19.862 ms draw intervals. Broad
+physics/render attribution and waits take priority over further pursuit-only
+optimization. Close the remaining pacing gate with uncontended traversal/save
+repeats and clock/host telemetry; close memory stability with sustained workloads.
+Native freeze remains O(resident data), with a 128 MiB pending-copy cap excluding
+encoder temporaries. Return to copy-on-write/delta storage when scale/backlog
+exposes that cost. Existing failing water/interaction gates remain open.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,

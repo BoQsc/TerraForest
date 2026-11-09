@@ -1,0 +1,1533 @@
+{
+  "schema": 1,
+  "implementation_commit": "9a2cd2b8f426ae9abfc6761c509ea9c0f0a145b2",
+  "scope": "Native frozen structure save capture; save latency improvement only. Whole-frame stability and controlled performance nonregression remain unqualified.",
+  "origin": "Original AI-assisted implementation and fixture under 0BSD; no imported code/assets/dependencies.",
+  "checks": {
+    "capture_debug": {
+      "path": "reports/checks/20261109T163237700426Z",
+      "manifest_sha256": "0fbcdb900d0fdec8cc421d8b9f88053991ce63a4d8855526c3baf97645a14afc",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 21744,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 34836480,
+          "peak_working_set_bytes": 76832768,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 34836480,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.5055455999681726,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 919584868,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    "persistence_debug": {
+      "path": "reports/checks/20261109T163131810076Z",
+      "manifest_sha256": "6e61453796467d32d103aa029eedca111acfd2c545fb11e46e93fb3653be3a87",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 47708,
+        "exit_code": 0,
+        "resources": {
+          "samples": 3,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 220114944,
+          "peak_working_set_bytes": 211197952,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 220114944,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 1.323806899948977,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\structure_persistence_a836153459fb4fc1b5c4d1cf244ee8ca",
+          "retained_bytes": 0,
+          "failed_cache_bytes": 919584868,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    "region_persistence_debug": {
+      "path": "reports/checks/20261109T163133779611Z",
+      "manifest_sha256": "d3bc9a6409bc3000d76d1918fc55f7efa134037f586185dcac858038c5822ab4",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 14488,
+        "exit_code": 0,
+        "resources": {
+          "samples": 3,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 132108288,
+          "peak_working_set_bytes": 150179840,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 132108288,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 1.8694548000348732,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\structure_persistence_9493d51370cf46e09e6b5edf5b54026e",
+          "retained_bytes": 0,
+          "failed_cache_bytes": 919584868,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    "save_barriers": {
+      "path": "reports/checks/20261109T163238826966Z",
+      "manifest_sha256": "92a44387738252a7b63fe8917774cd94a6aba098ecdbe6ec493ad5fcfe59e08c",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 29572,
+        "exit_code": 0,
+        "resources": {
+          "samples": 2,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 101244928,
+          "peak_working_set_bytes": 119435264,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 101244928,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.8614943999564275,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 919584868,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    "destruction_batches": {
+      "path": "reports/checks/20261109T163240277856Z",
+      "manifest_sha256": "0d4041e9017f37ee2097cee60af43fced02a014d9b70766bcb7285b512a19dba",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 31016,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 30277632,
+          "peak_working_set_bytes": 59355136,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 30277632,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.5852245999267325,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 919584868,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    "capture_release": {
+      "path": "reports/structures_capture_release.json",
+      "sha256": "5c1868b61636ea81938234b90d083623e88850b80f13b467c6bb439154477a98",
+      "failures": 0,
+      "checks": 25,
+      "library_sha256": "e5f88dc8e8eb516c3e0e68d0da759a06eda0179bf1fc8ce8ac4aef1b3fa8db42"
+    },
+    "region_persistence_release": {
+      "path": "reports/structure_region_persistence_release.json",
+      "sha256": "66ca3a82d9f66275692135060e71b1c8976816fe9db42d08b2fbeb39425bfc6a",
+      "failures": 0,
+      "checks": 82,
+      "library_sha256": "e5f88dc8e8eb516c3e0e68d0da759a06eda0179bf1fc8ce8ac4aef1b3fa8db42"
+    }
+  },
+  "native_fixture": {
+    "checks": 25,
+    "failures": 0,
+    "measurements": [
+      {
+        "bytes": 62688,
+        "main_us": 1574,
+        "mode": "legacy"
+      },
+      {
+        "bytes": 62688,
+        "capture": {
+          "capture_bytes": 2159944,
+          "capture_us": 637,
+          "chunks": 256,
+          "complete": true,
+          "missing_regions": 0,
+          "model_collections": 2,
+          "model_records": 1024,
+          "pending_bytes": 2159944,
+          "pending_limit_bytes": 134217728,
+          "reserved_bytes": 2159944,
+          "serialized": false,
+          "serialized_bytes": 0
+        },
+        "main_us": 663,
+        "mode": "native",
+        "worker_us": 2975
+      },
+      {
+        "bytes": 62688,
+        "capture": {
+          "capture_bytes": 2159944,
+          "capture_us": 528,
+          "chunks": 256,
+          "complete": true,
+          "missing_regions": 0,
+          "model_collections": 2,
+          "model_records": 1024,
+          "pending_bytes": 2159944,
+          "pending_limit_bytes": 134217728,
+          "reserved_bytes": 2159944,
+          "serialized": false,
+          "serialized_bytes": 0
+        },
+        "main_us": 541,
+        "mode": "native",
+        "worker_us": 2870
+      },
+      {
+        "bytes": 62688,
+        "main_us": 1647,
+        "mode": "legacy"
+      }
+    ],
+    "library": "structures.windows.template_release.x86_64.dll",
+    "library_sha256": "e5f88dc8e8eb516c3e0e68d0da759a06eda0179bf1fc8ce8ac4aef1b3fa8db42",
+    "baseline_native_commit": null
+  },
+  "runs": [
+    {
+      "path": "reports/performance_changes/20261109T163510662885Z_legacy_save_a",
+      "manifest_sha256": "6fbe5a56765ce83f8d9b50b415fbebd9b52b4c760f24562d912a0e8f0ae60236",
+      "observation_sha256": "6e52651d7f3c703ced66badea9f8d1471a4fd9120ddfa25d1f68c15ce0eb9f2f",
+      "engine_log_sha256": "46b7220cf419801ad54e9a5b6e441bf8940c94180a1da1ac781317489c263f5b",
+      "image_sha256": "4ff18c2fb852d9ca8407582beada85971737de01fcde69a4b963322da3d7bc07",
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "samples": 123,
+        "gpu_samples": 121,
+        "peak_private_commit_bytes": 3871076352,
+        "peak_working_set_bytes": 2315902976,
+        "peak_dedicated_gpu_bytes": 1474990080,
+        "checks": {
+          "ram": {
+            "bytes": 3871076352,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1474990080,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "free_space_warning_bytes": 10737418240,
+          "minimum_free_bytes": 2147483648,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "legacy": true,
+      "save": {
+        "completed": true,
+        "success": true,
+        "capture_total_us": 21396,
+        "structures": {
+          "bytes": 155898,
+          "us": 11572
+        },
+        "stats": null
+      },
+      "triggered_gameplay": {
+        "frame_ms": {
+          "samples": 1319,
+          "mean": 20.233372251705838,
+          "p50": 18.319,
+          "p95": 30.132,
+          "p99": 36.501,
+          "maximum": 702.654
+        },
+        "process_ms": {
+          "samples": 1319,
+          "mean": 2.9096891584533737,
+          "p50": 1.996,
+          "p95": 7.72,
+          "p99": 10.829,
+          "maximum": 25.209
+        },
+        "draw_ms": {
+          "samples": 1319,
+          "mean": 11.125082638362397,
+          "p50": 10.501,
+          "p95": 15.423,
+          "p99": 19.455,
+          "maximum": 26.617
+        },
+        "before_process_ms": {
+          "samples": 1319,
+          "mean": 6.028554207733131,
+          "p50": 4.543,
+          "p95": 10.706,
+          "p99": 14.903,
+          "maximum": 692.813
+        },
+        "after_process_ms": {
+          "samples": 1319,
+          "mean": 0.17004624715693706,
+          "p50": 0.128,
+          "p95": 0.251,
+          "p99": 0.632,
+          "maximum": 19.948
+        },
+        "physics_ms": {
+          "samples": 1319,
+          "mean": 4.017385140257771,
+          "p50": 3.173,
+          "p95": 8.577,
+          "p99": 11.648,
+          "maximum": 28.684
+        },
+        "gpu_ms": {
+          "samples": 1319,
+          "mean": 7.774771045065902,
+          "p50": 7.70300006866455,
+          "p95": 8.68400001525879,
+          "p99": 9.06999969482422,
+          "maximum": 9.39599990844727
+        },
+        "render_cpu_ms": {
+          "samples": 1319,
+          "mean": 7.631943153196253,
+          "p50": 7.18599987030029,
+          "p95": 10.8769998550415,
+          "p99": 13.6400003433228,
+          "maximum": 20.5319995880127
+        },
+        "recorder_previous_us": {
+          "samples": 1319,
+          "mean": 335.1250947687642,
+          "p50": 315,
+          "p95": 464,
+          "p99": 574,
+          "maximum": 1712
+        },
+        "draw_calls": {
+          "samples": 1319,
+          "mean": 5397.435936315391,
+          "p50": 5418.0,
+          "p95": 5418.0,
+          "p99": 5418.0,
+          "maximum": 5418.0
+        },
+        "primitives": {
+          "samples": 1319,
+          "mean": 4227516.855951479,
+          "p50": 4238409.0,
+          "p95": 4238429.0,
+          "p99": 4238429.0,
+          "maximum": 4238429.0
+        },
+        "over_20ms_frames": 493
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "samples": 558,
+            "mean": 21.551693548387096,
+            "p50": 20.588,
+            "p95": 31.197,
+            "p99": 36.13,
+            "maximum": 44.429
+          },
+          "gpu_ms": {
+            "samples": 558,
+            "mean": 7.651112911094474,
+            "p50": 7.53700017929077,
+            "p95": 8.53800010681152,
+            "p99": 8.84700012207031,
+            "maximum": 9.19999980926514
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "samples": 85,
+            "mean": 18.610611764705883,
+            "p50": 17.447,
+            "p95": 25.837,
+            "p99": 43.089,
+            "maximum": 43.089
+          },
+          "gpu_ms": {
+            "samples": 85,
+            "mean": 7.800870598063749,
+            "p50": 7.70300006866455,
+            "p95": 8.75,
+            "p99": 8.90499973297119,
+            "maximum": 8.90499973297119
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "samples": 280,
+            "mean": 17.89522142857143,
+            "p50": 16.519,
+            "p95": 28.22,
+            "p99": 39.125,
+            "maximum": 65.914
+          },
+          "gpu_ms": {
+            "samples": 280,
+            "mean": 7.903396437849318,
+            "p50": 7.83099985122681,
+            "p95": 8.83300018310547,
+            "p99": 9.23400020599365,
+            "maximum": 9.36900043487549
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "samples": 394,
+            "mean": 20.345730964467005,
+            "p50": 17.709,
+            "p95": 26.515,
+            "p99": 36.781,
+            "maximum": 703.468
+          },
+          "gpu_ms": {
+            "samples": 394,
+            "mean": 7.851946702463373,
+            "p50": 7.79300022125244,
+            "p95": 8.72200012207031,
+            "p99": 9.21500015258789,
+            "maximum": 9.39599990844727
+          }
+        }
+      },
+      "traces": [
+        {
+          "path": "trace_00.json",
+          "sha256": "5653bbfaf1b8b2ebd88199653b76d16c2e8d828e896bfa8e5c8ae42b61b7b238"
+        },
+        {
+          "path": "trace_01.json",
+          "sha256": "fabfe41bb5f17f67cfdf631903d0652b4fc8b8d64cab9fddbcf7ec62052ca753"
+        },
+        {
+          "path": "trace_02.json",
+          "sha256": "6271313da8da1e07d272e4a1f2cea63a0f90b5fe00123cac695046c0fb3af767"
+        },
+        {
+          "path": "trace_03.json",
+          "sha256": "39787b9f270d94f03aa9562ea0d23c847c8eeec80d90d0918ca92f0ef95bfadc"
+        },
+        {
+          "path": "trace_04.json",
+          "sha256": "a975776ccdfb9a04b5fac7a95d7a622e34b8d561fb56335c6e2d1baa01b5cf14"
+        }
+      ],
+      "visual_review": "Inspected arrival view: same brick room, doorway, hand/tool pose, HUD and nearby composition; scoped parity only, not general visual approval."
+    },
+    {
+      "path": "reports/performance_changes/20261109T163741077835Z_frozen_save_b_retry",
+      "manifest_sha256": "9e3370ab50bb6161be8054e62db691dab1fe484ec5b26c6cdac73b7ddc4297a8",
+      "observation_sha256": "59bcc35349b906c8c6e332a3ed637e5f23fd84831c2b8f0ea8b18f37bc94c993",
+      "engine_log_sha256": "aa17acf3323460643cffd8b942eac608c005ae19003c94bbeec8314e1252c6c0",
+      "image_sha256": "8cdba7a9831d526dd38ae44ef696d1f785d3534f0ca48e02fdb75adf02369dbc",
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "samples": 109,
+        "gpu_samples": 109,
+        "peak_private_commit_bytes": 3870244864,
+        "peak_working_set_bytes": 2329358336,
+        "peak_dedicated_gpu_bytes": 1474990080,
+        "checks": {
+          "ram": {
+            "bytes": 3870244864,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1474990080,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "free_space_warning_bytes": 10737418240,
+          "minimum_free_bytes": 2147483648,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "legacy": false,
+      "save": {
+        "completed": true,
+        "success": true,
+        "capture_total_us": 4133,
+        "structures": {
+          "bytes": -1,
+          "object_class": "NativeStructuresCapture",
+          "object_id": "-9223367651827356876",
+          "us": 782
+        },
+        "stats": {
+          "capture_bytes": 1584460,
+          "capture_us": 747,
+          "chunks": 182,
+          "complete": true,
+          "missing_regions": 373,
+          "model_collections": 26,
+          "model_records": 832,
+          "pending_bytes": 0,
+          "pending_limit_bytes": 134217728,
+          "reserved_bytes": 0,
+          "serialized": true,
+          "serialized_bytes": 155898
+        }
+      },
+      "triggered_gameplay": {
+        "frame_ms": {
+          "samples": 1509,
+          "mean": 17.358164347249836,
+          "p50": 16.709,
+          "p95": 23.722,
+          "p99": 28.492,
+          "maximum": 39.972
+        },
+        "process_ms": {
+          "samples": 1509,
+          "mean": 2.292306825712392,
+          "p50": 1.48,
+          "p95": 5.845,
+          "p99": 8.989,
+          "maximum": 12.476
+        },
+        "draw_ms": {
+          "samples": 1509,
+          "mean": 9.455380384360504,
+          "p50": 8.929,
+          "p95": 13.381,
+          "p99": 16.028,
+          "maximum": 23.423
+        },
+        "before_process_ms": {
+          "samples": 1509,
+          "mean": 5.482071570576541,
+          "p50": 5.282,
+          "p95": 8.382,
+          "p99": 10.398,
+          "maximum": 13.836
+        },
+        "after_process_ms": {
+          "samples": 1509,
+          "mean": 0.12840556660039762,
+          "p50": 0.11,
+          "p95": 0.224,
+          "p99": 0.329,
+          "maximum": 2.762
+        },
+        "physics_ms": {
+          "samples": 1509,
+          "mean": 3.052809145129225,
+          "p50": 2.761,
+          "p95": 5.036,
+          "p99": 8.619,
+          "maximum": 11.395
+        },
+        "gpu_ms": {
+          "samples": 1509,
+          "mean": 7.924127901998713,
+          "p50": 7.87200021743774,
+          "p95": 8.89200019836426,
+          "p99": 9.24499988555908,
+          "maximum": 9.61999988555908
+        },
+        "render_cpu_ms": {
+          "samples": 1509,
+          "mean": 6.43034526004627,
+          "p50": 6.03399991989136,
+          "p95": 9.20199966430664,
+          "p99": 11.6260004043579,
+          "maximum": 17.7119998931885
+        },
+        "recorder_previous_us": {
+          "samples": 1509,
+          "mean": 285.870112657389,
+          "p50": 270,
+          "p95": 388,
+          "p99": 465,
+          "maximum": 1044
+        },
+        "draw_calls": {
+          "samples": 1509,
+          "mean": 5403.549370444002,
+          "p50": 5418.0,
+          "p95": 5418.0,
+          "p99": 5418.0,
+          "maximum": 5418.0
+        },
+        "primitives": {
+          "samples": 1509,
+          "mean": 4230351.347249834,
+          "p50": 4238327.0,
+          "p95": 4238429.0,
+          "p99": 4238429.0,
+          "maximum": 4238429.0
+        },
+        "over_20ms_frames": 240
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "samples": 662,
+            "mean": 18.149577039274924,
+            "p50": 17.117,
+            "p95": 25.85,
+            "p99": 31.127,
+            "maximum": 40.032
+          },
+          "gpu_ms": {
+            "samples": 662,
+            "mean": 7.954031724584067,
+            "p50": 7.94299983978271,
+            "p95": 8.9370002746582,
+            "p99": 9.33300018310547,
+            "maximum": 9.54699993133545
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "samples": 67,
+            "mean": 16.618955223880597,
+            "p50": 15.916,
+            "p95": 23.43,
+            "p99": 24.987,
+            "maximum": 24.987
+          },
+          "gpu_ms": {
+            "samples": 67,
+            "mean": 8.034089558160128,
+            "p50": 7.97700023651123,
+            "p95": 8.82900047302246,
+            "p99": 9.38700008392334,
+            "maximum": 9.38700008392334
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "samples": 298,
+            "mean": 16.800053691275167,
+            "p50": 16.569,
+            "p95": 22.006,
+            "p99": 24.969,
+            "maximum": 34.435
+          },
+          "gpu_ms": {
+            "samples": 298,
+            "mean": 7.928275177142764,
+            "p50": 7.85099983215332,
+            "p95": 8.79699993133545,
+            "p99": 9.23299980163574,
+            "maximum": 9.44600009918213
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "samples": 480,
+            "mean": 16.707943750000002,
+            "p50": 16.549,
+            "p95": 20.575,
+            "p99": 25.602,
+            "maximum": 30.613
+          },
+          "gpu_ms": {
+            "samples": 480,
+            "mean": 7.865889581044515,
+            "p50": 7.77500009536743,
+            "p95": 8.93400001525879,
+            "p99": 9.24499988555908,
+            "maximum": 9.61999988555908
+          }
+        }
+      },
+      "traces": [
+        {
+          "path": "trace_00.json",
+          "sha256": "c6111aa956ac4ab0e8d43cfc7fd84d90f532aad352d8792aa6764771d4787c11"
+        },
+        {
+          "path": "trace_01.json",
+          "sha256": "ed195d59ea4b1044f95c25422d636e7178fbdfad7a5b94cb66b315e2e3daebe3"
+        },
+        {
+          "path": "trace_02.json",
+          "sha256": "a0fb82782c522456d4e76fb53e51ddd549a3f3b0f6c4abfe8b863de61a238278"
+        },
+        {
+          "path": "trace_03.json",
+          "sha256": "0bedf4f1e762a4655115d81fef2668d04ed54caac4106bf68adc04f13751b29b"
+        },
+        {
+          "path": "trace_04.json",
+          "sha256": "d831d2cb35ea7f2ce117c90a4c4da5911faa02dfa7775c7205677347297391bb"
+        }
+      ],
+      "visual_review": "Inspected arrival view: same brick room, doorway, hand/tool pose, HUD and nearby composition; scoped parity only, not general visual approval."
+    },
+    {
+      "path": "reports/performance_changes/20261109T163851059267Z_frozen_save_b2",
+      "manifest_sha256": "6cc760cf6807407784a577270cec16334a630cb25f5b1839f8288db73dbbf9a4",
+      "observation_sha256": "950c95d5022f14d345d53118953de03804d69a9ee2dc429af353f1b92cbfab03",
+      "engine_log_sha256": "7fe1fb8b15a9fa1aad6511506487a1ec407d4dfaec4c2cf8f62b98e42c799fac",
+      "image_sha256": "6ba60fbf07f2776affaa5d23bfbbc007fcd44b46c4cbfc432ca2daf556150e62",
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "samples": 108,
+        "gpu_samples": 107,
+        "peak_private_commit_bytes": 3864506368,
+        "peak_working_set_bytes": 2326872064,
+        "peak_dedicated_gpu_bytes": 1474994176,
+        "checks": {
+          "ram": {
+            "bytes": 3864506368,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1474994176,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "free_space_warning_bytes": 10737418240,
+          "minimum_free_bytes": 2147483648,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "legacy": false,
+      "save": {
+        "completed": true,
+        "success": true,
+        "capture_total_us": 4352,
+        "structures": {
+          "bytes": -1,
+          "object_class": "NativeStructuresCapture",
+          "object_id": "-9223367584030627066",
+          "us": 790
+        },
+        "stats": {
+          "capture_bytes": 1584460,
+          "capture_us": 741,
+          "chunks": 182,
+          "complete": true,
+          "missing_regions": 373,
+          "model_collections": 26,
+          "model_records": 832,
+          "pending_bytes": 0,
+          "pending_limit_bytes": 134217728,
+          "reserved_bytes": 0,
+          "serialized": true,
+          "serialized_bytes": 155898
+        }
+      },
+      "triggered_gameplay": {
+        "frame_ms": {
+          "samples": 1391,
+          "mean": 19.03891660675773,
+          "p50": 17.639,
+          "p95": 29.036,
+          "p99": 38.101,
+          "maximum": 47.827
+        },
+        "process_ms": {
+          "samples": 1391,
+          "mean": 2.684785046728972,
+          "p50": 1.906,
+          "p95": 6.598,
+          "p99": 9.552,
+          "maximum": 19.732
+        },
+        "draw_ms": {
+          "samples": 1391,
+          "mean": 10.899633357296908,
+          "p50": 10.272,
+          "p95": 15.295,
+          "p99": 18.585,
+          "maximum": 22.328
+        },
+        "before_process_ms": {
+          "samples": 1391,
+          "mean": 5.301471603163192,
+          "p50": 4.45,
+          "p95": 11.193,
+          "p99": 15.26,
+          "maximum": 25.696
+        },
+        "after_process_ms": {
+          "samples": 1391,
+          "mean": 0.15302659956865566,
+          "p50": 0.129,
+          "p95": 0.26,
+          "p99": 0.509,
+          "maximum": 3.312
+        },
+        "physics_ms": {
+          "samples": 1391,
+          "mean": 3.9854953271028033,
+          "p50": 3.246,
+          "p95": 9.115,
+          "p99": 12.957,
+          "maximum": 22.956
+        },
+        "gpu_ms": {
+          "samples": 1391,
+          "mean": 8.01470093552283,
+          "p50": 7.98699998855591,
+          "p95": 9.04399967193604,
+          "p99": 9.38899993896484,
+          "maximum": 9.62800025939941
+        },
+        "render_cpu_ms": {
+          "samples": 1391,
+          "mean": 7.390399714153847,
+          "p50": 6.89200019836426,
+          "p95": 10.6499996185303,
+          "p99": 12.9409999847412,
+          "maximum": 17.0699996948242
+        },
+        "recorder_previous_us": {
+          "samples": 1391,
+          "mean": 327.88353702372393,
+          "p50": 304,
+          "p95": 456,
+          "p99": 584,
+          "maximum": 1263
+        },
+        "draw_calls": {
+          "samples": 1391,
+          "mean": 5378.741193386053,
+          "p50": 5394.0,
+          "p95": 5394.0,
+          "p99": 5394.0,
+          "maximum": 5394.0
+        },
+        "primitives": {
+          "samples": 1391,
+          "mean": 4222747.833932423,
+          "p50": 4231209.0,
+          "p95": 4231229.0,
+          "p99": 4231229.0,
+          "maximum": 4231229.0
+        },
+        "over_20ms_frames": 394
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "samples": 596,
+            "mean": 20.149708053691278,
+            "p50": 18.61,
+            "p95": 31.069,
+            "p99": 39.22,
+            "maximum": 42.732
+          },
+          "gpu_ms": {
+            "samples": 596,
+            "mean": 7.899511750112444,
+            "p50": 7.88800001144409,
+            "p95": 8.92800045013428,
+            "p99": 9.35400009155273,
+            "maximum": 9.62800025939941
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "samples": 60,
+            "mean": 23.07095,
+            "p50": 21.547,
+            "p95": 38.734,
+            "p99": 47.799,
+            "maximum": 47.799
+          },
+          "gpu_ms": {
+            "samples": 60,
+            "mean": 8.153150002161661,
+            "p50": 8.22000026702881,
+            "p95": 9.13099956512451,
+            "p99": 9.14900016784668,
+            "maximum": 9.14900016784668
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "samples": 285,
+            "mean": 17.594108771929825,
+            "p50": 16.885,
+            "p95": 23.106,
+            "p99": 28.01,
+            "maximum": 28.882
+          },
+          "gpu_ms": {
+            "samples": 285,
+            "mean": 8.106424547496594,
+            "p50": 8.12399959564209,
+            "p95": 9.13000011444092,
+            "p99": 9.43299961090088,
+            "maximum": 9.48099994659424
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "samples": 448,
+            "mean": 17.904002232142858,
+            "p50": 16.868,
+            "p95": 26.407,
+            "p99": 33.565,
+            "maximum": 42.044
+          },
+          "gpu_ms": {
+            "samples": 448,
+            "mean": 8.091729916632175,
+            "p50": 8.08199977874756,
+            "p95": 9.19499969482422,
+            "p99": 9.41499996185303,
+            "maximum": 9.55900001525879
+          }
+        }
+      },
+      "traces": [
+        {
+          "path": "trace_00.json",
+          "sha256": "3bdd149c7d60532fed6ca0cedf3d54de3c0510ac2856c97e354df29e296eb0cc"
+        },
+        {
+          "path": "trace_01.json",
+          "sha256": "1ff7a96cf2277583cd4140db5857a07f1a2279a4b13ec665ece23ac0a4fa3a78"
+        },
+        {
+          "path": "trace_02.json",
+          "sha256": "5583fa9cc18e95566c8544281c457f2eb25faff34edd2898d393ee7712716a65"
+        },
+        {
+          "path": "trace_03.json",
+          "sha256": "5ae76153c2283c189300e9b8d27d12dc3e00171701119e69743c322913c55ae3"
+        },
+        {
+          "path": "trace_04.json",
+          "sha256": "d9b3d81eb0d37c6187ee901180cc179a466e8f1b8f40db5113ac707757e5f2fa"
+        }
+      ],
+      "visual_review": "Inspected arrival view: same brick room, doorway, hand/tool pose, HUD and nearby composition; scoped parity only, not general visual approval."
+    },
+    {
+      "path": "reports/performance_changes/20261109T163959538634Z_legacy_save_a2",
+      "manifest_sha256": "497bcc18a1925d644b6f9ba61b8e9a4b06839008fbd873a9e06c4e43d03297db",
+      "observation_sha256": "5e455b3ea54e7eedc3fd65e153d7788e5a6c4de06313ff0e86b8753d5eb5bdf5",
+      "engine_log_sha256": "d95b100cbb8ccb3025934a74127ee489fee618096ebeeb50fd5d89a6866554a0",
+      "image_sha256": "09b716e0f68650134eff5975323f6bdd25b6be807cd29a669dcab98ca5d287c5",
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "samples": 124,
+        "gpu_samples": 123,
+        "peak_private_commit_bytes": 3878359040,
+        "peak_working_set_bytes": 2336010240,
+        "peak_dedicated_gpu_bytes": 1474990080,
+        "checks": {
+          "ram": {
+            "bytes": 3878359040,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1474990080,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "free_space_warning_bytes": 10737418240,
+          "minimum_free_bytes": 2147483648,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "legacy": true,
+      "save": {
+        "completed": true,
+        "success": true,
+        "capture_total_us": 9312,
+        "structures": {
+          "bytes": 155898,
+          "us": 7068
+        },
+        "stats": null
+      },
+      "triggered_gameplay": {
+        "frame_ms": {
+          "samples": 1265,
+          "mean": 20.842277470355732,
+          "p50": 20.085,
+          "p95": 29.307,
+          "p99": 33.371,
+          "maximum": 54.05
+        },
+        "process_ms": {
+          "samples": 1265,
+          "mean": 2.9845438735177865,
+          "p50": 2.051,
+          "p95": 7.172,
+          "p99": 10.986,
+          "maximum": 15.049
+        },
+        "draw_ms": {
+          "samples": 1265,
+          "mean": 11.662256126482214,
+          "p50": 11.16,
+          "p95": 15.532,
+          "p99": 17.667,
+          "maximum": 20.481
+        },
+        "before_process_ms": {
+          "samples": 1265,
+          "mean": 6.037590513833992,
+          "p50": 4.978,
+          "p95": 11.502,
+          "p99": 13.613,
+          "maximum": 35.097
+        },
+        "after_process_ms": {
+          "samples": 1265,
+          "mean": 0.15788695652173915,
+          "p50": 0.132,
+          "p95": 0.297,
+          "p99": 0.476,
+          "maximum": 3.162
+        },
+        "physics_ms": {
+          "samples": 1265,
+          "mean": 4.657649011857708,
+          "p50": 3.7,
+          "p95": 9.333,
+          "p99": 11.188,
+          "maximum": 23.17
+        },
+        "gpu_ms": {
+          "samples": 1265,
+          "mean": 7.712353349391651,
+          "p50": 7.5939998626709,
+          "p95": 8.64099979400635,
+          "p99": 9.04599952697754,
+          "maximum": 9.49199962615967
+        },
+        "render_cpu_ms": {
+          "samples": 1265,
+          "mean": 7.953392100428404,
+          "p50": 7.57299995422363,
+          "p95": 10.7980003356934,
+          "p99": 12.3360004425049,
+          "maximum": 16.2590007781982
+        },
+        "recorder_previous_us": {
+          "samples": 1265,
+          "mean": 348.9106719367589,
+          "p50": 333,
+          "p95": 470,
+          "p99": 605,
+          "maximum": 1611
+        },
+        "draw_calls": {
+          "samples": 1265,
+          "mean": 5401.622924901186,
+          "p50": 5418.0,
+          "p95": 5418.0,
+          "p99": 5418.0,
+          "maximum": 5418.0
+        },
+        "primitives": {
+          "samples": 1265,
+          "mean": 4229495.741501977,
+          "p50": 4238409.0,
+          "p95": 4238429.0,
+          "p99": 4238429.0,
+          "maximum": 4238429.0
+        },
+        "over_20ms_frames": 640
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "samples": 584,
+            "mean": 20.559484589041094,
+            "p50": 19.583,
+            "p95": 29.231,
+            "p99": 32.756,
+            "maximum": 35.942
+          },
+          "gpu_ms": {
+            "samples": 584,
+            "mean": 7.697873276390442,
+            "p50": 7.55200004577637,
+            "p95": 8.65999984741211,
+            "p99": 9.10499954223633,
+            "maximum": 9.25800037384033
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "samples": 67,
+            "mean": 19.01174626865672,
+            "p50": 18.837,
+            "p95": 25.424,
+            "p99": 29.174,
+            "maximum": 29.174
+          },
+          "gpu_ms": {
+            "samples": 67,
+            "mean": 7.558164205124129,
+            "p50": 7.40500020980835,
+            "p95": 8.36600017547607,
+            "p99": 9.35599994659424,
+            "maximum": 9.35599994659424
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "samples": 231,
+            "mean": 21.625320346320343,
+            "p50": 21.27,
+            "p95": 30.571,
+            "p99": 32.856,
+            "maximum": 33.389
+          },
+          "gpu_ms": {
+            "samples": 231,
+            "mean": 7.6985151323921235,
+            "p50": 7.68800020217896,
+            "p95": 8.50899982452393,
+            "p99": 8.89999961853027,
+            "maximum": 9.1879997253418
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "samples": 381,
+            "mean": 21.08032283464567,
+            "p50": 20.256,
+            "p95": 30.224,
+            "p99": 46.335,
+            "maximum": 54.107
+          },
+          "gpu_ms": {
+            "samples": 381,
+            "mean": 7.769572169136188,
+            "p50": 7.63899993896484,
+            "p95": 8.73099994659424,
+            "p99": 9.0930004119873,
+            "maximum": 9.49199962615967
+          }
+        }
+      },
+      "traces": [
+        {
+          "path": "trace_00.json",
+          "sha256": "7001afc988620c8975d4d1da604e58fe193ff931bbf69f909069f4dd3252d310"
+        },
+        {
+          "path": "trace_01.json",
+          "sha256": "d4ea1b6f62e417f6cdee832804e42ac6e9490798e01a636a2fbd585748e5af15"
+        },
+        {
+          "path": "trace_02.json",
+          "sha256": "567ca1d0f57ddeae15f9bc013eb89c71854744954ae909bb7e075def312fcb36"
+        },
+        {
+          "path": "trace_03.json",
+          "sha256": "490a41d5b7915bb9b80796f168a8b01481225767d37ffa2e03fde00976ec6afd"
+        },
+        {
+          "path": "trace_04.json",
+          "sha256": "0692bacef2bfa40ffe3f7b265377037f8d81e7a62b7a3ba4ec154bb88541f4c1"
+        }
+      ],
+      "visual_review": "Inspected arrival view: same brick room, doorway, hand/tool pose, HUD and nearby composition; scoped parity only, not general visual approval.",
+      "known_contention": "Separate handgun checkout headless editor import began at 16:40:08 UTC; final A overlaps. Other host workloads/earlier build overlap are not isolated."
+    }
+  ],
+  "package": {
+    "path": "dist/TerraForest.pck",
+    "sha256": "3e4fad9983e6043eb90097c71c3a0f820bed920158a99da339c434d1adc55aab",
+    "bytes": 556866732,
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "5ed57d5b20ae153f9b57effd1694b3d2db59d30f170c47aa8b2c007475b06d73",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "e5f88dc8e8eb516c3e0e68d0da759a06eda0179bf1fc8ce8ac4aef1b3fa8db42",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+    },
+    "export_log": {
+      "path": "reports/structures_capture_export_20261109.log",
+      "sha256": "5daa1aaf360316ba9db7c570dc667fa15cced6f6a8ed7cd5d2a9cf1304d13c49"
+    }
+  },
+  "controls": [
+    {
+      "manifest": {
+        "path": "reports/performance_changes/20261109T163510555387Z_structures_capture_control/run.json",
+        "sha256": "96191781421889fd1f4b267cf140cde7331c22014524f30ab73c85af842be7fb"
+      },
+      "gpu": {
+        "path": "reports/performance_changes/20261109T163510555387Z_structures_capture_control/gpu.csv",
+        "sha256": "97f26aa2a7052ecfd6d7c1f8d272321182dab497639fc2b692d9444a2e8983ec"
+      }
+    },
+    {
+      "manifest": {
+        "path": "reports/performance_changes/20261109T163740914632Z_structures_capture_resume/run.json",
+        "sha256": "0cf0e54316711eba57b3a93412e620f783bbf3fc98fb041d020c3570baceeea3"
+      },
+      "gpu": {
+        "path": "reports/performance_changes/20261109T163740914632Z_structures_capture_resume/gpu.csv",
+        "sha256": "0526fd196c5cbdb692f497c67f6ab6f914134a70c8b350eda28db3be86e850e5"
+      }
+    }
+  ],
+  "failed_or_rejected": [
+    {
+      "path": "reports/structures_capture_release_runner_20261109.log",
+      "sha256": "a7583932050965a842f3bc4ac127e802877d7006c748e321c9a1c04558d5a28f"
+    },
+    {
+      "path": "reports/checks/20261109T163044512529Z/run.json",
+      "sha256": "32f093fe14d86961448c704a3bc01841debccdb5faeae211eda7e49698fc9231"
+    },
+    {
+      "path": "reports/checks/structures_capture_legacy_provider_control/run.json",
+      "sha256": "9a50eba175e7cf0fe7597a6be46ec3cda982759c918a6364a610c989f90bcf5a"
+    },
+    {
+      "path": "reports/structure_region_capture_release_runner_20261109.log",
+      "sha256": "e5b5836da9281ea34068f385e3a5a9b31f27f6272429230c1dbb0d700b44a3fd"
+    },
+    {
+      "path": "reports/performance_changes/20261109T163630124653Z_frozen_save_b/run.json",
+      "sha256": "8dc11f70573834c52caee196a11ea1ecc65891e717316b4ee90cca1a7c0f25b3"
+    },
+    {
+      "path": "reports/performance_changes/20261109T163510555387Z_structures_capture_control/storage_recheck.json",
+      "sha256": "1afded7fbca37fef2b9168122762053e4cbaa905afcfad2c8183316f11aac500"
+    }
+  ],
+  "limitations": [
+    "Initial release fixture omitted explicit extension preload; repaired before 25/25 release pass.",
+    "Outdated three-section assertion failed with legacy provider too; updated to exact four-section contract including location_baselines_v1.",
+    "Isolated integration harness omitted existing fullscreen policy and imported water texture; repaired before 82/82 release pass; setup-error leak retained in failed log.",
+    "One launch reported zero free space and did not start; recheck recovered without deleting files; underlying transient not diagnosed.",
+    "ABBA order completed after launch retry, but final A overlapped another checkout import. Whole-frame benefit/nonregression not established.",
+    "Pending 128 MiB cap bounds frozen copies only; worker reconstruction/encoding and serialized caches are additional memory.",
+    "Main capture remains O(resident data); total worker CPU efficiency and large-world delta/COW architecture remain open.",
+    "Short clean shutdowns are not long-session leak or multiplayer scale qualification.",
+    "Existing six water_cut_cells failures and legacy 81-cell interaction failure remain open."
+  ]
+}

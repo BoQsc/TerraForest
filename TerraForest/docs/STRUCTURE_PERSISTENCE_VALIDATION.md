@@ -1,5 +1,12 @@
 # Structures in the compound world save
 
+2026-11-09 follow-up: the normal provider now uses native frozen capture and
+worker serialization. [Current scoped checks and failures](../issues/runtime-performance/structures-save-capture-2026-11-09.md)
+include 25 native checks in each build, 64 ordinary/82 region persistence checks
+in source, 82 region checks in release, and packaged saves. Formats and region
+identity remain unchanged. The results below describe the earlier milestone;
+they are not current large-world or stable-frame-rate acceptance.
+
 The terrain scene now registers one native structures bundle alongside water. The bundle contains the independent block world and all configured model collections with stable IDs, asset keys and transforms. Its immutable native validator runs on the terrain worker before terrain deserialization. Known corrupt components and unresolved assets cannot partially restore the scene or overwrite the canonical file on shutdown.
 
 Reproduction:

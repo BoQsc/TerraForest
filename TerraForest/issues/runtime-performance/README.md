@@ -1,6 +1,13 @@
 # Runtime performance
 
-Latest: [frame-phase CPU work and hardware controls](phase-work-2026-11-09.md)
+Latest: [native structures save capture](structures-save-capture-2026-11-09.md)
+moves encoding to the ordered worker. Two packaged captures take 0.782/0.790 ms
+versus 7.068–11.572 ms for the legacy provider; exact-data, partial-region and
+shutdown checks pass. Whole-frame tails remain variable, including substantial
+physics/draw costs and a long wait; the final control overlaps another checkout's
+import. Broader world/player pacing and long-session stability remain open.
+
+[Frame-phase CPU work and hardware controls](phase-work-2026-11-09.md)
 separate CPU-heavy physics from long draw intervals. Recorder-off gameplay still
 has >32 ms frames and ~15 ms GPU work; NVIDIA reports software power/thermal
 limiting during that control. Save, physics, rendering and cold pursuit remain
