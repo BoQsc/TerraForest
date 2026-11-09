@@ -12,14 +12,14 @@ namespace terraforest {
 struct CombatBlast {godot::Vector3 center;godot::PackedInt32Array records;int offset=0;};
 class NativeCombatState : public godot::RefCounted {
     GDCLASS(NativeCombatState,godot::RefCounted)
-    int rounds=0, assault_rounds=0;
+    int rounds=0, assault_rounds=0, pistol_rounds=0;
     bool integrity=false;
     std::vector<CombatBlast> blasts;
 protected: static void _bind_methods();
 public:
-    int get_rounds(int weapon=7) const {return weapon==7?rounds:(weapon==8?assault_rounds:0);}
-    bool take_round(int weapon=7) {if((weapon!=7&&weapon!=8)||get_rounds(weapon)<=0)return false;--(weapon==7?rounds:assault_rounds);return true;}
-    bool load_rounds(int count,int weapon=7) {if((weapon!=7&&weapon!=8)||count<1||count>30-get_rounds(weapon))return false;(weapon==7?rounds:assault_rounds)+=count;return true;}
+    int get_rounds(int weapon=7) const {return weapon==7?rounds:(weapon==8?assault_rounds:(weapon==9?pistol_rounds:0));}
+    bool take_round(int weapon=7) {if((weapon!=7&&weapon!=8&&weapon!=9)||get_rounds(weapon)<=0)return false;--(weapon==7?rounds:(weapon==8?assault_rounds:pistol_rounds));return true;}
+    bool load_rounds(int count,int weapon=7) {if((weapon!=7&&weapon!=8&&weapon!=9)||count<1||count>(weapon==9?15:30)-get_rounds(weapon))return false;(weapon==7?rounds:(weapon==8?assault_rounds:pistol_rounds))+=count;return true;}
     bool integrity_enabled() const {return integrity;}
     void set_integrity_enabled(bool value) {integrity=value;}
     godot::PackedByteArray capture_storage_snapshot() const;

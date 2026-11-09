@@ -1,0 +1,71 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS PX9 enforces its own 15-round capacity
+PASS three independent magazines
+PASS v4 round trip preserves all magazines
+PASS corrupt pistol capacity rejected atomically
+PASS v3 saves initialize handgun empty
+PASS handgun and matching cartridges use shared native catalog
+PASS exact Human R11 rest contract admits paired PX9 adapter
+PASS PX9 selects corrected hand skin
+PASS live first-person renderer selects corrected PX9 arms and body
+PASS equipment registered with first-person depth renderer
+PASS paired clip available: idle
+PASS human and mechanics share clock: idle
+PASS paired clip available: walk
+PASS human and mechanics share clock: walk
+PASS paired clip available: run
+PASS human and mechanics share clock: run
+PASS paired clip available: jump
+PASS human and mechanics share clock: jump
+PASS paired clip available: equip
+PASS human and mechanics share clock: equip
+PASS paired clip available: holster
+PASS human and mechanics share clock: holster
+PASS paired clip available: inspect
+PASS human and mechanics share clock: inspect
+PASS paired clip available: aim_in
+PASS human and mechanics share clock: aim_in
+PASS paired clip available: aim_idle
+PASS human and mechanics share clock: aim_idle
+PASS paired clip available: aim_out
+PASS human and mechanics share clock: aim_out
+PASS paired clip available: fire
+PASS human and mechanics share clock: fire
+PASS paired clip available: fire_last
+PASS human and mechanics share clock: fire_last
+PASS paired clip available: aim_fire
+PASS human and mechanics share clock: aim_fire
+PASS paired clip available: aim_fire_last
+PASS human and mechanics share clock: aim_fire_last
+PASS paired clip available: idle_empty
+PASS human and mechanics share clock: idle_empty
+PASS paired clip available: aim_idle_empty
+PASS human and mechanics share clock: aim_idle_empty
+PASS paired clip available: reload
+PASS human and mechanics share clock: reload
+PASS paired clip available: reload_empty
+PASS human and mechanics share clock: reload_empty
+PASS paired clip available: rack
+PASS human and mechanics share clock: rack
+PASS paired clip available: dry_fire
+PASS human and mechanics share clock: dry_fire
+PASS paired clip available: walk_empty
+PASS human and mechanics share clock: walk_empty
+PASS paired clip available: run_empty
+PASS human and mechanics share clock: run_empty
+PASS paired clip available: jump_empty
+PASS human and mechanics share clock: jump_empty
+PASS empty handgun reload starts
+PASS authored magazine-out event precedes reload completion
+PASS cancelled handgun reload never grants ammunition
+PASS reload restarts after cancellation
+PASS reload finishes exactly once
+PASS right mouse enters aimed hold
+PASS last aimed shot starts
+PASS last round holds slide open
+PASS shot, casing and slide-lock events remain paired
+PASS tool switch plays handgun holster
+PASS unequip restores original body and next tool
+PASS existing pistol recording decodes
+PX9_HANDGUN checks=68 failures=0

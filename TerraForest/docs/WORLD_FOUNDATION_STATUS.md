@@ -1,3 +1,108 @@
+## PX9 merged into master - 2026-11-09
+
+Accepted pistol/player work is integrated with performance checkpoint 40a40d72.
+Merge is conflict-free, native lifetime repairs and performance DLLs are retained,
+and combined-source gameplay, combat, drop, movement and tracing checks pass.
+[Integration record](../issues/px9-handgun/README.md#master-integration---2026-11-09)
+contains exact tests and native identities. First-person acceptance is recorded;
+third-person, sustained performance and packaged/install qualification remain open.
+No export or installed package was changed during this source merge.
+
+## PX9 first-person playtest accepted - 2026-11-09
+
+User accepted the pistol/player feel at 2fb599e1 and authorized master integration.
+This supersedes earlier first-person feel re-review notes below. Integration is
+being coordinated with the performance chat; third-person and packaged-build
+qualification retain their existing scope. [Acceptance record](../issues/px9-handgun/README.md#accepted-first-person-playtest---2026-11-09).
+
+## PX9 independent aim/recoil - 2026-11-09
+
+User rejected the previous shortened transition pause. Aim now blends paired
+hip/aimed poses every frame during the same recoil clock, including immediate
+release/reversal. Separate aim clips no longer own a blocking action slot.
+72 paired and 32 world checks plus loaded/empty movement pass; same-shot rendered
+transitions inspected. [Evidence](../issues/px9-handgun/README.md#independent-aim-and-recoil---2026-11-09).
+Earlier aim-priority/interruption approaches below are superseded. User gameplay
+feel review remains pending for repeated aim changes while holding fire.
+
+## PX9 continuous aim/fire - 2026-11-09
+
+User reports aiming still pauses held shooting. Confirmed shots now interrupt
+or bypass aim-in/out with a short paired-pose blend; full aim clips no longer
+block fire. The timestamp regression checks held-fire cadence across both aim
+changes. [Evidence](../issues/px9-handgun/README.md#continuous-held-fire-through-aim---2026-11-09).
+User feel/visual review remains open for the next simultaneous fire/aim playtest.
+
+## PX9 muzzle VFX - 2026-11-09
+
+Original procedural warm-white muzzle flash, short warm light pulse and subtle
+smoke are integrated at the confirmed-shot boundary. Hip/aimed bright/dim views
+were checked with Compatibility and Forward+; temporary-world checks 31/31 and
+paired handgun checks 68/68 pass. [Evidence and provenance](../issues/px9-handgun/README.md#muzzle-flash-vfx---2026-11-09)
+record the renders and remaining user brightness/timing/feel review. Revisit
+after live playtesting; third-person and packaged build acceptance remain open.
+
+## PX9 automatic empty reload - 2026-11-09
+
+An empty equipped PX9 automatically reloads from reserve after last-shot recoil.
+The host no longer triggers dry-fire animations; no-reserve empty movement stays
+active. [Evidence](../issues/px9-handgun/README.md#automatic-empty-reload---2026-11-09)
+tracks trigger-released auto reload and no-reserve checks. User re-review remains open.
+
+## PX9 held-fire action priority - 2026-11-09
+
+Reload now interrupts PX9 recoil/dry fire and aim transitions; active reloads
+retain their shot gate. Held fire yields to aim-in/out before the next shot.
+[Evidence](../issues/px9-handgun/README.md#reloadaim-priority-during-held-fire---2026-11-09)
+records focused input checks. User feel re-review remains pending.
+
+## PX9 empty-magazine locomotion - 2026-11-09
+
+Empty ammunition no longer overrides moving presentation with fixed idle. Paired
+empty walk/run/jump variants keep authored locomotion and locked-open mechanics.
+Loaded/empty physics motion checks and 68 handgun checks pass; rendered empty
+motion inspected. [Evidence](../issues/px9-handgun/README.md#empty-magazine-locomotion---2026-11-09).
+User feel/visual re-review remains open.
+
+## PX9 held-trigger firing - 2026-11-09
+
+PX9 now repeats shots while left mouse is held, with existing recoil and combat
+gates. HUD/help text is updated. [Evidence](../issues/px9-handgun/README.md#held-trigger-firing---2026-11-09)
+tracks held/released trigger and menu checks; user feel review remains open.
+
+## PX9 running/jumping correction - 2026-11-09
+
+The reproduced apex switch/restart is corrected: airborne state persists until
+landing and the authored jump holds its endpoint during long flights. First-person
+PX9 base animation keeps root/hips at the authored baseline while legs animate;
+this removes torso/camera intersections. Short/long physics flights, continuous
+running and 62 handgun checks pass. [Evidence and retained rejected views](../issues/px9-handgun/README.md#runningjumping-correction---2026-11-09)
+record the scoped checks. Actual player feel and third-person review remain open.
+
+## PX9 live grip correction — 2026-11-09
+
+The user rejected the first gameplay grip. The live split-arm renderer retained
+old hands beside the corrected full mesh; offline PX9 body/arm variants now feed
+that renderer, and weapon meshes join its depth pass. The focused regression
+fails before and passes after (62 checks); [comparison and evidence](../issues/px9-handgun/README.md#live-first-person-grip-correction--2026-11-09)
+retain the rejected screenshot. Player re-review is still required.
+
+## PX9 Eclipse source integration — 2026-11-09
+
+The supplied revision-8 handgun is integrated in the isolated `codex/px9-handgun`
+worktree: paired animation/hand-skin adapter, shared catalog/crafting/trader path,
+independent native 15-round magazine and existing Kaino pistol/reload recordings.
+[Issue and evidence](../issues/px9-handgun/README.md) retain intake, exact checks,
+source images and remaining work. Paired presentation, actual temporary-world
+combat, native save migration, universal/physical dropping and graphical G input
+pass. Both player-runtime DLL variants were rebuilt. Performance checkpoint
+64eb3cc7 is preserved; the installed game package is unchanged.
+
+User visual acceptance, third-person qualification, dedicated remaining mechanical
+recordings and packaged-build qualification remain open. Their return triggers
+and required evidence are recorded in the issue; source checks do not close those
+requirements or claim an installed release.
+
 ## World/player performance foundation and rolling trace — 2026-11-09
 
 The latest default Frontier expedition was generated unchanged (seed 1703,

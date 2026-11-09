@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+MOTION frame=0 action=idle grounded=true vy=0.0
+MOTION frame=15 action=walk grounded=true vy=0.0
+MOTION frame=35 action=run grounded=true vy=0.0
+MOTION frame=45 action=jump grounded=false vy=8.0
+MOTION frame=68 action=jump grounded=false vy=0.33333197236061
+MOTION frame=71 action=jump grounded=false vy=-0.66666799783707
+MOTION frame=94 action=run grounded=true vy=0.0
+MOTION frame=160 action=jump grounded=false vy=12.0
+MOTION frame=250 action=jump grounded=false vy=0.00000605682544
+MOTION frame=341 action=run grounded=true vy=0.0
+PX9_LOCOMOTION jump starts=2 landings=2 held_frames=118 failures=0

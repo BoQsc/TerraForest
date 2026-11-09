@@ -1,0 +1,22 @@
+{
+  "handoff_archive": {
+    "filename": "TerraForest_PlayerModel_HumanR11_Handoff.zip",
+    "bytes": 122389257,
+    "sha256": "c6729e6c04a12eb7745d877aaf65ceb7579fac97aee732b629198ad203f7496e"
+  },
+  "human_blender": {
+    "filename": "Human.r11.blend",
+    "sha256": "8ad2d2c2d570f9adfa487cfd469957ff61b4fbe172f0b60d28a44529b8d822d3"
+  },
+  "human_runtime": {
+    "filename": "Human.r11.glb",
+    "sha256": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8"
+  },
+  "weapon_blender": {
+    "filename": "PX9_Eclipse_Skeleton.blend",
+    "sha256": "27677ac0c77606a0daf209e5c598d95ef88362938f63f82c5418e24a2761c7fe"
+  },
+  "human_license_record": "CC0-1.0; from supplied HANDOFF.md/README.txt/R11.validation.txt; inherited provenance retained",
+  "source_script_license": "0BSD for the four supplied author/import scripts",
+  "scope": "Records statements and exact supplied-file identities; no independent upstream rights clearance."
+}

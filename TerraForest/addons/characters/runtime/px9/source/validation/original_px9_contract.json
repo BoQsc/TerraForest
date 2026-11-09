@@ -1,0 +1,1068 @@
+{
+  "schema": "px9-source-contract-1",
+  "source_filename": "PX9_Eclipse_Skeleton.blend",
+  "source_sha256": "27677ac0c77606a0daf209e5c598d95ef88362938f63f82c5418e24a2761c7fe",
+  "rig_name": "WeaponSkeleton",
+  "bone_count": 22,
+  "bones": {
+    "weapon_root": {
+      "parent": null,
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "frame": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          0.9999999403953552,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          3.422854177870249e-08,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "slide": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          -7.761022402519302e-08,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          -4.338167869377685e-08,
+          0.0,
+          -0.014999999664723873
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.061000000685453415
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "front_sight": {
+      "parent": "slide",
+      "matrix_local": [
+        [
+          -7.761022402519302e-08,
+          1.0,
+          0.0,
+          3.80290199331057e-09
+        ],
+        [
+          -1.0,
+          -4.338167869377685e-08,
+          0.0,
+          0.0820000022649765
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.07900000363588333
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "rear_sight": {
+      "parent": "slide",
+      "matrix_local": [
+        [
+          -7.761022402519302e-08,
+          1.0,
+          0.0,
+          -4.734224123836839e-09
+        ],
+        [
+          -1.0,
+          -4.338167869377685e-08,
+          0.0,
+          -0.10000000149011612
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.07999999821186066
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "ejection_socket": {
+      "parent": "slide",
+      "matrix_local": [
+        [
+          -3.395448544551982e-08,
+          1.0,
+          0.0,
+          0.017000000923871994
+        ],
+        [
+          -1.0,
+          2.7405988589634944e-10,
+          0.0,
+          -0.014000002294778824
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.07199999690055847
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "barrel": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          -7.761022402519302e-08,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          -4.338167869377685e-08,
+          0.0,
+          -0.012000000104308128
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.06300000101327896
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "muzzle_housing": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          0.9999999403953552,
+          0.0,
+          5.587935447692871e-09
+        ],
+        [
+          -1.0,
+          3.422854177870249e-08,
+          0.0,
+          0.10999999940395355
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.061000000685453415
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "guide_rod": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          1.862645149230957e-09
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          0.029999999329447746
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.050999999046325684
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "magazine": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          -3.725290298461914e-09
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          -0.08799999952316284
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.05400000140070915
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "magazine_base": {
+      "parent": "magazine",
+      "matrix_local": [
+        [
+          -3.880510845988283e-08,
+          1.0,
+          0.0,
+          -3.725290298461914e-09
+        ],
+        [
+          -1.0,
+          -4.57656312846666e-09,
+          0.0,
+          -0.09000000357627869
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.07999999821186066
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "trigger": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          -1.862645149230957e-09
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          -0.02199999988079071
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.024000000208616257
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "grip_panel_left": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          -0.017000004649162292
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          -0.07800000160932541
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.02800000086426735
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "grip_panel_right": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.016999997198581696
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          -0.07800000160932541
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.02800000086426735
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "takedown": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          -1.862645149230957e-09
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          -0.04800000041723251
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.04100000113248825
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "slide_stop": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          -0.018000002950429916
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          -0.07800000160932541
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.041999999433755875
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "magazine_release": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          -0.017999999225139618
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          -0.04800000041723251
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.003000000026077032
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "frame_pins": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          0.9999999403953552,
+          0.0,
+          -1.862645149230957e-09
+        ],
+        [
+          -1.0,
+          3.422854177870249e-08,
+          0.0,
+          -0.05999999865889549
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.02500000037252903
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "ejected_case": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          -7.761022402519302e-08,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          -4.338167869377685e-08,
+          0.0,
+          -0.014000000432133675
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.07000000774860382
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "muzzle_socket": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          5.587935447692871e-09
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          0.12700000405311584
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.06300000101327896
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "grip_socket": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          -3.725290298461914e-09
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          -0.07500000298023224
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.020999999716877937
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "support_hand_socket": {
+      "parent": "weapon_root",
+      "matrix_local": [
+        [
+          0.0,
+          1.0,
+          0.0,
+          1.862645149230957e-09
+        ],
+        [
+          -1.0,
+          3.422854533141617e-08,
+          0.0,
+          0.04500000178813934
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.029999999329447746
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  },
+  "meshes": {
+    "Barrel": {
+      "vertices": 472,
+      "polygons": 932,
+      "triangles": 932,
+      "positions_sha256": "3ce9dc0ceeb954e1b2490e4a4048e9310bf891e5b616bcf5d8420787075bf4a8",
+      "topology_sha256": "d97ae0b2c2f8e666659c1ac50107016379cd5019e9a870702d0b529107393c42",
+      "weights_sha256": "2620af4bc369e21d37b4e2fef5a8ed01caf34c95e26e42457d9d6b02cbf45494",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 2796,
+          "coordinates_sha256": "b73fb852f9e2ee3d05ddc75d054cde509505aefda9073ea41eeb4439578e3a0c"
+        }
+      ],
+      "material_indices_sha256": "0c434dbcf00f2bf9c57b0a3ab181e10e20c849c3153038eb83c8df86e2708d07"
+    },
+    "EjectedCase": {
+      "vertices": 128,
+      "polygons": 256,
+      "triangles": 256,
+      "positions_sha256": "e4d6a7713e8e19b86ede4322428fdf7083dec092ef8df1154f10dc71e6f4f336",
+      "topology_sha256": "2639c2ee08373ec6c0aab289ca6d4d6a407bba53aefd732d4cbc409551841637",
+      "weights_sha256": "1a2b460db7412db7a142f14e733f5ec492d8d4c132e9a64e3085083249c8e748",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 768,
+          "coordinates_sha256": "babcda5bbda05aa905f7022f03f05b9c215be0ea865003b287c9748562fe0883"
+        }
+      ],
+      "material_indices_sha256": "2d673de942048a8b5ede075bd8fc7c56c7d9cce7335d5be36ef4b87dbb16cb82"
+    },
+    "Frame": {
+      "vertices": 3579,
+      "polygons": 6918,
+      "triangles": 6918,
+      "positions_sha256": "19ac9c6b0c25cecec8546e644188b417eac58369d5197fcda289d1958ef1801e",
+      "topology_sha256": "ff8823353350a431197a2b894252718f16a566e5891d6a04ff3ede78aab872fc",
+      "weights_sha256": "2034f99d42004b0bb50f45c18b2eebb797e37cf0a5e4b0d1ea27247bc02d4efa",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 20754,
+          "coordinates_sha256": "9ee0b292fb5eb2a17e6a4f762a2ad3d300c239e1048668bca7d8fae804207656"
+        }
+      ],
+      "material_indices_sha256": "5e7342b0bf2f3b0b3974b08ed75044b63e52a93c4e1251de3d95c9f0958110fd"
+    },
+    "FramePins": {
+      "vertices": 528,
+      "polygons": 960,
+      "triangles": 960,
+      "positions_sha256": "1b27b89c8d570fff7bf29a123ec5330ce25982ab8da25243dc0b6115312ece77",
+      "topology_sha256": "6c28509e6a7dd9da5507a2d52504fc65d6ce4d966266e458cea2c4c6c8b912ba",
+      "weights_sha256": "cd9f908a673a6e96a0355ac392cc94c519dec5eacfb7ff6a8d52d340ba533bf6",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 2880,
+          "coordinates_sha256": "cbfb656fe2dcdccb06e731f7190da0d39de279f51ecee65813d19d2fcbea026b"
+        }
+      ],
+      "material_indices_sha256": "90f169dc5c33259c2ce2aaedcde9f92440288d0333e3a4df9ce03acec9e98def"
+    },
+    "FrontSight": {
+      "vertices": 120,
+      "polygons": 228,
+      "triangles": 228,
+      "positions_sha256": "e67f9b1885d401828b04a2ee610f0e4e46a9b968034b8215b2e64f13a7d307f7",
+      "topology_sha256": "e26d12d5e3a934f25678bab18c03e445cd4d3c57f057ae3b6d132b2588f3b905",
+      "weights_sha256": "f0d5303a3274a988af0f14c483ce3a9ffd50d76862d60d9e455263149c415bec",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 684,
+          "coordinates_sha256": "a482f605efb807555ab516444ca2faf2b1b4bacf232eb88d3e0961651348ba6d"
+        }
+      ],
+      "material_indices_sha256": "1abd81415b648442f32e3a9e285d6a66f2a4c572b93bd357a115a1747938822f"
+    },
+    "GripPanel_Left": {
+      "vertices": 340,
+      "polygons": 672,
+      "triangles": 672,
+      "positions_sha256": "cf94d99fd1c090f5a0bf7ca1b101153a1a8291276621a8bdc171caba21a0f48a",
+      "topology_sha256": "31ecf4cc5e9ea7552dc998642b58303ac69752abe8e0baa75dc0f92b1b1440d1",
+      "weights_sha256": "2f60e8e2abebdcefc1d4b7f10a88ea54d569c1c67c4c2be5fecc5c73a92d9788",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 2016,
+          "coordinates_sha256": "29c44215f5503566b800337e9426b356733e0b247044ab67d5e3d419d6d9bb7b"
+        }
+      ],
+      "material_indices_sha256": "bf80524f6c553a32fa02276f5a5dc74c8b48bdcdd46b7bbbac1f36e28b479c6c"
+    },
+    "GripPanel_Right": {
+      "vertices": 340,
+      "polygons": 672,
+      "triangles": 672,
+      "positions_sha256": "eba002f954edae5ac98e073bbbbf0f373e5caea6ef1176451fb1b46fb607d1c2",
+      "topology_sha256": "296d1a13acf5feaa8ffd7928cb3308b1097895f82b22ed96a4800a20699f84cf",
+      "weights_sha256": "7876fa8a82419946f8bbdaf6ddb56afbefe40d0c9b24db83bb013c27b4cf205e",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 2016,
+          "coordinates_sha256": "10f35106768010348b3af667ea111a041e37ce19a9517259f83472be86a480fc"
+        }
+      ],
+      "material_indices_sha256": "bf80524f6c553a32fa02276f5a5dc74c8b48bdcdd46b7bbbac1f36e28b479c6c"
+    },
+    "GuideRod": {
+      "vertices": 373,
+      "polygons": 734,
+      "triangles": 734,
+      "positions_sha256": "d0c58f3e5891fd4aeb3ae618d88434a251b7d2859c33f51aa45ecc899770cf5c",
+      "topology_sha256": "9771ab794aac0b0d8405e75f0024839b817171cccf3acc5c1543a80122fc13c3",
+      "weights_sha256": "63283f30114142d62d294a94155428ba96d3823e2a56ed9b4a809ea9dddb6d76",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 2202,
+          "coordinates_sha256": "3a8288a2a2170bd6313dbef2859d8d15440fb09513592db98389f84f000780ac"
+        }
+      ],
+      "material_indices_sha256": "8976cfad0b28bae1ba3401290d4ddb415aadac5944d19f502f931c8a8c52bf63"
+    },
+    "Magazine": {
+      "vertices": 360,
+      "polygons": 556,
+      "triangles": 556,
+      "positions_sha256": "4defc1cdd171c1f15072a3441e9beba7abef7824439c99c7d6cbe4cff5007242",
+      "topology_sha256": "22e74cf5bd7bdd7dbb4eb869ff59199909390448f8aedda1023142cb2537446a",
+      "weights_sha256": "42a5233b1517b529ab209343077f561fd57f40e2c5fec8791383f6bf55d43ce1",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 1668,
+          "coordinates_sha256": "1b2fdeb815cf922c99d7092a26c99487467b12d798b43a1e5ee17e035357ed6a"
+        }
+      ],
+      "material_indices_sha256": "6cccb1eb51075c9529e37f7369e1719428983e2603956c84ff7b8be96a02fa8c"
+    },
+    "MagazineBase": {
+      "vertices": 194,
+      "polygons": 380,
+      "triangles": 380,
+      "positions_sha256": "add843977d84322b16c7d0f7f0e11a1902b48416f1547f5681df5acf4a009623",
+      "topology_sha256": "7d781d1b489981a435edab1ebb45b774cac8dfb2b585eb446d74693d22971529",
+      "weights_sha256": "51858f7120fb0220eb7a32bc7fcf2cc622d04268ecbed327bfe4ffe5e5fcd930",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 1140,
+          "coordinates_sha256": "22afc37867f99e568278228ec6241dacb109d3021c97132c7b4b3acd91622282"
+        }
+      ],
+      "material_indices_sha256": "e5218dded983d976cc6bf5f15a77255cdf9139f2104458f52dfc88b4b50dd285"
+    },
+    "MagazineRelease": {
+      "vertices": 138,
+      "polygons": 248,
+      "triangles": 248,
+      "positions_sha256": "e3a377e0eec12dc347c2a5d61efe6ed699743c79ee7457b5477255dcd4e72b33",
+      "topology_sha256": "95e23c907a644d9ceee5e471a68a96a8beb443756ce4fa30aecfe3832c81bdb8",
+      "weights_sha256": "244e3c577a96500e99c3b27f61046b173cd4e58b3b5fb41e3216c1e2c498f7da",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 744,
+          "coordinates_sha256": "a08434bd9b195be587df777f330f8a98907f0f8111333503c8865ca38b423806"
+        }
+      ],
+      "material_indices_sha256": "6f22a8da533f501e0c665b91e24fccf1d488587ae09dd4026019365deaeea303"
+    },
+    "MuzzleHousing": {
+      "vertices": 1388,
+      "polygons": 2756,
+      "triangles": 2756,
+      "positions_sha256": "755422d84ad03d115b8c92081a51b1794f3aa37776f9bd67f189b2719254898b",
+      "topology_sha256": "206e1c82f439b16e5c97c105f2dd4c0fd359e47cd8677174441078d9f169bb24",
+      "weights_sha256": "e2fbfcd93c5d7a02d47406a9161cd99ace1a9951d7d664e991423ef16bc50408",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 8268,
+          "coordinates_sha256": "3032346048367308800970ca822a9dec8b2203e4ef22990a290704b892f4e7b1"
+        }
+      ],
+      "material_indices_sha256": "0fc484e787a97bc8b55e2c6f47f9a1fb553708dc8e6a83d845b07bef759233ac"
+    },
+    "RearSight": {
+      "vertices": 172,
+      "polygons": 324,
+      "triangles": 324,
+      "positions_sha256": "189bbfda2256abad9cfcc27d8286f78815fc786e8d294f0d88d837f3b8407b8a",
+      "topology_sha256": "796e373a2ff97b058ea6fbf872b417734c1a77e8ed651269340435f547ecf90e",
+      "weights_sha256": "b3fcfd3a46d6b3abab54634e3eb5fd7f8da55d646763e75264214e47efa86a59",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 972,
+          "coordinates_sha256": "fa86995168b875843ca1ed4aa9ee11fa50670317b89e526da5f130c6d7462cae"
+        }
+      ],
+      "material_indices_sha256": "d77213ce76645cf26143ac65cdf2b7cb0544e67479c39283f7be5e602f95a33b"
+    },
+    "Slide": {
+      "vertices": 1376,
+      "polygons": 2740,
+      "triangles": 2740,
+      "positions_sha256": "17d068c4f2d6274056346f8aebf9d991da10df7f076c9998b6c25a4dfeb8a823",
+      "topology_sha256": "48ef8e6405dd4392bdf39893b2b27eba2ed1b41196a935cb56d780176027faac",
+      "weights_sha256": "4f4019e2d829b28bccf9f4237bb7470ddead7fc4a31e113f67cb5d614f425e43",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 8220,
+          "coordinates_sha256": "7a982569884b7e6af404aba6516f5a69dedcebc5940ad2f179eb370ae3493e3c"
+        }
+      ],
+      "material_indices_sha256": "2c3deb6f7730947028b138385a2fdbe19a8797ba09dbc19387421f086a74d0e7"
+    },
+    "SlideStop": {
+      "vertices": 136,
+      "polygons": 256,
+      "triangles": 256,
+      "positions_sha256": "168ee800a0acffbc52343a90b080d38ce3e2fc958b3cad518d8659f4dba5343b",
+      "topology_sha256": "22d43d8bc0eaa6988e742ea354df3e48f4522fcf0d5280d54872e6a42339f856",
+      "weights_sha256": "76c1809c9aa630d51a0f2c4a5f312865f90400708d2ae906b12d88b9888f942c",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 768,
+          "coordinates_sha256": "103922d758cf9921c5832541b6eacc7685a0de87769bb1219310219b8d193561"
+        }
+      ],
+      "material_indices_sha256": "2d673de942048a8b5ede075bd8fc7c56c7d9cce7335d5be36ef4b87dbb16cb82"
+    },
+    "Takedown": {
+      "vertices": 204,
+      "polygons": 368,
+      "triangles": 368,
+      "positions_sha256": "d3eb33bed524b0040c5b82b6e5378dcc757fb3d6ef52393add77e0a814815b97",
+      "topology_sha256": "d0c8606fa4c3cae760e5a6c1450ffb68d1d9736a13db287c6163f91e7bf87db4",
+      "weights_sha256": "4201501dd2a123b2a5f08d63b9fd7b9694ebdb2a87b9b190f73773281e746daf",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 1104,
+          "coordinates_sha256": "ea0602c662653a5dd41e95322961996096c733e685562fb120c1f692d67d505d"
+        }
+      ],
+      "material_indices_sha256": "262baa8e7c843f74f2e453da546dcf379c1c27a067cae22959f00755b313a39e"
+    },
+    "Trigger": {
+      "vertices": 314,
+      "polygons": 616,
+      "triangles": 616,
+      "positions_sha256": "2aef061d30105e6a91bd102c4234b9d451dcf98130faa33c99ee183ce9440fb8",
+      "topology_sha256": "52876b60f6ca8915dd2360cb3b5a24df4c91c5a9ebc6fa75f3e67e54ae95aa73",
+      "weights_sha256": "87280d75e7eb3f8539776ba20b13333d716071fa5a69eb5afb6d5b6b50931dd9",
+      "material_names": [
+        "PX9_Eclipse_Skeleton_PBR"
+      ],
+      "uv_layers": [
+        {
+          "name": "UVMap",
+          "loops": 1848,
+          "coordinates_sha256": "8ac5616664ad78caa47d526964d15189f032fc7d6ead580e0d0a00895d26dad9"
+        }
+      ],
+      "material_indices_sha256": "734686ff4c348bea4387eb59be4d54376a59ec33a2f4a1759466f7644956a62f"
+    }
+  },
+  "action_names": [
+    "PX9_SKEL__assemble",
+    "PX9_SKEL__disassemble",
+    "PX9_SKEL__draw",
+    "PX9_SKEL__fire",
+    "PX9_SKEL__fire_last_round",
+    "PX9_SKEL__holster",
+    "PX9_SKEL__idle",
+    "PX9_SKEL__inspect",
+    "PX9_SKEL__rack_slide",
+    "PX9_SKEL__reload_empty",
+    "PX9_SKEL__reload_tactical"
+  ],
+  "images": {
+    "Original_PX9_lettering_mask": {
+      "size": [
+        1536,
+        256
+      ],
+      "packed": true,
+      "packed_sha256": "5bf373e12ab2049aa74bed7bd5865ca7ae71ce9b392514e6d9e47470d8b8fac4"
+    },
+    "PX9_OpenAI_CoatedMetal": {
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": true,
+      "packed_sha256": "35121d9c33f9481cff1f187c1f88f9930f1b34c9cf2bb2e571274d0116a974b2"
+    },
+    "PX9_OpenAI_StippledPolymer": {
+      "size": [
+        1254,
+        1254
+      ],
+      "packed": true,
+      "packed_sha256": "48253d646aae6febdbabe1ef24772f42a6ccbfa16894c07a85ffb2936cd43017"
+    },
+    "PX9_Skeleton_AmbientOcclusion": {
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packed_sha256": "305f3638dc5804e535b3e5b9135d36fc3105f277ee08b619356bafc0876328d6"
+    },
+    "PX9_Skeleton_BaseColor": {
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packed_sha256": "90c250a0cf6b52986e8a1da7a2d1ba97d361e2bf8752ce2384b107c4c04057e7"
+    },
+    "PX9_Skeleton_Metallic": {
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packed_sha256": "cc029c2a7bc423df1cf309dd37308ed14776004e40cd7874866b1708518b3ab2"
+    },
+    "PX9_Skeleton_Normal": {
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packed_sha256": "396b702d4d03cda39f028ad74a9c437cd6ba6108dc3fd28ae16db49a4e31c64d"
+    },
+    "PX9_Skeleton_ORM": {
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packed_sha256": "c013e2463a0b0054dddf424a77973c125fbe10c7e3fa3afe757bdda7ce0390f6"
+    },
+    "PX9_Skeleton_Roughness": {
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packed_sha256": "9b76e4b543a72926b90f953ac9180496f1ca3772b87afad7c15ce51cd8e4eab3"
+    },
+    "Render Result": {
+      "size": [
+        0,
+        0
+      ],
+      "packed": false,
+      "packed_sha256": null
+    }
+  },
+  "source_bytes_unmodified": true
+}

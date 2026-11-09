@@ -17,7 +17,7 @@ const GOODS := {
 	# stock listing indices stable for existing tests and saved UI expectations.
 	1: ["Pickaxe", 18, 7, 0], 2: ["Hatchet", 15, 6, 0], 3: ["Repair hammer", 16, 6, 0],
 	4: ["Assembly tool", 15, 6, 0], 5: ["Shovel", 16, 6, 0], 6: ["Wooden torch", 4, 1, 0],
-	7: ["Carbine", 70, 25, 0], 8: ["Ranger assault rifle", 120, 45, 0],
+	7: ["Carbine", 70, 25, 0], 8: ["Ranger assault rifle", 120, 45, 0], 9: ["PX9 Eclipse handgun", 85, 30, 0], 228: ["PX9 cartridges", 2, 1, 0],
 	204: ["Plant", 2, 1, 0], 205: ["Grass clump", 1, 1, 0],
 	206: ["White wildflower", 2, 1, 0], 207: ["Golden wildflower", 3, 1, 0],
 	208: ["Violet wildflower", 2, 1, 0], 209: ["Low bush", 2, 1, 0],

@@ -1,0 +1,118 @@
+{
+  "idle.png": {
+    "sha256": "48ef94eb4831d1eb7d83836b744c31d69a587d289f0cca612cf0fa482f07504a",
+    "source": "tools/preview_px9.gd; actual host human_view.gd and PX9 adapter",
+    "view": "idle",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree FOV; actual camera-local Human presentation; studio lighting",
+    "status": "Engineering preview; user visual review pending"
+  },
+  "aim.png": {
+    "sha256": "430e798d5c98430847a2c6fd64ccf8d05af66975b82dc2ab49022e072e4c29e5",
+    "source": "tools/preview_px9.gd; actual host human_view.gd and PX9 adapter",
+    "view": "aim",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree FOV; actual camera-local Human presentation; studio lighting",
+    "status": "Engineering preview; user visual review pending"
+  },
+  "reload.png": {
+    "sha256": "76c41e37477874f387b9a715c1a56e180fb8918768f0184d88f25b2b172599d1",
+    "source": "tools/preview_px9.gd; actual host human_view.gd and PX9 adapter",
+    "view": "reload",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree FOV; actual camera-local Human presentation; studio lighting",
+    "status": "Engineering preview; user visual review pending"
+  },
+  "rack.png": {
+    "sha256": "4596f7057a90195a1f3fe49cda494b11750fd2b7edabd197eea06c528c75cfc5",
+    "source": "tools/preview_px9.gd; actual host human_view.gd and PX9 adapter",
+    "view": "rack",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree FOV; actual camera-local Human presentation; studio lighting",
+    "status": "Engineering preview; user visual review pending"
+  },
+  "user-rejected-grip.png": {
+    "source": "User gameplay screenshot; rejected grip",
+    "sha256": "f58a15158d9aaf98ad3304815a9bcaf9b65e88c493372d801a61ceabb18311a3"
+  },
+  "live-renderer-grip.png": {
+    "source": "Updated preview_px9.gd, live split renderer, 180 animation updates; engineering review only",
+    "sha256": "7027c17a1c8c07a6f58e7eb43278f944a5746074b7ae979e09088fccd0ee8a40"
+  },
+  "motion_068.png": {
+    "sha256": "e2297881511f8ef586042a66893859d8c6b40d6001a375eddf26268540a4858e",
+    "source": "motion_diagnostic.gd, physics-driven running jump; Godot 4.7.2 Compatibility",
+    "status": "Reproduced defect, before correction"
+  },
+  "motion_071.png": {
+    "sha256": "352c975b61b37973d8601cdaca61aaf4746e14464eb6daf3583ad1c96c87afaf",
+    "source": "motion_diagnostic.gd, physics-driven running jump; Godot 4.7.2 Compatibility",
+    "status": "Reproduced defect, before correction"
+  },
+  "motion_fixed_068.png": {
+    "sha256": "1d5bdca0f15c724def78ca5c8e10213a3ef171826610ef1e2f40a52465ee6410",
+    "source": "tests/px9_locomotion.gd; real physics and split renderer, Godot Compatibility",
+    "status": "Corrected first-person baseline; agent inspected; user review pending"
+  },
+  "motion_fixed_071.png": {
+    "sha256": "f9f641e530ec9f963b7fcb48b8d10b4ea5dbd7b5dce468a4dacfae708bb622af",
+    "source": "tests/px9_locomotion.gd; real physics and split renderer, Godot Compatibility",
+    "status": "Corrected first-person baseline; agent inspected; user review pending"
+  },
+  "motion_fixed_250.png": {
+    "sha256": "1569d24c772cb9613ea97e3662ac4b753b0a9ed7aadce91aa55128495582af91",
+    "source": "tests/px9_locomotion.gd; real physics and split renderer, Godot Compatibility",
+    "status": "Corrected first-person baseline; agent inspected; user review pending"
+  },
+  "empty-moving.png": {
+    "source": "tests/px9_locomotion.gd -- --empty; physics-driven movement, Godot Compatibility",
+    "sha256": "34d28b2e1b8709c40bcde847312a655c97f99dc3dfd1bd3ce39b3f1454e3b18f",
+    "status": "Agent inspected slide-open moving pose; user review pending"
+  },
+  "vfx-gameplay.png": {
+    "sha256": "17df404d6a3fb81413cb4b5e26cf480b88b41bc26713224c989dc3833a93622b",
+    "source": "tests/px9_world.gd -- --vfx-capture; temporary gameplay world; confirmed first shot; flash held for the still",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree first-person camera; 1920x1080 capture",
+    "status": "Agent inspected; user feel/visual review pending"
+  },
+  "vfx-hip-day.png": {
+    "sha256": "d790938e2112206fc2b81fa433afe528af62882862deaad4106441b7d576fd2a",
+    "source": "tools/preview_px9_flash.gd; fixed seed 910; first-person split meshes with depth protection; peak flash in bright studio",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050",
+    "camera": "75-degree first-person camera; 1920x1080 capture",
+    "status": "Agent inspected; user feel/visual review pending"
+  },
+  "vfx-aim-dim.png": {
+    "sha256": "674f47f2fd1647f763fd182697b221bf5c76673085753e69476f1932d8f68981",
+    "source": "tools/preview_px9_flash.gd; aimed peak flash in dim studio; rear of gun occludes the flash core",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050",
+    "camera": "75-degree first-person camera; 1920x1080 capture",
+    "status": "Agent inspected; user feel/visual review pending"
+  },
+  "vfx-smoke.png": {
+    "sha256": "ea48bda647c93371a76f538a1542e340f94314c6355df92d1f36bfab8c8cca91",
+    "source": "tools/preview_px9_flash.gd; dim studio; faint detached smoke at 316 ms (initial preview timing)",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree first-person camera; 1920x1080 capture",
+    "status": "Agent inspected; user feel/visual review pending"
+  },
+  "independent_aim_during_recoil_100ms.png": {
+    "sha256": "2bb7384f667f386bf0b38d9f580a603f2a8dd2ab93ca0a7e5c378898364fd3c0",
+    "source": "tools/preview_px9_flash.gd -- --aim-flow; same uninterrupted hip-shot clock; aim starts at shot time 0.05 s",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050; split first-person renderer and depth protection",
+    "status": "Agent inspected intermediate and reversed poses; user feel review pending"
+  },
+  "independent_aimed_recoil_160ms.png": {
+    "sha256": "f2fe2a050961af9a56fe5245af87447c325c7772f8a9f6b9b18fde8dd5e5e5d3",
+    "source": "tools/preview_px9_flash.gd -- --aim-flow; same uninterrupted hip-shot clock; aim starts at shot time 0.05 s",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050; split first-person renderer and depth protection",
+    "status": "Agent inspected intermediate and reversed poses; user feel review pending"
+  },
+  "independent_reverse_aim_mid_recoil.png": {
+    "sha256": "811d4caefd10e2c689335d44dd319b7870d0782792d7969dc30f9505a3737154",
+    "source": "tools/preview_px9_flash.gd -- --aim-flow; same uninterrupted hip-shot clock; aim starts at shot time 0.05 s",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050; split first-person renderer and depth protection",
+    "status": "Agent inspected intermediate and reversed poses; user feel review pending"
+  }
+}

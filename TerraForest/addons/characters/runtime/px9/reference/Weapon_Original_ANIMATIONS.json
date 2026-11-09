@@ -1,0 +1,516 @@
+{
+  "asset": "PX-9 ECLIPSE",
+  "license": "CC0-1.0",
+  "fps": 60,
+  "animation_method": "One real armature; rigid one-bone skinning on 17 separate meshes; pose-bone NLA clips.",
+  "animated_objects": [
+    "WeaponSkeleton"
+  ],
+  "rotation_channels": "Quaternion pose-bone keys sampled from authored object motion at 60 fps.",
+  "root_motion": "Presentation and recoil motion on weapon_root bone. WeaponSkeleton object remains static; parent it under a gameplay mount.",
+  "initial_state": "Assembled pose with all NLA tracks muted and ejected_case bone at uniform scale 0.0001.",
+  "export": {
+    "animation_mode": "NLA_TRACKS",
+    "slide_to_zero": true,
+    "limit_to_scene_frame_range": false,
+    "sample_rate_frames": 1,
+    "keep_constant_bone_channels": true,
+    "object_animation": false,
+    "skins": true,
+    "rest_position_armature": false
+  },
+  "notes": [
+    "Weapon component animation only; no hands, character skeleton, audio, muzzle flash or game logic.",
+    "Each separate mesh is rigidly bound with exactly one weight of 1.0 per vertex.",
+    "MagazineBase bone inherits Magazine; sight bones inherit Slide; ejection_socket inherits slide.",
+    "Every clip keys translation, quaternion rotation and scale for every bone, including socket reset channels.",
+    "fire_last_round ends slide-open and reload_empty starts in that part pose.",
+    "Assembly and disassembly are decorative game presentation with simplified hidden parts.",
+    "Casing visibility uses a tiny positive uniform bone scale; firing uses full-size rigid casing geometry.",
+    "Sockets are named bones, usable as native BoneAttachment3D targets in Godot.",
+    "The source-only preview reel is excluded from game exports."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "duration_seconds": 2.0,
+      "loop": true,
+      "frame_start": 1,
+      "frame_end": 121,
+      "start_pose": "assembled",
+      "end_pose": "assembled",
+      "description": "Subtle seamless breathing/sway loop.",
+      "events": []
+    },
+    {
+      "name": "fire",
+      "duration_seconds": 0.35,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 22,
+      "start_pose": "assembled",
+      "end_pose": "assembled",
+      "description": "Single shot, recoil, slide cycle, trigger and ejected casing.",
+      "events": [
+        {
+          "time_seconds": 0.016667,
+          "name": "shot",
+          "note": "Trigger game damage, shot sound and an external muzzle flash here."
+        },
+        {
+          "time_seconds": 0.05,
+          "name": "case_visible",
+          "note": "Included casing becomes visible; do not also spawn a duplicate unless disabling this mesh."
+        },
+        {
+          "time_seconds": 0.116667,
+          "name": "slide_closed",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.316667,
+          "name": "case_hidden",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "name": "fire_last_round",
+      "duration_seconds": 0.35,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 22,
+      "start_pose": "assembled",
+      "end_pose": "slide_locked_open",
+      "description": "Single shot, recoil, slide cycle, trigger and ejected casing; ends locked open.",
+      "events": [
+        {
+          "time_seconds": 0.016667,
+          "name": "shot",
+          "note": "Trigger game damage, shot sound and an external muzzle flash here."
+        },
+        {
+          "time_seconds": 0.05,
+          "name": "case_visible",
+          "note": "Included casing becomes visible; do not also spawn a duplicate unless disabling this mesh."
+        },
+        {
+          "time_seconds": 0.066667,
+          "name": "slide_locked_open",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.316667,
+          "name": "case_hidden",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "name": "reload_tactical",
+      "duration_seconds": 2.4,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 145,
+      "start_pose": "assembled",
+      "end_pose": "assembled",
+      "description": "Weapon-only magazine removal/reinsertion and recovery; no hand rig.",
+      "events": [
+        {
+          "time_seconds": 0.25,
+          "name": "magazine_release",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.45,
+          "name": "magazine_removed",
+          "note": ""
+        },
+        {
+          "time_seconds": 1.84,
+          "name": "magazine_inserted",
+          "note": "Suggested gameplay ammunition update / insertion sound."
+        },
+        {
+          "time_seconds": 2.4,
+          "name": "ready",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "name": "reload_empty",
+      "duration_seconds": 3.0,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 181,
+      "start_pose": "slide_locked_open",
+      "end_pose": "assembled",
+      "description": "Weapon-only magazine removal/reinsertion and recovery; no hand rig.",
+      "events": [
+        {
+          "time_seconds": 0.3,
+          "name": "magazine_release",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.52,
+          "name": "magazine_removed",
+          "note": ""
+        },
+        {
+          "time_seconds": 2.08,
+          "name": "magazine_inserted",
+          "note": "Suggested gameplay ammunition update / insertion sound."
+        },
+        {
+          "time_seconds": 2.35,
+          "name": "slide_release",
+          "note": ""
+        },
+        {
+          "time_seconds": 2.43,
+          "name": "slide_closed",
+          "note": ""
+        },
+        {
+          "time_seconds": 3.0,
+          "name": "ready",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "name": "rack_slide",
+      "duration_seconds": 1.0,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 61,
+      "start_pose": "assembled",
+      "end_pose": "assembled",
+      "description": "Pull back, hold, and release the slide.",
+      "events": [
+        {
+          "time_seconds": 0.35,
+          "name": "slide_open",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.5,
+          "name": "slide_release",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.6,
+          "name": "slide_closed",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "name": "inspect",
+      "duration_seconds": 3.0,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 181,
+      "start_pose": "assembled",
+      "end_pose": "assembled",
+      "description": "Show both sides and return to the held pose.",
+      "events": []
+    },
+    {
+      "name": "draw",
+      "duration_seconds": 0.6,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 37,
+      "start_pose": "stowed",
+      "end_pose": "assembled",
+      "description": "Raise the weapon into the held position.",
+      "events": [
+        {
+          "time_seconds": 0.6,
+          "name": "ready",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "name": "holster",
+      "duration_seconds": 0.6,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 37,
+      "start_pose": "assembled",
+      "end_pose": "stowed",
+      "description": "Lower the weapon out of the held position.",
+      "events": [
+        {
+          "time_seconds": 0.6,
+          "name": "stowed",
+          "note": "The game may hide the weapon after this event."
+        }
+      ]
+    },
+    {
+      "name": "disassemble",
+      "duration_seconds": 5.0,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 301,
+      "start_pose": "assembled",
+      "end_pose": "exploded",
+      "description": "Orderly decorative exploded view of the visible game parts.",
+      "events": [
+        {
+          "time_seconds": 1.15,
+          "name": "Magazine_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 2.2,
+          "name": "Slide_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 3.05,
+          "name": "Barrel_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 3.25,
+          "name": "MuzzleHousing_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 3.25,
+          "name": "GuideRod_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.05,
+          "name": "GripPanel_Left_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.05,
+          "name": "GripPanel_Right_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.25,
+          "name": "Trigger_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.35,
+          "name": "Takedown_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.35,
+          "name": "SlideStop_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.35,
+          "name": "MagazineRelease_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.35,
+          "name": "FramePins_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.55,
+          "name": "FrontSight_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.55,
+          "name": "RearSight_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 4.6,
+          "name": "MagazineBase_separated",
+          "note": ""
+        },
+        {
+          "time_seconds": 5.0,
+          "name": "exploded_view_ready",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "name": "assemble",
+      "duration_seconds": 5.0,
+      "loop": false,
+      "frame_start": 1,
+      "frame_end": 301,
+      "start_pose": "exploded",
+      "end_pose": "assembled",
+      "description": "Exact time reversal of the decorative exploded view.",
+      "events": [
+        {
+          "time_seconds": 0.4,
+          "name": "MagazineBase_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.45,
+          "name": "FrontSight_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.45,
+          "name": "RearSight_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.65,
+          "name": "Takedown_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.65,
+          "name": "SlideStop_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.65,
+          "name": "MagazineRelease_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.65,
+          "name": "FramePins_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.75,
+          "name": "Trigger_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.95,
+          "name": "GripPanel_Left_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 0.95,
+          "name": "GripPanel_Right_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 1.75,
+          "name": "MuzzleHousing_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 1.75,
+          "name": "GuideRod_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 1.95,
+          "name": "Barrel_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 2.8,
+          "name": "Slide_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 3.85,
+          "name": "Magazine_joined",
+          "note": ""
+        },
+        {
+          "time_seconds": 5.0,
+          "name": "assembled",
+          "note": ""
+        }
+      ]
+    }
+  ],
+  "armature": "WeaponSkeleton",
+  "root_bone": "weapon_root",
+  "animated_bones": [
+    "weapon_root",
+    "frame",
+    "slide",
+    "barrel",
+    "muzzle_housing",
+    "guide_rod",
+    "magazine",
+    "magazine_base",
+    "trigger",
+    "grip_panel_left",
+    "grip_panel_right",
+    "takedown",
+    "slide_stop",
+    "magazine_release",
+    "frame_pins",
+    "front_sight",
+    "rear_sight",
+    "ejected_case",
+    "muzzle_socket",
+    "grip_socket",
+    "support_hand_socket",
+    "ejection_socket"
+  ],
+  "part_bone_map": {
+    "Frame": "frame",
+    "Slide": "slide",
+    "Barrel": "barrel",
+    "MuzzleHousing": "muzzle_housing",
+    "GuideRod": "guide_rod",
+    "Magazine": "magazine",
+    "MagazineBase": "magazine_base",
+    "Trigger": "trigger",
+    "GripPanel_Left": "grip_panel_left",
+    "GripPanel_Right": "grip_panel_right",
+    "Takedown": "takedown",
+    "SlideStop": "slide_stop",
+    "MagazineRelease": "magazine_release",
+    "FramePins": "frame_pins",
+    "FrontSight": "front_sight",
+    "RearSight": "rear_sight",
+    "EjectedCase": "ejected_case"
+  },
+  "bone_parents": {
+    "weapon_root": null,
+    "frame": "weapon_root",
+    "slide": "weapon_root",
+    "barrel": "weapon_root",
+    "muzzle_housing": "weapon_root",
+    "guide_rod": "weapon_root",
+    "magazine": "weapon_root",
+    "magazine_base": "magazine",
+    "trigger": "weapon_root",
+    "grip_panel_left": "weapon_root",
+    "grip_panel_right": "weapon_root",
+    "takedown": "weapon_root",
+    "slide_stop": "weapon_root",
+    "magazine_release": "weapon_root",
+    "frame_pins": "weapon_root",
+    "front_sight": "slide",
+    "rear_sight": "slide",
+    "ejected_case": "weapon_root",
+    "muzzle_socket": "weapon_root",
+    "grip_socket": "weapon_root",
+    "support_hand_socket": "weapon_root",
+    "ejection_socket": "slide"
+  },
+  "socket_bone_map": {
+    "MuzzleSocket": "muzzle_socket",
+    "GripSocket": "grip_socket",
+    "SupportHandSocket": "support_hand_socket",
+    "EjectionSocket": "ejection_socket"
+  },
+  "initial_state_scope": "GLB node defaults preserve this posed casing visibility while inverse-bind matrices use the full-size rest geometry. Delivered Blender opens on the source-only preview reel."
+}

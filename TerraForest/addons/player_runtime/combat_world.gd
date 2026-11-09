@@ -4,7 +4,7 @@ const Barrel=preload("res://addons/player_runtime/combat_barrel.gd")
 const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
 const RIFLE:=7
 const AMMO:=221
-const WEAPONS={7:{"title":"CARBINE","ammo":221,"interval":.4,"speed":180.0,"damage":35,"block_damage":18},8:{"title":"RANGER AR","ammo":223,"interval":.10,"speed":240.0,"damage":24,"block_damage":12}}
+const WEAPONS={9:{"title":"PX9 ECLIPSE","ammo":228,"capacity":15,"interval":.22,"speed":170.0,"damage":28,"block_damage":10},7:{"title":"CARBINE","ammo":221,"interval":.4,"speed":180.0,"damage":35,"block_damage":18},8:{"title":"RANGER AR","ammo":223,"interval":.10,"speed":240.0,"damage":24,"block_damage":12}}
 const PROJECTILE_LIMIT:=64
 var game:Node
 # Input ownership is supplied by the host, allowing non-mouse controllers and
@@ -35,6 +35,8 @@ var audio_pool:Array[AudioStreamPlayer3D]=[]
 var shot_audio:AudioStreamWAV
 var blast_audio:AudioStreamWAV
 var assault_audio:AudioStreamWAV
+var pistol_audio:AudioStreamWAV
+var reload_audio:AudioStreamWAV
 var restored_support_pending:=true
 func prepare(host:Node)->bool:
 	game=host;state=ClassDB.instantiate("NativeCombatState")
@@ -43,6 +45,11 @@ func prepare(host:Node)->bool:
 	add_child(effects);effects.blocks=game.structures.blocks;integrity.attach(game,self)
 	holes=preload("res://addons/player_runtime/bullet_holes.gd").new();add_child(holes)
 	game.tool_view.human.rifle_reload_finished.connect(finish_reload)
+	var decoder=preload("res://addons/audio_runtime/wav_decoder.gd")
+	pistol_audio=decoder.decode("res://addons/audio_runtime/packs/Kaino/1/Pistol Shot 1 - Kaino.wav")
+	reload_audio=decoder.decode("res://addons/audio_runtime/packs/Kaino/1/Magazine Reload 1 - Kaino.wav")
+	game.tool_view.human.handgun_event.connect(func(event:String,_details:Dictionary):
+		if reload_slot>=0 and event=="magazine_out":play_sound(game.camera.global_position,reload_audio))
 	shot_audio=sound(.18,72);blast_audio=sound(.65,38);assault_audio=sound(.13,110);shot_random.randomize()
 	return game.persistence.register_component("combat",capture,restore,state,state.capture_storage_snapshot())
 func capture()->PackedByteArray:
@@ -58,7 +65,7 @@ func add_controls(menu:CanvasLayer,parent:Node)->void:
 	integrity_toggle=CheckButton.new();integrity_toggle.text="Structural integrity and collapse (optional)"
 	integrity_toggle.tooltip_text="Check nearby blocks after building, mining and explosions. Unsupported blocks fall. Off by default; saved with this world."
 	integrity_toggle.button_pressed=state.integrity_enabled();integrity_toggle.toggled.connect(set_integrity);parent.add_child(integrity_toggle)
-	menu.label(parent,"Firearms: hold left mouse to fire · right mouse aims · R reloads. Craft a Carbine or Ranger assault rifle and matching cartridges, or use Dev Bag. Equip a barrel and right-click loaded ground to place it.")
+	menu.label(parent,"Firearms: hold left mouse to fire · right mouse aims · R reloads. Craft a PX9 handgun, Carbine or Ranger assault rifle and matching cartridges, or use Dev Bag. Equip a barrel and right-click loaded ground to place it.")
 func set_integrity(enabled:bool)->void:
 	state.set_integrity_enabled(enabled);integrity.reset();game.terrain.changed_since_save=true
 	if enabled:integrity.changed(AABB(game.player.global_position-Vector3.ONE,Vector3.ONE*2))
@@ -68,6 +75,9 @@ func can_use()->bool:
 	return active() and not game.session_menu.developer and not game.world_vehicle.driving and not game.player_view.entry.blocks_actions() and action_input_owned.is_valid() and action_input_owned.call() and game._model_edit_available()
 func handle_input(event:InputEvent)->bool:
 	if game.equipped_tool in WEAPONS:
+		if game.equipped_tool==9 and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_I:
+			if can_use():game.tool_view.human.handgun_action("inspect")
+			return true
 		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_R:reload();return true
 		if event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT]:
 			if event.button_index==MOUSE_BUTTON_LEFT and event.pressed:fire()
@@ -89,7 +99,9 @@ func fire()->bool:
 	var human:Node=game.tool_view.human
 	if human.current!=weapon or human.action_remaining>0:return false
 	if state.get_rounds(weapon)<=0:
-		next_shot=timer+.4;reload();return false
+		next_shot=timer+.4
+		if weapon!=9 or rounds_in_bag(9)>0:reload()
+		return false
 	var origin:Vector3=game.camera.global_position
 	var direction:Vector3=-game.camera.global_basis.z
 	if weapon==8:
@@ -98,23 +110,27 @@ func fire()->bool:
 		direction=(direction+game.camera.global_basis.x*cos(angle)*radius+game.camera.global_basis.y*sin(angle)*radius).normalized()
 	if not launch(origin,direction,weapon):return false
 	if not state.take_round(weapon):return false
+	if weapon==9:human.handgun_empty=state.get_rounds(weapon)==0
 	human.rifle_action("Fire" if human.rifle_aiming else "HipFire")
+	if weapon==9:human.flash_handgun() # Only confirmed shots produce light/gas.
 	shots+=1;next_shot=timer+float(WEAPONS[weapon].interval);game.terrain.changed_since_save=true
-	game.zombies.hear_noise(origin,64);play_sound(origin,assault_audio if weapon==8 else shot_audio)
+	game.zombies.hear_noise(origin,64);play_sound(origin,pistol_audio if weapon==9 else (assault_audio if weapon==8 else shot_audio))
 	return true
 func reload()->bool:
 	var weapon:int=game.equipped_tool
-	if not can_use() or weapon not in WEAPONS or reload_slot>=0 or state.get_rounds(weapon)>=30:return false
+	if not can_use() or weapon not in WEAPONS or reload_slot>=0 or state.get_rounds(weapon)>=int(WEAPONS[weapon].get("capacity",30)):return false
 	if rounds_in_bag(weapon)<=0:game._show_lake_notice("No matching cartridges · craft or find ammunition");return false
 	if not game.tool_view.human.rifle_action("Reload"):return false
 	reload_slot=game.player_hud.active_slot;reload_epoch=game.terrain.epoch;reload_weapon=weapon;return true
 func finish_reload()->void:
 	if reload_slot<0:return
 	if not can_use() or game.equipped_tool!=reload_weapon or game.player_hud.active_slot!=reload_slot or game.terrain.epoch!=reload_epoch:cancel_reload();return
-	var count:=mini(30-state.get_rounds(reload_weapon),rounds_in_bag(reload_weapon))
+	var count:=mini(int(WEAPONS[reload_weapon].get("capacity",30))-state.get_rounds(reload_weapon),rounds_in_bag(reload_weapon))
 	var inventory:RefCounted=game.player_hud.inventory
 	if count>0 and inventory.consume_items(PackedInt64Array([WEAPONS[reload_weapon].ammo,count]),inventory.snapshot().revision).ok:
-		state.load_rounds(count,reload_weapon);game.terrain.changed_since_save=true;game.player_hud.refresh()
+		state.load_rounds(count,reload_weapon);
+		if reload_weapon==9:game.tool_view.human.handgun_empty=false
+		game.terrain.changed_since_save=true;game.player_hud.refresh()
 	reload_slot=-1;reload_weapon=-1
 func cancel_reload()->void:
 	reload_slot=-1;reload_weapon=-1
@@ -277,13 +293,21 @@ func _physics_process(delta:float)->void:
 	if int(timer)!=int(timer-delta):
 		for id:int in barrels.get_ids():
 			if game.world_attack.durability.damage("model:%s:%d"%[Barrel.KEY,id],50)>=50 and id not in detonations and detonations.size()<256:detonations.append(id)
+	if game.equipped_tool==9:
+		var human:Node=game.tool_view.human
+		human.handgun_empty=state.get_rounds(9)==0
+		# Finish last-shot recoil, then reload without requiring another click.
+		# Throttle empty-reserve checks and never play a dry-fire action.
+		if human.handgun_empty and reload_slot<0 and timer>=next_shot and can_use() and human.current==9 and human.action_remaining<=0:
+			next_shot=timer+.25
+			if rounds_in_bag(9)>0:reload()
 	if game.equipped_tool in WEAPONS and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):fire()
 	if ammo_label==null and game.player_hud.action_hint!=null:
 		ammo_label=Label.new();ammo_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT;ammo_label.custom_minimum_size.x=340;ammo_label.add_theme_font_size_override("font_size",22);game.player_hud.add_child(ammo_label)
 	if ammo_label!=null:
 		ammo_label.visible=game.equipped_tool in WEAPONS and not game.player_hud.inventory_open and not game.session_menu.visible_ui()
 		var viewport_size:Vector2=get_viewport().get_visible_rect().size
-		ammo_label.text="%s  %02d / 30   ·   %d reserve%s"%[WEAPONS.get(game.equipped_tool,WEAPONS[RIFLE]).title,state.get_rounds(game.equipped_tool),rounds_in_bag(),"   RELOADING" if reload_slot>=0 else ""]
+		ammo_label.text="%s  %02d / %d   ·   %d reserve%s"%[WEAPONS.get(game.equipped_tool,WEAPONS[RIFLE]).title,state.get_rounds(game.equipped_tool),int(WEAPONS.get(game.equipped_tool,WEAPONS[RIFLE]).get("capacity",30)),rounds_in_bag(),"   RELOADING" if reload_slot>=0 else ""]
 		ammo_label.size=ammo_label.get_combined_minimum_size()
 		ammo_label.position=Vector2(maxf(24,viewport_size.x-ammo_label.size.x-30),maxf(24,viewport_size.y-210))
 func sound(duration:float,frequency:float)->AudioStreamWAV:

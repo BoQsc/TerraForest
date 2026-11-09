@@ -1,0 +1,703 @@
+{
+  "scope": "Focused pose-only grip refinement and one optional source hand-weight outlier repair. No rest-bone, root/hips/legs, positions, topology, UV, material-slot or shape-key coordinate changes.",
+  "coordinate_space": "Canonical weapon Blender metres: +Y forward,+Z up. Human Blender: -Y forward,+Z up,right=-X.",
+  "grip_transforms": {
+    "RightHand_in_item": [
+      [
+        7.561857984228482e-08,
+        0.0,
+        0.9999999403953552,
+        0.028999999165534973
+      ],
+      [
+        0.5000000596046448,
+        0.8660253286361694,
+        0.0,
+        -0.16687151789665222
+      ],
+      [
+        -0.8660252690315247,
+        0.5000000596046448,
+        7.561857984228482e-08,
+        -0.06619225442409515
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LeftSupport_in_item": [
+      [
+        -0.21130916476249695,
+        0.4531539976596832,
+        -0.8660253286361694,
+        -0.09555259346961975
+      ],
+      [
+        -0.3659980595111847,
+        0.7848855257034302,
+        0.5000001192092896,
+        -0.120103619992733
+      ],
+      [
+        0.9063077569007874,
+        0.42261821031570435,
+        -1.0461826072116764e-08,
+        -0.08987656235694885
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "LeftMagazine_in_item": [
+      [
+        2.877273885815157e-08,
+        0.0,
+        -1.0,
+        -0.03700000047683716
+      ],
+      [
+        -0.9063078165054321,
+        0.42261815071105957,
+        0.0,
+        -0.13587656617164612
+      ],
+      [
+        0.4226181209087372,
+        0.9063078165054321,
+        2.877273885815157e-08,
+        -0.17872095108032227
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "construction": "q_new=Rz(yaw) @ Rx(pitch) @ old_q; mcp_local=Hand.rest^-1 @ Middle1.rest_head; t_new=(old_H@mcp_local)-(q_new@mcp_local).",
+    "rotations_degrees": {
+      "right_pitch": 30,
+      "left_support_pitch": 25,
+      "left_support_yaw": -30,
+      "left_magazine_pitch": -25
+    }
+  },
+  "elbow_pole": {
+    "formula": "desired_elbow=wrist_position-(Hand_rotation@(0,1,0))*original_forearm_length; pole=desired_elbow.lerp((side_sign*.38,-.08,1.22),.15)",
+    "side_sign": {
+      "Right": -1,
+      "Left": 1
+    },
+    "anatomical_mix": 0.15,
+    "forearm_length_metres": 0.263881
+  },
+  "wrist_axis_bend_degrees": [
+    {
+      "action": "idle",
+      "frame": 0,
+      "wrist_bend_degrees": {
+        "Right": 14.268750119587708,
+        "Left": 10.751510909317437
+      },
+      "reach": {
+        "Right": 0.5336799933853418,
+        "Left": 0.7940936624856552
+      }
+    },
+    {
+      "action": "aim_idle",
+      "frame": 0,
+      "wrist_bend_degrees": {
+        "Right": 13.975062230560914,
+        "Left": 17.28627305338598
+      },
+      "reach": {
+        "Right": 0.7106237747348213,
+        "Left": 0.7402518589645355
+      }
+    },
+    {
+      "action": "inspect",
+      "frame": 57,
+      "wrist_bend_degrees": {
+        "Right": 13.994903076326155,
+        "Left": 5.924038644997737
+      },
+      "reach": {
+        "Right": 0.7005722317902089,
+        "Left": 0.5777344057775756
+      }
+    },
+    {
+      "action": "inspect",
+      "frame": 120,
+      "wrist_bend_degrees": {
+        "Right": 13.935723756036227,
+        "Left": 5.924038644997737
+      },
+      "reach": {
+        "Right": 0.7049012132740069,
+        "Left": 0.5777344057775756
+      }
+    },
+    {
+      "action": "reload",
+      "frame": 24,
+      "wrist_bend_degrees": {
+        "Right": 26.065960429513158,
+        "Left": 36.61046623433408
+      },
+      "reach": {
+        "Right": 0.6589209638847289,
+        "Left": 0.7583194732660613
+      }
+    },
+    {
+      "action": "reload",
+      "frame": 64,
+      "wrist_bend_degrees": {
+        "Right": 25.482274661158673,
+        "Left": 93.2335506613456
+      },
+      "reach": {
+        "Right": 0.6572459639258482,
+        "Left": 0.6947408904155963
+      }
+    },
+    {
+      "action": "reload",
+      "frame": 98,
+      "wrist_bend_degrees": {
+        "Right": 25.417138562138845,
+        "Left": 47.24204499824162
+      },
+      "reach": {
+        "Right": 0.657816181223816,
+        "Left": 0.6876981356800157
+      }
+    },
+    {
+      "action": "rack",
+      "frame": 28,
+      "wrist_bend_degrees": {
+        "Right": 17.869895642490647,
+        "Left": 20.5653785720174
+      },
+      "reach": {
+        "Right": 0.62946735554804,
+        "Left": 0.7722145153534332
+      }
+    }
+  ],
+  "magazine_wrist_axis_bend_degrees": [
+    {
+      "frame": 24,
+      "angle": 19.31545566145236,
+      "palm_y_item": [
+        1.541338860988617e-07,
+        0.4226182997226715,
+        0.9063078165054321
+      ],
+      "forearm_y_item": [
+        0.32960644364356995,
+        0.4239429235458374,
+        0.8435827493667603
+      ],
+      "wrist_world": [
+        0.012030401267111301,
+        -0.27278947830200195,
+        1.4423753023147583
+      ],
+      "elbow_world": [
+        0.12771408259868622,
+        -0.11174625158309937,
+        1.2682620286941528
+      ]
+    },
+    {
+      "frame": 46,
+      "angle": 32.097186513816375,
+      "palm_y_item": [
+        3.306195139884949e-08,
+        0.42261821031570435,
+        0.9063078165054321
+      ],
+      "forearm_y_item": [
+        0.5113219022750854,
+        0.4890132546424866,
+        0.7066937685012817
+      ],
+      "wrist_world": [
+        0.04704040288925171,
+        -0.2395308017730713,
+        1.342851161956787
+      ],
+      "elbow_world": [
+        0.17915520071983337,
+        -0.046912383288145065,
+        1.2200634479522705
+      ]
+    },
+    {
+      "frame": 64,
+      "angle": 80.99118106471728,
+      "palm_y_item": [
+        -1.130392774939537e-07,
+        0.4226182699203491,
+        0.9063078165054321
+      ],
+      "forearm_y_item": [
+        0.8280905485153198,
+        0.5540248155593872,
+        -0.08557188510894775
+      ],
+      "wrist_world": [
+        0.18000002205371857,
+        -0.12000000476837158,
+        1.130000114440918
+      ],
+      "elbow_world": [
+        0.28438398241996765,
+        0.10068779438734055,
+        1.2301692962646484
+      ]
+    },
+    {
+      "frame": 98,
+      "angle": 30.081932369014943,
+      "palm_y_item": [
+        1.476728357374668e-07,
+        0.42261803150177,
+        0.9063079953193665
+      ],
+      "forearm_y_item": [
+        0.4805494248867035,
+        0.4948619306087494,
+        0.7240055799484253
+      ],
+      "wrist_world": [
+        0.05726892501115799,
+        -0.2373710572719574,
+        1.348127841949463
+      ],
+      "elbow_world": [
+        0.1883692890405655,
+        -0.04824536666274071,
+        1.2189874649047852
+      ]
+    },
+    {
+      "frame": 112,
+      "angle": 19.209451125533764,
+      "palm_y_item": [
+        2.658925950527191e-07,
+        0.42261824011802673,
+        0.9063078165054321
+      ],
+      "forearm_y_item": [
+        0.3279927968978882,
+        0.42266160249710083,
+        0.8448536396026611
+      ],
+      "wrist_world": [
+        0.012030360288918018,
+        -0.27278953790664673,
+        1.4423753023147583
+      ],
+      "elbow_world": [
+        0.12765297293663025,
+        -0.11219289153814316,
+        1.2678093910217285
+      ]
+    }
+  ],
+  "pouch_recommendation": {
+    "direction": [
+      0.1,
+      -0.9,
+      -0.4
+    ],
+    "angle": 7.24467578470039,
+    "palm_y_item": [
+      0.47222578525543213,
+      0.8221726417541504,
+      -0.31786003708839417
+    ],
+    "forearm_y_item": [
+      0.5681596994400024,
+      0.7858957648277283,
+      -0.24405436217784882
+    ],
+    "wrist_world": [
+      0.18000002205371857,
+      -0.12000001966953278,
+      1.1299999952316284
+    ],
+    "elbow_world": [
+      0.1860431730747223,
+      0.12360723316669464,
+      1.2312523126602173
+    ],
+    "matrix_world": [
+      [
+        -0.9126273393630981,
+        0.10101531445980072,
+        0.396115243434906,
+        0.18000000715255737
+      ],
+      [
+        -0.24638159573078156,
+        -0.9091373085975647,
+        -0.3358058035373688,
+        -0.11999999731779099
+      ],
+      [
+        0.32620158791542053,
+        -0.40406104922294617,
+        0.8545918464660645,
+        1.1299999952316284
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "fingers": {
+    "indexed_curls_degrees": [
+      -12,
+      -12,
+      0
+    ],
+    "trigger_curls_degrees": [
+      -29.79,
+      27.53,
+      50
+    ],
+    "trigger_index1_splay_degrees": -24.8,
+    "index1_rotation_order": "q=Rz(splay) @ Rx(-curl); other index joints Rx(-curl). Blend splay with same index contact blend as curls.",
+    "trigger_tip_item": [
+      2.87e-05,
+      -0.0065355,
+      0.0099989
+    ],
+    "target_pad_center_item": [
+      0,
+      -0.0065,
+      0.01
+    ],
+    "target_error_metres": 4.6e-05
+  },
+  "thumbs_item_directions": {
+    "Right": [
+      [
+        -0.4,
+        0.48,
+        0.78
+      ],
+      [
+        -0.45,
+        0.88,
+        0.15
+      ],
+      [
+        0.05,
+        0.99,
+        0.05
+      ]
+    ],
+    "LeftSupport": [
+      [
+        0.6,
+        0.5,
+        0.62
+      ],
+      [
+        0.55,
+        0.72,
+        0.42
+      ],
+      [
+        0.1,
+        0.98,
+        0.15
+      ]
+    ],
+    "LeftMagazine": [
+      [
+        0.65,
+        0.1,
+        0.75
+      ],
+      [
+        0.5,
+        0.1,
+        0.86
+      ],
+      [
+        -0.35,
+        0.9,
+        -0.25
+      ]
+    ],
+    "LeftSlide": [
+      [
+        0.6,
+        0.6,
+        0.5
+      ],
+      [
+        0.7,
+        0.6,
+        0
+      ],
+      [
+        0.1,
+        0.95,
+        -0.25
+      ]
+    ]
+  },
+  "thumb_tip_evidence": [
+    {
+      "tag": "repair741_up_aim_fp",
+      "right_thumb_tip": [
+        -0.017866121605038643,
+        -0.05873706936836243,
+        0.012637495994567871
+      ],
+      "left_thumb_tip": [
+        -0.07469432801008224,
+        -0.025708772242069244,
+        0.004305005073547363
+      ]
+    },
+    {
+      "tag": "repair741_fitted_aim_fp",
+      "right_thumb_tip": [
+        -0.01659858226776123,
+        -0.06450843811035156,
+        0.008739113807678223
+      ],
+      "left_thumb_tip": [
+        -0.0237201526761055,
+        -0.03099784441292286,
+        -0.00889897346496582
+      ]
+    },
+    {
+      "tag": "repair741_fitted_idle_side",
+      "right_thumb_tip": [
+        -0.0165986530482769,
+        -0.06450857222080231,
+        0.00873943604528904
+      ],
+      "left_thumb_tip": [
+        -0.023719895631074905,
+        -0.030997784808278084,
+        -0.008899149484932423
+      ]
+    },
+    {
+      "tag": "repair741_fitted_reload24_fp",
+      "right_thumb_tip": [
+        -0.015389341861009598,
+        -0.06525099277496338,
+        -0.01042231172323227
+      ],
+      "left_thumb_tip": [
+        0.011567264795303345,
+        -0.10835180431604385,
+        -0.07826295495033264
+      ]
+    },
+    {
+      "tag": "repair741_fitted_fire6_side",
+      "right_thumb_tip": [
+        -0.01659855619072914,
+        -0.06450826674699783,
+        0.008739177137613297
+      ],
+      "left_thumb_tip": [
+        -0.02372017689049244,
+        -0.03099794313311577,
+        -0.00889854971319437
+      ]
+    }
+  ],
+  "slide_release": {
+    "visual_bounds_item": {
+      "minimum": [
+        -0.02375,
+        -0.08677864,
+        0.037
+      ],
+      "maximum": [
+        -0.018,
+        -0.068,
+        0.045
+      ]
+    },
+    "bone_head_item": [
+      -0.018,
+      -0.078,
+      0.042
+    ],
+    "bone_axis_item": [
+      1,
+      0,
+      0
+    ],
+    "thumb_fit": {
+      "rest": {
+        "directions": [
+          [
+            -0.4,
+            0.48,
+            0.78
+          ],
+          [
+            -0.45,
+            0.88,
+            0.15
+          ],
+          [
+            0.05,
+            0.99,
+            0.05
+          ]
+        ],
+        "tip": [
+          -0.016598518937826157,
+          -0.06450861692428589,
+          0.00873919390141964
+        ]
+      },
+      "approach": {
+        "directions": [
+          [
+            -0.4,
+            0.48,
+            0.78
+          ],
+          [
+            -0.45,
+            0.65,
+            0.61
+          ],
+          [
+            -0.35,
+            0.67,
+            0.66
+          ]
+        ],
+        "tip": [
+          -0.02739708498120308,
+          -0.0828332006931305,
+          0.0440678596496582
+        ]
+      },
+      "press": {
+        "directions": [
+          [
+            -0.4,
+            0.48,
+            0.78
+          ],
+          [
+            -0.45,
+            0.65,
+            0.61
+          ],
+          [
+            -0.35,
+            0.75,
+            0.56
+          ]
+        ],
+        "tip": [
+          -0.02743661031126976,
+          -0.08059602975845337,
+          0.04144050180912018
+        ]
+      }
+    },
+    "suggested_frames_60fps": {
+      "reach_start": 138,
+      "reach_contact": 143,
+      "press_peak": 145,
+      "release_end": 149,
+      "restored": 152
+    },
+    "actuation_suggestion": "Approximately +8 degrees canonical-X about existing lever bone or1mm downward visual displacement at peak. Root owns integration and final clip review.",
+    "verification": "Native FK endpoints fitted to measured mesh bounds; full authored slide-release clip is reviewed by root."
+  },
+  "hand_patch": {
+    "path": "/workspace/scratch/dcf5bb39bbc3/work/px9_first_person/rig_analysis/hand_weight_patch_v2.json",
+    "sha256": "42b1a15fd864d1f43b691630e41ccf192e6db4894acdb70fb7dec9730f60ab0c",
+    "rows": 791,
+    "counts": {
+      "Right": 415,
+      "Left": 376
+    },
+    "previous_790_rows": "Identical; only row741 appended and sorted.",
+    "exception": {
+      "vertices": [
+        741
+      ],
+      "reason": "Original vertex 741 is a source boundary-seam thumb-weight outlier: 99.924% Thumb1 versus 28\u201330% on neighbors640/742. It stretches the existing tiny seam under thumb opposition.",
+      "source_neighbor": 742,
+      "source_boundary_edges": [
+        [
+          640,
+          741
+        ],
+        [
+          741,
+          742
+        ],
+        [
+          640,
+          742
+        ]
+      ],
+      "source_hand_local_y_metres": 0.01819046027958393,
+      "source_forearm_weight": 0.0002902052365243435,
+      "source_thumb1_weight": 0.9992421865463257,
+      "minimum_original_same_hand_weight_sum": 0.999,
+      "hand_rest_local_y_range_metres": [
+        0.01818,
+        0.0182
+      ],
+      "maximum_rest_distance_to_source_neighbor_metres": 0.00155,
+      "rule": "Only vertex741; reuse source742 proportions among RightHand* groups; preserve all original741 non-hand influences exactly; no geometry edits."
+    },
+    "fixture": "/workspace/scratch/dcf5bb39bbc3/work/px9_first_person/rig_analysis/hand_patch_v2_fixture.blend",
+    "helper": "Existing apply_hand_patch(bodycopy,rig,patch) accepts this revision unchanged; pass the frozen JSON."
+  },
+  "visual_evidence": {
+    "before_same_pose": "/workspace/scratch/dcf5bb39bbc3/work/px9_first_person/rig_analysis/wrist_review/thumb_up_aim_fp.png",
+    "after_only_741_weight_fix": "/workspace/scratch/dcf5bb39bbc3/work/px9_first_person/rig_analysis/wrist_review/repair741_up_aim_fp.png",
+    "final_ads": "/workspace/scratch/dcf5bb39bbc3/work/px9_first_person/rig_analysis/wrist_review/repair741_fitted_aim_fp.png",
+    "final_idle_side": "/workspace/scratch/dcf5bb39bbc3/work/px9_first_person/rig_analysis/wrist_review/repair741_fitted_idle_side.png",
+    "final_fire_side": "/workspace/scratch/dcf5bb39bbc3/work/px9_first_person/rig_analysis/wrist_review/repair741_fitted_fire6_side.png",
+    "final_reload_contact": "/workspace/scratch/dcf5bb39bbc3/work/px9_first_person/rig_analysis/wrist_review/repair741_fitted_reload24_fp.png"
+  },
+  "source_skin_limit": "Source has small pre-existing nonmanifold/boundary triangles. Topology remains exact; correcting vertex741 removes its visible deformation slit in the checked ADS pose. Other coarse source palm/knuckle facets remain.",
+  "independent_hand_patch_validation": {
+    "report": "work/px9_first_person/validation/hand_patch_v2_saved_validation.json",
+    "checks_passed": 17,
+    "non_hand_weight_difference": 0,
+    "neighbor_distance_metres": 0.0015392393,
+    "original_790_rows_exact": true,
+    "all_229_shapes_exact": true
+  }
+}

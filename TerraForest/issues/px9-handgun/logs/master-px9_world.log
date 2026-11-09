@@ -1,0 +1,47 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+WARNING: Loaded resource as image file, this will not work on export: 'res://addons/world_runtime/assets/general_world.png'. Instead, import the image file as an Image resource and load it normally as a resource.
+   at: load_from_file (core/io/image.cpp:2780)
+   GDScript backtrace (most recent call first):
+       [0] general_image (res://addons/world_runtime/world_presentation.gd:66)
+       [1] display_image (res://addons/world_runtime/world_presentation.gd:76)
+       [2] display_texture (res://addons/world_runtime/world_presentation.gd:79)
+       [3] _setup_loading (res://demo/controller.gd:347)
+       [4] _ready (res://demo/controller.gd:200)
+       [5] _ready (res://demo/world.gd:314)
+       [6] _startup_step (res://demo/world.gd:148)
+PASS temporary gameplay world ready
+PASS native bag receives handgun and cartridges
+PASS gameplay belt equips PX9
+PASS new handgun starts empty
+PASS empty equipped handgun automatically starts reload without a trigger
+PASS paired reload consumes exactly fifteen matching cartridges
+PASS host launches handgun projectile
+PASS one trigger consumes exactly one handgun round
+PASS confirmed shot emits one muzzle burst and light pulse
+PASS muzzle flash expires without repeat bursts from animation events
+PASS released trigger does not repeat fire
+PASS host combat save component restores pistol magazine
+PASS menus block handgun actions
+PASS partial reload starts
+PASS switching tools cancels reload without consuming cartridges
+PASS PX9 re-equips for held-trigger test
+PASS holding left mouse repeats shots at the existing recoil cadence
+PASS held trigger emits exactly one muzzle burst per accepted shot
+PASS held fire continues in aimed recoil after aim press
+PASS aim release returns held fire to hip recoil
+Aim/fire maximum shot gap: 0.41666666666669
+PASS aim press/release adds no delay to normal recoil cadence
+PASS reload interrupts recoil while the trigger remains held
+PASS held trigger cannot interrupt active reload
+PASS held fire resumes after reload completes
+PASS releasing left mouse immediately stops repeated fire
+PASS menu blocks held-trigger repetition
+PASS last loaded round fires
+PASS last round automatically reloads after recoil even with trigger released
+PASS automatic empty reload replenishes the magazine
+PASS empty reserve neither shoots nor loops a dry-fire/reload animation
+PASS empty trigger never emits a muzzle flash
+[TerrainRewrite] Temporary test world: save skipped
+PASS temporary world shuts down safely
+PX9_WORLD checks=32 failures=0

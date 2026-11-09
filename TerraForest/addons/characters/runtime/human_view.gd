@@ -1,6 +1,14 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
 ## Camera-local presentation. The existing native motor remains the player owner.
+signal handgun_event(event_name:String,details:Dictionary)
+var px9:Node
+var handgun_aim=preload("res://addons/characters/runtime/px9_aim_layer.gd").new()
+var handgun_flash:Node3D
+var handgun_empty:=true
+var handgun_aiming:=false
+const PX9_PATH="res://addons/characters/runtime/px9/item_px9.json"
+const PX9=preload("res://addons/characters/runtime/px9/item_instance.gd")
 signal rifle_reload_finished
 signal item_use_finished(identity:int,cancelled:bool)
 var rifle_aiming:=false
@@ -129,6 +137,7 @@ func _ready() -> void:
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
 	_prepare_item_locomotion()
+	_prepare_px9_locomotion()
 	# Retimed recoil keeps both hands and the weapon together at automatic cadence.
 	# All carry/equip/reload/holster actions retain their existing authored timing.
 	var automatic:=AnimationLibrary.new()
@@ -141,6 +150,28 @@ func _ready() -> void:
 		var name:=source.replace("Rifle","Ranger");automatic.add_animation(name,recoil);clips[name]="ranger/"+name
 	animation_player.add_animation_library("ranger",automatic)
 	equip(current)
+
+func _prepare_px9_locomotion()->void:
+	# Authored item motion assumes the original Idle root/hip baseline. Generic
+	# jump root motion can lift the torso through the camera. Keep legs animated
+	# while the paired item player exclusively owns the upper body.
+	var library:=AnimationLibrary.new()
+	var idle:Animation=animation_player.get_animation(clips["Idle"])
+	for source:String in ["Idle","Walk","Run","Jump","Player_Crouch"]:
+		var animation:Animation=animation_player.get_animation(clips[source]).duplicate(true)
+		for track in range(animation.get_track_count()-1,-1,-1):
+			var path:=animation.track_get_path(track)
+			var bone:=String(path.get_subname(0)) if path.get_subname_count()==1 else ""
+			if not ("Leg" in bone or "Foot" in bone or "Toe" in bone):animation.remove_track(track)
+		for track in idle.get_track_count():
+			var path:=idle.track_get_path(track)
+			if path.get_subname_count()!=1 or String(path.get_subname(0)) not in ["Root","Hips"]:continue
+			idle.copy_track(track,animation)
+			var added:=animation.get_track_count()-1
+			for key in range(animation.track_get_key_count(added)-1,0,-1):animation.track_remove_key(added,key)
+			animation.track_set_key_time(added,0,0)
+		library.add_animation(source,animation);clips["PX9_Base_"+source]="px9_base/"+source
+	animation_player.add_animation_library("px9_base",library)
 
 func _prepare_item_locomotion()->void:
 	# Keep existing feet/hips locomotion under the baseline's upper-body hold.
@@ -193,9 +224,14 @@ func set_third_person(value:bool)->void:
 	for entry:Array in face_surfaces:entry[0].set_surface_override_material(entry[1],null if value else entry[2])
 	for mesh:MeshInstance3D in meshes:mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON if value else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_sync_equipment()
+	if px9!=null and px9.item!=null:_collect_px9(px9.item)
 
 func equip(item: int, water_ml:int=-1) -> void:
 	cancel_item_use()
+	if current==9 and item!=9 and px9!=null:
+		rifle_holster_item=item;rifle_holster_water=water_ml
+		if px9.motion.current_action!="holster":px9.request("holster");action_remaining=px9.motion.duration_seconds()
+		return
 	if current in [7,8] and item!=current and model!=null and rifle_holster_item<0:
 		cancel_rifle_reload();rifle_holster_item=item;rifle_holster_water=water_ml
 		_play("FP_Rifle_Holster",true,0.04);return
@@ -213,6 +249,24 @@ func equip(item: int, water_ml:int=-1) -> void:
 	if model == null:
 		return
 	_sync_equipment()
+	if current==9:
+		if px9==null:
+			px9=PX9.new();px9.auto_process=false;add_child(px9)
+			var definition:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(PX9_PATH))
+			var weapon:Node3D=preload("res://addons/characters/runtime/px9/PX9_Eclipse_FP.glb").instantiate()
+			_prepare_empty_px9(weapon,definition)
+			var result:int=px9.equip(model,weapon,preload("res://addons/characters/runtime/px9/Human.px9_eclipse.res"),definition,PX9_PATH)
+			if result!=OK:push_error("PX9 equip failed: "+str(result));return
+			body_mesh.mesh.set_meta("px9_hand_skin",true)
+			px9.item.set_meta("first_person_equipment",true)
+			_collect_px9(px9.item)
+			handgun_aim.prepare(px9.motion)
+			_prepare_px9_flash()
+			px9.event_reached.connect(func(event:String,details:Dictionary):handgun_event.emit(event,details))
+			px9.action_finished.connect(func(action:String):
+				if action in ["reload","reload_empty"]:rifle_reload_finished.emit())
+			handgun_aiming=false;px9.request("equip");action_remaining=px9.motion.duration_seconds()
+		return
 	if current in [7,8] and previous_item!=current:
 		_play("FP_Rifle_Equip",true,0.0);animation_player.advance(0)
 	elif HeldItem.supports(current) and previous_item!=current:
@@ -228,7 +282,7 @@ func equip(item: int, water_ml:int=-1) -> void:
 
 func _sync_equipment() -> void:
 	if body_mesh!=null:
-		var selected:Mesh=unarmed_body_mesh if current in [0,6,401] or HeldItem.supports(current) else original_body_mesh
+		var selected:Mesh=body_mesh.mesh if current==9 and px9!=null else (unarmed_body_mesh if current in [0,6,401] or HeldItem.supports(current) else original_body_mesh)
 		if body_mesh.mesh!=selected:body_mesh.mesh=selected
 	for mesh in meshes:
 		var label := String(mesh.name).to_lower().replace("_", ".")
@@ -255,7 +309,68 @@ func _sync_bucket_water()->void:
 	var radius:=lerpf(.108,.137,bucket_display_fill)/.135
 	bucket_water.scale=Vector3(radius,1,radius)
 
+func _prepare_empty_px9(weapon:Node3D,definition:Dictionary)->void:
+	# Keep authored human locomotion and weapon-root motion while freezing the
+	# mechanical parts in their authored locked-open pose. Source assets stay intact.
+	var player:AnimationPlayer=weapon.find_children("*","AnimationPlayer",true,false)[0]
+	var names:={}
+	for name in player.get_animation_list():names[String(name).get_slice("/",String(name).get_slice_count("/")-1)]=name
+	var empty:Animation=player.get_animation(names["FP_PX9_ECLIPSE_Idle_Empty"])
+	var library:=AnimationLibrary.new()
+	var additions:Array=[]
+	for action:Dictionary in definition.actions:
+		if action.id not in ["walk","run","jump"]:continue
+		var animation:Animation=player.get_animation(names[action.item_clip]).duplicate(true)
+		for track in range(animation.get_track_count()-1,-1,-1):
+			var path:=animation.track_get_path(track)
+			if path.get_subname_count()!=1 or String(path.get_subname(0))!="weapon_root":animation.remove_track(track)
+		for track in empty.get_track_count():
+			var path:=empty.track_get_path(track)
+			if path.get_subname_count()==1 and String(path.get_subname(0))=="weapon_root":continue
+			empty.copy_track(track,animation)
+			var added:=animation.get_track_count()-1
+			for key in range(animation.track_get_key_count(added)-1,0,-1):animation.track_remove_key(added,key)
+			animation.track_set_key_time(added,0,0)
+		var name:String=action.id+"_empty";library.add_animation(name,animation)
+		var variant:Dictionary=action.duplicate(true);variant.id=name;variant.item_clip="px9_empty/"+name
+		if not variant.return_action.is_empty():variant.return_action="idle_empty"
+		additions.append(variant)
+	player.add_animation_library("px9_empty",library);definition.actions.append_array(additions)
+
+func _collect_px9(node:Node)->void:
+	if node is MeshInstance3D:
+		node.layers=1<<19
+		node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON if third_person else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for child in node.get_children():_collect_px9(child)
+
+func _prepare_px9_flash()->void:
+	var skeleton:Skeleton3D=px9.item.find_children("*","Skeleton3D",true,false)[0]
+	var socket:=BoneAttachment3D.new();socket.name="PX9Muzzle";socket.bone_name="muzzle_socket"
+	skeleton.add_child(socket)
+	handgun_flash=preload("res://addons/characters/runtime/muzzle_flash.gd").new()
+	# Supplied socket's -X follows the bore; the reusable effect points along +Z.
+	handgun_flash.basis=Basis(Vector3(0,-1,0),Vector3(0,0,1),Vector3(-1,0,0))
+	socket.add_child(handgun_flash)
+
+func flash_handgun()->void:
+	if current!=9 or px9==null or not is_instance_valid(handgun_flash):return
+	var socket:=handgun_flash.get_parent() as BoneAttachment3D
+	socket.get_skeleton().force_update_all_bone_transforms();socket.on_skeleton_update()
+	handgun_flash.fire()
+
+func handgun_action(action:String)->bool:
+	if current!=9 or px9==null or rifle_holster_item>=0:return false
+	var interrupt_reload:bool=action in ["reload","reload_empty"] and px9.motion.current_action in ["fire","fire_last","aim_fire","aim_fire_last","dry_fire","aim_in","aim_out"]
+	if action_remaining>0 and not interrupt_reload:return false
+	var result:int=px9.request(action,.04 if interrupt_reload else 0.0)
+	if result==OK and action in ["fire","fire_last","aim_fire","aim_fire_last"]:handgun_aiming=rifle_aiming
+	if result==OK:action_remaining=px9.motion.duration_seconds()
+	return result==OK
+
 func rifle_action(action:String)->bool:
+	if current==9:
+		var requested:String={"Reload":"reload_empty" if handgun_empty else "reload","Fire":"aim_fire_last" if handgun_empty else "aim_fire","HipFire":"fire_last" if handgun_empty else "fire"}.get(action,action)
+		return handgun_action(requested)
 	if current not in [7,8] or action_remaining>0 or rifle_holster_item>=0:return false
 	var clip:String=("Rifle_" if third_person else "FP_Rifle_")+action
 	if third_person and action=="HipFire":clip="Rifle_Fire"
@@ -263,6 +378,8 @@ func rifle_action(action:String)->bool:
 	if not clips.has(clip):return false
 	_play(clip,true,0.025);animation_player.advance(0);return true
 func cancel_rifle_reload()->void:
+	if current==9 and px9!=null and px9.motion.current_action in ["reload","reload_empty"]:
+		px9.request("idle_empty" if handgun_empty else "idle");action_remaining=0
 	if current in [7,8] and active_clip in ["FP_Rifle_Reload","Rifle_Reload"]:
 		action_remaining=0;_play(_motion_clip("Idle"),false,0.05)
 func _motion_clip(action: String) -> String:
@@ -341,7 +458,35 @@ func bucket_use(pouring:bool)->bool:
 	_sync_bucket_water()
 	return true
 
+func _process_handgun(delta:float)->void:
+	if px9==null:return
+	model.position=Vector3.ZERO if third_person else Vector3(0,0,.06)
+	if not is_visible_in_tree():return
+	var moving:=is_instance_valid(body) and Vector2(body.velocity.x,body.velocity.z).length()>.15
+	var motion:String="run" if moving and Vector2(body.velocity.x,body.velocity.z).length()>6.5 else ("walk" if moving else "idle")
+	if is_instance_valid(body) and not body.is_on_floor():motion="jump"
+	_play(("" if third_person else "PX9_Base_")+("Player_Crouch" if third_person and crouched else {"idle":"Idle","walk":"Walk","run":"Run","jump":"Jump"}[motion]),false,0)
+	animation_player.advance(delta)
+	var clock:Node=px9.motion
+	var ambient:=["idle","idle_empty","walk","run","jump","walk_empty","run_empty","jump_empty","aim_idle","aim_idle_empty"]
+	if clock.current_action in ambient or not clock.active:
+		var target:String=("aim_idle_empty" if handgun_empty else "aim_idle") if rifle_aiming else (motion+"_empty" if handgun_empty else motion)
+		if clock.current_action!=target:px9.request(target)
+	# Jump is a single authored action, held at its endpoint until landing.
+	# Returning to idle here would restart it during a longer flight.
+	clock.auto_return=clock.current_action not in ["jump","jump_empty"]
+	px9.advance(delta)
+	if clock.current_action in ["jump","jump_empty"] and not clock.active:clock.seek_seconds(clock.time_seconds)
+	handgun_aiming=rifle_aiming
+	handgun_aim.advance(delta,rifle_aiming,clock)
+	px9._after_pose(clock.current_action,clock.time_seconds,clock.current_frame())
+	if rifle_holster_item>=0 and (clock.current_action!="holster" or not clock.active):
+		var next:=rifle_holster_item;var water:=rifle_holster_water
+		px9.unequip();px9.queue_free();px9=null;current=-1;rifle_holster_item=-1;equip(next,water);return
+	action_remaining=0.0 if clock.current_action in ambient or not clock.active else maxf(0,clock.duration_seconds()-clock.time_seconds)
+
 func _process(delta: float) -> void:
+	if current==9:_process_handgun(delta);return
 	# Align the new iron-sight plane with the FP camera while keeping the stock
 	# below the sightline. Third-person and magazine handling retain rig placement.
 	var aiming_ranger:=current==8 and not third_person and rifle_aiming and (action_remaining<=0 or active_clip=="FP_Ranger_Fire")

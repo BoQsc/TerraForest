@@ -1,0 +1,76 @@
+{
+  "master_parent": "40a40d72520ee3cf58d5951ae4ff0f1ed5a17f24",
+  "handgun_parent": "a0079d05094b13a5c47439a8a118ebf871a359aa",
+  "accepted_playtest_tag": "px9-playtest-2026-11-09",
+  "automatic_merge": true,
+  "tests": [
+    {
+      "name": "px9_handgun",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PASS existing pistol recording decodes; PX9_HANDGUN checks=72 failures=0"
+    },
+    {
+      "name": "combat_state",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PASS new body and independent magazine replace the carbine presentation; COMBAT_STATE checks=82 failures=0"
+    },
+    {
+      "name": "universal_item_drop",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PASS old saves without universal drops restore empty defaults; UNIVERSAL_ITEM_DROP checks=454 failures=0"
+    },
+    {
+      "name": "physical_item_drops",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PASS old saves without physical motion load with empty physics state; PHYSICAL_ITEM_DROPS checks=79 failures=0"
+    },
+    {
+      "name": "px9_locomotion",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "MOTION frame=341 action=run grounded=true vy=0.0; PX9_LOCOMOTION jump starts=2 landings=2 held_frames=122 failures=0"
+    },
+    {
+      "name": "px9_locomotion_empty",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "MOTION frame=341 action=run grounded=true vy=0.0; PX9_LOCOMOTION jump starts=2 landings=2 held_frames=122 failures=0"
+    },
+    {
+      "name": "frame_trace",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "FRAME_TRACE enabled output=C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/frame_traces/2026-11-09T192101_52848 marker=Ctrl+Shift+F12; FRAME_TRACE_TEST failures=0"
+    },
+    {
+      "name": "release_combat",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "COMBAT_STATE checks=56 failures=0"
+    },
+    {
+      "name": "px9_world",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PASS temporary world shuts down safely; PX9_WORLD checks=32 failures=0"
+    },
+    {
+      "name": "drop_key_standard",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PASS world shuts down cleanly; DROP_KEY_STANDARD checks=32 failures=0"
+    }
+  ],
+  "credits": "20 notices match retained sources",
+  "export_or_install": false,
+  "native_sha256": {
+    "TerraForest/addons/structures/bin/structures.windows.template_debug.x86_64.dll": "95f041bb88827a2f3fa6796d09f3dbcfed8d676eddc6456f356dfbdc9933972d",
+    "TerraForest/addons/structures/bin/structures.windows.template_release.x86_64.dll": "c05d2c5113d967dc4501503eddc5f086cb9a602c983c0a6d67293ac4c311970a",
+    "TerraForest/addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+    "TerraForest/addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb"
+  }
+}

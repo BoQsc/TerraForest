@@ -3,6 +3,8 @@ extends RefCounted
 # Starter recipes are game rules, not physical manufacturing ratios.
 # Definitions and bounded UI orchestration may be modded; slot work is native.
 const RECIPES=[
+	{"title":"PX9 Eclipse handgun","costs":[104,10,102,2],"outputs":[9,1]},
+	{"title":"PX9 cartridges × 15","costs":[104,2,201,1],"outputs":[228,15]},
 
 	{"title":"Ranger assault rifle","costs":[104,18,102,6],"outputs":[8,1]},
 	{"title":"Ranger cartridges × 30","costs":[104,3,201,2],"outputs":[223,30]},

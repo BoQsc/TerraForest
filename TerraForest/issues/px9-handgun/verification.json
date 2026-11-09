@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-09",
+  "scope": "Source worktree only, no installed pack/export update",
+  "tested_base": "022b83f2; subsequently fast-forwarded to performance checkpoint 64eb3cc7 without changing PX9 code",
+  "checks": {
+    "px9_handgun": {
+      "checks": 60,
+      "failures": 0,
+      "log": "logs/px9-test.log"
+    },
+    "px9_world": {
+      "checks": 14,
+      "failures": 0,
+      "log": "logs/px9-world.log"
+    },
+    "combat_state_debug": {
+      "checks": 79,
+      "failures": 0,
+      "log": "logs/px9-combat-state.log"
+    },
+    "combat_state_release_native": {
+      "checks": 56,
+      "failures": 0,
+      "log": "logs/px9-native-release.log"
+    },
+    "universal_item_drop": {
+      "checks": 454,
+      "failures": 0,
+      "log": "logs/px9-universal-drop.log"
+    },
+    "physical_item_drops": {
+      "checks": 79,
+      "failures": 0,
+      "log": "logs/px9-physical-drop.log"
+    },
+    "drop_key_standard_graphical": {
+      "checks": 32,
+      "failures": 0,
+      "log": "logs/px9-drop-key-graphical.log"
+    }
+  },
+  "builds": [
+    "player_runtime template_debug",
+    "player_runtime template_release"
+  ],
+  "visual_review": "Idle, aimed and reload captures inspected by agent; user acceptance pending. Rack capture retained for review.",
+  "unreviewed": [
+    "third-person visual acceptance",
+    "dedicated dry-fire/rack/holster recordings (none supplied/selected)",
+    "packaged executable verification (no export requested)"
+  ],
+  "failed_attempts": "Headless G-key run cannot capture mouse (mode stays visible); failed before drop and terminated after test script indexed empty results. Original test restored unchanged; graphical rerun passed 32/32. Initial handgun test found holster cleanup bug, fixed and rerun 60/60. Existing general_world.png raw-image warning appears in world tests.",
+  "native_library_sha256": {
+    "template_debug": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+    "template_release": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb"
+  },
+  "upstream_whitespace": "git diff --check reports only pre-existing extra EOF blank lines in the unmodified imported source/px9_motion.py and reference/px9_motion_revision3.py; source bytes retained."
+}

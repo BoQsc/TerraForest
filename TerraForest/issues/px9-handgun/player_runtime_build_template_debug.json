@@ -1,0 +1,48 @@
+{
+  "target": "template_debug",
+  "compiled_extension_sources": [
+    "combat_state.cpp",
+    "container_patch.cpp",
+    "containers.cpp",
+    "corpse_patch.cpp",
+    "corpses.cpp",
+    "durability.cpp",
+    "durability_patch.cpp",
+    "inventory.cpp",
+    "movement.cpp",
+    "pose.cpp",
+    "progression.cpp",
+    "quests.cpp",
+    "register_types.cpp",
+    "survival.cpp",
+    "trader_stock.cpp"
+  ],
+  "godot_cpp_sources_compiled": 1,
+  "binding_repair": {
+    "id": "dictionary_move_assignment_v1",
+    "source_sha256": "cbeecb1484782dc2896a57061e52d7d2c0d4a90f6db2e27186b5eb7aab7f4ecd",
+    "source_commit": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "signature": "5eb864435082cc30c9145313e0e85a06f1788eabd09c69cb3b1c07499aa7d7d7",
+    "object_sha256": "d4c5f22698cfcf3d8067c3cedc35e632ec5d5d9b88f2d7cfcafd7daed32d3632",
+    "compiled": true
+  },
+  "linked": true,
+  "seconds": 60.421219699899666,
+  "output": "C:\\Users\\windows10\\.codex\\worktrees\\px9-handgun\\Godot Terrain\\TerraForest\\addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll",
+  "sha256": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "player_runtime"
+}

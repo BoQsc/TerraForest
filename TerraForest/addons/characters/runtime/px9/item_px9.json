@@ -1,0 +1,595 @@
+{
+  "schema": "bg5.first_person_item.v1",
+  "id": "px9_eclipse",
+  "title": "PX-9 ECLIPSE",
+  "fps": 60,
+  "default_action": "idle",
+  "files": {
+    "human_reference": "res://addons/characters/runtime/assets/Human.r11.glb",
+    "human_animation_source": "Human.px9_eclipse.glb",
+    "human_library": "Human.px9_eclipse.res",
+    "item_scene": "PX9_Eclipse_FP.glb",
+    "rest_space_item_scene": "PX9_Eclipse_FP_RestSpace.glb"
+  },
+  "human": {
+    "expected_bones": 59,
+    "reference_sha256": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+    "reference_rest_tolerance": 0.0001,
+    "first_person_material_mask": [
+      "Human.Head",
+      "Human.Mouth"
+    ],
+    "first_person_visible_meshes": [
+      "Human_Body"
+    ],
+    "source_baseline": "Original Idle frame1; lower-body transforms constant in authored data and excluded from imported first-person library.",
+    "reset_blend_shape_prefixes": [
+      "TP_Grip_",
+      "FP_"
+    ],
+    "hand_weight_patch": "Human.px9_eclipse.hand_weights.json",
+    "mesh_overrides": [
+      {
+        "mesh": "Human_Body",
+        "resource": "Human.px9_eclipse.body.res"
+      }
+    ]
+  },
+  "mount": {
+    "bone": "RightHand",
+    "space": "hand_local",
+    "transform": {
+      "basis_columns": [
+        [
+          0.18005681037902832,
+          -0.10395585000514984,
+          0.9781476259231567
+        ],
+        [
+          -0.8471006751060486,
+          0.48907381296157837,
+          0.20791170001029968
+        ],
+        [
+          -0.5000000596046448,
+          -0.866025447845459,
+          0.0
+        ]
+      ],
+      "origin": [
+        0.019923143088817596,
+        0.18118400871753693,
+        -0.03298769146203995
+      ]
+    },
+    "note": "Canonical item. Joint-local axes retain Blender bone axes; the glTF item basis conversion is included once in this measured hand-local transform.",
+    "rest_space_transform": {
+      "basis_columns": [
+        [
+          0.034113626927137375,
+          0.9781478047370911,
+          -0.20509353280067444
+        ],
+        [
+          -0.16049645841121674,
+          0.20791132748126984,
+          0.9648907780647278
+        ],
+        [
+          0.9864469170570374,
+          9.042831834449316e-07,
+          0.16408216953277588
+        ]
+      ],
+      "origin": [
+        -0.8636149764060974,
+        1.3231678009033203,
+        0.09730974584817886
+      ]
+    }
+  },
+  "camera": {
+    "position": [
+      0,
+      1.65,
+      -0.03
+    ],
+    "rotation_degrees": [
+      0,
+      180,
+      0
+    ],
+    "fov_degrees": 60,
+    "near_metres": 0.015
+  },
+  "actions": [
+    {
+      "id": "idle",
+      "label": "Idle",
+      "human_clip": "FP_PX9_ECLIPSE_Idle",
+      "item_clip": "FP_PX9_ECLIPSE_Idle",
+      "human_action": "FP_PX9_ECLIPSE_Idle",
+      "weapon_action": "PX9_FP__Idle",
+      "frame_end": 120,
+      "fps": 60,
+      "loop": true,
+      "return_action": "",
+      "events": []
+    },
+    {
+      "id": "walk",
+      "label": "Walk",
+      "human_clip": "FP_PX9_ECLIPSE_Walk",
+      "item_clip": "FP_PX9_ECLIPSE_Walk",
+      "human_action": "FP_PX9_ECLIPSE_Walk",
+      "weapon_action": "PX9_FP__Walk",
+      "frame_end": 72,
+      "fps": 60,
+      "loop": true,
+      "return_action": "",
+      "events": []
+    },
+    {
+      "id": "run",
+      "label": "Run",
+      "human_clip": "FP_PX9_ECLIPSE_Run",
+      "item_clip": "FP_PX9_ECLIPSE_Run",
+      "human_action": "FP_PX9_ECLIPSE_Run",
+      "weapon_action": "PX9_FP__Run",
+      "frame_end": 48,
+      "fps": 60,
+      "loop": true,
+      "return_action": "",
+      "events": []
+    },
+    {
+      "id": "jump",
+      "label": "Jump",
+      "human_clip": "FP_PX9_ECLIPSE_Jump",
+      "item_clip": "FP_PX9_ECLIPSE_Jump",
+      "human_action": "FP_PX9_ECLIPSE_Jump",
+      "weapon_action": "PX9_FP__Jump",
+      "frame_end": 60,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle",
+      "events": [
+        {
+          "frame": 38,
+          "event": "landing",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "equip",
+      "label": "Equip",
+      "human_clip": "FP_PX9_ECLIPSE_Equip",
+      "item_clip": "FP_PX9_ECLIPSE_Equip",
+      "human_action": "FP_PX9_ECLIPSE_Equip",
+      "weapon_action": "PX9_FP__Equip",
+      "frame_end": 42,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle",
+      "events": [
+        {
+          "frame": 30,
+          "event": "ready",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "holster",
+      "label": "Holster",
+      "human_clip": "FP_PX9_ECLIPSE_Holster",
+      "item_clip": "FP_PX9_ECLIPSE_Holster",
+      "human_action": "FP_PX9_ECLIPSE_Holster",
+      "weapon_action": "PX9_FP__Holster",
+      "frame_end": 36,
+      "fps": 60,
+      "loop": false,
+      "return_action": "",
+      "events": [
+        {
+          "frame": 30,
+          "event": "holstered",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "inspect",
+      "label": "Inspect",
+      "human_clip": "FP_PX9_ECLIPSE_Inspect",
+      "item_clip": "FP_PX9_ECLIPSE_Inspect",
+      "human_action": "FP_PX9_ECLIPSE_Inspect",
+      "weapon_action": "PX9_FP__Inspect",
+      "frame_end": 240,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle",
+      "events": []
+    },
+    {
+      "id": "aim_in",
+      "label": "Aim In",
+      "human_clip": "FP_PX9_ECLIPSE_Aim_In",
+      "item_clip": "FP_PX9_ECLIPSE_Aim_In",
+      "human_action": "FP_PX9_ECLIPSE_Aim_In",
+      "weapon_action": "PX9_FP__Aim_In",
+      "frame_end": 18,
+      "fps": 60,
+      "loop": false,
+      "return_action": "aim_idle",
+      "events": []
+    },
+    {
+      "id": "aim_idle",
+      "label": "Aim Idle",
+      "human_clip": "FP_PX9_ECLIPSE_Aim_Idle",
+      "item_clip": "FP_PX9_ECLIPSE_Aim_Idle",
+      "human_action": "FP_PX9_ECLIPSE_Aim_Idle",
+      "weapon_action": "PX9_FP__Aim_Idle",
+      "frame_end": 120,
+      "fps": 60,
+      "loop": true,
+      "return_action": "",
+      "events": []
+    },
+    {
+      "id": "aim_out",
+      "label": "Aim Out",
+      "human_clip": "FP_PX9_ECLIPSE_Aim_Out",
+      "item_clip": "FP_PX9_ECLIPSE_Aim_Out",
+      "human_action": "FP_PX9_ECLIPSE_Aim_Out",
+      "weapon_action": "PX9_FP__Aim_Out",
+      "frame_end": 18,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle",
+      "events": []
+    },
+    {
+      "id": "fire",
+      "label": "Fire",
+      "human_clip": "FP_PX9_ECLIPSE_Fire",
+      "item_clip": "FP_PX9_ECLIPSE_Fire",
+      "human_action": "FP_PX9_ECLIPSE_Fire",
+      "weapon_action": "PX9_FP__Fire",
+      "frame_end": 24,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle",
+      "events": [
+        {
+          "frame": 4,
+          "event": "shot",
+          "data": {}
+        },
+        {
+          "frame": 6,
+          "event": "case_eject",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "fire_last",
+      "label": "Fire Last",
+      "human_clip": "FP_PX9_ECLIPSE_Fire_Last",
+      "item_clip": "FP_PX9_ECLIPSE_Fire_Last",
+      "human_action": "FP_PX9_ECLIPSE_Fire_Last",
+      "weapon_action": "PX9_FP__Fire_Last",
+      "frame_end": 24,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle_empty",
+      "events": [
+        {
+          "frame": 4,
+          "event": "shot",
+          "data": {}
+        },
+        {
+          "frame": 6,
+          "event": "case_eject",
+          "data": {}
+        },
+        {
+          "frame": 9,
+          "event": "slide_locked",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "aim_fire",
+      "label": "Aim Fire",
+      "human_clip": "FP_PX9_ECLIPSE_Aim_Fire",
+      "item_clip": "FP_PX9_ECLIPSE_Aim_Fire",
+      "human_action": "FP_PX9_ECLIPSE_Aim_Fire",
+      "weapon_action": "PX9_FP__Aim_Fire",
+      "frame_end": 24,
+      "fps": 60,
+      "loop": false,
+      "return_action": "aim_idle",
+      "events": [
+        {
+          "frame": 4,
+          "event": "shot",
+          "data": {}
+        },
+        {
+          "frame": 6,
+          "event": "case_eject",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "aim_fire_last",
+      "label": "Aim Fire Last",
+      "human_clip": "FP_PX9_ECLIPSE_Aim_Fire_Last",
+      "item_clip": "FP_PX9_ECLIPSE_Aim_Fire_Last",
+      "human_action": "FP_PX9_ECLIPSE_Aim_Fire_Last",
+      "weapon_action": "PX9_FP__Aim_Fire_Last",
+      "frame_end": 24,
+      "fps": 60,
+      "loop": false,
+      "return_action": "aim_idle_empty",
+      "events": [
+        {
+          "frame": 4,
+          "event": "shot",
+          "data": {}
+        },
+        {
+          "frame": 6,
+          "event": "case_eject",
+          "data": {}
+        },
+        {
+          "frame": 9,
+          "event": "slide_locked",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "idle_empty",
+      "label": "Idle Empty",
+      "human_clip": "FP_PX9_ECLIPSE_Idle_Empty",
+      "item_clip": "FP_PX9_ECLIPSE_Idle_Empty",
+      "human_action": "FP_PX9_ECLIPSE_Idle_Empty",
+      "weapon_action": "PX9_FP__Idle_Empty",
+      "frame_end": 120,
+      "fps": 60,
+      "loop": true,
+      "return_action": "",
+      "events": []
+    },
+    {
+      "id": "aim_idle_empty",
+      "label": "Aim Idle Empty",
+      "human_clip": "FP_PX9_ECLIPSE_Aim_Idle_Empty",
+      "item_clip": "FP_PX9_ECLIPSE_Aim_Idle_Empty",
+      "human_action": "FP_PX9_ECLIPSE_Aim_Idle_Empty",
+      "weapon_action": "PX9_FP__Aim_Idle_Empty",
+      "frame_end": 120,
+      "fps": 60,
+      "loop": true,
+      "return_action": "",
+      "events": []
+    },
+    {
+      "id": "reload",
+      "label": "Reload",
+      "human_clip": "FP_PX9_ECLIPSE_Reload",
+      "item_clip": "FP_PX9_ECLIPSE_Reload",
+      "human_action": "FP_PX9_ECLIPSE_Reload",
+      "weapon_action": "PX9_FP__Reload",
+      "frame_end": 168,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle",
+      "events": [
+        {
+          "frame": 22,
+          "event": "magazine_release",
+          "data": {}
+        },
+        {
+          "frame": 46,
+          "event": "magazine_out",
+          "data": {}
+        },
+        {
+          "frame": 72,
+          "event": "magazine_exchange",
+          "data": {}
+        },
+        {
+          "frame": 112,
+          "event": "magazine_seated",
+          "data": {}
+        },
+        {
+          "frame": 150,
+          "event": "ready",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "reload_empty",
+      "label": "Reload Empty",
+      "human_clip": "FP_PX9_ECLIPSE_Reload_Empty",
+      "item_clip": "FP_PX9_ECLIPSE_Reload_Empty",
+      "human_action": "FP_PX9_ECLIPSE_Reload_Empty",
+      "weapon_action": "PX9_FP__Reload_Empty",
+      "frame_end": 192,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle",
+      "events": [
+        {
+          "frame": 22,
+          "event": "magazine_release",
+          "data": {}
+        },
+        {
+          "frame": 46,
+          "event": "magazine_out",
+          "data": {}
+        },
+        {
+          "frame": 72,
+          "event": "magazine_exchange",
+          "data": {}
+        },
+        {
+          "frame": 112,
+          "event": "magazine_seated",
+          "data": {}
+        },
+        {
+          "frame": 145,
+          "event": "slide_release",
+          "data": {}
+        },
+        {
+          "frame": 174,
+          "event": "ready",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "rack",
+      "label": "Rack",
+      "human_clip": "FP_PX9_ECLIPSE_Rack",
+      "item_clip": "FP_PX9_ECLIPSE_Rack",
+      "human_action": "FP_PX9_ECLIPSE_Rack",
+      "weapon_action": "PX9_FP__Rack",
+      "frame_end": 72,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle",
+      "events": [
+        {
+          "frame": 28,
+          "event": "slide_pull",
+          "data": {}
+        },
+        {
+          "frame": 40,
+          "event": "slide_release",
+          "data": {}
+        },
+        {
+          "frame": 64,
+          "event": "ready",
+          "data": {}
+        }
+      ]
+    },
+    {
+      "id": "dry_fire",
+      "label": "Dry Fire",
+      "human_clip": "FP_PX9_ECLIPSE_Dry_Fire",
+      "item_clip": "FP_PX9_ECLIPSE_Dry_Fire",
+      "human_action": "FP_PX9_ECLIPSE_Dry_Fire",
+      "weapon_action": "PX9_FP__Dry_Fire",
+      "frame_end": 20,
+      "fps": 60,
+      "loop": false,
+      "return_action": "idle",
+      "events": [
+        {
+          "frame": 5,
+          "event": "dry_fire",
+          "data": {}
+        }
+      ]
+    }
+  ],
+  "description": "Frame-baked Human R11 first-person clips and separately skinned PX9 item, synchronized at60FPS. Host game owns ammunition/damage, equip decisions and physical effects.",
+  "preview_reel": [
+    "equip",
+    "idle",
+    "walk",
+    "run",
+    "jump",
+    "inspect",
+    "aim_in",
+    "aim_idle",
+    "aim_fire",
+    "aim_fire_last",
+    "aim_idle_empty",
+    "aim_out",
+    "fire",
+    "fire_last",
+    "idle_empty",
+    "reload_empty",
+    "reload",
+    "rack",
+    "dry_fire",
+    "holster"
+  ],
+  "source_mount": {
+    "right_hand_in_item_blender": [
+      [
+        0.18005681037902832,
+        -0.10395585000514984,
+        0.9781476259231567,
+        0.047514673322439194
+      ],
+      [
+        0.5,
+        0.8660253882408142,
+        0.0,
+        -0.16687151789665222
+      ],
+      [
+        -0.8471006751060486,
+        0.48907381296157837,
+        0.20791170001029968,
+        -0.06487691402435303
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "rest_space_matrix_godot": [
+      [
+        0.034113626927137375,
+        -0.16049645841121674,
+        0.9864469170570374,
+        -0.8636149764060974
+      ],
+      [
+        0.9781478047370911,
+        0.20791132748126984,
+        9.042831834449316e-07,
+        1.3231678009033203
+      ],
+      [
+        -0.20509353280067444,
+        0.9648907780647278,
+        0.16408216953277588,
+        0.09730974584817886
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+PX-9 ECLIPSE — FIRST-PERSON CLIP TABLE
+60 FPS; frame 0 through frame_end inclusive. Duration = frame_end / 60.
+Human and item use the same runtime clip name and shared clock.
+New Blender weapon Actions use PX9_FP__<suffix>; human Actions use the public clip name.
+
+Clip | End frame | Stored samples | Seconds | Loop | Return action | Events
+FP_PX9_ECLIPSE_Idle | 120 | 121 | 2.000000 | true | none | none
+FP_PX9_ECLIPSE_Walk | 72 | 73 | 1.200000 | true | none | none
+FP_PX9_ECLIPSE_Run | 48 | 49 | 0.800000 | true | none | none
+FP_PX9_ECLIPSE_Jump | 60 | 61 | 1.000000 | false | idle | landing@38
+FP_PX9_ECLIPSE_Equip | 42 | 43 | 0.700000 | false | idle | ready@30
+FP_PX9_ECLIPSE_Holster | 36 | 37 | 0.600000 | false | none | holstered@30
+FP_PX9_ECLIPSE_Inspect | 240 | 241 | 4.000000 | false | idle | none
+FP_PX9_ECLIPSE_Aim_In | 18 | 19 | 0.300000 | false | aim_idle | none
+FP_PX9_ECLIPSE_Aim_Idle | 120 | 121 | 2.000000 | true | none | none
+FP_PX9_ECLIPSE_Aim_Out | 18 | 19 | 0.300000 | false | idle | none
+FP_PX9_ECLIPSE_Fire | 24 | 25 | 0.400000 | false | idle | shot@4, case_eject@6
+FP_PX9_ECLIPSE_Fire_Last | 24 | 25 | 0.400000 | false | idle_empty | shot@4, case_eject@6, slide_locked@9
+FP_PX9_ECLIPSE_Aim_Fire | 24 | 25 | 0.400000 | false | aim_idle | shot@4, case_eject@6
+FP_PX9_ECLIPSE_Aim_Fire_Last | 24 | 25 | 0.400000 | false | aim_idle_empty | shot@4, case_eject@6, slide_locked@9
+FP_PX9_ECLIPSE_Idle_Empty | 120 | 121 | 2.000000 | true | none | none
+FP_PX9_ECLIPSE_Aim_Idle_Empty | 120 | 121 | 2.000000 | true | none | none
+FP_PX9_ECLIPSE_Reload | 168 | 169 | 2.800000 | false | idle | magazine_release@22, magazine_out@46, magazine_exchange@72, magazine_seated@112, ready@150
+FP_PX9_ECLIPSE_Reload_Empty | 192 | 193 | 3.200000 | false | idle | magazine_release@22, magazine_out@46, magazine_exchange@72, magazine_seated@112, slide_release@145, ready@174
+FP_PX9_ECLIPSE_Rack | 72 | 73 | 1.200000 | false | idle | slide_pull@28, slide_release@40, ready@64
+FP_PX9_ECLIPSE_Dry_Fire | 20 | 21 | 0.333333 | false | idle | dry_fire@5
+
+HAND CONTACT
+Right hand retains the exact item-local grip throughout every clip.
+Support hand holds the same support station during idle, locomotion, aiming and firing.
+Inspection releases the support hand, shows both sides, then regrips.
+Reload: support hand reaches magazine by frame 24; carries it through extraction and
+off-screen exchange; seats it at frame 112; releases after frame 121 and regrips.
+Rack: support hand reaches slide by frame 22; follows slide through frame 41; returns by frame 60.
+Every integer-frame contact station is recorded in validation/AUTHORED_FRAMES.json.
+
+VISUAL AND GAMEPLAY SCOPE
+One magazine mesh represents outgoing/incoming magazines at the off-screen exchange event.
+No duplicate magazine geometry is added. Host ammunition/inventory decisions remain external.
+An animated casing is included. Hide EjectedCase if the game spawns its own casing.
+Audio, muzzle flash, physical projectiles and damage rules are not included.
+The 11 original weapon-only clips, including assemble/disassemble, remain in the weapon GLB.
+Their earlier table is reference/Weapon_Original_ANIMATIONS.json.
+Assembly/disassembly are visual game presentation, outside the paired first-person set.

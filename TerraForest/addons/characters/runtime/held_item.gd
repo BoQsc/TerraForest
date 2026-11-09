@@ -6,7 +6,7 @@ static var mounts:Dictionary={}
 var configured_item:=-1
 var fallback:BoxMesh
 static func supports(item:int)->bool:
-	return item>0 and item not in [1,2,3,4,5,6,7,8] and not (item>=401 and item<=411)
+	return item>0 and item not in [1,2,3,4,5,6,7,8,9] and not (item>=401 and item<=411)
 func _init()->void:
 	name="Equipment_Generic_Item";set_meta("first_person_equipment",true)
 	fallback=BoxMesh.new();fallback.size=Vector3(.10,.08,.12)

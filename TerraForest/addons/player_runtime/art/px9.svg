@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+<!-- Original TerraForest handgun silhouette. SPDX-License-Identifier: CC0-1.0 -->
+<g transform="rotate(-24 64 64)" stroke="#131d20" stroke-width="3" stroke-linejoin="round">
+<path d="M12 32h99v21H62l-7 49H33l4-49H12z" fill="#414c52"/>
+<path d="M18 36h86v11H18z" fill="#758087"/>
+<path d="M60 53h23v17H58" fill="none"/>
+<path d="M65 54v9h9" fill="none" stroke="#98a4a5"/>
+<path d="M40 63h12l-4 32H37z" fill="#293436"/>
+<path d="M22 30h8m64 0h7M82 36l-3 11m10-11l-3 11m10-11l-3 11" fill="none"/>
+</g></svg>

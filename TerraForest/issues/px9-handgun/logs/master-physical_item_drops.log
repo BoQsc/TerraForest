@@ -1,0 +1,82 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native physics and original pickup stores initialize together
+PASS physical dropping defaults on
+PASS off preference persists
+PASS a fresh session loads the saved off preference
+PASS on preference persists
+PASS physical transaction transfers one worn rifle atomically
+PASS engine gravity and drop impulse move the native pickup
+PASS one active body adds one bounded motion record
+PASS compound restore preserves exact in-flight pickup position
+PASS paused motion remains registered and preserves position
+PASS unready collision suspends the body without losing the item
+PASS continuous collision prevents tunnelling and rests on the actual floor
+PASS floor contact produces a real bounce
+PASS resting physics body goes to sleep
+PASS E collection retains exact wear and retires the physical body
+PASS item 1 supports physical drop and exact recovery without special registration
+PASS item 2 supports physical drop and exact recovery without special registration
+PASS item 3 supports physical drop and exact recovery without special registration
+PASS item 4 supports physical drop and exact recovery without special registration
+PASS item 5 supports physical drop and exact recovery without special registration
+PASS item 6 supports physical drop and exact recovery without special registration
+PASS item 7 supports physical drop and exact recovery without special registration
+PASS item 8 supports physical drop and exact recovery without special registration
+PASS item 9 supports physical drop and exact recovery without special registration
+PASS item 101 supports physical drop and exact recovery without special registration
+PASS item 102 supports physical drop and exact recovery without special registration
+PASS item 103 supports physical drop and exact recovery without special registration
+PASS item 104 supports physical drop and exact recovery without special registration
+PASS item 201 supports physical drop and exact recovery without special registration
+PASS item 202 supports physical drop and exact recovery without special registration
+PASS item 203 supports physical drop and exact recovery without special registration
+PASS item 204 supports physical drop and exact recovery without special registration
+PASS item 205 supports physical drop and exact recovery without special registration
+PASS item 206 supports physical drop and exact recovery without special registration
+PASS item 207 supports physical drop and exact recovery without special registration
+PASS item 208 supports physical drop and exact recovery without special registration
+PASS item 209 supports physical drop and exact recovery without special registration
+PASS item 210 supports physical drop and exact recovery without special registration
+PASS item 211 supports physical drop and exact recovery without special registration
+PASS item 212 supports physical drop and exact recovery without special registration
+PASS item 213 supports physical drop and exact recovery without special registration
+PASS item 214 supports physical drop and exact recovery without special registration
+PASS item 215 supports physical drop and exact recovery without special registration
+PASS item 216 supports physical drop and exact recovery without special registration
+PASS item 217 supports physical drop and exact recovery without special registration
+PASS item 218 supports physical drop and exact recovery without special registration
+PASS item 219 supports physical drop and exact recovery without special registration
+PASS item 220 supports physical drop and exact recovery without special registration
+PASS item 221 supports physical drop and exact recovery without special registration
+PASS item 222 supports physical drop and exact recovery without special registration
+PASS item 223 supports physical drop and exact recovery without special registration
+PASS item 224 supports physical drop and exact recovery without special registration
+PASS item 225 supports physical drop and exact recovery without special registration
+PASS item 226 supports physical drop and exact recovery without special registration
+PASS item 227 supports physical drop and exact recovery without special registration
+PASS item 228 supports physical drop and exact recovery without special registration
+PASS item 301 supports physical drop and exact recovery without special registration
+PASS item 302 supports physical drop and exact recovery without special registration
+PASS item 303 supports physical drop and exact recovery without special registration
+PASS item 304 supports physical drop and exact recovery without special registration
+PASS item 305 supports physical drop and exact recovery without special registration
+PASS item 306 supports physical drop and exact recovery without special registration
+PASS item 401 supports physical drop and exact recovery without special registration
+PASS item 402 supports physical drop and exact recovery without special registration
+PASS item 403 supports physical drop and exact recovery without special registration
+PASS item 404 supports physical drop and exact recovery without special registration
+PASS item 405 supports physical drop and exact recovery without special registration
+PASS item 406 supports physical drop and exact recovery without special registration
+PASS item 407 supports physical drop and exact recovery without special registration
+PASS item 408 supports physical drop and exact recovery without special registration
+PASS item 409 supports physical drop and exact recovery without special registration
+PASS item 410 supports physical drop and exact recovery without special registration
+PASS item 411 supports physical drop and exact recovery without special registration
+PASS item 501 supports physical drop and exact recovery without special registration
+PASS item 601 supports physical drop and exact recovery without special registration
+PASS item 9001 supports physical drop and exact recovery without special registration
+PASS full awake pool retains item and inventory revision
+PASS corrupt motion snapshots leave live bodies intact
+PASS old saves without physical motion load with empty physics state
+PHYSICAL_ITEM_DROPS checks=79 failures=0
