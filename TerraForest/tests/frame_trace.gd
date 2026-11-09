@@ -1,11 +1,32 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 const Trace=preload("res://addons/world_runtime/frame_trace.gd")
+const RenderTrace=preload("res://addons/world_runtime/render_trace.gd")
+class MarkerDevice extends RefCounted:
+	var frame:=7
+	var count:=5
+	var last_index:=-1
+	var stamps:=PackedInt64Array([100,110,700,699,1100])
+	func get_captured_timestamps_frame()->int:return frame
+	func get_captured_timestamps_count()->int:return count
+	func get_captured_timestamp_cpu_time(index:int)->int:
+		last_index=maxi(last_index,index)
+		return stamps[index] if index<stamps.size() else 1100+index
+	func get_captured_timestamp_name(index:int)->String:return "marker_%d"%index
 var failures:=0
 func check(ok:bool,label:String)->void:
 	if not ok:failures+=1;push_error(label)
 func _initialize()->void:run.call_deferred()
 func run()->void:
+	var render_trace:=RenderTrace.new();var device:=MarkerDevice.new()
+	check(not render_trace.capture(null).available,"headless rendering remains explicitly unavailable")
+	var render_sample:Dictionary=render_trace.capture(device)
+	check(render_sample.device_frame==7 and render_sample.begin_cpu_us==100 and render_sample.end_cpu_us==1100,"completed render frame and absolute CPU timestamps remain explicit")
+	check(render_sample.reversed==1 and render_sample.largest_cpu_gaps[0].cpu_us==590,"reversed timestamps are omitted rather than reported as negative work")
+	check(render_trace.capture(device).repeated,"a stale device frame does not duplicate marker work")
+	device.frame+=1;device.count=1000
+	render_sample=render_trace.capture(device)
+	check(render_sample.truncated and device.last_index==RenderTrace.MAX_MARKERS-1 and render_sample.largest_cpu_gaps.size()==RenderTrace.MAX_GAPS,"marker reads and retained gaps stay bounded")
 	var trace:=Trace.new();root.add_child(trace)
 	process_frame.disconnect(trace._begin_process);physics_frame.disconnect(trace._begin_physics)
 	RenderingServer.frame_pre_draw.disconnect(trace._begin_draw);RenderingServer.frame_post_draw.disconnect(trace._end_draw)

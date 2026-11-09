@@ -26,6 +26,24 @@ class TraceAnalysisTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             summarize([{"schema": 1, "frames": [self.row(1), self.row(1, 80)]}])
 
+    def test_delayed_device_markers_use_cpu_timestamps(self):
+        first = self.row(1) | {'draw_ms': 4}
+        reported = self.row(3) | {'draw_ms': 2, 'render_markers': {
+            'available': True, 'device_frame': 999, 'begin_cpu_us': 13000, 'end_cpu_us': 15000,
+            'largest_cpu_gaps': [{'after': 'scene', 'before': 'sky', 'begin_cpu_us': 13000, 'cpu_us': 2000}]}}
+        result = summarize([{'schema': 1, 'frames': [first, reported]}])['render_markers']
+        self.assertEqual(result['largest_cpu_gaps'][0]['frame'], 1)
+        self.assertEqual(result['largest_cpu_gaps'][0]['reported_in_frame'], 3)
+        self.assertEqual(result['largest_cpu_gaps'][0]['device_frame'], 999)
+
+    def test_markers_outside_retained_draw_are_not_attributed(self):
+        row = self.row(3) | {'draw_ms': 1, 'render_markers': {
+            'available': True, 'device_frame': 3, 'begin_cpu_us': 100, 'end_cpu_us': 200,
+            'largest_cpu_gaps': [{'after': 'a', 'before': 'b', 'begin_cpu_us': 100, 'cpu_us': 100}]}}
+        result = summarize([{'schema': 1, 'frames': [row]}])['render_markers']
+        self.assertEqual(result['largest_cpu_gaps'], [])
+        self.assertEqual(result['unmatched_gaps'], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

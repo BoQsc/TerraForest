@@ -46,6 +46,7 @@ var deferred_peak_ms:=0.0
 var resident_ids:Dictionary={}
 var cadence:Array[float]=[]
 var cadence_sum:=0.0
+var render_trace:RefCounted
 
 func _ready()->void:
 	process_priority=1000000;process_physics_priority=1000000
@@ -53,6 +54,7 @@ func _ready()->void:
 	output="user://frame_traces/"+Time.get_datetime_string_from_system(true).replace(":","")+"_"+str(OS.get_process_id())
 	for arg:String in OS.get_cmdline_user_args():
 		if arg.begins_with("--frame-trace-dir="):output=arg.trim_prefix("--frame-trace-dir=")
+		if arg=="--frame-trace-render-stages":render_trace=preload("res://addons/world_runtime/render_trace.gd").new()
 	if DirAccess.make_dir_recursive_absolute(output)!=OK:
 		push_error("Frame trace output could not be created: "+output);queue_free();return
 	if ClassDB.class_exists("NativeResourceUsage"):probe=ClassDB.instantiate("NativeResourceUsage")
@@ -151,11 +153,12 @@ func _end_draw()->void:
 	if previous==0:
 		previous=began;work_end=work;stages={};physics_elapsed_us=0;physics_steps=0
 		physics_cycles=0;physics_cpu_us=0;phase_probe_us=0;return
-	var row:Dictionary={"frame":Engine.get_process_frames(),"at_us":began,"frame_ms":(began-previous)/1000.0,
+	var row:Dictionary={"frame":Engine.get_process_frames(),"drawn_frame":Engine.get_frames_drawn(),"at_us":began,"frame_ms":(began-previous)/1000.0,
 		"before_process_ms":(process_started-previous)/1000.0,"process_ms":(process_finished-process_started)/1000.0,
 		"after_process_ms":(draw_started-process_finished)/1000.0,"draw_ms":(began-draw_started)/1000.0,
 		"physics_ms":physics_elapsed_us/1000.0,"physics_steps":physics_steps,"stages_ms":stages,
 		"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(get_viewport().get_viewport_rid()),
+		"render_setup_cpu_ms":RenderingServer.get_frame_setup_time_cpu(),
 		"render_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(get_viewport().get_viewport_rid()),
 		"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 		"primitives":Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME),
@@ -172,6 +175,8 @@ func _end_draw()->void:
 		if physics_cycles>=0:row.physics_cycles=physics_cycles
 		if physics_cpu_us>=0:row.physics_thread_cpu_ms=physics_cpu_us/1000.0
 	work_end=work
+	if render_trace!=null:
+		row.render_markers=render_trace.capture(RenderingServer.get_rendering_device()) if RenderingServer.is_on_render_thread() else {"available":false,"reason":"callback is not on render thread"}
 	var active:bool=is_instance_valid(game) and game.startup_complete
 	if active:
 		row.position=game.player.position;row.velocity=game.player.velocity

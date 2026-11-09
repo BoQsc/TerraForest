@@ -39,9 +39,10 @@ func wait_for(predicate:Callable,seconds:float)->bool:
 func frame()->void:
 	var now:=Time.get_ticks_usec()
 	if previous>0:
-		var sample:Dictionary={"phase":label,"frame_ms":(now-previous)/1000.0,"frame":Engine.get_frames_drawn(),"at_us":now}
+		var sample:Dictionary={"phase":label,"frame_ms":(now-previous)/1000.0,"frame":Engine.get_process_frames(),"drawn_frame":Engine.get_frames_drawn(),"at_us":now}
 		sample.gpu_ms=RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid())
 		sample.render_cpu_ms=RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid())
+		sample.render_setup_cpu_ms=RenderingServer.get_frame_setup_time_cpu()
 		sample.draw_calls=Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
 		samples.append(sample)
 	previous=now

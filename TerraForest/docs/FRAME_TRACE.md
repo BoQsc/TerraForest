@@ -49,6 +49,29 @@ Analyze one session:
 python TerraForest/tools/analyze_frame_trace.py <session-directory> --output <summary.json>
 ```
 
+For an explicit deeper render investigation, the owned-world harness accepts
+`--render-stages`. It enables Godot's `--gpu-profile` and adds
+`--frame-trace-render-stages` to the recorder. The optional collector reads at
+most 256 completed-device timestamps and retains the eight largest adjacent CPU
+gaps per frame, with truncation/repetition flags. It neither waits for GPU results
+nor inserts timestamps. Missing devices or callbacks on another thread are
+reported unavailable. The harness rejects a requested probe that collected no
+available marker data. Normal recording does not allocate this collector.
+
+Device frame counters and viewport times can describe earlier work. The analyzer
+uses absolute CPU timestamp ranges to match marker gaps only when they fit fully
+inside a retained draw interval; unmatched gaps stay unknown. A marker gap is not
+an inclusive named scope. Do not sum it with overlapping frame/physics timers.
+Recorder medians were about 0.28 ms normally and 0.66 ms with the collector in
+separate local runs; this is not an isolated overhead estimate. Engine profiling
+also adds its own work.
+Use ordinary recording for pacing acceptance; these probes are for attribution.
+
+Godot documents [shared render setup time](https://docs.godotengine.org/en/stable/classes/class_renderingserver.html#class-renderingserver-method-get-frame-setup-time-cpu)
+separately from viewport timers. [Completed-device CPU timestamps](https://docs.godotengine.org/en/stable/classes/class_renderingdevice.html#class-renderingdevice-method-get-captured-timestamp-cpu-time)
+use microseconds since engine startup. The collector records only CPU timestamps;
+it does not assume CPU and GPU timestamp units or frame counters are identical.
+
 The analyzer removes overlapping frame duplicates, retains tail distributions and
 outlier stage records, and computes compilation deltas only where the immediately
 previous frame is present. Triggered windows are biased toward trouble; use a
@@ -63,6 +86,9 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
 - Root-viewport GPU/render CPU timers, global draw calls/primitives and pipeline
   compilation counters. GPU readings can lag and root timers are not a guarantee
   of complete GPU attribution across every SubViewport.
+- Shared render setup CPU time (`render_setup_cpu_ms`) is recorded separately
+  from viewport time. Both process-frame and drawn-frame counters are retained;
+  the continuous observation driver now uses the same process-frame identity.
 - Main-thread cycles and CPU time when the existing native resource probe is
   available. CPU time is quantized; raw cycles are work counts, not milliseconds.
   `before_process_cycles`, `process_cycles`, `after_process_cycles` and

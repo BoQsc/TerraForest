@@ -25,6 +25,7 @@ def main():
     parser.add_argument('--save', action='store_true', help='Capture one normal save during active gameplay')
     parser.add_argument('--legacy-structure-capture', action='store_true', help='Diagnostic control: serialize structures on the main thread during save')
     parser.add_argument('--gpu-profile', action='store_true', help='Retain engine GPU pass summaries in the console log')
+    parser.add_argument('--render-stages', action='store_true', help='Diagnostic only: bounded completed-frame render-device CPU marker gaps')
     parser.add_argument('--script-profile', action='store_true', help='Diagnostic only: enable the engine script debugger profiler')
     parser.add_argument('--render-inventory', action='store_true', help='Inspect scene geometry/light candidates after all frame timings are saved')
     parser.add_argument('--render-partition', type=int, choices=[8,16], help='Stationary ABBA diagnostic of exact nearby cover draw partitions')
@@ -37,6 +38,8 @@ def main():
     parser.add_argument('--light-abba', action='store_true', help='Compare unchanged versus redundantly submitted pooled lights in one stationary view')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
+    if args.render_stages and args.without_trace:
+        parser.error('--render-stages requires the rolling recorder')
     if args.render_full_detail and not args.render_partition:
         parser.error('--render-full-detail requires --render-partition')
     if not args.source.startswith('StartupBench_FPS_') or not args.label.isidentifier():
@@ -71,8 +74,10 @@ def main():
         command += ['--trace-light-abba']
     if args.verbose:
         command.insert(1, '--verbose')
-    if args.gpu_profile:
+    if args.gpu_profile or args.render_stages:
         command.insert(1, '--gpu-profile')
+    if args.render_stages:
+        command += ['--frame-trace-render-stages']
     if args.script_profile:
         command[1:1] = ['--debug', '--ignore-error-breaks', '--profiling']
     if args.render_inventory:
@@ -98,7 +103,8 @@ def main():
     record = dict(command=command, clone=copied, **revision_metadata())
     record['diagnostic_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                   for p in [ROOT/'tests/frame_trace_world.gd', ROOT/'tests/render_inventory.gd',
-                                            ROOT/'tests/render_partition_probe.gd', ROOT/'tests/render_occlusion_probe.gd', ROOT/'tests/cover_outdoor_probe.gd', Path(__file__)]}
+                                            ROOT/'tests/render_partition_probe.gd', ROOT/'tests/render_occlusion_probe.gd', ROOT/'tests/cover_outdoor_probe.gd',
+                                            ROOT/'addons/world_runtime/frame_trace.gd', ROOT/'addons/world_runtime/render_trace.gd', Path(__file__)]}
     if args.executable:
         record['pack_sha256'] = hashlib.sha256((ROOT / 'dist/TerraForest.pck').read_bytes()).hexdigest()
         record['pack_native_sha256'] = native
@@ -110,6 +116,12 @@ def main():
     if args.script_profile:
         record['result']['script_profiler_started'] = 'BEGIN PROFILING' in (folder / 'console.log').read_text(encoding='utf-8', errors='replace')
         record['result']['passed'] &= record['result']['script_profiler_started']
+    if args.render_stages:
+        available = any(row.get('render_markers', {}).get('available', False)
+                        for path in (folder / 'traces').glob('trace_*.json')
+                        for row in json.loads(path.read_text(encoding='utf-8')).get('frames', []))
+        record['result']['render_markers_available'] = available
+        record['result']['passed'] &= available
     manifest.write_text(json.dumps(record, indent=2), encoding='utf-8')
     print(('PASS ' if record['result']['passed'] else 'FAIL ') + str(folder), flush=True)
     return 0 if record['result']['passed'] else 1

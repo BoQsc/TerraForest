@@ -1,6 +1,7 @@
 """Summarize one rolling-trace session without counting overlapping frames twice."""
 # SPDX-License-Identifier: 0BSD
 import argparse
+from bisect import bisect_left
 import hashlib
 import json
 from pathlib import Path
@@ -14,6 +15,35 @@ def distribution(values):
     return {"samples": n, "mean": sum(values) / n, "p50": values[n // 2],
             "p95": values[min(n - 1, int(n * .95))],
             "p99": values[min(n - 1, int(n * .99))], "maximum": values[-1]}
+
+
+def render_marker_gaps(rows):
+    # Device frame numbers need not identify the callback that reports them.
+    # Match absolute CPU stamps only when the full gap lies inside a known draw.
+    ends = [row['at_us'] for row in rows]
+    seen, gaps = set(), []
+    missing = truncated = 0
+    for reporter in rows:
+        markers = reporter.get('render_markers', {})
+        if not markers.get('available') or markers.get('repeated'):
+            continue
+        identity = (markers.get('device_frame'), markers.get('begin_cpu_us'), markers.get('end_cpu_us'))
+        if identity in seen:
+            continue
+        seen.add(identity)
+        truncated += bool(markers.get('truncated'))
+        for gap in markers.get('largest_cpu_gaps', []):
+            begin, elapsed = gap['begin_cpu_us'], gap['cpu_us']
+            index = bisect_left(ends, begin + elapsed)
+            match = rows[index] if index < len(rows) else None
+            if elapsed < 0 or match is None or 'draw_ms' not in match or begin < match['at_us'] - match['draw_ms'] * 1000:
+                missing += 1
+                continue
+            gaps.append(dict(gap, frame=match['frame'], phase=match['phase'], frame_ms=match['frame_ms'],
+                             reported_in_frame=reporter['frame'], device_frame=markers.get('device_frame')))
+    return {'completed_frames': len(seen), 'truncated_frames': truncated, 'unmatched_gaps': missing,
+            'largest_cpu_gaps': sorted(gaps, key=lambda gap: -gap['cpu_us'])[:50],
+            'scope': 'Adjacent CPU marker gaps matched by absolute timestamps inside retained draw intervals. Delayed device frames are not current gameplay frames. Partial top-gap sample, not inclusive scopes or a complete CPU sum.'}
 
 
 def summarize(captures):
@@ -33,7 +63,7 @@ def summarize(captures):
         selected = [r for r in rows if r["phase"] == phase]
         metrics = {key: distribution([r[key] for r in selected if key in r]) for key in
                    ("frame_ms", "process_ms", "draw_ms", "before_process_ms", "after_process_ms",
-                    "physics_ms", "gpu_ms", "render_cpu_ms", "recorder_previous_us", "draw_calls", "primitives")}
+                    "physics_ms", "gpu_ms", "render_cpu_ms", "render_setup_cpu_ms", "recorder_previous_us", "draw_calls", "primitives")}
         metrics["over_20ms_frames"] = sum(r["frame_ms"] > 20 for r in selected)
         phases[phase] = metrics
     worst = []
@@ -47,6 +77,7 @@ def summarize(captures):
         record["stages_ms"] = dict(sorted(row.get("stages_ms", {}).items(), key=lambda x: -x[1]))
         worst.append(record)
     return {"unique_frames": len(rows), "phases": phases, "slowest_frames": worst,
+            "render_markers": render_marker_gaps(rows),
             "scope": "Triggered windows only, not an unbiased whole-session distribution. Overlapping frames deduplicated. Stages/physics overlap wall intervals. GPU timers may lag. Missing adjacent frames give unknown compilation deltas."}
 
 
