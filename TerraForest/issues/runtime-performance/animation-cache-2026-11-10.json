@@ -1,0 +1,785 @@
+{
+  "scope": "Approved 60 FPS cap and VSync; callback intervals overlap. Functional passes are not stable-FPS acceptance. No asset, density, animation clock, loop mode, damage or movement policy changes.",
+  "runs": [
+    {
+      "report": "reports\\performance_changes\\20261109T220949716927Z_animation_old_capped",
+      "observation_sha256": "c6e3f11719d724b8633d1a3188c04f226cf1d384294a7deb42c302a6a2019d0e",
+      "runtime_source_sha256": {
+        "controller": "3efefb89d32e9b13385c7d9ca2c7ff3f07692eef34d316d8940cbd6b28851171",
+        "zombie": "7b31fa57429afdb8bbe330b5c11cad6cdd4824848bd733858c19c4fbecf299c6"
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 721,
+            "median": 16.669,
+            "p99": 21.937,
+            "max": 32.887
+          },
+          "one_step_physics_ms": {
+            "count": 721,
+            "median": 2.445,
+            "p99": 3.523,
+            "max": 5.748
+          },
+          "draw_ms": {
+            "count": 721,
+            "median": 4.059,
+            "p99": 5.762,
+            "max": 19.961
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 482,
+            "median": 16.661,
+            "p99": 19.822,
+            "max": 24.537
+          },
+          "one_step_physics_ms": {
+            "count": 482,
+            "median": 3.153,
+            "p99": 3.957,
+            "max": 4.182
+          },
+          "draw_ms": {
+            "count": 482,
+            "median": 4.513,
+            "p99": 6.273,
+            "max": 8.974
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 301,
+            "median": 16.651,
+            "p99": 21.498,
+            "max": 23.859
+          },
+          "one_step_physics_ms": {
+            "count": 301,
+            "median": 2.995,
+            "p99": 3.968,
+            "max": 4.598
+          },
+          "draw_ms": {
+            "count": 301,
+            "median": 4.628,
+            "p99": 7.206,
+            "max": 9.447
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 482,
+            "median": 16.654,
+            "p99": 19.221,
+            "max": 34.428
+          },
+          "one_step_physics_ms": {
+            "count": 315,
+            "median": 2.612,
+            "p99": 3.71,
+            "max": 5.275
+          },
+          "draw_ms": {
+            "count": 315,
+            "median": 4.523,
+            "p99": 6.312,
+            "max": 21.206
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "destruction_chain": {
+          "frame_ms": {
+            "count": 33,
+            "median": 16.49,
+            "p99": 21.704,
+            "max": 21.704
+          },
+          "one_step_physics_ms": {
+            "count": 33,
+            "median": 1.008,
+            "p99": 6.36,
+            "max": 6.36
+          },
+          "draw_ms": {
+            "count": 33,
+            "median": 5.353,
+            "p99": 6.993,
+            "max": 6.993
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "destruction_recovery": {
+          "frame_ms": {
+            "count": 642,
+            "median": 16.683,
+            "p99": 19.235,
+            "max": 22.925
+          },
+          "one_step_physics_ms": {
+            "count": 642,
+            "median": 2.919,
+            "p99": 4.419,
+            "max": 5.447
+          },
+          "draw_ms": {
+            "count": 642,
+            "median": 4.589,
+            "p99": 6.811,
+            "max": 8.449
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        }
+      },
+      "presentation": {
+        "effective_cap": 60,
+        "hidden_hud_control": false,
+        "refresh_hz": 144.022994995117,
+        "requested_cap": 60,
+        "vsync": 1
+      },
+      "functional_result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 52184,
+        "exit_code": 0,
+        "resources": {
+          "samples": 168,
+          "gpu_samples": 167,
+          "peak_private_commit_bytes": 4280295424,
+          "peak_working_set_bytes": 2427490304,
+          "peak_dedicated_gpu_bytes": 1761128448,
+          "checks": {
+            "ram": {
+              "bytes": 4280295424,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1761128448,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 102.48474740004167,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        },
+        "native_process_current_frames": {
+          "blocks": 3716,
+          "model_horizon": 3716,
+          "resident_lights": 3716
+        }
+      },
+      "outdoor": {
+        "ok": true,
+        "poses": [
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 60.20123, 353.6957)]",
+            "player": "(1085.203, 58.52123, 353.6957)",
+            "screenshot_us": 491398
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1093.203, 60.20123, 353.6957)]",
+            "player": "(1093.203, 58.52123, 353.6957)",
+            "screenshot_us": 470716
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1101.203, 60.20123, 353.6957)]",
+            "player": "(1101.203, 58.52123, 353.6957)",
+            "screenshot_us": 435656
+          }
+        ],
+        "scope": "16 m camera sweep through production cover; fly mode holds height, no density or quality overrides; not a walking/collision qualification",
+        "target": "(1085.203, 58.42123, 349.6957)"
+      },
+      "destruction": true
+    },
+    {
+      "report": "reports\\performance_changes\\20261109T221133645084Z_animation_guard_capped",
+      "observation_sha256": "c0b0de6b2785c62167dd3f7e0a5c48de5380456913673e35c109cc50e13bfb27",
+      "runtime_source_sha256": {
+        "controller": "3efefb89d32e9b13385c7d9ca2c7ff3f07692eef34d316d8940cbd6b28851171",
+        "zombie": "a887545d5d4959b43ddb003b9e072b866c362c2f863b484c0015fd823c26a08a"
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 721,
+            "median": 16.642,
+            "p99": 22.443,
+            "max": 25.106
+          },
+          "one_step_physics_ms": {
+            "count": 721,
+            "median": 2.125,
+            "p99": 3.295,
+            "max": 4.591
+          },
+          "draw_ms": {
+            "count": 721,
+            "median": 4.262,
+            "p99": 8.036,
+            "max": 10.152
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 482,
+            "median": 16.674,
+            "p99": 20.247,
+            "max": 24.441
+          },
+          "one_step_physics_ms": {
+            "count": 482,
+            "median": 2.663,
+            "p99": 3.438,
+            "max": 3.856
+          },
+          "draw_ms": {
+            "count": 482,
+            "median": 4.557,
+            "p99": 6.565,
+            "max": 9.295
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 300,
+            "median": 16.676,
+            "p99": 18.587,
+            "max": 19.065
+          },
+          "one_step_physics_ms": {
+            "count": 300,
+            "median": 2.057,
+            "p99": 3.129,
+            "max": 3.61
+          },
+          "draw_ms": {
+            "count": 300,
+            "median": 4.468,
+            "p99": 5.754,
+            "max": 6.52
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 481,
+            "median": 16.66,
+            "p99": 18.54,
+            "max": 18.754
+          },
+          "one_step_physics_ms": {
+            "count": 421,
+            "median": 1.929,
+            "p99": 2.908,
+            "max": 3.149
+          },
+          "draw_ms": {
+            "count": 421,
+            "median": 4.478,
+            "p99": 5.418,
+            "max": 6.102
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "destruction_chain": {
+          "frame_ms": {
+            "count": 31,
+            "median": 16.515,
+            "p99": 22.595,
+            "max": 22.595
+          },
+          "one_step_physics_ms": {
+            "count": 31,
+            "median": 1.087,
+            "p99": 6.013,
+            "max": 6.013
+          },
+          "draw_ms": {
+            "count": 31,
+            "median": 5.346,
+            "p99": 7.694,
+            "max": 7.694
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "destruction_recovery": {
+          "frame_ms": {
+            "count": 643,
+            "median": 16.652,
+            "p99": 19.626,
+            "max": 49.358
+          },
+          "one_step_physics_ms": {
+            "count": 640,
+            "median": 2.521,
+            "p99": 3.195,
+            "max": 4.626
+          },
+          "draw_ms": {
+            "count": 643,
+            "median": 4.556,
+            "p99": 6.658,
+            "max": 39.013
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        }
+      },
+      "presentation": {
+        "effective_cap": 60,
+        "hidden_hud_control": false,
+        "refresh_hz": 144.022994995117,
+        "requested_cap": 60,
+        "vsync": 1
+      },
+      "functional_result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 27280,
+        "exit_code": 0,
+        "resources": {
+          "samples": 167,
+          "gpu_samples": 166,
+          "peak_private_commit_bytes": 4286095360,
+          "peak_working_set_bytes": 2427052032,
+          "peak_dedicated_gpu_bytes": 1761132544,
+          "checks": {
+            "ram": {
+              "bytes": 4286095360,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1761132544,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 101.55634699994698,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        },
+        "native_process_current_frames": {
+          "blocks": 3817,
+          "model_horizon": 3817,
+          "resident_lights": 3817
+        }
+      },
+      "outdoor": {
+        "ok": true,
+        "poses": [
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 60.20123, 353.6957)]",
+            "player": "(1085.203, 58.52123, 353.6957)",
+            "screenshot_us": 477020
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1093.203, 60.20123, 353.6957)]",
+            "player": "(1093.203, 58.52123, 353.6957)",
+            "screenshot_us": 438065
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1101.203, 60.20123, 353.6957)]",
+            "player": "(1101.203, 58.52123, 353.6957)",
+            "screenshot_us": 405064
+          }
+        ],
+        "scope": "16 m camera sweep through production cover; fly mode holds height, no density or quality overrides; not a walking/collision qualification",
+        "target": "(1085.203, 58.42123, 349.6957)"
+      },
+      "destruction": true
+    },
+    {
+      "report": "reports\\performance_changes\\20261109T221529566537Z_animation_guard_walk_capped",
+      "observation_sha256": "863073db0128526c3178c3801ca8cc3dbf6eb1ba3e9772bc70dda706d4df3fc1",
+      "runtime_source_sha256": {
+        "controller": "3efefb89d32e9b13385c7d9ca2c7ff3f07692eef34d316d8940cbd6b28851171",
+        "zombie": "a887545d5d4959b43ddb003b9e072b866c362c2f863b484c0015fd823c26a08a"
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 721,
+            "median": 16.637,
+            "p99": 22.69,
+            "max": 26.071
+          },
+          "one_step_physics_ms": {
+            "count": 721,
+            "median": 2.154,
+            "p99": 3.752,
+            "max": 4.96
+          },
+          "draw_ms": {
+            "count": 721,
+            "median": 4.176,
+            "p99": 7.737,
+            "max": 12.41
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 182,
+            "median": 16.626,
+            "p99": 23.879,
+            "max": 24.363
+          },
+          "one_step_physics_ms": {
+            "count": 182,
+            "median": 2.022,
+            "p99": 4.08,
+            "max": 4.177
+          },
+          "draw_ms": {
+            "count": 182,
+            "median": 4.551,
+            "p99": 9.062,
+            "max": 12.203
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 300,
+            "median": 16.628,
+            "p99": 19.11,
+            "max": 23.146
+          },
+          "one_step_physics_ms": {
+            "count": 300,
+            "median": 2.404,
+            "p99": 3.552,
+            "max": 5.29
+          },
+          "draw_ms": {
+            "count": 300,
+            "median": 4.571,
+            "p99": 8.184,
+            "max": 13.398
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 481,
+            "median": 16.631,
+            "p99": 20.93,
+            "max": 25.227
+          },
+          "one_step_physics_ms": {
+            "count": 481,
+            "median": 2.119,
+            "p99": 3.837,
+            "max": 6.272
+          },
+          "draw_ms": {
+            "count": 481,
+            "median": 4.887,
+            "p99": 8.518,
+            "max": 14.085
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "destruction_chain": {
+          "frame_ms": {
+            "count": 34,
+            "median": 16.203,
+            "p99": 23.789,
+            "max": 23.789
+          },
+          "one_step_physics_ms": {
+            "count": 34,
+            "median": 1.012,
+            "p99": 6.405,
+            "max": 6.405
+          },
+          "draw_ms": {
+            "count": 34,
+            "median": 5.428,
+            "p99": 9.46,
+            "max": 9.46
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        },
+        "destruction_recovery": {
+          "frame_ms": {
+            "count": 642,
+            "median": 16.645,
+            "p99": 21.856,
+            "max": 29.961
+          },
+          "one_step_physics_ms": {
+            "count": 641,
+            "median": 2.487,
+            "p99": 3.995,
+            "max": 5.582
+          },
+          "draw_ms": {
+            "count": 642,
+            "median": 4.68,
+            "p99": 8.351,
+            "max": 12.577
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ]
+        }
+      },
+      "presentation": {
+        "effective_cap": 60,
+        "hidden_hud_control": false,
+        "refresh_hz": 144.022994995117,
+        "requested_cap": 60,
+        "vsync": 1
+      },
+      "functional_result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 22800,
+        "exit_code": 0,
+        "resources": {
+          "samples": 162,
+          "gpu_samples": 161,
+          "peak_private_commit_bytes": 4325994496,
+          "peak_working_set_bytes": 2675838976,
+          "peak_dedicated_gpu_bytes": 1761067008,
+          "checks": {
+            "ram": {
+              "bytes": 4325994496,
+              "status": "warning"
+            },
+            "vram": {
+              "bytes": 1761067008,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 99.1427480999846,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        },
+        "native_process_current_frames": {
+          "blocks": 3599,
+          "model_horizon": 3599,
+          "resident_lights": 3599
+        }
+      },
+      "outdoor": {
+        "grounded": true,
+        "grounded_frames": 184,
+        "movement_frames": 184,
+        "ok": true,
+        "poses": [
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 59.84698, 353.6957)]",
+            "player": "(1085.203, 58.16698, 353.6957)",
+            "screenshot_us": 465204
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1093.637, 59.82398, 353.696)]",
+            "player": "(1093.637, 58.14398, 353.696)",
+            "screenshot_us": 450366
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1102.071, 59.7096, 353.6961)]",
+            "player": "(1102.071, 58.0296, 353.6961)",
+            "screenshot_us": 436796
+          }
+        ],
+        "scope": "Production motor walking with gravity and collisions through the existing tool-cursor input gate; no density or quality overrides",
+        "target": "(1085.203, 58.42123, 349.6957)",
+        "travelled": 16.8677978515625
+      },
+      "destruction": true
+    }
+  ],
+  "host_report": "reports\\performance_changes\\host_animation_guard_20261109T220949524605Z",
+  "host_max_game_processes": {
+    "animation_guard_capped.processes.jsonl": 1,
+    "animation_old_capped.processes.jsonl": 1
+  }
+}

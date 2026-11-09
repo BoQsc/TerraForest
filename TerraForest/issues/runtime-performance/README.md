@@ -1,5 +1,11 @@
 # Runtime performance
 
+[Shared animation cache correction](animation-cache-2026-11-10.md) removes
+same-value writes that invalidated all residents' animation caches. The old/new
+capped world pair reduces settled physics median 2.612→1.929 ms; behavior,
+pose, grounded walking and destruction checks pass. A separate 49.358 ms
+rendering-heavy frame remains unresolved. This is not stable-FPS acceptance.
+
 [Approved pacing policy, 2026-11-10](approved-pacing-2026-11-10.md): the user
 reaffirmed the foreground cap, VSync and background cap. The uncommitted limiter
 experiment and its changed test expectations were reverted; it never entered

@@ -611,7 +611,9 @@ func _load_behavior_contract() -> void:
 	# paused inspector remains paused because advance is called only if playing.
 	animation_player.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	for clip: String in behavior_contract.actions:
-		animation_player.get_animation(_animation_key(clip)).loop_mode = Animation.LOOP_LINEAR if bool(behavior_contract.actions[clip].get("loop", false)) else Animation.LOOP_NONE
+		var animation:Animation=animation_player.get_animation(_animation_key(clip))
+		var loop_mode:=Animation.LOOP_LINEAR if bool(behavior_contract.actions[clip].get("loop", false)) else Animation.LOOP_NONE
+		if animation.loop_mode!=loop_mode:animation.loop_mode=loop_mode
 
 
 func _animation_key(clip: String) -> String:
@@ -1531,7 +1533,10 @@ func _play_animation(clip_name: String, restart: bool = false) -> void:
 	if not animation_player.has_animation(key):
 		return
 	if clip_name == "Zombie_Idle" or clip_name == "Zombie_Walk":
-		animation_player.get_animation(key).loop_mode = Animation.LOOP_LINEAR
+		# Animation resources are shared by residents. Even assigning the same
+		# mode emits changed and clears every attached player's track caches.
+		var animation:Animation=animation_player.get_animation(key)
+		if animation.loop_mode!=Animation.LOOP_LINEAR:animation.loop_mode=Animation.LOOP_LINEAR
 	if key == _current_clip and not restart and animation_player.is_playing():
 		return
 	var gait_phase := -1.0

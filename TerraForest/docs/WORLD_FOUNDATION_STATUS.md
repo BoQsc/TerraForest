@@ -1,5 +1,12 @@
 ## Approved FPS pacing retained - 2026-11-10
 
+[Shared animation cache invalidation](../issues/runtime-performance/animation-cache-2026-11-10.md)
+is corrected and verified with the approved limiters. Normal-world physics work
+decreases; grounded walking, damage, save/shutdown, pose and behavior checks pass.
+Rendering waits still reach 49.358 ms total frame time in the corrected capture.
+Installed validation, broader traversal and endurance remain open; follow the
+linked evidence and do not treat this local CPU gain as stable-60-FPS completion.
+
 Keep the approved foreground cap, VSync and background cap while reducing actual
 world/player/rendering costs. The uncommitted limiter-policy experiment was
 reverted and never installed. [Evidence and open gates](../issues/runtime-performance/approved-pacing-2026-11-10.md)
