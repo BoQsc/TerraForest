@@ -29,6 +29,7 @@ class ActorRoute {
     bool has_bounds_=false;
     bool edge_unavailable_=false;
     const char *edge_failure_="none";
+    godot::RID edge_obstacle_;
     double retry_=0, stuck_=0;
     int stalls_=0;
     void start(const godot::Vector3 &position,const godot::Vector3 &goal);
@@ -51,6 +52,7 @@ public:
     godot::Callable water_depth;
     bool edge_unavailable() const {return edge_unavailable_;}
     const char *edge_failure() const {return edge_failure_;}
+    godot::RID edge_obstacle() const {return edge_obstacle_;}
     int expansions=0;
     void invalidate(){state=IDLE;}
     void invalidate(const godot::AABB &bounds){if(!has_bounds_ || bounds.size==godot::Vector3() || bounds_.intersects(bounds))invalidate();}

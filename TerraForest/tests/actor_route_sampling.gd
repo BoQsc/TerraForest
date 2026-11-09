@@ -82,5 +82,30 @@ func run()->void:
 		if nav.state(1) in ["following","blocked"]:break
 	check(nav.state(1)=="following" and nav.steering_target(1).distance_to(first_target)>.1,"root rejection explores other neighbours instead of repeating the failed connector")
 	nav.invalidate();check(nav.status(1).rejected_waypoints==0,"world invalidation clears disposable support failures")
+	# Live clearance can disagree with a previously complete connection (for
+	# example at a tight corner). It must not retry that same cached target.
+	strip.free();nav.clear();start=Vector3(31,0,1);goal=Vector3(49,0,1)
+	await physics_frame;await physics_frame
+	for tick in 600:
+		await physics_frame;nav.set_agent(1,start,goal,0,true);nav.advance(1.0/60,func(_bounds:AABB):return true,Callable())
+		if nav.state(1)=="following":break
+	first_target=nav.steering_target(1)
+	var pillar:=StaticBody3D.new();pillar.position=first_target+Vector3.UP;scene.add_child(pillar)
+	var pillar_shape:=BoxShape3D.new();pillar_shape.size=Vector3(.1,2,.2)
+	var pillar_collider:=CollisionShape3D.new();pillar_collider.shape=pillar_shape;pillar.add_child(pillar_collider)
+	await physics_frame;await physics_frame
+	check(not nav.guard_motion(1,first_target-start,.5) and nav.status(1).motion_rejection=="capsule_clearance","live capsule guard stops at newly observed clearance obstruction")
+	check(nav.state(1)=="planning" and nav.status(1).rejected_waypoints==1,"clearance rejection discards the failed connection before repeated blocked replans")
+	for tick in 600:
+		await physics_frame;nav.set_agent(1,start,goal,0,true);nav.advance(1.0/60,func(_bounds:AABB):return true,Callable())
+		if nav.state(1) in ["following","blocked"]:break
+	check(nav.state(1)=="following" and nav.steering_target(1).distance_to(first_target)>.1,"clearance rejection finds another complete supported route")
+	# A declared door is deliberately present in the live movement mask but
+	# omitted from planning. Keep its approach so the host can attack the door.
+	nav.clear();nav.set_interactions([pillar.get_rid()])
+	for tick in 600:
+		await physics_frame;nav.set_agent(1,start,goal,0,true);nav.advance(1.0/60,func(_bounds:AABB):return true,Callable())
+		if nav.state(1)=="following":break
+	check(not nav.guard_motion(1,Vector3.RIGHT,.5) and nav.state(1)=="following" and nav.status(1).rejected_waypoints==0,"intact conditional door blocks motion while retaining its authorized approach")
 	scene.free();await process_frame
 	print("ACTOR_ROUTE_SAMPLING checks=",checks," failures=",failures);quit(1 if failures else 0)

@@ -62,11 +62,22 @@ physics queries including worst-case stair clearance; ordinary short frame-motio
 guards retain their two support probes. This remains bounded sampling, not a
 continuous proof for arbitrary sub-centimetre geometry.
 
-When live movement still finds a steep facet on a regional waypoint, that query
+Evaluate support samples in travel order before using midpoint/end capsule poses.
+A coarse midpoint height can span several legal risers; it must not reject a
+stair based on their combined rise. Each individual support transition still
+obeys the same step-height limit. The full furnished-tower entrance is a required
+regression because its merged collision faces expose boundary behavior that a
+simplified isolated stair does not reproduce.
+
+When live movement finds a steep facet or capsule-clearance obstruction on a regional waypoint, that query
 remembers at most 16 rejected waypoint neighbourhoods (10 cm radius, height-aware)
 and searches again. It does not repeat the same cached failing connector or move
 through it. Root rejection must try the other eight neighbours. Relevant world
 invalidation discards these derived failures; exhaustion stays explicitly blocked.
+For capsule clearance, record the actual blocking RID from the existing shape
+query. A declared conditional door keeps its approach for the host's authorized
+attack policy, while its intact collision still blocks movement. Other clearance
+failures trigger the same bounded replacement search as missed steep support.
 
 Hazard admission samples the centre, edge midpoints and corners of a conservative
 square footprint, with 5 cm padding (at least a 0.4 m half-width), along the edge

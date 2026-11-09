@@ -36,7 +36,7 @@ def main():
     folder=ROOT/'reports/checks'/datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder.mkdir(parents=True)
     command=[str(config.godot),'--path',str(ROOT),'--log-file',str(folder/'engine.log'),
-             *(['--headless'] if args.headless else ['--fullscreen','--resolution','1920x1080']),
+             *(['--headless'] if args.headless else ['--windowed','--position','-2400,-1600','--resolution','1920x1080']),
              '--max-fps','60','--script','res://tests/zombie_regional_world.gd','--',
              '--snapshot-readonly','--world-slot='+args.slot,'--derived-cache=user://zombie_regional_'+folder.name,
              '--navigation-case='+args.case,'--gameplay-construction','--zombies']

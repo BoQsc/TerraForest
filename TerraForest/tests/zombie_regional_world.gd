@@ -48,7 +48,8 @@ func chase(zombie:CharacterBody3D,seconds:float,label:String)->bool:
 			row.velocity=zombie.velocity;row.grounded=zombie.is_on_floor();row.behavior=zombie.state
 			row.planning_readiness_hits=stats.get("readiness_cache_hits",0);row.planning_readiness_probes=stats.get("readiness_probes",0)
 			var direction:Vector3=zombie.navigation_target-zombie.global_position;direction.y=0;direction=direction.normalized()
-			row.guards=[game.zombies.navigator.guard_motion(zombie.get_instance_id(),direction,.02),game.zombies.navigator.guard_motion(zombie.get_instance_id(),direction,.1),game.zombies.navigator.guard_motion(zombie.get_instance_id(),direction,.5)]
+			# guard_motion is stateful: speculative longer probes can reject the
+			# live route. Observe its recorded result without steering the test.
 			row.wall=zombie.test_move(zombie.global_transform,direction*.04)
 			row.head=zombie.test_move(zombie.global_transform,Vector3.UP*.3)
 			var raised:Transform3D=zombie.global_transform;raised.origin.y+=.3
@@ -61,11 +62,15 @@ func chase(zombie:CharacterBody3D,seconds:float,label:String)->bool:
 			trace.append(row)
 			if tick%600==0:print("WORLD_NAV_PROGRESS ",JSON.stringify(row))
 		if game.zombie_target.damage_received>before:reached=true;break
-		if route_state.planner=="regional" and route_state.state in ["blocked","search_limit"]:break
+		# After moving the player, the host may still expose the old query for
+		# this tick. Only a failure for the current destination ends the journey.
+		if route_state.planner=="regional" and route_state.state in ["blocked","search_limit"] and route_state.goal.distance_to(game.player.global_position)<.2:break
 	frames.sort()
 	phases.append({"phase":label,"contact":reached,"elapsed_seconds":(Time.get_ticks_usec()-started)/1000000.0,"first_complete_path_seconds":first_path,"physics_frames":frames.size(),"frame_interval_p50_us":frames[int(frames.size()*.5)],"frame_interval_p95_us":frames[int(frames.size()*.95)],"frame_interval_max_us":frames[-1],"route":game.zombies.navigator.route_points(zombie.get_instance_id())})
 	return reached
-func _initialize()->void:run.call_deferred()
+func _initialize()->void:
+	ProjectSettings.set_setting("terraforest/offscreen_session",true)
+	run.call_deferred()
 func run()->void:
 	if not "--snapshot-readonly" in OS.get_cmdline_user_args():quit(2);return
 	for arg in OS.get_cmdline_user_args():
@@ -76,7 +81,7 @@ func run()->void:
 	if not check(await until(func():return not game.loading_active,90),"saved actual world loads read-only"):await finish();return
 	game._clear_motion();game.needs_floor_spawn=false;game.fly=false;game.app_focused=true
 	if game.session_menu.developer:game.session_menu.toggle_developer()
-	game.session_menu.set_open(false);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	game.session_menu.set_open(false)
 	game.zombies.clear();game.zombies.population_enabled=false
 	var start:Vector3
 	var goal:Vector3

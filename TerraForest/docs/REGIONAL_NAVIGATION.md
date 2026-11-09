@@ -126,3 +126,19 @@ with both the pre-pursuit-change native library at `510c3a15` and the current on
 The ninety-second query remains planning below the first floor. This remains an
 open support/frontier investigation; the short mine/room pursuit passes do not
 qualify it. Comparison reports are retained in the zombie issue evidence.
+
+2026-11-09 support correction: the actual furnished tower fixture now passes
+18/18. The former midpoint-first support check combined two legal 25 cm risers
+into a forbidden 50 cm rise at aligned half-metre waypoints. Sampling every
+individual tread in travel order fixes that topology error. Dense 2.5 cm support,
+30 cm steps, slope/capsule/hazard/readiness checks and scheduling caps remain.
+The new `navigation_treads` fixture reproduces three failures before the fix and
+passes all 12 checks after it, including rejection of a genuine 50 cm riser.
+The cold tower query still needs 1,068 physics ticks (17.8 seconds) and 314
+expansions in the first corrected debug run. Live capsule-clearance failures now
+also use bounded rejected-waypoint memory; actual conditional door RIDs preserve
+their authorized approaches. The renewed saved-tower journey passes 13/13 with
+door destruction, both flights, attack contact and return, and preserves all
+200 source files. Cold outbound/return queries still take 35.2/45.0 seconds in
+the full host. Faster first routes remain an acceptance gate.
+Current receipts are linked from [the performance follow-up](../issues/runtime-performance/foundation-2026-11-09.md).

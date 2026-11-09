@@ -190,7 +190,17 @@ bool NativeActorNavigator::guard_motion(int64_t id,const Vector3 &direction,doub
     const bool allowed=agent->route.permits_motion(get_world_3d()->get_direct_space_state(),agent->position,to,readiness_,admission_,agent->motion_ray,agent->motion_shape);
     agent->motion_rejection=agent->route.edge_failure();
     if(!allowed&&agent->continuing){agent->continuing=false;agent->planned_from=agent->position;agent->route.invalidate();agent->journey.invalidate();}
-    if(!allowed&&agent->regional&&String(agent->motion_rejection)=="steep_support")agent->journey.reject_motion();
+    if(!allowed&&agent->regional){
+        const String failure=agent->motion_rejection;
+        bool conditional_door=false;
+        if(failure=="capsule_clearance")for(int i=0;i<interactions_.size();++i)
+            if(RID(interactions_[i])==agent->route.edge_obstacle()){conditional_door=true;break;}
+        // Keep an intentional door approach for the host's interaction policy.
+        // Other live clearance discrepancies must not replay the same cached
+        // connection until the stuck timer gives up. Reuse the bounded failure
+        // memory and full-route search already used for missed steep support.
+        if(failure=="steep_support"||(failure=="capsule_clearance"&&!conditional_door))agent->journey.reject_motion();
+    }
     return allowed;
 }
 String NativeActorNavigator::state(int64_t id){

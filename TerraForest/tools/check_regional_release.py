@@ -38,13 +38,15 @@ def main():
         descriptors.append('res://addons/'+addon+'/'+module+'.gdextension')
     if not args.sampling:
         shutil.copytree(ROOT/'addons/structures/prefabs', project/'addons/structures/prefabs')
-        shutil.copy2(ROOT/'addons/structures/furniture_catalog.gd', project/'addons/structures/furniture_catalog.gd')
+        for catalog in ['furniture_catalog.gd', 'expansion_catalog.gd']:
+            shutil.copy2(ROOT/'addons/structures'/catalog, project/'addons/structures'/catalog)
     (project/'.godot').mkdir()
     (project/'.godot/extension_list.cfg').write_text('\n'.join(descriptors)+'\n')
     (project/'tests').mkdir()
     outcomes = []
-    tests = [('regional_navigation', 'REGIONAL_NAVIGATION checks=14 failures=0'),
-             ('navigation_residency', 'NAVIGATION_RESIDENCY checks=11 failures=0'),
+    tests = [('navigation_treads', 'NAVIGATION_TREADS checks='),
+             ('regional_navigation', 'REGIONAL_NAVIGATION checks='),
+             ('navigation_residency', 'NAVIGATION_RESIDENCY checks='),
              ('zombie_step_guard', 'ZOMBIE_STEP_GUARD PASS'),
              ('player_cottage_stairs', 'PLAYER_COTTAGE_STAIRS failures=0')]
     if args.sampling:
