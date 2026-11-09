@@ -1,3 +1,10 @@
+## PX9 running/jumping diagnosis - 2026-11-09
+
+Running jump glitch reproduced: airborne apex selects run, then jump restarts;
+hands/weapon can leave the view. No behavior change yet: user requested detection
+first. [Evidence and remaining correction](../issues/px9-handgun/README.md#runningjumping-glitch-diagnosis---2026-11-09)
+record the reproduction and closure checks. Running-only continuity remains unqualified.
+
 ## PX9 live grip correction — 2026-11-09
 
 The user rejected the first gameplay grip. The live split-arm renderer retained

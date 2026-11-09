@@ -38,5 +38,15 @@
   "live-renderer-grip.png": {
     "source": "Updated preview_px9.gd, live split renderer, 180 animation updates; engineering review only",
     "sha256": "7027c17a1c8c07a6f58e7eb43278f944a5746074b7ae979e09088fccd0ee8a40"
+  },
+  "motion_068.png": {
+    "sha256": "e2297881511f8ef586042a66893859d8c6b40d6001a375eddf26268540a4858e",
+    "source": "motion_diagnostic.gd, physics-driven running jump; Godot 4.7.2 Compatibility",
+    "status": "Reproduced defect, before correction"
+  },
+  "motion_071.png": {
+    "sha256": "352c975b61b37973d8601cdaca61aaf4746e14464eb6daf3583ad1c96c87afaf",
+    "source": "motion_diagnostic.gd, physics-driven running jump; Godot 4.7.2 Compatibility",
+    "status": "Reproduced defect, before correction"
   }
 }

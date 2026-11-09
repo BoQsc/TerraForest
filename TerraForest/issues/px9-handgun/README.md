@@ -57,3 +57,20 @@ after 180 live animation updates. The new regression fails on the old renderer
 (61/62) and passes with the correction (62/62). The earlier speculation about
 competing animation players was disproved by the finger-rotation test; no such
 animation rewrite was retained. User gameplay re-review remains pending.
+
+## Running/jumping glitch diagnosis - 2026-11-09
+
+Status: Reproduced; behavior not changed, per user request to detect first.
+The physics-driven diagnostic uses the real human presentation and split renderer.
+In one running jump it selects jump at frame 45, switches back to run while
+still airborne at frame 68 (vertical speed 0.33), then restarts jump at frame 71
+(vertical speed -0.67). The weapon/hands leave the view in the second capture.
+The airborne test incorrectly depends on abs(vertical velocity) > 0.5, so the
+apex is treated as running. Jump is also a one-shot returning to idle; longer
+flights can restart it. A separate running-only defect has not yet been isolated.
+
+Evidence: [apex](images/motion_068.png), [restarted jump](images/motion_071.png),
+[log](logs/px9-motion-diagnostic.log), [diagnostic source](motion_diagnostic.gd).
+Fix/resume trigger: proceed with locomotion-state correction after this diagnosis
+is reviewed. Verify one jump presentation per airborne interval, stable apex,
+landing transitions, longer falls, and running-only continuity in gameplay.
