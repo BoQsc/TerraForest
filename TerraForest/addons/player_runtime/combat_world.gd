@@ -293,7 +293,7 @@ func _physics_process(delta:float)->void:
 	if int(timer)!=int(timer-delta):
 		for id:int in barrels.get_ids():
 			if game.world_attack.durability.damage("model:%s:%d"%[Barrel.KEY,id],50)>=50 and id not in detonations and detonations.size()<256:detonations.append(id)
-	if game.equipped_tool in [7,8] and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):fire()
+	if game.equipped_tool in WEAPONS and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):fire()
 	if game.equipped_tool==9:game.tool_view.human.handgun_empty=state.get_rounds(9)==0
 	if ammo_label==null and game.player_hud.action_hint!=null:
 		ammo_label=Label.new();ammo_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT;ammo_label.custom_minimum_size.x=340;ammo_label.add_theme_font_size_override("font_size",22);game.player_hud.add_child(ammo_label)

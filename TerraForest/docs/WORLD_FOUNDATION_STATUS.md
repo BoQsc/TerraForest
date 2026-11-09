@@ -1,3 +1,9 @@
+## PX9 held-trigger firing - 2026-11-09
+
+PX9 now repeats shots while left mouse is held, with existing recoil and combat
+gates. HUD/help text is updated. [Evidence](../issues/px9-handgun/README.md#held-trigger-firing---2026-11-09)
+tracks held/released trigger and menu checks; user feel review remains open.
+
 ## PX9 running/jumping correction - 2026-11-09
 
 The reproduced apex switch/restart is corrected: airborne state persists until

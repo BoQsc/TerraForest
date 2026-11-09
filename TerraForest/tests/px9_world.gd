@@ -34,7 +34,7 @@ func run()->void:
  check(game.combat.fire(),"host launches handgun projectile")
  check(game.combat.state.get_rounds(9)==14 and game.combat.shots==1,"one trigger consumes exactly one handgun round")
  await ticks(30)
- check(game.combat.state.get_rounds(9)==14,"semi-auto does not repeat without a new trigger")
+ check(game.combat.state.get_rounds(9)==14,"released trigger does not repeat fire")
  var saved:PackedByteArray=game.combat.capture()
  check(game.combat.state.take_round(9) and game.combat.restore(saved) and game.combat.state.get_rounds(9)==14,"host combat save component restores pistol magazine")
  game.session_menu.set_open(true)
@@ -43,6 +43,23 @@ func run()->void:
  check(game.combat.reload(),"partial reload starts")
  game.player_hud.equip_item(1);await ticks(110)
  check(game.combat.state.get_rounds(9)==14 and game.combat.rounds_in_bag(9)==25,"switching tools cancels reload without consuming cartridges")
+ check(game.player_hud.equip_item(9),"PX9 re-equips for held-trigger test")
+ await ticks(80)
+ var press:=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=true
+ Input.parse_input_event(press);Input.flush_buffered_events()
+ await ticks(90)
+ var held_rounds:int=game.combat.state.get_rounds(9)
+ check(held_rounds<=12 and held_rounds>0,"holding left mouse repeats shots at the existing recoil cadence")
+ press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=false
+ Input.parse_input_event(press);Input.flush_buffered_events()
+ await ticks(40)
+ check(game.combat.state.get_rounds(9)==held_rounds,"releasing left mouse immediately stops repeated fire")
+ game.session_menu.set_open(true)
+ press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=true
+ Input.parse_input_event(press);Input.flush_buffered_events();await ticks(40)
+ check(game.combat.state.get_rounds(9)==held_rounds,"menu blocks held-trigger repetition")
+ press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=false
+ Input.parse_input_event(press);Input.flush_buffered_events()
  game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"temporary world shuts down safely")
  game.free();await process_frame;await process_frame
  print("PX9_WORLD checks=",checks," failures=",failures);quit(1 if failures else 0)

@@ -21,7 +21,7 @@ Image sources, hashes and camera limits: [manifest](images/manifest.json).
 
 ## Changes and verification
 
-PX9 is shared catalog item 9; cartridges are 228. Find both through Dev Bag search `PX9`, crafting or traders. Left mouse fires one shot, right mouse aims, R reloads, I inspects, G uses the universal drop path. Fifteen-round native magazine saves independently from both rifles; snapshots v1–v3 load with an empty pistol magazine.
+PX9 is shared catalog item 9; cartridges are 228. Find both through Dev Bag search `PX9`, crafting or traders. Hold left mouse to repeat fire, right mouse aims, R reloads, I inspects, G uses the universal drop path. Fifteen-round native magazine saves independently from both rifles; snapshots v1–v3 load with an empty pistol magazine.
 
 The unchanged portable CC0 adapters sample all 20 paired body/weapon clips on one clock over existing lower-body locomotion. Equip applies the supplied hand-skin variant; holster restores the original body. Reload completion uses the existing host transaction and cancellation gates. Shot SFX reuse `Pistol Shot 1 - Kaino.wav`; magazine-out plays `Magazine Reload 1 - Kaino.wav`. These are existing project recordings under their retained terms; there are no newly imported sounds.
 
@@ -93,3 +93,13 @@ handgun checks pass 62/62. Graphical apex/descent/long-flight views were inspect
 [long flight](images/motion_fixed_250.png). Prior rejected captures are retained.
 Run tests/px9_locomotion.gd for the physics regression and optional graphical
 captures. User feel/visual review remains pending in the actual game.
+
+## Held-trigger firing - 2026-11-09
+
+PX9 now repeats fire while left mouse is held, using the shared combat trigger
+path and existing interval/recoil admission. Releasing the button stops repetition;
+menus, equip actions and reloads retain their existing gates. HUD and item help
+now describe holding the button. This supersedes the initial semi-auto input.
+
+Temporary-world regression passes 18/18, including held fire, release and menu
+blocking: [log](logs/px9-held-trigger.log).
