@@ -201,5 +201,33 @@
     "sha256": "3a06362497868522e2f308e72921fb8a4cf0f90c0486019f89676184756b6c51",
     "revision": "83554b22 installed PCK a856edb0232bfb150fb66fc4d6edb59626e194f79ce07efc64717906324661b6",
     "status": "Inspected installed endpoint with diagnostic render markers; profiler timing and overlap with other engine jobs exclude ordinary pacing qualification. Existing project assets retain their provenance; screenshot only."
+  },
+  "20261109-destruction-scan-after.png": {
+    "source": "reports/performance_changes/20261109T210153307672Z_destruction_scan_pack/destruction_after.png",
+    "sha256": "dd891d7d71179aee073bf4105fcf6e856cc853cc71f9461850169cea2b1b4405",
+    "revision": "e69d8d57 plus native owner-index changes; package acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be",
+    "world": "Owned copy of Frontier generator 29 seed 1703; base (1101,57,339), 1920x1080, normal quality, fly camera, unchanged 96-body limit.",
+    "status": "Original-scan control, exact 102-cell damage and 96-body peak; first chain interval includes test setup. Inspected engineering evidence, not user approval. Debris/wind/time differ; HUD FPS includes setup/readback and is not performance evidence."
+  },
+  "20261109-destruction-index-before.png": {
+    "source": "reports/performance_changes/20261109T210548903440Z_destruction_index_final/destruction_before.png",
+    "sha256": "eafe441fb05fbb44e16d508c67d239f86fc040e7809e249f5b46ad1bf4fb30e8",
+    "revision": "e69d8d57 plus native owner-index changes; package acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be",
+    "world": "Owned copy of Frontier generator 29 seed 1703; base (1101,57,339), 1920x1080, normal quality, fly camera, unchanged 96-body limit.",
+    "status": "Native candidate before the three-barrel chain, intact 153-cell shell. Inspected engineering evidence, not user approval. Debris/wind/time differ; HUD FPS includes setup/readback and is not performance evidence."
+  },
+  "20261109-destruction-index-after.png": {
+    "source": "reports/performance_changes/20261109T210548903440Z_destruction_index_final/destruction_after.png",
+    "sha256": "f3cbbf30ac2fd74874b65cd03c0cd92a2a943ecc6899be9c2b51dda0b275947b",
+    "revision": "e69d8d57 plus native owner-index changes; package acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be",
+    "world": "Owned copy of Frontier generator 29 seed 1703; base (1101,57,339), 1920x1080, normal quality, fly camera, unchanged 96-body limit.",
+    "status": "Native candidate after exact 102-cell blast destruction, normal debris and flash. Inspected engineering evidence, not user approval. Debris/wind/time differ; HUD FPS includes setup/readback and is not performance evidence."
+  },
+  "20261109-destruction-index-off-after.png": {
+    "source": "reports/performance_changes/20261109T210737606436Z_destruction_index_off/destruction_after.png",
+    "sha256": "6dc9883ea1084670d1ad516cb266556de974560371d80873d40360d6bb339f9b",
+    "revision": "e69d8d57 plus native owner-index changes; package acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be",
+    "world": "Owned copy of Frontier generator 29 seed 1703; base (1101,57,339), 1920x1080, normal quality, fly camera, unchanged 96-body limit.",
+    "status": "Same installed candidate without rolling recorder or per-body/publication observers; damage and retirement pass. Inspected engineering evidence, not user approval. Debris/wind/time differ; HUD FPS includes setup/readback and is not performance evidence."
   }
 }

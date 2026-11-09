@@ -36,6 +36,8 @@ def main():
     parser.add_argument('--render-full-detail', action='store_true', help='Diagnostic only: disable automatic mesh LOD for every ABBA phase')
     parser.add_argument('--legacy-cover', action='store_true', help='Diagnostic only: use the prior 32 m cover layout before first admission')
     parser.add_argument('--outdoor-cover', action='store_true', help='Repeatable 16 m outdoor camera sweep with normal world services and quality')
+    parser.add_argument('--destruction-load', action='store_true', help='Real three-barrel chain and full debris population in the owned default-world clone')
+    parser.add_argument('--legacy-owner-bounds', action='store_true', help='Diagnostic control: use original forest/boulder invalidation scans')
     parser.add_argument('--collision-piece-triangles', type=int, choices=[256, 512, 1024], help='Diagnostic only: configure exact terrain collision partitions before worker startup')
     parser.add_argument('--light-abba', action='store_true', help='Compare unchanged versus redundantly submitted pooled lights in one stationary view')
     parser.add_argument('--executable', action='store_true')
@@ -100,6 +102,10 @@ def main():
         command += ['--trace-legacy-cover']
     if args.outdoor_cover:
         command += ['--trace-outdoor-cover']
+    if args.destruction_load:
+        command += ['--trace-destruction-load']
+    if args.legacy_owner_bounds:
+        command += ['--trace-legacy-owner-bounds']
     if args.collision_piece_triangles:
         command += ['--trace-collision-piece-triangles=' + str(args.collision_piece_triangles)]
     if args.uncapped:
@@ -109,13 +115,20 @@ def main():
     record = dict(command=command, clone=copied, **revision_metadata())
     record['diagnostic_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                   for p in [ROOT/'tests/frame_trace_world.gd', ROOT/'tests/render_inventory.gd',
-                                            ROOT/'tests/render_partition_probe.gd', ROOT/'tests/render_occlusion_probe.gd', ROOT/'tests/cover_outdoor_probe.gd',
+                                            ROOT/'tests/render_partition_probe.gd', ROOT/'tests/render_occlusion_probe.gd', ROOT/'tests/cover_outdoor_probe.gd', ROOT/'tests/destruction_load_probe.gd',
                                             ROOT/'addons/world_runtime/frame_trace.gd', ROOT/'addons/world_runtime/render_trace.gd', Path(__file__)]}
     if args.executable:
         record['pack_sha256'] = hashlib.sha256((ROOT / 'dist/TerraForest.pck').read_bytes()).hexdigest()
         record['pack_native_sha256'] = native
     record['native_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                for p in sorted((ROOT / 'addons').glob('*/bin/*.dll'))}
+    if args.destruction_load:
+        record['destruction_source_sha256'] = {
+            name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in (
+                'addons/player_runtime/combat_world.gd', 'addons/player_runtime/destruction_effects.gd',
+                'addons/player_runtime/structural_integrity.gd', 'addons/structures/structures_world.gd',
+                'addons/world_ecosystem/ground_cover.gd', 'addons/world_ecosystem/world_ecosystem.gd',
+                'addons/world_ecosystem/boulder_horizon.gd', 'addons/volumetric_water/lake_world.gd')}
     manifest = folder / 'run.json'
     manifest.write_text(json.dumps(record, indent=2), encoding='utf-8')
     record['result'] = execute(command, folder, 300, 'FRAME_TRACE_WORLD ok=true')

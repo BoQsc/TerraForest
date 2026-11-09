@@ -10,6 +10,7 @@ var fractures:Node3D
 var rock_collision:Node3D
 var resident:Dictionary={}
 var _samples:Dictionary={}
+var _exclusion_index:RefCounted
 var _published:Dictionary={}
 var _requests:Dictionary={}
 var _pending:Dictionary={}
@@ -24,6 +25,7 @@ var last_process_us:=0
 var shared_surface_ready:Callable
 
 func _ready()->void:
+	if ClassDB.class_exists("NativeOwnerBoundsIndex"):_exclusion_index=ClassDB.instantiate("NativeOwnerBoundsIndex")
 	terrain=cover.terrain;removed=cover.removed;native=cover.native
 	fractures=cover.fractures;rock_collision=cover.rock_collision
 	picker=ClassDB.instantiate("NativeGroundCoverPicker")
@@ -40,6 +42,7 @@ func reset()->void:
 		picker.remove_cell(key);rock_collision.remove_instances(resident[key][0].ids)
 	if fractures!=null:fractures.clear()
 	resident.clear();_samples.clear();_published.clear();_requests.clear();_pending.clear();_reconcile.clear();_resample.clear();_owners.clear();_seed=-1
+	if _exclusion_index!=null:_exclusion_index.clear()
 
 func coverage_status()->Dictionary:
 	return {"ready":_published.size()==1024 and _requests.is_empty() and _resample.is_empty() and _reconcile.is_empty(),"owners":_published.size(),"total":1024,"pending":_requests.size(),"reconcile":_reconcile.size(),"rejected":rejected,"unchanged_publications":unchanged_publications,"process_us":last_process_us,"render":fractures.statistics()}
@@ -112,6 +115,10 @@ func accept_surface_page(data:Dictionary,points:PackedVector3Array,normals:Packe
 	var placed:Dictionary=native.place(data.ids,points,normals)
 	if not placed.ok:rejected+=1;_resample[data.key]=true;return
 	_samples[data.key]=placed;_resample.erase(data.key);_reconcile[data.key]=true
+	if _exclusion_index!=null:
+		if placed.transforms.is_empty():
+			if not _exclusion_index.set_inactive(data.key):_exclusion_index=null
+		elif not _exclusion_index.set_bounds(data.key,AABB(Vector3(data.key.x*64,0,data.key.y*64),Vector3(64,1,64)).grow(8)):_exclusion_index=null
 
 func _publish(key:Vector2i)->void:
 	var sample:Dictionary=_samples[key]
@@ -204,6 +211,12 @@ func _terrain_changed(bounds:AABB,_revision:int)->void:
 		if (road or not _published.has(key)) and AABB(Vector3(key.x*64,bounds.position.y,key.y*64),Vector3(64,maxf(1,bounds.size.y),64)).intersects(bounds):_resample[key]=true
 
 func _exclusion_changed(bounds:AABB)->void:
+	if _exclusion_index!=null:
+		# Existing boulder exclusion is horizontal; keep its exact 8 m padding.
+		var horizontal:=AABB(Vector3(bounds.position.x,0,bounds.position.z),Vector3(bounds.size.x,1,bounds.size.z))
+		var affected:Array=_exclusion_index.all_owners() if bounds.size==Vector3.ZERO else _exclusion_index.intersecting(horizontal)
+		for key:Vector2i in affected:_reconcile[key]=true
+		return
 	for key:Vector2i in _samples:
 		if _samples[key].transforms.is_empty():continue
 		if bounds.size==Vector3.ZERO or AABB(Vector3(key.x*64,bounds.position.y,key.y*64),Vector3(64,maxf(1,bounds.size.y),64)).grow(8).intersects(bounds):_reconcile[key]=true

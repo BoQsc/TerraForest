@@ -30,6 +30,7 @@ var _connected: bool = false
 var stale_results: int = 0
 var rejected_batches: int = 0
 var _samples: Dictionary = {}
+var _exclusion_index:RefCounted
 var _reconcile: Dictionary = {}
 var _resample: Dictionary = {}
 var last_process_us: int = 0
@@ -120,6 +121,7 @@ func _ready() -> void:
 		push_error("WorldEcosystem requires terrain, vegetation and camera")
 		set_process(false)
 		return
+	if ClassDB.class_exists("NativeOwnerBoundsIndex"):_exclusion_index=ClassDB.instantiate("NativeOwnerBoundsIndex")
 	terrain.surface_batch_ready.connect(_surface_ready)
 	terrain.region_changed.connect(_region_changed)
 	_terrain_support=ClassDB.instantiate("NativeVegetationSupport")
@@ -143,6 +145,7 @@ func reset() -> void:
 		vegetation.remove_chunk(_owner(key))
 	resident.clear()
 	_samples.clear()
+	if _exclusion_index!=null:_exclusion_index.clear()
 	_reconcile.clear()
 	_resample.clear()
 	_requests.clear()
@@ -217,6 +220,7 @@ func _refresh(center: Vector2i) -> void:
 	for key in _samples.keys():
 		if not _wanted.has(key):
 			_samples.erase(key)
+			if _exclusion_index!=null:_exclusion_index.erase(key)
 			_reconcile.erase(key)
 			_resample.erase(key)
 	# Keep outstanding tokens until completion; this bounds work during teleports.
@@ -260,6 +264,10 @@ func _replace_samples(key: Vector2i,ids: PackedInt64Array,transforms: Array[Tran
 	# Empty results must retire previously accepted roots as well as their cache.
 	var previous: Dictionary = _samples.get(key, {})
 	_samples[key] = {"ids": ids, "transforms": transforms, "active": previous.get("active", PackedInt64Array()), "active_transforms": previous.get("active_transforms", []), "published": previous.get("published", false)}
+	if _exclusion_index!=null:
+		if transforms.is_empty():
+			if not _exclusion_index.set_inactive(key):_exclusion_index=null
+		elif not _exclusion_index.set_unbounded(key):_exclusion_index=null
 	_resample.erase(key)
 	_publish_samples(key)
 
@@ -269,6 +277,10 @@ func _structures_changed() -> void:
 		_reconcile[key] = true
 
 func _structure_region_changed(bounds: AABB) -> void:
+	if _exclusion_index!=null:
+		var affected:Array=_exclusion_index.all_owners() if bounds.size==Vector3.ZERO else _exclusion_index.intersecting(bounds)
+		for key:Vector2i in affected:_reconcile[key]=true
+		return
 	if bounds.size==Vector3.ZERO:
 		_structures_changed();return
 	for key in _samples:
@@ -291,6 +303,7 @@ func _publish_samples(key: Vector2i) -> void:
 		var bounds: AABB=transforms[0]*prototype
 		for i in range(1,transforms.size()): bounds=bounds.merge(transforms[i]*prototype)
 		sample["exclusion_bounds"]=bounds
+		if _exclusion_index!=null and not _exclusion_index.set_bounds(key,bounds):_exclusion_index=null
 	var mask := PackedByteArray()
 	if structures != null and not transforms.is_empty():
 		mask = structures.overlap_mask(transforms, vegetation.placement_bounds())

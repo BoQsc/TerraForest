@@ -1,6 +1,15 @@
 # Runtime performance
 
-Latest installed fix: [skip unchanged shadow updates](shadow-updates-2026-11-09.md)
+Latest world fix: [native forest/boulder invalidation](destruction-owner-bounds-2026-11-09.md)
+replaces repeated owner scans during local destruction with exact native bounds
+queries. The same-package control reduces forest/boulder callback medians from
+1.036/0.852 ms to 0.011/0.012 ms while preserving all damage, 96 physical debris
+bodies and normal retirement. The real three-barrel default-world fixture and
+native/adapter parity checks pass. Whole-frame stalls, collapse, terrain publication,
+rendering waits, pursuit and endurance remain open; the report retains rejected
+pacing controls and separates test setup from gameplay timing.
+
+Earlier rendering fix: [skip unchanged shadow updates](shadow-updates-2026-11-09.md)
 removes redundant native state submissions that queued later renderer work.
 Nearby candidate/old/candidate controls reduce selected-frame drawing median
 from 13.890 to 6.449/5.311 ms, with geometry, coverage and shadow policy retained.

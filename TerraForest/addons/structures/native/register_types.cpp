@@ -21,8 +21,10 @@
 #include "model_transfer_scheduler.hpp"
 #include <godot_cpp/godot.hpp>
 using namespace godot;
+namespace terraforest {void register_owner_bounds();}
 static void initialize(ModuleInitializationLevel level) {
     if(level==MODULE_INITIALIZATION_LEVEL_SCENE) {
+        terraforest::register_owner_bounds();
         GDREGISTER_CLASS(terraforest::NativeBlockPrefab);
         GDREGISTER_CLASS(terraforest::NativePrefabPlacement);
         GDREGISTER_CLASS(terraforest::NativeBlockWorld);

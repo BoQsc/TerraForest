@@ -1,0 +1,2452 @@
+{
+  "schema": 1,
+  "status": "Localized native world fix installed and verified; stable 60 FPS remains open.",
+  "full_comparison": "reports/performance_changes/20261109T210000_owner_bounds_verification/full_comparison.json",
+  "full_comparison_sha256": "12c31ab8603e5bd02277905abb9580218f2e42b4a13b15d7ac04f59fd29642a5",
+  "verification": {
+    "debug_checks": "reports/checks/20261109T205229783258Z/run.json",
+    "publication_checks": "reports/checks/20261109T204915192855Z/run.json",
+    "release_checks": "reports/owner_bounds_release.json",
+    "cleanup_check": "issues/px9-handgun/logs/impact-final-destruction_batches.log",
+    "package_sha256": "acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be",
+    "package_bytes": 626976384,
+    "receipt_sha256": {
+      "destruction_owner_export.log": "44e9f9758cdff428d6f1e7cd906f839103a9a65e92404c36500b50cb35fc1f35",
+      "distribution_budget.json": "912fbef31f8d949446ae4c8403a687b6d213281398ae7a2a9b0f974af5b3ac16",
+      "export.log": "3955502931c1869b46a57ca39b0dc56199dc6e133e3096d8c65aeb42a4a33f57",
+      "house_lights_pack_gate.log": "a54353f9724889236291c23acdfe7a1970e2f4dda9fbaf6ee500cc5fcfa194fe",
+      "owner_bounds_release.json": "6d6bd63697eaff9a854c38fd218628f32461459291036b0eb4fbbf41933908bf",
+      "pack_smoke.log": "57682e39b6721e14bd122bd452061771c29950a16016bf2bbfdef34387e623e3",
+      "structures_build_template_debug.json": "5e2db4156b9376c0330a2bcda2688eb04bb6826c190aa1af069a37ab539ab244",
+      "structures_build_template_release.json": "55618b22d751041f70593b5558ea13aa71b01c006778c14b6a27f8a46b5c4cd6"
+    }
+  },
+  "runs": [
+    {
+      "label": "destruction_publication_clean",
+      "folder": "reports/performance_changes/20261109T204226087506Z_destruction_publication_clean",
+      "host_folder": "reports/performance_changes/host_destruction_publication_clean_20261109T204225935708Z",
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T204226087506",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "pack_sha256": null,
+      "destruction_source_sha256": {
+        "addons/player_runtime/combat_world.gd": "ff98da4fc95397d87394f65d7f691ae33dc80df8bb79079d49139ff3dd69d622",
+        "addons/player_runtime/destruction_effects.gd": "0f86ffde6401a2d05fd0984569c55ac4a084069c9e3db5c8e522fb040c57af47",
+        "addons/player_runtime/structural_integrity.gd": "a034298793bfe5a4032fa38072e6fd00a24d16a6d41cb31987028d39d28c760d",
+        "addons/structures/structures_world.gd": "cb9e1b7a27070d6b3c51ff4323980f74f5b3c86dfd932429d5f79e436da9e7ee",
+        "addons/world_ecosystem/ground_cover.gd": "2cdee4381292bdc60dc294bb6da1fb88fe81567082af5e9f458429f0fa2f9779",
+        "addons/world_ecosystem/world_ecosystem.gd": "7fbbda7a5f5beea20f8a42b1fa60ea80c9b6e21756aec78b2f2968a3d840c692",
+        "addons/world_ecosystem/boulder_horizon.gd": "4f9bc72393c29ff1587b9a0fe7aac3ca4b3d5d4ebe8d10d4a6cb74f9c62dd079",
+        "addons/volumetric_water/lake_world.gd": "d89812fe951162fe9300f724d8f7789dc403f6c94330df90551f6e2f100b7908"
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "bbc255e8f45c05f6d946b23c7060fec333137632954f3ac23d440f0ab01eb8df",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tests\\destruction_load_probe.gd": "2589013d7131123bf5186267c2b1b01c3c8d4c060ef77290372c6b598c3284dc",
+        "addons\\world_runtime\\frame_trace.gd": "c19ff2dc461406570289c556be7013ca9575fd270bfd52d94e02dc2868cd0acc",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "e731ec9132ae25374d37399da0787c720f095737bcabb2aa607ea08e92e10e0a"
+      },
+      "destruction": {
+        "base": "(1101.0, 57.0, 339.0)",
+        "chain_ms": 603.178,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "uncapped_pacing_mismatches": null,
+      "observed_pacing_states": [
+        [
+          0,
+          0,
+          true,
+          959
+        ],
+        [
+          0,
+          0,
+          false,
+          752
+        ],
+        [
+          0,
+          1,
+          true,
+          151
+        ],
+        [
+          0,
+          1,
+          false,
+          3220
+        ]
+      ],
+      "competing_engine_or_compiler_observed": [],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 30.99,
+        "temperature.gpu": 57.0,
+        "clocks.current.graphics [MHz]": 2250.0
+      },
+      "native_structures_sha256": {
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "20cd6e08d1afcfa201414337838c74066a24fae66642e4d75fee88398bfda5be",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "e418edc43744ad4d4e2e9d93b8bf1f60826bb384cd9a6129b04f85831d82d00e"
+      },
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 4370644992,
+        "peak_working_set_bytes": 2457370624,
+        "peak_dedicated_gpu_bytes": 1810481152,
+        "telemetry_complete": true,
+        "within_sampled_limits": true
+      },
+      "continuous_frame_ms": {
+        "arrival_idle": {
+          "samples": 1024,
+          "mean": 11.7224150390625,
+          "p50": 10.956,
+          "p95": 17.745,
+          "p99": 20.683,
+          "maximum": 49.101
+        },
+        "outdoor_sweep": {
+          "samples": 481,
+          "mean": 16.621251559251558,
+          "p50": 16.575,
+          "p95": 18.104,
+          "p99": 19.835,
+          "maximum": 39.687
+        },
+        "destruction_preparation": {
+          "samples": 142,
+          "mean": 17.255394366197184,
+          "p50": 16.576,
+          "p95": 18.285,
+          "p99": 50.365,
+          "maximum": 66.63
+        },
+        "destruction_chain": {
+          "samples": 37,
+          "mean": 16.540027027027026,
+          "p50": 16.491,
+          "p95": 18.627,
+          "p99": 34.752,
+          "maximum": 34.752
+        },
+        "destruction_recovery": {
+          "samples": 641,
+          "mean": 16.632634945397815,
+          "p50": 16.628,
+          "p95": 17.93,
+          "p99": 18.51,
+          "maximum": 21.177
+        },
+        "turning": {
+          "samples": 301,
+          "mean": 16.665870431893687,
+          "p50": 16.692,
+          "p95": 17.521,
+          "p99": 17.959,
+          "maximum": 28.124
+        },
+        "settled_idle": {
+          "samples": 481,
+          "mean": 16.66926611226611,
+          "p50": 16.722,
+          "p95": 17.801,
+          "p99": 18.248,
+          "maximum": 18.79
+        }
+      },
+      "publication_us": {
+        "structures.vegetation_changed:res://addons/world_ecosystem/world_ecosystem.gd._structure_region_changed": {
+          "samples": 11,
+          "mean": 1036.3636363636363,
+          "p50": 1046,
+          "p95": 1215,
+          "p99": 1215,
+          "maximum": 1215,
+          "sum": 11400
+        },
+        "structures.vegetation_changed:res://addons/world_ecosystem/boulder_horizon.gd._exclusion_changed": {
+          "samples": 11,
+          "mean": 842.2727272727273,
+          "p50": 824,
+          "p95": 956,
+          "p99": 956,
+          "maximum": 956,
+          "sum": 9265
+        },
+        "blocks.changed:res://addons/structures/structures_world.gd._mark_dirty": {
+          "samples": 8,
+          "mean": 1981.125,
+          "p50": 2058,
+          "p95": 2111,
+          "p99": 2111,
+          "maximum": 2111,
+          "sum": 15849
+        }
+      },
+      "debris_us": {
+        "total_us": {
+          "samples": 102,
+          "mean": 33.40196078431372,
+          "p50": 22,
+          "p95": 118,
+          "p99": 162,
+          "maximum": 377,
+          "sum": 3407
+        },
+        "geometry_us": {
+          "samples": 102,
+          "mean": 4.245098039215686,
+          "p50": 2,
+          "p95": 7,
+          "p99": 8,
+          "maximum": 167,
+          "sum": 433
+        },
+        "nodes_us": {
+          "samples": 102,
+          "mean": 16.11764705882353,
+          "p50": 10,
+          "p95": 62,
+          "p99": 131,
+          "maximum": 142,
+          "sum": 1644
+        },
+        "attach_us": {
+          "samples": 102,
+          "mean": 11.127450980392156,
+          "p50": 8,
+          "p95": 39,
+          "p99": 46,
+          "maximum": 73,
+          "sum": 1135
+        },
+        "motion_us": {
+          "samples": 102,
+          "mean": 1.911764705882353,
+          "p50": 2,
+          "p95": 5,
+          "p99": 6,
+          "maximum": 6,
+          "sum": 195
+        }
+      },
+      "blast_batch_frames": [
+        {
+          "frame": 5719,
+          "frame_ms": 34.757,
+          "batch_ms": 3.599
+        },
+        {
+          "frame": 5720,
+          "frame_ms": 13.12,
+          "batch_ms": 3.339
+        },
+        {
+          "frame": 5721,
+          "frame_ms": 10.954,
+          "batch_ms": 3.229
+        },
+        {
+          "frame": 5722,
+          "frame_ms": 10.566,
+          "batch_ms": 2.243
+        },
+        {
+          "frame": 5733,
+          "frame_ms": 15.275,
+          "batch_ms": 2.834
+        },
+        {
+          "frame": 5734,
+          "frame_ms": 16.449,
+          "batch_ms": 3.098
+        },
+        {
+          "frame": 5735,
+          "frame_ms": 17.57,
+          "batch_ms": 3.174
+        },
+        {
+          "frame": 5745,
+          "frame_ms": 14.706,
+          "batch_ms": 2.905
+        }
+      ],
+      "slowest_matched_frames": [
+        {
+          "frame": 3804,
+          "test_phase": "arrival_idle",
+          "frame_ms": 49.143,
+          "physics_steps": 2,
+          "physics_ms": 6.88,
+          "physics_tail_ms": 1.38,
+          "before_process_ms": 9.075,
+          "process_ms": 1.711,
+          "after_process_ms": 0.171,
+          "draw_ms": 38.186,
+          "gpu_ms": 6.12900018692017,
+          "render_cpu_ms": 3.15100002288818,
+          "stages_ms": {
+            "actor update": 0.081,
+            "base controller": 0.017,
+            "controller loading": 0.001,
+            "controller process": 0.101,
+            "lighting schedule": 0.006,
+            "player physics": 0.518,
+            "receive": 0.024,
+            "receive poll": 0.009,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.007,
+            "world authoring": 0.015,
+            "world interaction": 0.028,
+            "world pickups": 0.005,
+            "world presentation": 0.017,
+            "world process": 0.28,
+            "world vehicle": 0.007,
+            "zombie update": 0.968
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 42810442,
+              "horizon_us": 4,
+              "occlusion_us": 12,
+              "process_us": 17,
+              "residency_us": 0,
+              "started_us": 42810425,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 42810525,
+              "process_us": 75,
+              "started_us": 42810450
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 42810449,
+              "process_us": 6,
+              "started_us": 42810443
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 4617,
+          "test_phase": "outdoor_sweep",
+          "frame_ms": 39.607,
+          "physics_steps": 1,
+          "physics_ms": 5.307,
+          "physics_tail_ms": 1.066,
+          "before_process_ms": 6.899,
+          "process_ms": 12.145,
+          "after_process_ms": 0.197,
+          "draw_ms": 20.366,
+          "gpu_ms": 5.61199998855591,
+          "render_cpu_ms": 2.63499999046326,
+          "stages_ms": {
+            "LOD coverage": 0.018,
+            "LOD eviction": 0.004,
+            "LOD requests": 1.665,
+            "LOD schedule/cut/evict": 1.703,
+            "actor update": 0.053,
+            "base controller": 0.024,
+            "controller loading": 0.002,
+            "controller process": 1.03,
+            "lighting schedule": 0.006,
+            "player physics": 0.116,
+            "receive": 1.841,
+            "receive poll": 0.039,
+            "receive surface_batch": 1.744,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.008,
+            "world authoring": 0.018,
+            "world interaction": 0.032,
+            "world pickups": 0.896,
+            "world presentation": 0.022,
+            "world process": 1.282,
+            "world vehicle": 0.01,
+            "zombie update": 1.345
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 47,
+              "current": true,
+              "ended_us": 57015439,
+              "horizon_us": 5,
+              "occlusion_us": 15,
+              "process_us": 68,
+              "residency_us": 0,
+              "started_us": 57015371,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 57015513,
+              "process_us": 47,
+              "started_us": 57015466
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 57015465,
+              "process_us": 25,
+              "started_us": 57015440
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 3749,
+          "test_phase": "arrival_idle",
+          "frame_ms": 36.851,
+          "physics_steps": 1,
+          "physics_ms": 2.624,
+          "physics_tail_ms": 0.483,
+          "before_process_ms": 3.604,
+          "process_ms": 1.125,
+          "after_process_ms": 0.101,
+          "draw_ms": 32.021,
+          "gpu_ms": 5.37099981307983,
+          "render_cpu_ms": 3.64800000190735,
+          "stages_ms": {
+            "actor update": 0.025,
+            "base controller": 0.012,
+            "controller loading": 0.001,
+            "controller process": 0.072,
+            "lighting schedule": 0.004,
+            "player physics": 0.183,
+            "receive": 0.016,
+            "receive poll": 0.006,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.005,
+            "world authoring": 0.011,
+            "world interaction": 0.022,
+            "world pickups": 0.002,
+            "world presentation": 0.012,
+            "world process": 0.185,
+            "world vehicle": 0.006,
+            "zombie update": 0.482
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 41869000,
+              "horizon_us": 3,
+              "occlusion_us": 10,
+              "process_us": 14,
+              "residency_us": 0,
+              "started_us": 41868986,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 41869064,
+              "process_us": 58,
+              "started_us": 41869006
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 41869005,
+              "process_us": 5,
+              "started_us": 41869000
+            }
+          },
+          "trace_writer_active": false
+        }
+      ],
+      "scope": "Callback attribution only; overall baseline comparison rejected for VSync drift and differing combat source.",
+      "raw_sha256": {
+        "run.json": "c6191fad6a40e831a0d0d8df613bf9f68239813c0db369cf058da713734a4b7b",
+        "observation.json": "e1c28983799e3aa6b5c9a342d1c38fd014d53de51557c00720d855c99a90e7fa",
+        "console.log": "eb26e68295d58eec0ae82397e12c38f2db1255456bc1325d13c32c7fd15983a5"
+      }
+    },
+    {
+      "label": "destruction_bounds_native",
+      "folder": "reports/performance_changes/20261109T205012725048Z_destruction_bounds_native",
+      "host_folder": "reports/performance_changes/host_destruction_bounds_native_20261109T205012584924Z",
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T205012725048",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "pack_sha256": null,
+      "destruction_source_sha256": {
+        "addons/player_runtime/combat_world.gd": "8b7c96e0c375eddd048a3d4b2ab93ef0c8c3000b82c7d6cc83bddb2dc7533595",
+        "addons/player_runtime/destruction_effects.gd": "0f86ffde6401a2d05fd0984569c55ac4a084069c9e3db5c8e522fb040c57af47",
+        "addons/player_runtime/structural_integrity.gd": "a034298793bfe5a4032fa38072e6fd00a24d16a6d41cb31987028d39d28c760d",
+        "addons/structures/structures_world.gd": "cb9e1b7a27070d6b3c51ff4323980f74f5b3c86dfd932429d5f79e436da9e7ee",
+        "addons/world_ecosystem/ground_cover.gd": "2cdee4381292bdc60dc294bb6da1fb88fe81567082af5e9f458429f0fa2f9779",
+        "addons/world_ecosystem/world_ecosystem.gd": "749adfc610da4eedc7952aa7bead0861a9e4964ffa2ed302d706e6dc4bf94bb8",
+        "addons/world_ecosystem/boulder_horizon.gd": "5709f34fcdc5231ff541974ca0b862db7de7a792561be9f27572c0037e90c712",
+        "addons/volumetric_water/lake_world.gd": "d89812fe951162fe9300f724d8f7789dc403f6c94330df90551f6e2f100b7908"
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "bbc255e8f45c05f6d946b23c7060fec333137632954f3ac23d440f0ab01eb8df",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tests\\destruction_load_probe.gd": "2589013d7131123bf5186267c2b1b01c3c8d4c060ef77290372c6b598c3284dc",
+        "addons\\world_runtime\\frame_trace.gd": "c19ff2dc461406570289c556be7013ca9575fd270bfd52d94e02dc2868cd0acc",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "e731ec9132ae25374d37399da0787c720f095737bcabb2aa607ea08e92e10e0a"
+      },
+      "destruction": {
+        "base": "(1101.0, 57.0, 339.0)",
+        "chain_ms": 576.711,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "uncapped_pacing_mismatches": null,
+      "observed_pacing_states": [
+        [
+          0,
+          0,
+          true,
+          6471
+        ]
+      ],
+      "competing_engine_or_compiler_observed": [],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 41.86,
+        "temperature.gpu": 60.0,
+        "clocks.current.graphics [MHz]": 2265.0
+      },
+      "native_structures_sha256": {
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d163a137ff301ad3913ae1d1b193fdadc6c6fb3484e8dad3f2ba3fb1aa4cee9f",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d2ebaa98770fa7195113cb94ad14aae5a789c9a595b7d7d192be21851c87bb76"
+      },
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 4325031936,
+        "peak_working_set_bytes": 2673684480,
+        "peak_dedicated_gpu_bytes": 1752158208,
+        "telemetry_complete": true,
+        "within_sampled_limits": true
+      },
+      "continuous_frame_ms": {
+        "arrival_idle": {
+          "samples": 1492,
+          "mean": 8.047922922252011,
+          "p50": 7.776,
+          "p95": 12.562,
+          "p99": 14.993,
+          "maximum": 16.629
+        },
+        "outdoor_sweep": {
+          "samples": 1034,
+          "mean": 7.736272727272727,
+          "p50": 7.071,
+          "p95": 11.069,
+          "p99": 15.121,
+          "maximum": 17.444
+        },
+        "destruction_preparation": {
+          "samples": 274,
+          "mean": 8.055306569343065,
+          "p50": 6.747,
+          "p95": 11.776,
+          "p99": 33.392,
+          "maximum": 54.127
+        },
+        "destruction_chain": {
+          "samples": 59,
+          "mean": 9.985389830508476,
+          "p50": 9.184,
+          "p95": 15.533,
+          "p99": 30.111,
+          "maximum": 30.111
+        },
+        "destruction_recovery": {
+          "samples": 1356,
+          "mean": 7.872293510324484,
+          "p50": 7.174,
+          "p95": 11.316,
+          "p99": 13.766,
+          "maximum": 25.165
+        },
+        "turning": {
+          "samples": 645,
+          "mean": 7.75531007751938,
+          "p50": 7.12,
+          "p95": 11.235,
+          "p99": 13.121,
+          "maximum": 20.143
+        },
+        "settled_idle": {
+          "samples": 1091,
+          "mean": 7.339775435380385,
+          "p50": 6.417,
+          "p95": 10.149,
+          "p99": 11.233,
+          "maximum": 18.721
+        }
+      },
+      "publication_us": {
+        "structures.vegetation_changed:res://addons/world_ecosystem/world_ecosystem.gd._structure_region_changed": {
+          "samples": 11,
+          "mean": 8.545454545454545,
+          "p50": 8,
+          "p95": 10,
+          "p99": 10,
+          "maximum": 10,
+          "sum": 94
+        },
+        "structures.vegetation_changed:res://addons/world_ecosystem/boulder_horizon.gd._exclusion_changed": {
+          "samples": 11,
+          "mean": 8.909090909090908,
+          "p50": 9,
+          "p95": 11,
+          "p99": 11,
+          "maximum": 11,
+          "sum": 98
+        },
+        "blocks.changed:res://addons/structures/structures_world.gd._mark_dirty": {
+          "samples": 8,
+          "mean": 109.875,
+          "p50": 110,
+          "p95": 136,
+          "p99": 136,
+          "maximum": 136,
+          "sum": 879
+        }
+      },
+      "debris_us": {
+        "total_us": {
+          "samples": 102,
+          "mean": 30.862745098039216,
+          "p50": 23,
+          "p95": 100,
+          "p99": 127,
+          "maximum": 292,
+          "sum": 3148
+        },
+        "geometry_us": {
+          "samples": 102,
+          "mean": 3.803921568627451,
+          "p50": 2,
+          "p95": 6,
+          "p99": 8,
+          "maximum": 141,
+          "sum": 388
+        },
+        "nodes_us": {
+          "samples": 102,
+          "mean": 14.22549019607843,
+          "p50": 10,
+          "p95": 54,
+          "p99": 68,
+          "maximum": 92,
+          "sum": 1451
+        },
+        "attach_us": {
+          "samples": 102,
+          "mean": 11.049019607843137,
+          "p50": 9,
+          "p95": 36,
+          "p99": 45,
+          "maximum": 55,
+          "sum": 1127
+        },
+        "motion_us": {
+          "samples": 102,
+          "mean": 1.7843137254901962,
+          "p50": 2,
+          "p95": 4,
+          "p99": 6,
+          "maximum": 6,
+          "sum": 182
+        }
+      },
+      "blast_batch_frames": [
+        {
+          "frame": 8474,
+          "frame_ms": 10.621,
+          "batch_ms": 1.259
+        },
+        {
+          "frame": 8475,
+          "frame_ms": 9.281,
+          "batch_ms": 1.183
+        },
+        {
+          "frame": 8477,
+          "frame_ms": 10.675,
+          "batch_ms": 1.139
+        },
+        {
+          "frame": 8479,
+          "frame_ms": 8.698,
+          "batch_ms": 0.602
+        },
+        {
+          "frame": 8494,
+          "frame_ms": 11.043,
+          "batch_ms": 0.963
+        },
+        {
+          "frame": 8496,
+          "frame_ms": 11.892,
+          "batch_ms": 1.208
+        },
+        {
+          "frame": 8497,
+          "frame_ms": 10.737,
+          "batch_ms": 1.212
+        },
+        {
+          "frame": 8513,
+          "frame_ms": 10.314,
+          "batch_ms": 1.002
+        }
+      ],
+      "slowest_matched_frames": [
+        {
+          "frame": 8473,
+          "test_phase": "destruction_chain",
+          "frame_ms": 30.1,
+          "physics_steps": 1,
+          "physics_ms": 5.905,
+          "physics_tail_ms": 0.53,
+          "before_process_ms": 22.61,
+          "process_ms": 2.488,
+          "after_process_ms": 0.134,
+          "draw_ms": 4.868,
+          "gpu_ms": 5.35599994659424,
+          "render_cpu_ms": 3.24600005149841,
+          "stages_ms": {
+            "actor update": 0.025,
+            "base controller": 0.226,
+            "controller loading": 0.001,
+            "controller process": 0.368,
+            "lighting schedule": 0.001,
+            "player physics": 0.059,
+            "receive": 0.013,
+            "receive poll": 0.004,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.003,
+            "world authoring": 0.012,
+            "world interaction": 0.018,
+            "world pickups": 0.003,
+            "world presentation": 0.014,
+            "world process": 0.506,
+            "world vehicle": 0.087,
+            "zombie update": 1.116
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 76427958,
+              "horizon_us": 5,
+              "occlusion_us": 10,
+              "process_us": 16,
+              "residency_us": 0,
+              "started_us": 76427942,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 76429021,
+              "process_us": 1061,
+              "started_us": 76427960
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 76427959,
+              "process_us": 1,
+              "started_us": 76427958
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 9033,
+          "test_phase": "destruction_recovery",
+          "frame_ms": 25.079,
+          "physics_steps": 1,
+          "physics_ms": 3.105,
+          "physics_tail_ms": 0.445,
+          "before_process_ms": 3.879,
+          "process_ms": 1.088,
+          "after_process_ms": 0.079,
+          "draw_ms": 20.033,
+          "gpu_ms": 4.84200000762939,
+          "render_cpu_ms": 2.83400011062622,
+          "stages_ms": {
+            "actor update": 0.024,
+            "base controller": 0.01,
+            "controller loading": 0.001,
+            "controller process": 0.056,
+            "lighting schedule": 0.089,
+            "player physics": 0.058,
+            "receive": 0.01,
+            "receive poll": 0.004,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.005,
+            "world authoring": 0.011,
+            "world interaction": 0.013,
+            "world pickups": 0.002,
+            "world presentation": 0.01,
+            "world process": 0.166,
+            "world vehicle": 0.004,
+            "zombie update": 1.176
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 81628596,
+              "horizon_us": 3,
+              "occlusion_us": 7,
+              "process_us": 11,
+              "residency_us": 1,
+              "started_us": 81628585,
+              "upload_us": 0
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 81628654,
+              "process_us": 56,
+              "started_us": 81628598
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 81628597,
+              "process_us": 0,
+              "started_us": 81628597
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 9966,
+          "test_phase": "turning",
+          "frame_ms": 20.285,
+          "physics_steps": 1,
+          "physics_ms": 2.605,
+          "physics_tail_ms": 0.584,
+          "before_process_ms": 3.76,
+          "process_ms": 1.426,
+          "after_process_ms": 8.949,
+          "draw_ms": 6.15,
+          "gpu_ms": 4.79300022125244,
+          "render_cpu_ms": 4.34299993515015,
+          "stages_ms": {
+            "actor update": 0.065,
+            "base controller": 0.016,
+            "controller loading": 0.002,
+            "controller process": 0.083,
+            "lighting schedule": 0.125,
+            "player physics": 0.078,
+            "receive": 0.017,
+            "receive poll": 0.006,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.006,
+            "world authoring": 0.012,
+            "world interaction": 0.021,
+            "world pickups": 0.003,
+            "world presentation": 0.014,
+            "world process": 0.232,
+            "world vehicle": 0.006,
+            "zombie update": 0.55
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 88814065,
+              "horizon_us": 5,
+              "occlusion_us": 10,
+              "process_us": 16,
+              "residency_us": 0,
+              "started_us": 88814049,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 88814137,
+              "process_us": 70,
+              "started_us": 88814067
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 88814066,
+              "process_us": 0,
+              "started_us": 88814066
+            }
+          },
+          "trace_writer_active": false
+        }
+      ],
+      "scope": "Callback attribution only; overall baseline comparison rejected for VSync drift and differing combat source.",
+      "raw_sha256": {
+        "run.json": "c331ba0303a66df6157568ad3279b5f38c8fd9351cbc7b23d2146efa225579e1",
+        "observation.json": "f6c4e6d35a41504d7c2e1ab8ef486d939b2e31ca3d94449acc579f320cbc3e7f",
+        "console.log": "bee1308fa58dbf34d01123a2241b13b119e02c5a4ace1bb8e96c9f620075fe6c"
+      }
+    },
+    {
+      "label": "destruction_scan_pack",
+      "folder": "reports/performance_changes/20261109T210153307672Z_destruction_scan_pack",
+      "host_folder": "reports/performance_changes/host_destruction_bounds_pack_20261109T210153168941Z",
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T210153307672",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "pack_sha256": "acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be",
+      "destruction_source_sha256": {
+        "addons/player_runtime/combat_world.gd": "cf5aa701827a450c016aaf375950db36850ff240203427919262a9f92269895f",
+        "addons/player_runtime/destruction_effects.gd": "0f86ffde6401a2d05fd0984569c55ac4a084069c9e3db5c8e522fb040c57af47",
+        "addons/player_runtime/structural_integrity.gd": "a034298793bfe5a4032fa38072e6fd00a24d16a6d41cb31987028d39d28c760d",
+        "addons/structures/structures_world.gd": "cb9e1b7a27070d6b3c51ff4323980f74f5b3c86dfd932429d5f79e436da9e7ee",
+        "addons/world_ecosystem/ground_cover.gd": "2cdee4381292bdc60dc294bb6da1fb88fe81567082af5e9f458429f0fa2f9779",
+        "addons/world_ecosystem/world_ecosystem.gd": "749adfc610da4eedc7952aa7bead0861a9e4964ffa2ed302d706e6dc4bf94bb8",
+        "addons/world_ecosystem/boulder_horizon.gd": "5709f34fcdc5231ff541974ca0b862db7de7a792561be9f27572c0037e90c712",
+        "addons/volumetric_water/lake_world.gd": "d89812fe951162fe9300f724d8f7789dc403f6c94330df90551f6e2f100b7908"
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "717c1e3deaa6bc07ba3764e6acba0e56a162bf6f7ed66cebd24d0f2976886d85",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tests\\destruction_load_probe.gd": "2589013d7131123bf5186267c2b1b01c3c8d4c060ef77290372c6b598c3284dc",
+        "addons\\world_runtime\\frame_trace.gd": "c19ff2dc461406570289c556be7013ca9575fd270bfd52d94e02dc2868cd0acc",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "470c256527089639b5eb10ff98bf3518cb6aea4af99b4d88916f1a863b4a9bed"
+      },
+      "destruction": {
+        "base": "(1101.0, 57.0, 339.0)",
+        "chain_ms": 618.97,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "uncapped_pacing_mismatches": 0,
+      "observed_pacing_states": [
+        [
+          0,
+          0,
+          true,
+          7335
+        ]
+      ],
+      "competing_engine_or_compiler_observed": [],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 39.39,
+        "temperature.gpu": 59.0,
+        "clocks.current.graphics [MHz]": 2295.0
+      },
+      "native_structures_sha256": {
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d163a137ff301ad3913ae1d1b193fdadc6c6fb3484e8dad3f2ba3fb1aa4cee9f",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d2ebaa98770fa7195113cb94ad14aae5a789c9a595b7d7d192be21851c87bb76"
+      },
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 4364034048,
+        "peak_working_set_bytes": 2675642368,
+        "peak_dedicated_gpu_bytes": 1752227840,
+        "telemetry_complete": true,
+        "within_sampled_limits": true
+      },
+      "continuous_frame_ms": {
+        "arrival_idle": {
+          "samples": 1436,
+          "mean": 8.361931754874652,
+          "p50": 7.916,
+          "p95": 13.619,
+          "p99": 16.024,
+          "maximum": 21.039
+        },
+        "outdoor_sweep": {
+          "samples": 905,
+          "mean": 8.84633812154696,
+          "p50": 9.062,
+          "p95": 13.036,
+          "p99": 16.259,
+          "maximum": 19.119
+        },
+        "destruction_preparation": {
+          "samples": 244,
+          "mean": 8.923250000000001,
+          "p50": 9.003,
+          "p95": 14.053,
+          "p99": 28.78,
+          "maximum": 45.493
+        },
+        "destruction_chain": {
+          "samples": 59,
+          "mean": 10.708,
+          "p50": 10.808,
+          "p95": 16.267,
+          "p99": 32.311,
+          "maximum": 32.311
+        },
+        "destruction_recovery": {
+          "samples": 1294,
+          "mean": 8.234418083462133,
+          "p50": 8.399,
+          "p95": 12.311,
+          "p99": 16.095,
+          "maximum": 19.883
+        },
+        "turning": {
+          "samples": 607,
+          "mean": 8.251093904448105,
+          "p50": 7.966,
+          "p95": 12.547,
+          "p99": 18.85,
+          "maximum": 19.775
+        },
+        "settled_idle": {
+          "samples": 825,
+          "mean": 9.722413333333334,
+          "p50": 9.254,
+          "p95": 16.768,
+          "p99": 21.006,
+          "maximum": 25.915
+        }
+      },
+      "publication_us": {
+        "structures.vegetation_changed:res://addons/world_ecosystem/world_ecosystem.gd._structure_region_changed": {
+          "samples": 11,
+          "mean": 1076.2727272727273,
+          "p50": 1036,
+          "p95": 1418,
+          "p99": 1418,
+          "maximum": 1418,
+          "sum": 11839
+        },
+        "structures.vegetation_changed:res://addons/world_ecosystem/boulder_horizon.gd._exclusion_changed": {
+          "samples": 11,
+          "mean": 965.2727272727273,
+          "p50": 852,
+          "p95": 1736,
+          "p99": 1736,
+          "maximum": 1736,
+          "sum": 10618
+        },
+        "blocks.changed:res://addons/structures/structures_world.gd._mark_dirty": {
+          "samples": 8,
+          "mean": 2225.625,
+          "p50": 2294,
+          "p95": 2993,
+          "p99": 2993,
+          "maximum": 2993,
+          "sum": 17805
+        }
+      },
+      "debris_us": {
+        "total_us": {
+          "samples": 102,
+          "mean": 39.549019607843135,
+          "p50": 20,
+          "p95": 132,
+          "p99": 296,
+          "maximum": 447,
+          "sum": 4034
+        },
+        "geometry_us": {
+          "samples": 102,
+          "mean": 4.294117647058823,
+          "p50": 2,
+          "p95": 8,
+          "p99": 13,
+          "maximum": 143,
+          "sum": 438
+        },
+        "nodes_us": {
+          "samples": 102,
+          "mean": 20.872549019607842,
+          "p50": 9,
+          "p95": 76,
+          "p99": 103,
+          "maximum": 412,
+          "sum": 2129
+        },
+        "attach_us": {
+          "samples": 102,
+          "mean": 12.46078431372549,
+          "p50": 7,
+          "p95": 40,
+          "p99": 53,
+          "maximum": 58,
+          "sum": 1271
+        },
+        "motion_us": {
+          "samples": 102,
+          "mean": 1.9215686274509804,
+          "p50": 1,
+          "p95": 5,
+          "p99": 7,
+          "maximum": 8,
+          "sum": 196
+        }
+      },
+      "blast_batch_frames": [
+        {
+          "frame": 7855,
+          "frame_ms": 12.533,
+          "batch_ms": 2.958
+        },
+        {
+          "frame": 7856,
+          "frame_ms": 11.729,
+          "batch_ms": 3.36
+        },
+        {
+          "frame": 7857,
+          "frame_ms": 11.419,
+          "batch_ms": 2.677
+        },
+        {
+          "frame": 7859,
+          "frame_ms": 16.287,
+          "batch_ms": 3.3
+        },
+        {
+          "frame": 7874,
+          "frame_ms": 11.381,
+          "batch_ms": 2.769
+        },
+        {
+          "frame": 7876,
+          "frame_ms": 12.5,
+          "batch_ms": 4.445
+        },
+        {
+          "frame": 7877,
+          "frame_ms": 15.726,
+          "batch_ms": 4.743
+        },
+        {
+          "frame": 7893,
+          "frame_ms": 12.598,
+          "batch_ms": 2.736
+        }
+      ],
+      "slowest_matched_frames": [
+        {
+          "frame": 7854,
+          "test_phase": "destruction_chain",
+          "frame_ms": 32.28,
+          "physics_steps": 1,
+          "physics_ms": 9.048,
+          "physics_tail_ms": 0.467,
+          "before_process_ms": 26.147,
+          "process_ms": 1.413,
+          "after_process_ms": 0.088,
+          "draw_ms": 4.632,
+          "gpu_ms": 4.99399995803833,
+          "render_cpu_ms": 3.09200000762939,
+          "stages_ms": {
+            "actor update": 0.026,
+            "base controller": 0.008,
+            "controller loading": 0.001,
+            "controller process": 0.057,
+            "lighting schedule": 0.001,
+            "player physics": 0.061,
+            "receive": 0.011,
+            "receive poll": 0.004,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.003,
+            "world authoring": 0.01,
+            "world interaction": 0.016,
+            "world pickups": 0.002,
+            "world presentation": 0.01,
+            "world process": 0.165,
+            "world vehicle": 0.004,
+            "zombie update": 1.094
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 78087897,
+              "horizon_us": 3,
+              "occlusion_us": 8,
+              "process_us": 12,
+              "residency_us": 0,
+              "started_us": 78087885,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 78088391,
+              "process_us": 492,
+              "started_us": 78087899
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 78087898,
+              "process_us": 0,
+              "started_us": 78087898
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 9863,
+          "test_phase": "settled_idle",
+          "frame_ms": 25.942,
+          "physics_steps": 2,
+          "physics_ms": 14.506,
+          "physics_tail_ms": 1.612,
+          "before_process_ms": 17.582,
+          "process_ms": 1.562,
+          "after_process_ms": 0.382,
+          "draw_ms": 6.416,
+          "gpu_ms": 4.76200008392334,
+          "render_cpu_ms": 4.88800001144409,
+          "stages_ms": {
+            "actor update": 0.083,
+            "base controller": 0.016,
+            "controller loading": 0.001,
+            "controller process": 0.1,
+            "lighting schedule": 0.135,
+            "player physics": 0.169,
+            "receive": 0.019,
+            "receive poll": 0.007,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.007,
+            "world authoring": 0.014,
+            "world interaction": 0.024,
+            "world pickups": 0.005,
+            "world presentation": 0.019,
+            "world process": 0.269,
+            "world vehicle": 0.007,
+            "zombie update": 2.971
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 95547576,
+              "horizon_us": 4,
+              "occlusion_us": 10,
+              "process_us": 15,
+              "residency_us": 0,
+              "started_us": 95547561,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 95547638,
+              "process_us": 60,
+              "started_us": 95547578
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 95547577,
+              "process_us": 1,
+              "started_us": 95547576
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 10425,
+          "test_phase": "settled_idle",
+          "frame_ms": 24.441,
+          "physics_steps": 1,
+          "physics_ms": 4.274,
+          "physics_tail_ms": 0.644,
+          "before_process_ms": 5.273,
+          "process_ms": 1.553,
+          "after_process_ms": 10.009,
+          "draw_ms": 7.606,
+          "gpu_ms": 4.5149998664856,
+          "render_cpu_ms": 5.15500020980835,
+          "stages_ms": {
+            "actor update": 0.06,
+            "base controller": 0.015,
+            "controller loading": 0.002,
+            "controller process": 0.087,
+            "lighting schedule": 0.124,
+            "player physics": 0.1,
+            "receive": 0.02,
+            "receive poll": 0.008,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.006,
+            "world authoring": 0.014,
+            "world interaction": 0.021,
+            "world pickups": 0.003,
+            "world presentation": 0.018,
+            "world process": 0.232,
+            "world vehicle": 0.006,
+            "zombie update": 1.17
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 100496026,
+              "horizon_us": 4,
+              "occlusion_us": 9,
+              "process_us": 14,
+              "residency_us": 0,
+              "started_us": 100496012,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 100496097,
+              "process_us": 69,
+              "started_us": 100496028
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 100496027,
+              "process_us": 0,
+              "started_us": 100496027
+            }
+          },
+          "trace_writer_active": false
+        }
+      ],
+      "scope": "Same-package callback comparison; first blast interval includes observer setup and must not be treated as gameplay-only.",
+      "raw_sha256": {
+        "run.json": "d4e7dc79bc61ae18bfea84ec7a7ee3bfb78b276d1ef3b6b7e3b31190d1986e9a",
+        "observation.json": "aebe9c9cda61134155e42c2d20931d807645a1b0f95693e7cf9440970d5425d9",
+        "console.log": "c3fda2484fa3d3e9df36be4206aa04fe397977d90ce3b6900842e6f2ca6d5ece"
+      }
+    },
+    {
+      "label": "destruction_index_pack",
+      "folder": "reports/performance_changes/20261109T210342400008Z_destruction_index_pack",
+      "host_folder": "reports/performance_changes/host_destruction_bounds_pack_20261109T210153168941Z",
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T210342400008",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "pack_sha256": "acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be",
+      "destruction_source_sha256": {
+        "addons/player_runtime/combat_world.gd": "cf5aa701827a450c016aaf375950db36850ff240203427919262a9f92269895f",
+        "addons/player_runtime/destruction_effects.gd": "0f86ffde6401a2d05fd0984569c55ac4a084069c9e3db5c8e522fb040c57af47",
+        "addons/player_runtime/structural_integrity.gd": "a034298793bfe5a4032fa38072e6fd00a24d16a6d41cb31987028d39d28c760d",
+        "addons/structures/structures_world.gd": "cb9e1b7a27070d6b3c51ff4323980f74f5b3c86dfd932429d5f79e436da9e7ee",
+        "addons/world_ecosystem/ground_cover.gd": "2cdee4381292bdc60dc294bb6da1fb88fe81567082af5e9f458429f0fa2f9779",
+        "addons/world_ecosystem/world_ecosystem.gd": "749adfc610da4eedc7952aa7bead0861a9e4964ffa2ed302d706e6dc4bf94bb8",
+        "addons/world_ecosystem/boulder_horizon.gd": "5709f34fcdc5231ff541974ca0b862db7de7a792561be9f27572c0037e90c712",
+        "addons/volumetric_water/lake_world.gd": "d89812fe951162fe9300f724d8f7789dc403f6c94330df90551f6e2f100b7908"
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "717c1e3deaa6bc07ba3764e6acba0e56a162bf6f7ed66cebd24d0f2976886d85",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tests\\destruction_load_probe.gd": "2589013d7131123bf5186267c2b1b01c3c8d4c060ef77290372c6b598c3284dc",
+        "addons\\world_runtime\\frame_trace.gd": "c19ff2dc461406570289c556be7013ca9575fd270bfd52d94e02dc2868cd0acc",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "470c256527089639b5eb10ff98bf3518cb6aea4af99b4d88916f1a863b4a9bed"
+      },
+      "destruction": {
+        "base": "(1101.0, 57.0, 339.0)",
+        "chain_ms": 749.43,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "uncapped_pacing_mismatches": 0,
+      "observed_pacing_states": [
+        [
+          0,
+          0,
+          true,
+          8046
+        ]
+      ],
+      "competing_engine_or_compiler_observed": [],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 41.57,
+        "temperature.gpu": 63.0,
+        "clocks.current.graphics [MHz]": 2325.0
+      },
+      "native_structures_sha256": {
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d163a137ff301ad3913ae1d1b193fdadc6c6fb3484e8dad3f2ba3fb1aa4cee9f",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d2ebaa98770fa7195113cb94ad14aae5a789c9a595b7d7d192be21851c87bb76"
+      },
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 4356313088,
+        "peak_working_set_bytes": 2493444096,
+        "peak_dedicated_gpu_bytes": 1752227840,
+        "telemetry_complete": true,
+        "within_sampled_limits": true
+      },
+      "continuous_frame_ms": {
+        "arrival_idle": {
+          "samples": 1434,
+          "mean": 8.377147140864714,
+          "p50": 7.914,
+          "p95": 13.658,
+          "p99": 17.706,
+          "maximum": 24.356
+        },
+        "outdoor_sweep": {
+          "samples": 1008,
+          "mean": 7.9418323412698415,
+          "p50": 7.631,
+          "p95": 12.345,
+          "p99": 16.875,
+          "maximum": 18.513
+        },
+        "destruction_preparation": {
+          "samples": 244,
+          "mean": 8.971639344262295,
+          "p50": 9.081,
+          "p95": 15.19,
+          "p99": 28.279,
+          "maximum": 35.767
+        },
+        "destruction_chain": {
+          "samples": 57,
+          "mean": 13.207298245614036,
+          "p50": 11.879,
+          "p95": 27.202,
+          "p99": 41.395,
+          "maximum": 41.395
+        },
+        "destruction_recovery": {
+          "samples": 1279,
+          "mean": 8.26247771696638,
+          "p50": 8.175,
+          "p95": 12.763,
+          "p99": 15.624,
+          "maximum": 42.931
+        },
+        "turning": {
+          "samples": 646,
+          "mean": 7.742162538699691,
+          "p50": 6.824,
+          "p95": 11.361,
+          "p99": 14.818,
+          "maximum": 21.29
+        },
+        "settled_idle": {
+          "samples": 1067,
+          "mean": 7.5122127460168695,
+          "p50": 6.628,
+          "p95": 10.507,
+          "p99": 11.952,
+          "maximum": 27.714
+        }
+      },
+      "publication_us": {
+        "structures.vegetation_changed:res://addons/world_ecosystem/world_ecosystem.gd._structure_region_changed": {
+          "samples": 11,
+          "mean": 11.363636363636363,
+          "p50": 11,
+          "p95": 14,
+          "p99": 14,
+          "maximum": 14,
+          "sum": 125
+        },
+        "structures.vegetation_changed:res://addons/world_ecosystem/boulder_horizon.gd._exclusion_changed": {
+          "samples": 11,
+          "mean": 12.181818181818182,
+          "p50": 12,
+          "p95": 15,
+          "p99": 15,
+          "maximum": 15,
+          "sum": 134
+        },
+        "blocks.changed:res://addons/structures/structures_world.gd._mark_dirty": {
+          "samples": 8,
+          "mean": 142.125,
+          "p50": 149,
+          "p95": 199,
+          "p99": 199,
+          "maximum": 199,
+          "sum": 1137
+        }
+      },
+      "debris_us": {
+        "total_us": {
+          "samples": 102,
+          "mean": 43.745098039215684,
+          "p50": 29,
+          "p95": 123,
+          "p99": 212,
+          "maximum": 381,
+          "sum": 4462
+        },
+        "geometry_us": {
+          "samples": 102,
+          "mean": 5.352941176470588,
+          "p50": 3,
+          "p95": 9,
+          "p99": 11,
+          "maximum": 188,
+          "sum": 546
+        },
+        "nodes_us": {
+          "samples": 102,
+          "mean": 19.715686274509803,
+          "p50": 13,
+          "p95": 67,
+          "p99": 84,
+          "maximum": 119,
+          "sum": 2011
+        },
+        "attach_us": {
+          "samples": 102,
+          "mean": 16.166666666666668,
+          "p50": 11,
+          "p95": 48,
+          "p99": 69,
+          "maximum": 122,
+          "sum": 1649
+        },
+        "motion_us": {
+          "samples": 102,
+          "mean": 2.5098039215686274,
+          "p50": 2,
+          "p95": 5,
+          "p99": 8,
+          "maximum": 9,
+          "sum": 256
+        }
+      },
+      "blast_batch_frames": [
+        {
+          "frame": 8294,
+          "frame_ms": 41.338,
+          "batch_ms": 1.594
+        },
+        {
+          "frame": 8295,
+          "frame_ms": 16.516,
+          "batch_ms": 3.555
+        },
+        {
+          "frame": 8296,
+          "frame_ms": 9.892,
+          "batch_ms": 0.78
+        },
+        {
+          "frame": 8312,
+          "frame_ms": 11.122,
+          "batch_ms": 1.199
+        },
+        {
+          "frame": 8313,
+          "frame_ms": 13.168,
+          "batch_ms": 1.464
+        },
+        {
+          "frame": 8314,
+          "frame_ms": 11.117,
+          "batch_ms": 1.212
+        },
+        {
+          "frame": 8330,
+          "frame_ms": 27.298,
+          "batch_ms": 2.5
+        }
+      ],
+      "slowest_matched_frames": [
+        {
+          "frame": 9261,
+          "test_phase": "destruction_recovery",
+          "frame_ms": 42.897,
+          "physics_steps": 1,
+          "physics_ms": 1.938,
+          "physics_tail_ms": 0.486,
+          "before_process_ms": 2.793,
+          "process_ms": 1.164,
+          "after_process_ms": 0.106,
+          "draw_ms": 38.834,
+          "gpu_ms": 5.10099983215332,
+          "render_cpu_ms": 3.09699988365173,
+          "stages_ms": {
+            "actor update": 0.025,
+            "base controller": 0.011,
+            "controller loading": 0.001,
+            "controller process": 0.063,
+            "lighting schedule": 0.089,
+            "player physics": 0.064,
+            "receive": 0.012,
+            "receive poll": 0.004,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.005,
+            "world authoring": 0.011,
+            "world interaction": 0.015,
+            "world pickups": 0.003,
+            "world presentation": 0.01,
+            "world process": 0.178,
+            "world vehicle": 0.005,
+            "zombie update": 0.353
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 1,
+              "current": true,
+              "ended_us": 88306307,
+              "horizon_us": 4,
+              "occlusion_us": 6,
+              "process_us": 11,
+              "residency_us": 0,
+              "started_us": 88306296,
+              "upload_us": 0
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 88306338,
+              "process_us": 29,
+              "started_us": 88306309
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 88306308,
+              "process_us": 0,
+              "started_us": 88306308
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 8294,
+          "test_phase": "destruction_chain",
+          "frame_ms": 41.338,
+          "physics_steps": 2,
+          "physics_ms": 11.729,
+          "physics_tail_ms": 1.133,
+          "before_process_ms": 30.074,
+          "process_ms": 3.498,
+          "after_process_ms": 0.386,
+          "draw_ms": 7.38,
+          "gpu_ms": 4.8600001335144,
+          "render_cpu_ms": 3.42400002479553,
+          "stages_ms": {
+            "actor update": 0.105,
+            "base controller": 0.011,
+            "combat blast batch": 1.594,
+            "controller loading": 0.001,
+            "controller process": 0.075,
+            "lighting schedule": 0.001,
+            "player physics": 0.153,
+            "receive": 0.014,
+            "receive poll": 0.006,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.003,
+            "world authoring": 0.011,
+            "world interaction": 0.016,
+            "world pickups": 0.003,
+            "world presentation": 0.017,
+            "world process": 0.342,
+            "world vehicle": 0.007,
+            "zombie update": 2.593
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 87,
+              "current": true,
+              "ended_us": 79165918,
+              "horizon_us": 57,
+              "occlusion_us": 842,
+              "process_us": 1203,
+              "residency_us": 114,
+              "started_us": 79164715,
+              "upload_us": 103
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 79166561,
+              "process_us": 639,
+              "started_us": 79165922
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 79165921,
+              "process_us": 1,
+              "started_us": 79165920
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 8350,
+          "test_phase": "destruction_chain",
+          "frame_ms": 29.494,
+          "physics_steps": 1,
+          "physics_ms": 1.672,
+          "physics_tail_ms": 0.447,
+          "before_process_ms": 3.229,
+          "process_ms": 15.391,
+          "after_process_ms": 0.328,
+          "draw_ms": 10.546,
+          "gpu_ms": 6.11199998855591,
+          "render_cpu_ms": 3.1800000667572,
+          "stages_ms": {
+            "LOD coverage": 0.013,
+            "LOD eviction": 0.003,
+            "LOD requests": 0.981,
+            "LOD schedule/cut/evict": 1.016,
+            "actor update": 0.008,
+            "atomic publish": 5.072,
+            "base controller": 0.16,
+            "collision exact match": 0.002,
+            "collision node attach": 2.391,
+            "collision physics cook": 0.19,
+            "collision piece": 2.689,
+            "controller loading": 0.003,
+            "controller process": 0.269,
+            "lighting schedule": 0.003,
+            "mesh upload/create": 0.611,
+            "player physics": 0.118,
+            "prepared subtree attach": 0.125,
+            "receive": 0.131,
+            "receive batch": 0.062,
+            "receive edit_done": 0.016,
+            "receive poll": 0.024,
+            "retire collision/mesh": 0.531,
+            "staging frame": 10.12,
+            "vegetation edit publish": 1.998,
+            "world authoring": 0.02,
+            "world interaction": 0.027,
+            "world pickups": 0.006,
+            "world presentation": 0.028,
+            "world process": 0.474,
+            "world vehicle": 0.009,
+            "zombie update": 0.642
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 1,
+              "current": true,
+              "ended_us": 79873117,
+              "horizon_us": 4,
+              "occlusion_us": 10,
+              "process_us": 16,
+              "residency_us": 1,
+              "started_us": 79873101,
+              "upload_us": 0
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 79873205,
+              "process_us": 85,
+              "started_us": 79873120
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 79873119,
+              "process_us": 1,
+              "started_us": 79873118
+            }
+          },
+          "trace_writer_active": false
+        }
+      ],
+      "scope": "Same-package callback comparison; first blast interval includes observer setup and must not be treated as gameplay-only.",
+      "raw_sha256": {
+        "run.json": "c8f59db4cc2f7be69ddbf8c52a6028f2322033f24a072dd6ae3671a1fef3b585",
+        "observation.json": "9b8627c58a0daa69e2a3235e681952a6afe7df34c7d30f931911e791751a04a5",
+        "console.log": "1301feb819d24b10b31cff97134b371baf83cf3a11e0afe73f0b9501edb26d9f"
+      }
+    },
+    {
+      "label": "destruction_index_final",
+      "folder": "reports/performance_changes/20261109T210548903440Z_destruction_index_final",
+      "host_folder": "reports/performance_changes/host_destruction_bounds_final_20261109T210548743631Z",
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T210548903440",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "pack_sha256": "acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be",
+      "destruction_source_sha256": {
+        "addons/player_runtime/combat_world.gd": "cf5aa701827a450c016aaf375950db36850ff240203427919262a9f92269895f",
+        "addons/player_runtime/destruction_effects.gd": "0f86ffde6401a2d05fd0984569c55ac4a084069c9e3db5c8e522fb040c57af47",
+        "addons/player_runtime/structural_integrity.gd": "a034298793bfe5a4032fa38072e6fd00a24d16a6d41cb31987028d39d28c760d",
+        "addons/structures/structures_world.gd": "cb9e1b7a27070d6b3c51ff4323980f74f5b3c86dfd932429d5f79e436da9e7ee",
+        "addons/world_ecosystem/ground_cover.gd": "2cdee4381292bdc60dc294bb6da1fb88fe81567082af5e9f458429f0fa2f9779",
+        "addons/world_ecosystem/world_ecosystem.gd": "749adfc610da4eedc7952aa7bead0861a9e4964ffa2ed302d706e6dc4bf94bb8",
+        "addons/world_ecosystem/boulder_horizon.gd": "5709f34fcdc5231ff541974ca0b862db7de7a792561be9f27572c0037e90c712",
+        "addons/volumetric_water/lake_world.gd": "d89812fe951162fe9300f724d8f7789dc403f6c94330df90551f6e2f100b7908"
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "717c1e3deaa6bc07ba3764e6acba0e56a162bf6f7ed66cebd24d0f2976886d85",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tests\\destruction_load_probe.gd": "cf770f29b6ddc17e9d5006043f1b70fbce47c05f5a95ef2605d36f851c6ad31e",
+        "addons\\world_runtime\\frame_trace.gd": "c19ff2dc461406570289c556be7013ca9575fd270bfd52d94e02dc2868cd0acc",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "470c256527089639b5eb10ff98bf3518cb6aea4af99b4d88916f1a863b4a9bed"
+      },
+      "destruction": {
+        "base": "(1101.0, 57.0, 339.0)",
+        "chain_ms": 597.845,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ignition_us": 40,
+        "observer_setup_us": 189338,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; observer setup drains before gameplay; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "uncapped_pacing_mismatches": 0,
+      "observed_pacing_states": [
+        [
+          0,
+          0,
+          false,
+          7290
+        ]
+      ],
+      "competing_engine_or_compiler_observed": [],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 42.725,
+        "temperature.gpu": 63.0,
+        "clocks.current.graphics [MHz]": 2250.0
+      },
+      "native_structures_sha256": {
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d163a137ff301ad3913ae1d1b193fdadc6c6fb3484e8dad3f2ba3fb1aa4cee9f",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d2ebaa98770fa7195113cb94ad14aae5a789c9a595b7d7d192be21851c87bb76"
+      },
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 4347826176,
+        "peak_working_set_bytes": 2418626560,
+        "peak_dedicated_gpu_bytes": 1752227840,
+        "telemetry_complete": true,
+        "within_sampled_limits": true
+      },
+      "continuous_frame_ms": {
+        "arrival_idle": {
+          "samples": 1365,
+          "mean": 8.795679120879122,
+          "p50": 8.074,
+          "p95": 15.428,
+          "p99": 18.19,
+          "maximum": 28.606
+        },
+        "outdoor_sweep": {
+          "samples": 968,
+          "mean": 8.272719008264463,
+          "p50": 8.045,
+          "p95": 13.311,
+          "p99": 16.594,
+          "maximum": 21.506
+        },
+        "destruction_preparation": {
+          "samples": 253,
+          "mean": 9.746241106719367,
+          "p50": 8.849,
+          "p95": 14.225,
+          "p99": 30.746,
+          "maximum": 221.84
+        },
+        "destruction_chain": {
+          "samples": 57,
+          "mean": 10.420263157894738,
+          "p50": 10.367,
+          "p95": 15.675,
+          "p99": 16.795,
+          "maximum": 16.795
+        },
+        "destruction_recovery": {
+          "samples": 1309,
+          "mean": 8.134595874713522,
+          "p50": 7.856,
+          "p95": 11.914,
+          "p99": 13.78,
+          "maximum": 19.271
+        },
+        "turning": {
+          "samples": 622,
+          "mean": 8.044136655948554,
+          "p50": 7.843,
+          "p95": 12.168,
+          "p99": 16.11,
+          "maximum": 18.455
+        },
+        "settled_idle": {
+          "samples": 1005,
+          "mean": 7.971632835820896,
+          "p50": 7.389,
+          "p95": 11.579,
+          "p99": 17.639,
+          "maximum": 32.846
+        }
+      },
+      "publication_us": {
+        "structures.vegetation_changed:res://addons/world_ecosystem/world_ecosystem.gd._structure_region_changed": {
+          "samples": 11,
+          "mean": 9.272727272727273,
+          "p50": 9,
+          "p95": 11,
+          "p99": 11,
+          "maximum": 11,
+          "sum": 102
+        },
+        "structures.vegetation_changed:res://addons/world_ecosystem/boulder_horizon.gd._exclusion_changed": {
+          "samples": 11,
+          "mean": 9.363636363636363,
+          "p50": 9,
+          "p95": 12,
+          "p99": 12,
+          "maximum": 12,
+          "sum": 103
+        },
+        "blocks.changed:res://addons/structures/structures_world.gd._mark_dirty": {
+          "samples": 8,
+          "mean": 100.75,
+          "p50": 97,
+          "p95": 129,
+          "p99": 129,
+          "maximum": 129,
+          "sum": 806
+        }
+      },
+      "debris_us": {
+        "total_us": {
+          "samples": 102,
+          "mean": 36.666666666666664,
+          "p50": 26,
+          "p95": 113,
+          "p99": 146,
+          "maximum": 316,
+          "sum": 3740
+        },
+        "geometry_us": {
+          "samples": 102,
+          "mean": 4.480392156862745,
+          "p50": 3,
+          "p95": 7,
+          "p99": 13,
+          "maximum": 150,
+          "sum": 457
+        },
+        "nodes_us": {
+          "samples": 102,
+          "mean": 17.147058823529413,
+          "p50": 12,
+          "p95": 60,
+          "p99": 76,
+          "maximum": 104,
+          "sum": 1749
+        },
+        "attach_us": {
+          "samples": 102,
+          "mean": 12.96078431372549,
+          "p50": 10,
+          "p95": 40,
+          "p99": 54,
+          "maximum": 58,
+          "sum": 1322
+        },
+        "motion_us": {
+          "samples": 102,
+          "mean": 2.0784313725490198,
+          "p50": 2,
+          "p95": 5,
+          "p99": 6,
+          "maximum": 7,
+          "sum": 212
+        }
+      },
+      "blast_batch_frames": [
+        {
+          "frame": 8022,
+          "frame_ms": 13.143,
+          "batch_ms": 2.017
+        },
+        {
+          "frame": 8023,
+          "frame_ms": 9.281,
+          "batch_ms": 1.192
+        },
+        {
+          "frame": 8025,
+          "frame_ms": 11.44,
+          "batch_ms": 1.079
+        },
+        {
+          "frame": 8027,
+          "frame_ms": 10.177,
+          "batch_ms": 0.516
+        },
+        {
+          "frame": 8039,
+          "frame_ms": 13.143,
+          "batch_ms": 1.411
+        },
+        {
+          "frame": 8041,
+          "frame_ms": 14.024,
+          "batch_ms": 2.552
+        },
+        {
+          "frame": 8042,
+          "frame_ms": 11.591,
+          "batch_ms": 1.426
+        },
+        {
+          "frame": 8057,
+          "frame_ms": 11.061,
+          "batch_ms": 1.141
+        }
+      ],
+      "slowest_matched_frames": [
+        {
+          "frame": 10121,
+          "test_phase": "settled_idle",
+          "frame_ms": 32.893,
+          "physics_steps": 2,
+          "physics_ms": 12.418,
+          "physics_tail_ms": 2.664,
+          "before_process_ms": 15.818,
+          "process_ms": 4.099,
+          "after_process_ms": 1.462,
+          "draw_ms": 11.514,
+          "gpu_ms": 4.7020001411438,
+          "render_cpu_ms": 4.54699993133545,
+          "stages_ms": {
+            "LOD coverage": 0.015,
+            "LOD eviction": 0.004,
+            "LOD requests": 1.392,
+            "LOD schedule/cut/evict": 1.432,
+            "actor update": 0.089,
+            "base controller": 0.023,
+            "controller loading": 0.001,
+            "controller process": 0.631,
+            "lighting schedule": 0.153,
+            "player physics": 0.176,
+            "receive": 0.027,
+            "receive poll": 0.01,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.008,
+            "world authoring": 0.019,
+            "world interaction": 0.029,
+            "world pickups": 0.496,
+            "world presentation": 0.025,
+            "world process": 0.846,
+            "world vehicle": 0.009,
+            "zombie update": 1.803
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 96496789,
+              "horizon_us": 4,
+              "occlusion_us": 12,
+              "process_us": 17,
+              "residency_us": 0,
+              "started_us": 96496772,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 96496884,
+              "process_us": 80,
+              "started_us": 96496804
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 96496802,
+              "process_us": 12,
+              "started_us": 96496790
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 10117,
+          "test_phase": "settled_idle",
+          "frame_ms": 29.296,
+          "physics_steps": 1,
+          "physics_ms": 3.867,
+          "physics_tail_ms": 1.095,
+          "before_process_ms": 5.518,
+          "process_ms": 2.049,
+          "after_process_ms": 0.137,
+          "draw_ms": 21.592,
+          "gpu_ms": 4.97100019454956,
+          "render_cpu_ms": 3.42499995231628,
+          "stages_ms": {
+            "actor update": 0.072,
+            "base controller": 0.018,
+            "controller loading": 0.001,
+            "controller process": 0.101,
+            "lighting schedule": 0.165,
+            "player physics": 0.109,
+            "receive": 0.023,
+            "receive poll": 0.009,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.007,
+            "world authoring": 0.015,
+            "world interaction": 0.024,
+            "world pickups": 0.004,
+            "world presentation": 0.02,
+            "world process": 0.279,
+            "world vehicle": 0.008,
+            "zombie update": 0.714
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 1,
+              "current": true,
+              "ended_us": 96390504,
+              "horizon_us": 4,
+              "occlusion_us": 11,
+              "process_us": 17,
+              "residency_us": 1,
+              "started_us": 96390487,
+              "upload_us": 0
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 96390579,
+              "process_us": 73,
+              "started_us": 96390506
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 96390505,
+              "process_us": 1,
+              "started_us": 96390504
+            }
+          },
+          "trace_writer_active": false
+        },
+        {
+          "frame": 3186,
+          "test_phase": "arrival_idle",
+          "frame_ms": 28.747,
+          "physics_steps": 1,
+          "physics_ms": 5.972,
+          "physics_tail_ms": 0.891,
+          "before_process_ms": 7.5,
+          "process_ms": 8.046,
+          "after_process_ms": 0.173,
+          "draw_ms": 13.028,
+          "gpu_ms": 4.63700008392334,
+          "render_cpu_ms": 2.68499994277954,
+          "stages_ms": {
+            "actor update": 0.053,
+            "base controller": 0.02,
+            "collision exact match": 0.001,
+            "collision node attach": 1.696,
+            "collision physics cook": 0.097,
+            "collision piece": 1.85,
+            "controller loading": 0.002,
+            "controller process": 0.116,
+            "lighting schedule": 0.008,
+            "mesh upload/create": 0.503,
+            "player physics": 0.375,
+            "prepared subtree attach": 0.098,
+            "receive": 0.423,
+            "receive cache_accounting": 0.029,
+            "receive mesh": 0.054,
+            "receive poll": 0.027,
+            "receive surface_batch": 0.272,
+            "retire collision/mesh": 0.0,
+            "staging frame": 2.625,
+            "world authoring": 0.015,
+            "world interaction": 0.03,
+            "world pickups": 0.004,
+            "world presentation": 0.022,
+            "world process": 0.327,
+            "world vehicle": 0.008,
+            "zombie update": 0.787
+          },
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 1,
+              "current": true,
+              "ended_us": 37063625,
+              "horizon_us": 4,
+              "occlusion_us": 14,
+              "process_us": 20,
+              "residency_us": 1,
+              "started_us": 37063605,
+              "upload_us": 0
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 37063725,
+              "process_us": 89,
+              "started_us": 37063636
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 37063634,
+              "process_us": 8,
+              "started_us": 37063626
+            }
+          },
+          "trace_writer_active": false
+        }
+      ],
+      "scope": "Setup drained before gameplay; exact damage/retirement, normal save and clean exit. Short observation, not endurance or stable-60-FPS acceptance.",
+      "raw_sha256": {
+        "run.json": "c155c3ccabdeef9046d67ef02a7687d393e473e76467bbbf4816f63847ee5339",
+        "observation.json": "b9402184e1a12a6b6d488ef4ff0b4318bdc4f0ec2b452de505d16c87e643c3e9",
+        "console.log": "8262999cf3fd91d6c4a2db171929c4e288fb5a9085efd01f153767e60d7fa6d4"
+      }
+    },
+    {
+      "label": "destruction_index_off",
+      "folder": "reports/performance_changes/20261109T210737606436Z_destruction_index_off",
+      "host_folder": "reports/performance_changes/host_destruction_bounds_final_20261109T210548743631Z",
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T210737606436",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "pack_sha256": "acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be",
+      "destruction_source_sha256": {
+        "addons/player_runtime/combat_world.gd": "cf5aa701827a450c016aaf375950db36850ff240203427919262a9f92269895f",
+        "addons/player_runtime/destruction_effects.gd": "0f86ffde6401a2d05fd0984569c55ac4a084069c9e3db5c8e522fb040c57af47",
+        "addons/player_runtime/structural_integrity.gd": "a034298793bfe5a4032fa38072e6fd00a24d16a6d41cb31987028d39d28c760d",
+        "addons/structures/structures_world.gd": "cb9e1b7a27070d6b3c51ff4323980f74f5b3c86dfd932429d5f79e436da9e7ee",
+        "addons/world_ecosystem/ground_cover.gd": "2cdee4381292bdc60dc294bb6da1fb88fe81567082af5e9f458429f0fa2f9779",
+        "addons/world_ecosystem/world_ecosystem.gd": "749adfc610da4eedc7952aa7bead0861a9e4964ffa2ed302d706e6dc4bf94bb8",
+        "addons/world_ecosystem/boulder_horizon.gd": "5709f34fcdc5231ff541974ca0b862db7de7a792561be9f27572c0037e90c712",
+        "addons/volumetric_water/lake_world.gd": "d89812fe951162fe9300f724d8f7789dc403f6c94330df90551f6e2f100b7908"
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "717c1e3deaa6bc07ba3764e6acba0e56a162bf6f7ed66cebd24d0f2976886d85",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tests\\destruction_load_probe.gd": "cf770f29b6ddc17e9d5006043f1b70fbce47c05f5a95ef2605d36f851c6ad31e",
+        "addons\\world_runtime\\frame_trace.gd": "c19ff2dc461406570289c556be7013ca9575fd270bfd52d94e02dc2868cd0acc",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "470c256527089639b5eb10ff98bf3518cb6aea4af99b4d88916f1a863b4a9bed"
+      },
+      "destruction": {
+        "base": "(1101.0, 57.0, 339.0)",
+        "chain_ms": 608.265,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ignition_us": 49,
+        "observer_setup_us": 3,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; observer setup drains before gameplay; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "uncapped_pacing_mismatches": 0,
+      "observed_pacing_states": [],
+      "competing_engine_or_compiler_observed": [],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 43.53,
+        "temperature.gpu": 65.0,
+        "clocks.current.graphics [MHz]": 2265.0
+      },
+      "native_structures_sha256": {
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d163a137ff301ad3913ae1d1b193fdadc6c6fb3484e8dad3f2ba3fb1aa4cee9f",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d2ebaa98770fa7195113cb94ad14aae5a789c9a595b7d7d192be21851c87bb76"
+      },
+      "passed": true,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 4186845184,
+        "peak_working_set_bytes": 2335907840,
+        "peak_dedicated_gpu_bytes": 1752227840,
+        "telemetry_complete": true,
+        "within_sampled_limits": true
+      },
+      "continuous_frame_ms": {
+        "arrival_idle": {
+          "samples": 1403,
+          "mean": 8.555838203848895,
+          "p50": 7.843,
+          "p95": 15.139,
+          "p99": 18.66,
+          "maximum": 29.261
+        },
+        "outdoor_sweep": {
+          "samples": 1022,
+          "mean": 7.833362035225049,
+          "p50": 7.447,
+          "p95": 11.07,
+          "p99": 14.641,
+          "maximum": 21.303
+        },
+        "destruction_preparation": {
+          "samples": 262,
+          "mean": 8.381465648854961,
+          "p50": 8.004,
+          "p95": 12.775,
+          "p99": 21.073,
+          "maximum": 35.153
+        },
+        "destruction_chain": {
+          "samples": 62,
+          "mean": 9.747370967741935,
+          "p50": 9.605,
+          "p95": 15.365,
+          "p99": 17.227,
+          "maximum": 17.227
+        },
+        "destruction_recovery": {
+          "samples": 1326,
+          "mean": 8.067363499245852,
+          "p50": 7.631,
+          "p95": 12.268,
+          "p99": 15.62,
+          "maximum": 18.386
+        },
+        "turning": {
+          "samples": 640,
+          "mean": 7.8170765625000005,
+          "p50": 7.262,
+          "p95": 11.212,
+          "p99": 14.577,
+          "maximum": 21.895
+        },
+        "settled_idle": {
+          "samples": 656,
+          "mean": 7.624132621951219,
+          "p50": 6.903,
+          "p95": 10.358,
+          "p99": 12.24,
+          "maximum": 16.721
+        }
+      },
+      "publication_us": {},
+      "debris_us": {
+        "total_us": {
+          "samples": 0,
+          "sum": 0
+        },
+        "geometry_us": {
+          "samples": 0,
+          "sum": 0
+        },
+        "nodes_us": {
+          "samples": 0,
+          "sum": 0
+        },
+        "attach_us": {
+          "samples": 0,
+          "sum": 0
+        },
+        "motion_us": {
+          "samples": 0,
+          "sum": 0
+        }
+      },
+      "blast_batch_frames": [],
+      "slowest_matched_frames": [],
+      "scope": "Setup drained before gameplay; exact damage/retirement, normal save and clean exit. Short observation, not endurance or stable-60-FPS acceptance.",
+      "raw_sha256": {
+        "run.json": "87fb1af2eaebc4c3d06514a2dc010cd4d49a729dfa17fe8b0d043b6e96633d08",
+        "observation.json": "45aeb1e09fafc08eac5397b7c19fa72381ef41c80c0e03c0ff680847dda570a0",
+        "console.log": "618e0b9f110c75100407a157090baae05373979fa0f5c9e511f08b8abf5c56e3"
+      }
+    }
+  ]
+}

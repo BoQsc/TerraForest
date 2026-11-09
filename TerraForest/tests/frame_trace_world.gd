@@ -13,6 +13,7 @@ var light_phases:Array[Dictionary]=[]
 var render_probe:=false
 var render_probe_result:Dictionary={}
 var outdoor_result:Dictionary={}
+var destruction_result:Dictionary={}
 var occlusion_result:Dictionary={}
 var collision_piece_triangles:=0
 var collision_configured:=false
@@ -86,6 +87,7 @@ func frame()->void:
 		sample.render_cpu_ms=RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid())
 		sample.render_setup_cpu_ms=RenderingServer.get_frame_setup_time_cpu()
 		sample.draw_calls=Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
+		sample.fps_cap=Engine.max_fps;sample.vsync=DisplayServer.window_get_vsync_mode()
 		if collision_piece_triangles>0:
 			sample.physics_monitor_ms=Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000.0
 		samples.append(sample)
@@ -108,9 +110,16 @@ func run()->void:
 	if not await wait_for(func():return game.startup_complete,90):quit(1);return
 	if "--trace-no-first-person-depth" in OS.get_cmdline_user_args():game.first_person_view.set_enabled(false,false)
 	if "--trace-uncapped" in OS.get_cmdline_user_args():
+		# The session normally restores VSync on focus. This diagnostic explicitly
+		# owns uncapped pacing; retain normal production focus policy elsewhere.
+		var restore:Callable=root.get_node("WorldSession")._restore_presentation.call_deferred
+		if root.focus_entered.is_connected(restore):root.focus_entered.disconnect(restore)
 		game.max_fps=0;game.background_fps=0;Engine.max_fps=0
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	if not await wait_for(func():return game.startup_complete and not game.loading_active and not game.player_view.entry.blocks_actions(),120):quit(1);return
+	if "--trace-legacy-owner-bounds" in OS.get_cmdline_user_args():
+		game.ecosystem._exclusion_index=null
+		game.ground_cover.boulders._exclusion_index=null
 	world_ready_ms=(Time.get_ticks_usec()-world_opened_us)/1000.0
 	# Registration occurs asynchronously during startup; replace only after ready.
 	var legacy_structure_capture:bool="--trace-legacy-structure-capture" in OS.get_cmdline_user_args()
@@ -172,6 +181,8 @@ func run()->void:
 		var structure_payload:RefCounted=game.structures._cached_save
 		await wait_for(func():return manual_save.completed,20)
 		if structure_payload!=null:manual_save.structure_capture_stats=structure_payload.stats()
+	if "--trace-destruction-load" in OS.get_cmdline_user_args():
+		destruction_result=await load(get_script().resource_path.get_base_dir().path_join("destruction_load_probe.gd")).new().run(self,game,output)
 	label="turning"
 	var turn_started:=Time.get_ticks_msec()
 	var deadline:=turn_started+(5000 if short else 30000)
@@ -189,6 +200,11 @@ func run()->void:
 	RenderingServer.frame_post_draw.disconnect(frame)
 	var record:Dictionary={"slot":slot,"samples":samples,"trace_enabled":trace!=null,"position":game.player.position,"temporary":game.temporary_world,"snapshot_readonly":game.terrain.backend.readonly_snapshot,"mouse_captures":preload("res://addons/world_runtime/mouse_ownership.gd").captures}
 	record.initializations=initializations
+	var pacing_mismatches:=0
+	if "--trace-uncapped" in OS.get_cmdline_user_args():
+		for sample:Dictionary in samples:
+			if sample.phase not in ["loading","test_screenshot"] and (sample.fps_cap!=0 or sample.vsync!=DisplayServer.VSYNC_DISABLED):pacing_mismatches+=1
+	record.uncapped_pacing_mismatches=pacing_mismatches
 	if collision_piece_triangles>0:
 		record.collision={"configured":collision_configured,"requested_triangles":collision_piece_triangles,"ready_ms":world_ready_ms,"stages":collision_stages,"stages_dropped":collision_stages_dropped,"census":collision_census(game.terrain.tiles),"resident_tiles":game.terrain.tiles.size(),"engine_static_bytes":Performance.get_monitor(Performance.MEMORY_STATIC)}
 	record.last_capture=game.persistence.last_capture.duplicate(true)
@@ -197,6 +213,7 @@ func run()->void:
 	if game.structures._cached_save!=null:record.structure_capture_stats=game.structures._cached_save.stats()
 	record.cover_render=[]
 	if not outdoor_result.is_empty():record.outdoor=outdoor_result
+	if not destruction_result.is_empty():record.destruction=destruction_result
 	if not occlusion_result.is_empty():record.occlusion=occlusion_result
 	if game.structures.blocks.has_method("occlusion_stats"):record.block_occlusion=game.structures.blocks.occlusion_stats()
 	for batch:Node in game.ground_cover.batches:record.cover_render.append(batch.render_stats())
@@ -214,9 +231,10 @@ func run()->void:
 	record.viewport_occlusion_restored=root.use_occlusion_culling==original_occlusion
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
-	okay=okay and record.viewport_occlusion_restored
+	okay=okay and record.viewport_occlusion_restored and pacing_mismatches==0
 	if collision_piece_triangles>0:okay=okay and collision_configured and collision_stages_dropped==0 and record.collision.census.shapes>0 and record.collision.census.largest_piece<=collision_piece_triangles
 	if render_probe:okay=okay and render_probe_result.unchanged and render_probe_result.instances>0
 	if not outdoor_result.is_empty():okay=okay and outdoor_result.ok
+	if not destruction_result.is_empty():okay=okay and destruction_result.ok
 	if not occlusion_result.is_empty():okay=okay and occlusion_result.ok
 	print("FRAME_TRACE_WORLD ok=",okay," slot=",slot);quit(0 if okay else 1)

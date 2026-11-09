@@ -421,6 +421,26 @@ callbacks with these boundaries, then repeat normal recorder-off controls and
 the existing destruction/pursuit/long-session gates. Scoped improvement is not
 stable-60-FPS acceptance or approval of the rejected district layout.
 
+[Local destruction owner queries](../issues/runtime-performance/destruction-owner-bounds-2026-11-09.md)
+replace synchronous forest/boulder scans with a derived native bounds index.
+Same-package callback medians fall from 1.036/0.852 ms to 0.011/0.012 ms, retaining
+exact 3D forest coverage, horizontal boulder padding, insertion order, conservative
+unknown bounds and the old scan fallback. Thirteen native/adapter checks and eleven
+isolated release checks pass. The default-world three-barrel fixture removes the
+expected 102 blocks, preserves edge durability, reaches all 96 debris bodies and
+retires them normally. Collapse is explicitly excluded and remains required.
+The new unprepared-combat fixture leak was fixed by the parallel firearm commit
+`e69d8d57`; its 25-check destruction regression exits cleanly. Initial VSync drift
+and observer-setup contamination are retained and excluded from whole-frame claims.
+Pacing is now checked continuously and setup drains before gameplay measurements.
+The final installed recorder-on/off chain maxima are 16.795/17.227 ms, but ordinary
+arrival/settled phases still reach 29–33 ms. Both save/shutdown controls are clean;
+peak private commit is 4.049/3.899 GiB, leaving memory endurance unqualified.
+Return to residual terrain staging/atomic publication, physics work and draw waits
+using recorder-on/off captures; close with comparable pacing, normal player travel,
+collapse/water-boundary recovery and endurance evidence. Callback improvement and
+short cleanup checks do not establish whole-world nonregression or memory stability.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,
