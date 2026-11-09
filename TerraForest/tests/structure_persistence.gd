@@ -44,7 +44,7 @@ func create_world() -> void:
 	lakes.prepare()
 	root.add_child(lakes)
 	persistence = Persistence.new()
-	check(persistence.register_component("structures",structures.capture_storage_snapshot if region_storage else structures.capture_snapshot,structures.restore_snapshot,structures.snapshot_validator(),structures.empty_snapshot()),"structures bundle registers as one world component")
+	check(persistence.register_component("structures",structures.capture_save_snapshot,structures.restore_snapshot,structures.snapshot_validator(),structures.empty_snapshot()),"structures bundle registers as one world component")
 	if region_storage:
 		check(persistence.enable_region_structures(),"native region archive enabled before terrain starts")
 	check(persistence.register_component("volumetric_water",lakes.capture_snapshot,lakes.restore_snapshot,lakes.snapshot_validator(),lakes.empty_snapshot()) and persistence.attach(terrain)==OK,"water and structures share the terrain persistence coordinator")
@@ -92,6 +92,17 @@ func run() -> void:
 	check(structures.model(asset_ids[1]).upsert_instances(PackedInt64Array([12]),transform_at(810)),"second mesh collection accepts placement")
 	check(terrain.sculpt_sphere(Vector3(800,50,1310),3),"terrain edit accepted alongside buildings")
 	check(await until(func(): return not terrain.pending_edit),"terrain edit completes")
+	var frozen:Variant=structures.capture_save_snapshot()
+	check(frozen is RefCounted and frozen==structures.capture_save_snapshot(),"changed structures reuse one immutable native save capture")
+	var worker:=Thread.new()
+	worker.start(frozen.serialize_snapshot)
+	var frozen_bytes:PackedByteArray=worker.wait_to_finish()
+	check(frozen.stats().reserved_bytes==0 and frozen_bytes==structures.capture_snapshot(),"worker encodes exact structure bytes and releases frozen memory")
+	structures.model(asset_ids[1]).upsert_instances(PackedInt64Array([12]),transform_at(811))
+	var changed:Variant=structures.capture_save_snapshot()
+	check(changed is RefCounted and changed!=frozen and changed.serialize_snapshot()!=frozen_bytes and frozen.serialize_snapshot()==frozen_bytes,"model edits invalidate the provider cache without mutating a queued save")
+	structures.model(asset_ids[1]).upsert_instances(PackedInt64Array([12]),transform_at(810))
+	frozen=null;changed=null;worker=null
 	var saved: PackedByteArray = structures.capture_snapshot()
 	check(structures.capture_snapshot()==saved,"unchanged bundle capture reuses the same logical snapshot")
 	# Exercise the worker-owned capture ordering state without starting a worker.
@@ -107,11 +118,18 @@ func run() -> void:
 	var exposed: PackedByteArray = structures.capture_snapshot()
 	exposed[0]^=1
 	check(structures.snapshot_validator().validate_snapshot(structures.capture_snapshot()),"caller mutation of returned bytes cannot corrupt the component cache")
+	var save_exposed:PackedByteArray=structures.capture_save_snapshot()
+	save_exposed[0]^=1
+	check(structures.capture_save_snapshot()==saved,"new provider also isolates the existing byte cache from caller mutation")
+	# Force a cold provider so the real terrain worker resolves an opaque capture.
+	structures._snapshot_changed()
+	check(structures.capture_save_snapshot() is RefCounted,"compound save exercises the native capture provider")
 	check(await save(),"compound save publishes terrain water blocks and static models")
 	var path := ProjectSettings.globalize_path("user://worlds/"+slot+".trw")
 	var archive: RefCounted = ClassDB.instantiate("NativeWorldArchive")
 	var decoded: Dictionary = terrain.backend.snapshot_codec.decode(archive.read(path))
-	check(decoded.ok and decoded.sections.size()==3 and decoded.sections.structures==saved,"one canonical file contains all providers, with models inside the structures section")
+	var section_names:Array=decoded.sections.keys();section_names.sort()
+	check(decoded.ok and section_names==["location_baselines_v1","structures","terrain","volumetric_water"] and decoded.sections.structures==saved,"one canonical file contains all registered providers, with models inside the structures section")
 	if region_storage:
 		var disk_root: Dictionary = archive.decode(archive.read(path))
 		check(structures.snapshot_validator().decode_reference(disk_root.sections.structures).ok and DirAccess.dir_exists_absolute(path+".regions"),"integrated terrain save publishes checkpoint reference and region sidecar")
@@ -127,6 +145,8 @@ func run() -> void:
 		check(structures.capture_storage_snapshot()==partial and not structures.restore_snapshot(partial),"partial cache is isolated and cannot be restored as a complete scene")
 		structures.model(asset_ids[1]).upsert_instances(PackedInt64Array([12]),transform_at(812))
 		check(structures.capture_storage_snapshot()!=partial,"model edits invalidate the partial storage cache")
+		structures._snapshot_changed()
+		check(structures.capture_save_snapshot() is RefCounted,"partial compound save also exercises the native capture provider")
 		check(await save(),"terrain worker commits resident edits alongside unloaded region references")
 		decoded=terrain.backend.snapshot_codec.decode(archive.read(path))
 		saved=decoded.sections.structures

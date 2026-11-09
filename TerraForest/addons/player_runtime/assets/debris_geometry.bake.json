@@ -8,7 +8,7 @@
     "res://addons/structures/native/block_shapes.hpp": "1fd0507edee668d8040f7fea865bcf1edcf427f0092de2ab3ce3d6ac2bc039be",
     "res://addons/structures/native/block_word.hpp": "e3ea27327b76b24f1df51b774a79c1af7e3d2a338ee550735af27c88075e1fa4",
     "res://addons/structures/native/block_world.cpp": "44b458d1b96681c005736c1d64ddba78d67045fe8648b29e2ac360a1b873c0d3",
-    "res://addons/structures/native/block_world.hpp": "f1b77c7c6a8da5e7e1757057f478c1874be79d314fdd822a0949b7537e57af4b",
+    "res://addons/structures/native/block_world.hpp": "70f55aaeca83b97d2774ed1891355e95be9474819fed3c227a8fe371910117ff",
     "res://addons/structures/native/modular_mesher.hpp": "f203a9ced357377686c7d79ef79f6532a9f9410d43503924e9fdccb335a8ce6e",
     "res://addons/structures/native/modular_shapes.hpp": "984ed381059d307089ea99804687d154324e764715feb40cc2a7a04834d5588d",
     "res://tools/bake_debris_geometry.gd": "5771456d5a9b6d88ba2d6f2b821928db167deca8eda7a5922bb93d376e633eb8"

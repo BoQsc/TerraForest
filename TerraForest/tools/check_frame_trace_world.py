@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--without-trace', action='store_true')
     parser.add_argument('--verbose', action='store_true')
     parser.add_argument('--save', action='store_true', help='Capture one normal save during active gameplay')
+    parser.add_argument('--legacy-structure-capture', action='store_true', help='Diagnostic control: serialize structures on the main thread during save')
     parser.add_argument('--gpu-profile', action='store_true', help='Retain engine GPU pass summaries in the console log')
     parser.add_argument('--render-inventory', action='store_true', help='Inspect scene geometry/light candidates after all frame timings are saved')
     parser.add_argument('--render-partition', type=int, choices=[8,16], help='Stationary ABBA diagnostic of exact nearby cover draw partitions')
@@ -60,6 +61,8 @@ def main():
         command += ['--trace-short']
     if args.save:
         command += ['--trace-save']
+    if args.legacy_structure_capture:
+        command += ['--trace-legacy-structure-capture']
     if args.light_abba:
         command += ['--trace-light-abba']
     if args.verbose:

@@ -63,6 +63,9 @@ func run()->void:
 		game.max_fps=0;game.background_fps=0;Engine.max_fps=0
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	if not await wait_for(func():return game.startup_complete and not game.loading_active and not game.player_view.entry.blocks_actions(),120):quit(1);return
+	# Registration occurs asynchronously during startup; replace only after ready.
+	var legacy_structure_capture:bool="--trace-legacy-structure-capture" in OS.get_cmdline_user_args()
+	if legacy_structure_capture:game.persistence._providers["structures"].capture=game.structures.capture_storage_snapshot
 	var trace=root.get_node_or_null("WorldSession/FrameTrace")
 	var initializations:Array=[]
 	for zombie:Node in game.zombies.residents:initializations.append(zombie.initialization_us.duplicate())
@@ -112,7 +115,10 @@ func run()->void:
 		var saved_callback:Callable=func(success:bool):manual_save.completed=true;manual_save.success=success
 		game.terrain.save_completed.connect(saved_callback,CONNECT_ONE_SHOT)
 		game.terrain.changed_since_save=true;game.terrain.save_world()
+		manual_save.capture=game.persistence.last_capture.duplicate(true)
+		var structure_payload:RefCounted=game.structures._cached_save
 		await wait_for(func():return manual_save.completed,20)
+		if structure_payload!=null:manual_save.structure_capture_stats=structure_payload.stats()
 	label="turning"
 	var turn_started:=Time.get_ticks_msec()
 	var deadline:=turn_started+(5000 if short else 30000)
@@ -132,6 +138,8 @@ func run()->void:
 	record.initializations=initializations
 	record.last_capture=game.persistence.last_capture.duplicate(true)
 	record.manual_save=manual_save.duplicate()
+	record.legacy_structure_capture=legacy_structure_capture
+	if game.structures._cached_save!=null:record.structure_capture_stats=game.structures._cached_save.stats()
 	record.cover_render=[]
 	if not outdoor_result.is_empty():record.outdoor=outdoor_result
 	for batch:Node in game.ground_cover.batches:record.cover_render.append(batch.render_stats())

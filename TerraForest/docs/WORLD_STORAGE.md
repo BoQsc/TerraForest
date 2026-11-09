@@ -4,7 +4,7 @@ The main world now publishes block-region checkpoint references through a native
 archive adapter, retaining current and backup roots. See [region-backed world saves](REGION_WORLD_ARCHIVE.md).
 Full-resident capture/restore limits remain; automatic runtime paging is unfinished.
 
-Terrain, lake definitions, building blocks and registered static-model placements share one versioned canonical snapshot in the terrain demo. The demo attaches `world_runtime/world_persistence.gd` before terrain startup and registers the water catalog and structures bundle as addon sections. Native C++ performs archive packing, hashing, schema validation, bounded file reads and Windows publication on the terrain worker. Small GDScript callbacks collect/restore addon configuration and connect scene ownership; a dirty structures bundle is serialized on capture before worker publication.
+Terrain, lake definitions, building blocks and registered static-model placements share one versioned canonical snapshot in the terrain demo. The demo attaches `world_runtime/world_persistence.gd` before terrain startup and registers the water catalog and structures bundle as addon sections. Native C++ performs archive packing, hashing, schema validation, bounded file reads and Windows publication on the terrain worker. Small GDScript callbacks collect/restore addon configuration and connect scene ownership. Changed structures copy canonical native values during main-thread capture; the save worker serializes and validates that frozen payload.
 
 ## Format and ownership
 
@@ -43,7 +43,23 @@ persistence.register_component("volumetric_water", water.capture_snapshot,
 persistence.attach(terrain)
 ```
 
-Capture returns fresh immutable `PackedByteArray` data. Restore returns `bool`. A provider validator is a stateless native RefCounted object with `validate_snapshot(bytes)`; it can run on the terrain worker while other immutable validation occurs. Providers are registered only before attachment. The terrain addon remains usable by itself with its legacy format; reading compound snapshots requires the runtime archive adapter.
+Capture returns immutable `PackedByteArray` data or an immutable `RefCounted` payload with `serialize_snapshot()`. The existing ordered terrain worker resolves the latter into bytes before validation and publication. Restore returns `bool`. A provider validator is a stateless native RefCounted object with `validate_snapshot(bytes)`; it can run on the terrain worker while other immutable validation occurs. Providers are registered only before attachment. The terrain addon remains usable by itself with its legacy format; reading compound snapshots requires the runtime archive adapter.
+
+The demo's structures provider uses `capture_save_snapshot()`. Its
+`NativeStructuresCapture` owns copied block cells, model identities/transforms,
+unavailable-region digests and an immutable codec schema, with no scene-owner
+references. Pending frozen values share a process-wide 128 MiB reservation limit;
+failure rejects the save through the existing invalid-capture guard. The limit
+does not include temporary encoder allocations. Encoding releases the frozen
+buffers and caches the resulting bytes; repeated unchanged captures reuse that
+payload. Native edit signals, region transitions, restores and checkpoint changes
+invalidate the provider cache. Existing 64 MiB section limits, archive formats,
+generation/epoch ordering and publication safeguards are unchanged.
+
+Legacy `capture_snapshot()` and `capture_storage_snapshot()` still produce bytes
+synchronously for explicit consumers. Main-thread save capture remains proportional
+to resident canonical data: this is a bounded snapshot bridge, not a zero-copy or
+region/delta persistence architecture.
 
 `structures/structures_world.gd` owns one native block world and up to 256 registered model collections. Its native `NativeStructuresSnapshot` validator freezes the asset-key registry and validates every nested block/model snapshot before terrain is applied. All model collections occupy one `structures` section, rather than one world section per mesh asset. Added assets restore empty when absent from an older bundle; an unknown saved asset rejects loading to avoid silently losing objects. Model identities are locked when registered. See [structures persistence validation](STRUCTURE_PERSISTENCE_VALIDATION.md).
 

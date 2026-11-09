@@ -6,6 +6,7 @@
 #include "resident_lights.hpp"
 #include "hinged_doors.hpp"
 #include "structures_snapshot.hpp"
+#include "structures_capture.hpp"
 #include "structure_queries.hpp"
 #include "exclusion_page.hpp"
 #include "model_render_page.hpp"
@@ -31,6 +32,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeResidentLights);
         GDREGISTER_CLASS(terraforest::NativeHingedDoors);
         GDREGISTER_CLASS(terraforest::NativeStructuresSnapshot);
+        GDREGISTER_CLASS(terraforest::NativeStructuresCapture);
         GDREGISTER_CLASS(terraforest::NativeStructureQueries);
         GDREGISTER_CLASS(terraforest::NativeExclusionPage);
         GDREGISTER_CLASS(terraforest::NativeModelRenderPage);

@@ -44,6 +44,7 @@ class NativeStaticBatch : public Node3D {
     std::shared_ptr<ModelCheckpointLease> paging_checkpoint;
     uint64_t paging_owner=0;
     friend class NativeStructuresSnapshot;
+    friend class NativeStructuresCapture;
     friend class NativeStaticHistory;
     friend class NativeBlockRegionStore;
     using Placement = std::array<float,12>;

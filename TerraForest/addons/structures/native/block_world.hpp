@@ -61,6 +61,7 @@ class NativeBlockWorld : public Node3D {
     GDCLASS(NativeBlockWorld,Node3D)
     friend class NativePrefabPlacement;
     friend class NativeStructuresSnapshot;
+    friend class NativeStructuresCapture;
     friend class NativeBlockPager;
     friend class BlockHorizon;
     BlockHorizon *horizon=nullptr;

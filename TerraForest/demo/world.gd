@@ -286,7 +286,7 @@ func _ready() -> void:
 		["zombie population",func():return zombies.prepare(self,persistence)],
 		["structure catalog",func():return structures_ready],
 		["water",func():return lakes.prepare()],
-		["structure registration",func():return persistence.register_component("structures",structures.capture_storage_snapshot,storage.restore_structures,structures.snapshot_validator(),structures.empty_snapshot())],
+		["structure registration",func():return persistence.register_component("structures",structures.capture_save_snapshot,storage.restore_structures,structures.snapshot_validator(),structures.empty_snapshot())],
 		["water registration",func():return persistence.register_component("volumetric_water",lakes.capture_storage_snapshot,lakes.restore_snapshot,lakes.snapshot_validator(),lakes.empty_snapshot())],
 		["regional archive",func():return persistence.enable_region_structures(true,model_region_paging)],
 		["terrain attachment",func():return persistence.attach(terrain)==OK]]

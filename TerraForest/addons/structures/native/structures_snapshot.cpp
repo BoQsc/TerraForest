@@ -1,4 +1,5 @@
 #include "structures_snapshot.hpp"
+#include "structures_capture.hpp"
 #include "block_world.hpp"
 #include "static_batch.hpp"
 #include <godot_cpp/classes/hashing_context.hpp>
@@ -22,6 +23,7 @@ bool NativeStructuresSnapshot::parse_model_reference(const PackedByteArray &byte
     checkpoint=bytes.slice(12+length,44+length);return true;
 }
 void NativeStructuresSnapshot::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("capture_save_snapshot","blocks","collections","checkpoint"),&NativeStructuresSnapshot::capture_save_snapshot);
     ClassDB::bind_method(D_METHOD("encode_bootstrap","checkpoint","keys","checksums","models"),&NativeStructuresSnapshot::encode_bootstrap);
     ClassDB::bind_method(D_METHOD("decode_bootstrap","bytes"),&NativeStructuresSnapshot::decode_bootstrap);
     ClassDB::bind_method(D_METHOD("validate_bootstrap","bytes"),&NativeStructuresSnapshot::validate_bootstrap);

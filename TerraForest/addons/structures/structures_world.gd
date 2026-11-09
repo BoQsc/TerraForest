@@ -18,6 +18,7 @@ var _sealed := false
 var _dirty := true
 var _cached_snapshot := PackedByteArray()
 var _cached_storage := PackedByteArray()
+var _cached_save:RefCounted
 var _storage_checkpoint := PackedByteArray()
 var _model_checkpoints: Dictionary = {}
 var _pager: RefCounted
@@ -165,6 +166,7 @@ func step_region_paging(world_focus: Vector3) -> bool:
 	if checkpoint != _storage_checkpoint:
 		_storage_checkpoint = checkpoint
 		_cached_storage = PackedByteArray()
+		_cached_save=null
 	return ok
 
 func region_paging_stats() -> Dictionary:
@@ -201,6 +203,7 @@ func _block_cells_changed(bounds: AABB) -> void:
 func _snapshot_changed() -> void:
 	_dirty = true
 	_cached_storage = PackedByteArray()
+	_cached_save=null
 
 func _exclusion_changed(bounds:AABB=AABB()) -> void:
 	_snapshot_changed()
@@ -303,6 +306,15 @@ func capture_snapshot() -> PackedByteArray:
 	_dirty = _cached_snapshot.is_empty()
 	return _cached_snapshot.duplicate()
 
+func capture_save_snapshot() -> Variant:
+	if not seal():return PackedByteArray()
+	# Existing immutable byte caches remain cheap. Changed worlds copy canonical
+	# native values; the terrain save worker resolves the opaque payload later.
+	if not _dirty:return _cached_snapshot.duplicate()
+	if not _cached_storage.is_empty():return _cached_storage.duplicate()
+	if _cached_save==null:_cached_save=_codec.capture_save_snapshot(blocks,_models,_storage_checkpoint)
+	return _cached_save
+
 func capture_storage_snapshot() -> PackedByteArray:
 	if not seal():
 		return PackedByteArray()
@@ -340,17 +352,19 @@ func restore_storage_snapshot(bytes: PackedByteArray) -> bool:
 		return restore_snapshot(bytes)
 	var bootstrap: Dictionary = _codec.decode_bootstrap(bytes)
 	if bootstrap.get("ok",false):
-		var previous: Array=[_storage_checkpoint,_model_checkpoints,_cached_storage,_cached_snapshot,_dirty]
+		var previous: Array=[_storage_checkpoint,_model_checkpoints,_cached_storage,_cached_snapshot,_dirty,_cached_save]
 		_storage_checkpoint = bootstrap.checkpoint
 		_model_checkpoints = {}
 		for id: String in bootstrap.models:
 			_model_checkpoints[id] = bootstrap.models[id].slice(16,48)
 		_cached_storage = PackedByteArray()
 		_cached_snapshot = PackedByteArray()
+		_cached_save=null
 		_dirty = true
 		if not _codec.restore_bootstrap(bytes,blocks,_models):
 			_storage_checkpoint=previous[0];_model_checkpoints=previous[1]
 			_cached_storage=previous[2];_cached_snapshot=previous[3];_dirty=previous[4]
+			_cached_save=previous[5]
 			return false
 		return true
 	var decoded: Dictionary = _codec.decode_storage(bytes)
@@ -370,6 +384,7 @@ func restore_storage_snapshot(bytes: PackedByteArray) -> bool:
 	_model_checkpoints.clear()
 	_storage_checkpoint = decoded.checkpoint
 	_cached_storage = bytes.duplicate()
+	_cached_save=null
 	_cached_snapshot = PackedByteArray()
 	_dirty = true
 	return true
@@ -391,6 +406,7 @@ func restore_snapshot(bytes: PackedByteArray) -> bool:
 			return false
 	_cached_storage = PackedByteArray()
 	_model_checkpoints.clear()
+	_cached_save=null
 	_storage_checkpoint = PackedByteArray()
 	_cached_snapshot = bytes.duplicate()
 	_dirty = false

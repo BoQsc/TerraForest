@@ -7,6 +7,7 @@
 #include <set>
 namespace terraforest {
 class NativeBlockWorld;
+class NativeStructuresCapture;
 class NativeStructuresSnapshot : public godot::RefCounted {
     GDCLASS(NativeStructuresSnapshot,godot::RefCounted)
     enum Mode { RESIDENT, REFERENCE, STORAGE, CHECKPOINT_STORAGE, BOOTSTRAP };
@@ -22,6 +23,7 @@ class NativeStructuresSnapshot : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    godot::Ref<NativeStructuresCapture> capture_save_snapshot(NativeBlockWorld *blocks,const godot::Dictionary &collections,const godot::PackedByteArray &checkpoint) const;
     godot::PackedByteArray encode_bootstrap(const godot::PackedByteArray &checkpoint,const godot::PackedInt32Array &keys,const godot::PackedByteArray &checksums,const godot::Dictionary &models) const;
     godot::Dictionary decode_bootstrap(const godot::PackedByteArray &bytes) const;
     bool validate_bootstrap(const godot::PackedByteArray &bytes) const {return parse(bytes,nullptr,BOOTSTRAP);}
