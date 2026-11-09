@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://w5tuv3q5irgh"
-path="res://.godot/imported/Landline Ringing 2 - Kaino.wav-93fdbfea6e5d3ac6739b38c91dddb1c8.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Landline Ringing 2 - Kaino.wav"
-dest_files=["res://.godot/imported/Landline Ringing 2 - Kaino.wav-93fdbfea6e5d3ac6739b38c91dddb1c8.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

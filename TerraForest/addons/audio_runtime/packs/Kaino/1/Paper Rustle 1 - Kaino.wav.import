@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://mmvx2a7nuhyo"
-path="res://.godot/imported/Paper Rustle 1 - Kaino.wav-e8a3684009a377ebdc0efbec9f53c53e.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Paper Rustle 1 - Kaino.wav"
-dest_files=["res://.godot/imported/Paper Rustle 1 - Kaino.wav-e8a3684009a377ebdc0efbec9f53c53e.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

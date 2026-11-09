@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://cli3gajp8vy2c"
-path="res://.godot/imported/Water Pour 2 - Kaino.wav-5030ff146c2e594d8d35f1f9c7fd930b.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Water Pour 2 - Kaino.wav"
-dest_files=["res://.godot/imported/Water Pour 2 - Kaino.wav-5030ff146c2e594d8d35f1f9c7fd930b.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://c17cm68ngc171"
-path="res://.godot/imported/Box Opening 2 - Kaino.wav-01242a249b1c8031a72e42fede31ebc9.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Box Opening 2 - Kaino.wav"
-dest_files=["res://.godot/imported/Box Opening 2 - Kaino.wav-01242a249b1c8031a72e42fede31ebc9.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

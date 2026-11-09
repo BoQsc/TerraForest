@@ -6,7 +6,7 @@ const Decoder := preload("res://addons/audio_runtime/wav_decoder.gd")
 const DEFAULT_SELECTION := "res://addons/audio_runtime/kaino_audition_selection.json"
 
 static func apply(catalog: RefCounted, selection_path: String = DEFAULT_SELECTION) -> int:
-	var path := ProjectSettings.globalize_path(selection_path)
+	var path := selection_path
 	if not FileAccess.file_exists(path): return 0
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if not parsed is Dictionary or not parsed.get("selection", {}) is Dictionary: return 0

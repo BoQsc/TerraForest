@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://0g0l3p80kdw0"
-path="res://.godot/imported/Armor Hit 3 - Kaino.wav-e1a7d2b8aee53c16b345cc59ad7b7884.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Armor Hit 3 - Kaino.wav"
-dest_files=["res://.godot/imported/Armor Hit 3 - Kaino.wav-e1a7d2b8aee53c16b345cc59ad7b7884.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

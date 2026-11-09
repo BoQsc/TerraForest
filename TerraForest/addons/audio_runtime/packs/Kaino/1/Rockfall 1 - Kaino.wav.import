@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://364lmb2b4dg3"
-path="res://.godot/imported/Rockfall 1 - Kaino.wav-01cfcbf42fa63a91c5f225312d864860.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Rockfall 1 - Kaino.wav"
-dest_files=["res://.godot/imported/Rockfall 1 - Kaino.wav-01cfcbf42fa63a91c5f225312d864860.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

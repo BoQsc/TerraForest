@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://b3vcsfcyl5ilj"
-path="res://.godot/imported/Plasma Rifle 3 - Kaino.wav-e91ff6aabef10a6f9627bb0da5e0d234.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Plasma Rifle 3 - Kaino.wav"
-dest_files=["res://.godot/imported/Plasma Rifle 3 - Kaino.wav-e91ff6aabef10a6f9627bb0da5e0d234.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

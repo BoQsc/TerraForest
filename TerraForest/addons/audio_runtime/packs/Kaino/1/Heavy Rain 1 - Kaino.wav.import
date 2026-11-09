@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://5a35htjbf2fb"
-path="res://.godot/imported/Heavy Rain 1 - Kaino.wav-d31279542555015d626237d346d451e3.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Heavy Rain 1 - Kaino.wav"
-dest_files=["res://.godot/imported/Heavy Rain 1 - Kaino.wav-d31279542555015d626237d346d451e3.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

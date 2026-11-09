@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://rghrp705048n"
-path="res://.godot/imported/Eagle Screech 2 - Kaino.wav-68c2d40ec8a76de79c08184151cdd49d.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Eagle Screech 2 - Kaino.wav"
-dest_files=["res://.godot/imported/Eagle Screech 2 - Kaino.wav-68c2d40ec8a76de79c08184151cdd49d.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

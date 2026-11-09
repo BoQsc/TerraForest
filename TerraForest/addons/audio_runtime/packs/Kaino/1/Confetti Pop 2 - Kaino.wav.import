@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://bgyf8kmhqe3qn"
-path="res://.godot/imported/Confetti Pop 2 - Kaino.wav-cc1659446f0d3467585bb80e197ce5c6.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Confetti Pop 2 - Kaino.wav"
-dest_files=["res://.godot/imported/Confetti Pop 2 - Kaino.wav-cc1659446f0d3467585bb80e197ce5c6.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

@@ -236,7 +236,7 @@ func note(text: String) -> void:
 ## takes effect without restarting anything.
 func reload_mapping(force: bool = false) -> int:
 	if audio == null: return 0
-	var stamp := FileAccess.get_modified_time(ProjectSettings.globalize_path(mapping_path))
+	var stamp := FileAccess.get_modified_time(mapping_path)
 	if not force and stamp == mapping_stamp: return 0
 	mapping_stamp = stamp
 	for id: String in base_files:
@@ -246,7 +246,7 @@ func reload_mapping(force: bool = false) -> int:
 		audio.catalog.sounds[id] = row
 	var applied: int = KainoMap.apply(audio.catalog, mapping_path)
 	assigned = {}
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(ProjectSettings.globalize_path(mapping_path))) if FileAccess.file_exists(ProjectSettings.globalize_path(mapping_path)) else null
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(mapping_path)) if FileAccess.file_exists(mapping_path) else null
 	if parsed is Dictionary and parsed.get("selection", {}) is Dictionary:
 		for key: Variant in parsed["selection"]: assigned[str(key)] = true
 	note("mapping %d entries from %s (stamp %d)" % [applied, mapping_path, stamp])

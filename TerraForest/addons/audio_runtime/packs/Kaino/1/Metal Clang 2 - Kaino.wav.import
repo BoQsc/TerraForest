@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://c8xgm7jd2xfsd"
-path="res://.godot/imported/Metal Clang 2 - Kaino.wav-f6d80c9ac4e32f398a90fbcf0c546985.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Metal Clang 2 - Kaino.wav"
-dest_files=["res://.godot/imported/Metal Clang 2 - Kaino.wav-f6d80c9ac4e32f398a90fbcf0c546985.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

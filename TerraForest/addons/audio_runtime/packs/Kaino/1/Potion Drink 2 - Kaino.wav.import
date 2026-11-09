@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://ciddqcxkst8ug"
-path="res://.godot/imported/Potion Drink 2 - Kaino.wav-6b1369aa62597e12f6fc7740124204fa.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Potion Drink 2 - Kaino.wav"
-dest_files=["res://.godot/imported/Potion Drink 2 - Kaino.wav-6b1369aa62597e12f6fc7740124204fa.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

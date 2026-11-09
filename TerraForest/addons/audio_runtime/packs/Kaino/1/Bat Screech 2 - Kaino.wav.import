@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://yi4ktuhkaudd"
-path="res://.godot/imported/Bat Screech 2 - Kaino.wav-2020838643a473e3a40d72849ef0846e.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Bat Screech 2 - Kaino.wav"
-dest_files=["res://.godot/imported/Bat Screech 2 - Kaino.wav-2020838643a473e3a40d72849ef0846e.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

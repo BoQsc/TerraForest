@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://bctm2hdfvw8r5"
-path="res://.godot/imported/Lockpicking 3 - Kaino.wav-9c06092ace0289eca9aad9fecc13c7b2.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Lockpicking 3 - Kaino.wav"
-dest_files=["res://.godot/imported/Lockpicking 3 - Kaino.wav-9c06092ace0289eca9aad9fecc13c7b2.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

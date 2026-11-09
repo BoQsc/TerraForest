@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://cb46gkvmtbtxq"
-path="res://.godot/imported/Duck Quack 1 - Kaino.wav-951b68178a2be88a6ca6b1b85948dc25.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Duck Quack 1 - Kaino.wav"
-dest_files=["res://.godot/imported/Duck Quack 1 - Kaino.wav-951b68178a2be88a6ca6b1b85948dc25.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

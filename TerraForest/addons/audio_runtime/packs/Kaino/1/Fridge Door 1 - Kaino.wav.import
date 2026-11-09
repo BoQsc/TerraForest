@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://dln82o4w7ikw"
-path="res://.godot/imported/Fridge Door 1 - Kaino.wav-8340c77157c76759e29eed537b78e7dd.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Fridge Door 1 - Kaino.wav"
-dest_files=["res://.godot/imported/Fridge Door 1 - Kaino.wav-8340c77157c76759e29eed537b78e7dd.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

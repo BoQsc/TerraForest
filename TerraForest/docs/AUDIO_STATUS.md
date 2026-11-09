@@ -46,3 +46,19 @@ See the [addon/API/content guide](../addons/audio_runtime/README.md),
 Tests do not authorize broad claims about world acoustics or human acceptance.
 Executable/native mods retain the existing explicit trust model; audio data packs
 do not install scripts or native libraries.
+
+## Kaino export boundary — 2026-11-09
+
+The already admitted Kaino WAVs are consumed by the existing custom decoder;
+Godot's WAV importer rejects 211 of their original headers. Their import mode is
+now [Keep File (exported as is)](https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/import_process.html),
+including existing split recordings. All 277 WAV source bytes and inherited
+notices remain unchanged. The selection JSON and CC0 legal text are exported.
+Resource paths remain `res://` through FileAccess so decoding works inside the
+PCK as well as source; loose user paths remain supported.
+
+Export passes with the existing engine and fourteen matching native libraries.
+`reports/performance_changes/pack_contracts_20261109T091454Z/audio_pack_paths`
+passes all five selected sounds in the actual executable; decoded PCM hashes,
+sample rates and channels equal the source check `reports/checks/20261109T085551679602Z`.
+This repairs delivery, not mixing/listening acceptance or new sound adapters.

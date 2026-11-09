@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://disap2p137bmm"
-path="res://.godot/imported/Scanner Ping 3 - Kaino.wav-7487917d3027b4cf854a033e7ab3f3f9.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Scanner Ping 3 - Kaino.wav"
-dest_files=["res://.godot/imported/Scanner Ping 3 - Kaino.wav-7487917d3027b4cf854a033e7ab3f3f9.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

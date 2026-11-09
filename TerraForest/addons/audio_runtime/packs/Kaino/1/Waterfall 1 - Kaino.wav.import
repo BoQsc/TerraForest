@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://tufm3sdgp1rq"
-path="res://.godot/imported/Waterfall 1 - Kaino.wav-40e20e6c107d8bddd81bdc9bd0d37258.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Waterfall 1 - Kaino.wav"
-dest_files=["res://.godot/imported/Waterfall 1 - Kaino.wav-40e20e6c107d8bddd81bdc9bd0d37258.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2

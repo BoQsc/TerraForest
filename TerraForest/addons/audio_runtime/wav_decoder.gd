@@ -3,7 +3,7 @@ extends RefCounted
 ## Decode Kaino's 24-bit PCM WAVs into the 16-bit streams Godot can play.
 
 static func decode(path: String) -> AudioStreamWAV:
-	var bytes := FileAccess.get_file_as_bytes(ProjectSettings.globalize_path(path))
+	var bytes := FileAccess.get_file_as_bytes(path)
 	if bytes.size() < 44 or bytes.slice(0, 4).get_string_from_ascii() != "RIFF":
 		return null
 	var channels := 0

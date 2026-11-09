@@ -1,24 +1,4 @@
 [remap]
 
-importer="wav"
-type="AudioStreamWAV"
+importer="keep"
 uid="uid://klcoun2ve5ep"
-path="res://.godot/imported/Crafting 1 - Kaino.wav-54e4ccdca51a90be449933ed57e3ffb3.sample"
-
-[deps]
-
-source_file="res://addons/audio_runtime/packs/Kaino/1/Crafting 1 - Kaino.wav"
-dest_files=["res://.godot/imported/Crafting 1 - Kaino.wav-54e4ccdca51a90be449933ed57e3ffb3.sample"]
-
-[params]
-
-force/8_bit=false
-force/mono=false
-force/max_rate=false
-force/max_rate_hz=44100
-edit/trim=false
-edit/normalize=false
-edit/loop_mode=0
-edit/loop_begin=0
-edit/loop_end=-1
-compress/mode=2
