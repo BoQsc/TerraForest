@@ -31,6 +31,19 @@ func run() -> void:
 	check(batch.get_child_count()==2 and shadows(batch,false),"newly streamed pages inherit disabled casting")
 	batch.set_casts_shadows(true)
 	check(shadows(batch,true),"policy can restore casting on all live pages")
+	var before:PackedByteArray=batch.capture_snapshot()
+	check(batch.set_shadow_distance(1.0),"bounded shadow distance accepted")
+	await ticks()
+	var first:Node=null
+	for child:Node in batch.get_children():
+		if child.cast_shadow==GeometryInstance3D.SHADOW_CASTING_SETTING_ON:first=child
+	check(first!=null and batch.render_stats().shadow_batches==1,"only the nearby retained page casts shadows")
+	batch.set_render_focus(Vector3(40,0,0));await ticks()
+	check(batch.render_stats().shadow_batches==1 and first.cast_shadow==GeometryInstance3D.SHADOW_CASTING_SETTING_OFF,"moving focus switches casting while both pages remain resident")
+	batch.set_render_focus(Vector3.ZERO);await ticks()
+	check(batch.render_stats().shadow_batches==1 and first.cast_shadow==GeometryInstance3D.SHADOW_CASTING_SETTING_ON,"returning focus restores the original page's shadow")
+	batch.set_casts_shadows(true);batch.set_shadow_distance(1.0);await ticks()
+	check(batch.render_stats().shadow_batches==1 and first.cast_shadow==GeometryInstance3D.SHADOW_CASTING_SETTING_ON and batch.capture_snapshot()==before,"repeated policy and reselection preserve shadows and exact placement data")
 	batch.free()
 	var result:={"checks":checks,"failures":failures}
 	DirAccess.make_dir_recursive_absolute("res://reports")

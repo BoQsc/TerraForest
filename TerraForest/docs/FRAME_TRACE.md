@@ -81,8 +81,21 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
 ## Recorded evidence
 
 - Draw-end wall intervals split into before-process, scene processing,
-  after-process and drawing intervals. Physics ticks and elapsed physics work are
-  recorded too; they overlap the other intervals and must not be added to them.
+  after-process and drawing intervals. `physics_ms` measures from the SceneTree
+  physics signal through the late recorder's callback, not the full physics
+  server step. These intervals overlap and must not be added to frame time.
+- `physics_tail_ms` closes the gap from the end of that late callback to the
+  next physics or process signal. It includes queued work, transforms, engine
+  stepping, synchronization and other work; it is not isolated Jolt time. With
+  catch-up steps it also includes preparation before the next physics signal.
+  Initial synchronization before the first physics signal remains outside both
+  measurements. The gap is closed before drawing/frame limiting, accumulated
+  across catch-up steps and reset per rendered frame. Segment/step counts and
+  `physics_tail_complete` expose incomplete coverage; the analyzer excludes
+  incomplete/old unavailable values rather than inventing zero work. Both
+  physics fields overlap `before_process_ms`. Ordering is verified against the
+  pinned [main loop](https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/main/main.cpp)
+  and [SceneTree](https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/scene/main/scene_tree.cpp).
 - Root-viewport GPU/render CPU timers, global draw calls/primitives and pipeline
   compilation counters. GPU readings can lag and root timers are not a guarantee
   of complete GPU attribution across every SubViewport.
@@ -96,6 +109,8 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
   `<phase>_thread_cpu_ms` counter. `physics_cycles`/`physics_thread_cpu_ms` sum
   measured SceneTree physics callbacks in the frame and overlap the four
   intervals. Engine work outside those callback boundaries is not included.
+  `physics_tail_cycles` and `physics_tail_thread_cpu_ms` separately report work
+  during the post-callback gaps, with the same availability/quantization limits.
   Samples taken off the main thread, missing, unsupported or reversed counter
   readings omit the associated field;
   they never become zero-work evidence. Samples bracket callbacks with small

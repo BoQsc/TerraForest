@@ -5,6 +5,11 @@
 #include <cmath>
 
 namespace terraforest {
+static void update_batch_shadows(MultiMeshInstance3D *instance,bool enabled) {
+    const auto desired=enabled?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF;
+    // The engine queues geometry updates even for unchanged shadow settings.
+    if(instance->get_cast_shadows_setting()!=desired)instance->set_cast_shadows_setting(desired);
+}
 void NativeStaticBatch::remove_render_members(const std::set<BlockKey> &keys) {
     if(render_partitions>1){rebuild(keys,true);return;}
     std::vector<RenderKey> changed;
@@ -220,7 +225,7 @@ void NativeStaticBatch::select_render_batches() {
     std::vector<RenderKey> evict;
     for(const auto &batch:batches)if(!std::binary_search(wanted.begin(),wanted.end(),batch.first))evict.push_back(batch.first);
     for(auto key:evict)release_batch(key,true);
-    for(auto &entry:batches)entry.second->set_cast_shadows_setting(page_casts_shadows(entry.first)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
+    for(auto &entry:batches)update_batch_shadows(entry.second,page_casts_shadows(entry.first));
     render_pending.clear();
     for(auto it=ordered.rbegin();it!=ordered.rend();++it)
         if(!std::binary_search(held_partial.begin(),held_partial.end(),*it)&&(!batches.count(*it)||resident_ids.at(*it).size()!=render_page_size(*it)))render_pending.push_back(*it);
@@ -276,7 +281,7 @@ bool NativeStaticBatch::set_shadow_distance(double radius) {
 }
 void NativeStaticBatch::set_casts_shadows(bool enabled) {
     casts_shadows=enabled;
-    for(auto &entry:batches)entry.second->set_cast_shadows_setting(page_casts_shadows(entry.first)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
+    for(auto &entry:batches)update_batch_shadows(entry.second,page_casts_shadows(entry.first));
 }
 bool NativeStaticBatch::is_render_region_ready(const AABB &world_bounds) const {
     if(!world_bounds.position.is_finite()||!world_bounds.size.is_finite()||

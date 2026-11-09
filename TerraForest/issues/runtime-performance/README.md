@@ -1,5 +1,17 @@
 # Runtime performance
 
+Latest installed fix: [skip unchanged shadow updates](shadow-updates-2026-11-09.md)
+removes redundant native state submissions that queued later renderer work.
+Nearby candidate/old/candidate controls reduce selected-frame drawing median
+from 13.890 to 6.449/5.311 ms, with geometry, coverage and shadow policy retained.
+Debug/release shadow and rendered-partition checks pass; sixteen source/package
+views were inspected. A new trace interval separates physics callbacks from
+subsequent engine/queue/synchronization work. Both packaged save/shutdown runs
+are clean, and all 2,980 traced physics segments close. The recorder-off package
+still reaches 24.696 ms outdoors; source arrival/settled tails do not establish
+general nonregression. Hardware clocks differ, so total recorder overhead remains
+unisolated. Rendering, physics, destruction, pursuit and endurance remain open.
+
 Latest diagnosis: [terrain collision publication](terrain-collision-publication-2026-11-09.md)
 measures actual live-body attachment, which the old resource-setup timer omitted.
 The 144-check fixture preserves all triangles and distinguishes cold/reused

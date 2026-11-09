@@ -4,6 +4,17 @@ from analyze_frame_trace import summarize
 
 
 class TraceAnalysisTests(unittest.TestCase):
+    def test_physics_tail_distinguishes_missing_incomplete_and_valid_zero(self):
+        rows = [self.row(1), self.row(2) | {'physics_tail_complete': False, 'physics_tail_ms': 999},
+                self.row(3) | {'physics_tail_complete': True, 'physics_tail_ms': 0},
+                self.row(4) | {'physics_tail_complete': True, 'physics_tail_ms': 2, 'physics_tail_thread_cpu_ms': 0}]
+        result = summarize([{'schema': 1, 'frames': rows}])['phases']['gameplay']['physics_tail']
+        self.assertEqual(result['complete_frames'], 2)
+        self.assertEqual(result['unavailable_or_incomplete_frames'], 2)
+        self.assertEqual(result['wall_ms']['mean'], 1)
+        self.assertEqual(result['thread_cpu_ms']['samples'], 1)
+        self.assertEqual(result['thread_cpu_ms']['maximum'], 0)
+
     def row(self, frame, milliseconds=16):
         return {"frame": frame, "at_us": frame * 16667, "phase": "gameplay",
                 "frame_ms": milliseconds, "pipeline_specialization": frame,

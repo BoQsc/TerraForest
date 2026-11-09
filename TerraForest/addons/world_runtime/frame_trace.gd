@@ -37,6 +37,12 @@ var work_physics:=PackedInt64Array()
 var work_end:=PackedInt64Array()
 var physics_cycles:=0
 var physics_cpu_us:=0
+var physics_tail_started:=0
+var physics_tail_work:=PackedInt64Array()
+var physics_tail_us:=0
+var physics_tail_segments:=0
+var physics_tail_cycles:=0
+var physics_tail_cpu_us:=0
 var phase_probe_us:=0
 var overhead_us:=0
 var previous_profiling:Dictionary={}
@@ -100,10 +106,12 @@ func stage(label:String,milliseconds:float)->void:
 func _begin_process()->void:
 	process_started=Time.get_ticks_usec()
 	work_start=_sample_work()
+	_finish_physics_tail(process_started,work_start)
 	if not previous_profiling.has("blocks"):_attach_block_profile()
 func _begin_physics()->void:
 	physics_started=Time.get_ticks_usec();physics_steps+=1
 	work_physics=_sample_work()
+	_finish_physics_tail(physics_started,work_physics)
 func _physics_process(_delta:float)->void:
 	if physics_started>0:
 		physics_elapsed_us+=Time.get_ticks_usec()-physics_started
@@ -115,6 +123,24 @@ func _physics_process(_delta:float)->void:
 	physics_started=0
 	if is_instance_valid(game) and game.startup_complete and game.zombies.update_phase_us.has("planning"):
 		capture_navigation(game.zombies.navigation_status,game.zombies.update_phase_us)
+	# The scene callback interval ends before Jolt stepping. Finish this gap at
+	# the next physics/process signal, never across drawing or frame limiting.
+	physics_tail_work=_sample_work()
+	physics_tail_started=Time.get_ticks_usec()
+
+func _finish_physics_tail(now:int,work:PackedInt64Array)->void:
+	if physics_tail_started==0:return
+	if now>=physics_tail_started:
+		physics_tail_us+=now-physics_tail_started;physics_tail_segments+=1
+		var cycles:=work_delta(physics_tail_work,work,0)
+		var cpu_us:=work_delta(physics_tail_work,work,1)
+		physics_tail_cycles=physics_tail_cycles+cycles if physics_tail_cycles>=0 and cycles>=0 else -1
+		physics_tail_cpu_us=physics_tail_cpu_us+cpu_us if physics_tail_cpu_us>=0 and cpu_us>=0 else -1
+	physics_tail_started=0;physics_tail_work=PackedInt64Array()
+
+func _reset_physics_tail()->void:
+	physics_tail_started=0;physics_tail_work=PackedInt64Array()
+	physics_tail_us=0;physics_tail_segments=0;physics_tail_cycles=0;physics_tail_cpu_us=0
 
 func capture_navigation(status:Dictionary,phases:Dictionary)->void:
 	var began:=Time.get_ticks_usec()
@@ -171,11 +197,13 @@ func _end_draw()->void:
 	var work:=_main_thread_work()
 	if previous==0:
 		previous=began;work_end=work;stages={};physics_elapsed_us=0;physics_steps=0
-		physics_cycles=0;physics_cpu_us=0;phase_probe_us=0;return
+		physics_cycles=0;physics_cpu_us=0;phase_probe_us=0;_reset_physics_tail();return
 	var row:Dictionary={"frame":Engine.get_process_frames(),"drawn_frame":Engine.get_frames_drawn(),"at_us":began,"frame_ms":(began-previous)/1000.0,
 		"before_process_ms":(process_started-previous)/1000.0,"process_ms":(process_finished-process_started)/1000.0,
 		"after_process_ms":(draw_started-process_finished)/1000.0,"draw_ms":(began-draw_started)/1000.0,
 		"physics_ms":physics_elapsed_us/1000.0,"physics_steps":physics_steps,"stages_ms":stages,
+		"physics_tail_ms":physics_tail_us/1000.0,"physics_tail_segments":physics_tail_segments,
+		"physics_tail_complete":physics_tail_segments==physics_steps and physics_tail_started==0,
 		"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(get_viewport().get_viewport_rid()),
 		"render_setup_cpu_ms":RenderingServer.get_frame_setup_time_cpu(),
 		"render_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(get_viewport().get_viewport_rid()),
@@ -193,6 +221,8 @@ func _end_draw()->void:
 	if physics_steps>0:
 		if physics_cycles>=0:row.physics_cycles=physics_cycles
 		if physics_cpu_us>=0:row.physics_thread_cpu_ms=physics_cpu_us/1000.0
+		if physics_tail_cycles>=0:row.physics_tail_cycles=physics_tail_cycles
+		if physics_tail_cpu_us>=0:row.physics_tail_thread_cpu_ms=physics_tail_cpu_us/1000.0
 	work_end=work
 	if render_trace!=null:
 		row.render_markers=render_trace.capture(RenderingServer.get_rendering_device()) if RenderingServer.is_on_render_thread() else {"available":false,"reason":"callback is not on render thread"}
@@ -228,6 +258,7 @@ func _end_draw()->void:
 	record(row,eligible)
 	previous=began;stages={};physics_elapsed_us=0;physics_steps=0
 	physics_cycles=0;physics_cpu_us=0
+	_reset_physics_tail()
 	overhead_us=Time.get_ticks_usec()-began+navigation_capture_us+phase_probe_us
 	navigation_capture_us=0;phase_probe_us=0
 
@@ -265,7 +296,7 @@ func mark(label:String,now:int=-1)->bool:
 	pending={"schema":1,"trigger":label,"trigger_us":now,"until_us":now+POST_US,"frames":history(now),"truncated":false,
 		"metadata":{"engine":Engine.get_version_info(),"adapter":RenderingServer.get_video_adapter_name(),"viewport":get_viewport().get_visible_rect().size,
 		"arguments":OS.get_cmdline_user_args(),"slot":game.terrain.save_slot if is_instance_valid(game) else "",
-		"scope":"Wall intervals; physics/stages overlap other intervals. GPU timers may lag; CPU-time quantized. Encoding/I/O off-thread. Ring: 1200 frames/10 s; post: 2 s, max 2400 rows. Eight files rotate per session.",
+		"scope":"Wall intervals; physics_ms measures scene callbacks through the late recorder. physics_tail_ms measures from that callback's end to the next physics/process signal: includes engine stepping, queues, synchronization and other work, not isolated Jolt time. Both overlap before_process_ms. GPU timers may lag; CPU-time quantized. Encoding/I/O off-thread. Ring: 1200 frames/10 s; post: 2 s, max 2400 rows. Eight files rotate per session.",
 		"skipped_triggers":skipped_triggers,"capture_serial":serial}}
 	return true
 

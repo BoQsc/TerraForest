@@ -81,6 +81,12 @@ def summarize(captures):
                     "physics_ms", "gpu_ms", "render_cpu_ms", "render_setup_cpu_ms", "recorder_previous_us", "draw_calls", "primitives")}
         metrics["over_20ms_frames"] = sum(r["frame_ms"] > 20 for r in selected)
         metrics["native_world_process"] = native_process_profiles(selected)
+        tails = [r for r in selected if r.get('physics_tail_complete', False)]
+        metrics['physics_tail'] = {
+            'complete_frames': len(tails), 'unavailable_or_incomplete_frames': len(selected) - len(tails),
+            'wall_ms': distribution(r['physics_tail_ms'] for r in tails),
+            'thread_cpu_ms': distribution(r['physics_tail_thread_cpu_ms'] for r in tails if 'physics_tail_thread_cpu_ms' in r),
+            'scope': 'After late physics callbacks through the next physics/process signal. Engine stepping, queues, synchronization and other work overlap before_process_ms; not isolated Jolt time.'}
         phases[phase] = metrics
     worst = []
     for row in sorted(rows, key=lambda r: r["frame_ms"], reverse=True)[:20]:

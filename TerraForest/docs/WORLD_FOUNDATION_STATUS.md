@@ -390,6 +390,27 @@ gates remain prerequisites for any future collision publication redesign; they
 were not run for this rejected candidate. Identical triangles alone do not
 establish unchanged contact behavior or 60 FPS. Endurance remains unqualified.
 
+[Unchanged shadow submissions](../issues/runtime-performance/shadow-updates-2026-11-09.md)
+are now skipped in native retained-page selection and repeated policy updates.
+The pinned engine queued renderer work even when the requested state was already
+set. Nearby candidate/old/candidate controls reduce selected-frame draw median
+from 13.890 to 6.449/5.311 ms; outdoor p99 is 24.408 ms old versus 22.353/21.080 ms
+candidate. These are small live-world samples with varying residency/hardware;
+arrival maxima and settled tails do not establish general nonregression. No
+shadow distance, geometry, density or simulation setting was reduced. Both native
+variants pass 12 shadow-boundary and 28 rendered-partition checks. The recorder
+now separates scene physics callbacks from the following engine/queue/sync gap,
+with 59 recorder checks per variant and seven analyzer tests. Both installed
+save/shutdown controls pass without leak diagnostics; all 2,980 physics segments
+close, and fourteen native DLLs match source. Sixteen source/package views were
+inspected without obvious missing assets or shadows. The recorder-off package
+still has outdoor p99/max 18.258/24.696 ms; GPU clocks change substantially between
+on/off runs, preventing isolation of total observer overhead. Memory endurance
+remains unqualified. Next work must attribute residual draw waits and physics
+callbacks with these boundaries, then repeat normal recorder-off controls and
+the existing destruction/pursuit/long-session gates. Scoped improvement is not
+stable-60-FPS acceptance or approval of the rejected district layout.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,
