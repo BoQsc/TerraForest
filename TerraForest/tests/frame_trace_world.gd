@@ -6,6 +6,7 @@ var slot:=""
 var samples:Array[Dictionary]=[]
 var previous:=0
 var label:="loading"
+var manual_save:Dictionary={"requested":false,"completed":false,"success":false}
 func _initialize()->void:
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
 	node_added.connect(func(node:Node):
@@ -51,11 +52,11 @@ func run()->void:
 	if "--trace-save" in OS.get_cmdline_user_args():
 		label="save_during_play"
 		if trace!=null:trace.mark("explicit normal save during gameplay")
-		var completed:=[false]
-		var saved_callback:Callable=func(_success:bool):completed[0]=true
+		manual_save.requested=true
+		var saved_callback:Callable=func(success:bool):manual_save.completed=true;manual_save.success=success
 		game.terrain.save_completed.connect(saved_callback,CONNECT_ONE_SHOT)
 		game.terrain.changed_since_save=true;game.terrain.save_world()
-		await wait_for(func():return completed[0],20)
+		await wait_for(func():return manual_save.completed,20)
 	label="turning"
 	var turn_started:=Time.get_ticks_msec()
 	var deadline:=turn_started+(5000 if short else 30000)
@@ -74,10 +75,12 @@ func run()->void:
 	var record:Dictionary={"slot":slot,"samples":samples,"trace_enabled":trace!=null,"position":game.player.position,"temporary":game.temporary_world,"snapshot_readonly":game.terrain.backend.readonly_snapshot,"mouse_captures":preload("res://addons/world_runtime/mouse_ownership.gd").captures}
 	record.initializations=initializations
 	record.last_capture=game.persistence.last_capture.duplicate(true)
+	record.manual_save=manual_save.duplicate()
 	if trace!=null:record.trace_files=trace.written;record.trace_overhead_last_us=trace.overhead_us
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	game.yaw=initial_yaw;game.player.rotation.y=initial_yaw
 	game.shutdown_requested=true
 	var saved:bool=await game.terrain.shutdown_after_edits()
 	game.free();await process_frame;await process_frame
-	print("FRAME_TRACE_WORLD ok=",saved and record.mouse_captures==0," slot=",slot);quit(0 if saved and record.mouse_captures==0 else 1)
+	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
+	print("FRAME_TRACE_WORLD ok=",okay," slot=",slot);quit(0 if okay else 1)
