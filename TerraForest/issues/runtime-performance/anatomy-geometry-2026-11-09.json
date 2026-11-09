@@ -1,0 +1,2512 @@
+{
+  "schema": 1,
+  "date": "2026-11-09",
+  "scope": "Exact CPU geometry bake for the inherited R4 model, native admission diagnostics and cache ownership. Original new code 0BSD; data retains GAP-002. No stable-60-FPS or universal visual acceptance claim.",
+  "failures_retained": [
+    "reports/checks/20261109T112849211570Z: invalidation signal freed native listener during emission; repaired by preserving its lifetime through notification.",
+    "reports/anatomy_geometry_release_missing_extension.log: isolated release fixture lacked extension discovery; driver now loads extension explicitly."
+  ],
+  "native_sha256": {
+    "addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+    "addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+    "addons/structures/bin/structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+    "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+    "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+    "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+    "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+    "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+    "addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+    "addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+    "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+    "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+  },
+  "pack_sha256": "863b5c1ebbb5142322c8d19f86dd51ef16be090d9d00d79888083fec6584b0a8",
+  "bake_receipt": {
+    "engine": "4.7.2-stable (steam)",
+    "output_sha256": "47920c3fbbeccfa38df2cb8725a44824f712433b5d2bbcc470602e0b6d4e0c34",
+    "parts": 14,
+    "recipe": "Exact existing R4 raw vertices, triangle indices, skin weights and morph arrays from native anatomy; no simplification or collision change. Derived data retains inherited character provenance GAP-002; original preparation code is 0BSD.",
+    "schema": 1,
+    "sources": {
+      "res://addons/characters/runtime/assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+      "res://addons/characters/runtime/assets/Zombie.r4.glb.import": "a7defd3dd42620045bd2e2a39e9d3afae20de2eee998a49fe3a1f1ea7b3dac9c",
+      "res://addons/characters/runtime/zombie.gd": "7b31fa57429afdb8bbe330b5c11cad6cdd4824848bd733858c19c4fbecf299c6",
+      "res://addons/characters/runtime/zombie_geometry_data.gd": "eca79f040e03c21108852b4a6255990f21a31b8cc987fefe8ede14a80a0b3000",
+      "res://addons/world_runtime/native/zombie_anatomy.cpp": "dff0d041948ece7649f5295e7ce1cd71e9807b8e702d314347f9b6f11c45ac52",
+      "res://addons/world_runtime/native/zombie_anatomy.hpp": "bed8344d459e0ca7989f2ad0478c74b1a7f94ee387168bc6fa62e834e5185ee7",
+      "res://addons/world_runtime/native/zombie_geometry.cpp": "66e0b41ce5fcfa49eec620cd87748f85fb41c78896057806bed48db049a1b5f6",
+      "res://tools/bake_zombie_geometry.gd": "0767e8e68e8c78e02c9dac5550d0e6a11d24d47057b0381babc10b6e3b7be16b"
+    },
+    "vertices": 12082
+  },
+  "runs": [
+    {
+      "path": "reports/performance_changes/20261109T111548973735Z_anatomy_readback_baseline",
+      "manifest": "run.json",
+      "manifest_sha256": "543f28915e79ceff984a1a52d381f20216321808f7b7c264a10a26f09faf6fd8",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "424ca4ab0488e0f49141ddf823fa65ff19769e54fe25d314bcf9693edf17bfd8",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "f37440376b882c3d9ace83738341ec2cc3658c933e9fcbdb728f3bf0a8ec54e8"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 40512,
+        "exit_code": 0,
+        "resources": {
+          "samples": 136,
+          "gpu_samples": 135,
+          "peak_private_commit_bytes": 3829784576,
+          "peak_working_set_bytes": 1865887744,
+          "peak_dedicated_gpu_bytes": 1474990080,
+          "checks": {
+            "ram": {
+              "bytes": 3829784576,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1474990080,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 83.6683465000242,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      }
+    },
+    {
+      "path": "reports/performance_changes/20261109T113212567742Z_anatomy_baked1",
+      "manifest": "run.json",
+      "manifest_sha256": "1c72f1fb290a173261caafac7b2d598d1782096accf55cc1d839a0525c7bc3be",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "e39f833639658184efd42eec2c4cd3a6c00297505703456fc31e76cfcbdad0b9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "f37440376b882c3d9ace83738341ec2cc3658c933e9fcbdb728f3bf0a8ec54e8"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 19112,
+        "exit_code": 0,
+        "resources": {
+          "samples": 111,
+          "gpu_samples": 110,
+          "peak_private_commit_bytes": 3826556928,
+          "peak_working_set_bytes": 2290163712,
+          "peak_dedicated_gpu_bytes": 1474990080,
+          "checks": {
+            "ram": {
+              "bytes": 3826556928,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1474990080,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 68.12390000000596,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      }
+    },
+    {
+      "path": "reports/performance_changes/20261109T114157357162Z_anatomy_geometry_pack1",
+      "manifest": "run.json",
+      "manifest_sha256": "3a47e0c2fe608b40c3a51c7f85ed6ae1d68f47dd1cb8e1a142a160bc307623e2",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "pack_sha256": "863b5c1ebbb5142322c8d19f86dd51ef16be090d9d00d79888083fec6584b0a8",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 42204,
+        "exit_code": 0,
+        "resources": {
+          "samples": 103,
+          "gpu_samples": 102,
+          "peak_private_commit_bytes": 3804880896,
+          "peak_working_set_bytes": 2269110272,
+          "peak_dedicated_gpu_bytes": 1474994176,
+          "checks": {
+            "ram": {
+              "bytes": 3804880896,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1474994176,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 63.23150880006142,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      }
+    },
+    {
+      "path": "reports/performance_changes/20261109T114302555644Z_anatomy_geometry_pack2",
+      "manifest": "run.json",
+      "manifest_sha256": "cea7593f8259afd7c43e7008aec08b6dde3c968be999480834b595afc3998892",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "pack_sha256": "863b5c1ebbb5142322c8d19f86dd51ef16be090d9d00d79888083fec6584b0a8",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 3088,
+        "exit_code": 0,
+        "resources": {
+          "samples": 103,
+          "gpu_samples": 102,
+          "peak_private_commit_bytes": 3788251136,
+          "peak_working_set_bytes": 2249281536,
+          "peak_dedicated_gpu_bytes": 1474990080,
+          "checks": {
+            "ram": {
+              "bytes": 3788251136,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1474990080,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 63.03230910003185,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T113800101560Z_zombies/zombie_anatomy",
+      "manifest": "run.json",
+      "manifest_sha256": "ceddfde6e57bb9f07569e7a8995a4321c0f07c794f7c630898adfae60cc78e9a",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "test_sha256": {
+        "tests\\zombie_anatomy.gd": "fbb3cc95d83430ebf154fa9b62f51daa12caf5fe20221c6c13376283df79a5ea"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 51516,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 3883008,
+          "peak_working_set_bytes": 5181440,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 3883008,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.37812690006103367,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T113800101560Z_zombies/zombie_combat_regions",
+      "manifest": "run.json",
+      "manifest_sha256": "7a29b77f0ca349d9898cca38dc464554f0bbc5dacd9b1b573cc2a485bae6fd18",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "test_sha256": {
+        "tests\\zombie_combat_regions.gd": "7cbd85fa1a156cfa3dcdfba610e9ac86ab9f92c7f3ed9b77bd9d501371a8f321"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 21860,
+        "exit_code": 0,
+        "resources": {
+          "samples": 32,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 127602688,
+          "peak_working_set_bytes": 138305536,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 127602688,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 19.401565599953756,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T113800101560Z_zombies/zombie_geometry_bake",
+      "manifest": "run.json",
+      "manifest_sha256": "12811dfcb5052d2706d896139dce2174dcf1139e582f164f3cc811a9800099f1",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "test_sha256": {
+        "tests\\zombie_geometry_bake.gd": "383c38edea9f610bebb551208b48f3d32a9d40eccab0a2c3da4650bf99c50f02",
+        "tests\\zombie_geometry_cache.gd": "f31cae4d469b4062f7a961ceb00ce33c41a17f3127e0a57c2960d91f42e01cb1"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 3840,
+        "exit_code": 0,
+        "resources": {
+          "samples": 2,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 123789312,
+          "peak_working_set_bytes": 133378048,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 123789312,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.7637596999993548,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T113800101560Z_zombies/zombie_geometry_cache",
+      "manifest": "run.json",
+      "manifest_sha256": "c123643fe5f8c24d77da61d741784aba33bb22b057a0e119dff8c24e82381833",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "test_sha256": {
+        "tests\\zombie_geometry_cache.gd": "f31cae4d469b4062f7a961ceb00ce33c41a17f3127e0a57c2960d91f42e01cb1"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 25584,
+        "exit_code": 0,
+        "resources": {
+          "samples": 2,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 118341632,
+          "peak_working_set_bytes": 132005888,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 118341632,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.7555829000193626,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T113800101560Z_zombies/zombie_rest_support",
+      "manifest": "run.json",
+      "manifest_sha256": "0aed4eb3e608c4f0bf3222027b014cccb11a67b1fc35b517e647414dbdfee880",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "test_sha256": {
+        "tests\\zombie_rest_support.gd": "43f9473d5559a315ab65671a5f447b9c3cd0ec57c76f28124b36ccc305a9ec90"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 6136,
+        "exit_code": 0,
+        "resources": {
+          "samples": 57,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 119398400,
+          "peak_working_set_bytes": 131932160,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 119398400,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 34.45312660001218,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T114130254778Z_zombies_pack/zombie_geometry_bake",
+      "manifest": "run.json",
+      "manifest_sha256": "e7e60d016a4a25045f36456253c7343c6ddb35cfcd1f10513c66fa2c0395ea56",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "pack_sha256": "863b5c1ebbb5142322c8d19f86dd51ef16be090d9d00d79888083fec6584b0a8",
+      "test_sha256": {
+        "tests\\zombie_geometry_bake.gd": "383c38edea9f610bebb551208b48f3d32a9d40eccab0a2c3da4650bf99c50f02",
+        "tests\\zombie_geometry_cache.gd": "c7e98c8a9d73228adfe9a4d4eef22919c363a00f5dcb41c921a91f31e92eeb65"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 38092,
+        "exit_code": 0,
+        "resources": {
+          "samples": 2,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 123789312,
+          "peak_working_set_bytes": 133189632,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 123789312,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.7648732999805361,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T114130254778Z_zombies_pack/zombie_geometry_cache",
+      "manifest": "run.json",
+      "manifest_sha256": "ca6e761537b4ee264e323b0738fb6f95de5ec9454c47c0029f395ae1d7054494",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "pack_sha256": "863b5c1ebbb5142322c8d19f86dd51ef16be090d9d00d79888083fec6584b0a8",
+      "test_sha256": {
+        "tests\\zombie_geometry_cache.gd": "c7e98c8a9d73228adfe9a4d4eef22919c363a00f5dcb41c921a91f31e92eeb65"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 19712,
+        "exit_code": 0,
+        "resources": {
+          "samples": 2,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 116801536,
+          "peak_working_set_bytes": 126464000,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 116801536,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.7701594000682235,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T114134125222Z_zombies_pack/zombie_combat_regions",
+      "manifest": "run.json",
+      "manifest_sha256": "e02d6aaf79f1a5d8a97a80789a1b69d9c4ab99246fa7f9ffeed9536ea6154121",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "pack_sha256": "863b5c1ebbb5142322c8d19f86dd51ef16be090d9d00d79888083fec6584b0a8",
+      "test_sha256": {
+        "tests\\zombie_combat_regions.gd": "7cbd85fa1a156cfa3dcdfba610e9ac86ab9f92c7f3ed9b77bd9d501371a8f321"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 18252,
+        "exit_code": 0,
+        "resources": {
+          "samples": 36,
+          "gpu_samples": 36,
+          "peak_private_commit_bytes": 1049235456,
+          "peak_working_set_bytes": 627724288,
+          "peak_dedicated_gpu_bytes": 393482240,
+          "checks": {
+            "ram": {
+              "bytes": 1049235456,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 393482240,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 21.750977200106718,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T111714359898Z",
+      "manifest": "run.json",
+      "manifest_sha256": "15faa7b04714eac050d22954bda9f481634e70011b130dd3696f548ceb9d8e81",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "424ca4ab0488e0f49141ddf823fa65ff19769e54fe25d314bcf9693edf17bfd8",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "f37440376b882c3d9ace83738341ec2cc3658c933e9fcbdb728f3bf0a8ec54e8"
+      },
+      "test_sha256": "08a51c58ca9edc3f9eab8fa87afcdfe7e54b63e321a378dee8b7d51305bee9ec",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 44832,
+        "exit_code": 0,
+        "resources": {
+          "samples": 2,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 117673984,
+          "peak_working_set_bytes": 130547712,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 117673984,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 1.0148935000179335,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T112849211570Z",
+      "manifest": "run.json",
+      "manifest_sha256": "b9408b7237ac36d6528572bf93596fab0d672aa31e4a23d3ff79abccb8d7ba08",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "e39f833639658184efd42eec2c4cd3a6c00297505703456fc31e76cfcbdad0b9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "f37440376b882c3d9ace83738341ec2cc3658c933e9fcbdb728f3bf0a8ec54e8"
+      },
+      "test_sha256": "5b3eb14cf0f51ce2559df2947b62198f65398aeda235511f24e4c118f5afb486",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 33912,
+        "exit_code": 3221225477,
+        "resources": {
+          "samples": 5,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 125894656,
+          "peak_working_set_bytes": 134303744,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 125894656,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": false,
+        "elapsed_seconds": 3.2407306000823155,
+        "passed": false,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T113003144351Z",
+      "manifest": "run.json",
+      "manifest_sha256": "4f843eb8528ca2061b2fd4866e7a9d006711a4cf8cc165c02686057c5bd47694",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "e39f833639658184efd42eec2c4cd3a6c00297505703456fc31e76cfcbdad0b9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "f37440376b882c3d9ace83738341ec2cc3658c933e9fcbdb728f3bf0a8ec54e8"
+      },
+      "test_sha256": "5b3eb14cf0f51ce2559df2947b62198f65398aeda235511f24e4c118f5afb486",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 42864,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 30253056,
+          "peak_working_set_bytes": 61296640,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 30253056,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.6937605999410152,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/checks/20261109T113004465014Z",
+      "manifest": "run.json",
+      "manifest_sha256": "7d8c85603aa73cfda396c0f746b926e5ab1c0c740a30e575fc89d09d1128579a",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "e39f833639658184efd42eec2c4cd3a6c00297505703456fc31e76cfcbdad0b9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "f37440376b882c3d9ace83738341ec2cc3658c933e9fcbdb728f3bf0a8ec54e8"
+      },
+      "test_sha256": "f31cae4d469b4062f7a961ceb00ce33c41a17f3127e0a57c2960d91f42e01cb1",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 10776,
+        "exit_code": 0,
+        "resources": {
+          "samples": 2,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 123092992,
+          "peak_working_set_bytes": 131973120,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 123092992,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.7591543999733403,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      }
+    },
+    {
+      "path": "reports/zombie_pressure/20261109T114407507033Z",
+      "manifest": "run.json",
+      "manifest_sha256": "fd9342f8ca32264d6a630fbb194e4dd5fb419354030ec911bc914c2c6c9a3e6c",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "pack_sha256": "863b5c1ebbb5142322c8d19f86dd51ef16be090d9d00d79888083fec6584b0a8",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 46716,
+        "exit_code": 0,
+        "resources": {
+          "samples": 14,
+          "gpu_samples": 14,
+          "peak_private_commit_bytes": 735125504,
+          "peak_working_set_bytes": 548552704,
+          "peak_dedicated_gpu_bytes": 153927680,
+          "checks": {
+            "ram": {
+              "bytes": 735125504,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 153927680,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 8.71919470001012,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      }
+    },
+    {
+      "path": "reports/zombie_pressure/20261109T114417382974Z",
+      "manifest": "run.json",
+      "manifest_sha256": "f0e5bc73b5879a6ee91cfe73663cf75de29794487c2cdb106dfb9dde307c3e6f",
+      "revision": "fc1f746d54507f3bb6944126bc2b6c4a65fc2468",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8dd47a1e6bbb8165dc9c15635effa7b34543d561ec3b01e44c34924a96aaf992",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "34b804536c327d545f3276675fd5985a35cce5096d7ff775539fd7f1c56df946",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "557bef4b5b3adfb3d09e0f5335e1a7528df5335df4a68acc5230b62b204be0e3",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "1226f1b405c71aa7654c3fdfeaf91cf190ddb7c7d55ca9b991fc82862da20674",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "7c2a334363e279a564d6ac832227b19ce3bbe7aa64ddf11eeb329e15fb77ae85"
+      },
+      "pack_sha256": "863b5c1ebbb5142322c8d19f86dd51ef16be090d9d00d79888083fec6584b0a8",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 32844,
+        "exit_code": 0,
+        "resources": {
+          "samples": 15,
+          "gpu_samples": 14,
+          "peak_private_commit_bytes": 735698944,
+          "peak_working_set_bytes": 549425152,
+          "peak_dedicated_gpu_bytes": 153927680,
+          "checks": {
+            "ram": {
+              "bytes": 735698944,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 153927680,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 9.14971890009474,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      }
+    }
+  ],
+  "world_analysis": [
+    {
+      "path": "reports/performance_changes/20261109T111548973735Z_anatomy_readback_baseline",
+      "initializations": [
+        {
+          "anatomy": 57864,
+          "anatomy readback": 46603,
+          "animation": 13907,
+          "hit areas": 12884,
+          "parts": 1798,
+          "ragdoll": 8677,
+          "scene": 17356,
+          "scene attach": 4891,
+          "scene instantiate": 10812,
+          "scene resource": 396,
+          "shape fit": 2086
+        },
+        {
+          "anatomy": 165,
+          "anatomy readback": 0,
+          "animation": 849,
+          "hit areas": 392,
+          "parts": 164,
+          "ragdoll": 924,
+          "scene": 1403,
+          "scene attach": 612,
+          "scene instantiate": 732,
+          "scene resource": 2,
+          "shape fit": 22
+        },
+        {
+          "anatomy": 173,
+          "anatomy readback": 0,
+          "animation": 770,
+          "hit areas": 410,
+          "parts": 141,
+          "ragdoll": 893,
+          "scene": 1175,
+          "scene attach": 588,
+          "scene instantiate": 535,
+          "scene resource": 2,
+          "shape fit": 22
+        },
+        {
+          "anatomy": 153,
+          "anatomy readback": 0,
+          "animation": 1359,
+          "hit areas": 307,
+          "parts": 145,
+          "ragdoll": 1235,
+          "scene": 1225,
+          "scene attach": 518,
+          "scene instantiate": 654,
+          "scene resource": 1,
+          "shape fit": 19
+        },
+        {
+          "anatomy": 290,
+          "anatomy readback": 0,
+          "animation": 1350,
+          "hit areas": 1051,
+          "parts": 296,
+          "ragdoll": 1332,
+          "scene": 2279,
+          "scene attach": 979,
+          "scene instantiate": 1187,
+          "scene resource": 4,
+          "shape fit": 43
+        },
+        {
+          "anatomy": 300,
+          "anatomy readback": 0,
+          "animation": 1589,
+          "hit areas": 724,
+          "parts": 334,
+          "ragdoll": 1712,
+          "scene": 2227,
+          "scene attach": 982,
+          "scene instantiate": 1120,
+          "scene resource": 3,
+          "shape fit": 46
+        }
+      ],
+      "gameplay_trigger_windows": {
+        "frame_ms": {
+          "count": 1547,
+          "mean": 16.988725921137686,
+          "p99_nearest_rank": 26.918,
+          "max": 62.764
+        },
+        "gpu_ms": {
+          "count": 1547,
+          "mean": 13.128102133022868,
+          "p99_nearest_rank": 14.6359996795654,
+          "max": 15.4010000228882
+        },
+        "process_ms": {
+          "count": 1547,
+          "mean": 2.248033613445378,
+          "p99_nearest_rank": 9.168,
+          "max": 25.442
+        },
+        "draw_ms": {
+          "count": 1547,
+          "mean": 10.74391338073691,
+          "p99_nearest_rank": 14.073,
+          "max": 24.243
+        },
+        "before_process_ms": {
+          "count": 1547,
+          "mean": 3.8750077569489334,
+          "p99_nearest_rank": 8.737,
+          "max": 31.208
+        }
+      },
+      "scope": "Overlapping trigger windows deduplicated by engine frame; not whole-session unbiased percentiles. Same default-world clone, offscreen 1080p; source versus packaged and cache/driver state are not perfectly matched.",
+      "worst_gameplay_frame": {
+        "after_process_ms": 0.148,
+        "at_us": 54409801,
+        "before_process_ms": 31.208,
+        "cadence_ms": 59.5125,
+        "cover_cells": 99,
+        "cover_us": 88,
+        "cover_wanted": 99,
+        "draw_calls": 4850.0,
+        "draw_ms": 11.094,
+        "driving": false,
+        "ecosystem_us": 290,
+        "entry": false,
+        "first_person": {
+          "active": true,
+          "detailed_shadows": false,
+          "enabled": true,
+          "overlay": false
+        },
+        "focus_admitted": true,
+        "focused": true,
+        "forest_us": 2639,
+        "fps_cap": 60,
+        "frame": 2555,
+        "frame_ms": 62.764,
+        "gpu_ms": 14.6160001754761,
+        "inventory": false,
+        "loading": false,
+        "menu": false,
+        "phase": "gameplay",
+        "physics_ms": 25.227,
+        "physics_steps": 3,
+        "pipeline_draw": 0.0,
+        "pipeline_specialization": 68.0,
+        "position": "(1058.5, 61.00056, 325.0)",
+        "primitives": 4134500.0,
+        "process_cycles": 45004880,
+        "process_ms": 20.314,
+        "recorder_previous_us": 2619,
+        "render_cpu_ms": 5.09100008010864,
+        "stages_ms": {
+          "LOD coverage": 0.012,
+          "LOD eviction": 0.003,
+          "LOD requests": 0.943,
+          "LOD schedule/cut/evict": 0.971,
+          "actor update": 0.514,
+          "base controller": 0.366,
+          "controller loading": 0.002,
+          "controller process": 0.886,
+          "lighting schedule": 0.005,
+          "player physics": 8.059,
+          "receive": 2.203,
+          "receive cache_accounting": 0.036,
+          "receive poll": 0.026,
+          "receive surface_batch": 2.1,
+          "retire collision/mesh": 0.0,
+          "staging frame": 0.009,
+          "world authoring": 0.019,
+          "world interaction": 0.039,
+          "world pickups": 0.004,
+          "world presentation": 0.024,
+          "world process": 1.068,
+          "world vehicle": 0.41,
+          "zombie update": 4.101
+        },
+        "surface_backlog": 1,
+        "terrain_pending_edit": false,
+        "terrain_queued": 0,
+        "thread_cpu_ms": 46.875,
+        "thread_cycles": 128777496,
+        "trace_writer_active": false,
+        "velocity": "(0.0, 0.0, 0.0)",
+        "vsync": 1,
+        "zombie_phases_us": {
+          "intent": 230,
+          "interest_spacing": 18,
+          "planning": 23,
+          "population": 9,
+          "residency": 213,
+          "steering": 8
+        },
+        "zombies": 6
+      },
+      "observations_sha256": "217c623ca74801ff37828a6b48109c25ab0568df43adcc4b39c8ad9ac7fa589f",
+      "trace_sha256": {
+        "trace_00.json": "71ead944265b69de48848c457a9ab340693091bff600b3669852c7bc1b06215c",
+        "trace_01.json": "f342f64df4f42928db9c13b146c6a7ef210b4e9e3462feac1792a0a3ce582d6e",
+        "trace_02.json": "c7427373bdbc9a58887d07a30b7def3eb8753d3fd41bc971cab20588adf193ad",
+        "trace_03.json": "0a4bfd7384c5cf75c0ff0d13a09a61c94ed5615dd39997d484ade278e0fb0f89",
+        "trace_04.json": "ecbab358313312881b2eb2f990f18b0e7e60581c3878fca0bc73755309b67206"
+      }
+    },
+    {
+      "path": "reports/performance_changes/20261109T113212567742Z_anatomy_baked1",
+      "initializations": [
+        {
+          "anatomy": 2307,
+          "anatomy readback": 0,
+          "animation": 922,
+          "hit areas": 11508,
+          "parts": 149,
+          "ragdoll": 1056,
+          "scene": 1304,
+          "scene attach": 638,
+          "scene instantiate": 610,
+          "scene resource": 1,
+          "shape fit": 19
+        },
+        {
+          "anatomy": 221,
+          "anatomy readback": 0,
+          "animation": 1070,
+          "hit areas": 462,
+          "parts": 197,
+          "ragdoll": 1263,
+          "scene": 1694,
+          "scene attach": 874,
+          "scene instantiate": 743,
+          "scene resource": 2,
+          "shape fit": 26
+        },
+        {
+          "anatomy": 222,
+          "anatomy readback": 0,
+          "animation": 1097,
+          "hit areas": 288,
+          "parts": 135,
+          "ragdoll": 955,
+          "scene": 1078,
+          "scene attach": 504,
+          "scene instantiate": 524,
+          "scene resource": 2,
+          "shape fit": 23
+        },
+        {
+          "anatomy": 160,
+          "anatomy readback": 0,
+          "animation": 901,
+          "hit areas": 320,
+          "parts": 146,
+          "ragdoll": 847,
+          "scene": 1125,
+          "scene attach": 519,
+          "scene instantiate": 552,
+          "scene resource": 2,
+          "shape fit": 20
+        },
+        {
+          "anatomy": 195,
+          "anatomy readback": 0,
+          "animation": 752,
+          "hit areas": 404,
+          "parts": 208,
+          "ragdoll": 849,
+          "scene": 1606,
+          "scene attach": 736,
+          "scene instantiate": 795,
+          "scene resource": 3,
+          "shape fit": 19
+        },
+        {
+          "anatomy": 214,
+          "anatomy readback": 0,
+          "animation": 930,
+          "hit areas": 300,
+          "parts": 165,
+          "ragdoll": 915,
+          "scene": 1442,
+          "scene attach": 720,
+          "scene instantiate": 663,
+          "scene resource": 3,
+          "shape fit": 20
+        }
+      ],
+      "gameplay_trigger_windows": {
+        "frame_ms": {
+          "count": 1494,
+          "mean": 16.734989290495314,
+          "p99_nearest_rank": 22.278,
+          "max": 36.28
+        },
+        "gpu_ms": {
+          "count": 1494,
+          "mean": 13.962489952843192,
+          "p99_nearest_rank": 15.5380001068115,
+          "max": 16.1310005187988
+        },
+        "process_ms": {
+          "count": 1494,
+          "mean": 2.1875589022757698,
+          "p99_nearest_rank": 8.465,
+          "max": 10.785
+        },
+        "draw_ms": {
+          "count": 1494,
+          "mean": 10.275998661311915,
+          "p99_nearest_rank": 14.179,
+          "max": 31.465
+        },
+        "before_process_ms": {
+          "count": 1494,
+          "mean": 4.151352074966533,
+          "p99_nearest_rank": 8.867,
+          "max": 10.721
+        }
+      },
+      "scope": "Overlapping trigger windows deduplicated by engine frame; not whole-session unbiased percentiles. Same default-world clone, offscreen 1080p; source versus packaged and cache/driver state are not perfectly matched.",
+      "worst_gameplay_frame": {
+        "after_process_ms": 0.094,
+        "at_us": 60708816,
+        "before_process_ms": 3.277,
+        "cadence_ms": 17.2871000000001,
+        "cover_cells": 99,
+        "cover_us": 64,
+        "cover_wanted": 99,
+        "draw_calls": 5007.0,
+        "draw_ms": 31.465,
+        "driving": false,
+        "ecosystem_us": 5,
+        "entry": false,
+        "first_person": {
+          "active": true,
+          "detailed_shadows": false,
+          "enabled": true,
+          "overlay": false
+        },
+        "focus_admitted": true,
+        "focused": false,
+        "forest_us": 7,
+        "fps_cap": 60,
+        "frame": 3084,
+        "frame_ms": 36.28,
+        "gpu_ms": 14.0609998703003,
+        "inventory": false,
+        "loading": false,
+        "menu": false,
+        "phase": "gameplay",
+        "physics_ms": 2.624,
+        "physics_steps": 1,
+        "pipeline_draw": 0.0,
+        "pipeline_specialization": 68.0,
+        "position": "(1058.5, 61.00056, 325.0)",
+        "primitives": 4220244.0,
+        "process_cycles": 3331771,
+        "process_ms": 1.444,
+        "recorder_previous_us": 122,
+        "render_cpu_ms": 4.38399982452393,
+        "stages_ms": {
+          "actor update": 0.024,
+          "base controller": 0.014,
+          "controller loading": 0.001,
+          "controller process": 0.085,
+          "lighting schedule": 0.005,
+          "player physics": 0.176,
+          "receive": 0.016,
+          "receive poll": 0.006,
+          "retire collision/mesh": 0.001,
+          "staging frame": 0.005,
+          "world authoring": 0.013,
+          "world interaction": 0.023,
+          "world pickups": 0.003,
+          "world presentation": 0.013,
+          "world process": 0.231,
+          "world vehicle": 0.006,
+          "zombie update": 0.33
+        },
+        "surface_backlog": 0,
+        "terrain_pending_edit": false,
+        "terrain_queued": 0,
+        "thread_cpu_ms": 15.625,
+        "thread_cycles": 30817902,
+        "trace_writer_active": false,
+        "velocity": "(0.0, 0.0, 0.0)",
+        "vsync": 1,
+        "zombie_phases_us": {
+          "intent": 147,
+          "interest_spacing": 25,
+          "planning": 16,
+          "population": 7,
+          "residency": 120,
+          "steering": 5
+        },
+        "zombies": 6
+      },
+      "observations_sha256": "2ed6425d6a81427816f32dbe07a0badced8cb24b24265ed24135b29b95cd3f32",
+      "trace_sha256": {
+        "trace_00.json": "ea6e06cdfbd312dbf4afce910a96759b85870e14580748f96492cf2aac1d26d8",
+        "trace_01.json": "d1ff5e75bf2c01ff36f6b2f41c3a071d1b30d72ab26bcb2996871e6be4845959",
+        "trace_02.json": "49c66ba3436bdfc4134ea7db181c1c8612d22d4aa503b3c48f89f57ad7273d2c",
+        "trace_03.json": "4cb125308523e07f63240a53bb9283a28c1d71ee37651f25c8e4cb5b5499f015"
+      }
+    },
+    {
+      "path": "reports/performance_changes/20261109T114157357162Z_anatomy_geometry_pack1",
+      "initializations": [
+        {
+          "anatomy": 2118,
+          "anatomy readback": 0,
+          "animation": 708,
+          "hit areas": 9628,
+          "parts": 159,
+          "ragdoll": 932,
+          "scene": 2079,
+          "scene attach": 672,
+          "scene instantiate": 1348,
+          "scene resource": 2,
+          "shape fit": 20
+        },
+        {
+          "anatomy": 307,
+          "anatomy readback": 0,
+          "animation": 799,
+          "hit areas": 307,
+          "parts": 165,
+          "ragdoll": 994,
+          "scene": 1326,
+          "scene attach": 702,
+          "scene instantiate": 564,
+          "scene resource": 2,
+          "shape fit": 21
+        },
+        {
+          "anatomy": 157,
+          "anatomy readback": 0,
+          "animation": 628,
+          "hit areas": 268,
+          "parts": 143,
+          "ragdoll": 931,
+          "scene": 1214,
+          "scene attach": 601,
+          "scene instantiate": 560,
+          "scene resource": 2,
+          "shape fit": 20
+        },
+        {
+          "anatomy": 155,
+          "anatomy readback": 0,
+          "animation": 575,
+          "hit areas": 270,
+          "parts": 137,
+          "ragdoll": 865,
+          "scene": 1159,
+          "scene attach": 509,
+          "scene instantiate": 599,
+          "scene resource": 2,
+          "shape fit": 19
+        },
+        {
+          "anatomy": 201,
+          "anatomy readback": 0,
+          "animation": 579,
+          "hit areas": 291,
+          "parts": 141,
+          "ragdoll": 817,
+          "scene": 1268,
+          "scene attach": 553,
+          "scene instantiate": 664,
+          "scene resource": 2,
+          "shape fit": 20
+        },
+        {
+          "anatomy": 157,
+          "anatomy readback": 0,
+          "animation": 562,
+          "hit areas": 360,
+          "parts": 139,
+          "ragdoll": 825,
+          "scene": 1301,
+          "scene attach": 542,
+          "scene instantiate": 705,
+          "scene resource": 2,
+          "shape fit": 20
+        }
+      ],
+      "gameplay_trigger_windows": {
+        "frame_ms": {
+          "count": 1496,
+          "mean": 17.456641711229945,
+          "p99_nearest_rank": 32.333,
+          "max": 33.453
+        },
+        "gpu_ms": {
+          "count": 1496,
+          "mean": 14.368310835272233,
+          "p99_nearest_rank": 16.1720008850098,
+          "max": 16.8689994812012
+        },
+        "process_ms": {
+          "count": 1496,
+          "mean": 2.192427139037433,
+          "p99_nearest_rank": 8.002,
+          "max": 14.485
+        },
+        "draw_ms": {
+          "count": 1496,
+          "mean": 11.200753342245989,
+          "p99_nearest_rank": 26.977,
+          "max": 29.198
+        },
+        "before_process_ms": {
+          "count": 1496,
+          "mean": 3.9458602941176473,
+          "p99_nearest_rank": 8.165,
+          "max": 10.764
+        }
+      },
+      "scope": "Overlapping trigger windows deduplicated by engine frame; not whole-session unbiased percentiles. Same default-world clone, offscreen 1080p; source versus packaged and cache/driver state are not perfectly matched.",
+      "worst_gameplay_frame": {
+        "after_process_ms": 0.148,
+        "at_us": 38440884,
+        "before_process_ms": 5.211,
+        "cadence_ms": 17.6561,
+        "cover_cells": 99,
+        "cover_us": 55,
+        "cover_wanted": 99,
+        "draw_calls": 4975.0,
+        "draw_ms": 24.337,
+        "driving": false,
+        "ecosystem_us": 340,
+        "entry": false,
+        "first_person": {
+          "active": true,
+          "detailed_shadows": false,
+          "enabled": true,
+          "overlay": false
+        },
+        "focus_admitted": true,
+        "focused": false,
+        "forest_us": 48,
+        "fps_cap": 60,
+        "frame": 1955,
+        "frame_ms": 33.453,
+        "gpu_ms": 15.7569999694824,
+        "inventory": false,
+        "loading": false,
+        "menu": false,
+        "phase": "gameplay",
+        "physics_ms": 4.493,
+        "physics_steps": 1,
+        "pipeline_draw": 0.0,
+        "pipeline_specialization": 68.0,
+        "position": "(1058.5, 61.00056, 325.0)",
+        "primitives": 4209382.0,
+        "process_cycles": 9230561,
+        "process_ms": 3.757,
+        "recorder_previous_us": 164,
+        "render_cpu_ms": 4.62200021743774,
+        "stages_ms": {
+          "LOD coverage": 0.01,
+          "LOD eviction": 0.002,
+          "LOD requests": 0.669,
+          "LOD schedule/cut/evict": 0.688,
+          "actor update": 0.034,
+          "base controller": 0.012,
+          "controller loading": 0.001,
+          "controller process": 0.073,
+          "lighting schedule": 0.002,
+          "player physics": 0.223,
+          "receive": 0.182,
+          "receive cache_accounting": 0.016,
+          "receive poll": 0.011,
+          "receive surface_batch": 0.136,
+          "retire collision/mesh": 0.001,
+          "staging frame": 0.005,
+          "world authoring": 0.012,
+          "world interaction": 0.021,
+          "world pickups": 0.003,
+          "world presentation": 0.013,
+          "world process": 0.185,
+          "world vehicle": 0.005,
+          "zombie update": 1.294
+        },
+        "surface_backlog": 0,
+        "terrain_pending_edit": false,
+        "terrain_queued": 0,
+        "thread_cpu_ms": 31.25,
+        "thread_cycles": 42907656,
+        "trace_writer_active": false,
+        "velocity": "(0.0, 0.0, 0.0)",
+        "vsync": 1,
+        "zombie_phases_us": {
+          "intent": 159,
+          "interest_spacing": 135,
+          "planning": 804,
+          "population": 10,
+          "residency": 154,
+          "steering": 16
+        },
+        "zombies": 6
+      },
+      "observations_sha256": "e382dc4b7c01355f27b281251121a936f4f9bcf4cad665c12de47d72675147ff",
+      "trace_sha256": {
+        "trace_00.json": "9a260ddcb87f1af9e5537628077caf1d6d8b2d539858dd8e3251b259dd029d68",
+        "trace_01.json": "322432f742efbc61496a4b3771e03ba367ff825343284202cf8382a51f9375b9",
+        "trace_02.json": "2dd07461d8c2c7f0b7cc6fad8658a42565aae8bb1157f4dc995c92e03166844b",
+        "trace_03.json": "920a709bec025253ea781f0879f7ff84a4ee4fc4c453ac42041d22a8008319bc",
+        "trace_04.json": "74697c2e234e41ceca7e870d6bf4a9232f7f3e4a0421e4969946116a16238135"
+      }
+    },
+    {
+      "path": "reports/performance_changes/20261109T114302555644Z_anatomy_geometry_pack2",
+      "initializations": [
+        {
+          "anatomy": 2048,
+          "anatomy readback": 0,
+          "animation": 1120,
+          "hit areas": 19121,
+          "parts": 135,
+          "ragdoll": 1684,
+          "scene": 1287,
+          "scene attach": 603,
+          "scene instantiate": 628,
+          "scene resource": 2,
+          "shape fit": 17
+        },
+        {
+          "anatomy": 198,
+          "anatomy readback": 0,
+          "animation": 644,
+          "hit areas": 346,
+          "parts": 195,
+          "ragdoll": 1016,
+          "scene": 1532,
+          "scene attach": 744,
+          "scene instantiate": 720,
+          "scene resource": 2,
+          "shape fit": 24
+        },
+        {
+          "anatomy": 154,
+          "anatomy readback": 0,
+          "animation": 590,
+          "hit areas": 322,
+          "parts": 138,
+          "ragdoll": 761,
+          "scene": 1090,
+          "scene attach": 521,
+          "scene instantiate": 513,
+          "scene resource": 2,
+          "shape fit": 45
+        },
+        {
+          "anatomy": 152,
+          "anatomy readback": 0,
+          "animation": 651,
+          "hit areas": 320,
+          "parts": 132,
+          "ragdoll": 869,
+          "scene": 1299,
+          "scene attach": 592,
+          "scene instantiate": 655,
+          "scene resource": 2,
+          "shape fit": 22
+        },
+        {
+          "anatomy": 179,
+          "anatomy readback": 0,
+          "animation": 619,
+          "hit areas": 392,
+          "parts": 161,
+          "ragdoll": 917,
+          "scene": 1276,
+          "scene attach": 582,
+          "scene instantiate": 635,
+          "scene resource": 2,
+          "shape fit": 27
+        },
+        {
+          "anatomy": 164,
+          "anatomy readback": 0,
+          "animation": 612,
+          "hit areas": 328,
+          "parts": 149,
+          "ragdoll": 820,
+          "scene": 1297,
+          "scene attach": 610,
+          "scene instantiate": 631,
+          "scene resource": 2,
+          "shape fit": 22
+        }
+      ],
+      "gameplay_trigger_windows": {
+        "frame_ms": {
+          "count": 1509,
+          "mean": 17.3912365805169,
+          "p99_nearest_rank": 32.261,
+          "max": 40.257
+        },
+        "gpu_ms": {
+          "count": 1509,
+          "mean": 14.119845595084888,
+          "p99_nearest_rank": 16.1580009460449,
+          "max": 16.9850006103516
+        },
+        "process_ms": {
+          "count": 1509,
+          "mean": 2.2676713055003312,
+          "p99_nearest_rank": 9.533,
+          "max": 17.714
+        },
+        "draw_ms": {
+          "count": 1509,
+          "mean": 10.836722995361166,
+          "p99_nearest_rank": 25.87,
+          "max": 34.143
+        },
+        "before_process_ms": {
+          "count": 1509,
+          "mean": 4.162435387673956,
+          "p99_nearest_rank": 9.462,
+          "max": 16.89
+        }
+      },
+      "scope": "Overlapping trigger windows deduplicated by engine frame; not whole-session unbiased percentiles. Same default-world clone, offscreen 1080p; source versus packaged and cache/driver state are not perfectly matched.",
+      "worst_gameplay_frame": {
+        "after_process_ms": 0.117,
+        "at_us": 51514978,
+        "before_process_ms": 4.446,
+        "cadence_ms": 18.4805666666666,
+        "cover_cells": 99,
+        "cover_us": 72,
+        "cover_wanted": 99,
+        "draw_calls": 4983.0,
+        "draw_ms": 34.143,
+        "driving": false,
+        "ecosystem_us": 6,
+        "entry": false,
+        "first_person": {
+          "active": true,
+          "detailed_shadows": false,
+          "enabled": true,
+          "overlay": false
+        },
+        "focus_admitted": true,
+        "focused": false,
+        "forest_us": 7,
+        "fps_cap": 60,
+        "frame": 2783,
+        "frame_ms": 40.257,
+        "gpu_ms": 16.1580009460449,
+        "inventory": false,
+        "loading": false,
+        "menu": false,
+        "phase": "gameplay",
+        "physics_ms": 3.49,
+        "physics_steps": 1,
+        "pipeline_draw": 0.0,
+        "pipeline_specialization": 68.0,
+        "position": "(1058.5, 61.00056, 325.0)",
+        "primitives": 4213024.0,
+        "process_cycles": 3863931,
+        "process_ms": 1.551,
+        "recorder_previous_us": 209,
+        "render_cpu_ms": 4.92600011825562,
+        "stages_ms": {
+          "actor update": 0.045,
+          "base controller": 0.016,
+          "controller loading": 0.002,
+          "controller process": 0.195,
+          "lighting schedule": 0.005,
+          "player physics": 0.365,
+          "receive": 0.016,
+          "receive poll": 0.006,
+          "retire collision/mesh": 0.0,
+          "staging frame": 0.006,
+          "world authoring": 0.015,
+          "world interaction": 0.028,
+          "world pickups": 0.004,
+          "world presentation": 0.018,
+          "world process": 0.345,
+          "world vehicle": 0.106,
+          "zombie update": 0.633
+        },
+        "surface_backlog": 0,
+        "terrain_pending_edit": false,
+        "terrain_queued": 0,
+        "thread_cpu_ms": 15.625,
+        "thread_cycles": 34198262,
+        "trace_writer_active": false,
+        "velocity": "(0.0, 0.0, 0.0)",
+        "vsync": 1,
+        "zombie_phases_us": {
+          "intent": 314,
+          "interest_spacing": 42,
+          "planning": 29,
+          "population": 12,
+          "residency": 205,
+          "steering": 9
+        },
+        "zombies": 6
+      },
+      "observations_sha256": "cbbe28fb83c151456447a81979c37f6393598ddec000f18ca409055be59ab782",
+      "trace_sha256": {
+        "trace_00.json": "46ec7e8273d9e768f4b474961140aa779f52005f13f8755ad13b7a214b575561",
+        "trace_01.json": "8f926d12c11319aed231fad5a21ad9a5bde9238b41a6140e96102ef93850614b",
+        "trace_02.json": "a962f2036a186c4451f301068f7e30713d650ae22fc588c8c2b8f14f3d756671",
+        "trace_03.json": "5948bacbd80cdfc36f9984943618f4c6fe01f12102caf589c1b5e16ba5d8b04d",
+        "trace_04.json": "b055e0b168331276aaacec574dbd29ffc7fc54f8d5afaa63ffc875935b2fb80f"
+      }
+    }
+  ],
+  "release_checks": {
+    "zombie_geometry_bake": {
+      "path": "reports/zombie_geometry_bake_release.json",
+      "sha256": "277ba2d582b1d3a4ad1444cceb2f1d6d0d6d912f9dd1aaed7d0c3b1c90da6269",
+      "result": {
+        "baked_parts": 14,
+        "baked_us": {
+          "anatomy": 10962,
+          "anatomy readback": 0,
+          "animation": 1059,
+          "hit areas": 13763,
+          "parts": 133,
+          "ragdoll": 1391,
+          "scene": 577,
+          "scene attach": 104,
+          "scene instantiate": 419,
+          "scene resource": 3,
+          "shape fit": 35
+        },
+        "baked_vertices": 12082,
+        "checks": 19,
+        "failures": 0,
+        "reference_us": {
+          "anatomy": 2302,
+          "anatomy readback": 1083,
+          "animation": 5955,
+          "hit areas": 8686,
+          "parts": 191,
+          "ragdoll": 4611,
+          "scene": 648,
+          "scene attach": 127,
+          "scene instantiate": 459,
+          "scene resource": 3,
+          "shape fit": 13906
+        },
+        "library": "world_runtime.windows.template_release.x86_64.dll"
+      },
+      "console_sha256": "107fabc4fcab8724f8b8f91bffd04b6abb3af90a3e5b94c93ee33603bc1b3345"
+    },
+    "zombie_geometry_cache": {
+      "path": "reports/zombie_geometry_cache_release.json",
+      "sha256": "3b68423da221886551df82737cbb4b2ec57d083521ce69032c7761593571905c",
+      "result": {
+        "checks": 30,
+        "failures": 0,
+        "initialization_us": [
+          {
+            "anatomy": 2402,
+            "anatomy readback": 1131,
+            "animation": 2736,
+            "hit areas": 15038,
+            "parts": 236,
+            "ragdoll": 1305,
+            "scene": 680,
+            "scene attach": 141,
+            "scene instantiate": 473,
+            "scene resource": 3,
+            "shape fit": 13111
+          },
+          {
+            "anatomy": 4453,
+            "anatomy readback": 0,
+            "animation": 877,
+            "hit areas": 301,
+            "parts": 296,
+            "ragdoll": 697,
+            "scene": 1161,
+            "scene attach": 216,
+            "scene instantiate": 837,
+            "scene resource": 5,
+            "shape fit": 30
+          },
+          {
+            "anatomy": 251,
+            "anatomy readback": 0,
+            "animation": 1104,
+            "hit areas": 362,
+            "parts": 233,
+            "ragdoll": 965,
+            "scene": 846,
+            "scene attach": 158,
+            "scene instantiate": 596,
+            "scene resource": 4,
+            "shape fit": 29
+          },
+          {
+            "anatomy": 2240,
+            "anatomy readback": 1058,
+            "animation": 730,
+            "hit areas": 9516,
+            "parts": 178,
+            "ragdoll": 632,
+            "scene": 641,
+            "scene attach": 116,
+            "scene instantiate": 463,
+            "scene resource": 3,
+            "shape fit": 9709
+          },
+          {
+            "anatomy": 145,
+            "anatomy readback": 0,
+            "animation": 736,
+            "hit areas": 217,
+            "parts": 146,
+            "ragdoll": 607,
+            "scene": 486,
+            "scene attach": 94,
+            "scene instantiate": 343,
+            "scene resource": 2,
+            "shape fit": 18
+          }
+        ],
+        "library": "world_runtime.windows.template_release.x86_64.dll"
+      },
+      "console_sha256": "fe1c95aa935dfbfc10f7e054d88460d5877bb3ceb802ae1dc80609b7ad19af44"
+    }
+  },
+  "logs": {
+    "reports/anatomy_geometry_final_build.log": "4229a3da8fbafc9baa2f496cc01ad39a55d72e3a943f67f054527c2d65531879",
+    "reports/anatomy_geometry_export.log": "d1078848ae349b719c86692f63fb2b28416b0699b570a9f7e82a6b1562969b91",
+    "reports/anatomy_geometry_validation.log": "51fa0631089f288a728e112444c83be25f58f457e9328c8f9163373d40bf33d8",
+    "reports/anatomy_geometry_release_missing_extension.log": "21e19530f9004a6011c5c6ed4451b5a0ad2e339bca45b2ccb0483afb2e90da37"
+  },
+  "implementation_commit": "72379f7c36190a3e22a4d68de26c4f9b1179a1f6"
+}

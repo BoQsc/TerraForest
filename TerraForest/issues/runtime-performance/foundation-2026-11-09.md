@@ -7,6 +7,11 @@ is original CC0 with its own source/engine/hash receipt; no new dependency.
 
 ## Changes and measured limits
 
+The [subsequent anatomy investigation and bake](anatomy-geometry-2026-11-09.md)
+localizes 46.603 ms of the first zombie's setup to render-mesh readback and removes
+that readback with exact binary geometry. Its verification and remaining limits
+are tracked separately; the original measurements below remain historical evidence.
+
 | Path | Change | Evidence / practical limit |
 | --- | --- | --- |
 | First-person arrival | Activate the same depth-protected materials behind the opaque loading cover, before control release | Matched default-world release **223.587 → 26.603 ms**; draw **160.549 → 9.513 ms**. Covers the tested existing-photo arrival, not every cold driver/material or newly generated photograph |

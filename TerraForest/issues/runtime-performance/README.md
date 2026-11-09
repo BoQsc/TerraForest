@@ -22,6 +22,12 @@ cost about 5 ms and independent draw/scheduling stalls remain. The final ordinar
 long control has p99 27.096 ms; a 480 ms interval in the profiled run has no proven
 cause and did not recur in that control. No graphics or gameplay limit was reduced.
 
+The [zombie geometry follow-up](anatomy-geometry-2026-11-09.md) removes a measured
+46.603 ms first-admission mesh readback using the exact inherited mesh data in a
+compressed binary cache. Source anatomy setup is now 2.307 ms in the first repeat;
+first-use hit areas and later rendering/planning stalls remain open. Independent
+geometry, combat, rest and release checks guard visual/gameplay parity.
+
 Earlier [fresh-default-world / rolling-trace investigation](rolling-trace-2026-11-09.md):
 normal Frontier expedition generation completed; first-person depth activation,
 arrival PNG decoding, first zombie admission, parked-prototype preparation and

@@ -15,7 +15,17 @@ actual compound-water reopen, combat, first-person and provider checks pass.
 First-person materials prepare behind the loading cover; photograph validation
 and parked resource validation run on workers. Matched existing-photo release
 fell from 223.6 to 26.6 ms. Built-in zombie loading joins startup dependency
-preparation, but scene/anatomy admission and slow multi-floor pursuit remain open.
+preparation. [Exact binary anatomy geometry](../issues/runtime-performance/anatomy-geometry-2026-11-09.md)
+removes a measured 46.603 ms first-use render-mesh readback; the first source
+repeat's anatomy stage falls from 57.864 to 2.307 ms, preserving all 12,082
+vertices, hit regions and fitted shapes. Debug/release geometry checks and source
+combat/rest checks pass. First-use hit-area creation still costs 11.508 ms; scene/admission,
+rendering and slow multi-floor pursuit remain open.
+Two matching packaged repeats retain zero readback and 2.048–2.118 ms anatomy;
+hit-area creation varies 9.628–19.121 ms. Packaged combat/replanning checks and
+both save/shutdown runs pass cleanly, but triggered gameplay p99 remains about
+32.3 ms and maximum reaches 40.257 ms, mostly draw. No overall pacing/headroom
+improvement is claimed for this admission-only correction.
 
 Stable 60 FPS with headroom is NOT established: the combined trace still has a
 91.4 ms gameplay frame and ~15 ms root GPU work. Rendering pass/batch costs,

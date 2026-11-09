@@ -69,5 +69,35 @@
     "revision": "130c8f05; exact PCK and fourteen native hashes in run.json",
     "world": "Owned clone of default Frontier generator 29 seed 1703, unchanged 1080p sanctuary view after a full turn and normal gameplay save",
     "status": "Inspected against source repeat3 arrival and repaired package repeat1. Existing material, geometry, tool/hand appearance and HUD preserved; prior art defects and user visual approval are not closed. GPU-profile/verbose mode used; screenshot is not FPS evidence."
+  },
+  "anatomy-readback-baseline.png": {
+    "source": "reports/performance_changes/20261109T111548973735Z_anatomy_readback_baseline/arrival.png",
+    "sha256": "a77c987579f88f6fc759c598568ed647698c38c8fb9d33b898724a23dc3ded3b",
+    "revision": "fc1f746d plus exact binary zombie geometry; native/package hashes in anatomy-geometry-2026-11-09.json",
+    "status": "Generator 29, seed 1703, unchanged 1080p default-world view before binary anatomy cache; inspected. Existing pickaxe grip appearance remains, not a new regression."
+  },
+  "anatomy-baked-source.png": {
+    "source": "reports/performance_changes/20261109T113212567742Z_anatomy_baked1/arrival.png",
+    "sha256": "5f8067d57ebb4f4d98ada00961d8af87618397ea6e14d4cd7a0869febbab2bc8",
+    "revision": "fc1f746d plus exact binary zombie geometry; native/package hashes in anatomy-geometry-2026-11-09.json",
+    "status": "Same world/view after binary anatomy cache. No new visible difference found in this view; numerical/animated geometry parity is separately tested; not user visual approval."
+  },
+  "anatomy-baked-combat.png": {
+    "source": "reports/checks/20261109T114134125222Z_zombies_pack/zombie_combat_regions/evidence/arm_detachment.png",
+    "sha256": "baddb807fd14401dd004d25f3d740e85aca330eaed87996f5301b6513bc2e37b",
+    "revision": "fc1f746d plus exact binary zombie geometry; native/package hashes in anatomy-geometry-2026-11-09.json",
+    "status": "Matching PCK, 1080p Vulkan combat fixture. Severed arm and exposed cap retained. Inspected engineering evidence, not broad art acceptance."
+  },
+  "anatomy-baked-crawl.png": {
+    "source": "reports/checks/20261109T114134125222Z_zombies_pack/zombie_combat_regions/evidence/crawl_limbs.png",
+    "sha256": "f8f79ed9540f3e8fc01bbe6911a34dc3516535911e4bc662afc2ca1b9e019335",
+    "revision": "fc1f746d plus exact binary zombie geometry; native/package hashes in anatomy-geometry-2026-11-09.json",
+    "status": "Matching PCK, 1080p Vulkan combat fixture. Crawling with severed thigh and detached limb/cap. Existing authored shape retained; not user art approval."
+  },
+  "anatomy-baked-corpse.png": {
+    "source": "reports/checks/20261109T114134125222Z_zombies_pack/zombie_combat_regions/evidence/settled_corpse.png",
+    "sha256": "3c6270f66b6eb9a8329e35ce70dd35be052b4a0cdac037ce87a663105c2e827b",
+    "revision": "fc1f746d plus exact binary zombie geometry; native/package hashes in anatomy-geometry-2026-11-09.json",
+    "status": "Matching PCK, 1080p Vulkan corpse fixture. Resting articulated body retains targeting, wake-up and gravity tests. Inspected; no universal visual acceptance."
   }
 }
