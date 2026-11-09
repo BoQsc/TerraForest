@@ -1,6 +1,12 @@
 # Runtime performance
 
-Latest: [native route-water footprints](navigation-water-batch-2026-11-09.md)
+Latest: [frame-phase CPU work and hardware controls](phase-work-2026-11-09.md)
+separate CPU-heavy physics from long draw intervals. Recorder-off gameplay still
+has >32 ms frames and ~15 ms GPU work; NVIDIA reports software power/thermal
+limiting during that control. Save, physics, rendering and cold pursuit remain
+open; no stable-60-FPS claim is made.
+
+[Native route-water footprints](navigation-water-batch-2026-11-09.md)
 retain every hazard sample while removing repeated engine-call crossings. The
 release comparison preserves all paths and uses 38% fewer thread cycles; saved
 tower hazard time falls about 84%. Cold pursuit still takes seconds, and waits,

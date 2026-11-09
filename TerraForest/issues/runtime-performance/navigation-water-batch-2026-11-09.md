@@ -2,6 +2,8 @@
 
 Status: scoped CPU improvement; cold pursuit and stable 60 FPS remain open.
 Implementation: `1df22d86` (debug/release libraries and matching test UID included).
+Follow-up: [phase CPU-work and recorder-off controls](phase-work-2026-11-09.md)
+retain the newer diagnostic package and hardware-limiting observations.
 Continues [bounded model/door invalidation](navigation-model-invalidation-2026-11-09.md).
 [Exact receipts](navigation-water-batch-2026-11-09.json) retain source/release
 comparisons, failed attempts, native hashes and saved-world results.

@@ -120,6 +120,10 @@ the history and manual marker remain available.
 [Fresh-default-world investigation](../issues/runtime-performance/rolling-trace-2026-11-09.md)
 records confirmed costs, controls, unresolved waits and the optimization order.
 The recorder itself is diagnostic infrastructure, not a stutter fix.
+The [phase-work follow-up](../issues/runtime-performance/phase-work-2026-11-09.md)
+records the main-thread guards, recorder-off comparison, remaining physics/draw
+costs and observed GPU power/thermal limiting. Keep hardware telemetry with future
+rendering comparisons; a frame timer alone cannot separate these contributors.
 
 ```text
 python TerraForest/tools/run_godot_check.py frame_trace --headless --timeout 30 --require "FRAME_TRACE_TEST failures=0"

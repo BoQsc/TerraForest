@@ -1,0 +1,1873 @@
+{
+  "schema": 1,
+  "scope": "Opt-in rolling trace attribution and serial recorder-on/off control; not stable 60 FPS, an unbiased universal performance bound, or an isolated estimate of recorder overhead.",
+  "implementation_commit": "105acaaa24c952bcd8a13092baceedbd81dd2838",
+  "runs": {
+    "initial_counter_fixture": {
+      "path": "reports/checks/20261109T155151004717Z",
+      "manifest_sha256": "bfaf99b91d0dae674748f01655c4d163ca120da7e2cb30df59208d06c8358e5a",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T155151004717Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/frame_trace.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_235ff2966d464c6f9e46a21403a4fa42",
+        "--derived-cache=user://frame_trace_235ff2966d464c6f9e46a21403a4fa42"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 49776,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 18907136,
+          "peak_working_set_bytes": 48660480,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 18907136,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.43504590005613863,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 919584868,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "diagnostic_sha256": null,
+      "pack_sha256": null
+    },
+    "thread_guard_fixture": {
+      "path": "reports/checks/20261109T155420751004Z",
+      "manifest_sha256": "935515df45c5351f264c828dd2e830b326ca66637d9df2dc3cab2fe0172f712b",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T155420751004Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/frame_trace.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_a9a3e3a3b4fb49729e78f2d1df4680c1",
+        "--derived-cache=user://frame_trace_a9a3e3a3b4fb49729e78f2d1df4680c1"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 16584,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 19283968,
+          "peak_working_set_bytes": 49123328,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 19283968,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.34699340001679957,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 919584868,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "diagnostic_sha256": null,
+      "pack_sha256": null
+    },
+    "interim_no_thread_guard": {
+      "path": "reports/performance_changes/20261109T155254810212Z_phase_thread_trace",
+      "manifest_sha256": "eeb0ab033e855d547fc1f5d4b10c9522ec398f9588169010fcdf714b6e092000",
+      "command": [
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T155254810212Z_phase_thread_trace\\engine.log",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\frame_trace_world.gd",
+        "--",
+        "--trace-world-slot=StartupBench_FPS_20261109T155254810212",
+        "--trace-world-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/performance_changes/20261109T155254810212Z_phase_thread_trace",
+        "--trace-short",
+        "--trace-save",
+        "--frame-trace",
+        "--frame-trace-dir=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T155254810212Z_phase_thread_trace\\traces"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 39960,
+        "exit_code": 0,
+        "resources": {
+          "samples": 105,
+          "gpu_samples": 104,
+          "peak_private_commit_bytes": 3907563520,
+          "peak_working_set_bytes": 2367193088,
+          "peak_dedicated_gpu_bytes": 1491771392,
+          "checks": {
+            "ram": {
+              "bytes": 3907563520,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1491771392,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 64.38838969997596,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "0f07db4b2ebec5292b68f931dc17433efca6dbfb5dcfb60b693121083331548a",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tools\\check_frame_trace_world.py": "0a00627c038f75939c2cf8db47341e1db45bff81f80d018b4490df55d588524a"
+      },
+      "pack_sha256": "cf4ce39a766244a87aea5b8c4c3960d171de68d57ceb1cf38c34a5fb813ee05e"
+    },
+    "recorder_on": {
+      "path": "reports/performance_changes/20261109T155712534546Z_phase_guard_on",
+      "manifest_sha256": "c700c7991bc79a2c45e135cad83e9b6cece6165c35eb9f73d7b1a3d2e5f5dd2e",
+      "command": [
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T155712534546Z_phase_guard_on\\engine.log",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\frame_trace_world.gd",
+        "--",
+        "--trace-world-slot=StartupBench_FPS_20261109T155712534546",
+        "--trace-world-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/performance_changes/20261109T155712534546Z_phase_guard_on",
+        "--trace-short",
+        "--trace-save",
+        "--frame-trace",
+        "--frame-trace-dir=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T155712534546Z_phase_guard_on\\traces"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 50208,
+        "exit_code": 0,
+        "resources": {
+          "samples": 104,
+          "gpu_samples": 103,
+          "peak_private_commit_bytes": 3917840384,
+          "peak_working_set_bytes": 2373988352,
+          "peak_dedicated_gpu_bytes": 1491767296,
+          "checks": {
+            "ram": {
+              "bytes": 3917840384,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1491767296,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 63.68292179994751,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "4e414a74f1cb6b4a7b7903d8a52cf43c4b24ed12254261ec3f05ea4091eab075",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tools\\check_frame_trace_world.py": "0a00627c038f75939c2cf8db47341e1db45bff81f80d018b4490df55d588524a"
+      },
+      "pack_sha256": "2640664aea5524cadf13beda980202e4520531e7609b51c347be23dedfb9c402"
+    },
+    "recorder_off": {
+      "path": "reports/performance_changes/20261109T155818654983Z_phase_guard_off",
+      "manifest_sha256": "39abe2889c10e91ffde198b86b308be8288195478085f3b932d34ca2dc103a27",
+      "command": [
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T155818654983Z_phase_guard_off\\engine.log",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\frame_trace_world.gd",
+        "--",
+        "--trace-world-slot=StartupBench_FPS_20261109T155818654983",
+        "--trace-world-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/performance_changes/20261109T155818654983Z_phase_guard_off",
+        "--trace-short",
+        "--trace-save"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 1728,
+        "exit_code": 0,
+        "resources": {
+          "samples": 99,
+          "gpu_samples": 99,
+          "peak_private_commit_bytes": 3847790592,
+          "peak_working_set_bytes": 2306174976,
+          "peak_dedicated_gpu_bytes": 1491771392,
+          "checks": {
+            "ram": {
+              "bytes": 3847790592,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1491771392,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 60.64806869998574,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "4e414a74f1cb6b4a7b7903d8a52cf43c4b24ed12254261ec3f05ea4091eab075",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tools\\check_frame_trace_world.py": "0a00627c038f75939c2cf8db47341e1db45bff81f80d018b4490df55d588524a"
+      },
+      "pack_sha256": "2640664aea5524cadf13beda980202e4520531e7609b51c347be23dedfb9c402"
+    }
+  },
+  "observations": {
+    "interim_no_thread_guard": {
+      "observation_sha256": "c0623a8f4243124ef4ecf98b4d7bd36893347fe90cebd082866d70aed1738cac",
+      "manual_save": {
+        "completed": true,
+        "requested": true,
+        "success": true
+      },
+      "continuous_phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "samples": 660,
+            "mean": 18.192481818181818,
+            "p50": 17.708,
+            "p95": 22.91,
+            "p99": 26.075,
+            "maximum": 30.185
+          },
+          "gpu_ms": null,
+          "render_cpu_ms": null,
+          "draw_calls": null
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "samples": 61,
+            "mean": 17.363819672131147,
+            "p50": 16.695,
+            "p95": 19.02,
+            "p99": 34.122,
+            "maximum": 34.122
+          },
+          "gpu_ms": null,
+          "render_cpu_ms": null,
+          "draw_calls": null
+        },
+        "turning": {
+          "frame_ms": {
+            "samples": 299,
+            "mean": 16.75752508361204,
+            "p50": 16.641,
+            "p95": 18.995,
+            "p99": 20.242,
+            "maximum": 23.074
+          },
+          "gpu_ms": null,
+          "render_cpu_ms": null,
+          "draw_calls": null
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "samples": 475,
+            "mean": 16.873911578947368,
+            "p50": 16.718,
+            "p95": 19.048,
+            "p99": 20.149,
+            "maximum": 34.007
+          },
+          "gpu_ms": null,
+          "render_cpu_ms": null,
+          "draw_calls": null
+        }
+      },
+      "arrival": {
+        "path": "reports/performance_changes/20261109T155254810212Z_phase_thread_trace/arrival.png",
+        "sha256": "e55f0fad03e7ba8ea947459a36a0f6ba0123a7d2105feb6acaa7d2ea80ee80a4",
+        "reviewed": false,
+        "caption": "Normal first-person furnished-house arrival with the same held pickaxe, UI and doorway; scoped visual check, not world-quality acceptance."
+      },
+      "analysis_sha256": "e1899fec8ecee68eb0f32c8643f90c09220452d69f8ec85d2407ab66a1181b95",
+      "triggered_phases": {
+        "loading": {
+          "frame_ms": {
+            "samples": 578,
+            "mean": 17.275326989619376,
+            "p50": 16.876,
+            "p95": 20.556,
+            "p99": 24.001,
+            "maximum": 49.575
+          },
+          "process_ms": {
+            "samples": 578,
+            "mean": 5.515899653979239,
+            "p50": 5.02,
+            "p95": 8.465,
+            "p99": 11.573,
+            "maximum": 37.867
+          },
+          "draw_ms": {
+            "samples": 578,
+            "mean": 10.663474048442907,
+            "p50": 10.497,
+            "p95": 13.896,
+            "p99": 15.385,
+            "maximum": 24.454
+          },
+          "before_process_ms": {
+            "samples": 578,
+            "mean": 0.9126903114186851,
+            "p50": 0.837,
+            "p95": 1.387,
+            "p99": 1.869,
+            "maximum": 3.236
+          },
+          "after_process_ms": {
+            "samples": 578,
+            "mean": 0.18326297577854672,
+            "p50": 0.132,
+            "p95": 0.375,
+            "p99": 0.511,
+            "maximum": 1.513
+          },
+          "physics_ms": {
+            "samples": 578,
+            "mean": 0.5421522491349481,
+            "p50": 0.489,
+            "p95": 0.901,
+            "p99": 1.263,
+            "maximum": 1.91
+          },
+          "gpu_ms": {
+            "samples": 578,
+            "mean": 14.942515556375051,
+            "p50": 14.6470003128052,
+            "p95": 18.261999130249,
+            "p99": 20.0590000152588,
+            "maximum": 20.5429992675781
+          },
+          "render_cpu_ms": {
+            "samples": 578,
+            "mean": 5.570780278902153,
+            "p50": 5.37799978256226,
+            "p95": 7.24300003051758,
+            "p99": 8.26200008392334,
+            "maximum": 9.68299961090088
+          },
+          "recorder_previous_us": {
+            "samples": 578,
+            "mean": 248.83391003460207,
+            "p50": 233,
+            "p95": 342,
+            "p99": 454,
+            "maximum": 1024
+          },
+          "draw_calls": {
+            "samples": 578,
+            "mean": 5190.826989619377,
+            "p50": 5237.0,
+            "p95": 5237.0,
+            "p99": 5237.0,
+            "maximum": 5237.0
+          },
+          "primitives": {
+            "samples": 578,
+            "mean": 4072545.4844290656,
+            "p50": 4094166.0,
+            "p95": 4145486.0,
+            "p99": 4145486.0,
+            "maximum": 4145572.0
+          },
+          "over_20ms_frames": 45
+        },
+        "gameplay": {
+          "frame_ms": {
+            "samples": 1497,
+            "mean": 17.456948563794256,
+            "p50": 17.033,
+            "p95": 21.093,
+            "p99": 25.749,
+            "maximum": 34.157
+          },
+          "process_ms": {
+            "samples": 1497,
+            "mean": 2.2588503674014695,
+            "p50": 1.452,
+            "p95": 5.39,
+            "p99": 8.962,
+            "maximum": 11.624
+          },
+          "draw_ms": {
+            "samples": 1497,
+            "mean": 10.949330661322646,
+            "p50": 10.863,
+            "p95": 13.485,
+            "p99": 15.278,
+            "maximum": 28.701
+          },
+          "before_process_ms": {
+            "samples": 1497,
+            "mean": 4.129820975283901,
+            "p50": 3.887,
+            "p95": 6.249,
+            "p99": 8.253,
+            "maximum": 11.831
+          },
+          "after_process_ms": {
+            "samples": 1497,
+            "mean": 0.11894655978623914,
+            "p50": 0.107,
+            "p95": 0.164,
+            "p99": 0.31,
+            "maximum": 3.308
+          },
+          "physics_ms": {
+            "samples": 1497,
+            "mean": 3.1574689378757514,
+            "p50": 2.953,
+            "p95": 4.853,
+            "p99": 6.595,
+            "maximum": 8.915
+          },
+          "gpu_ms": {
+            "samples": 1497,
+            "mean": 15.168630594242073,
+            "p50": 14.8269996643066,
+            "p95": 18.2339992523193,
+            "p99": 19.4330005645752,
+            "maximum": 20.9029998779297
+          },
+          "render_cpu_ms": {
+            "samples": 1497,
+            "mean": 6.021520373179424,
+            "p50": 5.77600002288818,
+            "p95": 7.59499979019165,
+            "p99": 9.7810001373291,
+            "maximum": 12.6829996109009
+          },
+          "recorder_previous_us": {
+            "samples": 1497,
+            "mean": 284.4929859719439,
+            "p50": 266,
+            "p95": 382,
+            "p99": 489,
+            "maximum": 1057
+          },
+          "draw_calls": {
+            "samples": 1497,
+            "mean": 5381.831663326653,
+            "p50": 5394.0,
+            "p95": 5412.0,
+            "p99": 5412.0,
+            "maximum": 5412.0
+          },
+          "primitives": {
+            "samples": 1497,
+            "mean": 4222427.653306614,
+            "p50": 4231107.0,
+            "p95": 4231127.0,
+            "p99": 4231127.0,
+            "maximum": 4231127.0
+          },
+          "over_20ms_frames": 140
+        },
+        "browser": {
+          "frame_ms": {
+            "samples": 2,
+            "mean": 996.386,
+            "p50": 1964.196,
+            "p95": 1964.196,
+            "p99": 1964.196,
+            "maximum": 1964.196
+          },
+          "process_ms": {
+            "samples": 2,
+            "mean": 1.3105,
+            "p50": 2.611,
+            "p95": 2.611,
+            "p99": 2.611,
+            "maximum": 2.611
+          },
+          "draw_ms": {
+            "samples": 2,
+            "mean": 13.045,
+            "p50": 25.581,
+            "p95": 25.581,
+            "p99": 25.581,
+            "maximum": 25.581
+          },
+          "before_process_ms": {
+            "samples": 2,
+            "mean": 982.0055,
+            "p50": 1963.663,
+            "p95": 1963.663,
+            "p99": 1963.663,
+            "maximum": 1963.663
+          },
+          "after_process_ms": {
+            "samples": 2,
+            "mean": 0.024999999999999998,
+            "p50": 0.036,
+            "p95": 0.036,
+            "p99": 0.036,
+            "maximum": 0.036
+          },
+          "physics_ms": {
+            "samples": 2,
+            "mean": 0.066,
+            "p50": 0.1,
+            "p95": 0.1,
+            "p99": 0.1,
+            "maximum": 0.1
+          },
+          "gpu_ms": {
+            "samples": 2,
+            "mean": 14.945499897003149,
+            "p50": 15.1309995651245,
+            "p95": 15.1309995651245,
+            "p99": 15.1309995651245,
+            "maximum": 15.1309995651245
+          },
+          "render_cpu_ms": {
+            "samples": 2,
+            "mean": 5.837000131607055,
+            "p50": 6.27400016784668,
+            "p95": 6.27400016784668,
+            "p99": 6.27400016784668,
+            "maximum": 6.27400016784668
+          },
+          "recorder_previous_us": {
+            "samples": 2,
+            "mean": 248.5,
+            "p50": 260,
+            "p95": 260,
+            "p99": 260,
+            "maximum": 260
+          },
+          "draw_calls": {
+            "samples": 2,
+            "mean": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "maximum": 0.0
+          },
+          "primitives": {
+            "samples": 2,
+            "mean": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "maximum": 0.0
+          },
+          "over_20ms_frames": 2
+        }
+      },
+      "triggered_scope": "Triggered windows only, not an unbiased whole-session distribution. Overlapping frames deduplicated. Stages/physics overlap wall intervals. GPU timers may lag. Missing adjacent frames give unknown compilation deltas."
+    },
+    "recorder_on": {
+      "observation_sha256": "7c16e735915e055dfc8d8ac9b18f0637ba21b3d1cf629d78b943360ee4778fa7",
+      "manual_save": {
+        "completed": true,
+        "requested": true,
+        "success": true
+      },
+      "continuous_phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "samples": 670,
+            "mean": 17.927932835820897,
+            "p50": 17.511,
+            "p95": 21.856,
+            "p99": 25.1,
+            "maximum": 34.588
+          },
+          "gpu_ms": {
+            "samples": 670,
+            "mean": 16.045516425460136,
+            "p50": 15.8479995727539,
+            "p95": 19.0200004577637,
+            "p99": 20.4710006713867,
+            "maximum": 21.5990009307861
+          },
+          "render_cpu_ms": {
+            "samples": 670,
+            "mean": 5.911353726173515,
+            "p50": 5.65199995040894,
+            "p95": 7.72300004959106,
+            "p99": 10.3009996414185,
+            "maximum": 12.8819999694824
+          },
+          "draw_calls": {
+            "samples": 670,
+            "mean": 5385.3537313432835,
+            "p50": 5418.0,
+            "p95": 5418.0,
+            "p99": 5418.0,
+            "maximum": 5418.0
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "samples": 58,
+            "mean": 18.67346551724138,
+            "p50": 18.259,
+            "p95": 21.839,
+            "p99": 32.773,
+            "maximum": 32.773
+          },
+          "gpu_ms": {
+            "samples": 58,
+            "mean": 16.98670691457288,
+            "p50": 16.7339992523193,
+            "p95": 18.9640007019043,
+            "p99": 19.246000289917,
+            "maximum": 19.246000289917
+          },
+          "render_cpu_ms": {
+            "samples": 58,
+            "mean": 6.464482743164589,
+            "p50": 6.28499984741211,
+            "p95": 9.00500011444092,
+            "p99": 11.7799997329712,
+            "maximum": 11.7799997329712
+          },
+          "draw_calls": {
+            "samples": 58,
+            "mean": 5418.0,
+            "p50": 5418.0,
+            "p95": 5418.0,
+            "p99": 5418.0,
+            "maximum": 5418.0
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "samples": 301,
+            "mean": 16.651707641196012,
+            "p50": 16.509,
+            "p95": 18.999,
+            "p99": 19.871,
+            "maximum": 20.457
+          },
+          "gpu_ms": {
+            "samples": 301,
+            "mean": 14.789225914153546,
+            "p50": 14.7700004577637,
+            "p95": 16.7399997711182,
+            "p99": 17.3409996032715,
+            "maximum": 17.9370002746582
+          },
+          "render_cpu_ms": {
+            "samples": 301,
+            "mean": 5.229392039023365,
+            "p50": 5.11600017547607,
+            "p95": 5.90100002288818,
+            "p99": 6.90299987792969,
+            "maximum": 8.61400032043457
+          },
+          "draw_calls": {
+            "samples": 301,
+            "mean": 5418.0,
+            "p50": 5418.0,
+            "p95": 5418.0,
+            "p99": 5418.0,
+            "maximum": 5418.0
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "samples": 479,
+            "mean": 16.72719624217119,
+            "p50": 16.665,
+            "p95": 18.923,
+            "p99": 19.997,
+            "maximum": 20.286
+          },
+          "gpu_ms": {
+            "samples": 479,
+            "mean": 14.584695184902756,
+            "p50": 14.5159997940063,
+            "p95": 16.5400009155273,
+            "p99": 17.6200008392334,
+            "maximum": 17.9290008544922
+          },
+          "render_cpu_ms": {
+            "samples": 479,
+            "mean": 5.283127356670595,
+            "p50": 5.16099977493286,
+            "p95": 6.14300012588501,
+            "p99": 7.05000019073486,
+            "maximum": 8.36200046539307
+          },
+          "draw_calls": {
+            "samples": 479,
+            "mean": 5418.425887265135,
+            "p50": 5418.0,
+            "p95": 5421.0,
+            "p99": 5421.0,
+            "maximum": 5421.0
+          }
+        }
+      },
+      "arrival": {
+        "path": "reports/performance_changes/20261109T155712534546Z_phase_guard_on/arrival.png",
+        "sha256": "b9912ddace16584b81edf7b271c968d49ca98240de014e92ea6209d960ed74eb",
+        "reviewed": true,
+        "caption": "Normal first-person furnished-house arrival with the same held pickaxe, UI and doorway; scoped visual check, not world-quality acceptance."
+      },
+      "analysis_sha256": "04199673c7802fd36b7563ffa1e2180fb4443a1b49decb1e62dd819925f61689",
+      "triggered_phases": {
+        "loading": {
+          "frame_ms": {
+            "samples": 579,
+            "mean": 17.251525043177892,
+            "p50": 16.916,
+            "p95": 20.194,
+            "p99": 23.036,
+            "maximum": 43.883
+          },
+          "process_ms": {
+            "samples": 579,
+            "mean": 5.3813713298791015,
+            "p50": 4.944,
+            "p95": 8.184,
+            "p99": 11.45,
+            "maximum": 33.751
+          },
+          "draw_ms": {
+            "samples": 579,
+            "mean": 10.808136442141624,
+            "p50": 10.694,
+            "p95": 13.587,
+            "p99": 15.416,
+            "maximum": 28.172
+          },
+          "before_process_ms": {
+            "samples": 579,
+            "mean": 0.8856787564766839,
+            "p50": 0.836,
+            "p95": 1.366,
+            "p99": 1.848,
+            "maximum": 2.455
+          },
+          "after_process_ms": {
+            "samples": 579,
+            "mean": 0.1763385146804836,
+            "p50": 0.123,
+            "p95": 0.359,
+            "p99": 0.515,
+            "maximum": 1.169
+          },
+          "physics_ms": {
+            "samples": 579,
+            "mean": 0.5190915371329878,
+            "p50": 0.481,
+            "p95": 0.904,
+            "p99": 1.288,
+            "maximum": 1.979
+          },
+          "gpu_ms": {
+            "samples": 579,
+            "mean": 15.046241796490236,
+            "p50": 14.7880001068115,
+            "p95": 17.8379993438721,
+            "p99": 19.2730007171631,
+            "maximum": 19.9570007324219
+          },
+          "render_cpu_ms": {
+            "samples": 579,
+            "mean": 5.524507785296399,
+            "p50": 5.31500005722046,
+            "p95": 7.34299993515015,
+            "p99": 8.68599987030029,
+            "maximum": 9.48799991607666
+          },
+          "recorder_previous_us": {
+            "samples": 579,
+            "mean": 248.80138169257341,
+            "p50": 238,
+            "p95": 333,
+            "p99": 418,
+            "maximum": 1018
+          },
+          "draw_calls": {
+            "samples": 579,
+            "mean": 5196.303972366149,
+            "p50": 5261.0,
+            "p95": 5261.0,
+            "p99": 5261.0,
+            "maximum": 5261.0
+          },
+          "primitives": {
+            "samples": 579,
+            "mean": 4063875.0328151984,
+            "p50": 4074360.0,
+            "p95": 4152686.0,
+            "p99": 4152686.0,
+            "maximum": 4152772.0
+          },
+          "over_20ms_frames": 38
+        },
+        "gameplay": {
+          "frame_ms": {
+            "samples": 1510,
+            "mean": 17.32520927152318,
+            "p50": 17.008,
+            "p95": 20.744,
+            "p99": 23.077,
+            "maximum": 34.59
+          },
+          "process_ms": {
+            "samples": 1510,
+            "mean": 2.122419205298013,
+            "p50": 1.328,
+            "p95": 5.264,
+            "p99": 8.488,
+            "maximum": 11.557
+          },
+          "draw_ms": {
+            "samples": 1510,
+            "mean": 11.139684105960264,
+            "p50": 11.09,
+            "p95": 13.795,
+            "p99": 15.035,
+            "maximum": 29.21
+          },
+          "before_process_ms": {
+            "samples": 1510,
+            "mean": 3.9512430463576163,
+            "p50": 3.762,
+            "p95": 5.625,
+            "p99": 7.806,
+            "maximum": 15.063
+          },
+          "after_process_ms": {
+            "samples": 1510,
+            "mean": 0.11186291390728477,
+            "p50": 0.1,
+            "p95": 0.163,
+            "p99": 0.283,
+            "maximum": 4.392
+          },
+          "physics_ms": {
+            "samples": 1510,
+            "mean": 3.0217198675496686,
+            "p50": 2.884,
+            "p95": 4.477,
+            "p99": 6.203,
+            "maximum": 12.229
+          },
+          "gpu_ms": {
+            "samples": 1510,
+            "mean": 15.367126489475073,
+            "p50": 14.9790000915527,
+            "p95": 18.3600006103516,
+            "p99": 19.5520000457764,
+            "maximum": 21.5990009307861
+          },
+          "render_cpu_ms": {
+            "samples": 1510,
+            "mean": 5.597952320086246,
+            "p50": 5.37799978256226,
+            "p95": 7.05000019073486,
+            "p99": 9.28600025177002,
+            "maximum": 12.8819999694824
+          },
+          "recorder_previous_us": {
+            "samples": 1510,
+            "mean": 277.05562913907283,
+            "p50": 263,
+            "p95": 361,
+            "p99": 432,
+            "maximum": 965
+          },
+          "draw_calls": {
+            "samples": 1510,
+            "mean": 5403.547682119205,
+            "p50": 5418.0,
+            "p95": 5418.0,
+            "p99": 5421.0,
+            "maximum": 5421.0
+          },
+          "primitives": {
+            "samples": 1510,
+            "mean": 4230105.194701986,
+            "p50": 4238307.0,
+            "p95": 4238429.0,
+            "p99": 4238429.0,
+            "maximum": 4238429.0
+          },
+          "over_20ms_frames": 118
+        },
+        "browser": {
+          "frame_ms": {
+            "samples": 2,
+            "mean": 969.2475000000001,
+            "p50": 1908.515,
+            "p95": 1908.515,
+            "p99": 1908.515,
+            "maximum": 1908.515
+          },
+          "process_ms": {
+            "samples": 2,
+            "mean": 1.1965,
+            "p50": 2.377,
+            "p95": 2.377,
+            "p99": 2.377,
+            "maximum": 2.377
+          },
+          "draw_ms": {
+            "samples": 2,
+            "mean": 13.732000000000001,
+            "p50": 27.047,
+            "p95": 27.047,
+            "p99": 27.047,
+            "maximum": 27.047
+          },
+          "before_process_ms": {
+            "samples": 2,
+            "mean": 954.2810000000001,
+            "p50": 1908.054,
+            "p95": 1908.054,
+            "p99": 1908.054,
+            "maximum": 1908.054
+          },
+          "after_process_ms": {
+            "samples": 2,
+            "mean": 0.038,
+            "p50": 0.048,
+            "p95": 0.048,
+            "p99": 0.048,
+            "maximum": 0.048
+          },
+          "physics_ms": {
+            "samples": 2,
+            "mean": 0.4495,
+            "p50": 0.875,
+            "p95": 0.875,
+            "p99": 0.875,
+            "maximum": 0.875
+          },
+          "gpu_ms": {
+            "samples": 2,
+            "mean": 16.885499954223647,
+            "p50": 16.9659996032715,
+            "p95": 16.9659996032715,
+            "p99": 16.9659996032715,
+            "maximum": 16.9659996032715
+          },
+          "render_cpu_ms": {
+            "samples": 2,
+            "mean": 6.006500005722045,
+            "p50": 6.59999990463257,
+            "p95": 6.59999990463257,
+            "p99": 6.59999990463257,
+            "maximum": 6.59999990463257
+          },
+          "recorder_previous_us": {
+            "samples": 2,
+            "mean": 344.0,
+            "p50": 435,
+            "p95": 435,
+            "p99": 435,
+            "maximum": 435
+          },
+          "draw_calls": {
+            "samples": 2,
+            "mean": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "maximum": 0.0
+          },
+          "primitives": {
+            "samples": 2,
+            "mean": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "maximum": 0.0
+          },
+          "over_20ms_frames": 2
+        }
+      },
+      "triggered_scope": "Triggered windows only, not an unbiased whole-session distribution. Overlapping frames deduplicated. Stages/physics overlap wall intervals. GPU timers may lag. Missing adjacent frames give unknown compilation deltas."
+    },
+    "recorder_off": {
+      "observation_sha256": "66426c1d3f2985340e394ff0649b2ee48a99999ddab8ec5d4379bd40196719bf",
+      "manual_save": {
+        "completed": true,
+        "requested": true,
+        "success": true
+      },
+      "continuous_phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "samples": 691,
+            "mean": 17.362481910274965,
+            "p50": 17.083,
+            "p95": 20.33,
+            "p99": 24.358,
+            "maximum": 31.201
+          },
+          "gpu_ms": {
+            "samples": 691,
+            "mean": 15.409722132206657,
+            "p50": 15.2309999465942,
+            "p95": 17.8390007019043,
+            "p99": 18.6650009155273,
+            "maximum": 21.8680000305176
+          },
+          "render_cpu_ms": {
+            "samples": 691,
+            "mean": 5.506678726152125,
+            "p50": 5.28900003433228,
+            "p95": 6.85400009155273,
+            "p99": 9.57299995422363,
+            "maximum": 11.5539999008179
+          },
+          "draw_calls": {
+            "samples": 691,
+            "mean": 5363.150506512301,
+            "p50": 5394.0,
+            "p95": 5394.0,
+            "p99": 5394.0,
+            "maximum": 5394.0
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "samples": 57,
+            "mean": 17.34159649122807,
+            "p50": 17.041,
+            "p95": 19.259,
+            "p99": 29.651,
+            "maximum": 29.651
+          },
+          "gpu_ms": {
+            "samples": 57,
+            "mean": 16.27405273705198,
+            "p50": 16.2310009002686,
+            "p95": 17.5820007324219,
+            "p99": 18.6100006103516,
+            "maximum": 18.6100006103516
+          },
+          "render_cpu_ms": {
+            "samples": 57,
+            "mean": 5.797368400975278,
+            "p50": 5.5939998626709,
+            "p95": 7.97700023651123,
+            "p99": 9.00399971008301,
+            "maximum": 9.00399971008301
+          },
+          "draw_calls": {
+            "samples": 57,
+            "mean": 5394.0,
+            "p50": 5394.0,
+            "p95": 5394.0,
+            "p99": 5394.0,
+            "maximum": 5394.0
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "samples": 301,
+            "mean": 16.660159468438536,
+            "p50": 16.535,
+            "p95": 19.151,
+            "p99": 19.946,
+            "maximum": 21.966
+          },
+          "gpu_ms": {
+            "samples": 301,
+            "mean": 14.63393686617728,
+            "p50": 14.625,
+            "p95": 16.326000213623,
+            "p99": 16.8169994354248,
+            "maximum": 18.298999786377
+          },
+          "render_cpu_ms": {
+            "samples": 301,
+            "mean": 5.391481730629043,
+            "p50": 5.23199987411499,
+            "p95": 6.51399993896484,
+            "p99": 7.64200019836426,
+            "maximum": 9.23999977111816
+          },
+          "draw_calls": {
+            "samples": 301,
+            "mean": 5394.0,
+            "p50": 5394.0,
+            "p95": 5394.0,
+            "p99": 5394.0,
+            "maximum": 5394.0
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "samples": 296,
+            "mean": 16.928875,
+            "p50": 16.856,
+            "p95": 19.188,
+            "p99": 20.473,
+            "maximum": 32.034
+          },
+          "gpu_ms": {
+            "samples": 296,
+            "mean": 15.012141894649812,
+            "p50": 14.8839998245239,
+            "p95": 17.3020000457764,
+            "p99": 18.3649997711182,
+            "maximum": 19.8640003204346
+          },
+          "render_cpu_ms": {
+            "samples": 296,
+            "mean": 5.269949321811263,
+            "p50": 5.19099998474121,
+            "p95": 6.07200002670288,
+            "p99": 6.43100023269653,
+            "maximum": 6.53900003433228
+          },
+          "draw_calls": {
+            "samples": 296,
+            "mean": 5394.0,
+            "p50": 5394.0,
+            "p95": 5394.0,
+            "p99": 5394.0,
+            "maximum": 5394.0
+          }
+        }
+      },
+      "arrival": {
+        "path": "reports/performance_changes/20261109T155818654983Z_phase_guard_off/arrival.png",
+        "sha256": "ba3c60e0053a3b3ba6e6270cc1058a547d644f87830de01cd9f57f990f9f9150",
+        "reviewed": true,
+        "caption": "Normal first-person furnished-house arrival with the same held pickaxe, UI and doorway; scoped visual check, not world-quality acceptance."
+      }
+    }
+  },
+  "analyzer_checks": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools",
+      "-p",
+      "test_analyze_frame_trace.py"
+    ],
+    "passed": 3
+  },
+  "selected_frames": [
+    {
+      "frame": 2140,
+      "at_us": 42487387,
+      "phase": "gameplay",
+      "frame_ms": 34.59,
+      "before_process_ms": 3.129,
+      "before_process_cycles": 7789868,
+      "process_ms": 2.157,
+      "process_cycles": 5382956,
+      "after_process_ms": 0.094,
+      "after_process_cycles": 228284,
+      "draw_ms": 29.21,
+      "draw_cycles": 20978908,
+      "physics_ms": 2.33,
+      "physics_cycles": 5815320,
+      "thread_cycles": 34380016,
+      "thread_cpu_ms": 15.625,
+      "gpu_ms": 14.9440002441406,
+      "render_cpu_ms": 5.16800022125244,
+      "physics_steps": 1,
+      "stages_ms": {
+        "LOD coverage": 0.008,
+        "LOD eviction": 0.002,
+        "LOD requests": 0.729,
+        "LOD schedule/cut/evict": 0.746,
+        "actor update": 0.028,
+        "base controller": 0.011,
+        "controller loading": 0.001,
+        "controller process": 0.327,
+        "lighting schedule": 0.003,
+        "player physics": 0.193,
+        "receive": 0.011,
+        "receive poll": 0.004,
+        "retire collision/mesh": 0.001,
+        "staging frame": 0.004,
+        "world authoring": 0.012,
+        "world interaction": 0.024,
+        "world pickups": 0.253,
+        "world presentation": 0.011,
+        "world process": 0.461,
+        "world vehicle": 0.006,
+        "zombie update": 0.376
+      },
+      "navigation": {
+        "agents": 6,
+        "goal_probes": 0,
+        "graph_cache_hits": 0,
+        "graph_node_limit": 32768,
+        "graph_nodes": 0,
+        "invalidation": {
+          "allocated_slots": 0,
+          "count": 360,
+          "edges_reset": 0,
+          "elapsed_us": 1,
+          "free_slots": 0,
+          "global": false,
+          "global_count": 32,
+          "live_vertices": 0,
+          "max_us": 19,
+          "queries_reset": 0,
+          "revision": 360,
+          "total_us": 310,
+          "vertex_capacity_bytes": 0,
+          "vertices_retired": 0,
+          "vertices_scanned": 0
+        },
+        "ok": true,
+        "perception_probe_limit": 2,
+        "perception_probes": 2,
+        "planning_thread_cpu_us": 0,
+        "planning_thread_cycles": 42902,
+        "planning_us": 19,
+        "query_profile": {
+          "admission_queries": 0,
+          "clearance_us": 0.0,
+          "edges": 0,
+          "hazard_us": 0.0,
+          "readiness_us": 0.0,
+          "shape_queries": 0,
+          "support_cache_hits": 0,
+          "support_raycasts": 0,
+          "support_rays": 0,
+          "support_us": 0.0,
+          "sweeps": 0,
+          "water_batches": 0,
+          "water_queries": 0
+        },
+        "readiness_cache_entries": 0,
+        "readiness_cache_hits": 0,
+        "readiness_probes": 0,
+        "route_work": 0,
+        "route_work_limit": 12,
+        "streaming_requests": 0,
+        "support_cache_bytes": 3145728,
+        "support_cache_hits": 0,
+        "support_cache_limit": 65536,
+        "support_cache_misses": 0
+      }
+    },
+    {
+      "frame": 2404,
+      "at_us": 47004596,
+      "phase": "gameplay",
+      "frame_ms": 32.327,
+      "before_process_ms": 4.059,
+      "before_process_cycles": 10068363,
+      "process_ms": 10.675,
+      "process_cycles": 26626636,
+      "after_process_ms": 0.237,
+      "after_process_cycles": 573210,
+      "draw_ms": 17.356,
+      "draw_cycles": 42252526,
+      "physics_ms": 3.049,
+      "physics_cycles": 7609254,
+      "thread_cycles": 79520735,
+      "thread_cpu_ms": 31.25,
+      "gpu_ms": 16.0100002288818,
+      "render_cpu_ms": 6.52500009536743,
+      "physics_steps": 1,
+      "stages_ms": {
+        "actor update": 0.034,
+        "base controller": 0.018,
+        "controller loading": 0.001,
+        "controller process": 0.109,
+        "lighting schedule": 0.006,
+        "player physics": 0.193,
+        "receive": 0.012,
+        "receive poll": 0.006,
+        "retire collision/mesh": 0.001,
+        "save capture": 8.632,
+        "staging frame": 0.007,
+        "world authoring": 0.018,
+        "world interaction": 0.03,
+        "world pickups": 0.005,
+        "world presentation": 0.017,
+        "world process": 0.311,
+        "world vehicle": 0.008,
+        "zombie update": 0.35
+      },
+      "navigation": {
+        "agents": 6,
+        "goal_probes": 0,
+        "graph_cache_hits": 0,
+        "graph_node_limit": 32768,
+        "graph_nodes": 0,
+        "invalidation": {
+          "allocated_slots": 0,
+          "count": 360,
+          "edges_reset": 0,
+          "elapsed_us": 1,
+          "free_slots": 0,
+          "global": false,
+          "global_count": 32,
+          "live_vertices": 0,
+          "max_us": 19,
+          "queries_reset": 0,
+          "revision": 360,
+          "total_us": 310,
+          "vertex_capacity_bytes": 0,
+          "vertices_retired": 0,
+          "vertices_scanned": 0
+        },
+        "ok": true,
+        "perception_probe_limit": 2,
+        "perception_probes": 2,
+        "planning_thread_cpu_us": 0,
+        "planning_thread_cycles": 36455,
+        "planning_us": 16,
+        "query_profile": {
+          "admission_queries": 0,
+          "clearance_us": 0.0,
+          "edges": 0,
+          "hazard_us": 0.0,
+          "readiness_us": 0.0,
+          "shape_queries": 0,
+          "support_cache_hits": 0,
+          "support_raycasts": 0,
+          "support_rays": 0,
+          "support_us": 0.0,
+          "sweeps": 0,
+          "water_batches": 0,
+          "water_queries": 0
+        },
+        "readiness_cache_entries": 0,
+        "readiness_cache_hits": 0,
+        "readiness_probes": 0,
+        "route_work": 0,
+        "route_work_limit": 12,
+        "streaming_requests": 0,
+        "support_cache_bytes": 3145728,
+        "support_cache_hits": 0,
+        "support_cache_limit": 65536,
+        "support_cache_misses": 0
+      }
+    },
+    {
+      "frame": 2405,
+      "at_us": 47033500,
+      "phase": "gameplay",
+      "frame_ms": 28.904,
+      "before_process_ms": 15.063,
+      "before_process_cycles": 37306415,
+      "process_ms": 1.676,
+      "process_cycles": 4165287,
+      "after_process_ms": 0.13,
+      "after_process_cycles": 312464,
+      "draw_ms": 12.035,
+      "draw_cycles": 29090838,
+      "physics_ms": 12.229,
+      "physics_cycles": 30471774,
+      "thread_cycles": 70875004,
+      "thread_cpu_ms": 31.25,
+      "gpu_ms": 16.5200004577637,
+      "render_cpu_ms": 5.31599998474121,
+      "physics_steps": 2,
+      "stages_ms": {
+        "actor update": 0.113,
+        "base controller": 0.019,
+        "controller loading": 0.001,
+        "controller process": 0.136,
+        "lighting schedule": 0.006,
+        "player physics": 0.76,
+        "receive": 0.053,
+        "receive cache_accounting": 0.025,
+        "receive poll": 0.013,
+        "retire collision/mesh": 0.0,
+        "staging frame": 0.007,
+        "world authoring": 0.023,
+        "world interaction": 0.034,
+        "world pickups": 0.005,
+        "world presentation": 0.022,
+        "world process": 0.366,
+        "world vehicle": 0.016,
+        "zombie update": 1.735
+      },
+      "navigation": {
+        "agents": 6,
+        "goal_probes": 0,
+        "graph_cache_hits": 0,
+        "graph_node_limit": 32768,
+        "graph_nodes": 0,
+        "invalidation": {
+          "allocated_slots": 0,
+          "count": 360,
+          "edges_reset": 0,
+          "elapsed_us": 1,
+          "free_slots": 0,
+          "global": false,
+          "global_count": 32,
+          "live_vertices": 0,
+          "max_us": 19,
+          "queries_reset": 0,
+          "revision": 360,
+          "total_us": 310,
+          "vertex_capacity_bytes": 0,
+          "vertices_retired": 0,
+          "vertices_scanned": 0
+        },
+        "ok": true,
+        "perception_probe_limit": 2,
+        "perception_probes": 2,
+        "planning_thread_cpu_us": 0,
+        "planning_thread_cycles": 98203,
+        "planning_us": 45,
+        "query_profile": {
+          "admission_queries": 0,
+          "clearance_us": 0.0,
+          "edges": 0,
+          "hazard_us": 0.0,
+          "readiness_us": 0.0,
+          "shape_queries": 0,
+          "support_cache_hits": 0,
+          "support_raycasts": 0,
+          "support_rays": 0,
+          "support_us": 0.0,
+          "sweeps": 0,
+          "water_batches": 0,
+          "water_queries": 0
+        },
+        "readiness_cache_entries": 0,
+        "readiness_cache_hits": 0,
+        "readiness_probes": 0,
+        "route_work": 0,
+        "route_work_limit": 12,
+        "streaming_requests": 0,
+        "support_cache_bytes": 3145728,
+        "support_cache_hits": 0,
+        "support_cache_limit": 65536,
+        "support_cache_misses": 0
+      }
+    }
+  ],
+  "remaining": [
+    "Unattributed CPU-heavy physics callbacks; instrument body animation/posture/hit-shape and other callbacks before choosing a rewrite.",
+    "Long draw/presentation intervals need render-driver/scheduler attribution; WPR CPU.Light failed under current profiling policy, no scheduler capture exists.",
+    "Substantial GPU time persists with recorder off. Driver reports software power/thermal limits; cannot attribute all historic tails to those limits without contemporaneous telemetry.",
+    "Native water batching retains its CPU benefit, but cold regional search still takes seconds to tens of seconds and needs prepared/shared connectivity with physical edit validation.",
+    "Save capture, dense destruction/crowd scale, leak endurance and stable 60 FPS with headroom remain open."
+  ],
+  "counter_validation": {
+    "unique_rows": 2091,
+    "complete_phase_rows": 2091,
+    "cycle_sum_mismatches": 0,
+    "rows_with_physics_work": 2079,
+    "physics_ticks": 2178
+  },
+  "device_telemetry": {
+    "path": "reports/performance_changes/20261109T155712433493Z_phase_work_control",
+    "manifest_sha256": "5dbd9f8e0188edc009f67bfa988213351b391b3663216cb8e8c68bf3e2341611",
+    "manifest": {
+      "scope": "External 1-second device-wide NVIDIA readings; overlapping host workloads and polling overhead are not isolated. No settings changed. Two serial game processes.",
+      "command": [
+        "C:\\Windows\\system32\\nvidia-smi.EXE",
+        "--query-gpu=timestamp,name,pstate,clocks.current.graphics,clocks.current.memory,temperature.gpu,power.draw,power.limit,utilization.gpu,utilization.memory",
+        "--format=csv",
+        "-lms",
+        "1000"
+      ],
+      "power": {
+        "ACLineStatus": 1,
+        "BatteryFlag": 1,
+        "BatteryLifePercent": 100,
+        "SystemStatusFlag": 0,
+        "BatteryLifeTime": 4294967295,
+        "BatteryFullLifeTime": 4294967295
+      },
+      "runs": [
+        {
+          "label": "phase_guard_on",
+          "command": [
+            "C:\\Users\\windows10\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+            "tools/check_frame_trace_world.py",
+            "--executable",
+            "--short",
+            "--save",
+            "--label",
+            "phase_guard_on"
+          ],
+          "begin_utc": "2026-11-09T15:57:12.438751+00:00",
+          "end_utc": "2026-11-09T15:58:18.561799+00:00",
+          "returncode": 0,
+          "stdout": "PASS C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T155712534546Z_phase_guard_on\n"
+        },
+        {
+          "label": "phase_guard_off",
+          "command": [
+            "C:\\Users\\windows10\\AppData\\Local\\Python\\pythoncore-3.15-64\\python.exe",
+            "tools/check_frame_trace_world.py",
+            "--executable",
+            "--short",
+            "--save",
+            "--label",
+            "phase_guard_off",
+            "--without-trace"
+          ],
+          "begin_utc": "2026-11-09T15:58:18.562412+00:00",
+          "end_utc": "2026-11-09T15:59:20.809829+00:00",
+          "returncode": 0,
+          "stdout": "PASS C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T155818654983Z_phase_guard_off\n"
+        }
+      ],
+      "probe_exit_code": 1
+    },
+    "csv_sha256": "7dd10ffd297a5641243ac5e1ed7f9744e46643ee4914457b944319a5c9f84a8a",
+    "csv": "timestamp, name, pstate, clocks.current.graphics [MHz], clocks.current.memory [MHz], temperature.gpu, power.draw [W], power.limit [W], utilization.gpu [%], utilization.memory [%]\n2026/11/09 17:57:12.483, NVIDIA GeForce RTX 4050 Laptop GPU, P5, 780 MHz, 810 MHz, 46, 6.46 W, [N/A], 43 %, 23 %\n2026/11/09 17:57:13.488, NVIDIA GeForce RTX 4050 Laptop GPU, P5, 780 MHz, 810 MHz, 46, 6.30 W, [N/A], 41 %, 22 %\n2026/11/09 17:57:14.489, NVIDIA GeForce RTX 4050 Laptop GPU, P5, 780 MHz, 810 MHz, 46, 5.45 W, [N/A], 19 %, 13 %\n2026/11/09 17:57:15.497, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 46, 5.67 W, [N/A], 13 %, 2 %\n2026/11/09 17:57:16.499, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 46, 7.16 W, [N/A], 8 %, 1 %\n2026/11/09 17:57:17.535, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 46, 7.78 W, [N/A], 17 %, 3 %\n2026/11/09 17:57:18.544, NVIDIA GeForce RTX 4050 Laptop GPU, P5, 495 MHz, 810 MHz, 46, 7.47 W, [N/A], 21 %, 8 %\n2026/11/09 17:57:19.560, NVIDIA GeForce RTX 4050 Laptop GPU, P4, 675 MHz, 6001 MHz, 46, 7.32 W, [N/A], 19 %, 3 %\n2026/11/09 17:57:20.565, NVIDIA GeForce RTX 4050 Laptop GPU, P4, 510 MHz, 6001 MHz, 46, 7.56 W, [N/A], 28 %, 5 %\n2026/11/09 17:57:21.569, NVIDIA GeForce RTX 4050 Laptop GPU, P4, 465 MHz, 6001 MHz, 46, 7.62 W, [N/A], 28 %, 3 %\n2026/11/09 17:57:22.572, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 46, 7.13 W, [N/A], 91 %, 48 %\n2026/11/09 17:57:23.575, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 47, 8.28 W, [N/A], 34 %, 6 %\n2026/11/09 17:57:24.577, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 47, 10.03 W, [N/A], 53 %, 12 %\n2026/11/09 17:57:25.578, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 48, 12.93 W, [N/A], 90 %, 14 %\n2026/11/09 17:57:26.587, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 840 MHz, 7001 MHz, 48, 14.87 W, [N/A], 99 %, 14 %\n2026/11/09 17:57:27.592, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 870 MHz, 7001 MHz, 48, 14.91 W, [N/A], 99 %, 13 %\n2026/11/09 17:57:28.598, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 975 MHz, 7001 MHz, 49, 15.15 W, [N/A], 93 %, 16 %\n2026/11/09 17:57:29.600, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1005 MHz, 7001 MHz, 49, 15.65 W, [N/A], 95 %, 16 %\n2026/11/09 17:57:30.609, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1035 MHz, 7001 MHz, 49, 15.36 W, [N/A], 98 %, 15 %\n2026/11/09 17:57:31.623, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1080 MHz, 7001 MHz, 49, 17.20 W, [N/A], 96 %, 17 %\n2026/11/09 17:57:32.630, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1050 MHz, 7001 MHz, 49, 17.26 W, [N/A], 90 %, 15 %\n2026/11/09 17:57:33.638, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 960 MHz, 7001 MHz, 49, 16.50 W, [N/A], 90 %, 14 %\n2026/11/09 17:57:34.644, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 945 MHz, 7001 MHz, 49, 16.46 W, [N/A], 94 %, 15 %\n2026/11/09 17:57:35.648, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1155 MHz, 7001 MHz, 50, 16.28 W, [N/A], 99 %, 18 %\n2026/11/09 17:57:36.653, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1140 MHz, 7001 MHz, 50, 17.01 W, [N/A], 99 %, 17 %\n2026/11/09 17:57:37.658, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1335 MHz, 7001 MHz, 50, 18.87 W, [N/A], 99 %, 19 %\n2026/11/09 17:57:38.665, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1185 MHz, 7001 MHz, 50, 20.01 W, [N/A], 95 %, 18 %\n2026/11/09 17:57:39.671, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1275 MHz, 7001 MHz, 50, 18.57 W, [N/A], 99 %, 20 %\n2026/11/09 17:57:40.673, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1455 MHz, 7001 MHz, 51, 21.73 W, [N/A], 93 %, 21 %\n2026/11/09 17:57:41.675, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1275 MHz, 7001 MHz, 50, 19.92 W, [N/A], 99 %, 19 %\n2026/11/09 17:57:42.678, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1260 MHz, 7001 MHz, 51, 20.40 W, [N/A], 96 %, 20 %\n2026/11/09 17:57:43.679, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1365 MHz, 7001 MHz, 51, 20.14 W, [N/A], 96 %, 21 %\n2026/11/09 17:57:44.682, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1350 MHz, 7001 MHz, 51, 21.54 W, [N/A], 97 %, 21 %\n2026/11/09 17:57:45.683, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1230 MHz, 7001 MHz, 51, 20.83 W, [N/A], 92 %, 18 %\n2026/11/09 17:57:46.699, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1320 MHz, 7001 MHz, 51, 18.92 W, [N/A], 99 %, 20 %\n2026/11/09 17:57:47.703, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1455 MHz, 7001 MHz, 52, 21.85 W, [N/A], 95 %, 22 %\n2026/11/09 17:57:48.719, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1470 MHz, 7001 MHz, 52, 22.42 W, [N/A], 90 %, 21 %\n2026/11/09 17:57:49.730, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1230 MHz, 7001 MHz, 51, 19.99 W, [N/A], 95 %, 19 %\n2026/11/09 17:57:50.735, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1095 MHz, 7001 MHz, 51, 18.42 W, [N/A], 95 %, 18 %\n2026/11/09 17:57:51.739, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1125 MHz, 7001 MHz, 51, 17.89 W, [N/A], 92 %, 17 %\n2026/11/09 17:57:52.746, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1140 MHz, 7001 MHz, 51, 17.67 W, [N/A], 97 %, 18 %\n2026/11/09 17:57:53.754, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1050 MHz, 7001 MHz, 51, 17.17 W, [N/A], 98 %, 17 %\n2026/11/09 17:57:54.759, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1155 MHz, 7001 MHz, 51, 17.77 W, [N/A], 98 %, 17 %\n2026/11/09 17:57:55.769, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1125 MHz, 7001 MHz, 51, 18.17 W, [N/A], 99 %, 18 %\n2026/11/09 17:57:56.784, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1200 MHz, 7001 MHz, 51, 18.55 W, [N/A], 99 %, 19 %\n2026/11/09 17:57:57.793, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1125 MHz, 7001 MHz, 51, 19.38 W, [N/A], 96 %, 16 %\n2026/11/09 17:57:58.794, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1380 MHz, 7001 MHz, 52, 19.56 W, [N/A], 94 %, 20 %\n2026/11/09 17:57:59.800, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1365 MHz, 7001 MHz, 52, 21.57 W, [N/A], 96 %, 21 %\n2026/11/09 17:58:00.804, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1410 MHz, 7001 MHz, 52, 21.60 W, [N/A], 91 %, 20 %\n2026/11/09 17:58:01.807, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1200 MHz, 7001 MHz, 52, 20.33 W, [N/A], 89 %, 17 %\n2026/11/09 17:58:02.815, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1125 MHz, 7001 MHz, 51, 17.70 W, [N/A], 92 %, 16 %\n2026/11/09 17:58:03.826, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1215 MHz, 7001 MHz, 52, 18.67 W, [N/A], 95 %, 18 %\n2026/11/09 17:58:04.834, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1230 MHz, 7001 MHz, 52, 19.47 W, [N/A], 94 %, 18 %\n2026/11/09 17:58:05.839, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1215 MHz, 7001 MHz, 52, 19.41 W, [N/A], 95 %, 18 %\n2026/11/09 17:58:06.845, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1335 MHz, 7001 MHz, 52, 21.02 W, [N/A], 97 %, 21 %\n2026/11/09 17:58:07.851, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1350 MHz, 7001 MHz, 53, 21.09 W, [N/A], 93 %, 20 %\n2026/11/09 17:58:08.855, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1215 MHz, 7001 MHz, 52, 19.40 W, [N/A], 94 %, 18 %\n2026/11/09 17:58:09.858, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1335 MHz, 7001 MHz, 52, 21.32 W, [N/A], 99 %, 20 %\n2026/11/09 17:58:10.873, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1380 MHz, 7001 MHz, 53, 21.69 W, [N/A], 96 %, 21 %\n2026/11/09 17:58:11.879, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1425 MHz, 7001 MHz, 53, 21.93 W, [N/A], 99 %, 21 %\n2026/11/09 17:58:12.883, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1425 MHz, 7001 MHz, 53, 22.11 W, [N/A], 95 %, 21 %\n2026/11/09 17:58:13.896, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1425 MHz, 7001 MHz, 53, 22.05 W, [N/A], 95 %, 21 %\n2026/11/09 17:58:14.898, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1230 MHz, 7001 MHz, 52, 20.84 W, [N/A], 94 %, 18 %\n2026/11/09 17:58:15.905, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1215 MHz, 7001 MHz, 52, 19.27 W, [N/A], 94 %, 18 %\n2026/11/09 17:58:16.910, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 50, 7.90 W, [N/A], 11 %, 2 %\n2026/11/09 17:58:17.917, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 49, 6.90 W, [N/A], 7 %, 1 %\n2026/11/09 17:58:18.918, NVIDIA GeForce RTX 4050 Laptop GPU, P4, 330 MHz, 6001 MHz, 49, 6.37 W, [N/A], 17 %, 2 %\n2026/11/09 17:58:19.923, NVIDIA GeForce RTX 4050 Laptop GPU, P4, 255 MHz, 6001 MHz, 49, 6.26 W, [N/A], 18 %, 2 %\n2026/11/09 17:58:20.928, NVIDIA GeForce RTX 4050 Laptop GPU, P5, 435 MHz, 810 MHz, 49, 6.29 W, [N/A], 43 %, 22 %\n2026/11/09 17:58:21.930, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 49, 7.42 W, [N/A], 16 %, 3 %\n2026/11/09 17:58:22.948, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 49, 8.36 W, [N/A], 27 %, 5 %\n2026/11/09 17:58:23.958, NVIDIA GeForce RTX 4050 Laptop GPU, P4, 585 MHz, 6001 MHz, 49, 8.23 W, [N/A], 33 %, 5 %\n2026/11/09 17:58:24.964, NVIDIA GeForce RTX 4050 Laptop GPU, P4, 555 MHz, 6001 MHz, 49, 7.83 W, [N/A], 41 %, 6 %\n2026/11/09 17:58:25.967, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 810 MHz, 49, 7.14 W, [N/A], 73 %, 41 %\n2026/11/09 17:58:26.971, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 49, 8.07 W, [N/A], 16 %, 3 %\n2026/11/09 17:58:27.976, NVIDIA GeForce RTX 4050 Laptop GPU, P4, 495 MHz, 6001 MHz, 49, 7.91 W, [N/A], 33 %, 5 %\n2026/11/09 17:58:28.978, NVIDIA GeForce RTX 4050 Laptop GPU, P4, 450 MHz, 6001 MHz, 49, 8.98 W, [N/A], 61 %, 7 %\n2026/11/09 17:58:29.985, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 50, 12.80 W, [N/A], 72 %, 12 %\n2026/11/09 17:58:30.986, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 855 MHz, 7001 MHz, 50, 14.09 W, [N/A], 93 %, 14 %\n2026/11/09 17:58:31.990, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 50, 14.89 W, [N/A], 97 %, 14 %\n2026/11/09 17:58:32.995, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 870 MHz, 7001 MHz, 51, 15.34 W, [N/A], 99 %, 14 %\n2026/11/09 17:58:34.000, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 840 MHz, 7001 MHz, 51, 15.15 W, [N/A], 97 %, 14 %\n2026/11/09 17:58:35.002, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 900 MHz, 7001 MHz, 51, 15.50 W, [N/A], 93 %, 14 %\n2026/11/09 17:58:36.009, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1125 MHz, 7001 MHz, 51, 16.21 W, [N/A], 97 %, 17 %\n2026/11/09 17:58:37.013, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1140 MHz, 7001 MHz, 51, 17.70 W, [N/A], 99 %, 17 %\n2026/11/09 17:58:38.020, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1125 MHz, 7001 MHz, 51, 17.91 W, [N/A], 94 %, 16 %\n2026/11/09 17:58:39.023, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1125 MHz, 7001 MHz, 51, 18.15 W, [N/A], 98 %, 18 %\n2026/11/09 17:58:40.028, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 960 MHz, 7001 MHz, 51, 16.02 W, [N/A], 97 %, 15 %\n2026/11/09 17:58:41.032, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1050 MHz, 7001 MHz, 51, 16.16 W, [N/A], 99 %, 15 %\n2026/11/09 17:58:42.037, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1125 MHz, 7001 MHz, 51, 17.12 W, [N/A], 99 %, 16 %\n2026/11/09 17:58:43.041, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1335 MHz, 7001 MHz, 52, 19.25 W, [N/A], 97 %, 19 %\n2026/11/09 17:58:44.043, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1170 MHz, 7001 MHz, 52, 19.64 W, [N/A], 90 %, 17 %\n2026/11/09 17:58:45.052, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1200 MHz, 7001 MHz, 52, 19.10 W, [N/A], 94 %, 18 %\n2026/11/09 17:58:46.058, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1005 MHz, 7001 MHz, 52, 18.47 W, [N/A], 87 %, 16 %\n2026/11/09 17:58:47.063, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1200 MHz, 7001 MHz, 52, 17.40 W, [N/A], 97 %, 18 %\n2026/11/09 17:58:48.078, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1290 MHz, 7001 MHz, 52, 19.35 W, [N/A], 99 %, 19 %\n2026/11/09 17:58:49.081, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1320 MHz, 7001 MHz, 53, 20.43 W, [N/A], 90 %, 20 %\n2026/11/09 17:58:50.088, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1245 MHz, 7001 MHz, 52, 18.76 W, [N/A], 99 %, 19 %\n2026/11/09 17:58:51.089, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1245 MHz, 7001 MHz, 52, 19.24 W, [N/A], 98 %, 19 %\n2026/11/09 17:58:52.096, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1320 MHz, 7001 MHz, 53, 21.81 W, [N/A], 95 %, 20 %\n2026/11/09 17:58:53.100, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1215 MHz, 7001 MHz, 52, 19.41 W, [N/A], 99 %, 19 %\n2026/11/09 17:58:54.104, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1215 MHz, 7001 MHz, 52, 19.58 W, [N/A], 95 %, 19 %\n2026/11/09 17:58:55.108, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1125 MHz, 7001 MHz, 52, 18.86 W, [N/A], 95 %, 19 %\n2026/11/09 17:58:56.111, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1170 MHz, 7001 MHz, 52, 18.37 W, [N/A], 98 %, 18 %\n2026/11/09 17:58:57.118, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1095 MHz, 7001 MHz, 52, 17.47 W, [N/A], 97 %, 18 %\n2026/11/09 17:58:58.119, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1155 MHz, 7001 MHz, 52, 17.82 W, [N/A], 98 %, 18 %\n2026/11/09 17:58:59.125, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1275 MHz, 7001 MHz, 53, 18.73 W, [N/A], 99 %, 20 %\n2026/11/09 17:59:00.140, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1335 MHz, 7001 MHz, 53, 19.98 W, [N/A], 96 %, 20 %\n2026/11/09 17:59:01.145, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1215 MHz, 7001 MHz, 53, 19.44 W, [N/A], 95 %, 18 %\n2026/11/09 17:59:02.151, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1215 MHz, 7001 MHz, 53, 19.48 W, [N/A], 95 %, 18 %\n2026/11/09 17:59:03.153, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1320 MHz, 7001 MHz, 53, 19.92 W, [N/A], 99 %, 19 %\n2026/11/09 17:59:04.161, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1395 MHz, 7001 MHz, 53, 21.75 W, [N/A], 95 %, 20 %\n2026/11/09 17:59:05.168, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1260 MHz, 7001 MHz, 53, 21.09 W, [N/A], 84 %, 18 %\n2026/11/09 17:59:06.175, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1230 MHz, 7001 MHz, 53, 19.27 W, [N/A], 96 %, 18 %\n2026/11/09 17:59:07.190, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1275 MHz, 7001 MHz, 53, 20.13 W, [N/A], 99 %, 19 %\n2026/11/09 17:59:08.194, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1170 MHz, 7001 MHz, 52, 18.72 W, [N/A], 99 %, 18 %\n2026/11/09 17:59:09.204, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1260 MHz, 7001 MHz, 53, 19.69 W, [N/A], 99 %, 19 %\n2026/11/09 17:59:10.210, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1290 MHz, 7001 MHz, 53, 20.78 W, [N/A], 92 %, 19 %\n2026/11/09 17:59:11.213, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1215 MHz, 7001 MHz, 53, 19.33 W, [N/A], 94 %, 18 %\n2026/11/09 17:59:12.223, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1245 MHz, 7001 MHz, 53, 19.36 W, [N/A], 99 %, 18 %\n2026/11/09 17:59:13.229, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1230 MHz, 7001 MHz, 53, 19.49 W, [N/A], 94 %, 18 %\n2026/11/09 17:59:14.242, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1395 MHz, 7001 MHz, 53, 21.53 W, [N/A], 99 %, 20 %\n2026/11/09 17:59:15.250, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1380 MHz, 7001 MHz, 53, 21.83 W, [N/A], 95 %, 21 %\n2026/11/09 17:59:16.251, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1260 MHz, 7001 MHz, 53, 19.43 W, [N/A], 98 %, 19 %\n2026/11/09 17:59:17.266, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1395 MHz, 7001 MHz, 53, 22.33 W, [N/A], 91 %, 21 %\n2026/11/09 17:59:18.272, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 1470 MHz, 7001 MHz, 54, 21.75 W, [N/A], 90 %, 21 %\n2026/11/09 17:59:19.276, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 50, 7.62 W, [N/A], 12 %, 2 %\n2026/11/09 17:59:20.283, NVIDIA GeForce RTX 4050 Laptop GPU, P3, 780 MHz, 7001 MHz, 50, 7.60 W, [N/A], 12 %, 2 %\n",
+    "clock_event_snapshot": {
+      "path": "reports/phase_work_gpu_reasons_20261109.csv",
+      "sha256": "e04e8f8ea83961eea74431955ab5080a7f4a232ba633df46d1db01f6a999148e",
+      "csv": "timestamp, pstate, clocks.current.graphics [MHz], clocks.current.memory [MHz], power.draw [W], utilization.gpu [%], clocks_event_reasons.active, clocks_event_reasons.sw_power_cap, clocks_event_reasons.hw_slowdown, clocks_event_reasons.sw_thermal_slowdown, clocks_event_reasons.hw_power_brake_slowdown\n2026/11/09 17:58:47.186, P3, 1200 MHz, 7001 MHz, 17.40 W, 97 %, 0x0000000000000024, Active, Not Active, Active, Not Active\n",
+      "scope": "Single sample during recorder-off run; device-wide driver-reported reasons, not proof that every historical frame was throttled."
+    }
+  },
+  "package": {
+    "path": "dist/TerraForest.pck",
+    "bytes": 556866492,
+    "sha256": "2640664aea5524cadf13beda980202e4520531e7609b51c347be23dedfb9c402",
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+    },
+    "export_log": "reports/export_phase_thread_guard_20261109.log",
+    "export_log_sha256": "69dfeecbb273e2b2b34ce7bbef6e09985dedd653ca43f02229c80daa10034d21",
+    "unchanged_native_libraries": 14
+  },
+  "provenance": "Original AI-assisted diagnostic changes for TerraForest under 0BSD; existing OS/driver tools used externally; no code/assets/dependencies imported or system settings changed."
+}

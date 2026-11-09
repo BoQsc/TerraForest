@@ -144,6 +144,21 @@ largest frames have only 19/32 us navigation planning, alongside save capture,
 physics and long draw intervals. Attribute those owners and waits before closing
 the tail-regression concern; GPU averages near 7.9 ms alone cannot qualify 60 FPS.
 
+[Frame-phase thread-work counters](../issues/runtime-performance/phase-work-2026-11-09.md)
+now separate draw and physics CPU work from wall intervals without comparing
+different threads or treating unavailable counters as zero work. Focused checks,
+2,091 balanced captured rows, and packaged recorder-on/off save/shutdown pass.
+The new evidence distinguishes a 29.210 ms draw interval with 20.979 million
+thread cycles from a 12.229 ms physics interval with 30.472 million cycles; exact
+wait owners and unmeasured physics callbacks still need attribution. Recorder-off
+gameplay retains >32 ms frames and about 15 ms GPU cost. Device telemetry reports
+active software power and thermal limits during that control, on AC with battery
+saver off. This is an observed machine-level contributor, not an explanation for
+every historical stall or a reason to waive code costs. Future comparisons must
+retain clocks/limiting state, and physics-body/animation, save and render costs
+remain prerequisites for a headroom claim. Both arrival captures were inspected;
+the latest matching package and all failed/unqualified gates are linked above.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,
