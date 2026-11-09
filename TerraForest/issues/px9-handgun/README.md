@@ -1,8 +1,8 @@
 # PX9 Eclipse handgun integration
 
-- Status: Integrated in isolated source worktree / player review pending.
+- Status: First-person playtest accepted; master integration in progress.
 - Updated: 2026-11-09. Branch: `codex/px9-handgun`.
-- User review: Not reviewed in TerraForest.
+- User review: User accepted first-person pistol/player feel at 2fb599e1 on 2026-11-09 ("Seems good enough") and authorized master integration.
 - Symptom: Supplied high-quality handgun and paired animations were absent from the live item/combat systems.
 
 ## Images
@@ -253,3 +253,13 @@ with `tools/preview_px9_flash.gd -- --aim-flow`. No new third-party material was
 imported; supplied CC0 clips remain unchanged. User gameplay feel acceptance
 remains pending: next playtest should hold fire while repeatedly pressing and
 releasing aim, including near the start and middle of each recoil.
+
+## Accepted first-person playtest - 2026-11-09
+
+The user tested 2fb599e1, accepted its first-person feel as "good enough", and
+explicitly authorized coordination with the performance chat and merging the
+pistol/player changes into master. This supersedes the pending first-person
+acceptance notes above. Historical rejected and intermediate checks remain for
+provenance. Third-person art qualification, sustained performance measurement,
+and packaged export/install acceptance remain separate; this merge is source
+integration. The isolated handgun worktree is retained for now.

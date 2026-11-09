@@ -1,3 +1,10 @@
+## PX9 first-person playtest accepted - 2026-11-09
+
+User accepted the pistol/player feel at 2fb599e1 and authorized master integration.
+This supersedes earlier first-person feel re-review notes below. Integration is
+being coordinated with the performance chat; third-person and packaged-build
+qualification retain their existing scope. [Acceptance record](../issues/px9-handgun/README.md#accepted-first-person-playtest---2026-11-09).
+
 ## PX9 independent aim/recoil - 2026-11-09
 
 User rejected the previous shortened transition pause. Aim now blends paired
