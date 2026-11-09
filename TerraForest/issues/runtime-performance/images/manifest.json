@@ -99,5 +99,11 @@
     "sha256": "3c6270f66b6eb9a8329e35ce70dd35be052b4a0cdac037ce87a663105c2e827b",
     "revision": "fc1f746d plus exact binary zombie geometry; native/package hashes in anatomy-geometry-2026-11-09.json",
     "status": "Matching PCK, 1080p Vulkan corpse fixture. Resting articulated body retains targeting, wake-up and gravity tests. Inspected; no universal visual acceptance."
+  },
+  "navigation-support-cache-package.png": {
+    "source": "reports/performance_changes/20261109T121905110311Z_support_cache_pack2_long/arrival.png",
+    "sha256": "c2d222529881d647154b6f1565fe9e2b4b4d93ec2cf4e64b849d7953b57b54b4",
+    "revision": "2e730410 (captured with matching uncommitted implementation; source run.json retains hashes)",
+    "status": "Inspected indoor arrival: brick, door, HUD and held item present. Camera faces wall; this does not qualify zombie traversal visuals or broad visual acceptance. Same inherited pickaxe grip limitation remains."
   }
 }

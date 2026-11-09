@@ -67,11 +67,19 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
   available. CPU time is quantized; raw cycles are work counts, not milliseconds.
 - Terrain/controller/loading/vehicle stages, publication queues, forest/cover
   work, zombie phases and newly admitted zombie initialization breakdowns.
+- Native navigation readiness/support/hazard/clearance times, requested support
+  rays versus actual raycasts, and support-cache hits/limits. `zombie_navigation`
+  is the last-pass snapshot; `zombie_navigation_ticks.samples` retains every
+  planning tick before the draw, capped at sixteen with an explicit `dropped`
+  count. Each includes immutable navigation and zombie-phase values, so catch-up
+  ticks cannot hide an earlier slow planner pass. Timing categories overlap the
+  planner/physics intervals and must not be added to their parents.
 - Component snapshot measurements on save-capture frames, position, motion,
   focus, menus, entry/loading state, first-person rendering mode and presentation
   settings. Stage parents/children overlap; never sum their maxima.
 - Previous recorder callback elapsed time and writer activity, to investigate
-  observer effects. That callback timer excludes some stage/probe overhead and
+  observer effects. The elapsed metric includes navigation-sample capture but
+  excludes some stage/probe overhead and
   can include OS descheduling; it is not total recorder CPU time.
 
 The persistent host stays active across browser/world transitions. Temporary

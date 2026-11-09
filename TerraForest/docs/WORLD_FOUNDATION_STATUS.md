@@ -27,6 +27,24 @@ both save/shutdown runs pass cleanly, but triggered gameplay p99 remains about
 32.3 ms and maximum reaches 40.257 ms, mostly draw. No overall pacing/headroom
 improvement is claimed for this admission-only correction.
 
+[Native query profiling and exact support reuse](../issues/runtime-performance/navigation-query-cache-2026-11-09.md)
+identify dense support rays as about 69% of saved-world planning query time.
+A bounded 3 MiB cache per navigator preserves every sample and all live movement
+guards; all eight fixture route arrays match, while 50.36% of requested rays are
+reused and the measured tower search changes from 640 to 404 ticks. Saved-world
+outbound planning improves 40.551 → 33.125 seconds, but return planning worsens
+46.059 → 50.411 seconds, so full-host latency remains unqualified. Both journeys
+pass 13 checks with unchanged source saves. Debug/release physics contracts pass;
+global invalidation, hazard cost and planning wall-time tails remain open.
+The rolling trace retains each navigation physics tick before a draw, so a later
+catch-up tick cannot overwrite an earlier slow pass.
+Final packaged replan/response/interior checks pass 14/11/23 assertions; two
+world repeats save and shut down cleanly. Their triggered-window p99 remains
+33.338/33.251 ms, with GPU means 17.028/16.725 ms, worse than the prior 14.120 ms
+sample. Rendering has not received a matched A/B explanation; it remains an
+explicit performance regression candidate. These local gameplay samples have
+zero support-cache hits, so only the regional fixture establishes reuse benefit.
+
 Stable 60 FPS with headroom is NOT established: the combined trace still has a
 91.4 ms gameplay frame and ~15 ms root GPU work. Rendering pass/batch costs,
 physics/draw tails, staged zombie admission, native regional route connectivity,

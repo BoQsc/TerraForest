@@ -28,6 +28,12 @@ compressed binary cache. Source anatomy setup is now 2.307 ms in the first repea
 first-use hit areas and later rendering/planning stalls remain open. Independent
 geometry, combat, rest and release checks guard visual/gameplay parity.
 
+[Navigation query profiling and support reuse](navigation-query-cache-2026-11-09.md)
+now preserve exact ray answers in a bounded 3 MiB native cache. The fixture avoids
+50.36% of rays with all eight paths unchanged; the saved tower still passes its
+round trip, but return planning remains about 50 seconds and full-host timing is
+mixed. Rolling captures retain every navigation tick before a rendered frame.
+
 Earlier [fresh-default-world / rolling-trace investigation](rolling-trace-2026-11-09.md):
 normal Frontier expedition generation completed; first-person depth activation,
 arrival PNG decoding, first zombie admission, parked-prototype preparation and

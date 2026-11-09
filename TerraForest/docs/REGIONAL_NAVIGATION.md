@@ -142,3 +142,13 @@ door destruction, both flights, attack contact and return, and preserves all
 200 source files. Cold outbound/return queries still take 35.2/45.0 seconds in
 the full host. Faster first routes remain an acceptance gate.
 Current receipts are linked from [the performance follow-up](../issues/runtime-performance/foundation-2026-11-09.md).
+
+2026-11-09 query-cost follow-up: exact downward-ray reuse now shares a fixed
+65,536-entry / 3 MiB numeric cache per navigator. Keys include the full ray origin
+and endpoint height, with no position quantization. Entries belong to the graph
+revision and the navigator's shared mask/exclusion policy; all existing graph
+invalidations also invalidate support reuse. Coverage, every dense support
+sample, hazard admission, floor-normal limits and capsule tests remain in place.
+Motion guards bypass this cache. The eight fixture route arrays match exactly;
+50.36% of requested fixture rays use cached answers. Full-host latency remains
+mixed and unqualified: see [query evidence and limits](../issues/runtime-performance/navigation-query-cache-2026-11-09.md).

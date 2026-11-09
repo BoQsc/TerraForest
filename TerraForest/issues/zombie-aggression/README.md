@@ -28,6 +28,14 @@ Moving-goal, physical stair/slope and release checks are tracked with the
 Earlier failures below remain historical evidence; player acceptance and wider
 world/multiplayer navigation remain open.
 
+The [query-cost follow-up](../runtime-performance/navigation-query-cache-2026-11-09.md)
+attributes about 69% of saved-world query time to dense support rays. Exact native
+reuse avoids 50.36% of fixture raycasts without changing any of its eight paths,
+sample spacing or physical movement guards. Full saved-world checks still pass,
+but planning remains mixed: outbound 40.551 → 33.125 seconds, return 46.059 →
+50.411 seconds. This does not establish acceptable pursuit latency. Native
+query timings and individual physics-tick snapshots now join the rolling trace.
+
 ## Recalculation pauses — 2026-11-05 follow-up
 
 User feedback: zombies take too long to recalculate and act. The focused baseline
