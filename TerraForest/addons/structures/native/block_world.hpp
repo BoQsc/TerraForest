@@ -200,6 +200,8 @@ public:
     ~NativeBlockWorld();
     void _process(double delta) override;
     bool set_cells(const PackedInt32Array &records);
+    // Bounded destructive compare-and-remove. No undo allocation; one publication.
+    bool erase_cells(const PackedInt32Array &expected,int64_t expected_revision);
     bool configure_history(int64_t byte_limit,int step_limit);
     void clear_history();
     Dictionary history_stats() const;

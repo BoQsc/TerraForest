@@ -6,17 +6,42 @@ var flashes:Array[Dictionary]=[]
 var blocks:Node3D
 var suspended:=false
 var colors:=[Color("a78a75"),Color("7c603e"),Color("9c9f98"),Color("657580")]
+const BAKED_GEOMETRY=preload("res://addons/player_runtime/assets/debris_geometry.res")
+const GEOMETRY_LIMIT:=128
+var geometry:Dictionary={}
+var materials:Array[Material]=[]
+var convex_builds:=0
+var geometry_loads:=0
+func _geometry(definition:Dictionary)->Dictionary:
+	var key:=Vector2i(definition.shape,definition.rotation)
+	if geometry.has(key):return geometry[key]
+	var mesh:Mesh=blocks.preview_mesh(definition.shape,definition.rotation)
+	if mesh==null:return {}
+	var shape:ConvexPolygonShape3D=BAKED_GEOMETRY.get_meta("shapes",{}).get(key)
+	if shape==null:
+		# Authoring fallback only. The export gate bakes every supported pose;
+		# gameplay never has to run the expensive decomposition algorithm.
+		shape=mesh.create_convex_shape(true,true);convex_builds+=1
+	if shape==null:return {}
+	if geometry.size()>=GEOMETRY_LIMIT:geometry.erase(geometry.keys()[0])
+	geometry[key]={"mesh":mesh,"shape":shape};geometry_loads+=1
+	return geometry[key]
+func _material(index:int)->Material:
+	if materials.is_empty():
+		for color:Color in colors:
+			var material:=StandardMaterial3D.new();material.albedo_color=color;material.roughness=.9;materials.append(material)
+	return materials[index]
 func block(cell:Vector3i,word:int,origin:Vector3,force:float)->void:
 	if fragments.size()>=LIMIT:
 		fragments.pop_front().body.queue_free()
 	var definition:Dictionary=blocks.decode_block(word)
-	var mesh:Mesh=blocks.preview_mesh(definition.shape,definition.rotation)
-	if mesh==null:return
+	var prototype:=_geometry(definition)
+	if prototype.is_empty():return
 	var body:=RigidBody3D.new();body.mass=[12.0,5.0,18.0,20.0][definition.material]
 	body.collision_layer=1<<20;body.collision_mask=1|2|4;body.continuous_cd=true
-	var view:=MeshInstance3D.new();view.mesh=mesh;view.position=-Vector3.ONE*.5
-	var material:=StandardMaterial3D.new();material.albedo_color=colors[definition.material];material.roughness=.9;view.material_override=material;body.add_child(view)
-	var collision:=CollisionShape3D.new();collision.shape=mesh.create_convex_shape(true,true);collision.position=-Vector3.ONE*.5;body.add_child(collision)
+	var view:=MeshInstance3D.new();view.mesh=prototype.mesh;view.position=-Vector3.ONE*.5
+	view.material_override=_material(definition.material);body.add_child(view)
+	var collision:=CollisionShape3D.new();collision.shape=prototype.shape;collision.position=-Vector3.ONE*.5;body.add_child(collision)
 	add_child(body);body.global_position=Vector3(cell)+Vector3.ONE*.5
 	var outward:Vector3=(body.global_position-origin).normalized()
 	if outward.is_zero_approx():outward=Vector3.UP

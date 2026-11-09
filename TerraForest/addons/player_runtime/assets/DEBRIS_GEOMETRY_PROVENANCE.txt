@@ -1,0 +1,15 @@
+debris_geometry.res and debris_geometry.bake.json
+Original derived asset, CC0-1.0. TerraForest contributors, 2026-11-09.
+
+Generated from this repository's original block shape definitions by the original
+0BSD tool tools/bake_debris_geometry.gd, using the existing external Godot engine.
+No downloaded asset, copied algorithm or new runtime dependency is included.
+The receipt identifies exact source hashes, engine version and output hash.
+The shape/rotation catalog uses the same convex decomposition recipe previously
+executed for every debris body at runtime. Meshes, masses, impulses, collision
+layers, continuous collision detection and debris lifetime are unchanged.
+
+To the extent possible under law, the original contributors waive all copyright
+and related or neighboring rights in these original generated asset files under
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+Inherited project code and existing engine/dependency terms are unchanged.

@@ -125,7 +125,9 @@
   "res://addons/player_runtime/destination_guide.gd": [
     "res://addons/player_runtime/compass.gd"
   ],
-  "res://addons/player_runtime/destruction_effects.gd": [],
+  "res://addons/player_runtime/destruction_effects.gd": [
+    "res://addons/player_runtime/assets/debris_geometry.res"
+  ],
   "res://addons/player_runtime/developer_bag.gd": [
     "res://addons/player_runtime/item_icons.gd",
     "res://addons/player_runtime/text_input_focus.gd",

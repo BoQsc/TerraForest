@@ -33,11 +33,18 @@ func step()->void:
 	if not falling.is_empty():
 		if collapse_revision!=game.structures.blocks.survey_content_revision_id() or collapse_terrain_revision!=game.terrain.density_revision:
 			falling.clear();regions.push_front(collapse_center);status="changed; retrying";return
-		var next:=falling.slice(0,mini(48,falling.size()));falling=falling.slice(next.size())
-		suppress=true
+		var next:=falling.slice(0,mini(48,falling.size()))
+		var expected:=PackedInt32Array()
 		for i in range(0,next.size(),4):
 			var cell:=Vector3i(next[i],next[i+1],next[i+2])
-			if game.structures.blocks.get_cell(cell)==next[i+3]:combat.demolish(cell,next[i+3],Vector3(cell)-Vector3.UP,0)
+			if game.structures.blocks.get_cell(cell)==next[i+3]:expected.append_array(next.slice(i,i+4))
+		suppress=true
+		if not expected.is_empty() and not game.structures.blocks.erase_cells(expected,game.structures.blocks.survey_revision_id()):
+			suppress=false;status="edit admission unavailable";return
+		falling=falling.slice(next.size())
+		for i in range(0,expected.size(),4):
+			var cell:=Vector3i(expected[i],expected[i+1],expected[i+2])
+			combat._demolished(cell,expected[i+3],Vector3(cell)-Vector3.UP,0)
 		suppress=false;collapse_revision=game.structures.blocks.survey_content_revision_id();status="collapsing";return
 	if not work.is_empty():
 		if work.epoch!=game.terrain.epoch or work.revision!=game.terrain.density_revision or work.blocks!=game.structures.blocks.survey_content_revision_id():

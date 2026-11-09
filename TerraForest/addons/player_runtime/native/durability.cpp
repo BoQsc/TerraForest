@@ -13,6 +13,7 @@ void NativeWorldDurability::_bind_methods(){
     ClassDB::bind_method(D_METHOD("validate_damage_patch","bytes"),&NativeWorldDurability::validate_damage_patch);
     ClassDB::bind_method(D_METHOD("restore_damage_patch","bytes","expected_revision","expected_owner"),&NativeWorldDurability::restore_damage_patch);
     ClassDB::bind_method(D_METHOD("hit","key","maximum","amount"),&NativeWorldDurability::hit);
+    ClassDB::bind_method(D_METHOD("quote_hit","key","maximum","amount"),&NativeWorldDurability::quote_hit);
     ClassDB::bind_method(D_METHOD("preview_harvest","key","maximum","amount","damage_per_item","finishing_bonus"),&NativeWorldDurability::preview_harvest);
     ClassDB::bind_method(D_METHOD("harvest_hit","key","maximum","amount","item","damage_per_item","finishing_bonus","inventory","expected_revision"),&NativeWorldDurability::harvest_hit);
     ClassDB::bind_method(D_METHOD("repair","key","maximum","amount"),&NativeWorldDurability::repair);

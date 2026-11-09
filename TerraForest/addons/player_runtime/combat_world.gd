@@ -183,16 +183,19 @@ func damage_block(cell:Vector3i,word:int,damage:int,origin:Vector3,force:float)-
 	if word==0 or damage<=0 or game.structures.blocks.get_cell(cell)!=word:return false
 	var material:int=game.structures.blocks.decode_block(word).material
 	var key:String=game.world_attack.block_key(cell)
-	var result:Dictionary=game.world_attack.durability.hit(key,Durability.BLOCK_MAXIMUM[material],damage)
-	if not result.ok:return false
+	var quote:Dictionary=game.world_attack.durability.quote_hit(key,Durability.BLOCK_MAXIMUM[material],damage)
+	if not quote.ok:return false
+	if quote.destroyed:return demolish(cell,word,origin,force)
+	if not game.world_attack.durability.hit(key,Durability.BLOCK_MAXIMUM[material],damage).ok:return false
 	game.terrain.changed_since_save=true
-	if result.destroyed:return demolish(cell,word,origin,force)
 	return true
 func demolish(cell:Vector3i,word:int,origin:Vector3,force:float)->bool:
 	if word==0 or game.structures.blocks.get_cell(cell)!=word:return false
-	if not game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,0])):return false
-	game.structures.blocks.clear_history();game.world_attack.durability.forget(game.world_attack.block_key(cell))
-	effects.block(cell,word,origin,force);destroyed_blocks+=1;game.terrain.changed_since_save=true;return true
+	if not game.structures.blocks.erase_cells(PackedInt32Array([cell.x,cell.y,cell.z,word]),game.structures.blocks.survey_revision_id()):return false
+	_demolished(cell,word,origin,force);return true
+func _demolished(cell:Vector3i,word:int,origin:Vector3,force:float)->void:
+	game.world_attack.durability.forget(game.world_attack.block_key(cell))
+	effects.block(cell,word,origin,force);destroyed_blocks+=1;game.terrain.changed_since_save=true
 func detonate(id:int)->bool:
 	if blast_jobs.size()>=32:return false
 	var base:=barrel_position(id)
@@ -224,13 +227,33 @@ func detonate(id:int)->bool:
 	explosions+=1;game.terrain.changed_since_save=true;return true
 func step_blasts()->void:
 	if blast_jobs.is_empty():return
+	var started:=Time.get_ticks_usec()
 	var job:Dictionary=blast_jobs[0];var records:PackedInt32Array=job.records
-	for _i in 24:
-		if job.offset>=records.size():blast_jobs.pop_front();break
-		var at:int=job.offset;job.offset+=4
+	var end:int=mini(job.offset+24*4,records.size())
+	var removed:=PackedInt32Array();var hits_to_apply:Array[Dictionary]=[];var debris:Array[Dictionary]=[]
+	var revision:int=game.structures.blocks.survey_revision_id()
+	for at in range(job.offset,end,4):
 		var cell:=Vector3i(records[at],records[at+1],records[at+2])
+		var word:int=records[at+3]
+		if word==0 or game.structures.blocks.get_cell(cell)!=word:continue
 		var distance:float=(Vector3(cell)+Vector3.ONE*.5).distance_to(job.center)
-		damage_block(cell,records[at+3],maxi(1,roundi(300*(1-distance/5))),job.center,9*(1-distance/6))
+		var damage:=maxi(1,roundi(300*(1-distance/5)))
+		var maximum:int=Durability.BLOCK_MAXIMUM[game.structures.blocks.decode_block(word).material]
+		var key:String=game.world_attack.block_key(cell)
+		var quote:Dictionary=game.world_attack.durability.quote_hit(key,maximum,damage)
+		if not quote.ok:continue
+		if quote.destroyed:
+			removed.append_array(PackedInt32Array([cell.x,cell.y,cell.z,word]));debris.append({"cell":cell,"word":word,"force":9*(1-distance/6)})
+		else:hits_to_apply.append({"key":key,"maximum":maximum,"damage":damage})
+	# A rejected water/readiness admission must not consume damage or the saved
+	# cursor. Retry the same batch against the then-current world on the next tick.
+	if not removed.is_empty() and not game.structures.blocks.erase_cells(removed,revision):return
+	for hit:Dictionary in hits_to_apply:
+		if game.world_attack.durability.hit(hit.key,hit.maximum,hit.damage).ok:game.terrain.changed_since_save=true
+	for item:Dictionary in debris:_demolished(item.cell,item.word,job.center,item.force)
+	job.offset=end
+	if job.offset>=records.size():blast_jobs.pop_front()
+	game.terrain._record_stage("combat blast batch",(Time.get_ticks_usec()-started)/1000.0)
 func clear_transients()->void:
 	for bullet in projectiles:bullet.view.queue_free()
 	projectiles.clear();detonations.clear();blast_jobs.clear();effects.clear()

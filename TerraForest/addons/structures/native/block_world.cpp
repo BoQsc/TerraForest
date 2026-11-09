@@ -55,6 +55,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("placement_support","world_bounds","surface","lattice","terrain_only","exclude","prefer_burial"),&NativeBlockWorld::placement_support,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("set_edit_admission","callback"),&NativeBlockWorld::set_edit_admission);
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
+    ClassDB::bind_method(D_METHOD("erase_cells","expected","expected_revision"),&NativeBlockWorld::erase_cells);
     ClassDB::bind_method(D_METHOD("configure_history","byte_limit","step_limit"),&NativeBlockWorld::configure_history);
     ClassDB::bind_method(D_METHOD("clear_history"),&NativeBlockWorld::clear_history);
     ClassDB::bind_method(D_METHOD("history_stats"),&NativeBlockWorld::history_stats);
@@ -137,6 +138,23 @@ bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
     bool changed=false;
     if(!apply_cells(records,true,changed))return false;
     if(changed)emit_signal("changed");
+    return true;
+}
+bool NativeBlockWorld::erase_cells(const PackedInt32Array &expected,int64_t expected_revision) {
+    if(expected_revision<0||uint64_t(expected_revision)!=mutation_revision||expected.size()%4||expected.size()>4*64)return false;
+    PackedInt32Array records;records.resize(expected.size());
+    std::set<BlockKey> unique;
+    for(int64_t i=0;i<expected.size();i+=4){
+        const int x=expected[i],y=expected[i+1],z=expected[i+2],word=expected[i+3];
+        if(x<-LIMIT||x>LIMIT||y<-LIMIT||y>LIMIT||z<-LIMIT||z>LIMIT||word==0||!valid_word(word)||
+           !unique.insert({x,y,z}).second||cell(x,y,z)!=word)return false;
+        records.set(i,x);records.set(i+1,y);records.set(i+2,z);records.set(i+3,0);
+    }
+    bool changed=false;AABB bounds;
+    // Admission still covers the entire transaction and rejects reentrant edits.
+    // Do not publish until history is a barrier, so callbacks cannot resurrect it.
+    if(!apply_cells(records,false,changed,&bounds))return false;
+    if(changed){clear_history();emit_signal("cells_changed",bounds);emit_signal("changed");}
     return true;
 }
 bool NativeBlockWorld::admits_edit(const AABB &bounds) const {

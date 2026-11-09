@@ -23,6 +23,7 @@ func checksum(bytes: PackedByteArray) -> PackedByteArray:
 func run() -> void:
 	if "--cell-patch-only" in OS.get_cmdline_user_args():
 		check_cell_patches()
+		check_destructive_batch()
 		print("BLOCK_CELL_PATCH checks=%d failures=%d"%[checks,failures])
 		quit(1 if failures else 0)
 		return
@@ -119,6 +120,21 @@ func patch_capture(world:Node3D,origin:Vector3i,size:Vector3i)->PackedByteArray:
 func patch_restore(world:Node3D,bytes:PackedByteArray)->Dictionary:
 	var state:Dictionary=world.cell_patch_state()
 	return world.restore_cell_patch(bytes,state.revision,state.epoch)
+
+func check_destructive_batch()->void:
+	var world:Node3D=ClassDB.instantiate("NativeBlockWorld")
+	world.configure_history(1048576,64)
+	var source:=PackedInt32Array([0,3,0,1,1,3,0,2])
+	world.set_cells(source)
+	var revision:int=world.survey_revision_id()
+	check(not world.erase_cells(source,revision-1) and world.can_undo(),"destructive batch preserves cells and history on stale revision")
+	var replaced:=source.duplicate();replaced[7]=3
+	check(not world.erase_cells(replaced,revision) and world.get_cell(Vector3i(0,3,0))==1,"destructive batch rejects changed expected words atomically")
+	world.set_edit_admission(func(_bounds:AABB)->bool:return false)
+	check(not world.erase_cells(source,revision) and world.can_undo(),"destructive batch preserves undo when edit admission is unavailable")
+	world.set_edit_admission(Callable())
+	check(world.erase_cells(source,revision) and world.get_cell(Vector3i(0,3,0))==0 and world.get_cell(Vector3i(1,3,0))==0 and not world.can_undo(),"accepted destructive batch removes all cells with an undo barrier")
+	world.free()
 
 func check_cell_patches()->void:
 	var world:Node3D=ClassDB.instantiate("NativeBlockWorld")

@@ -1,0 +1,16 @@
+{
+  "engine": "4.7.2-stable (steam)",
+  "output_sha256": "3d5ff63aef629211d112d3b2b6883839a311cf77e6db5af511b7f312f0f6b599",
+  "recipe": "Same preview_mesh(shape,rotation).create_convex_shape(true,true) as legacy physical debris, evaluated offline. Original derived asset: CC0-1.0.",
+  "schema": 1,
+  "shapes": 704,
+  "sources": {
+    "res://addons/structures/native/block_shapes.hpp": "1fd0507edee668d8040f7fea865bcf1edcf427f0092de2ab3ce3d6ac2bc039be",
+    "res://addons/structures/native/block_word.hpp": "e3ea27327b76b24f1df51b774a79c1af7e3d2a338ee550735af27c88075e1fa4",
+    "res://addons/structures/native/block_world.cpp": "44b458d1b96681c005736c1d64ddba78d67045fe8648b29e2ac360a1b873c0d3",
+    "res://addons/structures/native/block_world.hpp": "baad6ee2d003e09b7e94da9156bd4f2c41a280b070c2574b426b552122f9a6b5",
+    "res://addons/structures/native/modular_mesher.hpp": "f203a9ced357377686c7d79ef79f6532a9f9410d43503924e9fdccb335a8ce6e",
+    "res://addons/structures/native/modular_shapes.hpp": "984ed381059d307089ea99804687d154324e764715feb40cc2a7a04834d5588d",
+    "res://tools/bake_debris_geometry.gd": "5771456d5a9b6d88ba2d6f2b821928db167deca8eda7a5922bb93d376e633eb8"
+  }
+}
