@@ -32,7 +32,12 @@ var output:=""
 var probe:RefCounted
 var work_start:=PackedInt64Array()
 var work_process:=PackedInt64Array()
+var work_draw:=PackedInt64Array()
+var work_physics:=PackedInt64Array()
 var work_end:=PackedInt64Array()
+var physics_cycles:=0
+var physics_cpu_us:=0
+var phase_probe_us:=0
 var overhead_us:=0
 var previous_profiling:Dictionary={}
 var capture_threshold_ms:=20.0
@@ -83,11 +88,18 @@ func stage(label:String,milliseconds:float)->void:
 
 func _begin_process()->void:
 	process_started=Time.get_ticks_usec()
-	if probe!=null:work_start=probe.thread_work()
+	work_start=_sample_work()
 func _begin_physics()->void:
 	physics_started=Time.get_ticks_usec();physics_steps+=1
+	work_physics=_sample_work()
 func _physics_process(_delta:float)->void:
-	if physics_started>0:physics_elapsed_us+=Time.get_ticks_usec()-physics_started
+	if physics_started>0:
+		physics_elapsed_us+=Time.get_ticks_usec()-physics_started
+		var work:=_sample_work()
+		var cycles:=work_delta(work_physics,work,0)
+		var cpu_us:=work_delta(work_physics,work,1)
+		physics_cycles=physics_cycles+cycles if physics_cycles>=0 and cycles>=0 else -1
+		physics_cpu_us=physics_cpu_us+cpu_us if physics_cpu_us>=0 and cpu_us>=0 else -1
 	physics_started=0
 	if is_instance_valid(game) and game.startup_complete and game.zombies.update_phase_us.has("planning"):
 		capture_navigation(game.zombies.navigation_status,game.zombies.update_phase_us)
@@ -105,13 +117,40 @@ func take_navigation_samples()->Dictionary:
 	return result
 func _process(_delta:float)->void:
 	process_finished=Time.get_ticks_usec()
-	if probe!=null:work_process=probe.thread_work()
+	work_process=_sample_work()
 	_poll_writer()
-func _begin_draw()->void:draw_started=Time.get_ticks_usec()
+func _begin_draw()->void:
+	draw_started=Time.get_ticks_usec()
+	work_draw=_sample_work()
+
+func _main_thread_work()->PackedInt64Array:
+	# Never subtract counters sampled on different engine threads.
+	if probe==null or OS.get_thread_caller_id()!=OS.get_main_thread_id():return PackedInt64Array()
+	return probe.thread_work()
+
+func _sample_work()->PackedInt64Array:
+	var began:=Time.get_ticks_usec()
+	var result:=_main_thread_work()
+	phase_probe_us+=Time.get_ticks_usec()-began
+	return result
+
+static func work_delta(older:PackedInt64Array,newer:PackedInt64Array,index:int)->int:
+	# Unsupported/failed counters are unknown, never evidence of zero CPU work.
+	if older.size()!=2 or newer.size()!=2 or older[index]<0 or newer[index]<older[index]:return -1
+	return newer[index]-older[index]
+
+static func add_work(row:Dictionary,label:String,older:PackedInt64Array,newer:PackedInt64Array)->void:
+	var cycles:=work_delta(older,newer,0)
+	var cpu_us:=work_delta(older,newer,1)
+	if cycles>=0:row["thread_cycles" if label.is_empty() else label+"_cycles"]=cycles
+	if cpu_us>=0:row[("" if label.is_empty() else label+"_")+"thread_cpu_ms"]=cpu_us/1000.0
 
 func _end_draw()->void:
 	var began:=Time.get_ticks_usec()
-	if previous==0:previous=began;stages={};physics_elapsed_us=0;physics_steps=0;return
+	var work:=_main_thread_work()
+	if previous==0:
+		previous=began;work_end=work;stages={};physics_elapsed_us=0;physics_steps=0
+		physics_cycles=0;physics_cpu_us=0;phase_probe_us=0;return
 	var row:Dictionary={"frame":Engine.get_process_frames(),"at_us":began,"frame_ms":(began-previous)/1000.0,
 		"before_process_ms":(process_started-previous)/1000.0,"process_ms":(process_finished-process_started)/1000.0,
 		"after_process_ms":(draw_started-process_finished)/1000.0,"draw_ms":(began-draw_started)/1000.0,
@@ -124,12 +163,15 @@ func _end_draw()->void:
 		"pipeline_specialization":Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SPECIALIZATION),
 		"focused":DisplayServer.window_is_focused(),"fps_cap":Engine.max_fps,"vsync":DisplayServer.window_get_vsync_mode(),
 		"recorder_previous_us":overhead_us,"trace_writer_active":writer!=null}
-	if probe!=null:
-		var work:PackedInt64Array=probe.thread_work()
-		if work_end.size()==2:
-			row.thread_cycles=work[0]-work_end[0];row.thread_cpu_ms=(work[1]-work_end[1])/1000.0
-		if work_start.size()==2 and work_process.size()==2:row.process_cycles=work_process[0]-work_start[0]
-		work_end=work
+	add_work(row,"",work_end,work)
+	add_work(row,"before_process",work_end,work_start)
+	add_work(row,"process",work_start,work_process)
+	add_work(row,"after_process",work_process,work_draw)
+	add_work(row,"draw",work_draw,work)
+	if physics_steps>0:
+		if physics_cycles>=0:row.physics_cycles=physics_cycles
+		if physics_cpu_us>=0:row.physics_thread_cpu_ms=physics_cpu_us/1000.0
+	work_end=work
 	var active:bool=is_instance_valid(game) and game.startup_complete
 	if active:
 		row.position=game.player.position;row.velocity=game.player.velocity
@@ -159,7 +201,9 @@ func _end_draw()->void:
 	var eligible:bool=active and not game.shutdown_requested and not game.loading_active and not row.menu and not row.inventory and game.app_focused
 	record(row,eligible)
 	previous=began;stages={};physics_elapsed_us=0;physics_steps=0
-	overhead_us=Time.get_ticks_usec()-began+navigation_capture_us;navigation_capture_us=0
+	physics_cycles=0;physics_cpu_us=0
+	overhead_us=Time.get_ticks_usec()-began+navigation_capture_us+phase_probe_us
+	navigation_capture_us=0;phase_probe_us=0
 
 func record(row:Dictionary,auto_trigger:bool)->void:
 	if auto_trigger:

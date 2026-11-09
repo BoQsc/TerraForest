@@ -11,6 +11,20 @@ func run()->void:
 	RenderingServer.frame_pre_draw.disconnect(trace._begin_draw);RenderingServer.frame_post_draw.disconnect(trace._end_draw)
 	trace.set_process(false);trace.set_physics_process(false)
 	trace.output="res://reports/frame_trace_test";DirAccess.make_dir_recursive_absolute(trace.output)
+	check(trace._main_thread_work().size()==2,"native main-thread counters are available in the runtime fixture")
+	var worker:=Thread.new();worker.start(trace._main_thread_work)
+	var other_thread:PackedInt64Array=worker.wait_to_finish()
+	check(other_thread.is_empty(),"worker callbacks must not be subtracted from main-thread counters")
+	var measured:Dictionary={}
+	Trace.add_work(measured,"draw",PackedInt64Array([100,1000]),PackedInt64Array([300,16625]))
+	check(measured.draw_cycles==200 and measured.draw_thread_cpu_ms==15.625,"phase counters retain raw cycles and separately quantized CPU time")
+	for pair:Array in [[[],[]],[[-1,-1],[-1,-1]],[[300,2000],[100,1000]]]:
+		var unknown:Dictionary={}
+		Trace.add_work(unknown,"draw",PackedInt64Array(pair[0]),PackedInt64Array(pair[1]))
+		check(unknown.is_empty(),"missing, unsupported and reversed counters must not become zero-work evidence")
+	var partial:Dictionary={}
+	Trace.add_work(partial,"physics",PackedInt64Array([100,-1]),PackedInt64Array([100,-1]))
+	check(partial.physics_cycles==0 and not partial.has("physics_thread_cpu_ms"),"a valid zero delta remains distinct from an unavailable CPU-time counter")
 	var first_query:Dictionary={"planning_us":50000,"query_profile":{"support_us":49000}}
 	trace.capture_navigation(first_query,{"planning":50000})
 	first_query.query_profile.support_us=0

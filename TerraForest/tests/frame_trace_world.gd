@@ -39,14 +39,16 @@ func frame()->void:
 	var now:=Time.get_ticks_usec()
 	if previous>0:
 		var sample:Dictionary={"phase":label,"frame_ms":(now-previous)/1000.0,"frame":Engine.get_frames_drawn(),"at_us":now}
-		if light_abba or render_probe:
-			sample.gpu_ms=RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid())
-			sample.draw_calls=Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
+		sample.gpu_ms=RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid())
+		sample.render_cpu_ms=RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid())
+		sample.draw_calls=Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
 		samples.append(sample)
 	previous=now
 func run()->void:
 	if not slot.begins_with("StartupBench_FPS_") or not slot.is_valid_identifier() or output.is_empty():quit(2);return
 	DirAccess.make_dir_recursive_absolute(output)
+	# The recorder-off control must retain the same root GPU timing instrumentation.
+	RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
 	RenderingServer.frame_post_draw.connect(frame)
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed
 	var browser=current_scene

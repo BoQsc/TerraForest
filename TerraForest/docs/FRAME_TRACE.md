@@ -65,6 +65,17 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
   of complete GPU attribution across every SubViewport.
 - Main-thread cycles and CPU time when the existing native resource probe is
   available. CPU time is quantized; raw cycles are work counts, not milliseconds.
+  `before_process_cycles`, `process_cycles`, `after_process_cycles` and
+  `draw_cycles` separate the same four wall intervals. Each also has a
+  `<phase>_thread_cpu_ms` counter. `physics_cycles`/`physics_thread_cpu_ms` sum
+  measured SceneTree physics callbacks in the frame and overlap the four
+  intervals. Engine work outside those callback boundaries is not included.
+  Samples taken off the main thread, missing, unsupported or reversed counter
+  readings omit the associated field;
+  they never become zero-work evidence. Samples bracket callbacks with small
+  measurement offsets. These counters distinguish little measured thread work
+  from sustained computation, but do not identify a wait owner or include work
+  performed by other engine threads.
 - Terrain/controller/loading/vehicle stages, publication queues, forest/cover
   work, zombie phases and newly admitted zombie initialization breakdowns.
 - Native navigation readiness/support/hazard/clearance times, requested support
@@ -94,8 +105,8 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
   focus, menus, entry/loading state, first-person rendering mode and presentation
   settings. Stage parents/children overlap; never sum their maxima.
 - Previous recorder callback elapsed time and writer activity, to investigate
-  observer effects. The elapsed metric includes navigation-sample capture but
-  excludes some stage/probe overhead and
+  observer effects. The elapsed metric includes navigation-sample capture and
+  phase-counter probe time but excludes some stage/callback overhead and
   can include OS descheduling; it is not total recorder CPU time.
 
 The persistent host stays active across browser/world transitions. Temporary
@@ -134,6 +145,9 @@ python TerraForest/tools/check_frame_trace_world.py --short --save --executable 
 shutdown save. Its observation retains per-component capture costs and initial
 zombie setup timings. A successful save does not override a strict shutdown
 diagnostic failure; the wrapper retains both results in the report.
+The driver's continuous samples retain root GPU/render-CPU timings and draw
+counts even with `--without-trace`, enabling a recorder-off control with the same
+GPU timing instrumentation. That control is diagnostic, not a quality setting.
 
 `--gpu-profile` also retains the engine's GPU pass summaries. `--light-abba`
 compares four five-second stationary phases: guarded light updates, redundant
