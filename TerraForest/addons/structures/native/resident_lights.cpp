@@ -110,7 +110,14 @@ void NativeResidentLights::_process(double delta){
     for(auto &slot:slots)if(slot.identity){
         Vector3 position;
         if(!point(sources[slot.source],slot.identity,position)){slot.light->set_visible(false);slot.identity=0;slot.source=-1;}
-        else {slot.light->set_global_position(position);double distance=position.distance_to(focus);slot.light->set_param(Light3D::PARAM_ENERGY,sources[slot.source].energy*Math::clamp((24-distance)/6.0,0.0,1.0));}
+        else {
+            // Reasserting a static transform queues redundant notifications.
+            // Keep exact poses/energy, submit only changes.
+            if(slot.light->get_global_position()!=position)slot.light->set_global_position(position);
+            const double distance=position.distance_to(focus);
+            const float energy=float(sources[slot.source].energy*Math::clamp((24-distance)/6.0,0.0,1.0));
+            if(slot.light->get_param(Light3D::PARAM_ENERGY)!=energy)slot.light->set_param(Light3D::PARAM_ENERGY,energy);
+        }
     }
     timer+=std::max(0.0,delta);if(timer>=.1){timer=0;select();}
     last_us=Time::get_singleton()->get_ticks_usec()-started;max_us=std::max(max_us,last_us);

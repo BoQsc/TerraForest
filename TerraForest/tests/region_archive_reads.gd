@@ -66,6 +66,19 @@ func run() -> void:
 	var surveyed:Dictionary=archive.take_survey_region_read(survey_ticket)
 	check(surveyed.get("ok",false) and surveyed.survey.columns(0).get("ok",false) and not surveyed.has("bytes"),"survey returns decoded bounded source rather than a gameplay packet")
 	check(archive.region_read_stats().reserved_bytes==0,"survey consumption releases queue reservation")
+	var decoder_ids:=PackedInt64Array([surveyed.survey.get_instance_id()])
+	surveyed.clear()
+	var repeated_surveys:=true
+	for iteration in 32:
+		var probe:int=archive.request_survey_region_read(Vector3i(-1,0,0),digest,checkpoint,16)
+		if probe<=0 or not await until(func():return archive.region_read_stats().survey_completed==1):repeated_surveys=false;break
+		var reply:Dictionary=archive.take_survey_region_read(probe)
+		if not reply.get("ok",false) or not reply.has("survey"):repeated_surveys=false;break
+		decoder_ids.append(reply.survey.get_instance_id());reply.clear()
+	await process_frame;await process_frame
+	var survivors:=0
+	for identity:int in decoder_ids:survivors+=int(is_instance_id_valid(identity))
+	check(repeated_surveys and decoder_ids.size()==33 and survivors==0,"consumed survey wrappers release across repeated native-worker handoffs")
 	var cancelled:int=archive.request_survey_region_read(Vector3i(-1,0,0),digest,checkpoint,16)
 	check(cancelled>0 and archive.discard_survey_region_read(cancelled),"survey cancellation accepts pending active or completed read")
 	check(await until(func():return archive.region_read_stats().outstanding==0),"cancelled survey releases reservation and completion")
@@ -172,6 +185,7 @@ func run() -> void:
 	file=FileAccess.open("res://reports/region_archive_reads.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(report,"  "))
 	file.close()
+	print("REGION_ARCHIVE_READS checks=",checks," failures=",failures)
 	quit(1 if failures else 0)
 
 func check_destructor(directory: String,c: RefCounted,packet: PackedByteArray,digest: PackedByteArray) -> void:

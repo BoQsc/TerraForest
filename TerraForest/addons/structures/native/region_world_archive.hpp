@@ -10,6 +10,8 @@
 namespace terraforest {
 class ExclusionPageData;
 class ModelRenderPageData;
+struct BlockMapRegionData;
+struct ModelMapRegionData;
 // An optional native adapter around NativeWorldArchive. One save-worker owner.
 // Its sibling .regions directory is exclusively managed by this adapter.
 class NativeRegionWorldArchive : public RefCounted {
@@ -55,6 +57,8 @@ class NativeRegionWorldArchive : public RefCounted {
     std::deque<Dictionary> survey_read_completed_;
     std::map<int64_t,std::shared_ptr<ExclusionPageData>> exclusion_completed_;
     std::map<int64_t,std::shared_ptr<ModelRenderPageData>> model_render_completed_;
+    std::map<int64_t,std::shared_ptr<const BlockMapRegionData>> block_survey_completed_;
+    std::map<int64_t,std::shared_ptr<const ModelMapRegionData>> model_survey_completed_;
     Dictionary take_survey_read_locked(int64_t ticket,std::shared_ptr<ExclusionPageData> *page,std::shared_ptr<ModelRenderPageData> *render=nullptr);
     int64_t read_active_survey_ticket_=0;
     int64_t read_active_model_ticket_=0;

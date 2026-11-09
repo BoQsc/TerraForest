@@ -29,7 +29,7 @@ class BlockHorizon {
     int64_t read_ticket=0;
     PackedByteArray read_digest;
     std::map<BlockKey,BlockChunk> source;
-    Ref<NativeBlockMapRegion> decoded;
+    std::shared_ptr<const BlockMapRegionData> decoded;
     struct Completion {BlockBake bake;bool last=false;std::set<BlockKey> keys;uint64_t charge=0;};
     std::deque<Completion> completed;
     static constexpr size_t RESULT_LIMIT=8;
@@ -38,7 +38,7 @@ class BlockHorizon {
     size_t peak_results=0;
     int last_step_uploads=0,max_step_uploads=0;
     void run();
-    void start(std::map<BlockKey,BlockChunk> &&chunks,const Ref<NativeBlockMapRegion> &packet={});
+    void start(std::map<BlockKey,BlockChunk> &&chunks,std::shared_ptr<const BlockMapRegionData> packet={});
     bool deliver(BlockBake &&bake,bool last,uint64_t ticket,const std::set<BlockKey> &keys={});
     void erase(BlockKey key);
     void reset();

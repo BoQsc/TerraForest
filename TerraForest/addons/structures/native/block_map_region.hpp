@@ -5,6 +5,7 @@
 #include "map_material.hpp"
 #include <godot_cpp/variant/packed_color_array.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <memory>
 namespace terraforest {
 // At most one occupied chunk (256 column samples) per call. All samples are
 // local-space points; the map consumer applies the captured world transform.
@@ -25,12 +26,19 @@ inline Dictionary block_map_columns(const std::map<BlockKey,BlockChunk>&chunks,B
  }
  out["ok"]=true;out["offset"]=offset;out["complete"]=offset==64;out["points"]=points;out["colors"]=colors;return out;
 }
-// Worker-owned decoder for one checksum-bound archived region. Does not load
-// the region into gameplay, construct meshes or allocate physics objects.
+// Immutable payload crosses native workers; engine RefCounted wrappers stay on
+// the consuming thread. No gameplay residency, render or physics allocation.
+struct BlockMapRegionData {
+ std::map<BlockKey,BlockChunk> chunks;BlockKey region;
+ bool load(const PackedByteArray &bytes,const PackedByteArray &expected){
+  chunks.clear();if(expected.size()!=32||bytes.size()<100||bytes.slice(bytes.size()-32)!=expected)return false;
+  return NativeBlockWorld::parse_region(bytes,region,chunks);
+ }
+};
 class NativeBlockMapRegion : public RefCounted {
  GDCLASS(NativeBlockMapRegion,RefCounted)
  friend class BlockHorizon;
- std::map<BlockKey,BlockChunk> chunks;BlockKey region;bool valid=false;
+ std::shared_ptr<const BlockMapRegionData> data_;
 protected:
  static void _bind_methods(){
   ClassDB::bind_method(D_METHOD("load_packet","bytes","expected_checksum"),&NativeBlockMapRegion::load_packet);
@@ -38,9 +46,10 @@ protected:
  }
 public:
  bool load_packet(const PackedByteArray &bytes,const PackedByteArray &expected){
-  valid=false;chunks.clear();if(expected.size()!=32||bytes.size()<100||bytes.slice(bytes.size()-32)!=expected)return false;
-  valid=NativeBlockWorld::parse_region(bytes,region,chunks);return valid;
+  data_.reset();auto next=std::make_shared<BlockMapRegionData>();
+  if(!next->load(bytes,expected))return false;data_=std::move(next);return true;
  }
- Dictionary columns(int64_t offset)const{return valid?block_map_columns(chunks,region,offset):Dictionary();}
+ void adopt(std::shared_ptr<const BlockMapRegionData> data){data_=std::move(data);}
+ Dictionary columns(int64_t offset)const{return data_?block_map_columns(data_->chunks,data_->region,offset):Dictionary();}
 };
 }

@@ -2,36 +2,45 @@
 #pragma once
 #include "static_batch.hpp"
 #include <godot_cpp/core/class_db.hpp>
+#include <memory>
 namespace terraforest {
-// Worker-owned one-region decoder. Bounds are conservative cartographic input,
-// not silhouettes. The caller captures the mesh bounds and collection transform.
-class NativeModelMapRegion : public RefCounted {
- GDCLASS(NativeModelMapRegion,RefCounted)
+// Pure native immutable data may cross workers. Bounds remain conservative
+// cartographic input, with captured mesh bounds and collection transform.
+struct ModelMapRegionData {
  std::map<int64_t,NativeStaticBatch::Placement> values;
  AABB prototype;
- bool valid=false;
-protected:
- static void _bind_methods(){
-  ClassDB::bind_method(D_METHOD("load_packet","bytes","checksum","asset","prototype_bounds"),&NativeModelMapRegion::load_packet);
-  ClassDB::bind_method(D_METHOD("bounds","after_id"),&NativeModelMapRegion::bounds);
- }
-public:
- bool load_packet(const PackedByteArray &bytes,const PackedByteArray &checksum,const String &expected_asset,const AABB &box){
-  valid=false;values.clear();
+ bool load(const PackedByteArray &bytes,const PackedByteArray &checksum,const String &expected_asset,const AABB &box){
+  values.clear();
   if(checksum.size()!=32||bytes.size()<100||bytes.slice(bytes.size()-32)!=checksum||
     !box.position.is_finite()||!box.size.is_finite()||box.size.x<0||box.size.y<0||box.size.z<0)return false;
   String asset;BlockKey region;
   if(!NativeStaticBatch::parse_region(bytes,asset,region,values)||asset!=expected_asset){values.clear();return false;}
-  prototype=box;valid=true;return true;
+  prototype=box;return true;
  }
  Dictionary bounds(int64_t after)const{
-  Dictionary out;if(!valid||after<0)return out;
+  Dictionary out;if(after<0)return out;
   Array boxes;PackedInt64Array ids;auto it=values.upper_bound(after);
   for(int n=0;n<32&&it!=values.end();++n,++it){
    boxes.push_back(NativeStaticBatch::placement_transform(it->second).xform(prototype));ids.push_back(it->first);after=it->first;
   }
   out["ok"]=true;out["bounds"]=boxes;out["ids"]=ids;out["after_id"]=after;out["complete"]=it==values.end();return out;
  }
+};
+class NativeModelMapRegion : public RefCounted {
+ GDCLASS(NativeModelMapRegion,RefCounted)
+ std::shared_ptr<const ModelMapRegionData> data_;
+protected:
+ static void _bind_methods(){
+  ClassDB::bind_method(D_METHOD("load_packet","bytes","checksum","asset","prototype_bounds"),&NativeModelMapRegion::load_packet);
+  ClassDB::bind_method(D_METHOD("bounds","after_id"),&NativeModelMapRegion::bounds);
+ }
+public:
+ bool load_packet(const PackedByteArray &bytes,const PackedByteArray &checksum,const String &asset,const AABB &box){
+  data_.reset();auto next=std::make_shared<ModelMapRegionData>();
+  if(!next->load(bytes,checksum,asset,box))return false;data_=std::move(next);return true;
+ }
+ void adopt(std::shared_ptr<const ModelMapRegionData> data){data_=std::move(data);}
+ Dictionary bounds(int64_t after)const{return data_?data_->bounds(after):Dictionary();}
 };
 inline Dictionary NativeStaticBatch::survey_index()const{
  Dictionary out;out["ready"]=!admission&&source_mesh.is_valid();out["revision"]=int64_t(edit_revision);

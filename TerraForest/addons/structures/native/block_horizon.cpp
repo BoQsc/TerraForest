@@ -64,9 +64,9 @@ void BlockHorizon::sync() {
             erase({key.x*4+width,key.y*4+height,key.z*4+depth});
     }
 }
-void BlockHorizon::start(std::map<BlockKey,BlockChunk> &&chunks,const Ref<NativeBlockMapRegion> &packet) {
+void BlockHorizon::start(std::map<BlockKey,BlockChunk> &&chunks,std::shared_ptr<const BlockMapRegionData> packet) {
     if(!worker.joinable())worker=std::thread(&BlockHorizon::run,this);
-    {std::lock_guard<std::mutex> lock(mutex);source=std::move(chunks);decoded=packet;pending=true;}
+    {std::lock_guard<std::mutex> lock(mutex);source=std::move(chunks);decoded=std::move(packet);pending=true;}
     active=true;wake.notify_all();
 }
 bool BlockHorizon::deliver(BlockBake &&bake,bool last,uint64_t ticket,const std::set<BlockKey> &keys) {
@@ -82,12 +82,12 @@ bool BlockHorizon::deliver(BlockBake &&bake,bool last,uint64_t ticket,const std:
 }
 void BlockHorizon::run() {
     for(;;) {
-        std::map<BlockKey,BlockChunk> chunks;Ref<NativeBlockMapRegion> packet;BlockKey region;uint64_t ticket;
+        std::map<BlockKey,BlockChunk> chunks;std::shared_ptr<const BlockMapRegionData> packet;BlockKey region;uint64_t ticket;
         {
             std::unique_lock<std::mutex> lock(mutex);wake.wait(lock,[&]{return stopping||pending;});if(stopping)return;
-            chunks=std::move(source);packet=decoded;decoded.unref();region=active_region;ticket=active_serial;pending=false;
+            chunks=std::move(source);packet=std::move(decoded);region=active_region;ticket=active_serial;pending=false;
         }
-        const auto &cells=packet.is_valid()?packet->chunks:chunks;
+        const auto &cells=packet?packet->chunks:chunks;
         std::set<BlockKey> keys;
         for(const auto &entry:cells) {
             const auto key=entry.first,owner=NativeBlockWorld::region_for(key);
@@ -158,7 +158,7 @@ void BlockHorizon::step() {
         if(active_serial!=serial||region==regions.end()||region->second.version!=active_version||unloaded==world.unloaded_regions.end()||unloaded->second!=read_digest){++rejected;return;}
         Ref<NativeBlockMapRegion> packet=response.get("survey",Variant());
         if(!bool(response.get("ok",false))||packet.is_null()){++failed;region->second.retry=ticks+600;return;}
-        start({},packet);return;
+        start({},packet->data_);return;
     }
     auto selected=regions.end();double closest=1e300;
     for(auto iterator=regions.begin();iterator!=regions.end();++iterator) {

@@ -22,6 +22,7 @@ struct ModelPlacementRecord {int64_t id;std::array<float,12> transform;};
 class NativeStaticBatch : public Node3D {
     GDCLASS(NativeStaticBatch,Node3D)
     friend class NativeModelMapRegion;
+    friend struct ModelMapRegionData;
     friend class NativePrefabPlacement;
     friend class NativeStructureQueries;
     friend class ExclusionPageData;

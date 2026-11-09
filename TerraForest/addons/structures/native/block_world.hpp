@@ -71,6 +71,7 @@ class NativeBlockWorld : public Node3D {
     bool restore_region_impl(const PackedByteArray &bytes,const PackedByteArray &expected,bool preserve_history);
     friend class NativeBlockRegionStore;
     friend class NativeBlockMapRegion;
+    friend struct BlockMapRegionData;
     friend class ExclusionPageData;
     friend class NativeStructureQueries;
     bool occupied_local(const AABB &bounds) const;

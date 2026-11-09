@@ -4,6 +4,11 @@ const Catalog = preload("res://addons/house_lights/catalog.gd")
 var checks := 0
 var failures := 0
 
+class TransformProbe extends OmniLight3D:
+	var notifications:=0
+	func _notification(what:int)->void:
+		if what==NOTIFICATION_TRANSFORM_CHANGED:notifications+=1
+
 class Host extends Node:
 	var structures: Node3D
 	var terrain: Dictionary = {"backend": {"world_seed": 1703}, "changed_since_save": false}
@@ -52,6 +57,22 @@ func run() -> void:
 		check(collection.upsert_instances(ids, transforms), "native GLB placements accepted: " + key)
 	pool.set_focus(Vector3(4, 1, 0)); await pump()
 	check(pool.statistics().active == 4 and pool.get_child_count() == 4, "eighteen objects use exactly four pooled light nodes")
+	for light:OmniLight3D in pool.get_children():
+		light.set_script(TransformProbe);light.set_notify_transform(true)
+	await pump(2)
+	for light:OmniLight3D in pool.get_children():light.notifications=0
+	await pump(10)
+	var notifications:=0
+	for light:OmniLight3D in pool.get_children():notifications+=light.notifications
+	check(notifications==0,"stationary pooled lights do not emit redundant transform notifications every frame")
+	# Moving a source collection still moves every retained light belonging to it.
+	for key:String in catalog.definitions:structures.model(key).position.y+=.25
+	await pump(2)
+	var moved:=0
+	for light:OmniLight3D in pool.get_children():moved+=light.notifications
+	check(moved>0,"real placement transform changes still reach pooled lights")
+	for key:String in catalog.definitions:structures.model(key).position.y-=.25
+	await pump(2)
 	var before: PackedByteArray = structures.capture_storage_snapshot()
 	for key: String in catalog.definitions:
 		var collection: Node3D = structures.model(key)
