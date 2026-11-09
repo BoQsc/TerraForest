@@ -7,6 +7,7 @@ var handgun_aim=preload("res://addons/characters/runtime/px9_aim_layer.gd").new(
 var handgun_flash:Node3D
 var handgun_empty:=true
 var handgun_aiming:=false
+const PX9_RELOAD_SPEED:=1.25 # Feel trial: 20% shorter paired reloads.
 const PX9_PATH="res://addons/characters/runtime/px9/item_px9.json"
 const PX9=preload("res://addons/characters/runtime/px9/item_instance.gd")
 signal rifle_reload_finished
@@ -364,7 +365,7 @@ func handgun_action(action:String)->bool:
 	if action_remaining>0 and not interrupt_reload:return false
 	var result:int=px9.request(action,.04 if interrupt_reload else 0.0)
 	if result==OK and action in ["fire","fire_last","aim_fire","aim_fire_last"]:handgun_aiming=rifle_aiming
-	if result==OK:action_remaining=px9.motion.duration_seconds()
+	if result==OK:action_remaining=px9.motion.duration_seconds()/(PX9_RELOAD_SPEED if action in ["reload","reload_empty"] else 1.0)
 	return result==OK
 
 func rifle_action(action:String)->bool:
@@ -475,6 +476,7 @@ func _process_handgun(delta:float)->void:
 	# Jump is a single authored action, held at its endpoint until landing.
 	# Returning to idle here would restart it during a longer flight.
 	clock.auto_return=clock.current_action not in ["jump","jump_empty"]
+	clock.speed=PX9_RELOAD_SPEED if clock.current_action in ["reload","reload_empty"] else 1.0
 	px9.advance(delta)
 	if clock.current_action in ["jump","jump_empty"] and not clock.active:clock.seek_seconds(clock.time_seconds)
 	handgun_aiming=rifle_aiming
@@ -483,7 +485,7 @@ func _process_handgun(delta:float)->void:
 	if rifle_holster_item>=0 and (clock.current_action!="holster" or not clock.active):
 		var next:=rifle_holster_item;var water:=rifle_holster_water
 		px9.unequip();px9.queue_free();px9=null;current=-1;rifle_holster_item=-1;equip(next,water);return
-	action_remaining=0.0 if clock.current_action in ambient or not clock.active else maxf(0,clock.duration_seconds()-clock.time_seconds)
+	action_remaining=0.0 if clock.current_action in ambient or not clock.active else maxf(0,clock.duration_seconds()-clock.time_seconds)/clock.speed
 
 func _process(delta: float) -> void:
 	if current==9:_process_handgun(delta);return

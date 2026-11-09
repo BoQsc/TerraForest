@@ -1,3 +1,10 @@
+## PX9 faster reload feel trial - 2026-11-09
+
+User requested a comparison on master: reloads now play at 1.25x (20% shorter),
+normal 2.24 s and empty 2.56 s, retaining paired animation/event timing. User feel
+acceptance is pending; compare both reload types while holding fire and decide
+whether to retain the rate. [Trial record](../issues/px9-handgun/README.md#faster-reload-feel-trial---2026-11-09).
+
 ## PX9 merged into master - 2026-11-09
 
 Accepted pistol/player work is integrated with performance checkpoint 40a40d72.

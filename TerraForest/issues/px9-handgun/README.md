@@ -285,3 +285,22 @@ update was performed. The performance chat's newly required installed native
 profiling gate was not run against the older installed package; it belongs to
 the next explicitly requested packaging milestone. Third-person qualification
 and sustained performance evidence retain their existing open scope.
+
+## Faster reload feel trial - 2026-11-09
+
+User requested a reload-speed comparison directly on master. The host now runs
+only PX9 reload/reload_empty at 1.25x on the existing shared human/weapon clock:
+normal reload 2.8 -> 2.24 seconds, empty reload 3.2 -> 2.56 seconds (20% shorter).
+Magazine events, reload SFX cue and ammunition completion remain on that clock;
+other actions use normal speed. The host's remaining-time estimate accounts for
+the playback rate. Original asset clips and source timing remain unchanged.
+
+This is a feel experiment, not a newly accepted timing milestone. The accepted
+baseline remains tagged px9-playtest-2026-11-09. Next playtest should compare partial
+and empty reloads, including holding fire through completion, before deciding
+whether to retain this rate. Set PX9_RELOAD_SPEED back to 1.0 for the baseline.
+
+Validation: [paired handgun 72/72](logs/px9-faster-reload-handgun.log) and
+[actual-world gameplay 32/32](logs/px9-faster-reload-world.log) pass, including
+reload cancellation, exact ammunition transfer, held-fire blocking during reload
+and resumption afterward, automatic empty reload and unchanged aiming cadence.
