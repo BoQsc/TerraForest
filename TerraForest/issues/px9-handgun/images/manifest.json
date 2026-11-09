@@ -114,5 +114,38 @@
     "source": "tools/preview_px9_flash.gd -- --aim-flow; same uninterrupted hip-shot clock; aim starts at shot time 0.05 s",
     "renderer": "Godot 4.7.2 Forward+ / RTX 4050; split first-person renderer and depth protection",
     "status": "Agent inspected intermediate and reversed poses; user feel review pending"
+  },
+  "impact_brick_burst.png": {
+    "sha256": "f4c21669652869d071e6e4eaf7c2d87cb547a7e27c71f98ee74d6e260d2566b5",
+    "source": "tools/preview_firearm_impacts.gd; actual shared effect and bullet-mark renderer, warm shaders, three render frames after emission for bursts; .65 s after for settled",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050",
+    "camera": "50-degree FOV, 1.5 m from a 1.2 m test panel; 1920x1080",
+    "status": "Agent inspected restrained scale/expiry; user gameplay/audio mix acceptance pending"
+  },
+  "impact_metal_burst.png": {
+    "sha256": "111718a91d594b1e9ee79c1172de8b7b22a755997e8bc2af4eb6e6ea48fcf674",
+    "source": "tools/preview_firearm_impacts.gd; actual shared effect and bullet-mark renderer, warm shaders, three render frames after emission for bursts; .65 s after for settled",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050",
+    "camera": "50-degree FOV, 1.5 m from a 1.2 m test panel; 1920x1080",
+    "status": "Agent inspected restrained scale/expiry; user gameplay/audio mix acceptance pending"
+  },
+  "impact_flesh_burst.png": {
+    "sha256": "10e6841fe404f2070cde98daa492a0aa238fddeb3fe8782a9f5208e9a33d615f",
+    "source": "tools/preview_firearm_impacts.gd; actual shared effect and bullet-mark renderer, warm shaders, three render frames after emission for bursts; .65 s after for settled",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050",
+    "camera": "50-degree FOV, 1.5 m from a 1.2 m test panel; 1920x1080",
+    "status": "Agent inspected restrained scale/expiry; user gameplay/audio mix acceptance pending"
+  },
+  "impact_wood_settled.png": {
+    "sha256": "357582188aaf20c5c5c938631f7efea94607cc316c4424d31831574413dbeedd",
+    "source": "tools/preview_firearm_impacts.gd; actual shared effect and bullet-mark renderer, warm shaders, three render frames after emission for bursts; .65 s after for settled",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050",
+    "camera": "50-degree FOV, 1.5 m from a 1.2 m test panel; 1920x1080",
+    "status": "Agent inspected restrained scale/expiry; user gameplay/audio mix acceptance pending"
+  },
+  "impact_initial_world_view.png": {
+    "sha256": "00228bf29cc81ec80b774520a60b0343ab25e229de3b482a982493238c55c2bf",
+    "source": "Initial tests/firearm_impacts.gd graphical run; temporary world",
+    "status": "Rejected diagnostic view: held tool obscures contact and first-use rendering makes burst timing unreliable; final warm material-panel captures supersede this view"
   }
 }

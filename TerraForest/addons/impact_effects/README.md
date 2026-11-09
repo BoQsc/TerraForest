@@ -84,3 +84,14 @@ Use `python tools/check_impact_effects.py --baseline` for the preserved profile;
 `--pack` checks either profile against the exported game.
 These checks do not substitute for the player's visual acceptance or low-end GPU
 performance measurements.
+
+### Firearm contacts
+
+Confirmed projectile hits also use this adapter with compact bursts: eight
+chips/dust particles for hard surfaces/wood, three short metal sparks, or six
+small flesh droplets. Normal tool effects and the original baseline profile
+retain their existing defaults. The particle master toggle covers these bursts.
+Spatial hit audio and fading entrance marks are owned by the combat host and
+remain independent of that particle setting. `tests/firearm_impacts.gd` exercises
+native block hits and a projectile against actual zombie anatomy;
+`tools/preview_firearm_impacts.gd` provides warmed close-up visual captures.

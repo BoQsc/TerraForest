@@ -34,6 +34,7 @@ func attach(world:Node)->void:
 	prepare_resources()
 	game.world_attack.impact_preparing.connect(prepare_contact)
 	game.world_attack.contact_effect.connect(contact)
+	game.combat.firearm_impact.connect(firearm_contact)
 	game.terrain.density_ray_received.connect(receive_sample)
 
 func set_enabled(value:bool,persist:=true)->void:
@@ -108,6 +109,11 @@ func contact(target:Dictionary)->void:
 	if material.is_empty() or (material=="flesh" and target.get("repairing",false)):return
 	burst(target.position,target.normal,material,target.get("destroyed",false) and breakup_enabled)
 
+func firearm_contact(target:Dictionary)->void:
+	if not enabled:return
+	var material:=material_for(target)
+	burst(target.position,target.normal,material,false,true)
+
 func mesh_for(shape:String)->Mesh:
 	if not meshes.has(shape):
 		if shape=="blood":
@@ -137,7 +143,7 @@ func prepare_resources()->void:
 		var blood:=ShaderMaterial.new();blood.shader=preload("res://addons/impact_effects/blood_motion.gdshader")
 		motions={"fragments":fragments,"blood":blood}
 
-func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
+func burst(point:Vector3,normal:Vector3,material:String,broken:=false,firearm:=false)->bool:
 	if not enabled or not PALETTE.has(material) or not point.is_finite() or not normal.is_finite() or normal.length_squared()<.25:return false
 	if motions.is_empty():prepare_resources()
 	var emitter:GPUParticles3D
@@ -161,7 +167,7 @@ func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
 		emitter.draw_pass_2=meshes.dust
 	emitter.draw_pass_1=mesh_for(shape);emitter.lifetime=.48 if spark else .95
 	emitter.amount_ratio=(.85 if broken else .46) if spark else (.75 if broken else .29)
-	emitter.global_position=point+normal.normalized()*.035
+	emitter.global_position=point+normal.normalized()*(.006 if firearm else .035)
 	var process:ShaderMaterial=emitter.process_material
 	process.shader=motions["blood" if flesh else "fragments"].shader
 	process.set_shader_parameter("surface_normal",normal.normalized())
@@ -177,6 +183,13 @@ func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
 			process.set_shader_parameter("piece_scale",Vector3(.003,.003,.07) if spark else (Vector3(.009,.012,.045) if shape=="wood" else Vector3(.040,.034,.038)))
 			process.set_shader_parameter("dust_count",0 if spark else (6 if broken else 3))
 		process.set_shader_parameter("breakup",broken)
+	if firearm:
+		emitter.lifetime=.25 if spark else (.32 if flesh else .55)
+		emitter.amount_ratio=(3.0 if spark else (6.0 if flesh else 8.0))/PARTICLES
+		if not flesh:
+			process.set_shader_parameter("piece_scale",Vector3(.0015,.0015,.025) if spark else (Vector3(.004,.005,.024) if material=="wood" else Vector3(.015,.012,.014)))
+			if style==0:process.set_shader_parameter("dust_count",0 if spark else 2)
+	if flesh:process.set_shader_parameter("compact",firearm)
 	process.set_shader_parameter("burst_count",int(ceil(PARTICLES*emitter.amount_ratio)))
 	var plane:=Vector4(0,1,0,-point.y);var floor_found:=normal.y>.65
 	if floor_found:plane=Vector4(normal.x,normal.y,normal.z,-normal.dot(point))
@@ -187,7 +200,7 @@ func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
 			var n:Vector3=floor_hit.normal;plane=Vector4(n.x,n.y,n.z,-n.dot(floor_hit.position));floor_found=true
 	process.set_shader_parameter("floor_plane",plane);process.set_shader_parameter("floor_enabled",floor_found)
 	emitter.set_meta("busy",true);emitter.show();emitter.restart()
-	emitted_events+=1;last_event={"material":material,"position":point,"normal":normal,"broken":broken,"count":int(ceil(PARTICLES*emitter.amount_ratio)),"style":STYLES[style]}
+	emitted_events+=1;last_event={"material":material,"position":point,"normal":normal,"broken":broken,"count":int(ceil(PARTICLES*emitter.amount_ratio)),"style":STYLES[style],"firearm":firearm}
 	return true
 
 func statistics()->Dictionary:

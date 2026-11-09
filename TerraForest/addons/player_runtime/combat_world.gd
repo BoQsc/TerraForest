@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
+signal firearm_impact(target:Dictionary)
+var impact_audio:Node3D
 const Barrel=preload("res://addons/player_runtime/combat_barrel.gd")
 const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
 const RIFLE:=7
@@ -42,7 +44,8 @@ func prepare(host:Node)->bool:
 	game=host;state=ClassDB.instantiate("NativeCombatState")
 	action_input_owned=func()->bool:return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 	if state==null or barrels==null:return false
-	add_child(effects);effects.blocks=game.structures.blocks;integrity.attach(game,self)
+	impact_audio=preload("res://addons/player_runtime/firearm_impact_audio.gd").new()
+	add_child(impact_audio);add_child(effects);effects.blocks=game.structures.blocks;integrity.attach(game,self)
 	holes=preload("res://addons/player_runtime/bullet_holes.gd").new();add_child(holes)
 	game.tool_view.human.rifle_reload_finished.connect(finish_reload)
 	var decoder=preload("res://addons/audio_runtime/wav_decoder.gd")
@@ -157,6 +160,7 @@ func step_projectiles(delta:float)->void:
 				var before:float=zombie.zombie.health
 				if game.zombies.apply_hit(zombie,bullet.damage,bullet.velocity.normalized(),"firearm"):
 					var lost:float=before-maxf(0,zombie.zombie.health)
+					resolve_impact_feedback({"kind":"zombie","position":zombie.position,"normal":zombie.get("normal",-bullet.velocity.normalized())})
 					if lost>0:game.player_hud.award_experience(mini(15,ceili(lost))+(25 if not zombie.zombie.alive else 0))
 					game.player_hud.show_target_damage("Zombie · "+str(zombie.part).replace("_"," "),maxi(0,ceili(zombie.zombie.health)),int(zombie.zombie.PARTS.torso.health))
 				hits+=1;remove=true
@@ -167,11 +171,48 @@ func step_projectiles(delta:float)->void:
 		bullet.view.look_at(end+bullet.velocity.normalized())
 func impact(hit:Dictionary,direction:Vector3,damage:int=35,block_damage:int=18)->void:
 	hits+=1
-	if holes!=null and hit.has("position"):holes.add(hit.position,hit.get("normal",-direction))
+	if hit.has("position"):resolve_impact_feedback(firearm_target(hit,direction))
 	if hit.get("collider")==barrels:
 		damage_barrel(barrels.placement_for_body(hit.rid),damage);return
 	if hit.get("collider")==game.structures.blocks and hit.has("cell"):
 		var cell:Vector3i=hit.cell;damage_block(cell,game.structures.blocks.get_cell(cell),block_damage,hit.position-direction,3)
+func firearm_target(hit:Dictionary,direction:Vector3)->Dictionary:
+	var target:Dictionary={"kind":"surface","position":hit.position,"normal":hit.get("normal",-direction)}
+	var collider=hit.get("collider")
+	if is_instance_valid(collider) and collider.has_meta("impact_material"):target.impact_material=collider.get_meta("impact_material")
+	if collider==barrels:target.kind="vehicle";return target
+	if collider!=null:
+		var vehicles:Node=game.world_vehicle
+		if collider==vehicles.car:target.kind="vehicle";return target
+		if vehicles.fleet_enabled:
+			for id:int in vehicles.activation.residents:
+				if collider==vehicles.activation.residents[id]:target.kind="vehicle";return target
+			if hit.has("rid") and vehicles.activation.parked_identity(collider,hit.rid)>0:target.kind="vehicle";return target
+
+	if collider==game.structures.blocks and hit.has("cell"):
+		target.kind="block";target.material_id=game.structures.blocks.decode_block(game.structures.blocks.get_cell(hit.cell)).get("material",0);return target
+	if collider!=null and collider==game.vegetation.trunk_collision:target.kind="tree";return target
+	for asset:String in game.structures._models:
+		if collider==game.structures._models[asset]:
+			target.kind="model";target.asset=asset;target.material=Durability.model_profile(asset,game.structures.object_definitions).material;return target
+	if collider==null or (collider is Node and game.terrain.is_ancestor_of(collider)):target.kind="terrain"
+	return target
+func resolve_impact_feedback(target:Dictionary)->void:
+	if not target.get("position",Vector3.INF).is_finite() or not target.get("normal",Vector3.ZERO).is_finite() or target.get("normal",Vector3.ZERO).length_squared()<.01:return
+	var material:String="flesh" if target.get("kind")=="zombie" else "stone"
+	match target.get("kind",""):
+		"block":material=["brick","wood","concrete","metal"][clampi(int(target.get("material_id",0)),0,3)]
+		"tree":material="wood"
+		"vehicle":material="metal"
+		"model":material="metal" if "metal" in target.get("asset","") else target.get("material","stone")
+		"terrain":material="soil" if target.normal.y>.65 else "stone"
+	if is_instance_valid(game.impact_effects):material=game.impact_effects.material_for(target)
+	if material.is_empty():material="stone"
+	if is_instance_valid(impact_audio):impact_audio.impact(target.position,material)
+	firearm_impact.emit(target)
+	# Soft surfaces and articulated/moving targets do not receive floating holes.
+	if holes!=null and material not in ["flesh","soil","sand","snow","foliage"] and target.get("kind") in ["block","terrain","model"] and not "door" in target.get("asset",""):
+		holes.add(target.position,target.normal)
 func barrel_position(id:int)->Vector3:
 	var pose:PackedFloat32Array=barrels.get_instance(id)
 	return barrels.to_global(Vector3(pose[3],pose[7],pose[11])) if pose.size()==12 else Vector3.INF
@@ -273,6 +314,8 @@ func step_blasts()->void:
 func clear_transients()->void:
 	for bullet in projectiles:bullet.view.queue_free()
 	projectiles.clear();detonations.clear();blast_jobs.clear();effects.clear()
+	if is_instance_valid(impact_audio):impact_audio.clear()
+	if holes!=null:holes.clear()
 func _physics_process(delta:float)->void:
 	if game==null:return
 	if epoch!=game.terrain.epoch:

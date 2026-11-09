@@ -304,3 +304,74 @@ Validation: [paired handgun 72/72](logs/px9-faster-reload-handgun.log) and
 [actual-world gameplay 32/32](logs/px9-faster-reload-world.log) pass, including
 reload cancellation, exact ammunition transfer, held-fire blocking during reload
 and resumption afterward, automatic empty reload and unchanged aiming cadence.
+
+## Realistic firearm impact feedback - 2026-11-09
+
+User requested material-aware firearm feedback after the reload feel trial.
+Confirmed solid hits now feed the existing optional impact adapter; accepted
+zombie damage emits at the actual anatomy hit point. Brick/concrete/stone use
+small chips and dust, wood uses splinters, and metal emits three short sparks.
+Firearm bursts use 8 particle slots for solids, 3 for metal and 6 small droplets
+for flesh, with .55/.25/.32-second lifetimes. They share the existing eight-emitter,
+384-slot GPU pool and add no physics bodies. The compact blood mode excludes the
+large melee mist while retaining the original melee default and existing zombie
+firearm reactions. Cosmetic output does not decide damage or ammunition.
+
+Impact audio uses a separate maximum-eight-voice spatial pool so hits cannot
+steal the shot/reload voices. Existing admitted Kaino recordings are decoded
+once and played with restrained volume, slight pitch variation and 36 m maximum
+range: Stone Thud 1/2, Metal Clang 1/2, Punch 1/2, and split Chopping Wood 2 hits
+1/2, all under `addons/audio_runtime/packs/Kaino/1/`. Their existing provenance,
+licenses and credits remain authoritative; no sound was imported or relicensed.
+These are reused foley approximations; the player's live mix/feel acceptance is
+pending, including whether the short body and metal cues suit this pistol.
+
+The old solid black quad bullet marks are replaced with original procedural
+irregular entrance/scuff masks and a five-second fade at the end of their existing
+24-second lifetime. The 96-mark cap remains. Soil/foliage/snow, flesh, vehicles and
+articulated doors do not receive floating static marks. World resets clear marks
+and stop transient impact audio. The particle toggle still suppresses particles;
+audio and marks remain independent, matching its label. Optional-module omission
+retains audio material fallbacks without requiring the particle addon.
+
+New original 0BSD code: `firearm_impact_audio.gd`, `bullet_mark.gdshader`,
+`tests/firearm_impacts.gd`, and `tools/preview_firearm_impacts.gd`. Other edits
+extend existing project code/shaders under retained terms. No external snippet,
+new texture, new asset license exception, native build or export was introduced.
+
+[Brick chips/dust](images/impact_brick_burst.png),
+[small metal spark burst](images/impact_metal_burst.png),
+[compact flesh droplets](images/impact_flesh_burst.png), and
+[settled wood entrance mark](images/impact_wood_settled.png) were inspected in
+Forward+ close-up renders. Captions and hashes are in the image manifest.
+These are material test panels, not claims of projectile gameplay or audio review.
+The native world regression separately covers real block ray hits and a projectile
+striking actual zombie anatomy, exact single block damage, one flesh burst/sound,
+soft-ground mark suppression, particle settings, pool caps and reset cleanup.
+
+Initial diagnostic failures were test setup issues: the first world fixture
+stopped before floor-spawn readiness, and its combined flesh assertion compared
+the hole count from before an intervening wood hit. Both were corrected. A legacy
+blood visual check was stopped after it reached `frame_post_draw` in headless
+mode; it requires a graphical run. Final regressions were serialized after the coordinated performance-test window;
+results are recorded below. User visual/audio
+acceptance remains pending for a live pistol playtest against varied surfaces.
+
+Final validation: [verification record](firearm-impact-verification.json),
+firearm impacts 33/33, existing blood/melee visuals 46/46 (graphical), combat 82/82,
+PX9 gameplay 32/32, and destruction batching 25/25. Impact resource preparation,
+style switching, pool bounds and final Forward+ preview also pass. Logs are
+`logs/impact-final-*.log`; all 20 existing credits notices still match their sources.
+
+The performance chat caught an orphan when an unprepared combat fixture created
+the audio node eagerly. It now initializes only inside `prepare()` with its parent,
+and cleanup guards the optional instance. The 25-check destruction fixture and
+all final game checks exit without ObjectDB/resource leak diagnostics. No changes
+to the performance chat's native/destruction/profiling work are included here.
+
+This remains a cosmetic overlay: marks approximate entrance/scuff, not carved
+geometry or penetration. Static marks keep the existing finite lifetime rather
+than tracking individual native model instances; dynamic doors/vehicles/flesh are
+excluded. Review near-surface impacts, mix levels and overall feel in actual play
+before accepting this art pass. Sustained performance and packaged export are
+not claimed by these source checks.

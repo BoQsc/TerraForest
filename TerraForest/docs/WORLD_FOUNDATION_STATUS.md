@@ -1,3 +1,13 @@
+## Firearm impact feedback trial - 2026-11-09
+
+Confirmed projectile hits now drive compact material-aware chips, dust, sparks
+or flesh droplets through the existing bounded impact pool, plus restrained
+spatial sounds and irregular fading hard-surface marks. No new physics bodies
+or damage rules are added. [Evidence/provenance](../issues/px9-handgun/README.md#realistic-firearm-impact-feedback---2026-11-09)
+records native projectile/block checks and inspected renders. Final impact, blood/melee, combat, gameplay, resource and destruction regressions
+pass after the coordinated performance-test window; user visual/audio feel
+acceptance remains pending on the next varied-surface shooting playtest.
+
 ## PX9 faster reload feel trial - 2026-11-09
 
 User requested a comparison on master: reloads now play at 1.25x (20% shorter),

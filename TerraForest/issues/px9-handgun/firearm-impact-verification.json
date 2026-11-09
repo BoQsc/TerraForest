@@ -1,0 +1,50 @@
+{
+  "tests": [
+    {
+      "test": "destruction_batches",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "DESTRUCTION_BATCHES checks=25 failures=0"
+    },
+    {
+      "test": "firearm_impacts",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "FIREARM_IMPACTS checks=33 failures=0"
+    },
+    {
+      "test": "impact_resources",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "IMPACT_RESOURCES failures=0"
+    },
+    {
+      "test": "blood_effects",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "BLOOD_EFFECTS checks=46 failures=0"
+    },
+    {
+      "test": "combat_state",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "COMBAT_STATE checks=82 failures=0"
+    },
+    {
+      "test": "px9_world",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PX9_WORLD checks=32 failures=0"
+    },
+    {
+      "test": "preview_firearm_impacts",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "FIREARM_IMPACT_PREVIEW complete"
+    }
+  ],
+  "scope": "Source master; concurrent performance-owned edits retained separately, not staged into this change",
+  "credits": "20 notices match retained sources",
+  "exported": false,
+  "player_acceptance": "Pending live visual/audio mix comparison"
+}

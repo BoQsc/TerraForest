@@ -1,0 +1,55 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+IMPACT_PREPARE style=0 us=5401
+PASS preparation reuses resources without emitting or allocating particles
+PASS both motion shaders and selected-style meshes are prepared
+PASS prepared burst soil
+IMPACT_BURST style=0 material=soil us=1036
+PASS prepared burst stone
+IMPACT_BURST style=0 material=stone us=1084
+PASS prepared burst wood
+IMPACT_BURST style=0 material=wood us=1001
+PASS prepared burst metal
+IMPACT_BURST style=0 material=metal us=1364
+PASS prepared burst flesh
+IMPACT_BURST style=0 material=flesh us=1067
+PASS first bursts create no additional meshes
+PASS emitters retain independent motion uniforms
+PASS burst tint does not mutate the cached template
+PASS disabled effects clear emitters and refuse bursts
+IMPACT_PREPARE style=1 us=4
+PASS preparation reuses resources without emitting or allocating particles
+PASS both motion shaders and selected-style meshes are prepared
+PASS prepared burst soil
+IMPACT_BURST style=1 material=soil us=2842
+PASS prepared burst stone
+IMPACT_BURST style=1 material=stone us=1119
+PASS prepared burst wood
+IMPACT_BURST style=1 material=wood us=934
+PASS prepared burst metal
+IMPACT_BURST style=1 material=metal us=917
+PASS prepared burst flesh
+IMPACT_BURST style=1 material=flesh us=905
+PASS first bursts create no additional meshes
+PASS emitters retain independent motion uniforms
+PASS burst tint does not mutate the cached template
+PASS disabled effects clear emitters and refuse bursts
+IMPACT_PREPARE style=0 us=4
+PASS preparation reuses resources without emitting or allocating particles
+PASS both motion shaders and selected-style meshes are prepared
+PASS prepared burst soil
+IMPACT_BURST style=0 material=soil us=1198
+PASS prepared burst stone
+IMPACT_BURST style=0 material=stone us=1073
+PASS prepared burst wood
+IMPACT_BURST style=0 material=wood us=1282
+PASS prepared burst metal
+IMPACT_BURST style=0 material=metal us=895
+PASS prepared burst flesh
+IMPACT_BURST style=0 material=flesh us=957
+PASS first bursts create no additional meshes
+PASS emitters retain independent motion uniforms
+PASS burst tint does not mutate the cached template
+PASS disabled effects clear emitters and refuse bursts
+PASS test never captures the pointer
+IMPACT_RESOURCES failures=0
