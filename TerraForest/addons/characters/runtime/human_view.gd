@@ -359,8 +359,10 @@ func flash_handgun()->void:
 func handgun_action(action:String)->bool:
 	if current!=9 or px9==null or rifle_holster_item>=0:return false
 	var interrupt_reload:bool=action in ["reload","reload_empty"] and px9.motion.current_action in ["fire","fire_last","aim_fire","aim_fire_last","dry_fire","aim_in","aim_out"]
-	if action_remaining>0 and not interrupt_reload:return false
-	var result:int=px9.request(action,.04 if interrupt_reload else 0.0)
+	var interrupt_aim:bool=action in ["fire","fire_last","aim_fire","aim_fire_last"] and px9.motion.current_action in ["aim_in","aim_out"]
+	if action_remaining>0 and not interrupt_reload and not interrupt_aim:return false
+	var result:int=px9.request(action,.04 if interrupt_reload else (.06 if interrupt_aim or rifle_aiming!=handgun_aiming else 0.0))
+	if result==OK and action in ["fire","fire_last","aim_fire","aim_fire_last"]:handgun_aiming=rifle_aiming
 	if result==OK:action_remaining=px9.motion.duration_seconds()
 	return result==OK
 

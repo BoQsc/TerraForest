@@ -200,3 +200,25 @@ actual-world still and interaction checks. User acceptance of brightness,
 briefness and smoke in live play remains pending; return after the next playtest
 and adjust from the user's feedback. Third-person art acceptance and packaged
 build validation remain in the existing open scope above.
+
+## Continuous held fire through aim - 2026-11-09
+
+User playtest reports that aiming still pauses shooting. The previous priority
+fix explicitly gated fire until a complete 0.3 s aim-in/out finished after recoil.
+Confirmed shots now interrupt aim-in/out and blend both paired skeletons into
+the requested aimed/hip recoil over 60 ms. An aim change admitted directly at
+the next shot also blends instead of snapping. Normal recoil, reload, equip,
+inspect and holster gates remain in force. Aim transitions still play normally
+when the trigger is released.
+
+The world regression now checks actual shot timestamps across held left mouse
+and right-button press/release, in addition to the resulting aimed/hip recoil
+states. The former assertions requiring full aim-in/out clip starts were replaced
+because those clips may now be bypassed by a continuous shot. User feel/visual
+acceptance remains pending; retry simultaneous held fire and repeated aim toggles
+in the next playtest. Logs below retain exact cadence and pass counts.
+
+Validation passes: [temporary world 32/32](logs/px9-aim-flow-final.log), maximum
+shot gap 0.467 s during aim changes (0.4 s authored recoil plus the short blend),
+and [paired handgun 68/68](logs/px9-aim-flow-handgun.log). No user saves or installed
+builds were modified. This supersedes the earlier full aim-transition priority.

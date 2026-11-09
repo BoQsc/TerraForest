@@ -63,12 +63,19 @@ func run()->void:
  check(game.tool_view.human.handgun_flash.bursts==game.combat.shots-held_start_shots,"held trigger emits exactly one muzzle burst per accepted shot")
  var human:Node=game.tool_view.human
  var actions:Array=[];human.px9.action_started.connect(func(action:String):actions.append(action))
+ var shot_times:Array[float]=[]
+ human.px9.action_started.connect(func(action:String):
+  if action in ["fire","aim_fire","fire_last","aim_fire_last"]:shot_times.append(game.combat.timer))
  var aim:=InputEventMouseButton.new();aim.button_index=MOUSE_BUTTON_RIGHT;aim.pressed=true
  Input.parse_input_event(aim);Input.flush_buffered_events();await ticks(70)
- check(actions.has("aim_in") and actions.has("aim_fire") and human.handgun_aiming,"held fire waits for aim-in before resuming aimed recoil")
+ check(actions.has("aim_fire") and human.handgun_aiming,"held fire continues in aimed recoil after aim press")
  aim=InputEventMouseButton.new();aim.button_index=MOUSE_BUTTON_RIGHT;aim.pressed=false
  Input.parse_input_event(aim);Input.flush_buffered_events();await ticks(50)
- check(actions.has("aim_out") and not human.handgun_aiming,"aim release while firing plays aim-out")
+ check(actions.has("fire") and not human.handgun_aiming,"aim release returns held fire to hip recoil")
+ var longest_gap:=0.0
+ for i in range(1,shot_times.size()):longest_gap=maxf(longest_gap,shot_times[i]-shot_times[i-1])
+ print("Aim/fire maximum shot gap: ",longest_gap)
+ check(shot_times.size()>=3 and longest_gap<.55,"aim press/release keeps held-fire cadence without a full aim-animation pause")
  check(game.combat.reload(),"reload interrupts recoil while the trigger remains held")
  var reload_shots:int=game.combat.shots
  await ticks(30)

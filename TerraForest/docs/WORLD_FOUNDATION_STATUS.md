@@ -1,3 +1,11 @@
+## PX9 continuous aim/fire - 2026-11-09
+
+User reports aiming still pauses held shooting. Confirmed shots now interrupt
+or bypass aim-in/out with a short paired-pose blend; full aim clips no longer
+block fire. The timestamp regression checks held-fire cadence across both aim
+changes. [Evidence](../issues/px9-handgun/README.md#continuous-held-fire-through-aim---2026-11-09).
+User feel/visual review remains open for the next simultaneous fire/aim playtest.
+
 ## PX9 muzzle VFX - 2026-11-09
 
 Original procedural warm-white muzzle flash, short warm light pulse and subtle
