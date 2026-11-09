@@ -13,7 +13,9 @@ func frames(count:int=3)->void:
 	for frame in count:await process_frame
 func until(predicate:Callable,seconds:int)->bool:
 	var deadline:=Time.get_ticks_msec()+seconds*1000
-	while not predicate.call() and Time.get_ticks_msec()<deadline:await process_frame
+	while not predicate.call() and Time.get_ticks_msec()<deadline:
+		if is_instance_valid(game):game.app_focused=true
+		await process_frame
 	return predicate.call()
 func amount(item:int)->int:
 	var count:=0
@@ -42,7 +44,7 @@ func run()->void:
 	folder=ProjectSettings.globalize_path(folder);DirAccess.make_dir_recursive_absolute(folder)
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.player_view.settings_path="";root.add_child(game)
-	if not check(await until(func():return not game.loading_active and not game.needs_floor_spawn,65),"temporary harvest world becomes playable"):await finish();return
+	if not check(await until(func():return not game.loading_active and not game.needs_floor_spawn and not game.player_view.entry.blocks_actions(),65),"temporary harvest world becomes playable"):await finish();return
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.zombies.population_enabled=false;game.zombies.clear();game.session_menu.set_open(false)
 	var hud:CanvasLayer=game.player_hud;var attack:RefCounted=game.world_attack
 	hud.resource_gains_allowed=func()->bool:return not hud.inventory_open and not game.session_menu.opened
@@ -55,13 +57,18 @@ func run()->void:
 	if not check(target.get("asset","")=="resources/iron_outcrop/v1" and target.id==identity,"normal pickaxe ray selects the mineral resource"):await finish();return
 	var ore_before:=amount(202);var wear_before:int=hud.inventory.snapshot().slots[hud.active_slot].wear
 	attack.next_attack=0
-	check(attack.attack(),"harvesting starts through the authored attack animation")
+	# The real attack admission requires captured input. Hold it only across this
+	# synchronous contact transaction, then restore it before any await/readback.
+	var previous_mouse:int=Input.mouse_mode;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	if not check(attack.attack(),"harvesting starts through the authored attack animation"):
+		Input.mouse_mode=previous_mouse;await finish();return
 	var profile:Dictionary=game.tool_view.attack_profile();game.tool_view.human._process(profile.contact-.01)
 	check(amount(202)==ore_before and attack.durability.damage(target.key,target.health)==0,"windup grants no resources or damage before contact")
 	game.tool_view.human._process(.02)
 	check(amount(202)==ore_before+1 and attack.durability.damage(target.key,target.health)==30,"first real contact grants one matching ore while the stone survives")
 	var contact:int=attack.pending.identity;attack.resolve_contact(contact)
 	check(amount(202)==ore_before+1 and hud.inventory.snapshot().slots[hud.active_slot].wear==wear_before+1,"duplicate contact cannot grant extra resources or wear")
+	Input.mouse_mode=previous_mouse
 	game.tool_view.cancel_attack();await photo("first_ore_hit")
 	check(hud.resource_feed.active.any(func(entry):return entry.item==202 and entry.icon.texture!=null),"per-hit gain uses the existing resource popup and item icon")
 	var saved_damage:PackedByteArray=attack.durability.capture_storage_snapshot();var saved_items:PackedByteArray=hud.inventory.capture_storage_snapshot()
