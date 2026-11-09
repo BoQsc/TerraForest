@@ -26,6 +26,7 @@ class NativeActorNavigator : public godot::Node3D {
     int capacity_=0;size_t cursor_=0;
     godot::Callable readiness_,admission_;
     godot::Callable water_depth_;
+    godot::Callable water_footprint_;
     godot::TypedArray<godot::RID> exclusions_;
     godot::TypedArray<godot::RID> interactions_;
     std::map<godot::RID,godot::AABB> interaction_bounds_;
@@ -49,7 +50,7 @@ public:
     void set_exclusions(const godot::TypedArray<godot::RID> &ids);
     void set_interactions(const godot::TypedArray<godot::RID> &ids);
     bool set_interactions_scoped(const godot::TypedArray<godot::RID> &ids,const godot::TypedArray<godot::AABB> &bounds);
-    void set_water_depth(const godot::Callable &depth);
+    void set_water_depth(const godot::Callable &depth,const godot::Callable &footprint=godot::Callable());
     bool set_agent(int64_t id,const godot::Vector3 &feet,const godot::Vector3 &goal,int profile,bool active);
     void remove_agent(int64_t id);
     void clear();

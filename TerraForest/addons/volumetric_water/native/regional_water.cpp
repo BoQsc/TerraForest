@@ -239,6 +239,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("transfer_bucket","from","to","pour","inventory","slot","revision"),&NativeRegionalWater::transfer_water);
     ClassDB::bind_method(D_METHOD("surface_near","point","radius"),&NativeRegionalWater::surface_near);
     ClassDB::bind_method(D_METHOD("depth_at","point"),&NativeRegionalWater::depth_at);
+    ClassDB::bind_method(D_METHOD("dry_footprint","from","middle","to","radius","vertical_offset"),&NativeRegionalWater::dry_footprint);
     ClassDB::bind_method(D_METHOD("survey_columns","cursor","expected_revision","region_budget"),&NativeRegionalWater::survey_columns);
     ClassDB::bind_method(D_METHOD("survey_cache_identity"),&NativeRegionalWater::survey_cache_identity);
     ClassDB::bind_method(D_METHOD("survey_revision_id"),&NativeRegionalWater::survey_revision_id);

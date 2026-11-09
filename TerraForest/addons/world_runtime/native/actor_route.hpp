@@ -45,7 +45,7 @@ public:
     // non-profiled callers leave this pointer null; no timings survive a pass.
     struct QueryProfile {
         uint64_t readiness_ns=0,support_ns=0,hazard_ns=0,clearance_ns=0;
-        uint64_t edges=0,support_rays=0,water_queries=0,admission_queries=0,shape_queries=0,sweeps=0;
+        uint64_t edges=0,support_rays=0,water_queries=0,water_batches=0,admission_queries=0,shape_queries=0,sweeps=0;
     };
     QueryProfile *query_profile=nullptr;
     // Exact ray answers for one navigator's static-query policy and graph
@@ -75,6 +75,7 @@ public:
     double maximum_step=.30;
     double minimum_floor_normal=.85;
     godot::Callable water_depth;
+    godot::Callable water_footprint;
     bool edge_unavailable() const {return edge_unavailable_;}
     const char *edge_failure() const {return edge_failure_;}
     godot::RID edge_obstacle() const {return edge_obstacle_;}

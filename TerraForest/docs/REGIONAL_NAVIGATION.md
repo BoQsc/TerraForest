@@ -45,9 +45,16 @@ destination. A failed query has no direct-chase or projected-horizon fallback.
 The shared graph retains at most 32,768 vertices. Each query retains at most
 16,384 search nodes, within +/-96 m horizontally and +/-64 m vertically of its
 start. Water footprint checks call the native water owner directly, preserving
-the same
-feet+10 cm dry-ground policy without repeated script forwarding. Optional custom
-admission remains an additional gate. The service shares twelve local or up to
+the same feet+10 cm dry-ground policy. An optional pure `dry_footprint` provider
+checks the identical nine offsets at each 10 cm interval in one native call;
+no positions are rounded or omitted and no water answers are cached. It accepts
+finite endpoints/midpoint, radius 0–2 m, vertical offset within 16 m and at most
+2 m between endpoints (current route quanta are at most 1.061 m). Invalid inputs
+or non-Boolean provider results reject. `set_water_depth(depth, footprint)` installs
+both callbacks atomically; its original one-argument form retains point sampling.
+Changing either provider invalidates prior routes. Motion guards also query the
+live provider. Custom admission retains the original interleaved point-call order
+instead of using the batch. The service shares twelve local or up to
 48 regional work quanta and a
 cooperative 750 us deadline per tick. More regional quanta use otherwise idle
 time inside the same deadline; they do not authorize unlimited collision work.

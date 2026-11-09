@@ -16,7 +16,7 @@ void NativeActorNavigator::_bind_methods(){
     ClassDB::bind_method(D_METHOD("set_exclusions","ids"),&NativeActorNavigator::set_exclusions);
     ClassDB::bind_method(D_METHOD("set_interactions","ids"),&NativeActorNavigator::set_interactions);
     ClassDB::bind_method(D_METHOD("set_interactions_scoped","ids","bounds"),&NativeActorNavigator::set_interactions_scoped);
-    ClassDB::bind_method(D_METHOD("set_water_depth","depth"),&NativeActorNavigator::set_water_depth);
+    ClassDB::bind_method(D_METHOD("set_water_depth","depth","footprint"),&NativeActorNavigator::set_water_depth,DEFVAL(Callable()));
     ClassDB::bind_method(D_METHOD("set_agent","id","feet","goal","profile","active"),&NativeActorNavigator::set_agent);
     ClassDB::bind_method(D_METHOD("remove_agent","id"),&NativeActorNavigator::remove_agent);
     ClassDB::bind_method(D_METHOD("clear"),&NativeActorNavigator::clear);
@@ -37,9 +37,9 @@ bool NativeActorNavigator::configure(int capacity){
     if(capacity_ || capacity<1 || capacity>64)return false;
     capacity_=capacity;agents_.reserve(capacity);return true;
 }
-void NativeActorNavigator::set_water_depth(const Callable &depth){
-    if(depth==water_depth_)return;water_depth_=depth;invalidate();
-    for(auto &agent:agents_){agent.continuing=false;agent.route.water_depth=depth;agent.route.invalidate();agent.journey.invalidate();}
+void NativeActorNavigator::set_water_depth(const Callable &depth,const Callable &footprint){
+    if(depth==water_depth_&&footprint==water_footprint_)return;water_depth_=depth;water_footprint_=footprint;invalidate();
+    for(auto &agent:agents_){agent.continuing=false;agent.route.water_depth=depth;agent.route.water_footprint=footprint;agent.route.invalidate();agent.journey.invalidate();}
 }
 bool NativeActorNavigator::set_agent(int64_t id,const Vector3 &feet,const Vector3 &goal,int profile,bool active){
     if(id<=0 || !feet.is_finite() || !goal.is_finite() || profile<0 || profile>1 || !capacity_)return false;
@@ -48,6 +48,7 @@ bool NativeActorNavigator::set_agent(int64_t id,const Vector3 &feet,const Vector
         if(agents_.size()>=size_t(capacity_))return false;
         agents_.emplace_back();agent=&agents_.back();agent->id=id;agent->profile=-1;
         agent->route.water_depth=water_depth_;
+        agent->route.water_footprint=water_footprint_;
         agent->ray.instantiate();agent->ray->set_collision_mask(7);agent->ray->set_exclude(exclusions_);
         agent->shape.instantiate();agent->shape->set_collision_mask(7);agent->shape->set_margin(.001);agent->shape->set_exclude(exclusions_);
         agent->motion_ray.instantiate();agent->motion_ray->set_collision_mask(7);agent->motion_ray->set_exclude(exclusions_);
@@ -202,7 +203,7 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
         measured["edges"]=int64_t(profile.edges);measured["support_rays"]=int64_t(profile.support_rays);
         measured["support_cache_hits"]=int64_t(support_cache_.hits);
         measured["support_raycasts"]=int64_t(profile.support_rays-support_cache_.hits);
-        measured["water_queries"]=int64_t(profile.water_queries);measured["admission_queries"]=int64_t(profile.admission_queries);
+        measured["water_queries"]=int64_t(profile.water_queries);measured["water_batches"]=int64_t(profile.water_batches);measured["admission_queries"]=int64_t(profile.admission_queries);
         measured["shape_queries"]=int64_t(profile.shape_queries);measured["sweeps"]=int64_t(profile.sweeps);
         out["query_profile"]=measured;
         out["invalidation"]=invalidation_stats();

@@ -74,6 +74,10 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
   count. Each includes immutable navigation and zombie-phase values, so catch-up
   ticks cannot hide an earlier slow planner pass. Timing categories overlap the
   planner/physics intervals and must not be added to their parents.
+- Navigation `query_profile.water_queries` counts individual water-depth calls;
+  `water_batches` counts native footprint calls. Each batch evaluates the original
+  bounded samples internally, so fewer callback crossings do not mean fewer hazard
+  samples. Custom admission and legacy point providers still use individual calls.
 - Profiled native navigation passes also include `planning_thread_cycles` and
   `planning_thread_cpu_us` from the current Windows thread. CPU time is quantized;
   cycles are not elapsed microseconds. Compare them with `planning_us` to identify

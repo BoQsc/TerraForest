@@ -330,6 +330,7 @@ func _ready() -> void:
 	zombies.spawn_visible=func(point:Vector3):return get_viewport().get_camera_3d().is_position_in_frustum(point)
 	zombies.readiness=_actor_collision_ready
 	zombies.water_depth=lakes.water.depth_at
+	zombies.water_footprint=lakes.water.dry_footprint
 	zombies.obstacle_provider=_zombie_obstacle_target
 	navigation_residency.game=self
 	zombies.navigation_interest=navigation_residency.update

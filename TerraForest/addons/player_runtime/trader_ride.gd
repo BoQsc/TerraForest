@@ -56,7 +56,7 @@ func prepare(merchant:Node3D,persistence:RefCounted)->bool:
 func _ready()->void:
 	process_physics_priority=-1
 	navigator=ClassDB.instantiate("NativeActorNavigator");add_child(navigator);navigator.configure(1)
-	navigator.set_water_depth(func(point:Vector3):return game.lakes.depth_at(point))
+	navigator.set_water_depth(game.lakes.water.depth_at,game.lakes.water.dry_footprint)
 	motor=ClassDB.instantiate("NativePlayerMovement");motor.set_step_radius(.34)
 	game.structures.obstacles_changed.connect(func(bounds:AABB):navigator.invalidate(bounds))
 	game.terrain.region_changed.connect(func(bounds:AABB,_revision:int):navigator.invalidate(bounds))

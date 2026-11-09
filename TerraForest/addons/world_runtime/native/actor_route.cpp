@@ -134,6 +134,14 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     if(admission.is_valid()||water_depth.is_valid()){
         QueryTimer measured(query_profile?&query_profile->hazard_ns:nullptr);
         edge_failure_="hazard";
+        // The optional pure provider evaluates this exact footprint natively.
+        // Custom admission keeps the original interleaved point-call order.
+        const bool batched=water_depth.is_valid()&&water_footprint.is_valid()&&!admission.is_valid();
+        if(batched){
+            if(query_profile)++query_profile->water_batches;
+            Variant dry=water_footprint.call(from,middle,to,double(radius),-.83);
+            if(dry.get_type()!=Variant::BOOL||!bool(dry))return false;
+        }
         // Conservative square footprint, including segment interiors. Endpoint
         // and midpoint-only tests can skip a shoreline corner which the smaller
         // actual movement guard then rejects, stranding the body on its route.
@@ -141,7 +149,7 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
             Vector3(0,0,1),Vector3(0,0,-1),Vector3(1,0,1),
             Vector3(-1,0,1),Vector3(1,0,-1),Vector3(-1,0,-1)};
         const int segments=std::max(1,int(std::ceil(horizontal(from,to)/.1)));
-        for(int i=0;i<=segments;++i){
+        for(int i=0;!batched&&i<=segments;++i){
             const double t=double(i)/segments;
             const Vector3 point=t<=.5?from.lerp(middle,t*2):middle.lerp(to,(t-.5)*2);
             for(const Vector3 &offset:offsets){

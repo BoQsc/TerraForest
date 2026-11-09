@@ -15,7 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sampling', action='store_true')
     parser.add_argument('--navigation-profile', action='store_true')
-    parser.add_argument('--tests', nargs='+', choices=['navigation_treads', 'regional_navigation', 'navigation_residency', 'zombie_step_guard', 'player_cottage_stairs', 'actor_route_sampling', 'actor_route_contract', 'navigation_support_cache', 'navigation_invalidation', 'navigation_model_changes'])
+    parser.add_argument('--tests', nargs='+', choices=['navigation_treads', 'regional_navigation', 'navigation_residency', 'zombie_step_guard', 'player_cottage_stairs', 'actor_route_sampling', 'actor_route_contract', 'navigation_support_cache', 'navigation_invalidation', 'navigation_model_changes', 'navigation_water_footprint'])
     parser.add_argument('--baseline-native-ref', help='Use a committed world_runtime release DLL only in the isolated project for comparison')
     args = parser.parse_args()
     config, _ = parse_args([])
@@ -34,7 +34,7 @@ def main():
         git_root = Path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], cwd=ROOT, text=True).strip())
         relative = (ROOT/'addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll').relative_to(git_root).as_posix()
         baseline_library = subprocess.check_output(['git', 'show', baseline_commit+':'+relative], cwd=ROOT)
-    for addon in ['world_runtime', 'player_runtime', 'structures', 'volumetric_terrain']:
+    for addon in ['world_runtime', 'player_runtime', 'structures', 'volumetric_terrain', 'volumetric_water']:
         module = 'terrain_core' if addon == 'volumetric_terrain' else addon
         source = ROOT/'addons'/addon
         destination = project/'addons'/addon
@@ -67,7 +67,8 @@ def main():
                  ('actor_route_contract', 'ACTOR_ROUTE_CONTRACT checks='),
                  ('navigation_support_cache', 'NAVIGATION_SUPPORT_CACHE checks='),
                  ('navigation_invalidation', 'NAVIGATION_INVALIDATION checks='),
-                 ('navigation_model_changes', 'NAVIGATION_MODEL_CHANGES checks=')]
+                 ('navigation_model_changes', 'NAVIGATION_MODEL_CHANGES checks='),
+                 ('navigation_water_footprint', 'NAVIGATION_WATER_FOOTPRINT checks=')]
     if args.tests:
         markers = dict(tests)
         markers.update(zombie_step_guard='ZOMBIE_STEP_GUARD PASS', player_cottage_stairs='PLAYER_COTTAGE_STAIRS failures=0')

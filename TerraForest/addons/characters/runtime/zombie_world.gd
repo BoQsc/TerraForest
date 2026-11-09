@@ -15,6 +15,7 @@ var enabled := false
 var target: Node3D
 var readiness: Callable
 var water_depth: Callable
+var water_footprint: Callable
 var obstacle_provider: Callable
 var navigation_interest:Callable
 var spawn_visible:Callable
@@ -156,7 +157,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 	if _navigation_profiling!=profiling_enabled:
 		_navigation_profiling=profiling_enabled;navigator.set_query_profiling(profiling_enabled)
 	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
-	navigator.set_water_depth(water_depth)
+	navigator.set_water_depth(water_depth,water_footprint)
 	var noise_speed:=0.0
 	if _last_player_position.is_finite() and delta>0:
 		var step:Vector3=target.global_position-_last_player_position;step.y=0

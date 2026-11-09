@@ -2,6 +2,7 @@
 from pathlib import Path
 import argparse
 import json
+import hashlib
 import os
 import re
 import shutil
@@ -13,6 +14,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--godot',default=os.environ.get('GODOT_EXE') or shutil.which('godot'))
 parser.add_argument('--addon',choices=['player_runtime','vehicle_runtime','world_runtime','volumetric_water','volumetric_terrain','structures','vegetation_runtime'],default='world_runtime')
 parser.add_argument('--region-storage',action='store_true',help='Exercise structure_persistence through the native region archive')
+parser.add_argument('--baseline-native-ref',help='Use the selected addon DLL from this commit only in the isolated test project')
 parser.add_argument('--test',choices=['model_horizon','door_content','door_animation','model_render_pages','vehicle_prototype','vehicle_horizon','boulder_horizon_native','structure_exclusion_paging','structure_exclusion_pressure','harvest_hit_native','terrain_contact_mining','vegetation_page_retirement','generation_contact_policy','connected_road_native','world_recipe_native','zombie_population','paving_blocks','terrain_placement_target','buildable_terrain','vegetation_edit_continuity','zombie_anatomy','zombie_geometry_cache','zombie_geometry_bake','zombie_awareness','actor_crossing','cave_generator_identity','water_lowering','water_raised_refill','water_structure_cache','block_solid_samples','water_refill_bank','water_return_nearby','water_pool_topology','water_static_editing','terrain_material_field','terrain_material_units','water_surface_topology','water_contact_clip','water_contact_volume','water_transfer_volume','water_inventory','water_volume_scale','water_ground_coherence','water_flow_clock','water_cut_cells','water_bucket','water_publication_scale','water_material_surface','water_shore_clipping','water_surface_continuity','regional_water_connectivity','water_single_runtime','container_store','container_drag','model_removal_protection','inventory_transfer','ladder_traversal','ground_support_surface','cache_eviction','entity_gait','road_editor_settings','vehicle_parked_renderer','vehicle_fleet','vehicle_fleet_storage','entity_renderer','actor_orders','entity_activation','entity_actor','entity_position','entity_sleeping','road_profile','road_surface_profile','terrain_locality_probe','terrain_region_cache','terrain_mesh_pressure','native_runtime','world_archive','world_persistence','terrain_planner','terrain_collision','block_lattice','block_worker','block_texture_sets','building_collision_profile','building_collision_stream','building_readiness','block_regions','block_region_store','block_region_io','block_region_checkpoints','block_region_bootstrap','partial_region_storage','region_world_archive','region_archive_reads','region_checkpoint_retention','model_transfer_scheduler','model_scheduler_pressure','model_world_bootstrap','model_focus_paging','model_focus_discovery','block_pager','block_pager_stress','region_metadata','structures','static_placements','static_model_regions','model_region_store','model_region_metadata','model_admission_pressure','model_incremental_admission','model_admission_history','model_incremental_retirement','structure_persistence','model_paging_lifecycle','settlement_network','prefab_model_attachments','prefab_transaction','prefab_staged','ground_scatter','ground_cover_state','ground_cover_picker','static_shadow_policy'])
 parser.add_argument('--curved-road',action='store_true')
 args=parser.parse_args()
@@ -32,6 +34,12 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
     module='terrain_core' if args.addon=='volumetric_terrain' else args.addon
     library=f'{module}.windows.template_release.x86_64.dll'
     shutil.copy2(source/'bin'/library,addon/'bin'/library)
+    baseline_commit=None
+    if args.baseline_native_ref:
+        baseline_commit=subprocess.check_output(['git','rev-parse','--verify',args.baseline_native_ref+'^{commit}'],cwd=ROOT,text=True).strip()
+        git_root=Path(subprocess.check_output(['git','rev-parse','--show-toplevel'],cwd=ROOT,text=True).strip())
+        relative=(source/'bin'/library).relative_to(git_root).as_posix()
+        (addon/'bin'/library).write_bytes(subprocess.check_output(['git','show',baseline_commit+':'+relative],cwd=ROOT))
     descriptor=(source/(module+'.gdextension')).read_text().replace('template_debug','template_release')
     if args.addon=='volumetric_terrain':descriptor=descriptor.replace('terrain_core.windows.x86_64.dll',library)
     (addon/(module+'.gdextension')).write_text(descriptor)
@@ -239,6 +247,8 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
         report_path=project/'reports'/test/'result.json'
     report=json.loads(report_path.read_text())
     report['library']=library
+    report['library_sha256']=hashlib.sha256((addon/'bin'/library).read_bytes()).hexdigest()
+    report['baseline_native_commit']=baseline_commit
     (ROOT/'reports'/(report_name+'.json')).write_text(json.dumps(report,indent=2))
     errors=re.search(r'(?m)^(?:SCRIPT ERROR|ERROR:|FAIL |WARNING: (?:[0-9]+ )?ObjectDB instances? (?:(?:was|were) )?leaked)',log)
     raise SystemExit(1 if run.returncode or report['failures'] or errors else 0)

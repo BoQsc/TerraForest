@@ -269,6 +269,7 @@ public:
     godot::Dictionary transfer_water(const godot::Vector3 &from,const godot::Vector3 &to,bool pour,godot::Object *inventory,int64_t slot,int64_t revision);
     godot::Vector3 surface_near(const godot::Vector3 &point,double radius) const;
     double depth_at(const godot::Vector3 &point) const;
+    bool dry_footprint(const godot::Vector3 &from,const godot::Vector3 &middle,const godot::Vector3 &to,double radius,double vertical_offset) const;
     bool overlaps_occupied(const godot::AABB &bounds) const;
     bool has_deferred_overlap(const godot::AABB &bounds) const;
     godot::Dictionary cell_geometry(const godot::Vector3 &point) const;

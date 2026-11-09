@@ -90,6 +90,9 @@ func run()->void:
 	game.zombies.profiling_enabled="--navigation-profile" in OS.get_cmdline_user_args()
 	game.zombies.force_pursuit=true # Explicit pre-acquired target for saved route journeys.
 	if not check(await until(func():return not game.loading_active,90),"saved actual world loads read-only"):await finish();return
+	# World loading installs providers asynchronously; apply the control afterward.
+	if "--point-water-queries" in OS.get_cmdline_user_args():game.zombies.water_footprint=Callable()
+	details.water_provider="point" if not game.zombies.water_footprint.is_valid() else "batch"
 	game._clear_motion();game.needs_floor_spawn=false;game.fly=false;game.app_focused=true
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	game.session_menu.set_open(false)
@@ -166,6 +169,11 @@ func run()->void:
 	check(peak_work<=48 and game.zombies.residents.size()<=6,"live host retains planning and encounter limits")
 	await finish()
 func finish()->void:
+	if not phases.is_empty() and "--navigation-profile" in OS.get_cmdline_user_args():
+		var points:=0;var batches:=0
+		for phase:Dictionary in phases:
+			points+=phase.query_profile_observed.get("water_queries",0);batches+=phase.query_profile_observed.get("water_batches",0)
+		check((points>0 and batches==0) if "--point-water-queries" in OS.get_cmdline_user_args() else (batches>0 and points==0),"observed planning uses the selected water-provider mode")
 	DirAccess.make_dir_recursive_absolute("res://reports/zombie_regional_world/"+kind)
 	var file:=FileAccess.open("res://reports/zombie_regional_world/"+kind+"/result.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"case":kind,"details":details,"trace":trace,"phases":phases,"slow_plans":slow_plans,"peak_work":peak_work,"peak_planning_us":peak_us,"slot":game.terrain.save_slot,"generator":game.terrain.backend.world_generator,"readonly":game.terrain.backend.readonly_snapshot},"  "));file.close()
