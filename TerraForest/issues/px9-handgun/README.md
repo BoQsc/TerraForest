@@ -134,3 +134,17 @@ and aimed recoil, starts reload with the trigger held, verifies zero reload-time
 shots and resumed fire after completion. Logs: [world](logs/px9-action-priority.log)
 and [paired presentation](logs/px9-priority-handgun.log). An initial GDScript type
 inference compile error was corrected with an explicit bool before these reruns.
+
+## Automatic empty reload - 2026-11-09
+
+An equipped empty PX9 now reloads automatically when matching reserve rounds are
+available. Last-shot recoil finishes first; no further click or held trigger is
+required. Triggering an empty gun no longer requests the dry-fire animation.
+Without reserve ammunition it remains in its normal empty locomotion/aim pose,
+without repeated reload attempts or animation triggers. Empty-reserve inventory
+checks are throttled to four per second. Existing action/menu gates still apply.
+User gameplay review remains pending.
+
+Temporary-world regression passes 27/27: automatic reload on empty equip and
+after the last released-trigger shot, magazine refill, no-reserve/no-dry-fire
+behavior, and prior held-fire/aim/reload gates. [Log](logs/px9-auto-reload.log).

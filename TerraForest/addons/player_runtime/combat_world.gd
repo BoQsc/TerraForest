@@ -102,8 +102,7 @@ func fire()->bool:
 	if weapon==9 and human.rifle_aiming!=human.handgun_aiming:return false
 	if state.get_rounds(weapon)<=0:
 		next_shot=timer+.4
-		if weapon==9:human.handgun_action("dry_fire")
-		else:reload()
+		if weapon!=9 or rounds_in_bag(9)>0:reload()
 		return false
 	var origin:Vector3=game.camera.global_position
 	var direction:Vector3=-game.camera.global_basis.z
@@ -295,8 +294,15 @@ func _physics_process(delta:float)->void:
 	if int(timer)!=int(timer-delta):
 		for id:int in barrels.get_ids():
 			if game.world_attack.durability.damage("model:%s:%d"%[Barrel.KEY,id],50)>=50 and id not in detonations and detonations.size()<256:detonations.append(id)
+	if game.equipped_tool==9:
+		var human:Node=game.tool_view.human
+		human.handgun_empty=state.get_rounds(9)==0
+		# Finish last-shot recoil, then reload without requiring another click.
+		# Throttle empty-reserve checks and never play a dry-fire action.
+		if human.handgun_empty and reload_slot<0 and timer>=next_shot and can_use() and human.current==9 and human.action_remaining<=0:
+			next_shot=timer+.25
+			if rounds_in_bag(9)>0:reload()
 	if game.equipped_tool in WEAPONS and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):fire()
-	if game.equipped_tool==9:game.tool_view.human.handgun_empty=state.get_rounds(9)==0
 	if ammo_label==null and game.player_hud.action_hint!=null:
 		ammo_label=Label.new();ammo_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT;ammo_label.custom_minimum_size.x=340;ammo_label.add_theme_font_size_override("font_size",22);game.player_hud.add_child(ammo_label)
 	if ammo_label!=null:

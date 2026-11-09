@@ -1,3 +1,10 @@
+## PX9 automatic empty reload - 2026-11-09
+
+An empty equipped PX9 automatically reloads from reserve after last-shot recoil.
+The host no longer triggers dry-fire animations; no-reserve empty movement stays
+active. [Evidence](../issues/px9-handgun/README.md#automatic-empty-reload---2026-11-09)
+tracks trigger-released auto reload and no-reserve checks. User re-review remains open.
+
 ## PX9 held-fire action priority - 2026-11-09
 
 Reload now interrupts PX9 recoil/dry fire and aim transitions; active reloads

@@ -28,7 +28,7 @@ func run()->void:
  check(game.player_hud.equip_item(9),"gameplay belt equips PX9")
  await ticks(80)
  check(game.tool_view.human.current==9 and game.combat.state.get_rounds(9)==0,"new handgun starts empty")
- check(game.combat.reload(),"host accepts empty reload")
+ check(game.combat.reload_slot>=0,"empty equipped handgun automatically starts reload without a trigger")
  await ticks(220)
  check(game.combat.state.get_rounds(9)==15 and game.combat.rounds_in_bag(9)==25,"paired reload consumes exactly fifteen matching cartridges")
  check(game.combat.fire(),"host launches handgun projectile")
@@ -73,6 +73,24 @@ func run()->void:
  press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=true
  Input.parse_input_event(press);Input.flush_buffered_events();await ticks(40)
  check(game.combat.state.get_rounds(9)==held_rounds,"menu blocks held-trigger repetition")
+ press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=false
+ Input.parse_input_event(press);Input.flush_buffered_events()
+ game.session_menu.set_open(false);await ticks(40)
+ while game.combat.state.get_rounds(9)>1:game.combat.state.take_round(9)
+ check(game.combat.fire(),"last loaded round fires")
+ await ticks(40)
+ check(game.combat.reload_slot>=0,"last round automatically reloads after recoil even with trigger released")
+ await ticks(220)
+ check(game.combat.state.get_rounds(9)>0,"automatic empty reload replenishes the magazine")
+ game.session_menu.set_open(true)
+ var reserve:int=game.combat.rounds_in_bag(9)
+ if reserve>0:inventory.consume_items(PackedInt64Array([228,reserve]),inventory.snapshot().revision)
+ while game.combat.state.get_rounds(9)>0:game.combat.state.take_round(9)
+ game.session_menu.set_open(false);await ticks(40)
+ var shots_before:int=game.combat.shots
+ press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=true
+ Input.parse_input_event(press);Input.flush_buffered_events();await ticks(60)
+ check(game.combat.shots==shots_before and game.combat.reload_slot<0 and not actions.has("dry_fire"),"empty reserve neither shoots nor loops a dry-fire/reload animation")
  press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=false
  Input.parse_input_event(press);Input.flush_buffered_events()
  game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"temporary world shuts down safely")
