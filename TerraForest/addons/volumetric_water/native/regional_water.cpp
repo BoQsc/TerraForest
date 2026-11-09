@@ -322,7 +322,7 @@ Dictionary NativeRegionalWater::update_ocean_residency(const Vector3 &center,int
         // Publish an empty replacement through the normal batch path; don't
         // leave stale pick triangles or remove scene geometry independently.
         if(mesh_set.insert(k).second)meshes.push_back(k);
-        uint64_t bytes=sizeof(Region)+64+r.vacancies.capacity()*sizeof(uint32_t);
+        uint64_t bytes=sizeof(Region)+Region::payload_bytes+64+r.vacancies.capacity()*sizeof(uint32_t);
         if(r.contacts)bytes+=r.contacts->bytes;
         if(r.structures)bytes+=r.structures->bytes;
         if(r.valid&&r.has_density&&!r.structures&&bytes<=32*1024*1024){
@@ -1421,9 +1421,9 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
 Dictionary NativeRegionalWater::statistics() const {
     uint64_t contact_bytes=0;for(const auto &[k,r]:regions)if(r.contacts)contact_bytes+=r.contacts->bytes;
     int ocean_clean=0,ocean_edited=0;for(const auto &[k,r]:regions){ocean_clean+=r.ocean_state==1;ocean_edited+=r.ocean_state==2;}
-    Dictionary d;d["deferred_regions"]=int64_t(deferred_regions.size());d["ocean_cache_regions"]=int64_t(ocean_cache.size());d["ocean_cache_bytes"]=int64_t(ocean_cache_bytes);d["ocean_cache_hits"]=int64_t(ocean_cache_hits);d["ocean_clean_regions"]=ocean_clean;d["ocean_edited_regions"]=ocean_edited;d["structure_contact_bytes"]=int64_t(solid_cache_bytes);d["terrain_contact_bytes"]=int64_t(contact_bytes);d["pending_vertical"]=int64_t(0);d["vertical_steps"]=int64_t(0);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(0);d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size()+batch_queue.size());d["mesh_batch_active"]=batch_active;d["mesh_publish_pending"]=publish_pending;d["published_mesh_batch"]=int64_t(published_batch);d["query_cache_bytes"]=int64_t(query_cache_bytes);d["query_builds"]=int64_t(query_builds);d["query_cache_hits"]=int64_t(query_cache_hits);d["mesh_snapshot_bytes"]=int64_t(mesh_snapshot.size()*sizeof(Region));d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(0);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;uint64_t vacancy_bytes=0;for(const auto &[k,r]:regions)vacancy_bytes+=r.vacancies.capacity()*sizeof(uint32_t);
+    Dictionary d;d["deferred_regions"]=int64_t(deferred_regions.size());d["ocean_cache_regions"]=int64_t(ocean_cache.size());d["ocean_cache_bytes"]=int64_t(ocean_cache_bytes);d["ocean_cache_hits"]=int64_t(ocean_cache_hits);d["ocean_clean_regions"]=ocean_clean;d["ocean_edited_regions"]=ocean_edited;d["structure_contact_bytes"]=int64_t(solid_cache_bytes);d["terrain_contact_bytes"]=int64_t(contact_bytes);d["pending_vertical"]=int64_t(0);d["vertical_steps"]=int64_t(0);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(0);d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size()+batch_queue.size());d["mesh_batch_active"]=batch_active;d["mesh_publish_pending"]=publish_pending;d["published_mesh_batch"]=int64_t(published_batch);d["query_cache_bytes"]=int64_t(query_cache_bytes);d["query_builds"]=int64_t(query_builds);d["query_cache_hits"]=int64_t(query_cache_hits);d["mesh_snapshot_bytes"]=int64_t(mesh_snapshot.size()*(sizeof(Region)+Region::payload_bytes));d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(0);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;uint64_t vacancy_bytes=0;for(const auto &[k,r]:regions)vacancy_bytes+=r.vacancies.capacity()*sizeof(uint32_t);
     d["map_identity_scene_hash_us"]=int64_t(survey_identity_scene_hash_us);d["map_identity_hash_us"]=int64_t(survey_identity_hash_us);d["snapshot_cache_bytes"]=saved_snapshot.size()+saved_catalog.size();d["snapshot_pending_bytes"]=int64_t(NativeWaterSnapshot::pending_bytes.load());d["snapshot_builds"]=int64_t(snapshot_builds);d["snapshot_hits"]=int64_t(snapshot_hits);
-    d["vacancy_bytes"]=int64_t(vacancy_bytes);d["resident_cell_bytes"]=int64_t(regions.size()*sizeof(Region)+contact_bytes+solid_cache_bytes+vacancy_bytes);return d;
+    d["vacancy_bytes"]=int64_t(vacancy_bytes);d["resident_cell_bytes"]=int64_t(regions.size()*(sizeof(Region)+Region::payload_bytes)+contact_bytes+solid_cache_bytes+vacancy_bytes);return d;
 }
 // Self-contained compound snapshot: authoritative amounts + derived occupancy.
 // Occupancy is valid only for the terrain captured in the SAME world archive.
@@ -1436,6 +1436,11 @@ void NativeWaterSnapshot::_bind_methods(){ClassDB::bind_method(D_METHOD("seriali
 NativeWaterSnapshot::~NativeWaterSnapshot(){if(reserved_bytes)pending_bytes.fetch_sub(reserved_bytes);}
 PackedByteArray NativeWaterSnapshot::serialize_snapshot(){
     if(frozen.is_valid()){
+        // Only retained (non-regenerable) regions belong to this archive. Sum
+        // their immutable amounts on the save worker, not during frame capture.
+        frozen->total=0;
+        for(const auto &[coordinate,region]:frozen->regions)
+            for(auto amount:region.water)frozen->total+=amount;
         serialized=frozen->capture_streaming_snapshot(catalog);
         // Only immutable bytes remain after serialization; release the copied
         // mutable records and shared contacts on the worker, never at edit time.
@@ -1455,7 +1460,7 @@ Variant NativeRegionalWater::capture_storage_snapshot(const PackedByteArray &cat
     uint64_t bytes=catalog.size()+deferred_regions.size()*128;
     for(const auto &[coordinate,region]:regions){
         if(region.ocean_state==1)continue;
-        bytes+=sizeof(Region)+64+region.vacancies.size()*sizeof(uint32_t);
+        bytes+=sizeof(Region)+Region::payload_bytes+64+region.vacancies.capacity()*sizeof(uint32_t);
         if(region.contacts)bytes+=region.contacts->bytes;
         if(region.structures)bytes+=region.structures->bytes;
     }
@@ -1467,7 +1472,6 @@ Variant NativeRegionalWater::capture_storage_snapshot(const PackedByteArray &cat
     for(const auto &[coordinate,region]:regions){
         if(region.ocean_state==1)continue;
         snapshot->frozen->regions.emplace(coordinate,region);
-        for(auto amount:region.water)snapshot->frozen->total+=amount;
     }
     snapshot->frozen->deferred_regions=deferred_regions;
     saved_frozen=snapshot;frozen_catalog=catalog;

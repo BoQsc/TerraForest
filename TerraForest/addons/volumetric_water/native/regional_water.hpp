@@ -18,6 +18,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "water_cell_profile.hpp"
+#include "snapshot_array.hpp"
 
 namespace terraforest {
 class NativeWaterRegionReceipt : public godot::RefCounted {
@@ -102,12 +103,12 @@ class NativeRegionalWater : public godot::RefCounted {
     friend class NativeGeneratedLakeBake;
     using Key=uint64_t;
     struct Region {
-        std::array<uint16_t,512> floor{},ceiling{};
-        std::array<uint64_t,512> water{};
+        SnapshotArray<uint16_t,512> floor,ceiling;
+        SnapshotArray<uint64_t,512> water;
         // Explicit scoop vacancies, allocated only in bucket-edited regions.
         // They store missing material, never simulated water or bucket identity.
         std::vector<uint32_t> vacancies;
-        std::array<float,729> density{};
+        SnapshotArray<float,729> density;
         std::shared_ptr<const TerrainWaterContacts> contacts;
         std::shared_ptr<const StructureWaterContacts> structures;
         bool valid=false,has_density=false,replace_water=false;
@@ -115,6 +116,9 @@ class NativeRegionalWater : public godot::RefCounted {
         uint8_t ocean_state=0;
         bool limited_building_edit=false;
         godot::AABB building_edit_bounds;
+        // Conservative charge per retained owner, even when payload is shared.
+        static constexpr uint64_t payload_bytes=2*SnapshotArray<uint16_t,512>::retained_bytes+
+            SnapshotArray<uint64_t,512>::retained_bytes+SnapshotArray<float,729>::retained_bytes;
     };
     static WaterCellProfile profile(const Region &r,int i) {
         if(r.floor[i]==r.ceiling[i])return WaterCellProfile::make(nullptr,false,r.floor[i],r.ceiling[i]);

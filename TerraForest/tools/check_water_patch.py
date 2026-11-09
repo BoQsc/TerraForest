@@ -25,7 +25,7 @@ def main():
     pack_hash = hashlib.sha256(pack.read_bytes()).hexdigest() if args.pack else None
     runs = []
     copied_libraries = {}
-    tests = ['water_patch', 'water_patch_contacts', 'water_static_editing', 'water_region_store', 'water_storage_snapshot', 'water_region_io', 'water_region_retirement', 'water_map_identity', 'water_region_transfer', 'ocean_residency']
+    tests = ['water_patch', 'water_patch_contacts', 'water_static_editing', 'water_region_store', 'water_storage_snapshot', 'water_region_io', 'water_region_retirement', 'water_map_identity', 'water_region_transfer', 'ocean_residency', 'water_snapshot_cost']
     for variant in (('pack',) if args.pack else ('debug', 'release')):
         project = folder / variant
         project.mkdir()
@@ -99,6 +99,7 @@ def main():
                            for path in [*[ROOT / 'tests' / (name + '.gd') for name in tests], ROOT / 'tools/check_water_patch.py',
                                         ROOT / 'addons/volumetric_water/native/water_patch.cpp',
                                         ROOT / 'addons/volumetric_water/native/regional_water.hpp',
+                                        ROOT / 'addons/volumetric_water/native/snapshot_array.hpp',
                                         ROOT / 'addons/volumetric_water/native/regional_water.cpp']},
                   **revision_metadata())
     record['native_copy_retention'] = release_copies(copied_libraries, record['passed'])
