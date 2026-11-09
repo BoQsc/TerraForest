@@ -60,6 +60,8 @@ func parked_identity(collider: Object, rid: RID) -> int:
 	for view: Node3D in parked_views.values():
 		if collider==view:return view.identity_for_body(rid)
 	return 0
+func _stage(world:Node,label:String,started:int)->void:
+	if world.terrain.has_method("_record_stage"):world.terrain._record_stage(label,(Time.get_ticks_usec()-started)/1000.0)
 func prepare_parked_view(world: Node,body: RigidBody3D) -> void:
 	var measured:=Time.get_ticks_usec()
 	var parts: Array=[]
@@ -69,15 +71,15 @@ func prepare_parked_view(world: Node,body: RigidBody3D) -> void:
 	var view: Node3D=ClassDB.instantiate("NativeParkedVehicleRenderer");world.add_child(view)
 	var chassis: CollisionShape3D=owner.adapter(body).collision(body)
 	var kind: String=owner.kind_of(body)
-	world.terrain._record_stage("vehicle prototype collect",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	_stage(world,"vehicle prototype collect",measured);measured=Time.get_ticks_usec()
 	var distant_parts:Array=owner.adapter(body).parked_render_parts(body,parts)
-	world.terrain._record_stage("vehicle prototype distant parts",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	_stage(world,"vehicle prototype distant parts",measured);measured=Time.get_ticks_usec()
 	var configured:bool=chassis!=null and view.configure(owner.fleet,parts,64,kind)
-	world.terrain._record_stage("vehicle prototype native configure",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	_stage(world,"vehicle prototype native configure",measured);measured=Time.get_ticks_usec()
 	var collision_ready:bool=configured and view.configure_collision(chassis.shape,body.global_transform.affine_inverse()*chassis.global_transform)
-	world.terrain._record_stage("vehicle prototype collision",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	_stage(world,"vehicle prototype collision",measured);measured=Time.get_ticks_usec()
 	var horizon_ready:bool=collision_ready and view.enable_horizon(distant_parts)
-	world.terrain._record_stage("vehicle prototype horizon",(Time.get_ticks_usec()-measured)/1000.0)
+	_stage(world,"vehicle prototype horizon",measured)
 	if not horizon_ready:parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
 	parked_views[kind]=view
 	if kind==owner.Packs.DEFAULT:parked_view=view

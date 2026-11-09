@@ -5,6 +5,21 @@ const RECEIPT:="res://vehicle_demo/assets/Vehicle.parked.bake.json"
 static var mesh:Mesh
 static var checked:=false
 static var current:=false
+static var worker:Thread
+static func request()->void:
+	if checked or worker!=null:return
+	worker=Thread.new()
+	if worker.start(_load_validated)!=OK:worker=null;checked=true
+static func _load_validated()->Mesh:
+	var receipt:Variant=JSON.parse_string(FileAccess.get_file_as_string(RECEIPT)) if FileAccess.file_exists(RECEIPT) else null
+	return load(PATH) as Mesh if valid_receipt(receipt) else null
+static func ready()->bool:
+	request()
+	if worker!=null and worker.is_alive():return false
+	finish();return checked
+static func finish()->void:
+	if worker==null:return
+	mesh=worker.wait_to_finish() as Mesh;worker=null;current=mesh!=null;checked=true
 static func valid_receipt(receipt:Variant)->bool:
 	if not FileAccess.file_exists(PATH):return false
 	if not receipt is Dictionary or receipt.get("schema")!=1 or not receipt.get("sources") is Dictionary or receipt.sources.is_empty() or receipt.sources.size()>64:return false
@@ -16,9 +31,8 @@ static func valid_receipt(receipt:Variant)->bool:
 	return true
 static func parts(original:Array)->Array:
 	if not checked:
-		checked=true
-		var receipt:Variant=JSON.parse_string(FileAccess.get_file_as_string(RECEIPT)) if FileAccess.file_exists(RECEIPT) else null
-		current=valid_receipt(receipt)
-		if current:mesh=load(PATH) as Mesh
+		# Synchronous compatibility for offline tools. Normal world admission waits
+		# on the provider's preparation_ready() before asking for render parts.
+		request();finish()
 	if not current or mesh==null or original.size()!=32:return original
 	return [{"mesh":mesh,"transform":Transform3D.IDENTITY,"material":null}]

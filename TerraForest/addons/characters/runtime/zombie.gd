@@ -15,6 +15,7 @@ signal action_finished(action: String)
 signal movement_mode_changed(mode: String)
 
 const MODEL_PATH := "res://addons/characters/runtime/assets/Zombie.r4.glb"
+const DEFAULT_MODEL = preload("res://addons/characters/runtime/assets/Zombie.r4.glb")
 const DRAG_WALK = preload("res://addons/characters/runtime/assets/Zombie.drag_walk.res")
 const ALERT_WALK = preload("res://addons/characters/runtime/assets/Zombie.alert.res")
 const DRAG_WALK_REFERENCE_SPEED := 0.45
@@ -161,14 +162,20 @@ func configure(scene: PackedScene = null) -> void:
 		return
 	var measured_begin:=Time.get_ticks_usec()
 	if scene == null:
-		scene = load(model_path) as PackedScene
+		# The built-in immutable resource joins the threaded startup dependency
+		# preparation. Alternate authored models retain their explicit source path.
+		scene = DEFAULT_MODEL if model_path==MODEL_PATH else load(model_path) as PackedScene
 	if scene == null:
 		push_error("Zombie model was not found: " + model_path)
 		return
 	model_scene = scene
+	initialization_us["scene resource"]=Time.get_ticks_usec()-measured_begin
+	var scene_begin:=Time.get_ticks_usec()
 	model = scene.instantiate() as Node3D
+	initialization_us["scene instantiate"]=Time.get_ticks_usec()-scene_begin;scene_begin=Time.get_ticks_usec()
 	model.name = "Model"
 	add_child(model)
+	initialization_us["scene attach"]=Time.get_ticks_usec()-scene_begin
 	skeleton = _find_type(model, "Skeleton3D") as Skeleton3D
 	animation_player = _find_type(model, "AnimationPlayer") as AnimationPlayer
 	if animation_player!=null and revision_id=="r4":

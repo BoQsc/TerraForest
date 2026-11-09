@@ -2,6 +2,9 @@ extends "res://addons/vehicle_runtime/vehicle_adapter.gd"
 
 var follow: RefCounted
 const ParkedPrototype=preload("res://addons/vehicle_runtime/parked_prototype_cache.gd")
+func prepare_resources()->void:ParkedPrototype.request()
+func preparation_ready()->bool:return ParkedPrototype.ready()
+func finish_resources()->void:ParkedPrototype.finish()
 
 func parked_render_parts(_body: RigidBody3D, original: Array) -> Array:
 	return ParkedPrototype.parts(original)

@@ -2,6 +2,15 @@ extends RefCounted
 
 const API_VERSION := 1
 
+# Optional immutable provider preparation. Only finish may wait, during restore
+# or shutdown; ordinary admission polls readiness before instantiating a body.
+func prepare_resources()->void:
+	pass
+func preparation_ready()->bool:
+	return true
+func finish_resources()->void:
+	pass
+
 func accepts(body: Node) -> bool:
 	return body is RigidBody3D
 

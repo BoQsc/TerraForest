@@ -9,6 +9,7 @@ var scenes: Dictionary = {}
 var requested: Dictionary = {}
 var failed: Dictionary = {}
 var errors: Array[String] = []
+var preparation:Dictionary={}
 
 func prepare(load_external: bool = true) -> bool:
 	if not registry.register_manifest("res://addons/vehicle_runtime/ranger.module.json", true).ok: return false
@@ -27,10 +28,12 @@ func prepare(load_external: bool = true) -> bool:
 		if not sample is Adapter:
 			errors.append("Vehicle adapter must implement API 1: " + entry.id); continue
 		vehicles[entry.id] = entry
+		preparation[entry.id]=sample
 	return vehicles.has(DEFAULT)
 
 func request(kind: String) -> bool:
 	if not vehicles.has(kind): return false
+	preparation[kind].prepare_resources()
 	var path: String = vehicles[kind].scene
 	if failed.has(path): return false
 	if scenes.has(path) or requested.has(path): return true
@@ -40,6 +43,7 @@ func request(kind: String) -> bool:
 
 func ready(kind: String) -> bool:
 	if not vehicles.has(kind): return false
+	if not request(kind) or not preparation[kind].preparation_ready():return false
 	var path: String = vehicles[kind].scene
 	if scenes.has(path): return true
 	if not request(kind): return false
@@ -51,6 +55,7 @@ func ready(kind: String) -> bool:
 
 func take(kind: String) -> PackedScene:
 	if not vehicles.has(kind): return null
+	preparation[kind].prepare_resources();preparation[kind].finish_resources()
 	var path: String = vehicles[kind].scene
 	if not scenes.has(path):
 		if not request(kind): return null
@@ -73,3 +78,4 @@ func adapter(kind: String) -> RefCounted:
 
 func finish() -> void:
 	for path: String in requested.keys(): _consume(path)
+	for provider:RefCounted in preparation.values():provider.finish_resources()
