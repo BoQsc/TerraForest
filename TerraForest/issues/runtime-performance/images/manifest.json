@@ -147,5 +147,35 @@
     "sha256": "897f9096c5cac5c58b1022ad079c1fb7207ff6bec58c3a5bc3ad44d8af80cb05",
     "revision": "67cf0f244fc1b73467f1d3d246fc6f4394b95a91749df9ca7d67d10c8e220db6 PCK; exact native hashes in native-cover-partitions-2026-11-09.json",
     "status": "Inspected packaged outdoor end view at matching camera pose. Near grass, far cover, boulder and shadows retained. Scoped visual evidence, not walking/driving or user art acceptance. Diagnostic screenshot preserves existing asset provenance."
+  },
+  "block-occlusion-source-off.png": {
+    "source": "reports\\performance_changes\\20261109T172244683484Z_native_block_occlusion_source\\occlusion_off_a.png",
+    "sha256": "508f65f4543c0b5617d9c5065b2ae631262d5fd5cbb3d6bb15600bec4f1f22a9",
+    "revision": "64eb3cc7 plus native block occlusion; exact hashes in linked run.json",
+    "status": "Inspected 1920x1080 default Frontier generator29 seed1703. Source-only comparison. No visible room regression; boulder size allegation rejected by original pixels. Not user visual acceptance or general performance qualification. Diagnostic screenshot; existing assets retain provenance."
+  },
+  "block-occlusion-source-on.png": {
+    "source": "reports\\performance_changes\\20261109T172244683484Z_native_block_occlusion_source\\occlusion_on_b.png",
+    "sha256": "508f65f4543c0b5617d9c5065b2ae631262d5fd5cbb3d6bb15600bec4f1f22a9",
+    "revision": "64eb3cc7 plus native block occlusion; exact hashes in linked run.json",
+    "status": "Inspected 1920x1080 default Frontier generator29 seed1703. Source-only comparison. No visible room regression; boulder size allegation rejected by original pixels. Not user visual acceptance or general performance qualification. Diagnostic screenshot; existing assets retain provenance."
+  },
+  "block-occlusion-source-outdoor.png": {
+    "source": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\outdoor_occlusion_on_b.png",
+    "sha256": "7ee9936ea4ca911df73f620a0d9d5b688be04257bfdb6cf15d317b5fd74fee63",
+    "revision": "64eb3cc7 plus native block occlusion; exact hashes in linked run.json",
+    "status": "Inspected 1920x1080 default Frontier generator29 seed1703. Source-only comparison. No visible room regression; boulder size allegation rejected by original pixels. Not user visual acceptance or general performance qualification. Diagnostic screenshot; existing assets retain provenance."
+  },
+  "block-occlusion-pack_indoor.png": {
+    "source": "reports\\performance_changes\\20261109T174931445092Z_native_occlusion_pack_indoor\\occlusion_on_b.png",
+    "sha256": "0148122ab6231b0ea864222264451baa660b6b25ef4cacbe45d77f7d2219254b",
+    "revision": "112c554377f8693b2ad37af9a47d3807a512039bcaadb08e105f829a89b0a176 PCK",
+    "status": "Inspected installed native occlusion view. Normal default Frontier world and unchanged camera within ABBA. Existing visual assets retain provenance. Scoped comparison, not general quality/performance acceptance."
+  },
+  "block-occlusion-pack_outdoor.png": {
+    "source": "reports\\performance_changes\\20261109T175106845859Z_native_occlusion_pack_outdoor\\outdoor_occlusion_on_b.png",
+    "sha256": "9f34cb817daf8055c1c0dd3ec4eedd230211957f9f7c5c125ebd9880285b521d",
+    "revision": "112c554377f8693b2ad37af9a47d3807a512039bcaadb08e105f829a89b0a176 PCK",
+    "status": "Inspected installed native occlusion view. Normal default Frontier world and unchanged camera within ABBA. Existing visual assets retain provenance. Scoped comparison, not general quality/performance acceptance."
   }
 }

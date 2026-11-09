@@ -176,6 +176,25 @@ Native freeze remains O(resident data), with a 128 MiB pending-copy cap excludin
 encoder temporaries. Return to copy-on-write/delta storage when scale/backlog
 exposes that cost. Existing failing water/interaction gates remain open.
 
+[Native building occlusion](../issues/runtime-performance/block-occlusion-2026-11-09.md)
+addresses whole-world rendering: source indoor rendering CPU medians fall from
+about 5.6 to 2.6 ms using exact opaque block geometry, with 24 native debug,
+release and rendered checks passing. Count, input bytes and publications are
+bounded; measured steps can exceed the soft 0.5 ms gate (about 2.1 ms observed).
+Outdoor CPU overhead is a remaining tradeoff and requires repeated traversal
+evidence. An alleged boulder size change was a visual-reading error, corrected
+against the original PNG pixels; no boulder workaround was added. The first
+indoor save maximum included diagnostic screenshot readback; the probe boundary
+is corrected without explaining away unrelated historical waits. The matching
+installed package now passes three save/shutdown runs; inspected indoor CPU
+medians improve about 5.2 to 2.7 ms. Capped/uncapped open-view CPU overhead of
+0.18–0.26 ms remains a regression candidate requiring policy refinement or wider
+controlled evidence. Uncapped sweep median/p99/max is 7.647/17.792/34.616 ms;
+another 26.795 ms settled frame has no physics callback and a 25.272 ms draw
+interval. Investigate world/player processing and render/engine scheduling,
+without assigning all tails to zombie planning. Dense destruction, continuous
+traversal and sustained memory checks remain prerequisites for the broader gate.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,

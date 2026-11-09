@@ -1,6 +1,15 @@
 # Runtime performance
 
-Latest: [native structures save capture](structures-save-capture-2026-11-09.md)
+Latest: [native building occlusion](block-occlusion-2026-11-09.md) reduces the
+indoor rendering CPU median from about 5.2 to 2.7 ms in the installed package,
+with unchanged visible room geometry. Native lifecycle, destruction, paging,
+release and three installed save/shutdown checks pass. Outdoor CPU overhead is
+0.18–0.26 ms in installed comparisons; uncapped sweep median/p99/max is
+7.647/17.792/34.616 ms. Typical capacity does not establish stable 60 FPS. The
+report retains corrected visual-reading and screenshot timing errors. World/player
+physics, draw waits, outdoor policy and long-session stability remain open.
+
+[Native structures save capture](structures-save-capture-2026-11-09.md)
 moves encoding to the ordered worker. Two packaged captures take 0.782/0.790 ms
 versus 7.068–11.572 ms for the legacy provider; exact-data, partial-region and
 shutdown checks pass. Whole-frame tails remain variable, including substantial

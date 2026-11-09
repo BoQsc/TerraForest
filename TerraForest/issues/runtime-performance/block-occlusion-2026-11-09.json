@@ -1,0 +1,3503 @@
+{
+  "schema": 1,
+  "scope": "Native exact opaque building occlusion. Indoor render CPU gain; whole-frame pacing/headroom and broad outdoor nonregression remain open.",
+  "origin": "Original AI-assisted 0BSD implementation/tests; no imported material or dependency. Diagnostic screenshots preserve existing asset provenance.",
+  "runs": {
+    "prototype": {
+      "path": "reports\\performance_changes\\20261109T170626904380Z_exact_block_occlusion_retry\\run.json",
+      "sha256": "585137f7b297bc1948bfe1b48950ad8a7f0ae0cb6ec21b2abeee7027968205f9",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 3935076352,
+        "peak_working_set_bytes": 2359078912,
+        "peak_dedicated_gpu_bytes": 1474990080
+      },
+      "occlusion": {
+        "ok": true,
+        "original_enabled": false,
+        "sources": 86,
+        "triangles": 18610,
+        "unchanged": true,
+        "vertices": 43621
+      },
+      "timings": {
+        "occlusion_off_a": {
+          "frame_ms": {
+            "n": 300,
+            "mean": 16.674606666666666,
+            "median": 16.6465,
+            "p99": 21.805,
+            "max": 24.39
+          },
+          "gpu_ms": {
+            "n": 300,
+            "mean": 7.4459833272298175,
+            "median": 7.437000036239625,
+            "p99": 8.13500022888184,
+            "max": 8.16100025177002
+          },
+          "render_cpu_ms": {
+            "n": 300,
+            "mean": 5.80203666528066,
+            "median": 5.579999923706055,
+            "p99": 8.87399959564209,
+            "max": 9.71599960327148
+          },
+          "draw_calls": {
+            "n": 300,
+            "mean": 5418.0,
+            "median": 5418.0,
+            "p99": 5418.0,
+            "max": 5418.0
+          }
+        },
+        "occlusion_off_a2": {
+          "frame_ms": {
+            "n": 301,
+            "mean": 16.67039534883721,
+            "median": 16.555,
+            "p99": 23.407,
+            "max": 26.571
+          },
+          "gpu_ms": {
+            "n": 301,
+            "mean": 7.3860996743769345,
+            "median": 7.31699991226196,
+            "p99": 8.02799987792969,
+            "max": 8.28899955749512
+          },
+          "render_cpu_ms": {
+            "n": 301,
+            "mean": 5.518182737090659,
+            "median": 5.28499984741211,
+            "p99": 8.39099979400635,
+            "max": 9.21500015258789
+          },
+          "draw_calls": {
+            "n": 301,
+            "mean": 5436.0,
+            "median": 5436.0,
+            "p99": 5436.0,
+            "max": 5436.0
+          }
+        },
+        "occlusion_on_b": {
+          "frame_ms": {
+            "n": 300,
+            "mean": 16.66444,
+            "median": 16.558,
+            "p99": 22.64,
+            "max": 23.578
+          },
+          "gpu_ms": {
+            "n": 300,
+            "mean": 5.819339989026387,
+            "median": 5.84850001335144,
+            "p99": 6.71299982070923,
+            "max": 6.80200004577637
+          },
+          "render_cpu_ms": {
+            "n": 300,
+            "mean": 2.7683133300145464,
+            "median": 2.610499978065495,
+            "p99": 4.44999980926514,
+            "max": 5.70599985122681
+          },
+          "draw_calls": {
+            "n": 300,
+            "mean": 1795.0,
+            "median": 1795.0,
+            "p99": 1795.0,
+            "max": 1795.0
+          }
+        },
+        "occlusion_on_b2": {
+          "frame_ms": {
+            "n": 301,
+            "mean": 16.63109634551495,
+            "median": 16.661,
+            "p99": 21.469,
+            "max": 23.582
+          },
+          "gpu_ms": {
+            "n": 301,
+            "mean": 6.002089693696792,
+            "median": 5.92999982833862,
+            "p99": 6.77699995040894,
+            "max": 6.84600019454956
+          },
+          "render_cpu_ms": {
+            "n": 301,
+            "mean": 2.697571426531009,
+            "median": 2.59500002861023,
+            "p99": 4.20699977874756,
+            "max": 6.38100004196167
+          },
+          "draw_calls": {
+            "n": 301,
+            "mean": 1795.0,
+            "median": 1795.0,
+            "p99": 1795.0,
+            "max": 1795.0
+          }
+        }
+      }
+    },
+    "source_indoor": {
+      "path": "reports\\performance_changes\\20261109T172244683484Z_native_block_occlusion_source\\run.json",
+      "sha256": "e2e6e0087a36a0e39a2cd4724924b5960d0c841519917df0736e6b78dfde6e3f",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 4008673280,
+        "peak_working_set_bytes": 2427289600,
+        "peak_dedicated_gpu_bytes": 1491771392
+      },
+      "occlusion": {
+        "native": true,
+        "native_after": {
+          "active": 86,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 746772,
+          "invalidations": 2,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 88,
+          "radius": 96.0,
+          "resident": 86,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 192,
+          "step_last_us": 9.6,
+          "step_max_uploads": 1,
+          "step_max_us": 2069.3,
+          "step_uploads": 0
+        },
+        "native_before": {
+          "active": 86,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 746772,
+          "invalidations": 2,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 88,
+          "radius": 96.0,
+          "resident": 86,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 192,
+          "step_last_us": 9.3,
+          "step_max_uploads": 1,
+          "step_max_us": 2069.3,
+          "step_uploads": 0
+        },
+        "ok": true,
+        "original_enabled": true,
+        "sources": 86,
+        "triangles": 18610,
+        "unchanged": true,
+        "vertices": 43621
+      },
+      "timings": {
+        "occlusion_off_a": {
+          "frame_ms": {
+            "samples": 299,
+            "median": 16.581,
+            "p99": 20.478,
+            "maximum": 30.468
+          },
+          "gpu_ms": {
+            "samples": 299,
+            "median": 14.6409997940063,
+            "p99": 17.257999420166,
+            "maximum": 17.94700050354
+          },
+          "render_cpu_ms": {
+            "samples": 299,
+            "median": 5.65700006484985,
+            "p99": 8.3430004119873,
+            "maximum": 8.63399982452393
+          },
+          "draw_calls": {
+            "samples": 299,
+            "median": 5418.0,
+            "p99": 5418.0,
+            "maximum": 5418.0
+          }
+        },
+        "occlusion_off_a2": {
+          "frame_ms": {
+            "samples": 288,
+            "median": 17.302999999999997,
+            "p99": 22.875,
+            "maximum": 25.728
+          },
+          "gpu_ms": {
+            "samples": 288,
+            "median": 15.125,
+            "p99": 19.5189990997314,
+            "maximum": 20.2759990692139
+          },
+          "render_cpu_ms": {
+            "samples": 288,
+            "median": 5.62949991226196,
+            "p99": 9.08199977874756,
+            "maximum": 11.8959999084473
+          },
+          "draw_calls": {
+            "samples": 288,
+            "median": 5418.0,
+            "p99": 5418.0,
+            "maximum": 5418.0
+          }
+        },
+        "occlusion_on_b": {
+          "frame_ms": {
+            "samples": 300,
+            "median": 16.603,
+            "p99": 20.67,
+            "maximum": 32.568
+          },
+          "gpu_ms": {
+            "samples": 300,
+            "median": 13.65500020980835,
+            "p99": 16.7940006256104,
+            "maximum": 17.503999710083
+          },
+          "render_cpu_ms": {
+            "samples": 300,
+            "median": 2.67400002479553,
+            "p99": 4.41499996185303,
+            "maximum": 5.14200019836426
+          },
+          "draw_calls": {
+            "samples": 300,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "maximum": 1783.0
+          }
+        },
+        "occlusion_on_b2": {
+          "frame_ms": {
+            "samples": 301,
+            "median": 16.568,
+            "p99": 20.097,
+            "maximum": 20.691
+          },
+          "gpu_ms": {
+            "samples": 301,
+            "median": 13.7819995880127,
+            "p99": 15.7910003662109,
+            "maximum": 16.4440002441406
+          },
+          "render_cpu_ms": {
+            "samples": 301,
+            "median": 2.61800003051758,
+            "p99": 4.5789999961853,
+            "maximum": 5.72300004959106
+          },
+          "draw_calls": {
+            "samples": 301,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "maximum": 1783.0
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "samples": 59,
+            "median": 16.713,
+            "p99": 20.471,
+            "maximum": 800.911
+          },
+          "gpu_ms": {
+            "samples": 59,
+            "median": 14.3800001144409,
+            "p99": 16.6889991760254,
+            "maximum": 16.7730007171631
+          },
+          "render_cpu_ms": {
+            "samples": 59,
+            "median": 2.62400007247925,
+            "p99": 4.82200002670288,
+            "maximum": 4.91499996185303
+          },
+          "draw_calls": {
+            "samples": 59,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "maximum": 1783.0
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "samples": 473,
+            "median": 16.796,
+            "p99": 21.282,
+            "maximum": 23.241
+          },
+          "gpu_ms": {
+            "samples": 473,
+            "median": 13.8129997253418,
+            "p99": 18.4589996337891,
+            "maximum": 19.1450004577637
+          },
+          "render_cpu_ms": {
+            "samples": 473,
+            "median": 2.44099998474121,
+            "p99": 3.53099989891052,
+            "maximum": 4.7519998550415
+          },
+          "draw_calls": {
+            "samples": 473,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "maximum": 1783.0
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "samples": 294,
+            "median": 16.7955,
+            "p99": 21.551,
+            "maximum": 23.093
+          },
+          "gpu_ms": {
+            "samples": 294,
+            "median": 13.656000137329102,
+            "p99": 18.7080001831055,
+            "maximum": 19.6399993896484
+          },
+          "render_cpu_ms": {
+            "samples": 294,
+            "median": 2.430999994277955,
+            "p99": 3.73300004005432,
+            "maximum": 9.5019998550415
+          },
+          "draw_calls": {
+            "samples": 294,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "maximum": 1783.0
+          }
+        }
+      }
+    },
+    "source_outdoor": {
+      "path": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\run.json",
+      "sha256": "aa0f6471363f6b3c926b64ab7c56974c194a859ac5df2f1ea187b8a9568a717f",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 4028489728,
+        "peak_working_set_bytes": 2436247552,
+        "peak_dedicated_gpu_bytes": 1493868544
+      },
+      "occlusion": {
+        "native": true,
+        "native_after": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 195,
+          "step_last_us": 7.5,
+          "step_max_uploads": 1,
+          "step_max_us": 2119.2,
+          "step_uploads": 0
+        },
+        "native_before": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 195,
+          "step_last_us": 9.1,
+          "step_max_uploads": 1,
+          "step_max_us": 2119.2,
+          "step_uploads": 0
+        },
+        "ok": true,
+        "original_enabled": true,
+        "sources": 75,
+        "triangles": 17178,
+        "unchanged": true,
+        "vertices": 40757
+      },
+      "timings": {
+        "outdoor_occlusion_off_a": {
+          "frame_ms": {
+            "n": 295,
+            "median": 16.742,
+            "p99": 20.892,
+            "max": 31.59
+          },
+          "gpu_ms": {
+            "n": 295,
+            "median": 14.2200002670288,
+            "p99": 18.4060001373291,
+            "max": 19.3159999847412
+          },
+          "render_cpu_ms": {
+            "n": 295,
+            "median": 2.81399989128113,
+            "p99": 4.93200016021729,
+            "max": 5.9229998588562
+          },
+          "draw_calls": {
+            "n": 295,
+            "median": 2487.0,
+            "p99": 2487.0,
+            "max": 2487.0
+          }
+        },
+        "outdoor_occlusion_off_a2": {
+          "frame_ms": {
+            "n": 297,
+            "median": 16.741,
+            "p99": 20.498,
+            "max": 33.489
+          },
+          "gpu_ms": {
+            "n": 297,
+            "median": 14.4069995880127,
+            "p99": 17.5459995269775,
+            "max": 19.3570003509521
+          },
+          "render_cpu_ms": {
+            "n": 297,
+            "median": 2.61199998855591,
+            "p99": 4.16900014877319,
+            "max": 5.51999998092651
+          },
+          "draw_calls": {
+            "n": 297,
+            "median": 2487.0,
+            "p99": 2487.0,
+            "max": 2487.0
+          }
+        },
+        "outdoor_occlusion_on_b": {
+          "frame_ms": {
+            "n": 297,
+            "median": 16.689,
+            "p99": 21.279,
+            "max": 27.847
+          },
+          "gpu_ms": {
+            "n": 297,
+            "median": 14.0,
+            "p99": 17.628999710083,
+            "max": 18.8479995727539
+          },
+          "render_cpu_ms": {
+            "n": 297,
+            "median": 2.92600011825562,
+            "p99": 5.19500017166138,
+            "max": 6.06699991226196
+          },
+          "draw_calls": {
+            "n": 297,
+            "median": 2414.0,
+            "p99": 2414.0,
+            "max": 2414.0
+          }
+        },
+        "outdoor_occlusion_on_b2": {
+          "frame_ms": {
+            "n": 299,
+            "median": 16.66,
+            "p99": 20.628,
+            "max": 21.542
+          },
+          "gpu_ms": {
+            "n": 299,
+            "median": 13.7510004043579,
+            "p99": 16.7940006256104,
+            "max": 18.1049995422363
+          },
+          "render_cpu_ms": {
+            "n": 299,
+            "median": 2.75099992752075,
+            "p99": 4.26800012588501,
+            "max": 6.36700010299683
+          },
+          "draw_calls": {
+            "n": 299,
+            "median": 2414.0,
+            "p99": 2414.0,
+            "max": 2414.0
+          }
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "n": 462,
+            "median": 17.071,
+            "p99": 26.446,
+            "max": 37.218
+          },
+          "gpu_ms": {
+            "n": 462,
+            "median": 14.03350019454955,
+            "p99": 19.5170001983643,
+            "max": 20.6159992218018
+          },
+          "render_cpu_ms": {
+            "n": 462,
+            "median": 3.0550000667572,
+            "p99": 10.5010004043579,
+            "max": 17.9440002441406
+          },
+          "draw_calls": {
+            "n": 462,
+            "median": 2348.0,
+            "p99": 2387.0,
+            "max": 2388.0
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "n": 51,
+            "median": 18.68,
+            "p99": 23.391,
+            "max": 23.993
+          },
+          "gpu_ms": {
+            "n": 51,
+            "median": 16.9740009307861,
+            "p99": 21.0020008087158,
+            "max": 22.6730003356934
+          },
+          "render_cpu_ms": {
+            "n": 51,
+            "median": 2.94600009918213,
+            "p99": 4.46000003814697,
+            "max": 4.7649998664856
+          },
+          "draw_calls": {
+            "n": 51,
+            "median": 2420.0,
+            "p99": 2420.0,
+            "max": 2420.0
+          }
+        }
+      }
+    },
+    "boulder_ignore_control": {
+      "path": "reports\\performance_changes\\20261109T173232047808Z_occlusion_boulder_control\\run.json",
+      "sha256": "9264417a3d92b314c035b3c9b509c5f3d76237c438350848b6b7ff54bca5bd97",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 4020428800,
+        "peak_working_set_bytes": 2443030528,
+        "peak_dedicated_gpu_bytes": 1493872640
+      },
+      "occlusion": {
+        "boulders_ignored": true,
+        "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1101.203, 60.20123, 353.6957)]",
+        "camera_fov": 75.0,
+        "native": true,
+        "native_after": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 195,
+          "step_last_us": 8.6,
+          "step_max_uploads": 1,
+          "step_max_us": 1566.7,
+          "step_uploads": 0
+        },
+        "native_before": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 195,
+          "step_last_us": 9.9,
+          "step_max_uploads": 1,
+          "step_max_us": 1566.7,
+          "step_uploads": 0
+        },
+        "ok": true,
+        "original_enabled": true,
+        "sources": 75,
+        "triangles": 17178,
+        "unchanged": true,
+        "vertices": 40757
+      }
+    },
+    "all_off_control": {
+      "path": "reports\\performance_changes\\20261109T173744657534Z_occlusion_all_off_control\\run.json",
+      "sha256": "05d5b3ae7a5a6ef46ebafd7282abdeaf81105de3435c9f0c386f8add884fa243",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 3953758208,
+        "peak_working_set_bytes": 2379247616,
+        "peak_dedicated_gpu_bytes": 1474994176
+      },
+      "occlusion": {
+        "boulders_ignored": false,
+        "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1101.203, 60.19567, 353.6957)]",
+        "camera_fov": 75.0,
+        "control_off": true,
+        "native": true,
+        "native_after": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 197,
+          "step_last_us": 9.6,
+          "step_max_uploads": 1,
+          "step_max_us": 1181.9,
+          "step_uploads": 0
+        },
+        "native_before": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 197,
+          "step_last_us": 7.8,
+          "step_max_uploads": 1,
+          "step_max_us": 1181.9,
+          "step_uploads": 0
+        },
+        "ok": true,
+        "original_enabled": true,
+        "sources": 75,
+        "triangles": 17178,
+        "unchanged": true,
+        "vertices": 40757
+      }
+    },
+    "pack_indoor": {
+      "path": "reports\\performance_changes\\20261109T174931445092Z_native_occlusion_pack_indoor\\run.json",
+      "sha256": "18b3f948d4a136e782e8a92c72e3eb72d10d0a1d90d87ec1e57f6d70abe53504",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 3935166464,
+        "peak_working_set_bytes": 2353840128,
+        "peak_dedicated_gpu_bytes": 1474994176
+      },
+      "pack_sha256": "112c554377f8693b2ad37af9a47d3807a512039bcaadb08e105f829a89b0a176",
+      "occlusion": {
+        "boulders_ignored": false,
+        "camera": "[X: (-0.615993, 0.0, -0.787751), Y: (0.0, 1.0, 0.0), Z: (0.787751, 0.0, -0.615993), O: (1058.5, 62.68056, 325.0)]",
+        "camera_fov": 75.0,
+        "control_off": false,
+        "native": true,
+        "native_after": {
+          "active": 86,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 746772,
+          "invalidations": 2,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 88,
+          "radius": 96.0,
+          "resident": 86,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 191,
+          "step_last_us": 13.1,
+          "step_max_uploads": 1,
+          "step_max_us": 1980.2,
+          "step_uploads": 0
+        },
+        "native_before": {
+          "active": 86,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 746772,
+          "invalidations": 2,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 88,
+          "radius": 96.0,
+          "resident": 86,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 191,
+          "step_last_us": 10.8,
+          "step_max_uploads": 1,
+          "step_max_us": 1980.2,
+          "step_uploads": 0
+        },
+        "ok": true,
+        "original_enabled": true,
+        "sources": 86,
+        "triangles": 18610,
+        "unchanged": true,
+        "vertices": 43621
+      },
+      "viewport_restored": true,
+      "capture_total_us": 1197,
+      "timings": {
+        "arrival_idle": {
+          "frame_ms": {
+            "n": 721,
+            "median": 16.604,
+            "p99": 22.887,
+            "max": 26.727
+          },
+          "gpu_ms": {
+            "n": 721,
+            "median": 5.79500007629395,
+            "p99": 6.71400022506714,
+            "max": 7.07299995422363
+          },
+          "render_cpu_ms": {
+            "n": 721,
+            "median": 2.71399998664856,
+            "p99": 6.57399988174438,
+            "max": 10.5600004196167
+          },
+          "draw_calls": {
+            "n": 721,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "max": 1783.0
+          }
+        },
+        "occlusion_off_a": {
+          "frame_ms": {
+            "n": 300,
+            "median": 16.57,
+            "p99": 20.419,
+            "max": 22.146
+          },
+          "gpu_ms": {
+            "n": 300,
+            "median": 7.834500074386595,
+            "p99": 8.97700023651123,
+            "max": 9.23299980163574
+          },
+          "render_cpu_ms": {
+            "n": 300,
+            "median": 5.219499826431275,
+            "p99": 8.12600040435791,
+            "max": 8.45899963378906
+          },
+          "draw_calls": {
+            "n": 300,
+            "median": 5418.0,
+            "p99": 5418.0,
+            "max": 5418.0
+          }
+        },
+        "occlusion_off_a2": {
+          "frame_ms": {
+            "n": 301,
+            "median": 16.692,
+            "p99": 19.526,
+            "max": 23.112
+          },
+          "gpu_ms": {
+            "n": 301,
+            "median": 7.6230001449585,
+            "p99": 8.75599956512451,
+            "max": 9.08500003814697
+          },
+          "render_cpu_ms": {
+            "n": 301,
+            "median": 5.17000007629395,
+            "p99": 7.51399993896484,
+            "max": 9.64799976348877
+          },
+          "draw_calls": {
+            "n": 301,
+            "median": 5418.0,
+            "p99": 5418.0,
+            "max": 5418.0
+          }
+        },
+        "occlusion_on_b": {
+          "frame_ms": {
+            "n": 301,
+            "median": 16.676,
+            "p99": 18.044,
+            "max": 18.777
+          },
+          "gpu_ms": {
+            "n": 301,
+            "median": 5.78700017929077,
+            "p99": 6.68800020217896,
+            "max": 6.78299999237061
+          },
+          "render_cpu_ms": {
+            "n": 301,
+            "median": 2.73399996757507,
+            "p99": 3.69899988174438,
+            "max": 4.52799987792969
+          },
+          "draw_calls": {
+            "n": 301,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "max": 1783.0
+          }
+        },
+        "occlusion_on_b2": {
+          "frame_ms": {
+            "n": 300,
+            "median": 16.628999999999998,
+            "p99": 18.967,
+            "max": 20.68
+          },
+          "gpu_ms": {
+            "n": 300,
+            "median": 5.859500169754025,
+            "p99": 6.76800012588501,
+            "max": 6.78499984741211
+          },
+          "render_cpu_ms": {
+            "n": 300,
+            "median": 2.737499952316285,
+            "p99": 3.38000011444092,
+            "max": 4.0310001373291
+          },
+          "draw_calls": {
+            "n": 300,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "max": 1783.0
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "n": 51,
+            "median": 16.6,
+            "p99": 18.091,
+            "max": 18.091
+          },
+          "gpu_ms": {
+            "n": 51,
+            "median": 4.95800018310547,
+            "p99": 8.09500026702881,
+            "max": 8.09500026702881
+          },
+          "render_cpu_ms": {
+            "n": 51,
+            "median": 2.75500011444092,
+            "p99": 5.98299980163574,
+            "max": 5.98299980163574
+          },
+          "draw_calls": {
+            "n": 51,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "max": 1783.0
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "n": 481,
+            "median": 16.681,
+            "p99": 19.067,
+            "max": 20.984
+          },
+          "gpu_ms": {
+            "n": 481,
+            "median": 5.68100023269653,
+            "p99": 6.59200000762939,
+            "max": 6.61399984359741
+          },
+          "render_cpu_ms": {
+            "n": 481,
+            "median": 3.01300001144409,
+            "p99": 4.98600006103516,
+            "max": 6.08099985122681
+          },
+          "draw_calls": {
+            "n": 481,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "max": 1783.0
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "n": 300,
+            "median": 16.6845,
+            "p99": 18.189,
+            "max": 18.42
+          },
+          "gpu_ms": {
+            "n": 300,
+            "median": 5.72599983215332,
+            "p99": 6.61800003051758,
+            "max": 6.67899990081787
+          },
+          "render_cpu_ms": {
+            "n": 300,
+            "median": 2.79550004005432,
+            "p99": 3.85700011253357,
+            "max": 4.07399988174438
+          },
+          "draw_calls": {
+            "n": 300,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "max": 1783.0
+          }
+        }
+      }
+    },
+    "pack_outdoor": {
+      "path": "reports\\performance_changes\\20261109T175106845859Z_native_occlusion_pack_outdoor\\run.json",
+      "sha256": "c89a79deb9b06b040c764c86b897a1d645bd6922f057278031fedb9e3c963182",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 3969499136,
+        "peak_working_set_bytes": 2382548992,
+        "peak_dedicated_gpu_bytes": 1474990080
+      },
+      "pack_sha256": "112c554377f8693b2ad37af9a47d3807a512039bcaadb08e105f829a89b0a176",
+      "occlusion": {
+        "boulders_ignored": false,
+        "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1101.203, 60.20123, 353.6957)]",
+        "camera_fov": 75.0,
+        "control_off": false,
+        "native": true,
+        "native_after": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 194,
+          "step_last_us": 8.8,
+          "step_max_uploads": 1,
+          "step_max_us": 1960.0,
+          "step_uploads": 0
+        },
+        "native_before": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 194,
+          "step_last_us": 10.0,
+          "step_max_uploads": 1,
+          "step_max_us": 1960.0,
+          "step_uploads": 0
+        },
+        "ok": true,
+        "original_enabled": true,
+        "sources": 75,
+        "triangles": 17178,
+        "unchanged": true,
+        "vertices": 40757
+      },
+      "viewport_restored": true,
+      "capture_total_us": 1396,
+      "timings": {
+        "arrival_idle": {
+          "frame_ms": {
+            "n": 721,
+            "median": 16.713,
+            "p99": 21.995,
+            "max": 31.502
+          },
+          "gpu_ms": {
+            "n": 721,
+            "median": 5.83699989318848,
+            "p99": 6.76200008392334,
+            "max": 7.39799976348877
+          },
+          "render_cpu_ms": {
+            "n": 721,
+            "median": 2.62899994850159,
+            "p99": 4.44799995422363,
+            "max": 6.78399991989136
+          },
+          "draw_calls": {
+            "n": 721,
+            "median": 1759.0,
+            "p99": 1759.0,
+            "max": 1759.0
+          }
+        },
+        "outdoor_occlusion_off_a": {
+          "frame_ms": {
+            "n": 301,
+            "median": 16.638,
+            "p99": 19.185,
+            "max": 20.76
+          },
+          "gpu_ms": {
+            "n": 301,
+            "median": 5.52600002288818,
+            "p99": 6.84899997711182,
+            "max": 6.92399978637695
+          },
+          "render_cpu_ms": {
+            "n": 301,
+            "median": 2.73099994659424,
+            "p99": 3.61999988555908,
+            "max": 4.12799978256226
+          },
+          "draw_calls": {
+            "n": 301,
+            "median": 2464.0,
+            "p99": 2464.0,
+            "max": 2464.0
+          }
+        },
+        "outdoor_occlusion_off_a2": {
+          "frame_ms": {
+            "n": 301,
+            "median": 16.68,
+            "p99": 18.649,
+            "max": 28.394
+          },
+          "gpu_ms": {
+            "n": 301,
+            "median": 5.82000017166138,
+            "p99": 6.92899990081787,
+            "max": 7.04400014877319
+          },
+          "render_cpu_ms": {
+            "n": 301,
+            "median": 2.69400000572205,
+            "p99": 4.25500011444092,
+            "max": 4.9229998588562
+          },
+          "draw_calls": {
+            "n": 301,
+            "median": 2473.0,
+            "p99": 2473.0,
+            "max": 2473.0
+          }
+        },
+        "outdoor_occlusion_on_b": {
+          "frame_ms": {
+            "n": 300,
+            "median": 16.636,
+            "p99": 23.193,
+            "max": 32.225
+          },
+          "gpu_ms": {
+            "n": 300,
+            "median": 5.643500089645385,
+            "p99": 6.54400014877319,
+            "max": 6.74499988555908
+          },
+          "render_cpu_ms": {
+            "n": 300,
+            "median": 3.120499968528745,
+            "p99": 5.66400003433228,
+            "max": 8.52600002288818
+          },
+          "draw_calls": {
+            "n": 300,
+            "median": 2391.0,
+            "p99": 2391.0,
+            "max": 2391.0
+          }
+        },
+        "outdoor_occlusion_on_b2": {
+          "frame_ms": {
+            "n": 300,
+            "median": 16.683500000000002,
+            "p99": 19.251,
+            "max": 19.964
+          },
+          "gpu_ms": {
+            "n": 300,
+            "median": 5.921499967575075,
+            "p99": 6.82600021362305,
+            "max": 7.10900020599365
+          },
+          "render_cpu_ms": {
+            "n": 300,
+            "median": 2.825999975204465,
+            "p99": 3.43499994277954,
+            "max": 6.2189998626709
+          },
+          "draw_calls": {
+            "n": 300,
+            "median": 2400.0,
+            "p99": 2400.0,
+            "max": 2400.0
+          }
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "n": 480,
+            "median": 16.616,
+            "p99": 27.244,
+            "max": 31.049
+          },
+          "gpu_ms": {
+            "n": 480,
+            "median": 5.9060001373291,
+            "p99": 6.88899993896484,
+            "max": 7.38199996948242
+          },
+          "render_cpu_ms": {
+            "n": 480,
+            "median": 2.914499998092655,
+            "p99": 8.69999980926514,
+            "max": 12.0270004272461
+          },
+          "draw_calls": {
+            "n": 480,
+            "median": 2335.5,
+            "p99": 2362.0,
+            "max": 2386.0
+          }
+        },
+        "outdoor_view_0": {
+          "frame_ms": {
+            "n": 240,
+            "median": 16.6485,
+            "p99": 20.455,
+            "max": 21.336
+          },
+          "gpu_ms": {
+            "n": 240,
+            "median": 5.82999992370605,
+            "p99": 6.86999988555908,
+            "max": 7.08400011062622
+          },
+          "render_cpu_ms": {
+            "n": 240,
+            "median": 2.736999988555905,
+            "p99": 4.08799982070923,
+            "max": 4.22599983215332
+          },
+          "draw_calls": {
+            "n": 240,
+            "median": 2276.0,
+            "p99": 2276.0,
+            "max": 2276.0
+          }
+        },
+        "outdoor_view_1": {
+          "frame_ms": {
+            "n": 236,
+            "median": 16.644,
+            "p99": 27.711,
+            "max": 55.159
+          },
+          "gpu_ms": {
+            "n": 236,
+            "median": 5.912500143051145,
+            "p99": 7.02600002288818,
+            "max": 7.30200004577637
+          },
+          "render_cpu_ms": {
+            "n": 236,
+            "median": 2.83400011062622,
+            "p99": 7.07299995422363,
+            "max": 8.6230001449585
+          },
+          "draw_calls": {
+            "n": 236,
+            "median": 2339.0,
+            "p99": 2342.0,
+            "max": 2344.0
+          }
+        },
+        "outdoor_view_2": {
+          "frame_ms": {
+            "n": 240,
+            "median": 16.707,
+            "p99": 21.13,
+            "max": 22.333
+          },
+          "gpu_ms": {
+            "n": 240,
+            "median": 5.803499937057495,
+            "p99": 6.89699983596802,
+            "max": 6.96799993515015
+          },
+          "render_cpu_ms": {
+            "n": 240,
+            "median": 3.074000000953675,
+            "p99": 6.19700002670288,
+            "max": 8.84799957275391
+          },
+          "draw_calls": {
+            "n": 240,
+            "median": 2391.0,
+            "p99": 2391.0,
+            "max": 2391.0
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "n": 60,
+            "median": 16.542,
+            "p99": 22.857,
+            "max": 22.857
+          },
+          "gpu_ms": {
+            "n": 60,
+            "median": 5.437999963760375,
+            "p99": 6.53000020980835,
+            "max": 6.53000020980835
+          },
+          "render_cpu_ms": {
+            "n": 60,
+            "median": 3.1894999742507952,
+            "p99": 6.86100006103516,
+            "max": 6.86100006103516
+          },
+          "draw_calls": {
+            "n": 60,
+            "median": 2400.0,
+            "p99": 2400.0,
+            "max": 2400.0
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "n": 480,
+            "median": 16.6585,
+            "p99": 23.986,
+            "max": 27.442
+          },
+          "gpu_ms": {
+            "n": 480,
+            "median": 6.03999996185303,
+            "p99": 6.82800006866455,
+            "max": 7.15299987792969
+          },
+          "render_cpu_ms": {
+            "n": 480,
+            "median": 2.868499994277955,
+            "p99": 5.66300010681152,
+            "max": 8.67599964141846
+          },
+          "draw_calls": {
+            "n": 480,
+            "median": 2400.0,
+            "p99": 2400.0,
+            "max": 2400.0
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "n": 301,
+            "median": 16.717,
+            "p99": 18.82,
+            "max": 19.261
+          },
+          "gpu_ms": {
+            "n": 301,
+            "median": 6.07999992370605,
+            "p99": 6.91699981689453,
+            "max": 7.125
+          },
+          "render_cpu_ms": {
+            "n": 301,
+            "median": 2.83400011062622,
+            "p99": 3.55999994277954,
+            "max": 3.87700009346008
+          },
+          "draw_calls": {
+            "n": 301,
+            "median": 2400.0,
+            "p99": 2400.0,
+            "max": 2400.0
+          }
+        }
+      }
+    },
+    "pack_uncapped": {
+      "path": "reports\\performance_changes\\20261109T175336004650Z_native_occlusion_pack_uncapped\\run.json",
+      "sha256": "049089d6ce95462bdfd8c8ca524e9cd878fb196c49d1e0aaa4c0bf52b00b6224",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 3966132224,
+        "peak_working_set_bytes": 2386366464,
+        "peak_dedicated_gpu_bytes": 1483857920
+      },
+      "pack_sha256": "112c554377f8693b2ad37af9a47d3807a512039bcaadb08e105f829a89b0a176",
+      "occlusion": {
+        "boulders_ignored": false,
+        "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1101.203, 60.20123, 353.6957)]",
+        "camera_fov": 75.0,
+        "control_off": false,
+        "native": true,
+        "native_after": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 194,
+          "step_last_us": 8.7,
+          "step_max_uploads": 1,
+          "step_max_us": 924.2,
+          "step_uploads": 0
+        },
+        "native_before": {
+          "active": 75,
+          "chunk_byte_limit": 262144,
+          "chunk_limit": 128,
+          "enabled": true,
+          "geometry_byte_limit": 2097152,
+          "geometry_bytes": 695220,
+          "invalidations": 15,
+          "oversized_chunks_skipped": 0,
+          "pending": 0,
+          "published": 90,
+          "radius": 96.0,
+          "resident": 75,
+          "retiring": 0,
+          "selection_dirty": false,
+          "selection_scans": 194,
+          "step_last_us": 8.6,
+          "step_max_uploads": 1,
+          "step_max_us": 924.2,
+          "step_uploads": 0
+        },
+        "ok": true,
+        "original_enabled": true,
+        "sources": 75,
+        "triangles": 17178,
+        "unchanged": true,
+        "vertices": 40757
+      },
+      "viewport_restored": true,
+      "capture_total_us": 1237,
+      "timings": {
+        "arrival_idle": {
+          "frame_ms": {
+            "n": 1516,
+            "median": 7.8375,
+            "p99": 15.099,
+            "max": 26.389
+          },
+          "gpu_ms": {
+            "n": 1516,
+            "median": 5.20800018310547,
+            "p99": 6.30299997329712,
+            "max": 6.79400014877319
+          },
+          "render_cpu_ms": {
+            "n": 1516,
+            "median": 2.55599999427795,
+            "p99": 4.19099998474121,
+            "max": 8.875
+          },
+          "draw_calls": {
+            "n": 1516,
+            "median": 1783.0,
+            "p99": 1783.0,
+            "max": 1783.0
+          }
+        },
+        "outdoor_occlusion_off_a": {
+          "frame_ms": {
+            "n": 625,
+            "median": 7.654,
+            "p99": 13.072,
+            "max": 15.1
+          },
+          "gpu_ms": {
+            "n": 625,
+            "median": 6.12900018692017,
+            "p99": 7.22399997711182,
+            "max": 7.58699989318848
+          },
+          "render_cpu_ms": {
+            "n": 625,
+            "median": 2.60999989509583,
+            "p99": 3.97399997711182,
+            "max": 5.30900001525879
+          },
+          "draw_calls": {
+            "n": 625,
+            "median": 2513.0,
+            "p99": 2513.0,
+            "max": 2513.0
+          }
+        },
+        "outdoor_occlusion_off_a2": {
+          "frame_ms": {
+            "n": 614,
+            "median": 7.9885,
+            "p99": 12.562,
+            "max": 15.878
+          },
+          "gpu_ms": {
+            "n": 614,
+            "median": 6.13000011444092,
+            "p99": 7.31899976730347,
+            "max": 7.72100019454956
+          },
+          "render_cpu_ms": {
+            "n": 614,
+            "median": 2.631500005722045,
+            "p99": 3.69199991226196,
+            "max": 6.51999998092651
+          },
+          "draw_calls": {
+            "n": 614,
+            "median": 2513.0,
+            "p99": 2513.0,
+            "max": 2513.0
+          }
+        },
+        "outdoor_occlusion_on_b": {
+          "frame_ms": {
+            "n": 619,
+            "median": 7.668,
+            "p99": 12.853,
+            "max": 15.302
+          },
+          "gpu_ms": {
+            "n": 619,
+            "median": 6.10200023651123,
+            "p99": 7.10300016403198,
+            "max": 7.42199993133545
+          },
+          "render_cpu_ms": {
+            "n": 619,
+            "median": 2.76200008392334,
+            "p99": 4.22300004959106,
+            "max": 4.68300008773804
+          },
+          "draw_calls": {
+            "n": 619,
+            "median": 2437.0,
+            "p99": 2437.0,
+            "max": 2437.0
+          }
+        },
+        "outdoor_occlusion_on_b2": {
+          "frame_ms": {
+            "n": 587,
+            "median": 8.616,
+            "p99": 15.752,
+            "max": 22.856
+          },
+          "gpu_ms": {
+            "n": 587,
+            "median": 6.13000011444092,
+            "p99": 7.30900001525879,
+            "max": 7.67000007629395
+          },
+          "render_cpu_ms": {
+            "n": 587,
+            "median": 2.83299994468689,
+            "p99": 5.73199987411499,
+            "max": 7.92000007629395
+          },
+          "draw_calls": {
+            "n": 587,
+            "median": 2437.0,
+            "p99": 2437.0,
+            "max": 2437.0
+          }
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "n": 1005,
+            "median": 7.647,
+            "p99": 17.792,
+            "max": 34.616
+          },
+          "gpu_ms": {
+            "n": 1005,
+            "median": 5.65000009536743,
+            "p99": 7.28900003433228,
+            "max": 7.77699995040894
+          },
+          "render_cpu_ms": {
+            "n": 1005,
+            "median": 2.70300006866455,
+            "p99": 7.88199996948242,
+            "max": 15.0019998550415
+          },
+          "draw_calls": {
+            "n": 1005,
+            "median": 2358.0,
+            "p99": 2403.0,
+            "max": 2431.0
+          }
+        },
+        "outdoor_view_0": {
+          "frame_ms": {
+            "n": 609,
+            "median": 5.684,
+            "p99": 9.77,
+            "max": 10.514
+          },
+          "gpu_ms": {
+            "n": 609,
+            "median": 4.7350001335144,
+            "p99": 5.65000009536743,
+            "max": 5.99399995803833
+          },
+          "render_cpu_ms": {
+            "n": 609,
+            "median": 2.53500008583069,
+            "p99": 3.13299989700317,
+            "max": 3.28600001335144
+          },
+          "draw_calls": {
+            "n": 609,
+            "median": 2298.0,
+            "p99": 2298.0,
+            "max": 2298.0
+          }
+        },
+        "outdoor_view_1": {
+          "frame_ms": {
+            "n": 522,
+            "median": 7.093500000000001,
+            "p99": 11.413,
+            "max": 12.09
+          },
+          "gpu_ms": {
+            "n": 522,
+            "median": 5.75699996948242,
+            "p99": 6.88299989700317,
+            "max": 7.15000009536743
+          },
+          "render_cpu_ms": {
+            "n": 522,
+            "median": 2.66499996185303,
+            "p99": 3.41599988937378,
+            "max": 4.19500017166138
+          },
+          "draw_calls": {
+            "n": 522,
+            "median": 2360.0,
+            "p99": 2360.0,
+            "max": 2360.0
+          }
+        },
+        "outdoor_view_2": {
+          "frame_ms": {
+            "n": 494,
+            "median": 7.922,
+            "p99": 12.989,
+            "max": 14.913
+          },
+          "gpu_ms": {
+            "n": 494,
+            "median": 6.280999898910525,
+            "p99": 7.4229998588562,
+            "max": 7.59299993515015
+          },
+          "render_cpu_ms": {
+            "n": 494,
+            "median": 2.6829999685287502,
+            "p99": 4.39200019836426,
+            "max": 4.68599987030029
+          },
+          "draw_calls": {
+            "n": 494,
+            "median": 2431.0,
+            "p99": 2431.0,
+            "max": 2431.0
+          }
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "n": 110,
+            "median": 9.085,
+            "p99": 15.774,
+            "max": 16.622
+          },
+          "gpu_ms": {
+            "n": 110,
+            "median": 5.94350004196167,
+            "p99": 6.89599990844727,
+            "max": 7.08099985122681
+          },
+          "render_cpu_ms": {
+            "n": 110,
+            "median": 2.971500039100645,
+            "p99": 5.1230001449585,
+            "max": 5.17700004577637
+          },
+          "draw_calls": {
+            "n": 110,
+            "median": 2437.0,
+            "p99": 2437.0,
+            "max": 2437.0
+          }
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "n": 1009,
+            "median": 7.541,
+            "p99": 11.285,
+            "max": 26.795
+          },
+          "gpu_ms": {
+            "n": 1009,
+            "median": 6.08599996566772,
+            "p99": 7.36299991607666,
+            "max": 7.50299978256226
+          },
+          "render_cpu_ms": {
+            "n": 1009,
+            "median": 2.74300003051758,
+            "p99": 3.76300001144409,
+            "max": 7.22200012207031
+          },
+          "draw_calls": {
+            "n": 1009,
+            "median": 2437.0,
+            "p99": 2437.0,
+            "max": 2437.0
+          }
+        },
+        "turning": {
+          "frame_ms": {
+            "n": 608,
+            "median": 8.296,
+            "p99": 13.623,
+            "max": 18.864
+          },
+          "gpu_ms": {
+            "n": 608,
+            "median": 6.1110000610351545,
+            "p99": 7.375,
+            "max": 7.8730001449585
+          },
+          "render_cpu_ms": {
+            "n": 608,
+            "median": 2.77500009536743,
+            "p99": 4.40999984741211,
+            "max": 5.43800020217896
+          },
+          "draw_calls": {
+            "n": 608,
+            "median": 2437.0,
+            "p99": 2437.0,
+            "max": 2437.0
+          }
+        }
+      }
+    }
+  },
+  "checks": {
+    "native_debug": {
+      "path": "reports/checks/20261109T171957887714Z/run.json",
+      "sha256": "c855ead30dbe25e461a2f43689221f18a75e02127a06df29ebf0c1c584de78e3",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 98902016,
+        "peak_working_set_bytes": 118591488,
+        "peak_dedicated_gpu_bytes": null
+      }
+    },
+    "native_rendered": {
+      "path": "reports/checks/block_occlusion_render_20261109T172212Z/run.json",
+      "sha256": "8ea46458018193857e82134d48bb38894326e01db1990289605592b69868cd29",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 1043365888,
+        "peak_working_set_bytes": 583254016,
+        "peak_dedicated_gpu_bytes": 393535488
+      }
+    },
+    "regions": {
+      "path": "reports/checks/20261109T172120371561Z/run.json",
+      "sha256": "04142f1a82d2e6fa9c9c00a86ae2408a8ffb7ace1ea8a8669eb15e5d839462cd",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 124588032,
+        "peak_working_set_bytes": 142155776,
+        "peak_dedicated_gpu_bytes": null
+      }
+    },
+    "collision_stream": {
+      "path": "reports/checks/20261109T172122033550Z/run.json",
+      "sha256": "acc022b5730a04dddd27621bc6beb9323a00357d8340fdb25dccfdd2a520475f",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 172060672,
+        "peak_working_set_bytes": 169848832,
+        "peak_dedicated_gpu_bytes": null
+      }
+    },
+    "destruction": {
+      "path": "reports/checks/20261109T172134640239Z/run.json",
+      "sha256": "a98f44763b0896a37a0a47b22ea6745bd3be4dcf64faecb96f206b4b1383bfbb",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 34996224,
+        "peak_working_set_bytes": 77193216,
+        "peak_dedicated_gpu_bytes": null
+      }
+    },
+    "trace": {
+      "path": "reports/checks/20261109T172136315052Z/run.json",
+      "sha256": "f573c76c549722749a7b4a1ea6430c76a2d1c6ac60d58bf8d482397fa7b602ae",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "peak_private_commit_bytes": 83820544,
+        "peak_working_set_bytes": 103784448,
+        "peak_dedicated_gpu_bytes": null
+      }
+    },
+    "native_release": {
+      "path": "reports/block_occlusion_release.json",
+      "sha256": "ec2a7f2cc88c8d006530a4bbf2a48e7dc2fdee0456be62a622c31a8ee8631ed0",
+      "checks": 24,
+      "failures": 0,
+      "dll_sha256": "7095ee417af21d94216d02a57bd65f7b3be9e32f3efbb18982bc9578bec0b615"
+    }
+  },
+  "images": [
+    {
+      "path": "reports\\performance_changes\\20261109T172244683484Z_native_block_occlusion_source\\occlusion_off_a.png",
+      "sha256": "508f65f4543c0b5617d9c5065b2ae631262d5fd5cbb3d6bb15600bec4f1f22a9",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172244683484Z_native_block_occlusion_source\\occlusion_off_a2.png",
+      "sha256": "508f65f4543c0b5617d9c5065b2ae631262d5fd5cbb3d6bb15600bec4f1f22a9",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172244683484Z_native_block_occlusion_source\\occlusion_on_b.png",
+      "sha256": "508f65f4543c0b5617d9c5065b2ae631262d5fd5cbb3d6bb15600bec4f1f22a9",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172244683484Z_native_block_occlusion_source\\occlusion_on_b2.png",
+      "sha256": "f543994d7e2d61817e8a2b2a6e731f1fb901b5f0c01356e9fb268caae01d0645",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\arrival.png",
+      "sha256": "d3121eaee65d478d16c116882cb02aea4980b15e8144df6891431165397c321d",
+      "inspection": "Retained arrival capture; not part of this milestone visual comparison."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\outdoor_0.png",
+      "sha256": "99850774692c6cd75470a7794eebe8b690bef8c23da402cf0b624655e88e812b",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\outdoor_1.png",
+      "sha256": "04dc62e42e1284e4a8f843e735b9048a1ea162b4e4cd4ae76a8654c1a311d6fd",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\outdoor_2.png",
+      "sha256": "86deb28a97b92bb612f1b0c576efa10efe3ac87273558d206eb22f5aa5d30365",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\outdoor_occlusion_off_a.png",
+      "sha256": "549b212fdaf71ccd011172f1eb6536a39456c698b215665c4e473c2cc6149e38",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\outdoor_occlusion_off_a2.png",
+      "sha256": "fc454274ad0e525d3767d6be2d1e007bf5cbe164647b9c1dbf7137be76361572",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\outdoor_occlusion_on_b.png",
+      "sha256": "7ee9936ea4ca911df73f620a0d9d5b688be04257bfdb6cf15d317b5fd74fee63",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T172625995666Z_native_block_occlusion_outdoor\\outdoor_occlusion_on_b2.png",
+      "sha256": "55a38d1f539f702187329d5ddd90e800d5cf0808bf2040e3e220c42dd1199d95",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T173232047808Z_occlusion_boulder_control\\outdoor_occlusion_off_a.png",
+      "sha256": "07ce8f41192e9ee0416a07f005b978e725008a7ccb29d76b9e774da0bfcc7cc1",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T173232047808Z_occlusion_boulder_control\\outdoor_occlusion_off_a2.png",
+      "sha256": "bcc96416ae5e79951852371ab7c80ab753651881e9afd431eba930813a853833",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T173232047808Z_occlusion_boulder_control\\outdoor_occlusion_on_b.png",
+      "sha256": "f3e0d9d5bb9e6b3a65f880dc63a3717bea4cec39b278141f963c46895b506d7b",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T173232047808Z_occlusion_boulder_control\\outdoor_occlusion_on_b2.png",
+      "sha256": "0aedbee264758a73a1ef67ecbcb8a4c8719aef96ff20b8e5d34153da2290db74",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T173744657534Z_occlusion_all_off_control\\outdoor_occlusion_off_a.png",
+      "sha256": "0ef33d4e4bb1836e9e29b581aed166e6af1ac125dac5dd684f38c197452a12b0",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T173744657534Z_occlusion_all_off_control\\outdoor_occlusion_off_a2.png",
+      "sha256": "fed7b0be19b778b1c6e52b117f5acb4b09e63f5e0c4f1f2beaa456665bf97b81",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T173744657534Z_occlusion_all_off_control\\outdoor_occlusion_on_b.png",
+      "sha256": "eee6c7fa228e98ea6e8e84afab038c154e58a74914de69ce52688693ef40790e",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T173744657534Z_occlusion_all_off_control\\outdoor_occlusion_on_b2.png",
+      "sha256": "3cf286e1627aa3a7409da61e5df85531d4a8e577d9c745c492326abc75cea56f",
+      "inspection": "Inspected; initial boulder size allegation corrected against pixels. Source-only view; existing asset provenance retained."
+    },
+    {
+      "path": "reports\\block_occlusion_visual\\closed_on.png",
+      "sha256": "e7f9dd6214c723a5678ae24040804ba1f4a446c1bbf7e33f614f4fda7612d580",
+      "inspection": "Inspected rendered doorway fixture: visibility through open and destroyed opening, hidden behind closed wall."
+    },
+    {
+      "path": "reports\\block_occlusion_visual\\destroyed_on.png",
+      "sha256": "8d9d600f9b5cd29bfe6577deda031a6e6ea342df63a1582897b328448f55d0f8",
+      "inspection": "Inspected rendered doorway fixture: visibility through open and destroyed opening, hidden behind closed wall."
+    },
+    {
+      "path": "reports\\block_occlusion_visual\\open_off.png",
+      "sha256": "8d9d600f9b5cd29bfe6577deda031a6e6ea342df63a1582897b328448f55d0f8",
+      "inspection": "Inspected rendered doorway fixture: visibility through open and destroyed opening, hidden behind closed wall."
+    },
+    {
+      "path": "reports\\block_occlusion_visual\\open_on.png",
+      "sha256": "8d9d600f9b5cd29bfe6577deda031a6e6ea342df63a1582897b328448f55d0f8",
+      "inspection": "Inspected rendered doorway fixture: visibility through open and destroyed opening, hidden behind closed wall."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T174931445092Z_native_occlusion_pack_indoor\\occlusion_off_a.png",
+      "sha256": "1f13c80f505c1fd4ab29f0dff1db65f0b96b0f0c05019c21de9a21e056a7d7a5",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T174931445092Z_native_occlusion_pack_indoor\\occlusion_off_a2.png",
+      "sha256": "0148122ab6231b0ea864222264451baa660b6b25ef4cacbe45d77f7d2219254b",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T174931445092Z_native_occlusion_pack_indoor\\occlusion_on_b.png",
+      "sha256": "0148122ab6231b0ea864222264451baa660b6b25ef4cacbe45d77f7d2219254b",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T174931445092Z_native_occlusion_pack_indoor\\occlusion_on_b2.png",
+      "sha256": "1f13c80f505c1fd4ab29f0dff1db65f0b96b0f0c05019c21de9a21e056a7d7a5",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175106845859Z_native_occlusion_pack_outdoor\\outdoor_0.png",
+      "sha256": "4fd56fa6915413ab84daef80448a5eaa2d71b97173f0fed6f8e6a1f093495fd8",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175106845859Z_native_occlusion_pack_outdoor\\outdoor_1.png",
+      "sha256": "4ddeceedb166254ef8109c73e188c4a2736e57c539a0df7ff05f5b436a655f35",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175106845859Z_native_occlusion_pack_outdoor\\outdoor_2.png",
+      "sha256": "5c99a674156031ac245425becfd97ca29eebf4d55a324b2bbf75b9d1d2b8df39",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175106845859Z_native_occlusion_pack_outdoor\\outdoor_occlusion_off_a.png",
+      "sha256": "54d0b485560b711a7133121c44acfd5799114ee31d7e2d8e207dccfced22d19a",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175106845859Z_native_occlusion_pack_outdoor\\outdoor_occlusion_off_a2.png",
+      "sha256": "6a39650084ed49f5b0c174a06509c44f3cb6957b8cd09b5c4f92a19abd2d715b",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175106845859Z_native_occlusion_pack_outdoor\\outdoor_occlusion_on_b.png",
+      "sha256": "9f34cb817daf8055c1c0dd3ec4eedd230211957f9f7c5c125ebd9880285b521d",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175106845859Z_native_occlusion_pack_outdoor\\outdoor_occlusion_on_b2.png",
+      "sha256": "41f216323263970ab98e5027cf81932ee212a4bd06c11e372af39560e75d887a",
+      "inspection": "Inspected indoor comparison or outdoor sweep/comparison at 1920x1080. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175336004650Z_native_occlusion_pack_uncapped\\outdoor_0.png",
+      "sha256": "4ac59d27c5542c0994885db7a19999c99baea821ed653348d2bd91499f82bb0c",
+      "inspection": "Inspected uncapped outdoor sweep and ABBA. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175336004650Z_native_occlusion_pack_uncapped\\outdoor_1.png",
+      "sha256": "d88168ea7837dbce775dba1a9d50423ba971a95b5f625bcecf1ad84338ef88fe",
+      "inspection": "Inspected uncapped outdoor sweep and ABBA. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175336004650Z_native_occlusion_pack_uncapped\\outdoor_2.png",
+      "sha256": "554f266d29ab12da41c8268d4508c6e6f4a3155f7a019f870bdbd0b463f536e1",
+      "inspection": "Inspected uncapped outdoor sweep and ABBA. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175336004650Z_native_occlusion_pack_uncapped\\outdoor_occlusion_off_a.png",
+      "sha256": "9ab287ffc4db9be450df6c7229d74934a29c2b58d1232af19cd661e86ea72978",
+      "inspection": "Inspected uncapped outdoor sweep and ABBA. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175336004650Z_native_occlusion_pack_uncapped\\outdoor_occlusion_off_a2.png",
+      "sha256": "118ba1ef516513107e514e0296538a7afa39bbc7c67400de98c5152dae805847",
+      "inspection": "Inspected uncapped outdoor sweep and ABBA. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175336004650Z_native_occlusion_pack_uncapped\\outdoor_occlusion_on_b.png",
+      "sha256": "9be80200aae2620316848c96967a98f8ed8124d4f1a01686caf39a9815c1d69a",
+      "inspection": "Inspected uncapped outdoor sweep and ABBA. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    },
+    {
+      "path": "reports\\performance_changes\\20261109T175336004650Z_native_occlusion_pack_uncapped\\outdoor_occlusion_on_b2.png",
+      "sha256": "b089fbde957c2a7156b3eb67b640fc06f9df2b26c687b3082ddec9470a90399e",
+      "inspection": "Inspected uncapped outdoor sweep and ABBA. No obvious missing visible geometry at sampled views; not exhaustive traversal or user visual approval."
+    }
+  ],
+  "visual_reading_correction": {
+    "scope": "Original PNG pixel analysis; neutral-color scan is an edge aid, not general segmentation. Earlier large/small silhouette claim was a visual misreading.",
+    "results": [
+      {
+        "folder": "20261109T172625995666Z_native_block_occlusion_outdoor",
+        "phases": [
+          {
+            "phase": "off_a",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1342
+              ],
+              [
+                425,
+                1315
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1295
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1328
+              ],
+              [
+                625,
+                1340
+              ],
+              [
+                650,
+                1359
+              ],
+              [
+                675,
+                1383
+              ],
+              [
+                700,
+                1409
+              ],
+              [
+                725,
+                1429
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          },
+          {
+            "phase": "on_b",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1342
+              ],
+              [
+                425,
+                1315
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1295
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1328
+              ],
+              [
+                625,
+                1340
+              ],
+              [
+                650,
+                1359
+              ],
+              [
+                675,
+                1383
+              ],
+              [
+                700,
+                1409
+              ],
+              [
+                725,
+                1429
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          },
+          {
+            "phase": "on_b2",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1342
+              ],
+              [
+                425,
+                1315
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1295
+              ],
+              [
+                575,
+                1305
+              ],
+              [
+                600,
+                1328
+              ],
+              [
+                625,
+                1340
+              ],
+              [
+                650,
+                1359
+              ],
+              [
+                675,
+                1383
+              ],
+              [
+                700,
+                1409
+              ],
+              [
+                725,
+                1429
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          },
+          {
+            "phase": "off_a2",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1342
+              ],
+              [
+                425,
+                1315
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1295
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1328
+              ],
+              [
+                625,
+                1340
+              ],
+              [
+                650,
+                1359
+              ],
+              [
+                675,
+                1383
+              ],
+              [
+                700,
+                1409
+              ],
+              [
+                725,
+                1429
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          }
+        ],
+        "edge_scans_identical": false
+      },
+      {
+        "folder": "20261109T173232047808Z_occlusion_boulder_control",
+        "phases": [
+          {
+            "phase": "off_a",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1342
+              ],
+              [
+                425,
+                1315
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1295
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1328
+              ],
+              [
+                625,
+                1340
+              ],
+              [
+                650,
+                1359
+              ],
+              [
+                675,
+                1383
+              ],
+              [
+                700,
+                1409
+              ],
+              [
+                725,
+                1429
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          },
+          {
+            "phase": "on_b",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1342
+              ],
+              [
+                425,
+                1315
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1295
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1328
+              ],
+              [
+                625,
+                1340
+              ],
+              [
+                650,
+                1359
+              ],
+              [
+                675,
+                1383
+              ],
+              [
+                700,
+                1409
+              ],
+              [
+                725,
+                1429
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          },
+          {
+            "phase": "on_b2",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1342
+              ],
+              [
+                425,
+                1315
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1295
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1328
+              ],
+              [
+                625,
+                1340
+              ],
+              [
+                650,
+                1359
+              ],
+              [
+                675,
+                1383
+              ],
+              [
+                700,
+                1409
+              ],
+              [
+                725,
+                1429
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          },
+          {
+            "phase": "off_a2",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1342
+              ],
+              [
+                425,
+                1315
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1295
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1328
+              ],
+              [
+                625,
+                1340
+              ],
+              [
+                650,
+                1359
+              ],
+              [
+                675,
+                1383
+              ],
+              [
+                700,
+                1409
+              ],
+              [
+                725,
+                1429
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          }
+        ],
+        "edge_scans_identical": true
+      },
+      {
+        "folder": "20261109T173744657534Z_occlusion_all_off_control",
+        "phases": [
+          {
+            "phase": "off_a",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1341
+              ],
+              [
+                425,
+                1314
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1296
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1325
+              ],
+              [
+                625,
+                1341
+              ],
+              [
+                650,
+                1360
+              ],
+              [
+                675,
+                1387
+              ],
+              [
+                700,
+                1419
+              ],
+              [
+                725,
+                1460
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          },
+          {
+            "phase": "on_b",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1341
+              ],
+              [
+                425,
+                1314
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1296
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1325
+              ],
+              [
+                625,
+                1341
+              ],
+              [
+                650,
+                1360
+              ],
+              [
+                675,
+                1387
+              ],
+              [
+                700,
+                1419
+              ],
+              [
+                725,
+                1460
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          },
+          {
+            "phase": "on_b2",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1341
+              ],
+              [
+                425,
+                1314
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1296
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1325
+              ],
+              [
+                625,
+                1341
+              ],
+              [
+                650,
+                1360
+              ],
+              [
+                675,
+                1387
+              ],
+              [
+                700,
+                1419
+              ],
+              [
+                725,
+                1460
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          },
+          {
+            "phase": "off_a2",
+            "interior_mean_difference": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "interior_difference_bbox": null,
+            "stone_edge_scan": [
+              [
+                400,
+                1341
+              ],
+              [
+                425,
+                1314
+              ],
+              [
+                450,
+                1306
+              ],
+              [
+                475,
+                1299
+              ],
+              [
+                500,
+                1292
+              ],
+              [
+                525,
+                1286
+              ],
+              [
+                550,
+                1296
+              ],
+              [
+                575,
+                1306
+              ],
+              [
+                600,
+                1325
+              ],
+              [
+                625,
+                1341
+              ],
+              [
+                650,
+                1360
+              ],
+              [
+                675,
+                1387
+              ],
+              [
+                700,
+                1419
+              ],
+              [
+                725,
+                1460
+              ],
+              [
+                750,
+                null
+              ]
+            ]
+          }
+        ],
+        "edge_scans_identical": true
+      }
+    ]
+  },
+  "failed_trials": [
+    "reports/checks/20261109T171919530589Z",
+    "reports/block_occlusion_release_missing_extension.log"
+  ],
+  "hardware": [
+    "reports/performance_changes/occlusion_host_20261109T170625Z",
+    "reports/performance_changes/native_occlusion_host_20261109T172243Z",
+    "reports/performance_changes/native_occlusion_outdoor_host_20261109T172625Z",
+    "reports/performance_changes/host_native_occlusion_pack_indoor_20261109T174930Z",
+    "reports/performance_changes/host_native_occlusion_pack_outdoor_20261109T175106Z",
+    "reports/performance_changes/host_occlusion_pack_uncapped_20261109T175335Z"
+  ],
+  "screenshot_boundary_correction": "800.911 ms source indoor first-save frame includes preceding screenshot readback; two post-draw drains added before phase switch. Earlier independent 702.654 ms wait remains unexplained.",
+  "installed_pack_sha256": "112c554377f8693b2ad37af9a47d3807a512039bcaadb08e105f829a89b0a176",
+  "installed_qualification": "Three installed default-world saves/shutdowns pass without error/leak diagnostics, with 14 matching DLLs. Capped indoor/outdoor and uncapped outdoor rendered comparisons inspected. Whole-frame headroom and outdoor CPU nonregression remain open.",
+  "native_sha256": {
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8f5bad37e4c8b50d81d95851de67e29c2a185f56cce6d1831d92a63e2023da51",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "7095ee417af21d94216d02a57bd65f7b3be9e32f3efbb18982bc9578bec0b615"
+  },
+  "remaining": [
+    "world/player physics attribution",
+    "independent draw/presentation waits",
+    "dense explosive chains",
+    "long-session memory growth",
+    "outdoor CPU overhead",
+    "cover travel selection regression",
+    "cold pursuit latency",
+    "weak hardware and future multiplayer scale",
+    "six water_cut_cells failures and legacy 81-cell interaction failure"
+  ],
+  "export": {
+    "console": "reports/occlusion_export_console.log",
+    "pack_bytes": 556867068,
+    "pack_sha256": "112c554377f8693b2ad37af9a47d3807a512039bcaadb08e105f829a89b0a176",
+    "building_checks": "reports/building_standards/20261109T174635745215Z",
+    "matching_dlls": 14,
+    "debris_geometry": "Source receipt refreshed; output resource bytes unchanged."
+  },
+  "implementation_commit": "1f1d7521ccc804d405e553ab062df6b0be21f953",
+  "remaining_stalls": {
+    "scope": "Largest ordinary/sweep sample frames joined to retained rolling rows by process frame. Physics/process/draw overlap; quantized CPU time must not be summed or treated as exact.",
+    "frames": [
+      {
+        "sample": {
+          "at_us": 56584202,
+          "draw_calls": 2321.0,
+          "frame": 6114,
+          "frame_ms": 34.616,
+          "gpu_ms": 5.35900020599365,
+          "phase": "outdoor_sweep",
+          "render_cpu_ms": 2.5
+        },
+        "trace": {
+          "frame_ms": 34.764,
+          "physics_ms": 3.854,
+          "physics_steps": 1,
+          "process_ms": 10.216,
+          "draw_ms": 19.031,
+          "before_process_ms": 5.175,
+          "after_process_ms": 0.342,
+          "process_thread_cpu_ms": 15.625,
+          "physics_thread_cpu_ms": 0.0,
+          "draw_thread_cpu_ms": 15.625,
+          "thread_cpu_ms": 31.25,
+          "cover_us": 1783,
+          "ecosystem_us": 8,
+          "forest_us": 9,
+          "recorder_previous_us": 378,
+          "trace_writer_active": false,
+          "block_occlusion": {
+            "active": 86,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 747636,
+            "invalidations": 4,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 90,
+            "radius": 96.0,
+            "resident": 86,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 192,
+            "step_last_us": 13.7,
+            "step_max_uploads": 1,
+            "step_max_us": 924.2,
+            "step_uploads": 0
+          },
+          "stages_ms": {
+            "LOD coverage": 0.013,
+            "LOD eviction": 0.003,
+            "LOD requests": 1.206,
+            "LOD schedule/cut/evict": 1.234,
+            "actor update": 0.048,
+            "base controller": 0.018,
+            "controller loading": 0.002,
+            "controller process": 0.714,
+            "lighting schedule": 0.005,
+            "player physics": 0.113,
+            "receive": 1.49,
+            "receive poll": 0.028,
+            "receive surface_batch": 1.425,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.009,
+            "world authoring": 0.018,
+            "world interaction": 0.029,
+            "world pickups": 0.605,
+            "world presentation": 0.019,
+            "world process": 0.91,
+            "world vehicle": 0.009,
+            "zombie update": 0.707
+          }
+        }
+      },
+      {
+        "sample": {
+          "at_us": 56549586,
+          "draw_calls": 2322.0,
+          "frame": 6113,
+          "frame_ms": 29.292,
+          "gpu_ms": 4.74900007247925,
+          "phase": "outdoor_sweep",
+          "render_cpu_ms": 2.78200006484985
+        },
+        "trace": {
+          "frame_ms": 29.196,
+          "physics_ms": 1.873,
+          "physics_steps": 1,
+          "process_ms": 9.634,
+          "draw_ms": 16.599,
+          "before_process_ms": 2.856,
+          "after_process_ms": 0.107,
+          "process_thread_cpu_ms": 15.625,
+          "physics_thread_cpu_ms": 0.0,
+          "draw_thread_cpu_ms": 15.625,
+          "thread_cpu_ms": 31.25,
+          "cover_us": 1209,
+          "ecosystem_us": 9,
+          "forest_us": 6,
+          "recorder_previous_us": 252,
+          "trace_writer_active": false,
+          "block_occlusion": {
+            "active": 86,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 747636,
+            "invalidations": 4,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 90,
+            "radius": 96.0,
+            "resident": 86,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 192,
+            "step_last_us": 9.8,
+            "step_max_uploads": 1,
+            "step_max_us": 924.2,
+            "step_uploads": 0
+          },
+          "stages_ms": {
+            "actor update": 0.024,
+            "base controller": 0.012,
+            "controller loading": 0.0,
+            "controller process": 0.07,
+            "lighting schedule": 0.004,
+            "player physics": 0.058,
+            "receive": 0.015,
+            "receive poll": 0.006,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.005,
+            "world authoring": 0.012,
+            "world interaction": 0.018,
+            "world pickups": 0.003,
+            "world presentation": 0.013,
+            "world process": 0.181,
+            "world vehicle": 0.005,
+            "zombie update": 0.341
+          }
+        }
+      },
+      {
+        "sample": {
+          "at_us": 109755764,
+          "draw_calls": 2437.0,
+          "frame": 12237,
+          "frame_ms": 26.795,
+          "gpu_ms": 6.14400005340576,
+          "phase": "settled_idle",
+          "render_cpu_ms": 7.22200012207031
+        },
+        "trace": {
+          "frame_ms": 26.7,
+          "physics_ms": 0.0,
+          "physics_steps": 0,
+          "process_ms": 1.052,
+          "draw_ms": 25.272,
+          "before_process_ms": 0.292,
+          "after_process_ms": 0.084,
+          "process_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": null,
+          "draw_thread_cpu_ms": 15.625,
+          "thread_cpu_ms": 15.625,
+          "cover_us": 56,
+          "ecosystem_us": 5,
+          "forest_us": 7,
+          "recorder_previous_us": 251,
+          "trace_writer_active": false,
+          "block_occlusion": {
+            "active": 75,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 695220,
+            "invalidations": 15,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 90,
+            "radius": 96.0,
+            "resident": 75,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 194,
+            "step_last_us": 6.4,
+            "step_max_uploads": 1,
+            "step_max_us": 924.2,
+            "step_uploads": 0
+          },
+          "stages_ms": {
+            "base controller": 0.01,
+            "controller loading": 0.001,
+            "controller process": 0.067,
+            "lighting schedule": 0.004,
+            "receive": 0.011,
+            "receive poll": 0.004,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.004,
+            "world authoring": 0.011,
+            "world interaction": 0.016,
+            "world pickups": 0.003,
+            "world presentation": 0.015,
+            "world process": 0.177,
+            "world vehicle": 0.005
+          }
+        }
+      },
+      {
+        "sample": {
+          "at_us": 33897852,
+          "draw_calls": 1739.0,
+          "frame": 3113,
+          "frame_ms": 26.389,
+          "gpu_ms": 4.58900022506714,
+          "phase": "arrival_idle",
+          "render_cpu_ms": 2.56699991226196
+        },
+        "trace": {
+          "frame_ms": null,
+          "physics_ms": null,
+          "physics_steps": null,
+          "process_ms": null,
+          "draw_ms": null,
+          "before_process_ms": null,
+          "after_process_ms": null,
+          "process_thread_cpu_ms": null,
+          "physics_thread_cpu_ms": null,
+          "draw_thread_cpu_ms": null,
+          "thread_cpu_ms": null,
+          "cover_us": null,
+          "ecosystem_us": null,
+          "forest_us": null,
+          "recorder_previous_us": null,
+          "trace_writer_active": null,
+          "block_occlusion": null,
+          "stages_ms": null
+        }
+      },
+      {
+        "sample": {
+          "at_us": 35816937,
+          "draw_calls": 1781.0,
+          "frame": 3294,
+          "frame_ms": 22.72,
+          "gpu_ms": 4.5770001411438,
+          "phase": "arrival_idle",
+          "render_cpu_ms": 2.67899990081787
+        },
+        "trace": {
+          "frame_ms": null,
+          "physics_ms": null,
+          "physics_steps": null,
+          "process_ms": null,
+          "draw_ms": null,
+          "before_process_ms": null,
+          "after_process_ms": null,
+          "process_thread_cpu_ms": null,
+          "physics_thread_cpu_ms": null,
+          "draw_thread_cpu_ms": null,
+          "thread_cpu_ms": null,
+          "cover_us": null,
+          "ecosystem_us": null,
+          "forest_us": null,
+          "recorder_previous_us": null,
+          "trace_writer_active": null,
+          "block_occlusion": null,
+          "stages_ms": null
+        }
+      },
+      {
+        "sample": {
+          "at_us": 56643839,
+          "draw_calls": 2323.0,
+          "frame": 6118,
+          "frame_ms": 21.998,
+          "gpu_ms": 4.43599987030029,
+          "phase": "outdoor_sweep",
+          "render_cpu_ms": 2.65400004386902
+        },
+        "trace": {
+          "frame_ms": 21.953,
+          "physics_ms": 2.19,
+          "physics_steps": 1,
+          "process_ms": 5.873,
+          "draw_ms": 12.952,
+          "before_process_ms": 3.004,
+          "after_process_ms": 0.124,
+          "process_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "draw_thread_cpu_ms": 15.625,
+          "thread_cpu_ms": 15.625,
+          "cover_us": 381,
+          "ecosystem_us": 9,
+          "forest_us": 6,
+          "recorder_previous_us": 226,
+          "trace_writer_active": false,
+          "block_occlusion": {
+            "active": 86,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 747636,
+            "invalidations": 4,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 90,
+            "radius": 96.0,
+            "resident": 86,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 192,
+            "step_last_us": 9.0,
+            "step_max_uploads": 1,
+            "step_max_us": 924.2,
+            "step_uploads": 0
+          },
+          "stages_ms": {
+            "actor update": 0.028,
+            "base controller": 0.013,
+            "controller loading": 0.001,
+            "controller process": 0.076,
+            "cover picker": 0.171,
+            "cover prepare": 0.081,
+            "cover publish": 1.048,
+            "lighting schedule": 0.005,
+            "player physics": 0.067,
+            "receive": 2.44,
+            "receive poll": 0.004,
+            "receive surface_batch": 2.411,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.006,
+            "world authoring": 0.013,
+            "world interaction": 0.021,
+            "world pickups": 0.003,
+            "world presentation": 0.012,
+            "world process": 0.19,
+            "world vehicle": 0.006,
+            "zombie update": 0.405
+          }
+        }
+      },
+      {
+        "sample": {
+          "at_us": 114622686,
+          "draw_calls": 2437.0,
+          "frame": 12850,
+          "frame_ms": 20.133,
+          "gpu_ms": 6.32499980926514,
+          "phase": "settled_idle",
+          "render_cpu_ms": 2.49399995803833
+        },
+        "trace": {
+          "frame_ms": 20.071,
+          "physics_ms": 3.167,
+          "physics_steps": 1,
+          "process_ms": 1.596,
+          "draw_ms": 6.271,
+          "before_process_ms": 4.36,
+          "after_process_ms": 7.844,
+          "process_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "draw_thread_cpu_ms": 15.625,
+          "thread_cpu_ms": 31.25,
+          "cover_us": 79,
+          "ecosystem_us": 6,
+          "forest_us": 9,
+          "recorder_previous_us": 288,
+          "trace_writer_active": false,
+          "block_occlusion": {
+            "active": 75,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 695220,
+            "invalidations": 15,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 90,
+            "radius": 96.0,
+            "resident": 75,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 194,
+            "step_last_us": 10.6,
+            "step_max_uploads": 1,
+            "step_max_us": 924.2,
+            "step_uploads": 0
+          },
+          "stages_ms": {
+            "actor update": 0.04,
+            "base controller": 0.017,
+            "controller loading": 0.001,
+            "controller process": 0.094,
+            "lighting schedule": 0.006,
+            "player physics": 0.084,
+            "receive": 0.019,
+            "receive poll": 0.007,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.006,
+            "world authoring": 0.014,
+            "world interaction": 0.023,
+            "world pickups": 0.004,
+            "world presentation": 0.017,
+            "world process": 0.262,
+            "world vehicle": 0.008,
+            "zombie update": 0.559
+          }
+        }
+      },
+      {
+        "sample": {
+          "at_us": 56811817,
+          "draw_calls": 2330.0,
+          "frame": 6132,
+          "frame_ms": 19.815,
+          "gpu_ms": 4.42899990081787,
+          "phase": "outdoor_sweep",
+          "render_cpu_ms": 3.15499997138977
+        },
+        "trace": {
+          "frame_ms": 19.823,
+          "physics_ms": 2.01,
+          "physics_steps": 1,
+          "process_ms": 5.666,
+          "draw_ms": 11.125,
+          "before_process_ms": 2.848,
+          "after_process_ms": 0.184,
+          "process_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 15.625,
+          "draw_thread_cpu_ms": 15.625,
+          "thread_cpu_ms": 31.25,
+          "cover_us": 139,
+          "ecosystem_us": 5,
+          "forest_us": 5,
+          "recorder_previous_us": 210,
+          "trace_writer_active": false,
+          "block_occlusion": {
+            "active": 86,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 747636,
+            "invalidations": 4,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 90,
+            "radius": 96.0,
+            "resident": 86,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 192,
+            "step_last_us": 50.7,
+            "step_max_uploads": 1,
+            "step_max_us": 924.2,
+            "step_uploads": 0
+          },
+          "stages_ms": {
+            "actor update": 0.044,
+            "base controller": 0.013,
+            "controller loading": 0.001,
+            "controller process": 0.074,
+            "cover picker": 0.16,
+            "cover prepare": 0.074,
+            "cover publish": 1.09,
+            "lighting schedule": 0.006,
+            "player physics": 0.065,
+            "receive": 2.307,
+            "receive poll": 0.005,
+            "receive surface_batch": 2.278,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.005,
+            "world authoring": 0.012,
+            "world interaction": 0.019,
+            "world pickups": 0.003,
+            "world presentation": 0.014,
+            "world process": 0.194,
+            "world vehicle": 0.006,
+            "zombie update": 0.357
+          }
+        }
+      }
+    ]
+  },
+  "quantile_method": "Installed phase summaries use nearest-rank p99. Engine GPU/CPU and callback phase intervals are different observations and may overlap; never sum them as independent costs.",
+  "resource_maintenance": {
+    "receipt": "reports/storage_maintenance/20261109T170547737985Z.json",
+    "removed_verified_cache_bytes": 6186404264,
+    "retained_verification_failures": 26275,
+    "scope": "Derived cache maintenance only; worlds/history/evidence retained. Partial result, not all-clear."
+  }
+}
