@@ -115,6 +115,11 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
             shutil.copy2(source/name,addon/name)
     if test=='terrain_planner':
         shutil.copy2(ROOT/'tests/reference_terrain_planner.gd',project/'tests/reference_terrain_planner.gd')
+        for name in ['terrain_stream.gd','terrain_backend.gd','mesh_codec.gd','derived_cache.gd','generated_lakes.gd']:
+            shutil.copy2(ROOT/'addons/volumetric_terrain'/name,addon/name)
+        destination=project/'addons/world_runtime'
+        destination.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(ROOT/'addons/world_runtime/generation_mesh_handoff.gd',destination/'generation_mesh_handoff.gd')
     if test in ['terrain_material_field','terrain_material_units','terrain_locality_probe','road_surface_profile','ground_support_surface']:
         shutil.copy2(source/'mesh_codec.gd',addon/'mesh_codec.gd')
     if test in ['terrain_mesh_pressure','terrain_region_cache']:
@@ -181,6 +186,16 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
         imported=subprocess.run([str(engine),'--headless','--editor','--path',str(project),'--import'],capture_output=True,text=True,timeout=60)
         if imported.returncode:raise RuntimeError(imported.stdout+'\n'+imported.stderr)
     shutil.copy2(ROOT/'tests'/(test+'.gd'),project/'tests'/(test+'.gd'))
+    if test=='world_persistence':
+        shutil.copy2(ROOT/'tests/terrain_storage_support.gd',project/'tests/terrain_storage_support.gd')
+        remap=ROOT/'addons/volumetric_water/textures/water_ripples_normal.png.import'
+        imported_paths=re.findall(r'^path(?:\.[^=]+)?="res://([^"\n]+)"',remap.read_text(),re.M)
+        if not imported_paths:raise RuntimeError('Missing water texture import path')
+        for imported_path in imported_paths:
+            if not imported_path.startswith('.godot/imported/'):raise RuntimeError('Unexpected water texture import path')
+            destination=project/imported_path
+            destination.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copy2(ROOT/imported_path,destination)
     display=['--windowed','--resolution','960x540','--rendering-method','forward_plus'] if test in {'block_texture_sets', 'vegetation_page_retirement'} else ['--headless']
     if test in ('entity_renderer','vehicle_parked_renderer','entity_gait','vegetation_edit_continuity'):display=['--fullscreen','--resolution','1920x1080','--rendering-method','forward_plus']
     command=[str(engine),*display,'--path',str(project),'--script',f'res://tests/{test}.gd']
