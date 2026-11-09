@@ -33,6 +33,7 @@
     "ANIMATION_IMPORT_REPORT.json": "cf982745bc4bc07559a404b4eb4b6a5245e7483e39d16e99ee27a22869a061d9"
   },
   "host_derivatives": {
-    "res://addons/player_runtime/art/px9.svg": "Original TerraForest silhouette, CC0-1.0; no external image input"
+    "res://addons/player_runtime/art/px9.svg": "Original TerraForest silhouette, CC0-1.0; no external image input",
+    "first_person_body.res / first_person_arms.res": "CC0 derivatives of supplied corrected hand skin; generated offline by tools/bake_px9_first_person.gd using the existing mesh splitter. Original source retained."
   }
 }

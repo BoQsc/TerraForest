@@ -42,3 +42,18 @@ World drops intentionally use the standard parcel fallback. Loaded rounds remain
 Open this worktree's `TerraForest/project.godot`, enter a temporary world, obtain PX9 and PX9 cartridges from Dev Bag or crafting, switch to gameplay belt, equip, reload and fire. Inspect loaded/empty reloads, aiming, final-round lock-open, tool switches and G/recollection. Existing player saves are not required for tests.
 
 Run `godot --headless --path TerraForest --script res://tests/px9_handgun.gd` and `res://tests/px9_world.gd` for focused checks. G-key regression requires a graphical window; headless mouse capture cannot satisfy its input contract. Earlier failed attempts and the final passing evidence are described in verification.json.
+
+## Live first-person grip correction — 2026-11-09
+
+User rejected the live grip in [this screenshot](images/user-rejected-grip.png).
+The previous studio preview omitted `first_person_meshes.gd`. Its split renderer
+continued drawing the old arms alongside the new full corrected mesh, producing
+the apparent extra/deformed fingers. The fix supplies offline body/arm subsets
+of the PX9 skin and registers dynamically equipped weapon meshes for the existing
+first-person depth renderer. Variant registrations are bounded across re-equips.
+
+[Corrected renderer preview](images/live-renderer-grip.png) uses that split renderer
+after 180 live animation updates. The new regression fails on the old renderer
+(61/62) and passes with the correction (62/62). The earlier speculation about
+competing animation players was disproved by the finger-rotation test; no such
+animation rewrite was retained. User gameplay re-review remains pending.

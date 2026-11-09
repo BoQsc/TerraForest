@@ -230,6 +230,8 @@ func equip(item: int, water_ml:int=-1) -> void:
 			var definition:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(PX9_PATH))
 			var result:int=px9.equip(model,preload("res://addons/characters/runtime/px9/PX9_Eclipse_FP.glb").instantiate(),preload("res://addons/characters/runtime/px9/Human.px9_eclipse.res"),definition,PX9_PATH)
 			if result!=OK:push_error("PX9 equip failed: "+str(result));return
+			body_mesh.mesh.set_meta("px9_hand_skin",true)
+			px9.item.set_meta("first_person_equipment",true)
 			_collect_px9(px9.item)
 			px9.event_reached.connect(func(event:String,details:Dictionary):handgun_event.emit(event,details))
 			px9.action_finished.connect(func(action:String):

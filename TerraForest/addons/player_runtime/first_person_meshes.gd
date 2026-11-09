@@ -2,6 +2,8 @@ extends RefCounted
 
 const ARM_LAYER=1<<18
 const BODY_LAYER=1<<19
+const PX9_BODY=preload("res://addons/characters/runtime/px9/first_person_body.res")
+const PX9_ARMS=preload("res://addons/characters/runtime/px9/first_person_arms.res")
 const BODY=preload("res://addons/characters/runtime/assets/first_person/body_body.res")
 const ARMS=preload("res://addons/characters/runtime/assets/first_person/body_arms.res")
 const UNARMED_BODY=preload("res://addons/characters/runtime/assets/first_person/unarmed_body.res")
@@ -84,6 +86,13 @@ func sync()->void:
 	for pair in pairs:
 		var source:MeshInstance3D=pair.source
 		var arms:MeshInstance3D=pair.arms
+		if source.mesh.has_meta("px9_hand_skin") and not pair.variants.has(source.mesh):
+			for mesh:Mesh in [PX9_BODY,PX9_ARMS]:
+				var surfaces:PackedInt32Array=mesh.get_meta("source_surfaces")
+				for surface in surfaces.size():mesh.surface_set_material(surface,source.mesh.surface_get_material(surfaces[surface]))
+			for previous:Mesh in pair.variants.keys():
+				if previous.has_meta("px9_hand_skin"):pair.variants.erase(previous)
+			pair.variants[source.mesh]=[PX9_BODY,PX9_ARMS]
 		if pair.variants.has(source.mesh):
 			pair.original=source.mesh
 			var variant:Array=pair.variants[source.mesh]

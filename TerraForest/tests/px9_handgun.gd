@@ -24,10 +24,14 @@ func run()->void:
  tools.set_process(false);tools.human.set_process(false)
  var human:Node=tools.human
  var original:Mesh=human.body_mesh.mesh
+ var split=preload("res://addons/player_runtime/first_person_meshes.gd").new();split.prepare(tools);split.set_active(true)
  tools.equip(9)
  check(human.px9!=null and human.px9.motion!=null,"exact Human R11 rest contract admits paired PX9 adapter")
  if human.px9==null or human.px9.motion==null:tools.free();quit(1);return
  check(human.body_mesh.mesh!=original,"PX9 selects corrected hand skin")
+ split.sync()
+ check(split.pairs[0].arms.mesh==preload("res://addons/characters/runtime/px9/first_person_arms.res") and human.body_mesh.mesh==preload("res://addons/characters/runtime/px9/first_person_body.res"),"live first-person renderer selects corrected PX9 arms and body")
+ check(split.equipment.size()>0,"equipment registered with first-person depth renderer")
  var events:Array=[];var completed:Array=[]
  human.handgun_event.connect(func(event:String,_data:Dictionary):events.append(event))
  human.rifle_reload_finished.connect(func():completed.append(true))
@@ -56,5 +60,6 @@ func run()->void:
  human._process(1)
  check(human.current==1 and human.px9==null and human.body_mesh.mesh==human.original_body_mesh,"unequip restores original body and next tool")
  check(preload("res://addons/audio_runtime/wav_decoder.gd").decode("res://addons/audio_runtime/packs/Kaino/1/Pistol Shot 1 - Kaino.wav")!=null,"existing pistol recording decodes")
+ split.dispose()
  tools.free();await process_frame
  print("PX9_HANDGUN checks=",checks," failures=",failures);quit(1 if failures else 0)

@@ -1,3 +1,11 @@
+## PX9 live grip correction — 2026-11-09
+
+The user rejected the first gameplay grip. The live split-arm renderer retained
+old hands beside the corrected full mesh; offline PX9 body/arm variants now feed
+that renderer, and weapon meshes join its depth pass. The focused regression
+fails before and passes after (62 checks); [comparison and evidence](../issues/px9-handgun/README.md#live-first-person-grip-correction--2026-11-09)
+retain the rejected screenshot. Player re-review is still required.
+
 ## PX9 Eclipse source integration — 2026-11-09
 
 The supplied revision-8 handgun is integrated in the isolated `codex/px9-handgun`

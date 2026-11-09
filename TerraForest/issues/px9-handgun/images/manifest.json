@@ -30,5 +30,13 @@
     "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
     "camera": "75-degree FOV; actual camera-local Human presentation; studio lighting",
     "status": "Engineering preview; user visual review pending"
+  },
+  "user-rejected-grip.png": {
+    "source": "User gameplay screenshot; rejected grip",
+    "sha256": "f58a15158d9aaf98ad3304815a9bcaf9b65e88c493372d801a61ceabb18311a3"
+  },
+  "live-renderer-grip.png": {
+    "source": "Updated preview_px9.gd, live split renderer, 180 animation updates; engineering review only",
+    "sha256": "7027c17a1c8c07a6f58e7eb43278f944a5746074b7ae979e09088fccd0ee8a40"
   }
 }
