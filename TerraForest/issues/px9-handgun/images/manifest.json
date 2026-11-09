@@ -147,5 +147,10 @@
     "sha256": "00228bf29cc81ec80b774520a60b0343ab25e229de3b482a982493238c55c2bf",
     "source": "Initial tests/firearm_impacts.gd graphical run; temporary world",
     "status": "Rejected diagnostic view: held tool obscures contact and first-use rendering makes burst timing unreliable; final warm material-panel captures supersede this view"
+  },
+  "feel-startup-user-stuck.png": {
+    "sha256": "b65888907f2ac05b425b3c3be5a66a3e49d1236cfef67d896ef1d0a2eb0f5d52",
+    "source": "User-provided screenshot 2026-11-09",
+    "status": "Reported startup failure at Connecting actor services, caused by GDScript type inference error in the unfinished player-feel trial; engineering fix verified by temporary world startup"
   }
 }

@@ -1,0 +1,33 @@
+{
+  "source_archive": "Fire Weapons Sound Effects(happysoulmusic.com)-20261109T210113Z-1-001.zip",
+  "archive_sha256": "25de2f0720be805d71d00d5001b62a26c31d9cbd7e8e98f831afe176fd0b0c7a",
+  "distributor": "Happy Soul Music Library",
+  "original_creators": "Not individually identified in supplied archive; distributor describes moderated CC0 recordings from Freesound",
+  "license": "CC0-1.0",
+  "collection_license_evidence": "https://happysoulmusic.com/fire-weapons-sound-effects/",
+  "license_checked": "2026-11-09",
+  "evidence_quote": "CC0 License. Credit not required.",
+  "individual_evidence": "Shot page also explicitly states CC0; reload page unavailable via web tool, covered by the collection declaration for the supplied full pack",
+  "scope": "Two user-selected runtime recordings for an uncommitted pistol sound trial; no other archive files admitted",
+  "files": [
+    {
+      "path": "shot.mp3",
+      "archive_member": "Fire Weapons Sound Effects(happysoulmusic.com)/mp3/Fire Weapons Sound Effects - 9mm-pistol-shoot-short-reverb.mp3",
+      "sha256": "d550e88f9946e2b2d4a054a75e52353d8f1a4d4644e28b52a33f99d7f1147fd9",
+      "changes": "Lossless MP3 audio-stream copy with embedded cover artwork and unrelated metadata removed; decoded 44.1kHz mono PCM verified identical.",
+      "source_page": "https://happysoulmusic.com/audio/fire_weapons_sound_effects_-_9mm-pistol-shoot-short-reverb-mp3/",
+      "source_sha256": "00a55eb533324bec4ca15e83cd461fbb9500bf434199a53954a8fa24b3516480",
+      "decoded_pcm_identical": true
+    },
+    {
+      "path": "reload.mp3",
+      "archive_member": "Fire Weapons Sound Effects(happysoulmusic.com)/mp3/Fire Weapons Sound Effects - 9mm-pistol-load-and-chamber.mp3",
+      "sha256": "f19ebc67ef21508303a98738869b5a8d0f3f66d745359f65a1560911ffe29b1b",
+      "changes": "Lossless MP3 audio-stream copy with embedded cover artwork and unrelated metadata removed; decoded 44.1kHz mono PCM verified identical.",
+      "source_page": "https://happysoulmusic.com/audio/fire_weapons_sound_effects_-_9mm-pistol-load-and-chamber-mp3/",
+      "source_sha256": "eae5f833fbae62520cc596f908d4305220bba1f31aa28a14f94a74ba1080cfc4",
+      "decoded_pcm_identical": true
+    }
+  ],
+  "authoring_tool": "External FFmpeg CLI used only for lossless stream remux / metadata removal, not bundled."
+}

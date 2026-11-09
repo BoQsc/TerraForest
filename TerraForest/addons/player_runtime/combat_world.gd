@@ -37,6 +37,7 @@ var audio_pool:Array[AudioStreamPlayer3D]=[]
 var shot_audio:AudioStreamWAV
 var blast_audio:AudioStreamWAV
 var assault_audio:AudioStreamWAV
+var pistol_sounds:Node3D
 var pistol_audio:AudioStreamWAV
 var reload_audio:AudioStreamWAV
 var restored_support_pending:=true
@@ -48,11 +49,15 @@ func prepare(host:Node)->bool:
 	add_child(impact_audio);add_child(effects);effects.blocks=game.structures.blocks;integrity.attach(game,self)
 	holes=preload("res://addons/player_runtime/bullet_holes.gd").new();add_child(holes)
 	game.tool_view.human.rifle_reload_finished.connect(finish_reload)
+	pistol_sounds=preload("res://addons/player_runtime/pistol_sound_trial.gd").new();pistol_sounds.follow_target=game.camera;add_child(pistol_sounds)
+	pistol_sounds.mode_changed.connect(func(_original:bool):
+		for voice in audio_pool:
+			if voice.stream in [pistol_audio,reload_audio,pistol_sounds.SHOT]:voice.stop())
 	var decoder=preload("res://addons/audio_runtime/wav_decoder.gd")
 	pistol_audio=decoder.decode("res://addons/audio_runtime/packs/Kaino/1/Pistol Shot 1 - Kaino.wav")
 	reload_audio=decoder.decode("res://addons/audio_runtime/packs/Kaino/1/Magazine Reload 1 - Kaino.wav")
 	game.tool_view.human.handgun_event.connect(func(event:String,_details:Dictionary):
-		if reload_slot>=0 and event=="magazine_out":play_sound(game.camera.global_position,reload_audio))
+		if reload_slot>=0 and pistol_sounds.use_original and event=="magazine_out":pistol_sounds.original_reload(reload_audio,game.camera.global_position))
 	shot_audio=sound(.18,72);blast_audio=sound(.65,38);assault_audio=sound(.13,110);shot_random.randomize()
 	return game.persistence.register_component("combat",capture,restore,state,state.capture_storage_snapshot())
 func capture()->PackedByteArray:
@@ -65,6 +70,11 @@ func restore(bytes:PackedByteArray)->bool:
 	if integrity_toggle!=null:integrity_toggle.set_pressed_no_signal(state.integrity_enabled())
 	return true
 func add_controls(menu:CanvasLayer,parent:Node)->void:
+	var original_sounds:=CheckButton.new();original_sounds.text="PX9 sounds: use original recordings"
+	original_sounds.tooltip_text="Off: new shot 2 and reload 7. On: previous pistol and reload recordings."
+	original_sounds.button_pressed=pistol_sounds.use_original
+	original_sounds.toggled.connect(pistol_sounds.set_original);parent.add_child(original_sounds)
+	pistol_sounds.mode_changed.connect(func(value:bool):original_sounds.set_pressed_no_signal(value))
 	integrity_toggle=CheckButton.new();integrity_toggle.text="Structural integrity and collapse (optional)"
 	integrity_toggle.tooltip_text="Check nearby blocks after building, mining and explosions. Unsupported blocks fall. Off by default; saved with this world."
 	integrity_toggle.button_pressed=state.integrity_enabled();integrity_toggle.toggled.connect(set_integrity);parent.add_child(integrity_toggle)
@@ -116,15 +126,18 @@ func fire()->bool:
 	if weapon==9:human.handgun_empty=state.get_rounds(weapon)==0
 	human.rifle_action("Fire" if human.rifle_aiming else "HipFire")
 	if weapon==9:human.flash_handgun() # Only confirmed shots produce light/gas.
+	game.player_view.shot_feedback()
 	shots+=1;next_shot=timer+float(WEAPONS[weapon].interval);game.terrain.changed_since_save=true
-	game.zombies.hear_noise(origin,64);play_sound(origin,pistol_audio if weapon==9 else (assault_audio if weapon==8 else shot_audio))
+	game.zombies.hear_noise(origin,64);play_sound(origin,pistol_sounds.shot(pistol_audio) if weapon==9 else (assault_audio if weapon==8 else shot_audio),pistol_sounds.TRIAL_GAIN_DB if weapon==9 and not pistol_sounds.use_original else 0.0)
 	return true
 func reload()->bool:
 	var weapon:int=game.equipped_tool
 	if not can_use() or weapon not in WEAPONS or reload_slot>=0 or state.get_rounds(weapon)>=int(WEAPONS[weapon].get("capacity",30)):return false
 	if rounds_in_bag(weapon)<=0:game._show_lake_notice("No matching cartridges · craft or find ammunition");return false
 	if not game.tool_view.human.rifle_action("Reload"):return false
-	reload_slot=game.player_hud.active_slot;reload_epoch=game.terrain.epoch;reload_weapon=weapon;return true
+	reload_slot=game.player_hud.active_slot;reload_epoch=game.terrain.epoch;reload_weapon=weapon
+	if weapon==9:pistol_sounds.start_reload(game.camera.global_position)
+	return true
 func finish_reload()->void:
 	if reload_slot<0:return
 	if not can_use() or game.equipped_tool!=reload_weapon or game.player_hud.active_slot!=reload_slot or game.terrain.epoch!=reload_epoch:cancel_reload();return
@@ -134,8 +147,10 @@ func finish_reload()->void:
 		state.load_rounds(count,reload_weapon);
 		if reload_weapon==9:game.tool_view.human.handgun_empty=false
 		game.terrain.changed_since_save=true;game.player_hud.refresh()
+	if is_instance_valid(pistol_sounds):pistol_sounds.stop_reload()
 	reload_slot=-1;reload_weapon=-1
 func cancel_reload()->void:
+	if is_instance_valid(pistol_sounds):pistol_sounds.stop_reload()
 	reload_slot=-1;reload_weapon=-1
 	if game!=null:game.tool_view.human.cancel_rifle_reload()
 func launch(origin:Vector3,direction:Vector3,weapon:int=RIFLE)->bool:
@@ -361,11 +376,11 @@ func sound(duration:float,frequency:float)->AudioStreamWAV:
 		var sample:float=(random.randf_range(-1,1)*.65+sin(t*TAU*frequency)*.35)*envelope*.6
 		data.encode_s16(index*2,int(sample*32767))
 	stream.data=data;return stream
-func play_sound(point:Vector3,stream:AudioStreamWAV)->void:
+func play_sound(point:Vector3,stream:AudioStream,gain_db:float=0.0)->void:
 	var player:AudioStreamPlayer3D
 	for candidate in audio_pool:
 		if not candidate.playing:player=candidate;break
 	if player==null:
 		if audio_pool.size()>=8:return
-		player=AudioStreamPlayer3D.new();player.max_distance=96;add_child(player);audio_pool.append(player)
-	player.global_position=point;player.stream=stream;player.play()
+		player=AudioStreamPlayer3D.new();player.bus="TerraForestEffects";player.max_distance=96;add_child(player);audio_pool.append(player)
+	player.volume_db=gain_db;player.global_position=point;player.stream=stream;player.play()

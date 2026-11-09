@@ -25,7 +25,7 @@ func impact(point:Vector3,material:String)->void:
         if not candidate.playing:voice=candidate;break
     if voice==null:
         if pool.size()>=8:return
-        voice=AudioStreamPlayer3D.new();voice.max_distance=36;voice.unit_size=3;voice.attenuation_filter_cutoff_hz=6500
+        voice=AudioStreamPlayer3D.new();voice.bus="TerraForestEffects";voice.max_distance=36;voice.unit_size=3;voice.attenuation_filter_cutoff_hz=6500
         add_child(voice);pool.append(voice)
     voice.stream=streams[key][random.randi_range(0,streams[key].size()-1)]
     voice.volume_db={"stone":-15.0,"wood":-12.0,"metal":-17.0,"flesh":-17.0}[key]

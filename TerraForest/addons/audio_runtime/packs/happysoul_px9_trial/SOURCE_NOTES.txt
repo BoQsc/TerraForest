@@ -1,0 +1,25 @@
+Happy Soul Music Library / Fire Weapons Sound Effects - PX9 sound trial
+
+Selected by the user on 2026-11-09 after listening to the supplied archive:
+shot.mp3 = audition 2, 9mm-pistol-shoot-short-reverb
+reload.mp3 = audition 7, 9mm-pistol-load-and-chamber
+The MP3 audio streams are copied without re-encoding. Embedded cover artwork
+and unrelated metadata are removed; decoded PCM was verified identical to the
+user-auditioned MP3s. Source/output hashes and exact processing: PROVENANCE.json.
+
+Collection and license evidence (checked 2026-11-09):
+https://happysoulmusic.com/fire-weapons-sound-effects/
+The distributor explicitly declares this collection CC0 and describes its source
+as moderated CC0 recordings from Freesound. Individual original creators are not
+identified in this supplied archive. The shot's individual page also states CC0:
+https://happysoulmusic.com/audio/fire_weapons_sound_effects_-_9mm-pistol-shoot-short-reverb-mp3/
+The reload's individual page was not accessible through the verification tool;
+its admission relies on the collection declaration for this exact supplied pack.
+License evidence excerpt: "CC0 License. Credit not required."
+Full CC0 1.0 legal code is retained in LICENSE.txt; this notice preserves the
+stated upstream grant and does not claim authorship of these recordings.
+
+User authorization is for local audition/gameplay testing with a toggleable
+original-sound fallback. User explicitly requested no commit yet. This asset set
+has not been accepted as the permanent pistol sound. Existing Kaino recordings
+and their licenses/provenance remain untouched and available as the fallback.

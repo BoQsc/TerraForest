@@ -125,6 +125,10 @@ func _ready() -> void:
 	entry_fly_in_toggle.toggled.connect(game.player_view.entry.set_enabled);player.add_child(entry_fly_in_toggle)
 	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
 	third_person_toggle.toggled.connect(game.player_view.set_enabled);player.add_child(third_person_toggle)
+	var feel_toggle:=CheckButton.new();feel_toggle.text="Player feel trial (movement and firing)"
+	feel_toggle.tooltip_text="Subtle movement lag, landing response and firing kick. Turn off for the previous feel."
+	feel_toggle.button_pressed=game.player_view.feel_enabled;feel_toggle.toggled.connect(game.player_view.set_feel_enabled)
+	game.player_view.feel_toggle=feel_toggle;player.add_child(feel_toggle)
 	overview_toggle=CheckButton.new();overview_toggle.text="World overview camera (preview)"
 	overview_toggle.tooltip_text="Mouse orbits; wheel zooms from 3.4 to 1800 metres. WASD still moves your character. Terrain and distant buildings remain real geometry; full-world vegetation is not yet implemented. Turn off to return to your normal camera."
 	overview_toggle.toggled.connect(game.player_view.set_overview);player.add_child(overview_toggle)

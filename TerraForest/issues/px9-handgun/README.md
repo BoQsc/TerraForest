@@ -375,3 +375,95 @@ than tracking individual native model instances; dynamic doors/vehicles/flesh ar
 excluded. Review near-surface impacts, mix levels and overall feel in actual play
 before accepting this art pass. Sustained performance and packaged export are
 not claimed by these source checks.
+
+## Selected pistol audio trial - 2026-11-09 (uncommitted)
+
+User selected audition 2 (9mm-pistol-shoot-short-reverb) and audition 7
+(9mm-pistol-load-and-chamber), explicitly requested the previous sounds as a
+manual fallback, no commit, and a launch. Trial sounds are selected initially;
+ESC > Player > "PX9 sounds: use original recordings" toggles both shot and reload
+back to the original Kaino pair and persists separately in user://px9_audio.cfg.
+The full new reload sample starts with the paired reload, not its magazine-out
+cue, and stops on cancellation, completion or mode change. Original mode retains
+the existing magazine-out cue. Switching mode also stops old pistol sound tails.
+No animation rate, damage, ammunition or rifle sound changes are introduced.
+
+Two selected recordings are admitted for this local trial under the distributor's
+explicit CC0 declaration. Source/archive hashes, exact members, license evidence,
+processing and original-creator identification limits are retained in
+addons/audio_runtime/packs/happysoul_px9_trial/PROVENANCE.json and SOURCE_NOTES.txt.
+Embedded cover art and unrelated metadata were removed by lossless audio-stream
+copy; decoded PCM was verified identical to the user's auditioned files. The
+in-game notices bundle includes the retained source notice (21 notices pass).
+
+[Temporary world checks 39/39](logs/px9-sound-trial-world.log) cover new stream
+loading, initial trial mode, exact original-shot fallback, full new reload,
+cancellation, mid-session switching and prior fire/aim/ammo gates. A subsequent
+[configuration check](logs/px9-sound-trial-config.log) verifies the final audio-only
+imports, stopped reload voice on mode change and saved preference reload.
+No ObjectDB/resource leak diagnostics occurred. Player sound mix and mechanical
+alignment acceptance remain pending; this is an uncommitted experiment, and the
+user has not authorized a commit or permanent sound replacement.
+
+## General volume and reversible player-feel trial - 2026-11-09 (uncommitted)
+
+User clarified that volume control should be general, not pistol-specific, and
+requested a slight pistol reduction plus both movement/landing and firing feel
+with easy reversion. The new pistol shot/reload pair is lowered 4 dB; original
+fallback levels are retained. Combat voices, trial reloads and impact voices now
+route to the existing TerraForestEffects bus, controlled by ESC > Audio > Effects.
+No pistol volume slider was added. The existing sound-pair fallback remains.
+
+ESC > Player > "Player feel trial (movement and firing)" enables bounded movement
+lag/turn bank, a small landing dip, and a restrained firing impulse and brief FOV
+pulse. Aimed impulses are reduced. The toggle immediately restores the original
+tool transform/FOV and persists outside world saves in user://player_feel_trial.cfg.
+Third person, vehicles, entry, menus and flight suppress the layer. Player motor,
+physical aim transform and paired weapon animation clock remain the original owners.
+New original 0BSD helper: player_feel_trial.gd. User feel/art acceptance is pending;
+all this work remains uncommitted per the user's explicit instruction.
+
+The user encountered a real startup failure at "Connecting actor services":
+[reported screen](images/feel-startup-user-stuck.png). An inferred local `yaw`
+read from a dynamically typed host failed GDScript compilation, preventing the
+world script from loading. It now has an explicit float type. The trial's process
+hook was also corrected. [Initial error](logs/feel-startup-initial-error.log),
+[fixed world 46/46](logs/feel-world-fixed.log), and
+[bounded landing/shot/recovery/reset checks](logs/feel-response-checks.log).
+The world check now attaches optional audio through the normal session host so
+it validates the actual Effects mixer, rather than a fixture with no audio module.
+Checks cover lower gain, original fallback, reload cancellation, physical aim
+preservation, immediate pose/FOV restoration and existing shooting/reload gates.
+
+Additional camera qualification: the headless third-person check has viewport
+projection/input limitations and is retained as a nonpassing diagnostic. A
+subsequent graphical post-entry check passes eye targeting, upright model,
+clipping, toggle restoration and vehicle camera handoff. Two legacy held-tool
+attack assertions still fail in that fixture and are not claimed as passed;
+review its development-belt/input preconditions and rerun before broader
+third-person feel acceptance. This does not block the verified first-person
+startup and 46-check pistol/audio/revert trial. Logs: player-feel-third-person.log
+and player-feel-camera-graphical.log. New player-feel art acceptance remains open.
+
+## Player-attached reload audio - 2026-11-09 (uncommitted)
+
+User reported that running left the new reload sound behind at its original
+world position. The helper created a spatial voice under the stationary combat
+node and assigned its world position only once. The original fallback used the
+same stationary shared combat pool, so it had the same ownership problem.
+
+Both reload pairs now use one dedicated emitter parented to the physical player's
+eye camera at local origin. Scene transforms carry the emitter with the player,
+including during running, with no per-frame follow loop. The fallback still starts
+at its authored magazine-out event and uses the exact old recording. Trial gain,
+Effects mixer routing and mode choice remain unchanged. Cancellation/completion
+and switching modes stop either reload; helper exit also frees its emitter if
+it is still alive under the camera outside the helper's own subtree.
+
+[World regression 50/50](logs/px9-reload-follow-world.log) passes. New checks move
+the real player transform during each active reload and verify the emitter moves
+by the same displacement, stays attached to the eye and keeps the intended
+recording. Existing fire/aim, mute/mixer, reload interruption, round transfer,
+mode switching and world shutdown checks still pass. No ObjectDB/resource leak
+diagnostics were reported. All sound/feel work remains uncommitted. Player
+listening acceptance while running remains the next review step.

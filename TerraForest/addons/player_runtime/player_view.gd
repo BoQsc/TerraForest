@@ -2,6 +2,14 @@
 extends Node
 # Presentation only. The eye camera remains the existing aim/reach origin;
 # Godot's native spring arm owns the collision sweep for the optional view.
+var feel=preload("res://addons/player_runtime/player_feel_trial.gd").new()
+var feel_enabled:=true
+var feel_toggle:CheckButton
+var feel_settings_path:="user://player_feel_trial.cfg"
+var _feel_base_fov:=75.0
+var _feel_fov:=0.0
+var _last_feel_fov:=-1.0
+var _feel_yaw:=0.0
 var game:Node
 var enabled:=false
 var active:=false
@@ -22,6 +30,11 @@ const PLAYER_LAYER:=1<<19
 func _init()->void:set_process(false)
 func prepare(world:Node)->void:
 	game=world
+	if not game.temporary_world and not settings_path.is_empty() and not ProjectSettings.get_setting("terraforest/offscreen_session",false):
+		var feel_config:=ConfigFile.new()
+		if feel_config.load(feel_settings_path)==OK:feel_enabled=feel_config.get_value("feel","enabled",true)==true
+	if feel_toggle!=null:feel_toggle.set_pressed_no_signal(feel_enabled)
+	_feel_yaw=game.camera.global_rotation.y
 	game.player_hud.character_panel.equipment_presented.connect(game.tool_view.human.clothing.set_slots)
 	game.tool_view.human.clothing.set_slots(game.player_hud.equipment.snapshot(1).slots)
 	arm=SpringArm3D.new();arm.name="ThirdPersonBoom"
@@ -127,12 +140,37 @@ func update(delta:float=0.0)->void:
 	var hit:Dictionary=game.structures.blocks.raycast_scene(eye,end,15|(1<<16)|(1<<18),[game.player.get_rid()])
 	aim_point=hit.position if not hit.is_empty() else end
 	if third_camera.global_position.distance_squared_to(aim_point)>.01:third_camera.look_at(aim_point,game.camera.global_basis.y)
-func refresh_processing()->void:set_process(enabled or overview or entry.pending or entry.active)
+func refresh_processing()->void:set_process(feel_enabled or enabled or overview or entry.pending or entry.active)
 func _input(event:InputEvent)->void:
 	if entry.consume(event):get_viewport().set_input_as_handled()
 func _process(delta:float)->void:
 	entry.step(delta)
 	update(delta)
+	_step_feel(delta)
+
+func set_feel_enabled(value:bool,persist:bool=true)->void:
+	feel_enabled=value;_clear_feel();refresh_processing()
+	if feel_toggle!=null:feel_toggle.set_pressed_no_signal(value)
+	if persist and is_instance_valid(game) and not game.temporary_world and not settings_path.is_empty() and not ProjectSettings.get_setting("terraforest/offscreen_session",false):
+		var config:=ConfigFile.new();config.set_value("feel","enabled",value);config.save(feel_settings_path)
+func _clear_feel()->void:
+	feel.reset()
+	if not is_instance_valid(game):return
+	if is_equal_approx(game.camera.fov,_last_feel_fov):game.camera.fov=_feel_base_fov
+	_feel_fov=0;_last_feel_fov=-1
+	if not active:game.tool_view.transform=Transform3D.IDENTITY
+	_feel_yaw=game.camera.global_rotation.y
+func shot_feedback()->void:
+	if feel_enabled and not active and not entry.blocks_actions():feel.shot(game.tool_view.human.rifle_aiming)
+func _step_feel(delta:float)->void:
+	if not feel_enabled or active or entry.blocks_actions() or game.loading_active or game.shutdown_requested or game.fly or game.world_vehicle.driving or not game.app_focused or game.session_menu.visible_ui() or game.player_hud.inventory_open or game.player_life.dead:
+		_clear_feel();return
+	var yaw:float=game.camera.global_rotation.y
+	var turn:=angle_difference(_feel_yaw,yaw)/maxf(.001,delta);_feel_yaw=yaw
+	var local_velocity:Vector3=game.player.global_basis.inverse()*game.player.velocity
+	game.tool_view.transform=feel.step(delta,local_velocity,game.player.is_on_floor(),turn,game.tool_view.human.rifle_aiming)
+	if not is_equal_approx(game.camera.fov,_last_feel_fov):_feel_base_fov=game.camera.fov
+	_feel_fov=feel.fov_pulse;game.camera.fov=_feel_base_fov+_feel_fov;_last_feel_fov=game.camera.fov
 
 func _notification(what:int)->void:
 	if what==NOTIFICATION_WM_WINDOW_FOCUS_OUT and not ProjectSettings.get_setting("terraforest/offscreen_session",false):

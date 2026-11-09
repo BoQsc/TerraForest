@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS a real airborne descent and landing produces a restrained dip
+PASS grounded follow-up recovers instead of retriggering landing
+PASS aimed feedback is smaller than hip-fire feedback
+PASS combined response stays bounded
+PASS feedback settles at rest
+PASS reset exactly restores the baseline
+PLAYER_FEEL_TRIAL failures=0

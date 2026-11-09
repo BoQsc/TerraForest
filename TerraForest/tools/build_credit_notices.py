@@ -13,6 +13,8 @@ NOTICES = [
      "Original torch strike motion with retained inherited rig/carry provenance. First-person integration accepted; third-person presentation remains unfinished."),
     ("nox_audio", "NOX Essentials sound recordings", "CC0 1.0", "addons/audio_runtime/packs/nox/NOTICE.txt",
      "Selected footsteps, forest ambience and a small-fire loop by Nox_Sound_Design. The retained notice records the source, CC0 evidence, archive identity and runtime conversions."),
+    ("px9_sound_trial", "Happy Soul pistol sound trial", "CC0 1.0", "addons/audio_runtime/packs/happysoul_px9_trial/SOURCE_NOTES.txt",
+     "User-selected shot 2 and reload 7 from the supplied Fire Weapons Sound Effects pack. Original recordings remain selectable; archive identity and distributor license evidence are retained."),
     ("px9", "PX9 Eclipse handgun and paired motion", "CC0 1.0", "addons/characters/runtime/px9/SOURCE_NOTES.txt",
      "User-supplied revision 8, made with ChatGPT Pro Astra. Runtime art, hand-skin variant, paired motion and inherited CC0 adapters retain package provenance; host integration is 0BSD."),
     ("ranger", "Original Ranger assault rifle", "CC0 1.0 assets / 0BSD code", "addons/characters/runtime/assets/Ranger.LICENSE.txt",
