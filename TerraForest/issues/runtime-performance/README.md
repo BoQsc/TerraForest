@@ -6,7 +6,15 @@
 
 Resource follow-up: [4 GiB GPU / 5 GB content targets and cache policy](../../docs/RESOURCE_BUDGETS.md).
 
-Latest [diagnostic playtest, 2026-11-09](playtest-2026-11-09.md): current source
+Latest [fresh-default-world / rolling-trace investigation](rolling-trace-2026-11-09.md):
+normal Frontier expedition generation completed; first-person depth activation,
+arrival PNG decoding, first zombie admission, parked-prototype preparation and
+save capture are now localized. Opt-in [rolling capture](../../docs/FRAME_TRACE.md)
+is implemented in source; stable 60 FPS/headroom and independent presentation waits
+remain open. Package refresh is blocked by unrelated unsupported Kaino WAV imports;
+the prior installed pack is retained.
+
+Earlier [diagnostic playtest, 2026-11-09](playtest-2026-11-09.md): current source
 still fails pacing gates on a populated road fixture. Capped walking/sprinting/
 jumping p99: 21.70 / 23.10 / 22.25 ms; maximum 48.08 ms. Uncapped movement
 improves but retains an early-idle 68.10 ms outlier. Rendering/presentation waits,

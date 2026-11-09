@@ -1,3 +1,41 @@
+## Fresh default world and rolling frame trace — 2026-11-09
+
+Generated the unchanged Frontier expedition default (seed 1703, generator 29,
+three settlements/two districts, introduction/material veins); 51 buildings and
+12 lakes publish successfully. First readiness 74.467 s, player control 82.497 s.
+Source rolling capture is implemented with bounded pre/post history, isolated and
+sustained triggers, a manual marker and worker JSON/file output. See
+[usage](FRAME_TRACE.md) and the [causal investigation](../issues/runtime-performance/rolling-trace-2026-11-09.md).
+
+Matched control localizes a 223.587 ms arrival to first-person depth activation
+(160.549 ms draw interval / eight new specializations; depth-disabled diagnostic
+7.077 ms draw), plus 34–47 ms of needless synchronous arrival-image decoding.
+Separate 139–264 ms first-zombie admission, 61–84 ms parked-prototype preparation
+and 15–38 ms save capture need bounded preparation. Rendering GPU tails reach
+15–16 ms in the new room/world; the old road fixture overstated general headroom.
+No optimization or visual reduction is installed. Recorder/analyzer, photo,
+vehicle loading and loading UI checks pass; one matched trace-off run retains a
+shutdown object leak and is not a clean verification pass.
+
+Remaining: first-person variant warmup preserving clipping/lighting, cached or
+off-thread validated photo availability, staged entity/prototype preparation,
+revision-safe bounded save capture, render-pass attribution and foreground OS/
+presentation wait tracing. These are deferred from instrumentation/diagnosis
+because controlled fixes and their correctness/tail evidence have not been built.
+Return on the retained fresh default fixture with matched before/after traces,
+normal visual settings, persistence and interaction checks; stable 60 FPS with
+headroom is not established. Combat/caves/driving/endurance/weaker hardware remain
+unqualified.
+
+Package follow-up: required building/notice/index gates pass, but export cannot
+publish because 211 original Kaino WAVs reject Godot's importer (unsupported
+non-PCM WAVE format), leaving referenced `.sample` outputs missing. A full import
+and clearing stale metadata for only those missing cache outputs confirms the
+format error; audio sources/formats and export scope are unchanged. The previous
+installed pack is retained. Source normal gameplay can use `--frame-trace` now;
+resume package refresh after the audio import/export boundary is repaired and
+run a fresh packaged trace. Do not claim packaged recorder parity yet.
+
 ## Frame-rate diagnostic playtest — 2026-11-09
 
 Current-source scripted 1080p walking/sprinting/jumping/mining reproduces uneven
