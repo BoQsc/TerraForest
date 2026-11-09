@@ -69,6 +69,26 @@ OS/presentation wait attribution is still required. Screenshot readback interval
 in the new outdoor harness are explicitly labeled and excluded from gameplay
 statistics; their earlier misclassification and raw results remain retained.
 
+[Local navigation invalidation](../issues/runtime-performance/navigation-local-invalidation-2026-11-09.md)
+now preserves unrelated complete pursuits and shared graph connections across
+bounded geometry edits. Building hosts retain native changed-cell bounds instead
+of resetting every actor. The focused detour uses 765 versus 1,299 planning work
+units after a local versus global reset, with the same route; repeated edits reuse
+the same slots. Rolling traces include invalidation counters, cost and graph
+storage. Cold discovery, unbounded model/tree/door-policy resets, broad-edit
+pressure and continuous moving-crowd endurance remain open. Reliable old/new
+geometry bounds are the prerequisite for making those remaining owner events
+local; repeated full-host latency and long edit/travel traces are required to
+close them. This is not stable-60-FPS or multiplayer acceptance.
+Final source/release invalidation checks pass 30/27 assertions; two DLL comparison
+pairs retain all eight paths and physics-query counts. The saved tower passes
+13 checks with all 200 source files unchanged, but outbound first planning worsens
+31.883 → 39.445 s while return improves 48.883 → 29.975 s. A new 69.363 ms planning
+pass and 106.449 ms physics interval require per-physics rolling-trace/CPU-wait
+attribution; the coarse journey trace misses the exact expensive pass. Packaged
+replan/response/moving-interior checks pass 14/11/23, with inspected captures and
+clean scoped shutdowns. Long-duration leak stability remains open.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,

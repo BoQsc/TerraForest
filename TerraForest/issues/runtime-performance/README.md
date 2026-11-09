@@ -1,6 +1,9 @@
 # Runtime performance
 
-Latest: [native cover draw partitions](native-cover-partitions-2026-11-09.md)
+Latest: [local navigation invalidation](navigation-local-invalidation-2026-11-09.md)
+preserves unrelated pursuits after bounded edits and reduces selected replan work
+by 41%, with unchanged paths. Cold search, unbounded model/door resets and frame
+tails remain open. [Native cover draw partitions](native-cover-partitions-2026-11-09.md)
 retain 74,320 instances while the first integrated arrival GPU median falls from
 12.456 to 7.459 ms. Outdoor views, native ownership/continuity and packaged
 save/shutdown have scoped verification. Increased travel selection cost, a failed
