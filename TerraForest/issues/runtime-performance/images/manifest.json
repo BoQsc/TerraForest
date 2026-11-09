@@ -177,5 +177,11 @@
     "sha256": "9f34cb817daf8055c1c0dd3ec4eedd230211957f9f7c5c125ebd9880285b521d",
     "revision": "112c554377f8693b2ad37af9a47d3807a512039bcaadb08e105f829a89b0a176 PCK",
     "status": "Inspected installed native occlusion view. Normal default Frontier world and unchanged camera within ABBA. Existing visual assets retain provenance. Scoped comparison, not general quality/performance acceptance."
+  },
+  "render-stage-control-outdoor.png": {
+    "source": "reports\\performance_changes\\20261109T181312000989Z_render_setup_control\\outdoor_2.png",
+    "sha256": "74866dd390464a461d686bdaf9997ab2977eddbeef0ebfca930a6c9ea3b7393f",
+    "revision": "40691310 plus source render setup/marker instrumentation; native DLLs unchanged",
+    "status": "Inspected source ordinary-recorder control endpoint at 1920x1080, retained Frontier generator29 seed1703. Uncapped diagnostic, no production graphics/gameplay change. Existing assets retain provenance; no user visual acceptance claimed."
   }
 }

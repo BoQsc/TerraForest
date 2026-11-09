@@ -1,6 +1,14 @@
 # Runtime performance
 
-Latest: [native building occlusion](block-occlusion-2026-11-09.md) reduces the
+Latest: [render-stage attribution](render-stage-attribution-2026-11-09.md) adds
+shared render-setup timing and optional bounded device CPU markers in source.
+The analyzer correctly maps delayed markers to earlier draw intervals. A 9.409 ms
+ordinary-view gap narrows one cost to 3D scene setup; independent draw/before-process
+stalls remain. Source recorder/analyzer and two normal-world saves pass. Package
+refresh waits for the active gameplay session to end; no FPS improvement or
+general nonregression is claimed for this instrumentation.
+
+[Native building occlusion](block-occlusion-2026-11-09.md) reduces the
 indoor rendering CPU median from about 5.2 to 2.7 ms in the installed package,
 with unchanged visible room geometry. Native lifecycle, destruction, paging,
 release and three installed save/shutdown checks pass. Outdoor CPU overhead is

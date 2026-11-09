@@ -195,6 +195,19 @@ interval. Investigate world/player processing and render/engine scheduling,
 without assigning all tails to zombie planning. Dense destruction, continuous
 traversal and sustained memory checks remain prerequisites for the broader gate.
 
+[Render-stage attribution](../issues/runtime-performance/render-stage-attribution-2026-11-09.md)
+now records shared render setup and optionally reads bounded CPU marker gaps.
+Device results arrive late: offline association uses absolute timestamps inside
+retained draw intervals instead of assuming a device counter is the current
+gameplay frame. A 9.409 ms ordinary-view gap is localized to 3D scene setup, but
+other >20 ms draw intervals have only about 0.3 ms shared setup. A profiled
+224 ms before-process pause remains unexplained. This is source diagnostic
+progress, not an FPS fix. Source checks pass; export and installed availability/
+save/shutdown validation are pending because another interactive checkout is
+running. Resume that gate once competing engine jobs are absent. Then isolate
+render-list/instance preparation and native world work, alongside the open-view
+occlusion overhead; preserve all broader destruction/memory/navigation gates.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,
