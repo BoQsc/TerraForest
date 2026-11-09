@@ -1,10 +1,18 @@
 # Runtime performance
 
 - Status: Improved-partial; installed and packaged walking verified.
-- Updated: 2026-11-01. Initial baseline: `5bfe87f4`; maintenance: `304206cc`; readiness: `87afcdfe`.
+- Updated: 2026-11-09. Initial baseline: `5bfe87f4`; maintenance: `304206cc`; readiness: `87afcdfe`.
 - User review: Not reviewed. No visual quality reduction intended.
 
 Resource follow-up: [4 GiB GPU / 5 GB content targets and cache policy](../../docs/RESOURCE_BUDGETS.md).
+
+Latest [diagnostic playtest, 2026-11-09](playtest-2026-11-09.md): current source
+still fails pacing gates on a populated road fixture. Capped walking/sprinting/
+jumping p99: 21.70 / 23.10 / 22.25 ms; maximum 48.08 ms. Uncapped movement
+improves but retains an early-idle 68.10 ms outlier. Rendering/presentation waits,
+first-use shader/contact work and main-thread streaming/NPC bursts need separate
+attribution. Diagnosis only; no runtime/settings change or universal fix claimed.
+
 Cleanup recovered 53.3 GiB net, leaving 54.2 GiB free; the 100 GB goal is not met.
 The original 2 GiB recognized-cache quota, 423 MB content and walking-memory gates
 pass. World data/history/evidence remain intact. [Resource evidence](resource-budget-evidence.json).

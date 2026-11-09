@@ -1,3 +1,21 @@
+## Frame-rate diagnostic playtest — 2026-11-09
+
+Current-source scripted 1080p walking/sprinting/jumping/mining reproduces uneven
+60 FPS pacing: movement p99 21.70 / 23.10 / 22.25 ms; capped maximum 48.08 ms.
+Both functional runs pass and both performance evaluations fail. An uncapped
+diagnostic improves movement but retains a 68.10 ms early-idle outlier requiring
+post-setup warmup/repetition. No runtime, graphics, cap or power changes installed.
+The [diagnostic report](../issues/runtime-performance/playtest-2026-11-09.md)
+separates rendering/presentation waits, shader/contact setup, terrain/collision/
+cover publication and NPC costs, with committed summaries and local raw traces.
+
+Remaining: arbitrary-session rolling capture and missing stage attribution,
+foreground matched scheduling/presentation traces, dense/cave/combat/driving/
+save/load/endurance and weaker-hardware qualification. Deferred from this initial
+diagnosis because the root wait and workload coverage are not established. Resume
+with event-correlated hitches and matched tail/headroom evidence; functional
+success, mean 60 FPS and non-recurrence do not close the performance requirement.
+
 ## Zombie recalculation pauses — 2026-11-05
 
 The player reports long delays while zombies recalculate and act. A new regression

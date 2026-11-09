@@ -1,0 +1,3048 @@
+{
+  "date": "2026-11-09",
+  "scope": "Scripted graphical 1080p source gameplay, offscreen read-only populated fixture. Nested stages overlap; GPU timers may lag. CPU-time samples are quantized. No subjective smoothness or arbitrary-world qualification.",
+  "hardware": {
+    "cpu": "Intel Core i5-12450H",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "power_plan": "Legion Quiet Mode (unchanged)"
+  },
+  "runs": [
+    {
+      "revision": "b1070c57b0a21ba4966664d4ada925213450e9c6",
+      "worktree_changes": [],
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "2c67bca4be463346457e5bc7ed5bcb71edcf86dd565a5966cd21bf2f086f9c54",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "184e9a14ae9efb49c53282af43b4c9b41563ce57d7f47cf85226e3df1953e39e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "20a0df319d50a9ff0eaa3fb91c2dc1287f2a7ff8d0dae2a833b3e8b1e6e3b8f7",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "13b66e691af5d87b48162a6c8c89e1e49947fac62f3528bdcad983ee733b6310"
+      },
+      "source_sha256": "8c1b85cc08b11e8a4013ba40430f65a3f763ac5a9c97a1b01389aff4e996e43b",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 41032,
+        "exit_code": 0,
+        "resources": {
+          "samples": 269,
+          "gpu_samples": 268,
+          "peak_private_commit_bytes": 3832233984,
+          "peak_working_set_bytes": 2260893696,
+          "peak_dedicated_gpu_bytes": 1507033088,
+          "checks": {
+            "ram": {
+              "bytes": 3832233984,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1507033088,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 163.48106889997143,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\gameplay_performance_20ca3f8467d94f1895d58224295718dc",
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "performance_passed": false,
+      "gameplay_gates": {
+        "all_24_contacts_changed": true,
+        "physical_jumps": true,
+        "contact_to_draw_max_150ms": true,
+        "idle_frame_p99_20ms_max_50ms": true,
+        "walking_frame_p99_20ms_max_50ms": false,
+        "sprinting_frame_p99_20ms_max_50ms": false,
+        "jumping_frame_p99_20ms_max_50ms": false,
+        "mining_idle_frame_p99_20ms_max_50ms": true,
+        "mining_after_run_frame_p99_20ms_max_50ms": false,
+        "mining_after_jump_frame_p99_20ms_max_50ms": true,
+        "recovery_frame_p99_20ms_max_50ms": true
+      },
+      "directory": "reports/runtime_performance/20261109T072131223854Z_first_playtest_capped",
+      "raw_sha256": {
+        "frames.json": "49cbe4c08ba8c5183dc194bbe293b9b9e1192ca8df5caa18d57554d594bd186c",
+        "gameplay.json": "0d4faf163e1a3153eb228623a0a935e9da69081e03b193044949c39069026acd",
+        "presentation.json": "5007ac0227c7109d2f21038acdbde8975b71151e625d42bdcc77a846dc1e84d9",
+        "arrival.png": "3b02475afc5e4eb9874ff851d8fd57747949691d5b6377b5a07a75a681802399"
+      },
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      },
+      "samples": 6218,
+      "focused_samples": 6218,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "slot": "recipe_generated_4644d8cfc8f97e43",
+      "phases": {
+        "idle": {
+          "frame_ms": {
+            "samples": 481,
+            "mean": 16.640864864864866,
+            "p50": 16.694,
+            "p95": 17.756,
+            "p99": 18.297,
+            "maximum": 18.789
+          },
+          "process_ms": {
+            "samples": 481,
+            "mean": 1.575920997920998,
+            "p50": 1.424,
+            "p95": 2.275,
+            "p99": 2.803,
+            "maximum": 7.545
+          },
+          "draw_ms": {
+            "samples": 481,
+            "mean": 3.5054594594594595,
+            "p50": 3.464,
+            "p95": 3.941,
+            "p99": 4.491,
+            "maximum": 5.852
+          },
+          "before_process_ms": {
+            "samples": 481,
+            "mean": 11.559484407484408,
+            "p50": 11.685,
+            "p95": 12.181,
+            "p99": 12.376,
+            "maximum": 12.931
+          },
+          "gpu_ms": {
+            "samples": 481,
+            "mean": 6.835309773125916,
+            "p50": 6.80399990081787,
+            "p95": 7.01100015640259,
+            "p99": 7.39099979400635,
+            "maximum": 7.55200004577637
+          },
+          "render_cpu_ms": {
+            "samples": 481,
+            "mean": 2.0964178838254015,
+            "p50": 2.08599996566772,
+            "p95": 2.36999988555908,
+            "p99": 2.59299993515015,
+            "maximum": 3.30299997329712
+          },
+          "over_20ms_frames": 0
+        },
+        "mining_idle": {
+          "frame_ms": {
+            "samples": 839,
+            "mean": 16.67332538736591,
+            "p50": 16.767,
+            "p95": 18.547,
+            "p99": 19.697,
+            "maximum": 48.083
+          },
+          "process_ms": {
+            "samples": 839,
+            "mean": 2.2998641239570916,
+            "p50": 1.821,
+            "p95": 4.424,
+            "p99": 7.212,
+            "maximum": 10.457
+          },
+          "draw_ms": {
+            "samples": 839,
+            "mean": 2.553740166865316,
+            "p50": 2.45,
+            "p95": 3.38,
+            "p99": 3.892,
+            "maximum": 25.213
+          },
+          "before_process_ms": {
+            "samples": 839,
+            "mean": 11.819721096543503,
+            "p50": 12.168,
+            "p95": 13.318,
+            "p99": 13.698,
+            "maximum": 14.423
+          },
+          "gpu_ms": {
+            "samples": 839,
+            "mean": 5.692307510876116,
+            "p50": 6.14499998092651,
+            "p95": 6.51800012588501,
+            "p99": 6.90199995040894,
+            "maximum": 7.38100004196167
+          },
+          "render_cpu_ms": {
+            "samples": 839,
+            "mean": 1.4081311084516568,
+            "p50": 1.31299996376038,
+            "p95": 1.98199999332428,
+            "p99": 2.17600011825562,
+            "maximum": 23.8910007476807
+          },
+          "over_20ms_frames": 8
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 900,
+            "mean": 16.66636777777778,
+            "p50": 16.677,
+            "p95": 19.438,
+            "p99": 21.7,
+            "maximum": 25.488
+          },
+          "process_ms": {
+            "samples": 900,
+            "mean": 2.224278888888889,
+            "p50": 1.818,
+            "p95": 4.458,
+            "p99": 5.972,
+            "maximum": 9.596
+          },
+          "draw_ms": {
+            "samples": 900,
+            "mean": 3.3917377777777777,
+            "p50": 3.191,
+            "p95": 5.113,
+            "p99": 7.123,
+            "maximum": 10.27
+          },
+          "before_process_ms": {
+            "samples": 900,
+            "mean": 11.050351111111112,
+            "p50": 11.521,
+            "p95": 12.407,
+            "p99": 13.013,
+            "maximum": 16.179
+          },
+          "gpu_ms": {
+            "samples": 900,
+            "mean": 6.79004443804423,
+            "p50": 6.77199983596802,
+            "p95": 8.03999996185303,
+            "p99": 9.10299968719482,
+            "maximum": 12.1800003051758
+          },
+          "render_cpu_ms": {
+            "samples": 900,
+            "mean": 2.045912223855655,
+            "p50": 1.90699994564056,
+            "p95": 3.33899998664856,
+            "p99": 5.5,
+            "maximum": 7.34000015258789
+          },
+          "over_20ms_frames": 33
+        },
+        "sprinting": {
+          "frame_ms": {
+            "samples": 900,
+            "mean": 16.67058888888889,
+            "p50": 16.661,
+            "p95": 20.614,
+            "p99": 23.095,
+            "maximum": 45.254
+          },
+          "process_ms": {
+            "samples": 900,
+            "mean": 2.68369,
+            "p50": 2.363,
+            "p95": 5.024,
+            "p99": 8.117,
+            "maximum": 11.463
+          },
+          "draw_ms": {
+            "samples": 900,
+            "mean": 3.78858,
+            "p50": 3.279,
+            "p95": 6.029,
+            "p99": 9.12,
+            "maximum": 32.067
+          },
+          "before_process_ms": {
+            "samples": 900,
+            "mean": 10.198318888888888,
+            "p50": 10.85,
+            "p95": 12.334,
+            "p99": 13.461,
+            "maximum": 16.085
+          },
+          "gpu_ms": {
+            "samples": 900,
+            "mean": 6.841766670015123,
+            "p50": 6.84800004959106,
+            "p95": 8.2209997177124,
+            "p99": 8.5319995880127,
+            "maximum": 8.90999984741211
+          },
+          "render_cpu_ms": {
+            "samples": 900,
+            "mean": 2.374910000297758,
+            "p50": 1.96700000762939,
+            "p95": 3.90100002288818,
+            "p99": 7.13500022888184,
+            "maximum": 30.07200050354
+          },
+          "over_20ms_frames": 69
+        },
+        "mining_after_run": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.665488095238096,
+            "p50": 16.709,
+            "p95": 18.501,
+            "p99": 20.848,
+            "maximum": 22.343
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.432609523809524,
+            "p50": 2.047,
+            "p95": 4.363,
+            "p99": 6.964,
+            "maximum": 11.707
+          },
+          "draw_ms": {
+            "samples": 840,
+            "mean": 2.6121011904761904,
+            "p50": 2.706,
+            "p95": 3.504,
+            "p99": 4.162,
+            "maximum": 6.653
+          },
+          "before_process_ms": {
+            "samples": 840,
+            "mean": 11.620777380952381,
+            "p50": 11.858,
+            "p95": 13.123,
+            "p99": 13.624,
+            "maximum": 16.018
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.7287321419942945,
+            "p50": 5.90399980545044,
+            "p95": 6.46500015258789,
+            "p99": 6.84499979019165,
+            "maximum": 8.26599979400635
+          },
+          "render_cpu_ms": {
+            "samples": 840,
+            "mean": 1.4435380974695795,
+            "p50": 1.50699996948242,
+            "p95": 2.03900003433228,
+            "p99": 2.18899989128113,
+            "maximum": 5.3270001411438
+          },
+          "over_20ms_frames": 12
+        },
+        "jumping": {
+          "frame_ms": {
+            "samples": 900,
+            "mean": 16.67322888888889,
+            "p50": 16.64,
+            "p95": 20.543,
+            "p99": 22.247,
+            "maximum": 26.845
+          },
+          "process_ms": {
+            "samples": 900,
+            "mean": 2.8671288888888893,
+            "p50": 2.582,
+            "p95": 5.161,
+            "p99": 7.653,
+            "maximum": 10.085
+          },
+          "draw_ms": {
+            "samples": 900,
+            "mean": 3.36701,
+            "p50": 2.831,
+            "p95": 6.142,
+            "p99": 8.564,
+            "maximum": 11.738
+          },
+          "before_process_ms": {
+            "samples": 900,
+            "mean": 10.43909,
+            "p50": 11.048,
+            "p95": 12.613,
+            "p99": 14.547,
+            "maximum": 16.792
+          },
+          "gpu_ms": {
+            "samples": 900,
+            "mean": 6.648848889668782,
+            "p50": 6.44500017166138,
+            "p95": 8.48200035095215,
+            "p99": 9.31599998474121,
+            "maximum": 11.7600002288818
+          },
+          "render_cpu_ms": {
+            "samples": 900,
+            "mean": 2.0442466682857936,
+            "p50": 1.63300001621246,
+            "p95": 4.03499984741211,
+            "p99": 6.56899976730347,
+            "maximum": 8.55500030517578
+          },
+          "over_20ms_frames": 68
+        },
+        "mining_after_jump": {
+          "frame_ms": {
+            "samples": 878,
+            "mean": 16.66142027334852,
+            "p50": 16.721,
+            "p95": 18.351,
+            "p99": 19.95,
+            "maximum": 32.913
+          },
+          "process_ms": {
+            "samples": 878,
+            "mean": 2.2691958997722095,
+            "p50": 1.867,
+            "p95": 3.957,
+            "p99": 6.937,
+            "maximum": 9.818
+          },
+          "draw_ms": {
+            "samples": 878,
+            "mean": 2.9415546697038724,
+            "p50": 2.801,
+            "p95": 4.283,
+            "p99": 6.325,
+            "maximum": 17.893
+          },
+          "before_process_ms": {
+            "samples": 878,
+            "mean": 11.450669703872437,
+            "p50": 11.758,
+            "p95": 12.929,
+            "p99": 13.216,
+            "maximum": 13.894
+          },
+          "gpu_ms": {
+            "samples": 878,
+            "mean": 6.07932232452688,
+            "p50": 6.06799983978271,
+            "p95": 7.17500019073486,
+            "p99": 7.50699996948242,
+            "maximum": 8.25599956512451
+          },
+          "render_cpu_ms": {
+            "samples": 878,
+            "mean": 1.707887244726911,
+            "p50": 1.59700000286102,
+            "p95": 2.61199998855591,
+            "p99": 4.26000022888184,
+            "maximum": 16.6469993591309
+          },
+          "over_20ms_frames": 8
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 480,
+            "mean": 16.67179375,
+            "p50": 16.653,
+            "p95": 18.274,
+            "p99": 18.792,
+            "maximum": 19.993
+          },
+          "process_ms": {
+            "samples": 480,
+            "mean": 1.9864208333333333,
+            "p50": 1.652,
+            "p95": 3.913,
+            "p99": 4.651,
+            "maximum": 4.895
+          },
+          "draw_ms": {
+            "samples": 480,
+            "mean": 5.9377,
+            "p50": 5.875,
+            "p95": 6.547,
+            "p99": 7.285,
+            "maximum": 8.277
+          },
+          "before_process_ms": {
+            "samples": 480,
+            "mean": 8.747672916666666,
+            "p50": 9.012,
+            "p95": 9.772,
+            "p99": 10.286,
+            "maximum": 10.691
+          },
+          "gpu_ms": {
+            "samples": 480,
+            "mean": 7.209383320808411,
+            "p50": 7.14699983596802,
+            "p95": 7.72399997711182,
+            "p99": 7.89599990844727,
+            "maximum": 8.54300022125244
+          },
+          "render_cpu_ms": {
+            "samples": 480,
+            "mean": 3.886166668931643,
+            "p50": 3.85400009155273,
+            "p95": 4.28000020980835,
+            "p99": 4.99100017547607,
+            "maximum": 5.80399990081787
+          },
+          "over_20ms_frames": 0
+        }
+      },
+      "stages_ms_zero_when_absent": {
+        "LOD coverage": {
+          "samples": 6218,
+          "mean": 0.03563123190736572,
+          "p50": 0,
+          "p95": 0.468,
+          "p99": 0.697,
+          "maximum": 1.75
+        },
+        "LOD eviction": {
+          "samples": 6218,
+          "mean": 0.0027972016725635253,
+          "p50": 0,
+          "p95": 0.002,
+          "p99": 0.039,
+          "maximum": 2.087
+        },
+        "LOD requests": {
+          "samples": 6218,
+          "mean": 0.11572563525249276,
+          "p50": 0,
+          "p95": 0.841,
+          "p99": 0.978,
+          "maximum": 1.42
+        },
+        "LOD schedule/cut/evict": {
+          "samples": 6218,
+          "mean": 0.15507220971373434,
+          "p50": 0,
+          "p95": 1.252,
+          "p99": 1.626,
+          "maximum": 4.916
+        },
+        "actor update": {
+          "samples": 6218,
+          "mean": 0.02767192023158572,
+          "p50": 0.025,
+          "p95": 0.04,
+          "p99": 0.049,
+          "maximum": 0.39
+        },
+        "atomic publish": {
+          "samples": 6218,
+          "mean": 0.0050260533933740754,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 2.009
+        },
+        "base controller": {
+          "samples": 6218,
+          "mean": 0.023392248311354134,
+          "p50": 0.01,
+          "p95": 0.199,
+          "p99": 0.221,
+          "maximum": 0.496
+        },
+        "collision exact match": {
+          "samples": 6218,
+          "mean": 0.00017787069797362497,
+          "p50": 0,
+          "p95": 0.001,
+          "p99": 0.002,
+          "maximum": 0.147
+        },
+        "collision node attach": {
+          "samples": 6218,
+          "mean": 0.1722777420392409,
+          "p50": 0,
+          "p95": 1.548,
+          "p99": 2.113,
+          "maximum": 2.903
+        },
+        "collision physics cook": {
+          "samples": 6218,
+          "mean": 0.009704406561595368,
+          "p50": 0,
+          "p95": 0.083,
+          "p99": 0.117,
+          "maximum": 0.236
+        },
+        "collision piece": {
+          "samples": 6218,
+          "mean": 0.18726375040205853,
+          "p50": 0,
+          "p95": 1.685,
+          "p99": 2.304,
+          "maximum": 3.105
+        },
+        "controller loading": {
+          "samples": 6218,
+          "mean": 0.0009179800578964297,
+          "p50": 0.001,
+          "p95": 0.001,
+          "p99": 0.002,
+          "maximum": 0.07
+        },
+        "controller process": {
+          "samples": 6218,
+          "mean": 0.12397217754905115,
+          "p50": 0.063,
+          "p95": 0.384,
+          "p99": 0.508,
+          "maximum": 1.046
+        },
+        "cover picker": {
+          "samples": 6218,
+          "mean": 0.0027467031199742684,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.138,
+          "maximum": 0.177
+        },
+        "cover prepare": {
+          "samples": 6218,
+          "mean": 0.0013287230620778385,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.064,
+          "maximum": 0.14
+        },
+        "cover publish": {
+          "samples": 6218,
+          "mean": 0.011205049855258926,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.557,
+          "maximum": 1.049
+        },
+        "lighting attribute upload": {
+          "samples": 6218,
+          "mean": 0.013996944355098103,
+          "p50": 0,
+          "p95": 0.093,
+          "p99": 0.137,
+          "maximum": 1.192
+        },
+        "lighting schedule": {
+          "samples": 6218,
+          "mean": 0.07409890640077195,
+          "p50": 0.092,
+          "p95": 0.115,
+          "p99": 0.167,
+          "maximum": 0.772
+        },
+        "mesh upload/create": {
+          "samples": 6218,
+          "mean": 0.03775844322933419,
+          "p50": 0,
+          "p95": 0.294,
+          "p99": 0.39,
+          "maximum": 1.35
+        },
+        "message console": {
+          "samples": 6218,
+          "mean": 6.43293663557414e-07,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.001
+        },
+        "message label": {
+          "samples": 6218,
+          "mean": 3.69893856545513e-06,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.004
+        },
+        "notice message": {
+          "samples": 6218,
+          "mean": 2.4123512383403023e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.013
+        },
+        "notice panel sync": {
+          "samples": 6218,
+          "mean": 0.00017947893213251848,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.051
+        },
+        "player physics": {
+          "samples": 6218,
+          "mean": 0.14510212286908974,
+          "p50": 0.133,
+          "p95": 0.195,
+          "p99": 0.247,
+          "maximum": 1.225
+        },
+        "prepared subtree attach": {
+          "samples": 6218,
+          "mean": 0.00520907044065616,
+          "p50": 0,
+          "p95": 0.043,
+          "p99": 0.05,
+          "maximum": 0.39
+        },
+        "receive": {
+          "samples": 6218,
+          "mean": 0.13993374075265358,
+          "p50": 0.012,
+          "p95": 1.121,
+          "p99": 2.016,
+          "maximum": 2.619
+        },
+        "receive batch": {
+          "samples": 6218,
+          "mean": 0.0002002251527822451,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.066
+        },
+        "receive density_ray": {
+          "samples": 6218,
+          "mean": 0.00011193309745899002,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.111
+        },
+        "receive edit_begin": {
+          "samples": 6218,
+          "mean": 0.001083628176262464,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.632
+        },
+        "receive edit_done": {
+          "samples": 6218,
+          "mean": 2.2354454808620137e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.01
+        },
+        "receive mesh": {
+          "samples": 6218,
+          "mean": 0.007257156642007076,
+          "p50": 0,
+          "p95": 0.066,
+          "p99": 0.075,
+          "maximum": 0.365
+        },
+        "receive poll": {
+          "samples": 6218,
+          "mean": 0.005602766162753297,
+          "p50": 0.005,
+          "p95": 0.011,
+          "p99": 0.014,
+          "maximum": 0.339
+        },
+        "receive relight": {
+          "samples": 6218,
+          "mean": 0.008458507558700546,
+          "p50": 0,
+          "p95": 0.034,
+          "p99": 0.037,
+          "maximum": 0.18
+        },
+        "receive surface_batch": {
+          "samples": 6218,
+          "mean": 0.10834786104856867,
+          "p50": 0,
+          "p95": 1.079,
+          "p99": 1.988,
+          "maximum": 2.595
+        },
+        "retire collision/mesh": {
+          "samples": 6218,
+          "mean": 0.06146799614023802,
+          "p50": 0.0,
+          "p95": 0.507,
+          "p99": 0.571,
+          "maximum": 2.335
+        },
+        "staging frame": {
+          "samples": 6218,
+          "mean": 0.2748594403345127,
+          "p50": 0.005,
+          "p95": 2.155,
+          "p99": 2.821,
+          "maximum": 4.31
+        },
+        "surface callback boulder_horizon.gd": {
+          "samples": 6218,
+          "mean": 0.0003502733998070119,
+          "p50": 0,
+          "p95": 0.004,
+          "p99": 0.005,
+          "maximum": 0.084
+        },
+        "surface callback ground_cover.gd": {
+          "samples": 6218,
+          "mean": 0.10319105821807655,
+          "p50": 0,
+          "p95": 1.023,
+          "p99": 1.932,
+          "maximum": 2.53
+        },
+        "surface callback road_authoring.gd": {
+          "samples": 6218,
+          "mean": 0.00042296558378899965,
+          "p50": 0,
+          "p95": 0.004,
+          "p99": 0.006,
+          "maximum": 0.101
+        },
+        "surface callback world_ecosystem.gd": {
+          "samples": 6218,
+          "mean": 0.00039723383724670316,
+          "p50": 0,
+          "p95": 0.004,
+          "p99": 0.006,
+          "maximum": 0.009
+        },
+        "surface callback zombie_population.gd": {
+          "samples": 6218,
+          "mean": 0.0006051785139916372,
+          "p50": 0,
+          "p95": 0.005,
+          "p99": 0.007,
+          "maximum": 0.081
+        },
+        "vegetation edit publish": {
+          "samples": 6218,
+          "mean": 4.326149887423609e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.017
+        },
+        "world authoring": {
+          "samples": 6218,
+          "mean": 0.010511900932775813,
+          "p50": 0.01,
+          "p95": 0.012,
+          "p99": 0.015,
+          "maximum": 0.212
+        },
+        "world interaction": {
+          "samples": 6218,
+          "mean": 0.017507558700546797,
+          "p50": 0.017,
+          "p95": 0.021,
+          "p99": 0.026,
+          "maximum": 0.24
+        },
+        "world pickups": {
+          "samples": 6218,
+          "mean": 0.04338485043422322,
+          "p50": 0.003,
+          "p95": 0.31,
+          "p99": 0.375,
+          "maximum": 0.99
+        },
+        "world presentation": {
+          "samples": 6218,
+          "mean": 0.010689449983917658,
+          "p50": 0.01,
+          "p95": 0.014,
+          "p99": 0.017,
+          "maximum": 0.241
+        },
+        "world process": {
+          "samples": 6218,
+          "mean": 0.2140788034737858,
+          "p50": 0.151,
+          "p95": 0.48,
+          "p99": 0.641,
+          "maximum": 1.131
+        },
+        "world vehicle": {
+          "samples": 6218,
+          "mean": 0.011561112898037955,
+          "p50": 0.005,
+          "p95": 0.079,
+          "p99": 0.097,
+          "maximum": 0.77
+        },
+        "zombie admission attach": {
+          "samples": 6218,
+          "mean": 0.01222338372467031,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 3.625
+        },
+        "zombie admission instance": {
+          "samples": 6218,
+          "mean": 0.00011289803795432614,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.039
+        },
+        "zombie admission support": {
+          "samples": 6218,
+          "mean": 0.00022418784174975878,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.399
+        },
+        "zombie callback navigation_interest": {
+          "samples": 6218,
+          "mean": 0.004405114184625282,
+          "p50": 0.003,
+          "p95": 0.018,
+          "p99": 0.056,
+          "maximum": 0.142
+        },
+        "zombie callback readiness": {
+          "samples": 6218,
+          "mean": 0.1545467996140238,
+          "p50": 0.152,
+          "p95": 0.184,
+          "p99": 0.246,
+          "maximum": 0.842
+        },
+        "zombie callback spawn_visible": {
+          "samples": 6218,
+          "mean": 0.00017192023158571888,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.005,
+          "maximum": 0.027
+        },
+        "zombie callback water_depth": {
+          "samples": 6218,
+          "mean": 0.15396751366999034,
+          "p50": 0.164,
+          "p95": 0.295,
+          "p99": 0.347,
+          "maximum": 1.07
+        },
+        "zombie intent": {
+          "samples": 6218,
+          "mean": 0.14059134770022516,
+          "p50": 0.134,
+          "p95": 0.185,
+          "p99": 0.256,
+          "maximum": 2.471
+        },
+        "zombie interest_spacing": {
+          "samples": 6218,
+          "mean": 0.027210678674815053,
+          "p50": 0.026,
+          "p95": 0.041,
+          "p99": 0.078,
+          "maximum": 0.335
+        },
+        "zombie planning": {
+          "samples": 6218,
+          "mean": 0.6087380186555162,
+          "p50": 0.802,
+          "p95": 0.899,
+          "p99": 0.941,
+          "maximum": 1.625
+        },
+        "zombie population": {
+          "samples": 6218,
+          "mean": 0.021570762302991316,
+          "p50": 0.006,
+          "p95": 0.014,
+          "p99": 0.033,
+          "maximum": 3.985
+        },
+        "zombie residency": {
+          "samples": 6218,
+          "mean": 0.12827275651334835,
+          "p50": 0.122,
+          "p95": 0.158,
+          "p99": 0.335,
+          "maximum": 0.76
+        },
+        "zombie steering": {
+          "samples": 6218,
+          "mean": 0.005566580894178192,
+          "p50": 0.005,
+          "p95": 0.007,
+          "p99": 0.011,
+          "maximum": 0.188
+        },
+        "zombie update": {
+          "samples": 6218,
+          "mean": 0.94544483756835,
+          "p50": 1.115,
+          "p95": 1.254,
+          "p99": 1.448,
+          "maximum": 4.866
+        }
+      },
+      "slowest_frames": [
+        {
+          "index": 531,
+          "phase": "mining_idle",
+          "frame_ms": 48.083,
+          "draw_ms": 25.213,
+          "process_ms": 10.457,
+          "before_process_ms": 12.413,
+          "gpu_ms": 4.46400022506714,
+          "render_cpu_ms": 1.05799996852875,
+          "position": "(779.3846, 49.13094, 1341.538)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 3.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.039,
+            "base controller": 0.011,
+            "controller loading": 0.001,
+            "controller process": 0.162,
+            "lighting schedule": 0.004,
+            "message console": 0.001,
+            "message label": 0.002,
+            "notice message": 0.007,
+            "notice panel sync": 0.047,
+            "player physics": 0.144,
+            "receive": 0.009,
+            "receive poll": 0.003,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.004,
+            "world authoring": 0.01,
+            "world interaction": 0.016,
+            "world pickups": 0.003,
+            "world presentation": 0.009,
+            "world process": 0.239,
+            "world vehicle": 0.105,
+            "zombie callback navigation_interest": 0.019,
+            "zombie callback readiness": 0.173,
+            "zombie callback water_depth": 0.35,
+            "zombie intent": 0.13,
+            "zombie interest_spacing": 0.042,
+            "zombie planning": 0.928,
+            "zombie population": 0.006,
+            "zombie residency": 0.119,
+            "zombie steering": 0.005,
+            "zombie update": 1.242
+          }
+        },
+        {
+          "index": 2298,
+          "phase": "sprinting",
+          "frame_ms": 45.254,
+          "draw_ms": 32.067,
+          "process_ms": 2.838,
+          "before_process_ms": 10.349,
+          "gpu_ms": 7.19099998474121,
+          "render_cpu_ms": 2.74699997901917,
+          "position": "(836.5641, 50.03074, 1403.378)",
+          "thread_cpu_ms": 0.0,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.024,
+            "base controller": 0.011,
+            "controller loading": 0.001,
+            "controller process": 0.643,
+            "lighting schedule": 0.1,
+            "player physics": 0.178,
+            "receive": 0.009,
+            "receive poll": 0.004,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.004,
+            "world authoring": 0.011,
+            "world interaction": 0.017,
+            "world pickups": 0.494,
+            "world presentation": 0.011,
+            "world process": 0.783,
+            "world vehicle": 0.09,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.149,
+            "zombie callback water_depth": 0.049,
+            "zombie intent": 0.128,
+            "zombie interest_spacing": 0.026,
+            "zombie planning": 0.013,
+            "zombie population": 0.006,
+            "zombie residency": 0.121,
+            "zombie steering": 0.005,
+            "zombie update": 0.313
+          }
+        },
+        {
+          "index": 5261,
+          "phase": "mining_after_jump",
+          "frame_ms": 32.913,
+          "draw_ms": 17.893,
+          "process_ms": 2.578,
+          "before_process_ms": 12.442,
+          "gpu_ms": 5.79699993133545,
+          "render_cpu_ms": 1.27300000190735,
+          "position": "(907.0603, 59.02412, 1623.409)",
+          "thread_cpu_ms": 0.0,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.024,
+            "base controller": 0.01,
+            "controller loading": 0.001,
+            "controller process": 0.057,
+            "lighting schedule": 0.105,
+            "player physics": 0.12,
+            "receive": 0.009,
+            "receive poll": 0.003,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.004,
+            "world authoring": 0.01,
+            "world interaction": 0.016,
+            "world pickups": 0.002,
+            "world presentation": 0.009,
+            "world process": 0.176,
+            "world vehicle": 0.005,
+            "zombie callback navigation_interest": 0.002,
+            "zombie callback readiness": 0.14,
+            "zombie callback water_depth": 0.208,
+            "zombie intent": 0.135,
+            "zombie interest_spacing": 0.025,
+            "zombie planning": 0.813,
+            "zombie population": 0.005,
+            "zombie residency": 0.114,
+            "zombie steering": 0.005,
+            "zombie update": 1.108
+          }
+        },
+        {
+          "index": 4676,
+          "phase": "jumping",
+          "frame_ms": 26.845,
+          "draw_ms": 4.76,
+          "process_ms": 10.085,
+          "before_process_ms": 12.0,
+          "gpu_ms": 5.43800020217896,
+          "render_cpu_ms": 1.83000004291534,
+          "position": "(911.4272, 59.7001, 1616.036)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "LOD coverage": 0.678,
+            "LOD eviction": 0.122,
+            "LOD requests": 0.811,
+            "LOD schedule/cut/evict": 1.619,
+            "actor update": 0.023,
+            "base controller": 0.01,
+            "controller loading": 0.001,
+            "controller process": 0.064,
+            "lighting schedule": 0.084,
+            "player physics": 0.112,
+            "receive": 0.011,
+            "receive poll": 0.005,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.005,
+            "world authoring": 0.01,
+            "world interaction": 0.02,
+            "world pickups": 0.002,
+            "world presentation": 0.011,
+            "world process": 0.153,
+            "world vehicle": 0.005,
+            "zombie callback readiness": 0.138,
+            "zombie callback water_depth": 0.024,
+            "zombie intent": 0.126,
+            "zombie interest_spacing": 0.013,
+            "zombie planning": 0.013,
+            "zombie population": 0.011,
+            "zombie residency": 0.128,
+            "zombie steering": 0.003,
+            "zombie update": 0.306
+          }
+        },
+        {
+          "index": 2729,
+          "phase": "sprinting",
+          "frame_ms": 26.405,
+          "draw_ms": 5.1,
+          "process_ms": 11.463,
+          "before_process_ms": 9.842,
+          "gpu_ms": 6.36600017547607,
+          "render_cpu_ms": 2.39199995994568,
+          "position": "(876.8361, 54.37504, 1440.06)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "LOD coverage": 0.732,
+            "LOD eviction": 0.29,
+            "LOD requests": 1.035,
+            "LOD schedule/cut/evict": 2.065,
+            "actor update": 0.023,
+            "base controller": 0.01,
+            "controller loading": 0.001,
+            "controller process": 0.063,
+            "lighting schedule": 0.002,
+            "player physics": 0.19,
+            "receive": 1.128,
+            "receive poll": 0.004,
+            "receive surface_batch": 1.102,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.004,
+            "surface callback boulder_horizon.gd": 0.004,
+            "surface callback ground_cover.gd": 1.045,
+            "surface callback road_authoring.gd": 0.004,
+            "surface callback world_ecosystem.gd": 0.006,
+            "surface callback zombie_population.gd": 0.004,
+            "world authoring": 0.01,
+            "world interaction": 0.018,
+            "world pickups": 0.003,
+            "world presentation": 0.011,
+            "world process": 0.151,
+            "world vehicle": 0.006,
+            "zombie callback readiness": 0.127,
+            "zombie callback spawn_visible": 0.005,
+            "zombie callback water_depth": 0.023,
+            "zombie intent": 0.155,
+            "zombie interest_spacing": 0.012,
+            "zombie planning": 0.012,
+            "zombie population": 0.024,
+            "zombie residency": 0.127,
+            "zombie steering": 0.005,
+            "zombie update": 0.348
+          }
+        },
+        {
+          "index": 2954,
+          "phase": "sprinting",
+          "frame_ms": 26.111,
+          "draw_ms": 4.865,
+          "process_ms": 9.358,
+          "before_process_ms": 11.888,
+          "gpu_ms": 7.59600019454956,
+          "render_cpu_ms": 1.69500005245209,
+          "position": "(895.6183, 57.18861, 1472.002)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.037,
+            "base controller": 0.01,
+            "collision exact match": 0.0,
+            "collision node attach": 0.384,
+            "collision physics cook": 0.026,
+            "collision piece": 0.425,
+            "controller loading": 0.001,
+            "controller process": 0.065,
+            "lighting schedule": 0.003,
+            "mesh upload/create": 0.136,
+            "player physics": 0.148,
+            "prepared subtree attach": 0.024,
+            "receive": 0.053,
+            "receive mesh": 0.038,
+            "receive poll": 0.007,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.628,
+            "world authoring": 0.011,
+            "world interaction": 0.018,
+            "world pickups": 0.003,
+            "world presentation": 0.011,
+            "world process": 0.156,
+            "world vehicle": 0.005,
+            "zombie callback navigation_interest": 0.002,
+            "zombie callback readiness": 0.154,
+            "zombie callback water_depth": 0.158,
+            "zombie intent": 0.139,
+            "zombie interest_spacing": 0.025,
+            "zombie planning": 0.777,
+            "zombie population": 0.007,
+            "zombie residency": 0.122,
+            "zombie steering": 0.006,
+            "zombie update": 1.09
+          }
+        },
+        {
+          "index": 2578,
+          "phase": "sprinting",
+          "frame_ms": 25.887,
+          "draw_ms": 5.35,
+          "process_ms": 9.211,
+          "before_process_ms": 11.326,
+          "gpu_ms": 5.75500011444092,
+          "render_cpu_ms": 1.99399995803833,
+          "position": "(864.0179, 53.00771, 1418.696)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.028,
+            "base controller": 0.012,
+            "controller loading": 0.001,
+            "controller process": 0.421,
+            "lighting schedule": 0.099,
+            "player physics": 0.198,
+            "receive": 0.014,
+            "receive poll": 0.006,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.004,
+            "world authoring": 0.012,
+            "world interaction": 0.021,
+            "world pickups": 0.348,
+            "world presentation": 0.013,
+            "world process": 0.534,
+            "world vehicle": 0.005,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.17,
+            "zombie callback water_depth": 0.037,
+            "zombie intent": 0.142,
+            "zombie interest_spacing": 0.025,
+            "zombie planning": 0.016,
+            "zombie population": 0.007,
+            "zombie residency": 0.137,
+            "zombie steering": 0.005,
+            "zombie update": 0.345
+          }
+        },
+        {
+          "index": 3987,
+          "phase": "jumping",
+          "frame_ms": 25.849,
+          "draw_ms": 4.951,
+          "process_ms": 8.758,
+          "before_process_ms": 12.14,
+          "gpu_ms": 6.26100015640259,
+          "render_cpu_ms": 1.7039999961853,
+          "position": "(895.9998, 58.16195, 1504.0)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.025,
+            "base controller": 0.009,
+            "controller loading": 0.001,
+            "controller process": 0.055,
+            "lighting attribute upload": 0.031,
+            "lighting schedule": 0.084,
+            "player physics": 0.108,
+            "receive": 0.044,
+            "receive poll": 0.006,
+            "receive relight": 0.031,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.062,
+            "world authoring": 0.01,
+            "world interaction": 0.014,
+            "world pickups": 0.002,
+            "world presentation": 0.009,
+            "world process": 0.14,
+            "world vehicle": 0.005,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.16,
+            "zombie callback water_depth": 0.168,
+            "zombie intent": 0.14,
+            "zombie interest_spacing": 0.027,
+            "zombie planning": 0.802,
+            "zombie population": 0.006,
+            "zombie residency": 0.119,
+            "zombie steering": 0.004,
+            "zombie update": 1.111
+          }
+        },
+        {
+          "index": 4176,
+          "phase": "jumping",
+          "frame_ms": 25.619,
+          "draw_ms": 5.338,
+          "process_ms": 8.841,
+          "before_process_ms": 11.44,
+          "gpu_ms": 5.8899998664856,
+          "render_cpu_ms": 1.47300004959106,
+          "position": "(896.0242, 58.89678, 1535.191)",
+          "thread_cpu_ms": 31.25,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.023,
+            "base controller": 0.009,
+            "controller loading": 0.001,
+            "controller process": 0.062,
+            "lighting attribute upload": 0.041,
+            "lighting schedule": 0.107,
+            "player physics": 0.117,
+            "receive": 0.047,
+            "receive poll": 0.006,
+            "receive relight": 0.033,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.071,
+            "world authoring": 0.01,
+            "world interaction": 0.017,
+            "world pickups": 0.003,
+            "world presentation": 0.01,
+            "world process": 0.155,
+            "world vehicle": 0.005,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.147,
+            "zombie callback water_depth": 0.033,
+            "zombie intent": 0.138,
+            "zombie interest_spacing": 0.026,
+            "zombie planning": 0.013,
+            "zombie population": 0.006,
+            "zombie residency": 0.12,
+            "zombie steering": 0.004,
+            "zombie update": 0.32
+          }
+        },
+        {
+          "index": 1804,
+          "phase": "walking",
+          "frame_ms": 25.488,
+          "draw_ms": 5.187,
+          "process_ms": 8.439,
+          "before_process_ms": 11.862,
+          "gpu_ms": 7.42700004577637,
+          "render_cpu_ms": 1.95099997520447,
+          "position": "(800.0206, 47.74103, 1376.021)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.024,
+            "base controller": 0.012,
+            "controller loading": 0.001,
+            "controller process": 0.143,
+            "lighting schedule": 0.098,
+            "player physics": 0.169,
+            "receive": 0.008,
+            "receive poll": 0.003,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.005,
+            "world authoring": 0.011,
+            "world interaction": 0.017,
+            "world pickups": 0.002,
+            "world presentation": 0.01,
+            "world process": 0.224,
+            "world vehicle": 0.085,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.156,
+            "zombie callback water_depth": 0.223,
+            "zombie intent": 0.127,
+            "zombie interest_spacing": 0.025,
+            "zombie planning": 0.889,
+            "zombie population": 0.006,
+            "zombie residency": 0.121,
+            "zombie steering": 0.006,
+            "zombie update": 1.189
+          }
+        }
+      ],
+      "contacts_ms": {
+        "samples": 24,
+        "mean": 24.503958333333333,
+        "p50": 23.179,
+        "p95": 26.761,
+        "p99": 49.194,
+        "maximum": 49.194
+      },
+      "worker_queue_ms": {
+        "samples": 24,
+        "mean": 0.11041666666666666,
+        "p50": 0.077,
+        "p95": 0.335,
+        "p99": 0.361,
+        "maximum": 0.361
+      },
+      "jumps": 22,
+      "distance_by_phase": {
+        "idle": 0.0,
+        "jumping": 160.197772756219,
+        "mining_after_jump": 2.77864346839488,
+        "mining_after_run": 0.285756886005402,
+        "mining_idle": 0.228664398193359,
+        "recovery": 0.0,
+        "sprinting": 149.011906348169,
+        "walking": 82.6889992803335
+      },
+      "failures": []
+    },
+    {
+      "revision": "b1070c57b0a21ba4966664d4ada925213450e9c6",
+      "worktree_changes": [],
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "2c67bca4be463346457e5bc7ed5bcb71edcf86dd565a5966cd21bf2f086f9c54",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "184e9a14ae9efb49c53282af43b4c9b41563ce57d7f47cf85226e3df1953e39e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "20a0df319d50a9ff0eaa3fb91c2dc1287f2a7ff8d0dae2a833b3e8b1e6e3b8f7",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "13b66e691af5d87b48162a6c8c89e1e49947fac62f3528bdcad983ee733b6310"
+      },
+      "source_sha256": "8c1b85cc08b11e8a4013ba40430f65a3f763ac5a9c97a1b01389aff4e996e43b",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 45476,
+        "exit_code": 0,
+        "resources": {
+          "samples": 254,
+          "gpu_samples": 254,
+          "peak_private_commit_bytes": 4034174976,
+          "peak_working_set_bytes": 2453704704,
+          "peak_dedicated_gpu_bytes": 1517993984,
+          "checks": {
+            "ram": {
+              "bytes": 4034174976,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1517993984,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 154.47616940003354,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\gameplay_performance_d5743d77caf04f9fa7ce2e94e53e1207",
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073708812,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "performance_passed": false,
+      "gameplay_gates": {
+        "all_24_contacts_changed": true,
+        "physical_jumps": true,
+        "contact_to_draw_max_150ms": true,
+        "idle_frame_p99_20ms_max_50ms": false,
+        "walking_frame_p99_20ms_max_50ms": true,
+        "sprinting_frame_p99_20ms_max_50ms": true,
+        "jumping_frame_p99_20ms_max_50ms": true,
+        "mining_idle_frame_p99_20ms_max_50ms": true,
+        "mining_after_run_frame_p99_20ms_max_50ms": true,
+        "mining_after_jump_frame_p99_20ms_max_50ms": true,
+        "recovery_frame_p99_20ms_max_50ms": true
+      },
+      "directory": "reports/runtime_performance/20261109T072428340063Z_first_playtest_uncapped",
+      "raw_sha256": {
+        "frames.json": "ec2d1ce4141a2b6c09ab33f266db7c7d7326d89a0dc9cef9c6388464eb3d65d8",
+        "gameplay.json": "74e1e89ad36cf77665d88fbf263143ae48eb474562308e9bb82dbaed3dfd64d8",
+        "presentation.json": "92ed2848425e92ab2ef221a46c263ae1338e24f23f2b7f976a4c17dc64b88ea6",
+        "arrival.png": "ba2ecc88e3c1120001c1675e683c1db3ed8907cbb39055027c2be61e8df90279"
+      },
+      "presentation": {
+        "fps_cap": 0,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": true,
+        "vsync": 0
+      },
+      "samples": 12999,
+      "focused_samples": 12999,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "slot": "recipe_generated_4644d8cfc8f97e43",
+      "phases": {
+        "idle": {
+          "frame_ms": {
+            "samples": 914,
+            "mean": 8.754548140043763,
+            "p50": 8.506,
+            "p95": 9.562,
+            "p99": 12.578,
+            "maximum": 68.1
+          },
+          "process_ms": {
+            "samples": 914,
+            "mean": 1.6368840262582058,
+            "p50": 1.509,
+            "p95": 2.511,
+            "p99": 2.909,
+            "maximum": 7.582
+          },
+          "draw_ms": {
+            "samples": 914,
+            "mean": 5.08186761487965,
+            "p50": 4.274,
+            "p95": 7.147,
+            "p99": 7.589,
+            "maximum": 63.184
+          },
+          "before_process_ms": {
+            "samples": 914,
+            "mean": 2.035796498905908,
+            "p50": 3.354,
+            "p95": 4.147,
+            "p99": 4.655,
+            "maximum": 12.298
+          },
+          "gpu_ms": {
+            "samples": 914,
+            "mean": 7.914295404692969,
+            "p50": 7.89200019836426,
+            "p95": 8.51599979400635,
+            "p99": 8.71399974822998,
+            "maximum": 8.9689998626709
+          },
+          "render_cpu_ms": {
+            "samples": 914,
+            "mean": 1.8143807456582068,
+            "p50": 1.76800000667572,
+            "p95": 2.15799999237061,
+            "p99": 2.67600011825562,
+            "maximum": 4.8730001449585
+          },
+          "over_20ms_frames": 2
+        },
+        "mining_idle": {
+          "frame_ms": {
+            "samples": 2093,
+            "mean": 6.568276636407071,
+            "p50": 6.155,
+            "p95": 9.442,
+            "p99": 11.226,
+            "maximum": 17.342
+          },
+          "process_ms": {
+            "samples": 2093,
+            "mean": 1.9248079311992357,
+            "p50": 1.652,
+            "p95": 3.902,
+            "p99": 5.005,
+            "maximum": 10.384
+          },
+          "draw_ms": {
+            "samples": 2093,
+            "mean": 3.1078848542761586,
+            "p50": 3.05,
+            "p95": 4.55,
+            "p99": 4.975,
+            "maximum": 5.61
+          },
+          "before_process_ms": {
+            "samples": 2093,
+            "mean": 1.535583850931677,
+            "p50": 0.143,
+            "p95": 4.006,
+            "p99": 4.369,
+            "maximum": 6.267
+          },
+          "gpu_ms": {
+            "samples": 2093,
+            "mean": 5.164085045193464,
+            "p50": 5.11700010299683,
+            "p95": 6.09700012207031,
+            "p99": 6.28599977493286,
+            "maximum": 7.92799997329712
+          },
+          "render_cpu_ms": {
+            "samples": 2093,
+            "mean": 1.207191113872045,
+            "p50": 1.15600001811981,
+            "p95": 1.83200001716614,
+            "p99": 2.07699990272522,
+            "maximum": 4.59100008010864
+          },
+          "over_20ms_frames": 0
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 1744,
+            "mean": 8.602081995412844,
+            "p50": 8.591,
+            "p95": 10.973,
+            "p99": 14.144,
+            "maximum": 18.825
+          },
+          "process_ms": {
+            "samples": 1744,
+            "mean": 2.010252866972477,
+            "p50": 1.682,
+            "p95": 3.668,
+            "p99": 5.234,
+            "maximum": 9.674
+          },
+          "draw_ms": {
+            "samples": 1744,
+            "mean": 4.635229357798165,
+            "p50": 4.264,
+            "p95": 7.667,
+            "p99": 8.325,
+            "maximum": 10.134
+          },
+          "before_process_ms": {
+            "samples": 1744,
+            "mean": 1.9565997706422018,
+            "p50": 2.805,
+            "p95": 4.269,
+            "p99": 4.957,
+            "maximum": 7.318
+          },
+          "gpu_ms": {
+            "samples": 1744,
+            "mean": 7.474491967793998,
+            "p50": 7.49100017547607,
+            "p95": 9.24499988555908,
+            "p99": 9.72000026702881,
+            "maximum": 10.0620002746582
+          },
+          "render_cpu_ms": {
+            "samples": 1744,
+            "mean": 1.851970756716958,
+            "p50": 1.70799994468689,
+            "p95": 2.79500007629395,
+            "p99": 3.93600010871887,
+            "maximum": 7.3439998626709
+          },
+          "over_20ms_frames": 0
+        },
+        "sprinting": {
+          "frame_ms": {
+            "samples": 1676,
+            "mean": 8.952149164677804,
+            "p50": 8.745,
+            "p95": 12.35,
+            "p99": 15.95,
+            "maximum": 22.934
+          },
+          "process_ms": {
+            "samples": 1676,
+            "mean": 2.23233830548926,
+            "p50": 1.818,
+            "p95": 4.191,
+            "p99": 5.986,
+            "maximum": 10.261
+          },
+          "draw_ms": {
+            "samples": 1676,
+            "mean": 4.949862171837708,
+            "p50": 4.842,
+            "p95": 7.764,
+            "p99": 8.784,
+            "maximum": 12.768
+          },
+          "before_process_ms": {
+            "samples": 1676,
+            "mean": 1.7699486873508354,
+            "p50": 2.521,
+            "p95": 3.76,
+            "p99": 5.015,
+            "maximum": 7.73
+          },
+          "gpu_ms": {
+            "samples": 1676,
+            "mean": 7.69992242991782,
+            "p50": 7.65799999237061,
+            "p95": 9.48900032043457,
+            "p99": 9.86200046539307,
+            "maximum": 10.4750003814697
+          },
+          "render_cpu_ms": {
+            "samples": 1676,
+            "mean": 2.0557840127933567,
+            "p50": 1.72500002384186,
+            "p95": 3.61400008201599,
+            "p99": 5.78299999237061,
+            "maximum": 9.8120002746582
+          },
+          "over_20ms_frames": 2
+        },
+        "mining_after_run": {
+          "frame_ms": {
+            "samples": 2126,
+            "mean": 6.459301975540922,
+            "p50": 6.396,
+            "p95": 8.386,
+            "p99": 9.978,
+            "maximum": 18.623
+          },
+          "process_ms": {
+            "samples": 2126,
+            "mean": 1.9249214487300093,
+            "p50": 1.708,
+            "p95": 3.662,
+            "p99": 4.87,
+            "maximum": 9.528
+          },
+          "draw_ms": {
+            "samples": 2126,
+            "mean": 3.3471820319849486,
+            "p50": 3.199,
+            "p95": 4.934,
+            "p99": 5.311,
+            "maximum": 14.401
+          },
+          "before_process_ms": {
+            "samples": 2126,
+            "mean": 1.1871984948259642,
+            "p50": 0.136,
+            "p95": 3.264,
+            "p99": 3.635,
+            "maximum": 7.686
+          },
+          "gpu_ms": {
+            "samples": 2126,
+            "mean": 5.466235186620803,
+            "p50": 5.60699987411499,
+            "p95": 6.42000007629395,
+            "p99": 6.85799980163574,
+            "maximum": 8.82100009918213
+          },
+          "render_cpu_ms": {
+            "samples": 2126,
+            "mean": 1.2918955771741392,
+            "p50": 1.27900004386902,
+            "p95": 1.84200000762939,
+            "p99": 2.10400009155273,
+            "maximum": 13.4160003662109
+          },
+          "over_20ms_frames": 0
+        },
+        "jumping": {
+          "frame_ms": {
+            "samples": 1740,
+            "mean": 8.622510344827585,
+            "p50": 8.308,
+            "p95": 12.269,
+            "p99": 16.776,
+            "maximum": 20.641
+          },
+          "process_ms": {
+            "samples": 1740,
+            "mean": 2.305980459770115,
+            "p50": 1.789,
+            "p95": 4.606,
+            "p99": 6.809,
+            "maximum": 11.282
+          },
+          "draw_ms": {
+            "samples": 1740,
+            "mean": 4.633757471264368,
+            "p50": 4.656,
+            "p95": 7.526,
+            "p99": 8.36,
+            "maximum": 12.29
+          },
+          "before_process_ms": {
+            "samples": 1740,
+            "mean": 1.6827724137931035,
+            "p50": 2.377,
+            "p95": 3.579,
+            "p99": 5.099,
+            "maximum": 10.01
+          },
+          "gpu_ms": {
+            "samples": 1740,
+            "mean": 7.393660338719686,
+            "p50": 7.08099985122681,
+            "p95": 9.42399978637695,
+            "p99": 9.83899974822998,
+            "maximum": 10.6470003128052
+          },
+          "render_cpu_ms": {
+            "samples": 1740,
+            "mean": 1.8076367815335592,
+            "p50": 1.49300003051758,
+            "p95": 3.77900004386902,
+            "p99": 5.6710000038147,
+            "maximum": 9.86100006103516
+          },
+          "over_20ms_frames": 3
+        },
+        "mining_after_jump": {
+          "frame_ms": {
+            "samples": 1942,
+            "mean": 7.414294541709578,
+            "p50": 7.223,
+            "p95": 9.676,
+            "p99": 11.159,
+            "maximum": 14.664
+          },
+          "process_ms": {
+            "samples": 1942,
+            "mean": 1.9571905252317199,
+            "p50": 1.711,
+            "p95": 3.648,
+            "p99": 4.537,
+            "maximum": 8.426
+          },
+          "draw_ms": {
+            "samples": 1942,
+            "mean": 3.9745041194644695,
+            "p50": 4.026,
+            "p95": 5.838,
+            "p99": 6.916,
+            "maximum": 7.931
+          },
+          "before_process_ms": {
+            "samples": 1942,
+            "mean": 1.4825998970133882,
+            "p50": 0.183,
+            "p95": 3.804,
+            "p99": 4.145,
+            "maximum": 6.158
+          },
+          "gpu_ms": {
+            "samples": 1942,
+            "mean": 6.481804329875078,
+            "p50": 6.38399982452393,
+            "p95": 7.40000009536743,
+            "p99": 8.64700031280518,
+            "maximum": 9.45499992370605
+          },
+          "render_cpu_ms": {
+            "samples": 1942,
+            "mean": 1.4585803294771118,
+            "p50": 1.36300003528595,
+            "p95": 2.28600001335144,
+            "p99": 3.75600004196167,
+            "maximum": 4.76100015640259
+          },
+          "over_20ms_frames": 0
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 764,
+            "mean": 10.481824607329843,
+            "p50": 10.95,
+            "p95": 13.419,
+            "p99": 15.201,
+            "maximum": 20.093
+          },
+          "process_ms": {
+            "samples": 764,
+            "mean": 1.8813232984293193,
+            "p50": 1.677,
+            "p95": 3.053,
+            "p99": 4.484,
+            "maximum": 4.995
+          },
+          "draw_ms": {
+            "samples": 764,
+            "mean": 6.073684554973822,
+            "p50": 5.965,
+            "p95": 6.956,
+            "p99": 7.532,
+            "maximum": 10.005
+          },
+          "before_process_ms": {
+            "samples": 764,
+            "mean": 2.5268167539267017,
+            "p50": 3.661,
+            "p95": 4.475,
+            "p99": 5.245,
+            "maximum": 6.25
+          },
+          "gpu_ms": {
+            "samples": 764,
+            "mean": 8.07462173107407,
+            "p50": 8.06999969482422,
+            "p95": 8.57600021362305,
+            "p99": 8.87199974060059,
+            "maximum": 8.99899959564209
+          },
+          "render_cpu_ms": {
+            "samples": 764,
+            "mean": 3.8308115209896525,
+            "p50": 3.77800011634827,
+            "p95": 4.42999982833862,
+            "p99": 5.01700019836426,
+            "maximum": 7.02500009536743
+          },
+          "over_20ms_frames": 1
+        }
+      },
+      "stages_ms_zero_when_absent": {
+        "LOD coverage": {
+          "samples": 12999,
+          "mean": 0.01628440649280714,
+          "p50": 0,
+          "p95": 0.007,
+          "p99": 0.602,
+          "maximum": 1.383
+        },
+        "LOD eviction": {
+          "samples": 12999,
+          "mean": 0.0014152627125163474,
+          "p50": 0,
+          "p95": 0.002,
+          "p99": 0.002,
+          "maximum": 2.791
+        },
+        "LOD requests": {
+          "samples": 12999,
+          "mean": 0.061203015616585886,
+          "p50": 0,
+          "p95": 0.743,
+          "p99": 0.904,
+          "maximum": 1.707
+        },
+        "LOD schedule/cut/evict": {
+          "samples": 12999,
+          "mean": 0.07942118624509577,
+          "p50": 0,
+          "p95": 0.811,
+          "p99": 1.453,
+          "maximum": 4.888
+        },
+        "actor update": {
+          "samples": 12999,
+          "mean": 0.013179629202246327,
+          "p50": 0,
+          "p95": 0.037,
+          "p99": 0.046,
+          "maximum": 0.267
+        },
+        "atomic publish": {
+          "samples": 12999,
+          "mean": 0.002360489268405262,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 1.566
+        },
+        "base controller": {
+          "samples": 12999,
+          "mean": 0.017625125009616126,
+          "p50": 0.011,
+          "p95": 0.014,
+          "p99": 0.222,
+          "maximum": 0.579
+        },
+        "collision exact match": {
+          "samples": 12999,
+          "mean": 8.585275790445419e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.002,
+          "maximum": 0.023
+        },
+        "collision node attach": {
+          "samples": 12999,
+          "mean": 0.08716493576428956,
+          "p50": 0,
+          "p95": 0.561,
+          "p99": 1.931,
+          "maximum": 2.811
+        },
+        "collision physics cook": {
+          "samples": 12999,
+          "mean": 0.004881529348411416,
+          "p50": 0,
+          "p95": 0.035,
+          "p99": 0.104,
+          "maximum": 0.263
+        },
+        "collision piece": {
+          "samples": 12999,
+          "mean": 0.09478406031233172,
+          "p50": 0,
+          "p95": 0.616,
+          "p99": 2.093,
+          "maximum": 3.007
+        },
+        "controller loading": {
+          "samples": 12999,
+          "mean": 0.000971997845988153,
+          "p50": 0.001,
+          "p95": 0.001,
+          "p99": 0.002,
+          "maximum": 0.174
+        },
+        "controller process": {
+          "samples": 12999,
+          "mean": 0.09836256635125779,
+          "p50": 0.067,
+          "p95": 0.317,
+          "p99": 0.454,
+          "maximum": 0.783
+        },
+        "cover picker": {
+          "samples": 12999,
+          "mean": 0.0012433264097238249,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.221
+        },
+        "cover prepare": {
+          "samples": 12999,
+          "mean": 0.0006303561812447112,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.096
+        },
+        "cover publish": {
+          "samples": 12999,
+          "mean": 0.005250942380183091,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.726
+        },
+        "lighting attribute upload": {
+          "samples": 12999,
+          "mean": 0.012048388337564428,
+          "p50": 0,
+          "p95": 0.078,
+          "p99": 0.129,
+          "maximum": 0.465
+        },
+        "lighting schedule": {
+          "samples": 12999,
+          "mean": 0.07572697899838449,
+          "p50": 0.087,
+          "p95": 0.118,
+          "p99": 0.194,
+          "maximum": 0.739
+        },
+        "mesh upload/create": {
+          "samples": 12999,
+          "mean": 0.01856088929917686,
+          "p50": 0,
+          "p95": 0.179,
+          "p99": 0.326,
+          "maximum": 1.319
+        },
+        "message console": {
+          "samples": 12999,
+          "mean": 5.385029617662897e-07,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.001
+        },
+        "message label": {
+          "samples": 12999,
+          "mean": 1.5385798907608277e-06,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.003
+        },
+        "notice message": {
+          "samples": 12999,
+          "mean": 1.2000923147934457e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.014
+        },
+        "notice panel sync": {
+          "samples": 12999,
+          "mean": 8.53142549426879e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.052
+        },
+        "player physics": {
+          "samples": 12999,
+          "mean": 0.07095222709439188,
+          "p50": 0,
+          "p95": 0.186,
+          "p99": 0.229,
+          "maximum": 0.86
+        },
+        "prepared subtree attach": {
+          "samples": 12999,
+          "mean": 0.0027700592353257945,
+          "p50": 0,
+          "p95": 0.027,
+          "p99": 0.05,
+          "maximum": 0.22
+        },
+        "receive": {
+          "samples": 12999,
+          "mean": 0.07712008616047389,
+          "p50": 0.011,
+          "p95": 0.104,
+          "p99": 1.291,
+          "maximum": 2.403
+        },
+        "receive batch": {
+          "samples": 12999,
+          "mean": 0.00014116470497730593,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.055
+        },
+        "receive density_ray": {
+          "samples": 12999,
+          "mean": 8.008308331410107e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.482
+        },
+        "receive edit_begin": {
+          "samples": 12999,
+          "mean": 0.0004650357719824602,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.28
+        },
+        "receive edit_done": {
+          "samples": 12999,
+          "mean": 1.2077852142472497e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.008
+        },
+        "receive mesh": {
+          "samples": 12999,
+          "mean": 0.003774905761981691,
+          "p50": 0,
+          "p95": 0.038,
+          "p99": 0.07,
+          "maximum": 0.267
+        },
+        "receive poll": {
+          "samples": 12999,
+          "mean": 0.005026463574121086,
+          "p50": 0.004,
+          "p95": 0.009,
+          "p99": 0.013,
+          "maximum": 0.32
+        },
+        "receive relight": {
+          "samples": 12999,
+          "mean": 0.007876452034771905,
+          "p50": 0,
+          "p95": 0.034,
+          "p99": 0.038,
+          "maximum": 0.366
+        },
+        "receive surface_batch": {
+          "samples": 12999,
+          "mean": 0.05110731594738057,
+          "p50": 0,
+          "p95": 0,
+          "p99": 1.235,
+          "maximum": 2.307
+        },
+        "retire collision/mesh": {
+          "samples": 12999,
+          "mean": 0.009144626509731517,
+          "p50": 0.0,
+          "p95": 0.001,
+          "p99": 0.501,
+          "maximum": 0.746
+        },
+        "staging frame": {
+          "samples": 12999,
+          "mean": 0.14887537502884837,
+          "p50": 0.005,
+          "p95": 1.048,
+          "p99": 2.541,
+          "maximum": 3.34
+        },
+        "surface callback boulder_horizon.gd": {
+          "samples": 12999,
+          "mean": 0.00015555042695591972,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.004,
+          "maximum": 0.013
+        },
+        "surface callback ground_cover.gd": {
+          "samples": 12999,
+          "mean": 0.04857942918686053,
+          "p50": 0,
+          "p95": 0,
+          "p99": 1.176,
+          "maximum": 2.242
+        },
+        "surface callback road_authoring.gd": {
+          "samples": 12999,
+          "mean": 0.00019593814908839142,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.005,
+          "maximum": 0.008
+        },
+        "surface callback world_ecosystem.gd": {
+          "samples": 12999,
+          "mean": 0.00019886145088083697,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.005,
+          "maximum": 0.116
+        },
+        "surface callback zombie_population.gd": {
+          "samples": 12999,
+          "mean": 0.00029248403723363336,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.006,
+          "maximum": 0.063
+        },
+        "vegetation edit publish": {
+          "samples": 12999,
+          "mean": 1.8693745672744057e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.017
+        },
+        "world authoring": {
+          "samples": 12999,
+          "mean": 0.010540810831602432,
+          "p50": 0.01,
+          "p95": 0.012,
+          "p99": 0.014,
+          "maximum": 0.238
+        },
+        "world interaction": {
+          "samples": 12999,
+          "mean": 0.018534810370028465,
+          "p50": 0.018,
+          "p95": 0.022,
+          "p99": 0.028,
+          "maximum": 0.276
+        },
+        "world pickups": {
+          "samples": 12999,
+          "mean": 0.02419839987691361,
+          "p50": 0.002,
+          "p95": 0.243,
+          "p99": 0.349,
+          "maximum": 0.669
+        },
+        "world presentation": {
+          "samples": 12999,
+          "mean": 0.012468420647742133,
+          "p50": 0.012,
+          "p95": 0.016,
+          "p99": 0.019,
+          "maximum": 0.237
+        },
+        "world process": {
+          "samples": 12999,
+          "mean": 0.19005731210093083,
+          "p50": 0.155,
+          "p95": 0.423,
+          "p99": 0.558,
+          "maximum": 1.274
+        },
+        "world vehicle": {
+          "samples": 12999,
+          "mean": 0.00831856296638203,
+          "p50": 0.005,
+          "p95": 0.007,
+          "p99": 0.098,
+          "maximum": 0.334
+        },
+        "zombie admission attach": {
+          "samples": 12999,
+          "mean": 0.009717362874067235,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 4.417
+        },
+        "zombie admission instance": {
+          "samples": 12999,
+          "mean": 9.931533194861143e-05,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.098
+        },
+        "zombie admission support": {
+          "samples": 12999,
+          "mean": 0.0001343949534579583,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0,
+          "maximum": 0.063
+        },
+        "zombie callback navigation_interest": {
+          "samples": 12999,
+          "mean": 0.002161704746518963,
+          "p50": 0,
+          "p95": 0.003,
+          "p99": 0.054,
+          "maximum": 0.349
+        },
+        "zombie callback readiness": {
+          "samples": 12999,
+          "mean": 0.07210731594738057,
+          "p50": 0,
+          "p95": 0.17,
+          "p99": 0.23,
+          "maximum": 0.833
+        },
+        "zombie callback spawn_visible": {
+          "samples": 12999,
+          "mean": 0.00010139241480113855,
+          "p50": 0,
+          "p95": 0,
+          "p99": 0.004,
+          "maximum": 0.226
+        },
+        "zombie callback water_depth": {
+          "samples": 12999,
+          "mean": 0.0546928225248096,
+          "p50": 0,
+          "p95": 0.264,
+          "p99": 0.334,
+          "maximum": 0.681
+        },
+        "zombie intent": {
+          "samples": 12999,
+          "mean": 0.13620201553965688,
+          "p50": 0.129,
+          "p95": 0.186,
+          "p99": 0.284,
+          "maximum": 2.529
+        },
+        "zombie interest_spacing": {
+          "samples": 12999,
+          "mean": 0.027628509885375796,
+          "p50": 0.026,
+          "p95": 0.042,
+          "p99": 0.079,
+          "maximum": 0.377
+        },
+        "zombie planning": {
+          "samples": 12999,
+          "mean": 0.37139010693130237,
+          "p50": 0.015,
+          "p95": 0.904,
+          "p99": 0.964,
+          "maximum": 1.409
+        },
+        "zombie population": {
+          "samples": 12999,
+          "mean": 0.018500576967459034,
+          "p50": 0.006,
+          "p95": 0.013,
+          "p99": 0.031,
+          "maximum": 4.71
+        },
+        "zombie residency": {
+          "samples": 12999,
+          "mean": 0.12453027155935072,
+          "p50": 0.116,
+          "p95": 0.164,
+          "p99": 0.352,
+          "maximum": 0.652
+        },
+        "zombie steering": {
+          "samples": 12999,
+          "mean": 0.005479729209939226,
+          "p50": 0.005,
+          "p95": 0.008,
+          "p99": 0.01,
+          "maximum": 0.092
+        },
+        "zombie update": {
+          "samples": 12999,
+          "mean": 0.3349121470882376,
+          "p50": 0,
+          "p95": 1.194,
+          "p99": 1.357,
+          "maximum": 5.934
+        }
+      },
+      "slowest_frames": [
+        {
+          "index": 6,
+          "phase": "idle",
+          "frame_ms": 68.1,
+          "draw_ms": 63.184,
+          "process_ms": 1.58,
+          "before_process_ms": 3.336,
+          "gpu_ms": 6.80600023269653,
+          "render_cpu_ms": 1.68799996376038,
+          "position": "(779.3846, 49.13094, 1341.538)",
+          "thread_cpu_ms": 0.0,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.024,
+            "base controller": 0.015,
+            "controller loading": 0.002,
+            "controller process": 0.085,
+            "lighting schedule": 0.005,
+            "player physics": 0.12,
+            "receive": 0.015,
+            "receive poll": 0.005,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.006,
+            "world authoring": 0.013,
+            "world interaction": 0.02,
+            "world pickups": 0.003,
+            "world presentation": 0.012,
+            "world process": 0.187,
+            "world vehicle": 0.006,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.136,
+            "zombie callback water_depth": 0.148,
+            "zombie intent": 0.123,
+            "zombie interest_spacing": 0.025,
+            "zombie planning": 0.778,
+            "zombie population": 0.006,
+            "zombie residency": 0.106,
+            "zombie steering": 0.005,
+            "zombie update": 1.053
+          }
+        },
+        {
+          "index": 0,
+          "phase": "idle",
+          "frame_ms": 26.012,
+          "draw_ms": 18.43,
+          "process_ms": 7.582,
+          "before_process_ms": 0.0,
+          "gpu_ms": 6.89300012588501,
+          "render_cpu_ms": 1.92999994754791,
+          "position": "(779.3846, 49.13094, 1341.538)",
+          "thread_cpu_ms": null,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "LOD coverage": 0.008,
+            "LOD eviction": 0.002,
+            "LOD requests": 0.688,
+            "LOD schedule/cut/evict": 0.703,
+            "base controller": 0.011,
+            "controller loading": 0.0,
+            "controller process": 0.062,
+            "lighting schedule": 0.002,
+            "message console": 0.001,
+            "message label": 0.003,
+            "notice message": 0.014,
+            "notice panel sync": 0.045,
+            "receive": 0.008,
+            "receive poll": 0.003,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.004,
+            "world authoring": 0.01,
+            "world interaction": 0.014,
+            "world pickups": 0.003,
+            "world presentation": 0.013,
+            "world process": 0.216,
+            "world vehicle": 0.005
+          }
+        },
+        {
+          "index": 5245,
+          "phase": "sprinting",
+          "frame_ms": 22.934,
+          "draw_ms": 12.233,
+          "process_ms": 6.856,
+          "before_process_ms": 3.845,
+          "gpu_ms": 7.59200000762939,
+          "render_cpu_ms": 1.79200005531311,
+          "position": "(857.736, 52.07637, 1408.227)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "LOD coverage": 0.82,
+            "LOD eviction": 0.003,
+            "LOD requests": 1.017,
+            "LOD schedule/cut/evict": 1.85,
+            "actor update": 0.05,
+            "base controller": 0.013,
+            "controller loading": 0.001,
+            "controller process": 0.079,
+            "lighting schedule": 0.116,
+            "player physics": 0.196,
+            "receive": 1.347,
+            "receive poll": 0.019,
+            "receive surface_batch": 1.301,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.008,
+            "surface callback boulder_horizon.gd": 0.005,
+            "surface callback ground_cover.gd": 1.233,
+            "surface callback road_authoring.gd": 0.006,
+            "surface callback world_ecosystem.gd": 0.005,
+            "surface callback zombie_population.gd": 0.007,
+            "world authoring": 0.012,
+            "world interaction": 0.023,
+            "world pickups": 0.003,
+            "world presentation": 0.014,
+            "world process": 0.189,
+            "world vehicle": 0.006,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.163,
+            "zombie callback water_depth": 0.037,
+            "zombie intent": 0.188,
+            "zombie interest_spacing": 0.034,
+            "zombie planning": 0.017,
+            "zombie population": 0.008,
+            "zombie residency": 0.158,
+            "zombie steering": 0.007,
+            "zombie update": 0.425
+          }
+        },
+        {
+          "index": 4832,
+          "phase": "sprinting",
+          "frame_ms": 20.688,
+          "draw_ms": 12.768,
+          "process_ms": 4.899,
+          "before_process_ms": 3.021,
+          "gpu_ms": 8.55000019073486,
+          "render_cpu_ms": 4.63299989700317,
+          "position": "(832.3859, 49.69356, 1406.831)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "LOD coverage": 0.007,
+            "LOD eviction": 0.002,
+            "LOD requests": 0.819,
+            "LOD schedule/cut/evict": 0.834,
+            "actor update": 0.024,
+            "base controller": 0.009,
+            "controller loading": 0.001,
+            "controller process": 0.065,
+            "lighting schedule": 0.007,
+            "player physics": 0.175,
+            "receive": 1.322,
+            "receive poll": 0.209,
+            "receive surface_batch": 1.088,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.004,
+            "surface callback boulder_horizon.gd": 0.003,
+            "surface callback ground_cover.gd": 1.026,
+            "surface callback road_authoring.gd": 0.005,
+            "surface callback world_ecosystem.gd": 0.005,
+            "surface callback zombie_population.gd": 0.006,
+            "world authoring": 0.01,
+            "world interaction": 0.02,
+            "world pickups": 0.003,
+            "world presentation": 0.011,
+            "world process": 0.147,
+            "world vehicle": 0.005,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.138,
+            "zombie callback water_depth": 0.025,
+            "zombie intent": 0.125,
+            "zombie interest_spacing": 0.024,
+            "zombie planning": 0.014,
+            "zombie population": 0.006,
+            "zombie residency": 0.12,
+            "zombie steering": 0.005,
+            "zombie update": 0.302
+          }
+        },
+        {
+          "index": 10197,
+          "phase": "jumping",
+          "frame_ms": 20.641,
+          "draw_ms": 12.29,
+          "process_ms": 4.824,
+          "before_process_ms": 3.527,
+          "gpu_ms": 8.49100017547607,
+          "render_cpu_ms": 1.37699997425079,
+          "position": "(901.2014, 59.44047, 1632.198)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.044,
+            "base controller": 0.013,
+            "controller loading": 0.001,
+            "controller process": 0.079,
+            "lighting attribute upload": 0.043,
+            "lighting schedule": 0.05,
+            "player physics": 0.137,
+            "receive": 1.266,
+            "receive poll": 0.022,
+            "receive relight": 0.047,
+            "receive surface_batch": 1.17,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.087,
+            "surface callback boulder_horizon.gd": 0.003,
+            "surface callback ground_cover.gd": 1.11,
+            "surface callback road_authoring.gd": 0.005,
+            "surface callback world_ecosystem.gd": 0.005,
+            "surface callback zombie_population.gd": 0.005,
+            "world authoring": 0.011,
+            "world interaction": 0.023,
+            "world pickups": 0.004,
+            "world presentation": 0.013,
+            "world process": 0.19,
+            "world vehicle": 0.006,
+            "zombie callback navigation_interest": 0.004,
+            "zombie callback readiness": 0.15,
+            "zombie callback water_depth": 0.028,
+            "zombie intent": 0.158,
+            "zombie interest_spacing": 0.031,
+            "zombie planning": 0.015,
+            "zombie population": 0.007,
+            "zombie residency": 0.141,
+            "zombie steering": 0.005,
+            "zombie update": 0.371
+          }
+        },
+        {
+          "index": 10196,
+          "phase": "jumping",
+          "frame_ms": 20.576,
+          "draw_ms": 5.843,
+          "process_ms": 11.282,
+          "before_process_ms": 3.451,
+          "gpu_ms": 8.99199962615967,
+          "render_cpu_ms": 1.65600001811981,
+          "position": "(901.293, 59.40714, 1632.061)",
+          "thread_cpu_ms": 31.25,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.026,
+            "base controller": 0.013,
+            "controller loading": 0.001,
+            "controller process": 0.203,
+            "lighting schedule": 0.107,
+            "player physics": 0.12,
+            "receive": 0.018,
+            "receive poll": 0.007,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.007,
+            "world authoring": 0.127,
+            "world interaction": 0.026,
+            "world pickups": 0.003,
+            "world presentation": 0.013,
+            "world process": 0.317,
+            "world vehicle": 0.011,
+            "zombie callback navigation_interest": 0.002,
+            "zombie callback readiness": 0.146,
+            "zombie callback water_depth": 0.034,
+            "zombie intent": 0.133,
+            "zombie interest_spacing": 0.024,
+            "zombie planning": 0.014,
+            "zombie population": 0.006,
+            "zombie residency": 0.124,
+            "zombie steering": 0.004,
+            "zombie update": 0.315
+          }
+        },
+        {
+          "index": 8609,
+          "phase": "jumping",
+          "frame_ms": 20.139,
+          "draw_ms": 9.963,
+          "process_ms": 6.851,
+          "before_process_ms": 3.325,
+          "gpu_ms": 8.09500026702881,
+          "render_cpu_ms": 3.53999996185303,
+          "position": "(895.9998, 58.07862, 1504.33)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.022,
+            "base controller": 0.011,
+            "collision exact match": 0.001,
+            "collision node attach": 1.232,
+            "collision physics cook": 0.065,
+            "collision piece": 1.336,
+            "controller loading": 0.001,
+            "controller process": 0.064,
+            "lighting schedule": 0.101,
+            "mesh upload/create": 0.249,
+            "player physics": 0.123,
+            "prepared subtree attach": 0.044,
+            "receive": 1.21,
+            "receive mesh": 0.065,
+            "receive poll": 0.016,
+            "receive surface_batch": 1.102,
+            "retire collision/mesh": 0.0,
+            "staging frame": 1.729,
+            "surface callback boulder_horizon.gd": 0.005,
+            "surface callback ground_cover.gd": 1.039,
+            "surface callback road_authoring.gd": 0.004,
+            "surface callback world_ecosystem.gd": 0.006,
+            "surface callback zombie_population.gd": 0.007,
+            "world authoring": 0.01,
+            "world interaction": 0.019,
+            "world pickups": 0.002,
+            "world presentation": 0.011,
+            "world process": 0.156,
+            "world vehicle": 0.005,
+            "zombie callback navigation_interest": 0.002,
+            "zombie callback readiness": 0.164,
+            "zombie callback water_depth": 0.035,
+            "zombie intent": 0.128,
+            "zombie interest_spacing": 0.024,
+            "zombie planning": 0.012,
+            "zombie population": 0.006,
+            "zombie residency": 0.121,
+            "zombie steering": 0.004,
+            "zombie update": 0.306
+          }
+        },
+        {
+          "index": 12605,
+          "phase": "recovery",
+          "frame_ms": 20.093,
+          "draw_ms": 10.005,
+          "process_ms": 4.163,
+          "before_process_ms": 5.925,
+          "gpu_ms": 7.83900022506714,
+          "render_cpu_ms": 4.11999988555908,
+          "position": "(906.9688, 59.01694, 1623.547)",
+          "thread_cpu_ms": 31.25,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.033,
+            "base controller": 0.021,
+            "controller loading": 0.002,
+            "controller process": 0.123,
+            "lighting schedule": 0.219,
+            "player physics": 0.198,
+            "receive": 0.027,
+            "receive poll": 0.01,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.009,
+            "world authoring": 0.018,
+            "world interaction": 0.034,
+            "world pickups": 0.005,
+            "world presentation": 0.02,
+            "world process": 0.3,
+            "world vehicle": 0.009,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.2,
+            "zombie callback water_depth": 0.172,
+            "zombie intent": 0.155,
+            "zombie interest_spacing": 0.036,
+            "zombie planning": 0.928,
+            "zombie population": 0.008,
+            "zombie residency": 0.145,
+            "zombie steering": 0.008,
+            "zombie update": 1.293
+          }
+        },
+        {
+          "index": 5244,
+          "phase": "sprinting",
+          "frame_ms": 19.925,
+          "draw_ms": 6.498,
+          "process_ms": 10.261,
+          "before_process_ms": 3.166,
+          "gpu_ms": 7.59299993515015,
+          "render_cpu_ms": 1.65900003910065,
+          "position": "(857.6511, 52.07637, 1408.085)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "actor update": 0.035,
+            "base controller": 0.014,
+            "controller loading": 0.001,
+            "controller process": 0.234,
+            "lighting schedule": 0.099,
+            "player physics": 0.188,
+            "receive": 0.013,
+            "receive poll": 0.005,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.005,
+            "world authoring": 0.011,
+            "world interaction": 0.02,
+            "world pickups": 0.003,
+            "world presentation": 0.015,
+            "world process": 0.326,
+            "world vehicle": 0.164,
+            "zombie callback navigation_interest": 0.003,
+            "zombie callback readiness": 0.137,
+            "zombie callback water_depth": 0.029,
+            "zombie intent": 0.142,
+            "zombie interest_spacing": 0.027,
+            "zombie planning": 0.015,
+            "zombie population": 0.007,
+            "zombie residency": 0.131,
+            "zombie steering": 0.006,
+            "zombie update": 0.338
+          }
+        },
+        {
+          "index": 8975,
+          "phase": "jumping",
+          "frame_ms": 18.857,
+          "draw_ms": 5.345,
+          "process_ms": 10.514,
+          "before_process_ms": 2.998,
+          "gpu_ms": 7.15700006484985,
+          "render_cpu_ms": 2.12299990653992,
+          "position": "(896.0242, 58.89678, 1535.191)",
+          "thread_cpu_ms": 15.625,
+          "residents": 6,
+          "pipeline_specialization_delta": 0.0,
+          "pipeline_draw_delta": 0.0,
+          "stages_ms": {
+            "LOD coverage": 0.614,
+            "LOD eviction": 0.001,
+            "LOD requests": 0.812,
+            "LOD schedule/cut/evict": 1.435,
+            "actor update": 0.023,
+            "base controller": 0.011,
+            "controller loading": 0.001,
+            "controller process": 0.344,
+            "lighting schedule": 0.086,
+            "player physics": 0.117,
+            "receive": 0.01,
+            "receive poll": 0.004,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.004,
+            "world authoring": 0.01,
+            "world interaction": 0.017,
+            "world pickups": 0.286,
+            "world presentation": 0.01,
+            "world process": 0.439,
+            "world vehicle": 0.004,
+            "zombie callback navigation_interest": 0.002,
+            "zombie callback readiness": 0.148,
+            "zombie callback water_depth": 0.038,
+            "zombie intent": 0.126,
+            "zombie interest_spacing": 0.026,
+            "zombie planning": 0.013,
+            "zombie population": 0.007,
+            "zombie residency": 0.122,
+            "zombie steering": 0.004,
+            "zombie update": 0.307
+          }
+        }
+      ],
+      "contacts_ms": {
+        "samples": 24,
+        "mean": 21.724875,
+        "p50": 21.699,
+        "p95": 24.929,
+        "p99": 25.309,
+        "maximum": 25.309
+      },
+      "worker_queue_ms": {
+        "samples": 24,
+        "mean": 0.06954166666666667,
+        "p50": 0.071,
+        "p95": 0.121,
+        "p99": 0.147,
+        "maximum": 0.147
+      },
+      "jumps": 22,
+      "distance_by_phase": {
+        "idle": 0.0,
+        "jumping": 160.197772756219,
+        "mining_after_jump": 2.1318473815918,
+        "mining_after_run": 0.120651245117188,
+        "mining_idle": 0.228664398193359,
+        "recovery": 0.0,
+        "sprinting": 149.177011989057,
+        "walking": 82.6890005990863
+      },
+      "failures": []
+    }
+  ]
+}
