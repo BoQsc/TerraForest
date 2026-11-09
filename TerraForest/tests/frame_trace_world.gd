@@ -7,6 +7,15 @@ var samples:Array[Dictionary]=[]
 var previous:=0
 var label:="loading"
 var manual_save:Dictionary={"requested":false,"completed":false,"success":false}
+var light_abba:=false
+var repeat_light_setters:=false
+var light_phases:Array[Dictionary]=[]
+func repeat_lights()->void:
+	if not repeat_light_setters or not is_instance_valid(game):return
+	for light:Node in game.structures.resident_lights.get_children():
+		if light is OmniLight3D and light.visible:
+			light.global_position=light.global_position
+			light.light_energy=light.light_energy
 func _initialize()->void:
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
 	node_added.connect(func(node:Node):
@@ -23,7 +32,12 @@ func wait_for(predicate:Callable,seconds:float)->bool:
 	return predicate.call()
 func frame()->void:
 	var now:=Time.get_ticks_usec()
-	if previous>0:samples.append({"phase":label,"frame_ms":(now-previous)/1000.0})
+	if previous>0:
+		var sample:Dictionary={"phase":label,"frame_ms":(now-previous)/1000.0}
+		if light_abba:
+			sample.gpu_ms=RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid())
+			sample.draw_calls=Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
+		samples.append(sample)
 	previous=now
 func run()->void:
 	if not slot.begins_with("StartupBench_FPS_") or not slot.is_valid_identifier() or output.is_empty():quit(2);return
@@ -49,6 +63,20 @@ func run()->void:
 	label="arrival_idle"
 	var short:bool="--trace-short" in OS.get_cmdline_user_args()
 	await wait_for(func():return false,12 if short else 20)
+	light_abba="--trace-light-abba" in OS.get_cmdline_user_args()
+	if light_abba:
+		RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
+		process_frame.connect(repeat_lights)
+		for phase:String in ["guarded_a","repeated_b","repeated_b2","guarded_a2"]:
+			repeat_light_setters=phase.begins_with("repeated")
+			label="light_warmup"
+			await wait_for(func():return false,1)
+			label="lights_"+phase
+			await wait_for(func():return false,5)
+			light_phases.append({"phase":phase,"lights":game.structures.resident_lights.statistics()})
+			await RenderingServer.frame_post_draw
+			root.get_texture().get_image().save_png(output.path_join(label+".png"))
+		repeat_light_setters=false;process_frame.disconnect(repeat_lights)
 	if "--trace-save" in OS.get_cmdline_user_args():
 		label="save_during_play"
 		if trace!=null:trace.mark("explicit normal save during gameplay")
@@ -76,6 +104,7 @@ func run()->void:
 	record.initializations=initializations
 	record.last_capture=game.persistence.last_capture.duplicate(true)
 	record.manual_save=manual_save.duplicate()
+	if light_abba:record.light_phases=light_phases
 	if trace!=null:record.trace_files=trace.written;record.trace_overhead_last_us=trace.overhead_us
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	game.yaw=initial_yaw;game.player.rotation.y=initial_yaw

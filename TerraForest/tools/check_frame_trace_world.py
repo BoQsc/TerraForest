@@ -23,6 +23,8 @@ def main():
     parser.add_argument('--without-trace', action='store_true')
     parser.add_argument('--verbose', action='store_true')
     parser.add_argument('--save', action='store_true', help='Capture one normal save during active gameplay')
+    parser.add_argument('--gpu-profile', action='store_true', help='Retain engine GPU pass summaries in the console log')
+    parser.add_argument('--light-abba', action='store_true', help='Compare unchanged versus redundantly submitted pooled lights in one stationary view')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
     if not args.source.startswith('StartupBench_FPS_') or not args.label.isidentifier():
@@ -51,8 +53,12 @@ def main():
         command += ['--trace-short']
     if args.save:
         command += ['--trace-save']
+    if args.light_abba:
+        command += ['--trace-light-abba']
     if args.verbose:
         command.insert(1, '--verbose')
+    if args.gpu_profile:
+        command.insert(1, '--gpu-profile')
     if args.uncapped:
         command += ['--trace-uncapped']
     if not args.without_trace:

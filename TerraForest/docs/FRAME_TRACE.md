@@ -110,3 +110,12 @@ python TerraForest/tools/check_frame_trace_world.py --short --save --executable 
 shutdown save. Its observation retains per-component capture costs and initial
 zombie setup timings. A successful save does not override a strict shutdown
 diagnostic failure; the wrapper retains both results in the report.
+
+`--gpu-profile` also retains the engine's GPU pass summaries. `--light-abba`
+compares four five-second stationary phases: guarded light updates, redundant
+unchanged setters twice, then guarded updates again, with one-second warmups.
+It records root GPU time, draw counts, selected lights and screenshots without
+changing light counts, positions, energy, shadows or graphics preferences.
+This is a diagnostic control, not evidence that redundant setters dominate GPU
+cost. Run one game at a time; concurrent game processes invalidate performance
+comparisons. Screenshot readback and optional verbose profiling can perturb timing.
