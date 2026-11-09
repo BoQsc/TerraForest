@@ -1,4 +1,5 @@
 {
+  "res://addons/audio_runtime/wav_decoder.gd": [],
   "res://addons/characters/runtime/held_item.gd": [
     "res://addons/player_runtime/art/consumables/214.res",
     "res://addons/player_runtime/art/consumables/215.res",
@@ -12,6 +13,8 @@
     "res://addons/structures/city_catalog.gd"
   ],
   "res://addons/characters/runtime/human_view.gd": [
+    "res://addons/characters/runtime/px9_aim_layer.gd",
+    "res://addons/characters/runtime/px9/item_instance.gd",
     "res://addons/characters/runtime/assets/Human.r11.glb",
     "res://addons/characters/runtime/assets/Human.crouch.res",
     "res://addons/characters/runtime/assets/Human.placement.res",
@@ -36,9 +39,18 @@
     "res://addons/characters/wearables/clothing.gd",
     "res://addons/characters/runtime/assets/Ranger.body.glb",
     "res://addons/characters/runtime/assets/Ranger.magazine.glb",
-    "res://addons/characters/runtime/torch_effects.gd"
+    "res://addons/characters/runtime/torch_effects.gd",
+    "res://addons/characters/runtime/px9/PX9_Eclipse_FP.glb",
+    "res://addons/characters/runtime/px9/Human.px9_eclipse.res",
+    "res://addons/characters/runtime/muzzle_flash.gd"
+  ],
+  "res://addons/characters/runtime/muzzle_flash.gd": [
+    "res://addons/characters/runtime/muzzle_flash.gdshader",
+    "res://addons/characters/runtime/muzzle_smoke.gdshader"
   ],
   "res://addons/characters/runtime/obstacle_target.gd": [],
+  "res://addons/characters/runtime/px9/item_instance.gd": [],
+  "res://addons/characters/runtime/px9_aim_layer.gd": [],
   "res://addons/characters/runtime/torch_effects.gd": [
     "res://addons/characters/runtime/torch_flame.gdshader",
     "res://addons/characters/runtime/torch_motes.gdshader"
@@ -109,7 +121,8 @@
     "res://addons/player_runtime/durability_catalog.gd",
     "res://addons/player_runtime/destruction_effects.gd",
     "res://addons/player_runtime/structural_integrity.gd",
-    "res://addons/player_runtime/bullet_holes.gd"
+    "res://addons/player_runtime/bullet_holes.gd",
+    "res://addons/audio_runtime/wav_decoder.gd"
   ],
   "res://addons/player_runtime/compass.gd": [],
   "res://addons/player_runtime/construction_inventory.gd": [],
@@ -155,6 +168,8 @@
   ],
   "res://addons/player_runtime/first_person_depth.gd": [],
   "res://addons/player_runtime/first_person_meshes.gd": [
+    "res://addons/characters/runtime/px9/first_person_body.res",
+    "res://addons/characters/runtime/px9/first_person_arms.res",
     "res://addons/characters/runtime/assets/first_person/body_body.res",
     "res://addons/characters/runtime/assets/first_person/body_arms.res",
     "res://addons/characters/runtime/assets/first_person/unarmed_body.res",
@@ -185,10 +200,11 @@
     "res://addons/player_runtime/art/salvage/225.svg",
     "res://addons/player_runtime/art/salvage/226.svg",
     "res://addons/player_runtime/art/salvage/227.svg",
+    "res://addons/player_runtime/art/px9.svg",
+    "res://addons/player_runtime/art/cartridge.svg",
     "res://addons/player_runtime/art/ranger.svg",
     "res://addons/player_runtime/art/ranger_cartridges.svg",
     "res://addons/player_runtime/art/carbine.svg",
-    "res://addons/player_runtime/art/cartridge.svg",
     "res://addons/player_runtime/art/explosive_barrel.svg",
     "res://addons/player_runtime/art/coal.svg",
     "res://addons/structures/mine_rail_catalog.gd",

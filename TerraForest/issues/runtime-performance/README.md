@@ -7,8 +7,10 @@ all three providers then capture 6,061 current gameplay frames. Source fixtures,
 save/shutdown and eight inspected views pass their scoped checks. A 34.638 ms
 frame spends just 0.056 ms in these callbacks; physics, terrain publication and
 rendering remain the next targets. Contended timing is not an FPS comparison.
-Export/installed verification awaits the authorized pistol/player merge window;
-recorder overhead, endurance and stable 60 FPS remain unqualified.
+The merged export now passes installed provider/save/shutdown gates across 5,226
+frames. A clean sequential recorder-off control still has outdoor p99/max
+17.169/27.356 ms. All eight installed images were inspected; bake outputs remain
+unchanged. Total recorder overhead, endurance and stable 60 FPS remain unqualified.
 
 Latest: [render-stage attribution](render-stage-attribution-2026-11-09.md) adds
 shared render-setup timing and optional bounded device CPU markers in source.

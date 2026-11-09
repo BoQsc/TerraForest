@@ -353,9 +353,19 @@ without error/leak diagnostics, and eight source images were inspected. In a
 10.806 ms; terrain collision attachment also reaches 2.182 ms in a selected
 frame. This contended functional run is not an FPS baseline or an attribution of
 all physics to zombies. Return to terrain publication, physics and render costs.
-Installed verification waits for the user-authorized pistol/player merge window;
-resume with a merged export, matching DLLs and the required-profile/save/shutdown
-gate. Matched recorder overhead and long-session memory remain open.
+The authorized pistol/player merge is now exported after refreshing its startup
+dependency index. All 14 native DLLs match; bake output identities are unchanged.
+The installed required-profile/save/shutdown gate passes with 5,226 current
+gameplay samples for each provider, and a recorder-off save/shutdown control
+passes. No competing engine/compiler was observed in either run's one-second
+samples. Recorder-off outdoor p99/max remains 17.169/27.356 ms. All eight installed
+views were inspected. The recorder callback median is 0.291 ms, but larger
+whole-frame and GPU differences prevent isolating total overhead from this one
+sequential pair. That qualification and long-session memory remain open.
+Next measure terrain collision attachment itself: the current fixture excludes
+the engine's live-body shape construction, even though that stage reaches
+2.182 ms in the actual world. Compare exact cold/reused/deferred publication
+before selecting a change; preserve all collision triangles and atomic readiness.
 
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction

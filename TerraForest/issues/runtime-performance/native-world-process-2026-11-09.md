@@ -1,7 +1,7 @@
 # Native world callback attribution — 2026-11-09
 
-Status: source integration verified; installed verification and uncontended
-overhead comparison remain open. This adds attribution, not a frame-rate fix. Stable 60 FPS with
+Status: source and installed integration verified; total recorder overhead and
+stable frame-time headroom remain open. This adds attribution, not a frame-rate fix. Stable 60 FPS with
 headroom remains open across the world and player.
 
 The [selection comparison](render-stage-attribution-2026-11-09.md) still contains
@@ -99,16 +99,64 @@ shows the retained generated fixture at the sweep endpoint. These are original
 runtime captures, without image editing; identities and exact selected samples
 are retained in [machine-readable evidence](native-world-process-2026-11-09.json).
 
+## Installed merged build and recorder control
+
+The authorized pistol/player merge completed at `020610cb`. The first export
+stopped on a stale startup dependency index; regenerating the index includes
+the merged player resources. The next export passed its existing gates with all
+14 native DLLs matching. The four regenerated bake receipts changed source
+identities only: tool geometry, icon atlases and debris outputs are unchanged.
+The installed PCK is 626,967,240 bytes, SHA256
+`1fdbb0e0431fb8b0633fad223bdcadea62fdb5a5076bafe7d52325e368946986`.
+
+The [installed trace run](../../reports/performance_changes/20261109T192630473869Z_native_world_profile_pack/run.json)
+passes all three native-provider gates across 5,226 current gameplay samples,
+normal save and shutdown. The subsequent [recorder-off control](../../reports/performance_changes/20261109T192803599323Z_native_world_trace_off_pack/run.json)
+also passes save/shutdown. Both have no error/leak diagnostics. One-second host
+samples observe no competing engine/compiler other than idle Project Manager
+41740; this is not proof of OS idleness or absence of subsecond activity.
+
+| Continuous phase | Trace on median / p99 / max ms | Trace off median / p99 / max ms |
+| --- | --- | --- |
+| Arrival idle | 8.160 / 16.250 / 23.489 | 7.376 / 15.651 / 22.094 |
+| Settled idle | 9.133 / 17.000 / 24.011 | 6.784 / 10.336 / 12.841 |
+| Outdoor sweep | 8.668 / 20.004 / 34.598 | 6.850 / 17.169 / 27.356 |
+
+Both finish with 81,497 indexed and 67,941 resident cover instances. Whole-run
+graphics-clock medians are 2,220 / 2,265 MHz. GPU times also differ between runs;
+the sequential pair does not isolate recorder cost from workload, clock or
+thermal variation. Its measured callback median/p99 is 0.291 / 0.509 ms, which
+excludes some callback/stage instrumentation and cannot explain the full paired
+difference by itself. Do not equate that metric with total observer overhead.
+The recorder-off sweep still misses 16.67 ms, independently confirming stalls.
+
+Peak private allocation is 4,283,965,440 / 4,163,264,512 bytes, and dedicated GPU
+allocation is 1,752,162,304 bytes in both. These short runs do not establish
+leak-free endurance. All eight installed images were inspected: no obvious new
+missing buildings, cover, boulders or held-tool geometry in these views. Small
+pose and wind differences remain; continuous-motion acceptance is still open.
+[Host evidence and compact comparison](../../reports/performance_changes/host_native_world_profile_pack_20261109T192630321904Z/comparison.json)
+retain counts, raw telemetry, image hashes and source/package identity.
+
 ## Remaining acceptance
 
-Complete matched recorder overhead and installed API/save/shutdown checks.
-The recorder-off attempt deferred because another engine was active; do not
-present unmatched timings as its cost. Export and installed checks are held for
-the user-authorized pistol/player merge window; resume on the merged revision,
-verify matching DLLs and rerun the required-profile/save/shutdown gate.
+The installed API/save/shutdown requirement is now closed for this build. Repeat
+recorder controls with phase-aligned hardware/workload evidence before claiming
+its total overhead qualified. The earlier contended/deferred attempts remain
+retained and excluded from comparison.
 Retain host/GPU telemetry and reject contended comparisons. Inspect generated
 images independently from lifecycle assertions. Then prioritize measured
 whole-frame costs; pursuit remains one workstream. Dense barrel/collapse
 chains, long-session memory growth, wider traversal, outdoor occlusion overhead,
 cold pursuit, known water/interaction failures and multiplayer scale remain open
 in the [foundation tracker](../../docs/WORLD_FOUNDATION_STATUS.md).
+
+The next terrain-publication experiment must measure actual collision attachment,
+not just resource setup. At the pinned engine revision, adding a shape to a live
+Jolt body commits its shapes; concave mesh construction occurs through that path.
+[Shape commit](https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/modules/jolt_physics/objects/jolt_shaped_object_3d.cpp),
+[concave construction](https://raw.githubusercontent.com/godotengine/godot/ed1daf0bf/modules/jolt_physics/shapes/jolt_concave_polygon_shape_3d.cpp).
+Our existing `terrain_collision` fixture explicitly excludes node attachment.
+Measure cold, live-reused and deferred body admission at unchanged triangle
+coverage before changing piece size or publication ownership. No engine code is
+copied into the project, and no production collision change is claimed here.

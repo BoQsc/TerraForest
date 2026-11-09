@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "status": "source verified; installed and uncontended overhead gates open",
+  "status": "source and installed integration verified; stable frame-time headroom and endurance open",
   "baseline_revision": "5a1fa28ee5cbde0db60334aae2c481f04daffd15",
   "source_run": "reports/performance_changes/20261109T191539218026Z_native_world_profile_lifecycle",
   "required_profile_counts": {
@@ -302,8 +302,8 @@
     "Contended functional capture; no FPS/nonregression or recorder-overhead claim",
     "Native callback profiles omit work invoked outside those callbacks",
     "Short shutdown diagnostics do not establish leak-free endurance",
-    "Export/installed gates resume after authorized pistol/player merge",
-    "Terrain/physics/rendering, destruction, pursuit and wider world/player qualification remain open"
+    "Terrain/physics/rendering, destruction, pursuit and wider world/player qualification remain open",
+    "Installed on/off comparison is one sequential pair; headroom and further observer-effect isolation remain open"
   ],
   "images": [
     {
@@ -330,5 +330,358 @@
       "review": "Inspected: no obvious new missing building/cover/boulder/tool geometry in this view; not continuous-motion or world-quality acceptance",
       "origin": "Original unedited runtime capture of owned default-world fixture"
     }
-  ]
+  ],
+  "installed": {
+    "revision": "020610cb",
+    "pack_bytes": 626967240,
+    "pack_sha256": "1fdbb0e0431fb8b0633fad223bdcadea62fdb5a5076bafe7d52325e368946986",
+    "host_receipts": "reports/performance_changes/host_native_world_profile_pack_20261109T192630321904Z",
+    "runs": [
+      {
+        "run": "reports/performance_changes/20261109T192630473869Z_native_world_profile_pack",
+        "passed": true,
+        "diagnostics": [],
+        "native_process_current_frames": {
+          "blocks": 5226,
+          "model_horizon": 5226,
+          "resident_lights": 5226
+        },
+        "foreign_engine_compiler_processes_observed": [],
+        "phases": {
+          "arrival_idle": {
+            "frame_ms": {
+              "n": 1437,
+              "p50": 8.16,
+              "p99": 16.25,
+              "max": 23.489
+            },
+            "over_16_667_ms": 6,
+            "gpu_median_ms": 5.22599983215332,
+            "draw_calls_median": 1783.0
+          },
+          "settled_idle": {
+            "frame_ms": {
+              "n": 877,
+              "p50": 9.133,
+              "p99": 17.0,
+              "max": 24.011
+            },
+            "over_16_667_ms": 9,
+            "gpu_median_ms": 6.1269998550415,
+            "draw_calls_median": 2398.0
+          },
+          "turning": {
+            "frame_ms": {
+              "n": 532,
+              "p50": 9.597999999999999,
+              "p99": 17.102,
+              "max": 19.858
+            },
+            "over_16_667_ms": 9,
+            "gpu_median_ms": 6.06300020217896,
+            "draw_calls_median": 2398.0
+          },
+          "outdoor_sweep": {
+            "frame_ms": {
+              "n": 884,
+              "p50": 8.6675,
+              "p99": 20.004,
+              "max": 34.598
+            },
+            "over_16_667_ms": 32,
+            "gpu_median_ms": 5.727999925613405,
+            "draw_calls_median": 2351.5
+          },
+          "save_during_play": {
+            "frame_ms": {
+              "n": 119,
+              "p50": 9.931,
+              "p99": 17.721,
+              "max": 23.078
+            },
+            "over_16_667_ms": 2,
+            "gpu_median_ms": 6.08199977874756,
+            "draw_calls_median": 2398.0
+          }
+        },
+        "cover_totals": {
+          "indexed_instances": 81497,
+          "resident_instances": 67941
+        },
+        "resources": {
+          "peak_private_commit_bytes": 4283965440,
+          "peak_dedicated_gpu_bytes": 1752162304
+        },
+        "whole_lifetime_gpu_graphics_clock_mhz": {
+          "n": 93,
+          "p50": 2220.0,
+          "p99": 2520.0,
+          "max": 2520.0
+        },
+        "images": [
+          {
+            "path": "reports/performance_changes/20261109T192630473869Z_native_world_profile_pack/arrival.png",
+            "sha256": "d4073dffaec4e8290cdd6b0226c6a4a9c81debdd28ed9258af1ee21bdcecfe6f",
+            "review": "Inspected: no obvious new missing geometry in this view; moving wind and slight pose differences remain"
+          },
+          {
+            "path": "reports/performance_changes/20261109T192630473869Z_native_world_profile_pack/outdoor_0.png",
+            "sha256": "f35010976b7a99c812c31387945ed31c32149066055ea0b9f0e076b9104fcb98",
+            "review": "Inspected: no obvious new missing geometry in this view; moving wind and slight pose differences remain"
+          },
+          {
+            "path": "reports/performance_changes/20261109T192630473869Z_native_world_profile_pack/outdoor_1.png",
+            "sha256": "cb5969056c663c2e0e4fae3d5ef641b665c0d005d18fdd72b05ea1f7640431c8",
+            "review": "Inspected: no obvious new missing geometry in this view; moving wind and slight pose differences remain"
+          },
+          {
+            "path": "reports/performance_changes/20261109T192630473869Z_native_world_profile_pack/outdoor_2.png",
+            "sha256": "043ea3762758228443cd5c26166c5fa9c18ade3763c696845e6d4135f2909487",
+            "review": "Inspected: no obvious new missing geometry in this view; moving wind and slight pose differences remain"
+          }
+        ],
+        "recorder_previous_us": {
+          "samples": 5226,
+          "mean": 304.83735170302333,
+          "p50": 291,
+          "p95": 416,
+          "p99": 509,
+          "maximum": 1718
+        },
+        "native_process_gameplay": {
+          "blocks": {
+            "current_samples": 5226,
+            "stale_samples": 0,
+            "unavailable_samples": 0,
+            "timings_us": {
+              "collision_us": {
+                "samples": 5226,
+                "mean": 7.91044776119403,
+                "p50": 0,
+                "p95": 27,
+                "p99": 135,
+                "maximum": 802
+              },
+              "horizon_us": {
+                "samples": 5226,
+                "mean": 3.3340987370838118,
+                "p50": 3,
+                "p95": 4,
+                "p99": 5,
+                "maximum": 32
+              },
+              "occlusion_us": {
+                "samples": 5226,
+                "mean": 8.871220818982014,
+                "p50": 8,
+                "p95": 11,
+                "p99": 14,
+                "maximum": 1033
+              },
+              "process_us": {
+                "samples": 5226,
+                "mean": 22.53348641408343,
+                "p50": 13,
+                "p95": 43,
+                "p99": 211,
+                "maximum": 1039
+              },
+              "residency_us": {
+                "samples": 5226,
+                "mean": 1.7809031764255645,
+                "p50": 0,
+                "p95": 1,
+                "p99": 102,
+                "maximum": 221
+              },
+              "upload_us": {
+                "samples": 5226,
+                "mean": 0.6368159203980099,
+                "p50": 1,
+                "p95": 1,
+                "p99": 1,
+                "maximum": 36
+              }
+            }
+          },
+          "model_horizon": {
+            "current_samples": 5226,
+            "stale_samples": 0,
+            "unavailable_samples": 0,
+            "timings_us": {
+              "process_us": {
+                "samples": 5226,
+                "mean": 56.03922694221202,
+                "p50": 58,
+                "p95": 77,
+                "p99": 109,
+                "maximum": 751
+              }
+            }
+          },
+          "resident_lights": {
+            "current_samples": 5226,
+            "stale_samples": 0,
+            "unavailable_samples": 0,
+            "timings_us": {
+              "process_us": {
+                "samples": 5226,
+                "mean": 3.2313432835820897,
+                "p50": 3,
+                "p95": 10,
+                "p99": 16,
+                "maximum": 127
+              }
+            }
+          }
+        }
+      },
+      {
+        "run": "reports/performance_changes/20261109T192803599323Z_native_world_trace_off_pack",
+        "passed": true,
+        "diagnostics": [],
+        "native_process_current_frames": null,
+        "foreign_engine_compiler_processes_observed": [],
+        "phases": {
+          "arrival_idle": {
+            "frame_ms": {
+              "n": 1564,
+              "p50": 7.3759999999999994,
+              "p99": 15.651,
+              "max": 22.094
+            },
+            "over_16_667_ms": 8,
+            "gpu_median_ms": 5.09899997711182,
+            "draw_calls_median": 1759.0
+          },
+          "settled_idle": {
+            "frame_ms": {
+              "n": 676,
+              "p50": 6.7835,
+              "p99": 10.336,
+              "max": 12.841
+            },
+            "over_16_667_ms": 0,
+            "gpu_median_ms": 5.713000059127809,
+            "draw_calls_median": 2389.0
+          },
+          "turning": {
+            "frame_ms": {
+              "n": 665,
+              "p50": 6.926,
+              "p99": 11.811,
+              "max": 15.054
+            },
+            "over_16_667_ms": 0,
+            "gpu_median_ms": 5.72900009155273,
+            "draw_calls_median": 2383.0
+          },
+          "outdoor_sweep": {
+            "frame_ms": {
+              "n": 1047,
+              "p50": 6.85,
+              "p99": 17.169,
+              "max": 27.356
+            },
+            "over_16_667_ms": 12,
+            "gpu_median_ms": 5.39699983596802,
+            "draw_calls_median": 2330.0
+          },
+          "save_during_play": {
+            "frame_ms": {
+              "n": 122,
+              "p50": 7.9605,
+              "p99": 12.753,
+              "max": 13.856
+            },
+            "over_16_667_ms": 0,
+            "gpu_median_ms": 5.50099992752075,
+            "draw_calls_median": 2383.0
+          }
+        },
+        "cover_totals": {
+          "indexed_instances": 81497,
+          "resident_instances": 67941
+        },
+        "resources": {
+          "peak_private_commit_bytes": 4163264512,
+          "peak_dedicated_gpu_bytes": 1752162304
+        },
+        "whole_lifetime_gpu_graphics_clock_mhz": {
+          "n": 88,
+          "p50": 2265.0,
+          "p99": 2535.0,
+          "max": 2535.0
+        },
+        "images": [
+          {
+            "path": "reports/performance_changes/20261109T192803599323Z_native_world_trace_off_pack/arrival.png",
+            "sha256": "d178e58ddcb2870e34ada7d390b75b651552d6a0e218ccc3cb47e2b8e72df517",
+            "review": "Inspected: no obvious new missing geometry in this view; moving wind and slight pose differences remain"
+          },
+          {
+            "path": "reports/performance_changes/20261109T192803599323Z_native_world_trace_off_pack/outdoor_0.png",
+            "sha256": "2f025b5daa28f5083f74b2def90cee73745a0fd82774122651e0ebff82b3cf32",
+            "review": "Inspected: no obvious new missing geometry in this view; moving wind and slight pose differences remain"
+          },
+          {
+            "path": "reports/performance_changes/20261109T192803599323Z_native_world_trace_off_pack/outdoor_1.png",
+            "sha256": "1bbefe0df187c8fbadb5215d7b566cb0cc2511bfdbbc5c4a977df215860a73ea",
+            "review": "Inspected: no obvious new missing geometry in this view; moving wind and slight pose differences remain"
+          },
+          {
+            "path": "reports/performance_changes/20261109T192803599323Z_native_world_trace_off_pack/outdoor_2.png",
+            "sha256": "bb026fd22d11e4079e453954d7d78d63ed663a51ccaedf92598b9c2b9d47c1d4",
+            "review": "Inspected: no obvious new missing geometry in this view; moving wind and slight pose differences remain"
+          }
+        ]
+      }
+    ],
+    "bake_receipts": {
+      "addons/player_runtime/art/drops/current_tools.bake.json": {
+        "old_keys": [
+          "outputs",
+          "schema",
+          "sources",
+          "triangles"
+        ],
+        "changed_top_keys": [
+          "sources"
+        ]
+      },
+      "addons/player_runtime/art/item_icons.bake.json": {
+        "old_keys": [
+          "atlas_sha256",
+          "schema",
+          "sources"
+        ],
+        "changed_top_keys": [
+          "sources"
+        ]
+      },
+      "addons/player_runtime/art/shape_icons.bake.json": {
+        "old_keys": [
+          "atlas_sha256",
+          "sources"
+        ],
+        "changed_top_keys": [
+          "sources"
+        ]
+      },
+      "addons/player_runtime/assets/debris_geometry.bake.json": {
+        "old_keys": [
+          "engine",
+          "output_sha256",
+          "recipe",
+          "schema",
+          "shapes",
+          "sources"
+        ],
+        "changed_top_keys": [
+          "sources"
+        ]
+      }
+    },
+    "scope": "One sequential on/off pair; same package and quality, no competing engine/compiler in one-second samples except idle Project Manager. Not proof of OS idleness, subsecond activity, repeated overhead isolation or long-session stability."
+  }
 }
