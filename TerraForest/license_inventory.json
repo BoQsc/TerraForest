@@ -113,7 +113,7 @@
       "status": "provenance_review_pending",
       "declared_terms": "CC0-1.0 is stated for original/derivative work; inherited rights retain their source scope",
       "scope": ["addons/characters/runtime/assets/", "addons/characters/Human_R11_Complete_Repost/", "addons/characters/authoring/", "addons/characters/ZombieLab/"],
-      "origin": "Supplied FirstPersonLab/Human R11 and Zombie Lab materials. The character notice identifies the earlier Human.realistic.glb and a source hash; the R11 metadata limits its CC0 statement to original edits.",
+      "origin": "Supplied FirstPersonLab/Human R11 and Zombie Lab materials. The character notice identifies the earlier Human.realistic.glb and a source hash; the R11 metadata limits its CC0 statement to original edits. Zombie.geometry.res is a binary CPU cache of the same R4 runtime vertices, indices, weights and morphs, retaining this provenance within the existing runtime scope; its source hashes and derivation are in Zombie.geometry.bake.json and Zombie.geometry.LICENSE.txt.",
       "evidence": ["addons/characters/LICENSE.txt", "addons/characters/README.md", "addons/characters/Human_R11_Complete_Repost/Godot_Viewer/README.md", "addons/characters/Human_R11_Complete_Repost/R11.validation.txt"],
       "distribution_boundary": "Character runtime models, embedded textures, animation derivatives and retained authoring/source packages. GAP-003 is a separate optional asset; LEG-003 covers retained CC0 code.",
       "reason_retained": "Current notices preserve a stated CC0 dedication with inherited-provenance qualifications; they are not independent proof of every upstream right.",

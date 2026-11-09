@@ -1,0 +1,15 @@
+Zombie CPU anatomy geometry cache
+
+Zombie.geometry.res contains the existing Zombie.r4.glb vertex positions,
+triangle indices, skin weights and morph positions without simplification or
+new geometry. Zombie.geometry.bake.json records its exact source hashes, engine
+and preparation code. This is a runtime representation of the same character,
+within the existing use recorded in license_inventory.json as GAP-002.
+
+The retained character dedication and inherited-source qualifications in
+addons/characters/LICENSE.txt apply to this derived data too. This cache does
+not relicense the inherited character or resolve its open provenance review.
+No external models, textures, animation data or libraries were added.
+
+The new geometry preparation, bake and verification code is original 0BSD code;
+its license does not replace the character asset's retained terms.

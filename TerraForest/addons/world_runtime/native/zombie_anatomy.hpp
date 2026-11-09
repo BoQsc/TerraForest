@@ -42,7 +42,9 @@ class NativeZombieAnatomy : public godot::RefCounted {
     std::vector<godot::StringName> geometry_names_;
     std::array<std::vector<double>,14> geometry_morphs_;
     godot::Dictionary fitted_shapes_;
-    bool geometry_valid_=false,geometry_reused_=false,shapes_reused_=false;
+    bool geometry_valid_=false,geometry_reused_=false,shapes_reused_=false,geometry_baked_=false;
+    int64_t geometry_readback_us_=0;
+    int geometry_surface_reads_=0,geometry_morph_reads_=0;
     uint64_t skeleton_=0;double health_=180,maximum_=180;
     int vertices_=0,triangles_=0,settle_events_=0;bool configured_=false;
     static int part_index(const godot::String &part);
@@ -53,7 +55,8 @@ protected:
 public:
     ~NativeZombieAnatomy() override;
     bool configure(const godot::Dictionary &definitions);
-    bool set_hit_meshes(godot::Skeleton3D *skeleton,const godot::Dictionary &meshes,const godot::Ref<NativeZombieAnatomy> &geometry=godot::Ref<NativeZombieAnatomy>());
+    bool set_hit_meshes(godot::Skeleton3D *skeleton,const godot::Dictionary &meshes,const godot::Ref<NativeZombieAnatomy> &geometry=godot::Ref<NativeZombieAnatomy>(),const godot::Dictionary &baked=godot::Dictionary());
+    godot::Dictionary capture_geometry_data() const;
     godot::PackedVector3Array sample_vertices(const godot::String &part,const godot::Transform3D &to_local) const;
     godot::AABB sample_bounds(const godot::String &part,const godot::Transform3D &to_local) const;
     godot::Dictionary hand_groups(const godot::String &part,const godot::Transform3D &to_local) const;

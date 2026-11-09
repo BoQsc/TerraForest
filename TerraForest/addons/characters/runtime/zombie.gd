@@ -16,6 +16,7 @@ signal movement_mode_changed(mode: String)
 
 const MODEL_PATH := "res://addons/characters/runtime/assets/Zombie.r4.glb"
 const DEFAULT_MODEL = preload("res://addons/characters/runtime/assets/Zombie.r4.glb")
+const DEFAULT_GEOMETRY = preload("res://addons/characters/runtime/assets/Zombie.geometry.res")
 const DRAG_WALK = preload("res://addons/characters/runtime/assets/Zombie.drag_walk.res")
 const ALERT_WALK = preload("res://addons/characters/runtime/assets/Zombie.alert.res")
 const DRAG_WALK_REFERENCE_SPEED := 0.45
@@ -88,6 +89,7 @@ var limb_health: Dictionary = {}
 var anatomy:RefCounted
 var hit_reaction:Node3D
 var geometry_template:RefCounted
+var geometry_source:Resource=DEFAULT_GEOMETRY
 var missing: Dictionary = {}
 var part_meshes: Dictionary = {}
 var caps: Dictionary = {}
@@ -215,11 +217,18 @@ func configure(scene: PackedScene = null) -> void:
 	capsule.position.y = shape.height * 0.5
 	add_child(capsule)
 	initialization_us["parts"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
+	var shared_geometry:RefCounted=geometry_template
+	var prepared_readback:=0
+	if geometry_source!=null and geometry_source.source_model==scene:
+		shared_geometry=geometry_source.prepare(skeleton,part_meshes,PARTS)
+		prepared_readback=int(geometry_source.last_readback_us)
 	anatomy=ClassDB.instantiate("NativeZombieAnatomy")
-	if anatomy==null or not anatomy.configure(PARTS) or not anatomy.set_hit_meshes(skeleton,part_meshes,geometry_template):
+	if anatomy==null or not anatomy.configure(PARTS) or not anatomy.set_hit_meshes(skeleton,part_meshes,shared_geometry):
 		push_error("Zombie native anatomy initialization failed");return
 	geometry_template=null
 	initialization_us["anatomy"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
+	# Nested timing: included in anatomy, not additional work to sum into it.
+	initialization_us["anatomy readback"]=anatomy.geometry_stats().readback_us+prepared_readback
 	_fit_collision_shapes()
 	if _shape_cache.size()!=15:
 		push_error("Zombie collision geometry initialization failed");return

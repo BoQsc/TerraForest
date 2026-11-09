@@ -3,6 +3,7 @@ import argparse
 import datetime
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 from play_checkpoint import revision_metadata
@@ -19,6 +20,7 @@ CHECKS = {
     "zombie_anatomy": (60, "ZOMBIE_ANATOMY checks=", ""),
     "zombie_awareness": (60, "ZOMBIE_AWARENESS checks=", ""),
     "zombie_geometry_cache": (90, "ZOMBIE_GEOMETRY_CACHE checks=", ""),
+    "zombie_geometry_bake": (90, "ZOMBIE_GEOMETRY_BAKE_TEST checks=", ""),
     "zombie_behavior": (150, "ZOMBIE_BEHAVIOR checks=", "--zombie-behavior-dir="),
     "zombie_step_guard": (120, "ZOMBIE_STEP_GUARD PASS", ""),
     "zombie_slope_contract": (150, "ZOMBIE_SLOPE_CONTRACT failures=0", ""),
@@ -31,12 +33,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pack", action="store_true")
     parser.add_argument("--graphical", action="store_true")
+    parser.add_argument("--offscreen", action="store_true", help="Keep graphical checks off the desktop without activating their window")
     parser.add_argument("--checks", nargs="+", choices=CHECKS,
                         default=[name for name in CHECKS if name != "zombie_combat_world"])
     parser.add_argument("--stress-hz", type=int, choices=[30, 60, 120], default=60)
     parser.add_argument("--stress-case", action="append", choices=STRESS_CASES, default=[])
     parser.add_argument("--forest", action="store_true")
     options = parser.parse_args()
+    if options.offscreen and not options.graphical:
+        parser.error("--offscreen requires --graphical")
     if "zombie_combat_world" in options.checks and not options.graphical:
         parser.error("zombie_combat_world requires --graphical")
     settings, _ = parse_args([])
@@ -62,10 +67,16 @@ def main():
         if name == "zombie_combat_world":
             extra += ["--gameplay-construction"]
         command, cache = command_for(engine, name, output, extra, not options.graphical)
+        if options.offscreen:
+            command[command.index("--fullscreen")] = "--windowed"
+            command[1:1] = ["--position", "-2400,-1600"]
         source = ROOT / "tests" / (name + ".gd")
         dependencies = {str(source.relative_to(ROOT)): hashlib.sha256(source.read_bytes()).hexdigest()}
         if name in {"zombie_ragdoll_stress", "zombie_corpse_walk"}:
             base = ROOT / "tests/zombie_ragdoll_reactivation.gd"
+            dependencies[str(base.relative_to(ROOT))] = hashlib.sha256(base.read_bytes()).hexdigest()
+        if name == "zombie_geometry_bake":
+            base = ROOT / "tests/zombie_geometry_cache.gd"
             dependencies[str(base.relative_to(ROOT))] = hashlib.sha256(base.read_bytes()).hexdigest()
         if options.pack:
             driver = output / (name + "_external.gd")
@@ -77,6 +88,10 @@ def main():
                 helper = output / "reactivation_base.gd"
                 helper.write_bytes((ROOT / "tests/zombie_ragdoll_reactivation.gd").read_bytes())
                 script = script.replace('"res://tests/zombie_ragdoll_reactivation.gd"', json.dumps(helper.as_posix()))
+            if name == "zombie_geometry_bake":
+                helper = output / "geometry_cache_base.gd"
+                helper.write_bytes((ROOT / "tests/zombie_geometry_cache.gd").read_bytes())
+                script = script.replace('"res://tests/zombie_geometry_cache.gd"', json.dumps(helper.as_posix()))
             driver.write_text(script, encoding="utf-8")
             command[command.index("--path") + 1] = str(ROOT / "dist")
             command[command.index("--script") + 1] = str(driver)
@@ -89,7 +104,19 @@ def main():
             record["driver_sha256"] = hashlib.sha256(driver.read_bytes()).hexdigest()
         manifest = output / "run.json"
         manifest.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
-        record["result"] = execute(command, output, timeout, marker)
+        original = subprocess.Popen
+        def nonactivating(*arguments, **keywords):
+            startup = subprocess.STARTUPINFO()
+            startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startup.wShowWindow = 4
+            keywords["startupinfo"] = startup
+            return original(*arguments, **keywords)
+        try:
+            if options.offscreen:
+                subprocess.Popen = nonactivating
+            record["result"] = execute(command, output, timeout, marker)
+        finally:
+            subprocess.Popen = original
         manifest.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
         records.append(dict(test=name, **record["result"]))
         print(("PASS " if record["result"]["passed"] else "FAIL ") + str(output), flush=True)

@@ -45,6 +45,7 @@
   ],
   "res://addons/characters/runtime/zombie.gd": [
     "res://addons/characters/runtime/assets/Zombie.r4.glb",
+    "res://addons/characters/runtime/assets/Zombie.geometry.res",
     "res://addons/characters/runtime/assets/Zombie.drag_walk.res",
     "res://addons/characters/runtime/assets/Zombie.alert.res",
     "res://addons/characters/runtime/zombie_sleeper.gd"

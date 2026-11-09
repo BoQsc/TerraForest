@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <cmath>
 #include <unordered_map>
+#include <chrono>
 using namespace godot;
 namespace terraforest {
 std::vector<uint64_t> NativeZombieAnatomy::ragdoll_owners_;
@@ -39,7 +40,8 @@ bool triangle(Vector3 from,Vector3 direction,Vector3 a,Vector3 b,Vector3 c,doubl
 }
 void NativeZombieAnatomy::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","definitions"),&NativeZombieAnatomy::configure);
-    ClassDB::bind_method(D_METHOD("set_hit_meshes","skeleton","meshes","geometry"),&NativeZombieAnatomy::set_hit_meshes,DEFVAL(Ref<NativeZombieAnatomy>()));
+    ClassDB::bind_method(D_METHOD("set_hit_meshes","skeleton","meshes","geometry","baked"),&NativeZombieAnatomy::set_hit_meshes,DEFVAL(Ref<NativeZombieAnatomy>()),DEFVAL(Dictionary()));
+    ClassDB::bind_method(D_METHOD("capture_geometry_data"),&NativeZombieAnatomy::capture_geometry_data);
     ClassDB::bind_method(D_METHOD("sample_vertices","part","to_local"),&NativeZombieAnatomy::sample_vertices);
     ClassDB::bind_method(D_METHOD("sample_bounds","part","to_local"),&NativeZombieAnatomy::sample_bounds);
     ClassDB::bind_method(D_METHOD("hand_groups","part","to_local"),&NativeZombieAnatomy::hand_groups);
@@ -71,8 +73,10 @@ bool NativeZombieAnatomy::configure(const Dictionary &definitions){
     }
     parts_=std::move(next);maximum_=health_=parts_[0].maximum;configured_=true;return true;
 }
-bool NativeZombieAnatomy::set_hit_meshes(Skeleton3D *skeleton,const Dictionary &meshes,const Ref<NativeZombieAnatomy> &geometry){
+bool NativeZombieAnatomy::set_hit_meshes(Skeleton3D *skeleton,const Dictionary &meshes,const Ref<NativeZombieAnatomy> &geometry,const Dictionary &baked){
     if(!configured_||skeleton_||!skeleton||skeleton->get_bone_count()>256||meshes.size()!=14)return false;
+    geometry_readback_us_=0;geometry_surface_reads_=geometry_morph_reads_=0;
+    geometry_baked_=false;
     geometry_names_.clear();geometry_rest_.clear();geometry_pose_.clear();geometry_mesh_transforms_.clear();
     for(auto &morphs:geometry_morphs_)morphs.clear();
     const int bone_count=skeleton->get_bone_count();
@@ -95,6 +99,31 @@ bool NativeZombieAnatomy::set_hit_meshes(Skeleton3D *skeleton,const Dictionary &
         if(reuse_shapes&&(!geometry_mesh_transforms_.back().is_equal_approx(geometry->geometry_mesh_transforms_[index])||geometry_morphs_[index]!=geometry->geometry_morphs_[index]))reuse_shapes=false;
     }
     reuse_shapes=reuse_shapes&&reuse;
+    // A bake is an optional source of raw CPU geometry, not a rig, pose, health
+    // or collision override. Check every asset before selecting it atomically.
+    bool baked_source=!reuse&&int(baked.get("schema",0))==1&&baked.get("parts",Variant()).get_type()==Variant::ARRAY;
+    Array baked_parts=baked_source?Array(baked["parts"]):Array();
+    baked_source=baked_source&&baked_parts.size()==14;
+    for(int i=0;baked_source&&i<14;++i){
+        auto *node=Object::cast_to<MeshInstance3D>(meshes.get(NAMES[i],Variant()));
+        auto *asset=Object::cast_to<ArrayMesh>(node->get_mesh().ptr());
+        if(baked_parts[i].get_type()!=Variant::DICTIONARY){baked_source=false;break;}
+        const Dictionary part=baked_parts[i];
+        baked_source=!asset->get_path().is_empty()&&String(part.get("mesh_path",String()))==asset->get_path()&&
+            int(part.get("blend_shape_mode",-1))==int(asset->get_blend_shape_mode())&&
+            int(part.get("blend_shapes",-1))==asset->get_blend_shape_count()&&part.get("surfaces",Variant()).get_type()==Variant::ARRAY;
+        if(!baked_source)break;
+        Array surfaces=part["surfaces"];baked_source=surfaces.size()==asset->get_surface_count();
+        for(int s=0;baked_source&&s<surfaces.size();++s){
+            if(surfaces[s].get_type()!=Variant::DICTIONARY){baked_source=false;break;}
+            Dictionary row=surfaces[s];
+            baked_source=row.get("vertices",Variant()).get_type()==Variant::PACKED_VECTOR3_ARRAY&&row.get("indices",Variant()).get_type()==Variant::PACKED_INT32_ARRAY&&
+                row.get("bones",Variant()).get_type()==Variant::PACKED_INT32_ARRAY&&row.get("weights",Variant()).get_type()==Variant::PACKED_FLOAT32_ARRAY&&row.get("morphs",Variant()).get_type()==Variant::ARRAY;
+            if(!baked_source)break;
+            baked_source=PackedVector3Array(row["vertices"]).size()==asset->surface_get_array_len(s)&&PackedInt32Array(row["indices"]).size()==asset->surface_get_array_index_len(s)&&
+                int64_t(row.get("format",int64_t(-1)))==int64_t(asset->surface_get_format(s))&&Array(row["morphs"]).size()==asset->get_blend_shape_count();
+        }
+    }
     auto next=parts_;int vertices=0,triangles=0;
     for(int i=0;i<14;i++){
         auto *node=Object::cast_to<MeshInstance3D>(meshes.get(NAMES[i],Variant()));
@@ -114,20 +143,38 @@ bool NativeZombieAnatomy::set_hit_meshes(Skeleton3D *skeleton,const Dictionary &
         }
         for(int s=0;s<mesh->get_surface_count();s++){
             if(array_mesh->surface_get_primitive_type(s)!=Mesh::PRIMITIVE_TRIANGLES)return false;
-            Array arrays=mesh->surface_get_arrays(s);Surface surface;surface.vertices=arrays[Mesh::ARRAY_VERTEX];
-            surface.indices=arrays[Mesh::ARRAY_INDEX];surface.bones=arrays[Mesh::ARRAY_BONES];surface.weights=arrays[Mesh::ARRAY_WEIGHTS];
+            Surface surface;Array raw_morphs;
+            if(baked_source){
+                Dictionary row=Array(Dictionary(baked_parts[i])["surfaces"])[s];
+                surface.vertices=row["vertices"];surface.indices=row["indices"];surface.bones=row["bones"];surface.weights=row["weights"];raw_morphs=row["morphs"];
+            }else{
+                auto began=std::chrono::steady_clock::now();
+                Array arrays=mesh->surface_get_arrays(s);
+                geometry_readback_us_+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-began).count();++geometry_surface_reads_;
+                surface.vertices=arrays[Mesh::ARRAY_VERTEX];
+                surface.indices=arrays[Mesh::ARRAY_INDEX];surface.bones=arrays[Mesh::ARRAY_BONES];surface.weights=arrays[Mesh::ARRAY_WEIGHTS];
+                if(array_mesh->get_blend_shape_count()>0){
+                    began=std::chrono::steady_clock::now();
+                    Array morphs=array_mesh->surface_get_blend_shape_arrays(s);
+                    geometry_readback_us_+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-began).count();++geometry_morph_reads_;
+                    for(int m=0;m<morphs.size();++m)raw_morphs.push_back(Array(morphs[m])[Mesh::ARRAY_VERTEX]);
+                }
+            }
             int count=surface.vertices.size();if(!count||count>32768)return false;
             if(surface.bones.size()!=surface.weights.size()||surface.bones.size()%count)return false;
             if(surface.bones.size()/count>8)return false;
             for(int j=0;j<surface.bones.size();j++)if(surface.bones[j]<0||surface.bones[j]>=int(part.binds.size())||!std::isfinite(surface.weights[j]))return false;
             for(int j=0;j<surface.indices.size();j++)if(surface.indices[j]<0||surface.indices[j]>=count)return false;
             for(int j=0;j<count;j++)if(!surface.vertices[j].is_finite())return false;
-            if(array_mesh){
-                Array morphs=array_mesh->surface_get_blend_shape_arrays(s);if(morphs.size()>16)return false;
+            {
+                if(raw_morphs.size()>16)return false;
                 surface.relative=array_mesh->get_blend_shape_mode()==Mesh::BLEND_SHAPE_MODE_RELATIVE;
-                for(int m=0;m<morphs.size();m++){
-                    Array shape=morphs[m];PackedVector3Array positions=shape[Mesh::ARRAY_VERTEX];
-                    if(positions.size()!=count)return false;surface.morphs.push_back(positions);
+                for(int m=0;m<raw_morphs.size();m++){
+                    if(raw_morphs[m].get_type()!=Variant::PACKED_VECTOR3_ARRAY)return false;
+                    PackedVector3Array positions=raw_morphs[m];
+                    if(positions.size()!=count)return false;
+                    for(int vertex=0;vertex<count;++vertex)if(!positions[vertex].is_finite())return false;
+                    surface.morphs.push_back(positions);
                 }
             }
             vertices+=count;triangles+=(surface.indices.is_empty()?count:surface.indices.size())/3;
@@ -136,7 +183,7 @@ bool NativeZombieAnatomy::set_hit_meshes(Skeleton3D *skeleton,const Dictionary &
         }
     }
     parts_=std::move(next);skeleton_=skeleton->get_instance_id();vertices_=reuse?geometry->vertices_:vertices;triangles_=reuse?geometry->triangles_:triangles;
-    geometry_valid_=true;geometry_reused_=reuse;shapes_reused_=reuse_shapes;
+    geometry_valid_=true;geometry_reused_=reuse;shapes_reused_=reuse_shapes;geometry_baked_=baked_source;
     if(reuse_shapes)fitted_shapes_=geometry->fitted_shapes_.duplicate(true);
     Callable changed=callable_mp(this,&NativeZombieAnatomy::invalidate_geometry);
     for(const auto &part:parts_){

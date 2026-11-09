@@ -4,13 +4,15 @@ var stage:Node3D
 var checks:=0
 var failures:=0
 var timings:Array[Dictionary]=[]
-func _initialize()->void:run.call_deferred()
+func _initialize()->void:
+ if not ClassDB.class_exists("NativeZombieAnatomy"):GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
+ run.call_deferred()
 func check(condition:bool,label:String)->void:
  checks+=1
  if not condition:failures+=1
  print("PASS " if condition else "FAIL ",label)
 func fresh(template:RefCounted=null,position:Vector3=Vector3.ZERO)->Node3D:
- var zombie:=Zombie.new();zombie.geometry_template=template;zombie.position=position;zombie.process_mode=Node.PROCESS_MODE_DISABLED
+ var zombie:=Zombie.new();zombie.geometry_source=null;zombie.geometry_template=template;zombie.position=position;zombie.process_mode=Node.PROCESS_MODE_DISABLED
  stage.add_child(zombie);timings.append(zombie.initialization_us.duplicate());return zombie
 func compare_pose(zombie:Node3D,label:String)->void:
  var worst:=0.0;var matched:=true

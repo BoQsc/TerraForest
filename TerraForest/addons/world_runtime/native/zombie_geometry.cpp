@@ -1,5 +1,6 @@
 #include "zombie_anatomy.hpp"
 #include <godot_cpp/classes/mesh_instance3d.hpp>
+#include <godot_cpp/classes/array_mesh.hpp>
 #include <godot_cpp/classes/physical_bone3d.hpp>
 #include <godot_cpp/classes/convex_polygon_shape3d.hpp>
 #include <cmath>
@@ -89,7 +90,26 @@ Dictionary NativeZombieAnatomy::fit_collision_shapes(){
     fitted_shapes_=next;return fitted_shapes_.duplicate(true);
 }
 Dictionary NativeZombieAnatomy::geometry_stats() const {
-    Dictionary result;result["mesh_reused"]=geometry_reused_;result["shapes_reused"]=shapes_reused_;result["valid"]=geometry_valid_;result["vertices"]=vertices_;result["shapes"]=fitted_shapes_.size();return result;
+    Dictionary result;result["mesh_reused"]=geometry_reused_;result["shapes_reused"]=shapes_reused_;result["valid"]=geometry_valid_;result["vertices"]=vertices_;result["shapes"]=fitted_shapes_.size();
+    result["readback_us"]=geometry_readback_us_;result["surface_reads"]=geometry_surface_reads_;result["morph_reads"]=geometry_morph_reads_;result["baked"]=geometry_baked_;return result;
+}
+Dictionary NativeZombieAnatomy::capture_geometry_data() const {
+    if(!geometry_valid_)return {};
+    Array parts;
+    for(const auto &part:parts_){
+        auto *asset=Object::cast_to<ArrayMesh>(part.asset.ptr());
+        if(!asset||asset->get_path().is_empty())return {};
+        Dictionary row;row["mesh_path"]=asset->get_path();row["blend_shape_mode"]=int(asset->get_blend_shape_mode());row["blend_shapes"]=asset->get_blend_shape_count();
+        Array surfaces;int index=0;
+        for(const auto &surface:part.surfaces){
+            Dictionary packet;packet["vertices"]=surface.vertices;packet["indices"]=surface.indices;packet["bones"]=surface.bones;packet["weights"]=surface.weights;
+            packet["format"]=int64_t(asset->surface_get_format(index++));
+            Array morphs;for(const auto &morph:surface.morphs)morphs.push_back(morph);
+            packet["morphs"]=morphs;surfaces.push_back(packet);
+        }
+        row["surfaces"]=surfaces;parts.push_back(row);
+    }
+    Dictionary result;result["schema"]=1;result["parts"]=parts;return result;
 }
 Dictionary NativeZombieAnatomy::hand_groups(const String &name,const Transform3D &to_local) const {
     Dictionary result;int index=part_index(name);if(index!=4&&index!=7)return result;

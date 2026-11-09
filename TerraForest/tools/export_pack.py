@@ -47,6 +47,8 @@ if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res:
     sys.exit(1)
 if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res://tools/bake_debris_geometry.gd']):
     sys.exit(1)
+if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res://tools/bake_zombie_geometry.gd']):
+    sys.exit(1)
 if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res://tools/ensure_item_icons.gd']):
     sys.exit(1)
 (root/'dist').mkdir(exist_ok=True)
