@@ -1,8 +1,10 @@
 # Ground-cover shadow submission waste
 
-Status: cause supported by controlled diagnostics; **native production correction
-is not implemented**. Updated 2026-11-09. Diagnostic commit `a973da7e`; packaged
-runtime remains the verified navigation build `2e730410`. New diagnostic code is
+Status at capture: cause supported by controlled diagnostics. The subsequent
+[native production correction and remaining acceptance work](native-cover-partitions-2026-11-09.md)
+are recorded separately; this report preserves the prototype evidence.
+Updated 2026-11-09. Diagnostic commit `a973da7e`; these captures use the verified
+navigation package `2e730410`. New diagnostic code is
 original 0BSD. [Exact evidence](cover-render-partitions-2026-11-09.json) retains
 run/package hashes, metrics, controls and the unresolved stall.
 
@@ -86,9 +88,9 @@ of the remaining draw waits still requires investigation.
 Reproduce with an owned clone (the wrapper preserves the source fixture):
 
 ```text
-python TerraForest/tools/check_frame_trace_world.py --executable --short --render-inventory --gpu-profile --label render_inventory
-python TerraForest/tools/check_frame_trace_world.py --executable --short --render-partition 16 --gpu-profile --label cover_partition16
-python TerraForest/tools/check_frame_trace_world.py --executable --short --render-partition 8 --render-full-detail --label cover_partition_full_detail
+python TerraForest/tools/check_frame_trace_world.py --executable --short --legacy-cover --render-inventory --gpu-profile --label render_inventory
+python TerraForest/tools/check_frame_trace_world.py --executable --short --legacy-cover --render-partition 16 --gpu-profile --label cover_partition16
+python TerraForest/tools/check_frame_trace_world.py --executable --short --legacy-cover --render-partition 8 --render-full-detail --label cover_partition_full_detail
 ```
 
 Run one game at a time. Do not compare the full-detail control against normal

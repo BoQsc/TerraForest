@@ -1,5 +1,11 @@
 # Runtime performance
 
+Latest: [native cover draw partitions](native-cover-partitions-2026-11-09.md)
+retain 74,320 instances while the first integrated arrival GPU median falls from
+12.456 to 7.459 ms. Outdoor views, native ownership/continuity and packaged
+save/shutdown have scoped verification. Increased travel selection cost, a failed
+legacy interaction fixture, slow pursuit and intermittent stalls remain open.
+
 - Status: Improved-partial; 60 FPS with headroom remains open.
 - Updated: 2026-11-09. Initial baseline: `5bfe87f4`; maintenance: `304206cc`; readiness: `87afcdfe`.
 - User review: Not reviewed. No visual quality reduction intended.
@@ -38,9 +44,10 @@ mixed. Rolling captures retain every navigation tick before a rendered frame.
 identify a major rendering cost: whole 32 m cover batches participate in nearby
 light shadows. Exact 16 m prototype partitions reduce stationary GPU medians
 from about 12 to 7.5 ms and point-shadow buckets from 4.3–4.5 to 1.36 ms.
-A full-detail control also improves, but this remains a test-only prototype.
-Bounded native publication, outdoor visual checks and remaining draw waits are
-the immediate continuation; stable 60 FPS is not established.
+A full-detail control also improves. This report records the test-only prototype;
+the native follow-up above implements its production counterpart. Broader
+walking/driving visual checks and draw waits remain open; stable 60 FPS is not
+established.
 
 Earlier [fresh-default-world / rolling-trace investigation](rolling-trace-2026-11-09.md):
 normal Frontier expedition generation completed; first-person depth activation,

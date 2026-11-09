@@ -49,17 +49,29 @@ zero support-cache hits, so only the regional fixture establishes reuse benefit.
 now support excessive 32 m cover-batch shadow submission as a major GPU cost.
 The 16 m diagnostic preserves 4,707 instance records and changes GPU phase
 medians from 12.143/11.750 to 7.490/7.475 ms; point shadows fall from about
-4.3–4.5 to 1.36 ms. An all-full-detail control also saves GPU time. This is
-**not yet a production rendering fix**: the script creates duplicate buffers and
-nodes synchronously. The immediate next milestone is bounded native render
-partitioning independent of archive/collision groups, preserving old coverage,
-fade identities, shadows and conservative wind bounds. Outdoor moving-camera,
-edit/retirement, memory and packaged visual checks must pass before admission.
+4.3–4.5 to 1.36 ms. An all-full-detail control also saves GPU time. The
+prototype alone is not a production fix: it duplicates buffers and nodes.
+[Native 16 m draw partitions](../issues/runtime-performance/native-cover-partitions-2026-11-09.md)
+now replace that prototype with derived ranges inside unchanged 32 m owners.
+The first integrated pair retains all 74,320 instances and lowers arrival GPU
+median from 12.456 to 7.459 ms; outdoor matched-pose views fall from about 7.8 to
+5.4 ms. Exact snapshots/fades, sparse edits, region replacement and bounded
+retirement pass debug/release checks; packaged save/shutdown and inspected
+outdoor views pass their scoped checks. Native selection/upload cost increases
+during travel and remains a budgeting target. Walking/driving and general visual
+acceptance remain open. The legacy 81-cell interaction fixture fails and requires
+modernization; its failure has not been relabeled as a passing gameplay gate.
 The linked report retains the exact implementation requirements and a separate
 97.573 ms draw-dominated stall despite 7.634 ms reported GPU time.
+An independent 503 ms idle sample spends 485.5 ms before processing while using
+only 31.25 ms of main-thread CPU and 9–15 us planning per catch-up tick. Engine/
+OS/presentation wait attribution is still required. Screenshot readback intervals
+in the new outdoor harness are explicitly labeled and excluded from gameplay
+statistics; their earlier misclassification and raw results remain retained.
 
-Stable 60 FPS with headroom is NOT established: the combined trace still has a
-91.4 ms gameplay frame and ~15 ms root GPU work. Rendering pass/batch costs,
+Stable 60 FPS with headroom is NOT established. Earlier combined traces include
+a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
+improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,
 physics/draw tails, staged zombie admission, native regional route connectivity,
 other save owners, first-ever photograph readback, dense barrel/collapse chains
 and long-session/weak-hardware qualification are continuation requirements.

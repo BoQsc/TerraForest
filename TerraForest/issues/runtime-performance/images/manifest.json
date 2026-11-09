@@ -117,5 +117,35 @@
     "sha256": "effe23c462abdbeab2f635f8c9422a1e8b3894133cc013d95fd92153743d79b5",
     "revision": "a973da7e diagnostic with unchanged aeff4c0e package (see run.json)",
     "status": "Test-only 16 m near-cover render partitions. Same indoor camera inspected; source/instance parity checked. Wall-facing view does not qualify outdoor vegetation or user visual approval."
+  },
+  "cover-native-legacy-0.png": {
+    "source": "reports/performance_changes/20261109T132047965128Z_native_partition_outdoor_a/outdoor_0.png",
+    "sha256": "38092a37bbbe87add1ef675d2161fa2055d2048602609d85c3afe48fb915dcd1",
+    "revision": "b9190d58 plus native render partition implementation; exact native/source hashes in run.json",
+    "status": "Inspected 1080p source legacy draw layout, outdoor view 0. Same camera poses; wind and actors remain live. No obvious missing near/far patches at sampled boundaries. Not walking/driving/endurance or user art acceptance. Existing assets retain their provenance; diagnostic screenshot by Codex."
+  },
+  "cover-native-legacy-2.png": {
+    "source": "reports/performance_changes/20261109T132047965128Z_native_partition_outdoor_a/outdoor_2.png",
+    "sha256": "b3fbf6ba8a88221d42351d66d6a38c10f5dcc399da7849bb2edf1c1c5853b481",
+    "revision": "b9190d58 plus native render partition implementation; exact native/source hashes in run.json",
+    "status": "Inspected 1080p source legacy draw layout, outdoor view 2. Same camera poses; wind and actors remain live. No obvious missing near/far patches at sampled boundaries. Not walking/driving/endurance or user art acceptance. Existing assets retain their provenance; diagnostic screenshot by Codex."
+  },
+  "cover-native-native-0.png": {
+    "source": "reports/performance_changes/20261109T132224854825Z_native_partition_outdoor_b/outdoor_0.png",
+    "sha256": "efae4a23e8ab7ac4e8714cb54ca3ead24d1976cb04873aaf35aca0f560a15ed0",
+    "revision": "b9190d58 plus native render partition implementation; exact native/source hashes in run.json",
+    "status": "Inspected 1080p source native draw layout, outdoor view 0. Same camera poses; wind and actors remain live. No obvious missing near/far patches at sampled boundaries. Not walking/driving/endurance or user art acceptance. Existing assets retain their provenance; diagnostic screenshot by Codex."
+  },
+  "cover-native-native-2.png": {
+    "source": "reports/performance_changes/20261109T132224854825Z_native_partition_outdoor_b/outdoor_2.png",
+    "sha256": "4f35f5561185b73b766200a774562382c5601881f5e59a4c0196254e3b0127a3",
+    "revision": "b9190d58 plus native render partition implementation; exact native/source hashes in run.json",
+    "status": "Inspected 1080p source native draw layout, outdoor view 2. Same camera poses; wind and actors remain live. No obvious missing near/far patches at sampled boundaries. Not walking/driving/endurance or user art acceptance. Existing assets retain their provenance; diagnostic screenshot by Codex."
+  },
+  "cover-native-packaged.png": {
+    "source": "reports/performance_changes/20261109T133605991498Z_native_partition_pack/outdoor_2.png",
+    "sha256": "897f9096c5cac5c58b1022ad079c1fb7207ff6bec58c3a5bc3ad44d8af80cb05",
+    "revision": "67cf0f244fc1b73467f1d3d246fc6f4394b95a91749df9ca7d67d10c8e220db6 PCK; exact native hashes in native-cover-partitions-2026-11-09.json",
+    "status": "Inspected packaged outdoor end view at matching camera pose. Near grass, far cover, boulder and shadows retained. Scoped visual evidence, not walking/driving or user art acceptance. Diagnostic screenshot preserves existing asset provenance."
   }
 }
