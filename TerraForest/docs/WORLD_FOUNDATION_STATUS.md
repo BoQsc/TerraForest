@@ -1,3 +1,11 @@
+## PX9 empty-magazine locomotion - 2026-11-09
+
+Empty ammunition no longer overrides moving presentation with fixed idle. Paired
+empty walk/run/jump variants keep authored locomotion and locked-open mechanics.
+Loaded/empty physics motion checks and 68 handgun checks pass; rendered empty
+motion inspected. [Evidence](../issues/px9-handgun/README.md#empty-magazine-locomotion---2026-11-09).
+User feel/visual re-review remains open.
+
 ## PX9 held-trigger firing - 2026-11-09
 
 PX9 now repeats shots while left mouse is held, with existing recoil and combat

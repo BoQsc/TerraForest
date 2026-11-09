@@ -21,14 +21,17 @@ func run()->void:
 	var shape:=CollisionShape3D.new();shape.shape=CapsuleShape3D.new();actor.add_child(shape);actor.position.y=1
 	var floor_body:=StaticBody3D.new();stage.add_child(floor_body)
 	var floor_shape:=CollisionShape3D.new();var box:=BoxShape3D.new();box.size=Vector3(1000,1,1000);floor_shape.shape=box;floor_shape.position.y=-.5;floor_body.add_child(floor_shape)
-	human.handgun_empty=false;human.px9.request("idle");human.action_remaining=0
+	var empty_mode:= "--empty" in OS.get_cmdline_user_args()
+	human.handgun_empty=empty_mode;human.px9.request("idle_empty" if empty_mode else "idle");human.action_remaining=0
+	var weapon_skeleton:Skeleton3D=human.px9.item.find_children("*","Skeleton3D",true,false)[0]
+	var slide_position:=weapon_skeleton.get_bone_pose_position(weapon_skeleton.find_bone("slide"))
 	var previous:="";var jump_count:=0;var failures:=0;var held_frames:=0;var landings:=0;var was_airborne:=false
 	var skeleton:Skeleton3D=human.model.find_children("*","Skeleton3D",true,false)[0]
 	var baseline:={}
 	for bone:String in ["Root","Hips"]:baseline[bone]=skeleton.get_bone_pose(skeleton.find_bone(bone))
 	for frame in 400:
 		await physics_frame
-		actor.velocity.x=9.9 if frame>=15 else 0
+		actor.velocity.x=9.9 if frame>=35 else (5.5 if frame>=15 else 0)
 		actor.velocity.y-=(20.0 if frame<160 else 8.0)/60
 		if frame==45:actor.velocity.y=8
 		if frame==160:actor.velocity.y=12
@@ -36,8 +39,11 @@ func run()->void:
 		human._process(1.0/60);split.sync()
 		for bone:String in baseline:
 			if not skeleton.get_bone_pose(skeleton.find_bone(bone)).is_equal_approx(baseline[bone]):failures+=1
-		var action:String=human.px9.motion.current_action
+		if empty_mode and weapon_skeleton.get_bone_pose_position(weapon_skeleton.find_bone("slide")).distance_to(slide_position)>.0001:failures+=1
+		var action:String=String(human.px9.motion.current_action).trim_suffix("_empty")
 		if not actor.is_on_floor() and action!="jump":failures+=1
+		if actor.is_on_floor() and frame>=20 and frame<35 and action!="walk":failures+=1
+		if empty_mode and not String(human.px9.motion.current_action).ends_with("_empty"):failures+=1
 		if was_airborne and actor.is_on_floor():
 			landings+=1
 			if action!="run":failures+=1

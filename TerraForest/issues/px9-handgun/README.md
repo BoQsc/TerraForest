@@ -103,3 +103,18 @@ now describe holding the button. This supersedes the initial semi-auto input.
 
 Temporary-world regression passes 18/18, including held fire, release and menu
 blocking: [log](logs/px9-held-trigger.log).
+
+## Empty-magazine locomotion - 2026-11-09
+
+Fixed: empty ammunition previously selected idle_empty regardless of movement.
+The host now builds paired walk_empty/run_empty/jump_empty variants at equip:
+human and weapon-root locomotion retain the supplied authored motion, while
+mechanical part tracks hold the supplied idle-empty lock-open pose. Source asset
+files are untouched. Empty jumping retains the same hold-until-landing behavior.
+
+The 400-frame physics regression passes loaded and empty, including walking,
+running, short/long jumps, exact slide-position retention throughout empty motion,
+and no movement interruption at the apex. Paired-action/reload/holster checks pass
+68/68. The [rendered empty moving pose](images/empty-moving.png) was inspected.
+Logs are retained in logs/px9-empty-*.log and logs/px9-loaded-motion.log. Reproduce
+with tests/px9_locomotion.gd -- --empty. User gameplay review remains pending.

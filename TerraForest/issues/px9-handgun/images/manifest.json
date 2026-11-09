@@ -63,5 +63,10 @@
     "sha256": "1569d24c772cb9613ea97e3662ac4b753b0a9ed7aadce91aa55128495582af91",
     "source": "tests/px9_locomotion.gd; real physics and split renderer, Godot Compatibility",
     "status": "Corrected first-person baseline; agent inspected; user review pending"
+  },
+  "empty-moving.png": {
+    "source": "tests/px9_locomotion.gd -- --empty; physics-driven movement, Godot Compatibility",
+    "sha256": "34d28b2e1b8709c40bcde847312a655c97f99dc3dfd1bd3ce39b3f1454e3b18f",
+    "status": "Agent inspected slide-open moving pose; user review pending"
   }
 }

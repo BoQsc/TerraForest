@@ -251,7 +251,9 @@ func equip(item: int, water_ml:int=-1) -> void:
 		if px9==null:
 			px9=PX9.new();px9.auto_process=false;add_child(px9)
 			var definition:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(PX9_PATH))
-			var result:int=px9.equip(model,preload("res://addons/characters/runtime/px9/PX9_Eclipse_FP.glb").instantiate(),preload("res://addons/characters/runtime/px9/Human.px9_eclipse.res"),definition,PX9_PATH)
+			var weapon:Node3D=preload("res://addons/characters/runtime/px9/PX9_Eclipse_FP.glb").instantiate()
+			_prepare_empty_px9(weapon,definition)
+			var result:int=px9.equip(model,weapon,preload("res://addons/characters/runtime/px9/Human.px9_eclipse.res"),definition,PX9_PATH)
 			if result!=OK:push_error("PX9 equip failed: "+str(result));return
 			body_mesh.mesh.set_meta("px9_hand_skin",true)
 			px9.item.set_meta("first_person_equipment",true)
@@ -302,6 +304,34 @@ func _sync_bucket_water()->void:
 	bucket_water.position.y=lerpf(-.412,-.252,bucket_display_fill)
 	var radius:=lerpf(.108,.137,bucket_display_fill)/.135
 	bucket_water.scale=Vector3(radius,1,radius)
+
+func _prepare_empty_px9(weapon:Node3D,definition:Dictionary)->void:
+	# Keep authored human locomotion and weapon-root motion while freezing the
+	# mechanical parts in their authored locked-open pose. Source assets stay intact.
+	var player:AnimationPlayer=weapon.find_children("*","AnimationPlayer",true,false)[0]
+	var names:={}
+	for name in player.get_animation_list():names[String(name).get_slice("/",String(name).get_slice_count("/")-1)]=name
+	var empty:Animation=player.get_animation(names["FP_PX9_ECLIPSE_Idle_Empty"])
+	var library:=AnimationLibrary.new()
+	var additions:Array=[]
+	for action:Dictionary in definition.actions:
+		if action.id not in ["walk","run","jump"]:continue
+		var animation:Animation=player.get_animation(names[action.item_clip]).duplicate(true)
+		for track in range(animation.get_track_count()-1,-1,-1):
+			var path:=animation.track_get_path(track)
+			if path.get_subname_count()!=1 or String(path.get_subname(0))!="weapon_root":animation.remove_track(track)
+		for track in empty.get_track_count():
+			var path:=empty.track_get_path(track)
+			if path.get_subname_count()==1 and String(path.get_subname(0))=="weapon_root":continue
+			empty.copy_track(track,animation)
+			var added:=animation.get_track_count()-1
+			for key in range(animation.track_get_key_count(added)-1,0,-1):animation.track_remove_key(added,key)
+			animation.track_set_key_time(added,0,0)
+		var name:String=action.id+"_empty";library.add_animation(name,animation)
+		var variant:Dictionary=action.duplicate(true);variant.id=name;variant.item_clip="px9_empty/"+name
+		if not variant.return_action.is_empty():variant.return_action="idle_empty"
+		additions.append(variant)
+	player.add_animation_library("px9_empty",library);definition.actions.append_array(additions)
 
 func _collect_px9(node:Node)->void:
 	if node is MeshInstance3D:
@@ -416,17 +446,17 @@ func _process_handgun(delta:float)->void:
 	_play(("" if third_person else "PX9_Base_")+("Player_Crouch" if third_person and crouched else {"idle":"Idle","walk":"Walk","run":"Run","jump":"Jump"}[motion]),false,0)
 	animation_player.advance(delta)
 	var clock:Node=px9.motion
-	var ambient:=["idle","idle_empty","walk","run","jump","aim_idle","aim_idle_empty"]
+	var ambient:=["idle","idle_empty","walk","run","jump","walk_empty","run_empty","jump_empty","aim_idle","aim_idle_empty"]
 	if clock.current_action in ambient or not clock.active:
-		var target:String=("aim_idle_empty" if handgun_empty else "aim_idle") if rifle_aiming else ("idle_empty" if handgun_empty else motion)
+		var target:String=("aim_idle_empty" if handgun_empty else "aim_idle") if rifle_aiming else (motion+"_empty" if handgun_empty else motion)
 		if rifle_aiming!=handgun_aiming:
 			handgun_aiming=rifle_aiming;px9.request("aim_in" if rifle_aiming else "aim_out")
 		elif clock.current_action!=target:px9.request(target,.06)
 	# Jump is a single authored action, held at its endpoint until landing.
 	# Returning to idle here would restart it during a longer flight.
-	clock.auto_return=clock.current_action!="jump"
+	clock.auto_return=clock.current_action not in ["jump","jump_empty"]
 	px9.advance(delta)
-	if clock.current_action=="jump" and not clock.active:clock.seek_seconds(clock.time_seconds)
+	if clock.current_action in ["jump","jump_empty"] and not clock.active:clock.seek_seconds(clock.time_seconds)
 	if rifle_holster_item>=0 and (clock.current_action!="holster" or not clock.active):
 		var next:=rifle_holster_item;var water:=rifle_holster_water
 		px9.unequip();px9.queue_free();px9=null;current=-1;rifle_holster_item=-1;equip(next,water);return
