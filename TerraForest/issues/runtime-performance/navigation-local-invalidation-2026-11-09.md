@@ -6,6 +6,10 @@ Continues [query-cost work](navigation-query-cache-2026-11-09.md).
 [Exact receipts, hashes and comparison metrics](navigation-local-invalidation-2026-11-09.json)
 retain the tested build and package identities.
 
+The [model/door follow-up](navigation-model-invalidation-2026-11-09.md) extends
+this work to ordinary model edits and bounded conditional-door policy updates.
+The unbounded-door statements below describe this earlier checkpoint.
+
 ## Cause and change
 
 Every local terrain, water or vehicle obstacle notification cleared the shared

@@ -1,9 +1,12 @@
 # Runtime performance
 
-Latest: [local navigation invalidation](navigation-local-invalidation-2026-11-09.md)
-preserves unrelated pursuits after bounded edits and reduces selected replan work
-by 41%, with unchanged paths. Cold search, unbounded model/door resets and frame
-tails remain open. [Native cover draw partitions](native-cover-partitions-2026-11-09.md)
+Latest: [bounded model and door updates](navigation-model-invalidation-2026-11-09.md)
+preserve the graph through actual door destruction and reduce the selected
+same-path replan work by 65%. The saved tower passes with all 200 files unchanged;
+cold planning, broad/unbounded owner events and frame tails remain open. Per-pass
+thread CPU/cycle evidence now accompanies profiled navigation. This extends
+[local graph invalidation](navigation-local-invalidation-2026-11-09.md).
+[Native cover draw partitions](native-cover-partitions-2026-11-09.md)
 retain 74,320 instances while the first integrated arrival GPU median falls from
 12.456 to 7.459 ms. Outdoor views, native ownership/continuity and packaged
 save/shutdown have scoped verification. Increased travel selection cost, a failed

@@ -89,6 +89,33 @@ attribution; the coarse journey trace misses the exact expensive pass. Packaged
 replan/response/moving-interior checks pass 14/11/23, with inspected captures and
 clean scoped shutdowns. Long-duration leak stability remains open.
 
+[Bounded model/door updates](../issues/runtime-performance/navigation-model-invalidation-2026-11-09.md)
+now retain old/new model geometry through ordinary edits, history, animated doors
+and conditional interaction policy. The actual tower door no longer clears the
+global graph twice: global count stays 34 and 862 vertices survive. Source/release
+fixtures retain identical paths with 450 versus 1,299 replan work units. The saved
+tower passes 13 checks with all 200 files unchanged; outbound contact changes from
+126.833 to 86.342 seconds, while return stays about 87.6 seconds. Cold first paths
+still take 19.8/29.7 seconds, and variable host timing prevents a universal speedup
+claim. Native per-pass thread cycles/quantized CPU time and the 32 slowest journey
+samples improve attribution; the former 69 ms planning tail did not recur and
+remains unexplained. The new maximum is 4.422 ms, mostly hazard-query wall time.
+Source/release collision/history/door contracts and rendered forest continuity
+pass without reducing gameplay or visuals. Whole-collection/restore/tree events,
+broad-edit pressure, cold frontier latency, normal rendering tails and long-session
+leak stability remain open. Reliable geometry bounds, resumable planner work and
+repeated full-host traces remain prerequisites; no multiplayer qualification is
+claimed. The failed isolated door-content run and repaired test dependencies are
+retained in the linked evidence.
+
+The refreshed package passes replan/response/moving-interior checks (14/11/23),
+with inspected captures, successful normal gameplay save and clean shutdown.
+All 14 native libraries match source. Triggered gameplay windows still have
+p99 23.210 ms and maximum 27.710 ms, despite mean GPU time of 8.138 ms. Save capture
+reaches 7.682 ms in a long frame. This is an incomplete pacing result, not a new
+60-FPS acceptance claim; remaining save-owner, draw and scheduling costs need
+separate attribution and repeated traces.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,
