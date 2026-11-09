@@ -68,5 +68,33 @@
     "source": "tests/px9_locomotion.gd -- --empty; physics-driven movement, Godot Compatibility",
     "sha256": "34d28b2e1b8709c40bcde847312a655c97f99dc3dfd1bd3ce39b3f1454e3b18f",
     "status": "Agent inspected slide-open moving pose; user review pending"
+  },
+  "vfx-gameplay.png": {
+    "sha256": "17df404d6a3fb81413cb4b5e26cf480b88b41bc26713224c989dc3833a93622b",
+    "source": "tests/px9_world.gd -- --vfx-capture; temporary gameplay world; confirmed first shot; flash held for the still",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree first-person camera; 1920x1080 capture",
+    "status": "Agent inspected; user feel/visual review pending"
+  },
+  "vfx-hip-day.png": {
+    "sha256": "d790938e2112206fc2b81fa433afe528af62882862deaad4106441b7d576fd2a",
+    "source": "tools/preview_px9_flash.gd; fixed seed 910; first-person split meshes with depth protection; peak flash in bright studio",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050",
+    "camera": "75-degree first-person camera; 1920x1080 capture",
+    "status": "Agent inspected; user feel/visual review pending"
+  },
+  "vfx-aim-dim.png": {
+    "sha256": "674f47f2fd1647f763fd182697b221bf5c76673085753e69476f1932d8f68981",
+    "source": "tools/preview_px9_flash.gd; aimed peak flash in dim studio; rear of gun occludes the flash core",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050",
+    "camera": "75-degree first-person camera; 1920x1080 capture",
+    "status": "Agent inspected; user feel/visual review pending"
+  },
+  "vfx-smoke.png": {
+    "sha256": "ea48bda647c93371a76f538a1542e340f94314c6355df92d1f36bfab8c8cca91",
+    "source": "tools/preview_px9_flash.gd; dim studio; faint detached smoke at 316 ms (initial preview timing)",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree first-person camera; 1920x1080 capture",
+    "status": "Agent inspected; user feel/visual review pending"
   }
 }

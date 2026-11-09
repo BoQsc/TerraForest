@@ -114,6 +114,7 @@ func fire()->bool:
 	if not state.take_round(weapon):return false
 	if weapon==9:human.handgun_empty=state.get_rounds(weapon)==0
 	human.rifle_action("Fire" if human.rifle_aiming else "HipFire")
+	if weapon==9:human.flash_handgun() # Only confirmed shots produce light/gas.
 	shots+=1;next_shot=timer+float(WEAPONS[weapon].interval);game.terrain.changed_since_save=true
 	game.zombies.hear_noise(origin,64);play_sound(origin,pistol_audio if weapon==9 else (assault_audio if weapon==8 else shot_audio))
 	return true

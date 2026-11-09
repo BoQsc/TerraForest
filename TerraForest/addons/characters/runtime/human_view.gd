@@ -3,6 +3,7 @@ extends Node3D
 ## Camera-local presentation. The existing native motor remains the player owner.
 signal handgun_event(event_name:String,details:Dictionary)
 var px9:Node
+var handgun_flash:Node3D
 var handgun_empty:=true
 var handgun_aiming:=false
 const PX9_PATH="res://addons/characters/runtime/px9/item_px9.json"
@@ -258,6 +259,7 @@ func equip(item: int, water_ml:int=-1) -> void:
 			body_mesh.mesh.set_meta("px9_hand_skin",true)
 			px9.item.set_meta("first_person_equipment",true)
 			_collect_px9(px9.item)
+			_prepare_px9_flash()
 			px9.event_reached.connect(func(event:String,details:Dictionary):handgun_event.emit(event,details))
 			px9.action_finished.connect(func(action:String):
 				if action in ["reload","reload_empty"]:rifle_reload_finished.emit())
@@ -338,6 +340,21 @@ func _collect_px9(node:Node)->void:
 		node.layers=1<<19
 		node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON if third_person else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for child in node.get_children():_collect_px9(child)
+
+func _prepare_px9_flash()->void:
+	var skeleton:Skeleton3D=px9.item.find_children("*","Skeleton3D",true,false)[0]
+	var socket:=BoneAttachment3D.new();socket.name="PX9Muzzle";socket.bone_name="muzzle_socket"
+	skeleton.add_child(socket)
+	handgun_flash=preload("res://addons/characters/runtime/muzzle_flash.gd").new()
+	# Supplied socket's -X follows the bore; the reusable effect points along +Z.
+	handgun_flash.basis=Basis(Vector3(0,-1,0),Vector3(0,0,1),Vector3(-1,0,0))
+	socket.add_child(handgun_flash)
+
+func flash_handgun()->void:
+	if current!=9 or px9==null or not is_instance_valid(handgun_flash):return
+	var socket:=handgun_flash.get_parent() as BoneAttachment3D
+	socket.get_skeleton().force_update_all_bone_transforms();socket.on_skeleton_update()
+	handgun_flash.fire()
 
 func handgun_action(action:String)->bool:
 	if current!=9 or px9==null or rifle_holster_item>=0:return false

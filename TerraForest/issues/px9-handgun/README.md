@@ -33,7 +33,7 @@ Source intake: [package identity/provenance](../../addons/characters/runtime/px9
 
 User art acceptance and third-person visual qualification remain open; inspect in actual gameplay after selecting the handgun. No dedicated third-person motion set is claimed: the supplied upper-body layer runs over host legs. A dedicated third-person pass is only needed if that review rejects the shared pose. Return with screenshots/video and verify grip, shoulders and transitions before closing that requirement.
 
-Dry-fire, rack and holster have animation but no dedicated selected recording. Add those only when suitable existing or admitted sounds are available; verify event timing by listening. Shot/audio starts at host trigger as with the existing rifles; authored shot/casing signals remain available, but no new physical shell simulation or independent muzzle-light system is added.
+Dry-fire, rack and holster have animation but no dedicated selected recording. Add those only when suitable existing or admitted sounds are available; verify event timing by listening. Shot/audio starts at host trigger as with the existing rifles; authored shot/casing signals remain available, with the muzzle burst and light now starting at that same accepted-shot boundary. No new physical shell simulation is added.
 
 World drops intentionally use the standard parcel fallback. Loaded rounds remain per weapon type, matching existing rifles; dropping a gun does not attach its magazine to that individual inventory stack. Old executables cannot read the new v4 combat snapshot. Packaging/export validation remains a separate milestone: run normal preflight and packaged firearm/drop/save checks before installing a build.
 
@@ -148,3 +148,55 @@ User gameplay review remains pending.
 Temporary-world regression passes 27/27: automatic reload on empty equip and
 after the last released-trigger shot, magazine refill, no-reserve/no-dry-fire
 behavior, and prior held-fire/aim/reload gates. [Log](logs/px9-auto-reload.log).
+
+## Muzzle flash VFX - 2026-11-09
+
+Original procedural host VFX now follow the supplied `muzzle_socket`: a compact
+irregular warm-white gas burst, a brief warm light on nearby surfaces, and faint
+cool-grey smoke. The nominal flash decays over 38 ms, with at least one visible
+render frame; smoke fades by 550 ms and stays at its shot origin during recoil.
+Each shot varies the gas silhouette, roll, size and intensity. Crossed axial
+sheets fade when viewed edge-on so they do not produce a flat cross/streak.
+The aimed gun naturally occludes the bright centre of the flash.
+
+Only an accepted, ammunition-consuming shot calls the effect, at the existing
+projectile/audio start; animation events do not duplicate it. Empty fire, reloads
+and blocked input produce no flash. Three flash quads, three reusable smoke
+quads and one unshadowed 1.5 m light are allocated at equip; no per-shot nodes or
+particle textures are allocated. The effect joins the existing first-person depth
+protection and is freed with the weapon. It does not change native simulation.
+
+New code: `addons/characters/runtime/muzzle_flash.gd`, `muzzle_flash.gdshader`,
+`muzzle_smoke.gdshader`, and `tools/preview_px9_flash.gd`. These are original
+AI-assisted code authored in this chat under 0BSD in response to the user's
+request for non-cartoonish gun flash. Geometry, masks and turbulence are defined
+in source; no external images, shaders, snippets or new dependencies were imported.
+The supplied CC0 gun and socket are used unchanged under their retained provenance.
+
+Validation: graphical temporary-world checks **31/31**, paired handgun checks
+**68/68**; no VFX/script errors. The world check covers one burst per shot, held
+fire, expiry, and no empty-trigger flash alongside existing aim/reload tests.
+[World log](logs/px9-vfx-world.log), [handgun log](logs/px9-vfx-handgun.log).
+Hip/aimed bright/dim captures were rendered with Compatibility and default
+Forward+; selected captures were inspected. [Compatibility log](logs/px9-vfx-preview.log),
+[Forward+ log](logs/px9-vfx-forward.log). An early invisible emissive-only material
+and a crossed-plane orientation error were corrected during authoring before
+these final captures/checks. The world log retains the pre-existing world-map
+raw-image import warning; this is not an export validation.
+
+![Gameplay muzzle burst](images/vfx-gameplay.png)
+Confirmed shot in the temporary gameplay world, frozen at flash peak for this
+still. The live effect decays immediately. Compatibility renderer.
+
+[Bright hip-fire peak](images/vfx-hip-day.png),
+[dim aimed peak](images/vfx-aim-dim.png), and
+[dim smoke tail](images/vfx-smoke.png) document the lighting/occlusion scope.
+Captions, source timing, renderer and hashes are in [the manifest](images/manifest.json).
+
+Reproduce the studio views with `godot --path TerraForest --script
+res://tools/preview_px9_flash.gd`; add `--rendering-method gl_compatibility` for
+that renderer. Run the graphical `tests/px9_world.gd -- --vfx-capture` for the
+actual-world still and interaction checks. User acceptance of brightness,
+briefness and smoke in live play remains pending; return after the next playtest
+and adjust from the user's feedback. Third-person art acceptance and packaged
+build validation remain in the existing open scope above.

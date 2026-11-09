@@ -1,3 +1,12 @@
+## PX9 muzzle VFX - 2026-11-09
+
+Original procedural warm-white muzzle flash, short warm light pulse and subtle
+smoke are integrated at the confirmed-shot boundary. Hip/aimed bright/dim views
+were checked with Compatibility and Forward+; temporary-world checks 31/31 and
+paired handgun checks 68/68 pass. [Evidence and provenance](../issues/px9-handgun/README.md#muzzle-flash-vfx---2026-11-09)
+record the renders and remaining user brightness/timing/feel review. Revisit
+after live playtesting; third-person and packaged build acceptance remain open.
+
 ## PX9 automatic empty reload - 2026-11-09
 
 An empty equipped PX9 automatically reloads from reserve after last-shot recoil.

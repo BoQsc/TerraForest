@@ -33,7 +33,16 @@ func run()->void:
  check(game.combat.state.get_rounds(9)==15 and game.combat.rounds_in_bag(9)==25,"paired reload consumes exactly fifteen matching cartridges")
  check(game.combat.fire(),"host launches handgun projectile")
  check(game.combat.state.get_rounds(9)==14 and game.combat.shots==1,"one trigger consumes exactly one handgun round")
+ var first_fx:Node3D=game.tool_view.human.handgun_flash
+ check(first_fx.bursts==1 and first_fx.lamp.visible,"confirmed shot emits one muzzle burst and light pulse")
+ if "--vfx-capture" in OS.get_cmdline_user_args() and DisplayServer.get_name()!="headless":
+  first_fx.set_process(false);game.tool_view.human.set_process(false)
+  await process_frame;await RenderingServer.frame_post_draw
+  DirAccess.make_dir_recursive_absolute("res://reports/px9_flash")
+  root.get_texture().get_image().save_png("res://reports/px9_flash/gameplay_flash.png")
+  first_fx.set_process(true);game.tool_view.human.set_process(true)
  await ticks(30)
+ check(not first_fx.lamp.visible and not first_fx.cards[0].visible and first_fx.bursts==1,"muzzle flash expires without repeat bursts from animation events")
  check(game.combat.state.get_rounds(9)==14,"released trigger does not repeat fire")
  var saved:PackedByteArray=game.combat.capture()
  check(game.combat.state.take_round(9) and game.combat.restore(saved) and game.combat.state.get_rounds(9)==14,"host combat save component restores pistol magazine")
@@ -45,11 +54,13 @@ func run()->void:
  check(game.combat.state.get_rounds(9)==14 and game.combat.rounds_in_bag(9)==25,"switching tools cancels reload without consuming cartridges")
  check(game.player_hud.equip_item(9),"PX9 re-equips for held-trigger test")
  await ticks(80)
+ var held_start_shots:int=game.combat.shots
  var press:=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=true
  Input.parse_input_event(press);Input.flush_buffered_events()
  await ticks(90)
  var held_rounds:int=game.combat.state.get_rounds(9)
  check(held_rounds<=12 and held_rounds>0,"holding left mouse repeats shots at the existing recoil cadence")
+ check(game.tool_view.human.handgun_flash.bursts==game.combat.shots-held_start_shots,"held trigger emits exactly one muzzle burst per accepted shot")
  var human:Node=game.tool_view.human
  var actions:Array=[];human.px9.action_started.connect(func(action:String):actions.append(action))
  var aim:=InputEventMouseButton.new();aim.button_index=MOUSE_BUTTON_RIGHT;aim.pressed=true
@@ -88,9 +99,11 @@ func run()->void:
  while game.combat.state.get_rounds(9)>0:game.combat.state.take_round(9)
  game.session_menu.set_open(false);await ticks(40)
  var shots_before:int=game.combat.shots
+ var flashes_before:int=human.handgun_flash.bursts
  press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=true
  Input.parse_input_event(press);Input.flush_buffered_events();await ticks(60)
  check(game.combat.shots==shots_before and game.combat.reload_slot<0 and not actions.has("dry_fire"),"empty reserve neither shoots nor loops a dry-fire/reload animation")
+ check(human.handgun_flash.bursts==flashes_before and not human.handgun_flash.lamp.visible,"empty trigger never emits a muzzle flash")
  press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=false
  Input.parse_input_event(press);Input.flush_buffered_events()
  game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"temporary world shuts down safely")
