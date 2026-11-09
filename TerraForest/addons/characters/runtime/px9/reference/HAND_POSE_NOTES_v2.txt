@@ -1,0 +1,109 @@
+PX-9 ECLIPSE — HUMAN R11 HAND POSE NOTES
+Final authoring handoff, 2026-11-08
+
+Scope and preserved source
+--------------------------
+The first-person poses use the original Human R11 59-bone rest skeleton.
+The weapon retains its separate rig and a fixed RightHand attachment.
+Original Human_Body is retained unchanged. The optional Human_FP_Hands
+copy changes skin weights only: rest positions, topology, all three UV
+layers, material slots, and all 229 shape-key coordinate blocks remain
+identical. Root/Hips/legs are not repositioned by this refinement.
+
+Source GLB SHA256:
+0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8
+
+Final optional skin patch
+-------------------------
+File: hand_weight_patch_v2.json
+Schema: human-r11-fp-hand-skin-patch-1; patch_revision: 2
+Rows: 791 (415 right, 376 left), named bones, maximum four influences.
+SHA256:
+42b1a15fd864d1f43b691630e41ccf192e6db4894acdb70fb7dec9730f60ab0c
+
+The first 790 authored corrections remove cross-finger influences that
+produced pointed skin sheets when the index moved independently. All
+previous 790 rows are unchanged in revision 2.
+
+The additional correction is source vertex 741. It carried 99.924%
+RightHandThumb1 while adjacent vertices 640/742 carried approximately
+28–30% Thumb1 and 70% Hand. This outlier stretched a pre-existing tiny
+boundary seam into the conspicuous dark ADS wrist slit. Revision 2 uses
+neighbor 742's same-hand proportions for vertex 741 and preserves its
+original RightForeArm weight, 0.0002902052365243435, exactly. Its explicit
+eligibility exception is documented in the JSON. No topology was repaired
+or welded. The isolated same-pose comparison removes the visible slit.
+
+Use apply_hand_patch(bodycopy, rig, frozen_patch_json) on a separate,
+single-user mesh. The existing apply helper accepts revision 2 unchanged.
+Do not regenerate the patch using the older 790-row generator alone.
+
+Grip and arm solution
+---------------------
+Canonical weapon space is +Y forward and +Z up, in metres. Human Blender
+space is -Y forward, +Z up, with anatomical right toward -X.
+
+The right palm rotates +30 degrees about item X. Left support rotates
++25 degrees about item X, then -30 degrees about item Z. The magazine
+grip rotates -25 degrees about item X. Each translation preserves its
+original Middle1 MCP anchor. Exact matrices are in wrist_refinement_final.json.
+
+Elbow guidance is 85% toward wrist minus palm-Y times the original forearm
+length, blended with 15% anatomical pole (side_sign*.38, -.08, 1.22).
+Right side_sign=-1; left=+1. Existing fixed bone lengths remain unchanged.
+
+Measured palm-Y/forearm-Y bend after refinement:
+  Idle:       right 14.3 degrees; left 10.8 degrees.
+  ADS:        right 14.0 degrees; left 17.3 degrees.
+  Reload L:   frames 24/46/98/112: 19.3/32.1/30.1/19.2 degrees.
+  Slide rack: right 17.9 degrees; left 20.6 degrees at frame 28.
+The offscreen pouch palm direction normalize(.1,-.9,-.4) reduced the
+measured left bend to 7.2 degrees without moving its wrist position.
+
+Measured finger and thumb contact
+---------------------------------
+Indexed right-index curls are (-12,-12,0) degrees. Trigger curls are
+(-29.79,27.53,50), with proximal local-Z splay -24.8 degrees. Proximal
+rotation order is Rz(splay) * Rx(-curl); other joints use Rx(-curl).
+The trigger pad-center bone tip is approximately
+(.000029,-.006536,.009999), within 0.046 mm of the fitted target. Splay
+blends with the same contact weight as the index curls.
+
+Final item-space thumb segment directions, proximal to distal:
+  Right:       (-.4,.48,.78), (-.45,.88,.15), (.05,.99,.05)
+  Left support:(.60,.50,.62), (.55,.72,.42), (.10,.98,.15)
+  Left mag:    (.65,.1,.75), (.5,.1,.86), (-.35,.9,-.25)
+  Left slide:  (.6,.6,.5), (.7,.6,0), (.1,.95,-.25)
+Directions are normalized by the solver. Final support-thumb tip is
+(-.02372,-.03100,-.00890), bringing it against the grip. The right rest
+thumb tip is (-.01660,-.06451,.00874).
+
+The measured slide-stop bounds are x[-.02375,-.018],
+y[-.086779,-.068], z[.037,.045]. Thumb approach directions
+(-.4,.48,.78),(-.45,.65,.61),(-.35,.67,.66) place the tip at
+(-.02740,-.08283,.04407). Changing the distal direction to
+(-.35,.75,.56) lowers the tip 2.63 mm to
+(-.02744,-.08060,.04144), with the flesh pad adjacent to the lever.
+Root integrated this into Reload_Empty: approach 138–143, press
+143–146, release by 149, relaxed by 152, with 8-degree lever actuation.
+
+Evidence and practical limits
+-----------------------------
+wrist_review/wrist_refinement_final.json collects exact matrices,
+measurements, patch identity, and image paths. The source seam diagnosis
+is slit_diagnosis.json; contact fits are tilted_index_fit.json and
+slide_release_thumb.json. Saved validation fixture:
+hand_patch_v2_fixture.blend.
+
+Independent saved-fixture audit passed all 17 checks, including exact
+original 790 rows, source geometry/UVs/materials/all 229 shapes, unchanged
+original body, and zero non-hand influence difference. The measured
+741-to-742 source distance is 0.0015392393 m. Audit report:
+../validation/hand_patch_v2_saved_validation.json.
+
+Visual comparisons are actual Blender renders. Human R11 retains its
+original low-resolution palm/knuckle facets and tiny source boundary
+triangles. This optional weight variant improves the reviewed poses;
+it does not replace the supplied character topology. Final per-frame
+clip validation and native runtime validation are performed separately
+against the completed root build.

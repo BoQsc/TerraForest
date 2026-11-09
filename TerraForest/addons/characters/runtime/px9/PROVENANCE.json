@@ -1,0 +1,38 @@
+{
+  "source_archive": "PX9_Eclipse_FirstPerson_CC0.zip",
+  "sha256": "994010c7643ec0a50dbfeae2b467e7dff5094d8a204fafd8979c812fc949247f",
+  "source_url": "https://chatgpt.com/share/6af1f516-491c-83eb-9517-d4b14a6645ab",
+  "creator": "User-supplied asset, authored with ChatGPT Pro Astra; retained package records identify BG5",
+  "revision": "Rack release thumb revision 8",
+  "license": "CC0-1.0 (including inherited portable scripts; preserved)",
+  "scope": "Copied runtime assets, portable adapters, editable source and source notices under this directory. Human.r11.glb is reused from existing assets, not duplicated. Historical review folders omitted.",
+  "files": {
+    "item_definition.gd": "fc8bf7f94310cb8bc615cb890eac063879f6b399ec22e8e658f7cc0d39a24365",
+    "item_motion.gd": "41b1d05566ce9f297d848e009248968e9df82497695cc951d758b35332d0c234",
+    "item_mount.gd": "0b60ed89888b8bfbe93cd61f51a17db62f57a7fd035723b8002766a8d4318eda",
+    "item_human_layer.gd": "b7d67d5ec56482e8b6f489dad8a98da1d5b2ec3a73e8360e220d365568986716",
+    "item_instance.gd": "a71d235831f7e058457f96907073e82aaffa24a08aa4a4685e41e8db164fdd75",
+    "item_hand_weights.gd": "944c7e4e512ad98b12437f597457bb9abbe5570a8597454e4b94f4c5f833c3ae",
+    "import_item_animations.gd": "58fef56c85bd1867878196236404958ae2457d419c4859b86f32191e4a857e8d",
+    "item_px9.json": "77372cd442868f9cbe3c5faa6782cdb099fd417f741153da2403066858100fb3",
+    "Human.px9_eclipse.res": "38cc90ee77a8136bef5551524ed79c2762e11119a107e5e8615314efb001ed02",
+    "Human.px9_eclipse.body.res": "72e8e15b2fe4bfff3c201d2a6a271f44a6f8934565849969bb0d70bdfd6a4304",
+    "Human.px9_eclipse.glb": "640af8f4ca9b50b8be1e3782cb5297395bff6474e83a8f5d6b0c0ab33afa046c",
+    "Human.px9_eclipse.hand_weights.json": "bfc8166a664e58641c5243358ebab43c8ca9187bff92b596b4ee8e3bcf82fe5b",
+    "PX9_Eclipse_FP.glb": "ae41ea1651ba958de5bc25006ee9fa335ac5c12991090541d518dbde795275cd",
+    "PX9_Eclipse_FP_PX9_Skeleton_BaseColor.png": "90c250a0cf6b52986e8a1da7a2d1ba97d361e2bf8752ce2384b107c4c04057e7",
+    "PX9_Eclipse_FP_PX9_Skeleton_Normal.png": "396b702d4d03cda39f028ad74a9c437cd6ba6108dc3fd28ae16db49a4e31c64d",
+    "PX9_Eclipse_FP_PX9_Skeleton_ORM.png": "c013e2463a0b0054dddf424a77973c125fbe10c7e3fa3afe757bdda7ce0390f6",
+    "LICENSE.txt": "8bdc7b952ae0a12e08ccf9463a4750f7288f4d05bf7f2124cc5805ecaabdb01c",
+    "SOURCE_NOTES.txt": "345b7cc4d4c07a350f14ead3371895ca7893cf5942a9db8b29bdb1629ccd5b88",
+    "THIRD_PARTY_NOTICES.txt": "7f7ce2749d154dbbecbcce1e06a30f5760efb1c6c83cb01def4d6c1513f16fdd",
+    "TEXTURE_PROVENANCE.json": "1c154bb41a4202036ae6800a8920ab75e2011c56ee3bc8aa38224cf5918bd970",
+    "PORTABLE_INTEGRATION.txt": "ba41694bc0a99faf2ec0c654871a7d3cc316f05eb801132d31c196bd6a04baa6",
+    "CLIPS.txt": "706f0c95d97eeaea147724c91427bc5bf67532294295341043bec34d09dafbb3",
+    "README.txt": "261a10e9689f50012a29a7411ffa6651aa75572e1844005106be2b1c10a5341b",
+    "ANIMATION_IMPORT_REPORT.json": "cf982745bc4bc07559a404b4eb4b6a5245e7483e39d16e99ee27a22869a061d9"
+  },
+  "host_derivatives": {
+    "res://addons/player_runtime/art/px9.svg": "Original TerraForest silhouette, CC0-1.0; no external image input"
+  }
+}

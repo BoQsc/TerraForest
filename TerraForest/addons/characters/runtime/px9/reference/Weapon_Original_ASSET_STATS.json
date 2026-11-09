@@ -1,0 +1,200 @@
+{
+  "asset": "PX-9 ECLIPSE \u2014 Skeleton / 20K edition",
+  "license": "CC0-1.0",
+  "texture_sources": "OpenAI imagegen; see TEXTURE_PROVENANCE.json",
+  "triangles_all_parts_including_casing": 19616,
+  "triangles_pistol_without_casing": 19360,
+  "mesh_vertices_before_gltf_splits": 10162,
+  "mesh_parts": 17,
+  "materials": 1,
+  "runtime_textures": 3,
+  "texture_size": [
+    2048,
+    2048
+  ],
+  "armatures": 1,
+  "armature_name": "WeaponSkeleton",
+  "bones": 22,
+  "weighted_part_bones": 17,
+  "socket_bones": 4,
+  "part_bone_map": {
+    "Frame": "frame",
+    "Slide": "slide",
+    "Barrel": "barrel",
+    "MuzzleHousing": "muzzle_housing",
+    "GuideRod": "guide_rod",
+    "Magazine": "magazine",
+    "MagazineBase": "magazine_base",
+    "Trigger": "trigger",
+    "GripPanel_Left": "grip_panel_left",
+    "GripPanel_Right": "grip_panel_right",
+    "Takedown": "takedown",
+    "SlideStop": "slide_stop",
+    "MagazineRelease": "magazine_release",
+    "FramePins": "frame_pins",
+    "FrontSight": "front_sight",
+    "RearSight": "rear_sight",
+    "EjectedCase": "ejected_case"
+  },
+  "bone_parents": {
+    "weapon_root": null,
+    "frame": "weapon_root",
+    "slide": "weapon_root",
+    "barrel": "weapon_root",
+    "muzzle_housing": "weapon_root",
+    "guide_rod": "weapon_root",
+    "magazine": "weapon_root",
+    "magazine_base": "magazine",
+    "trigger": "weapon_root",
+    "grip_panel_left": "weapon_root",
+    "grip_panel_right": "weapon_root",
+    "takedown": "weapon_root",
+    "slide_stop": "weapon_root",
+    "magazine_release": "weapon_root",
+    "frame_pins": "weapon_root",
+    "front_sight": "slide",
+    "rear_sight": "slide",
+    "ejected_case": "weapon_root",
+    "muzzle_socket": "weapon_root",
+    "grip_socket": "weapon_root",
+    "support_hand_socket": "weapon_root",
+    "ejection_socket": "slide"
+  },
+  "socket_bone_map": {
+    "MuzzleSocket": "muzzle_socket",
+    "GripSocket": "grip_socket",
+    "SupportHandSocket": "support_hand_socket",
+    "EjectionSocket": "ejection_socket"
+  },
+  "skinning": "Exactly one weight of 1.0 per mesh vertex; 17 separate skinned meshes.",
+  "coordinate_system_gltf": {
+    "up": "+Y",
+    "forward": "-Z",
+    "units": "meters"
+  },
+  "blender_version": "4.3.2",
+  "parts": {
+    "Frame": {
+      "triangles": 6918,
+      "mesh_vertices": 3579,
+      "rigid_bone": "frame"
+    },
+    "Slide": {
+      "triangles": 2740,
+      "mesh_vertices": 1376,
+      "rigid_bone": "slide"
+    },
+    "Barrel": {
+      "triangles": 932,
+      "mesh_vertices": 472,
+      "rigid_bone": "barrel"
+    },
+    "MuzzleHousing": {
+      "triangles": 2756,
+      "mesh_vertices": 1388,
+      "rigid_bone": "muzzle_housing"
+    },
+    "GuideRod": {
+      "triangles": 734,
+      "mesh_vertices": 373,
+      "rigid_bone": "guide_rod"
+    },
+    "Magazine": {
+      "triangles": 556,
+      "mesh_vertices": 360,
+      "rigid_bone": "magazine"
+    },
+    "MagazineBase": {
+      "triangles": 380,
+      "mesh_vertices": 194,
+      "rigid_bone": "magazine_base"
+    },
+    "Trigger": {
+      "triangles": 616,
+      "mesh_vertices": 314,
+      "rigid_bone": "trigger"
+    },
+    "GripPanel_Left": {
+      "triangles": 672,
+      "mesh_vertices": 340,
+      "rigid_bone": "grip_panel_left"
+    },
+    "GripPanel_Right": {
+      "triangles": 672,
+      "mesh_vertices": 340,
+      "rigid_bone": "grip_panel_right"
+    },
+    "Takedown": {
+      "triangles": 368,
+      "mesh_vertices": 204,
+      "rigid_bone": "takedown"
+    },
+    "SlideStop": {
+      "triangles": 256,
+      "mesh_vertices": 136,
+      "rigid_bone": "slide_stop"
+    },
+    "MagazineRelease": {
+      "triangles": 248,
+      "mesh_vertices": 138,
+      "rigid_bone": "magazine_release"
+    },
+    "FramePins": {
+      "triangles": 960,
+      "mesh_vertices": 528,
+      "rigid_bone": "frame_pins"
+    },
+    "FrontSight": {
+      "triangles": 228,
+      "mesh_vertices": 120,
+      "rigid_bone": "front_sight"
+    },
+    "RearSight": {
+      "triangles": 324,
+      "mesh_vertices": 172,
+      "rigid_bone": "rear_sight"
+    },
+    "EjectedCase": {
+      "triangles": 256,
+      "mesh_vertices": 128,
+      "rigid_bone": "ejected_case"
+    }
+  },
+  "requested_reference_file": "PX-9 ECLIPSE.glb",
+  "reference_file": "PX-9 ECLIPSE(1).glb",
+  "reference_sha256": "6c8c71dc1cf0cc65dff90f1070cd1df1856fe075ed129e7de8083dfdc4bb463a",
+  "reference_image": "PX-9 ECLIPSE.png",
+  "reference_image_sha256": "22e9a112a46a604de068736737d2c85aff8abd1b191f7be0b823a5ef57415e4e",
+  "triangle_budget_exclusive": 20000,
+  "triangles_below_budget": 384,
+  "animation_clip_count": 11,
+  "exported_vertices_after_uv_normal_splits": 19252,
+  "glb_skins": 1,
+  "glb_joint_nodes": 22,
+  "separate_skinned_mesh_nodes": 17,
+  "vertices_with_one_unit_influence": 19252,
+  "godot_skeleton_count": 1,
+  "godot_skeleton_type": "Skeleton3D",
+  "godot_skeleton_path": "WeaponSkeleton/Skeleton3D",
+  "godot_bone_count": 22,
+  "godot_version_verified": "4.6.3-stable (official)",
+  "rest_bounds_m": {
+    "min": [
+      -0.023750003427267075,
+      -0.08460000157356262,
+      -0.12510000197515728
+    ],
+    "max": [
+      0.020809998735785484,
+      0.08399999886751175,
+      0.12500000000000033
+    ],
+    "dimensions": [
+      0.04456000216305256,
+      0.16860000044107437,
+      0.2501000019751576
+    ]
+  },
+  "glb_sha256": "707269f8a81e3929b9abe1cc59af81d18ee63f5aead37c5e3dc2337557895d87",
+  "blender_source_sha256": "27677ac0c77606a0daf209e5c598d95ef88362938f63f82c5418e24a2761c7fe"
+}

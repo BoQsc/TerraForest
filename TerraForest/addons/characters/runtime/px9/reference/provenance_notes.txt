@@ -1,0 +1,54 @@
+PX9 FIRST-PERSON HANDOFF — SOURCE AND LICENSE OBSERVATIONS
+
+The existing PX9 weapon release is supplied in this same session with CC0-1.0
+legal text and source notes. Its original artist-authored geometry, textures,
+rig and animation provenance should be retained in the derivative package.
+
+The earlier successfully extracted TerraForest_PlayerModel_HumanR11_Handoff
+contains HANDOFF.md, README.txt and R11.validation.txt identifying the Human
+R11 model as CC0-1.0. HANDOFF.md preserves the statement "R7 original edits
+CC0-1.0; inherited asset provenance retained". This is source-supplied
+provenance, not an independent clearance of every upstream contribution.
+
+The four included 04_Reintegration scripts carry SPDX-License-Identifier:
+0BSD. Any copied files or substantive adapted fragments should retain that
+source identification; new authored animations and asset contributions can
+carry the user's requested CC0 dedication. Do not claim those source scripts
+were originally labeled CC0. No external stock art, downloaded fonts, or
+third-party Python packages are needed for this work.
+
+The actual original Human.r11.blend reads as Blender file version 4.5.90;
+Blender 4.3.2 opens it with a newer-file warning. A native compatibility fixture
+confirmed the exported 59-bone rig against the exact original runtime GLB in
+Godot 4.6.3: maximum global-rest error 2.40274e-7, local-rest error 1.23568e-7,
+with 0.0001 tolerance. The exact original runtime body should remain the
+reintegration target. Animation-only exports carry a joint-map mesh, which is
+not a replacement for the runtime body and may truncate more than four skin
+influences under the documented export settings.
+
+The example Human.hammer.blend and Human.unarmed.blend use a newer 5.2 file
+header that the available Blender 4.3.2 cannot open. Their supplied authoring
+and import code remains readable and is suitable as contract evidence. Do
+not claim those example Blender scenes were opened or visually validated.
+
+New per-frame clips should preserve all 59 human rest bones and all 497
+original source Action datablocks, including the 71 rig clips. They may use
+the original Idle frame1 lower-body pose as a constant authoring baseline;
+Root/Hips/legs/feet must not vary through an FP clip, and their tracks must
+be stripped from the runtime FP library so existing locomotion retains
+control. This does not authorize modifying the original runtime file.
+
+OPTIONAL FIRST-PERSON HAND WEIGHT VARIANT
+
+The new optional Human_FP_Hands duplicate is intended to repair cross-finger
+skin influence during the PX9 grip and moving-index poses. It must preserve
+all original vertex positions, topology, three UV layers, materials, and
+229 shape-block coordinate arrays. Only eligible hand-region vertex weights
+may differ; all original non-hand influence values must remain unchanged.
+The original Human_Body and its original source Actions remain intact.
+
+The Godot adapter should activate the optional mesh only while an item asks
+for it and restore the exact original mesh on release/switch. Native resource
+validation is separate from Blender-source validation; any serialization or
+weight-quantization differences must be measured and recorded. A successful
+structural check does not replace visual review of all final grip poses.

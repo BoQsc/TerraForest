@@ -1,0 +1,34 @@
+PX-9 ECLIPSE FIRST-PERSON — SOURCE AND TOOL NOTICES
+
+New authored contributions in this package are offered under CC0-1.0, with
+the scope described in SOURCE_NOTES.txt and the complete legal code LICENSE.txt.
+
+INCLUDED ASSET SOURCES
+
+1. Existing PX9 Weapon Skeleton / 20K edition: CC0-1.0 dedication and provenance
+   retained in reference/Weapon_Original_SOURCE_NOTES.txt. Its OpenAI-generated
+   texture sources, prompts and derived PBR maps are included unchanged.
+2. Supplied Human R11: source handoff identifies CC0-1.0 and retains inherited
+   asset provenance. The original supplied records are included in reference/.
+   The original runtime GLB remains byte-identical to the handoff copy.
+
+CONSULTED INTEGRATION REFERENCES, NOT INCLUDED
+
+The handoff files author_human_placement.py, author_human_unarmed.py,
+import_human_placement.gd and import_human_unarmed.gd are labeled 0BSD.
+They were read to understand the required rest-pose, naming, sampling and
+runtime library contract. The new authoring, validation and runtime modules
+were written for this release; the four original scripts are not bundled.
+No original 0BSD source file is relabeled as CC0.
+
+TOOLS, NOT BUNDLED OR RELICENSED
+
+Blender 4.3.2; Godot 4.6.3; Python standard library; FFmpeg for preview encoding.
+New scripts use native Blender/Godot APIs without external add-ons or packages.
+OpenAI image generation supplied the prior weapon edition's texture images.
+TRELLIS.2 describes the user's original reference workflow; source declaration
+is retained in the earlier weapon notes. Its software/model license is separate
+from the rights applicable to a particular generated output.
+
+No external stock art, audio, custom shader dependency or downloaded font file
+was added. The CC0 dedication does not grant rights belonging to others.

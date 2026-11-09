@@ -1,0 +1,1906 @@
+{
+  "animation_player_root": "Human model scene root",
+  "animation_source_file": "Human.px9_eclipse.glb",
+  "animation_source_sha256": "640af8f4ca9b50b8be1e3782cb5297395bff6474e83a8f5d6b0c0ab33afa046c",
+  "clips": {
+    "FP_PX9_ECLIPSE_Aim_Fire": {
+      "duration_seconds": 0.400000005960464,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "shot",
+          "frame": 4.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "case_eject",
+          "frame": 6.0
+        }
+      ],
+      "frame_end": 24.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 25
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Aim_Fire_Last": {
+      "duration_seconds": 0.400000005960464,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "shot",
+          "frame": 4.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "case_eject",
+          "frame": 6.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "slide_locked",
+          "frame": 9.0
+        }
+      ],
+      "frame_end": 24.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 25
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Aim_Idle": {
+      "duration_seconds": 2.0,
+      "events": [],
+      "frame_end": 120.0,
+      "loop": true,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 121
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Aim_Idle_Empty": {
+      "duration_seconds": 2.0,
+      "events": [],
+      "frame_end": 120.0,
+      "loop": true,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 121
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Aim_In": {
+      "duration_seconds": 0.300000011920929,
+      "events": [],
+      "frame_end": 18.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 19
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Aim_Out": {
+      "duration_seconds": 0.300000011920929,
+      "events": [],
+      "frame_end": 18.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 19
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Dry_Fire": {
+      "duration_seconds": 0.333333343267441,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "dry_fire",
+          "frame": 5.0
+        }
+      ],
+      "frame_end": 20.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 21
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Equip": {
+      "duration_seconds": 0.699999988079071,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "ready",
+          "frame": 30.0
+        }
+      ],
+      "frame_end": 42.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 43
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Fire": {
+      "duration_seconds": 0.400000005960464,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "shot",
+          "frame": 4.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "case_eject",
+          "frame": 6.0
+        }
+      ],
+      "frame_end": 24.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 25
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Fire_Last": {
+      "duration_seconds": 0.400000005960464,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "shot",
+          "frame": 4.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "case_eject",
+          "frame": 6.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "slide_locked",
+          "frame": 9.0
+        }
+      ],
+      "frame_end": 24.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 25
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Holster": {
+      "duration_seconds": 0.600000023841858,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "holstered",
+          "frame": 30.0
+        }
+      ],
+      "frame_end": 36.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 37
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Idle": {
+      "duration_seconds": 2.0,
+      "events": [],
+      "frame_end": 120.0,
+      "loop": true,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 121
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Idle_Empty": {
+      "duration_seconds": 2.0,
+      "events": [],
+      "frame_end": 120.0,
+      "loop": true,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 121
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Inspect": {
+      "duration_seconds": 4.0,
+      "events": [],
+      "frame_end": 240.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 241
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Jump": {
+      "duration_seconds": 1.0,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "landing",
+          "frame": 38.0
+        }
+      ],
+      "frame_end": 60.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 61
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Rack": {
+      "duration_seconds": 1.20000004768372,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "slide_pull",
+          "frame": 28.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "slide_release",
+          "frame": 40.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "ready",
+          "frame": 64.0
+        }
+      ],
+      "frame_end": 72.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 73
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Reload": {
+      "duration_seconds": 2.79999995231628,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "magazine_release",
+          "frame": 22.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "magazine_out",
+          "frame": 46.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "magazine_exchange",
+          "frame": 72.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "magazine_seated",
+          "frame": 112.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "ready",
+          "frame": 150.0
+        }
+      ],
+      "frame_end": 168.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 169
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Reload_Empty": {
+      "duration_seconds": 3.20000004768372,
+      "events": [
+        {
+          "data": {
+
+          },
+          "event": "magazine_release",
+          "frame": 22.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "magazine_out",
+          "frame": 46.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "magazine_exchange",
+          "frame": 72.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "magazine_seated",
+          "frame": 112.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "slide_release",
+          "frame": 145.0
+        },
+        {
+          "data": {
+
+          },
+          "event": "ready",
+          "frame": 174.0
+        }
+      ],
+      "frame_end": 192.0,
+      "loop": false,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 193
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Run": {
+      "duration_seconds": 0.800000011920929,
+      "events": [],
+      "frame_end": 48.0,
+      "loop": true,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 49
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    },
+    "FP_PX9_ECLIPSE_Walk": {
+      "duration_seconds": 1.20000004768372,
+      "events": [],
+      "frame_end": 72.0,
+      "loop": true,
+      "lower_body_constant_check": {
+        "baseline": "Frame 0; an inherited constant Idle lower-body baseline is permitted and stripped from the runtime library.",
+        "bones": 14,
+        "maximum_pose_variation": 0.0000000670552253723145,
+        "passed": true,
+        "sampled_frames": 73
+      },
+      "omitted_tracks": 42,
+      "tracks": 135,
+      "upper_body_bones": [
+        "RightHandThumb3",
+        "RightHandThumb2",
+        "RightHandThumb1",
+        "RightHandRing3",
+        "RightHandRing2",
+        "RightHandRing1",
+        "RightHandPinky3",
+        "RightHandPinky2",
+        "RightHandPinky1",
+        "RightHandMiddle3",
+        "RightHandMiddle2",
+        "RightHandMiddle1",
+        "RightHandIndex3",
+        "RightHandIndex2",
+        "RightHandIndex1",
+        "RightHand",
+        "RightForeArm",
+        "RightArm",
+        "RightShoulder",
+        "Eye.R",
+        "Eye.L",
+        "Head",
+        "Neck",
+        "LeftHandThumb3",
+        "LeftHandThumb2",
+        "LeftHandThumb1",
+        "LeftHandRing3",
+        "LeftHandRing2",
+        "LeftHandRing1",
+        "LeftHandPinky3",
+        "LeftHandPinky2",
+        "LeftHandPinky1",
+        "LeftHandMiddle3",
+        "LeftHandMiddle2",
+        "LeftHandMiddle1",
+        "LeftHandIndex3",
+        "LeftHandIndex2",
+        "LeftHandIndex1",
+        "LeftHand",
+        "LeftForeArm",
+        "LeftArm",
+        "LeftShoulder",
+        "Spine2",
+        "Spine1",
+        "Spine"
+      ]
+    }
+  },
+  "definition_sha256": "77372cd442868f9cbe3c5faa6782cdb099fd417f741153da2403066858100fb3",
+  "engine": "4.6.3-stable (official)",
+  "errors": [],
+  "fps": 60.0,
+  "hand_skin_variant": {
+    "bounds_policy": "Original per-bone bounds retained and conservatively expanded for newly assigned vertices.",
+    "changed_runtime_vertices": 1893,
+    "engine": "4.6.3-stable (official)",
+    "errors": [],
+    "mapped_runtime_vertices": 1906,
+    "mapped_source_rows": 1060,
+    "maximum_position_match_error_metres": 0.0,
+    "maximum_source_requested_weight_difference": 0.0000837784972598222,
+    "maximum_weight_quantization_error": 0.0000128489047389069,
+    "original_native_non_hand_weights_preserved": true,
+    "output": "Human.px9_eclipse.body.res",
+    "output_bytes": 25171410,
+    "output_sha256": "72e8e15b2fe4bfff3c201d2a6a271f44a6f8934565849969bb0d70bdfd6a4304",
+    "passed": true,
+    "raw_geometry_and_morph_buffers_byte_identical": true,
+    "runtime_blend_shapes": 228,
+    "runtime_materials": "Reused from the original model at equip time; not serialized into the variant.",
+    "runtime_surfaces": 3,
+    "saved_geometry_buffers_byte_identical": true,
+    "saved_skin_buffers_match_variant": true,
+    "schema": "bg5-native-hand-skin-1",
+    "source_glb_sha256": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+    "source_patch_schema": "human-r11-fp-hand-skin-patch-1",
+    "source_patch_sha256": "bfc8166a664e58641c5243358ebab43c8ca9187bff92b596b4ee8e3bcf82fe5b",
+    "source_rows": 1060,
+    "surfaces": [
+      {
+        "attribute_bytes": 95424,
+        "blend_shape_bytes": 18130560,
+        "changed_vertices": 0,
+        "index_bytes": 36240,
+        "mapped_vertices": 0,
+        "native_format": 34359786615,
+        "skin_width": 4,
+        "source_skin_sha256": "e91bef73a21e7daac21489903656b08559d64eed5dbe9c0c76c396c868123cbe",
+        "surface": 0,
+        "variant_skin_sha256": "e91bef73a21e7daac21489903656b08559d64eed5dbe9c0c76c396c868123cbe",
+        "vertex_bytes": 79520,
+        "vertices": 3976
+      },
+      {
+        "attribute_bytes": 82224,
+        "blend_shape_bytes": 15622560,
+        "changed_vertices": 1893,
+        "index_bytes": 21306,
+        "mapped_vertices": 1906,
+        "native_format": 34359786615,
+        "skin_width": 4,
+        "source_skin_sha256": "583855b3ab5e82292fda5b663e0846d0f82c6edb6d72b783b22ab094cff62134",
+        "surface": 1,
+        "variant_skin_sha256": "c3b1814050e8d635e6c77555cc1bed7c0cdcfe07950b50d28e351566a4b4bf89",
+        "vertex_bytes": 68520,
+        "vertices": 3426
+      },
+      {
+        "attribute_bytes": 4848,
+        "blend_shape_bytes": 921120,
+        "changed_vertices": 0,
+        "index_bytes": 1404,
+        "mapped_vertices": 0,
+        "native_format": 34359786615,
+        "skin_width": 4,
+        "source_skin_sha256": "2147c41212fe697cda0bdb737bc48f4faf55b7266ab8434e06b3bfee3c8eece8",
+        "surface": 2,
+        "variant_skin_sha256": "2147c41212fe697cda0bdb737bc48f4faf55b7266ab8434e06b3bfee3c8eece8",
+        "vertex_bytes": 4040,
+        "vertices": 202
+      }
+    ],
+    "unpatched_skin_records_byte_identical": true
+  },
+  "original_animation_count": 71,
+  "output": "Human.px9_eclipse.res",
+  "output_bytes": 1915924,
+  "output_sha256": "38cc90ee77a8136bef5551524ed79c2762e11119a107e5e8615314efb001ed02",
+  "passed": true,
+  "reference_file": "Human.r11.glb",
+  "reference_model_modified": false,
+  "reference_sha256": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+  "rest_validation": {
+    "bones": [
+      {
+        "bone": "Root",
+        "global_error": 0.0,
+        "local_error": 0.0,
+        "parent": ""
+      },
+      {
+        "bone": "Hips",
+        "global_error": 0.000000000000007105427357601,
+        "local_error": 0.000000000000007105427357601,
+        "parent": "Root"
+      },
+      {
+        "bone": "LeftUpLeg",
+        "global_error": 0.000000119209673243859,
+        "local_error": 0.000000119405328291577,
+        "parent": "Hips"
+      },
+      {
+        "bone": "LeftLeg",
+        "global_error": 0.000000119442077561871,
+        "local_error": 0.000000119270637810587,
+        "parent": "LeftUpLeg"
+      },
+      {
+        "bone": "LeftFoot",
+        "global_error": 0.0000000307195300308649,
+        "local_error": 0.0000000606433303573795,
+        "parent": "LeftLeg"
+      },
+      {
+        "bone": "LeftToeBase",
+        "global_error": 0.000000000000028421709430404,
+        "local_error": 0.0000000298604732051899,
+        "parent": "LeftFoot"
+      },
+      {
+        "bone": "RightUpLeg",
+        "global_error": 0.000000119684301580492,
+        "local_error": 0.000000119486358585164,
+        "parent": "Hips"
+      },
+      {
+        "bone": "RightLeg",
+        "global_error": 0.0000000614390955888666,
+        "local_error": 0.00000000372534403325631,
+        "parent": "RightUpLeg"
+      },
+      {
+        "bone": "RightFoot",
+        "global_error": 0.0000000298023223876953,
+        "local_error": 0.00000011944189282076,
+        "parent": "RightLeg"
+      },
+      {
+        "bone": "RightToeBase",
+        "global_error": 0.000000000000909494701772928,
+        "local_error": 0.000000066640019724673,
+        "parent": "RightFoot"
+      },
+      {
+        "bone": "Spine",
+        "global_error": 0.000000119209289550781,
+        "local_error": 0.00000011926748300084,
+        "parent": "Hips"
+      },
+      {
+        "bone": "Spine1",
+        "global_error": 0.00000011944189282076,
+        "local_error": 0.000000119212927529588,
+        "parent": "Spine"
+      },
+      {
+        "bone": "Spine2",
+        "global_error": 0.00000011944189282076,
+        "local_error": 0.000000000000000444089209850063,
+        "parent": "Spine1"
+      },
+      {
+        "bone": "LeftShoulder",
+        "global_error": 0.0000000596046447753906,
+        "local_error": 0.00000000795722332469495,
+        "parent": "Spine2"
+      },
+      {
+        "bone": "LeftArm",
+        "global_error": 0.000000119456416314279,
+        "local_error": 0.0000000601890874918354,
+        "parent": "LeftShoulder"
+      },
+      {
+        "bone": "LeftForeArm",
+        "global_error": 0.000000119271120979647,
+        "local_error": 0.0000000223517417907715,
+        "parent": "LeftArm"
+      },
+      {
+        "bone": "LeftHand",
+        "global_error": 0.0000000298023223876953,
+        "local_error": 0.000000119442120194435,
+        "parent": "LeftForeArm"
+      },
+      {
+        "bone": "LeftHandIndex1",
+        "global_error": 0.0000000615518942481685,
+        "local_error": 0.0000000614391524322855,
+        "parent": "LeftHand"
+      },
+      {
+        "bone": "LeftHandIndex2",
+        "global_error": 0.000000123778335137104,
+        "local_error": 0.0000000666660469050839,
+        "parent": "LeftHandIndex1"
+      },
+      {
+        "bone": "LeftHandIndex3",
+        "global_error": 0.000000066640019724673,
+        "local_error": 0.00000000000000177635683940025,
+        "parent": "LeftHandIndex2"
+      },
+      {
+        "bone": "LeftHandMiddle1",
+        "global_error": 0.0000000597209464103798,
+        "local_error": 0.000000120352652288602,
+        "parent": "LeftHand"
+      },
+      {
+        "bone": "LeftHandMiddle2",
+        "global_error": 0.00000011922384146601,
+        "local_error": 0.000000120145131177196,
+        "parent": "LeftHandMiddle1"
+      },
+      {
+        "bone": "LeftHandMiddle3",
+        "global_error": 0.000000119340185733563,
+        "local_error": 0.0000000000000317764376281133,
+        "parent": "LeftHandMiddle2"
+      },
+      {
+        "bone": "LeftHandPinky1",
+        "global_error": 0.000000119209289550781,
+        "local_error": 0.0000000597141109892618,
+        "parent": "LeftHand"
+      },
+      {
+        "bone": "LeftHandPinky2",
+        "global_error": 0.000000122198613894398,
+        "local_error": 0.000000123567943433045,
+        "parent": "LeftHandPinky1"
+      },
+      {
+        "bone": "LeftHandPinky3",
+        "global_error": 0.0000000298023223876953,
+        "local_error": 0.0000000596046447753906,
+        "parent": "LeftHandPinky2"
+      },
+      {
+        "bone": "LeftHandRing1",
+        "global_error": 0.000000120194741271007,
+        "local_error": 0.00000012016587902508,
+        "parent": "LeftHand"
+      },
+      {
+        "bone": "LeftHandRing2",
+        "global_error": 0.0000000674935805022869,
+        "local_error": 0.000000119209289550781,
+        "parent": "LeftHandRing1"
+      },
+      {
+        "bone": "LeftHandRing3",
+        "global_error": 0.0000000650593960926926,
+        "local_error": 0.0000000000000123883786258897,
+        "parent": "LeftHandRing2"
+      },
+      {
+        "bone": "LeftHandThumb1",
+        "global_error": 0.00000011944189282076,
+        "local_error": 0.000000120137784165308,
+        "parent": "LeftHand"
+      },
+      {
+        "bone": "LeftHandThumb2",
+        "global_error": 0.0000000596046447753906,
+        "local_error": 0.0000000187193514022965,
+        "parent": "LeftHandThumb1"
+      },
+      {
+        "bone": "LeftHandThumb3",
+        "global_error": 0.0000000954139878217575,
+        "local_error": 0.00000000000000236505151400557,
+        "parent": "LeftHandThumb2"
+      },
+      {
+        "bone": "Neck",
+        "global_error": 0.000000000000014210854715202,
+        "local_error": 0.0,
+        "parent": "Spine2"
+      },
+      {
+        "bone": "Head",
+        "global_error": 0.0,
+        "local_error": 0.00000012287812012346,
+        "parent": "Neck"
+      },
+      {
+        "bone": "Eye.L",
+        "global_error": 0.0,
+        "local_error": 0.0,
+        "parent": "Head"
+      },
+      {
+        "bone": "Eye.R",
+        "global_error": 0.0,
+        "local_error": 0.0,
+        "parent": "Head"
+      },
+      {
+        "bone": "RightShoulder",
+        "global_error": 0.0000000298024325218194,
+        "local_error": 0.00000000655657039771995,
+        "parent": "Spine2"
+      },
+      {
+        "bone": "RightArm",
+        "global_error": 0.000000122546794045775,
+        "local_error": 0.00000000187714066512967,
+        "parent": "RightShoulder"
+      },
+      {
+        "bone": "RightForeArm",
+        "global_error": 0.00000000465661287307739,
+        "local_error": 0.00000011947456357575,
+        "parent": "RightArm"
+      },
+      {
+        "bone": "RightHand",
+        "global_error": 0.0000000596046447753906,
+        "local_error": 0.0000000149015217942861,
+        "parent": "RightForeArm"
+      },
+      {
+        "bone": "RightHandIndex1",
+        "global_error": 0.000000119648674967721,
+        "local_error": 0.0000000157879629369972,
+        "parent": "RightHand"
+      },
+      {
+        "bone": "RightHandIndex2",
+        "global_error": 0.0000000600685012841495,
+        "local_error": 0.000000000000156319401867222,
+        "parent": "RightHandIndex1"
+      },
+      {
+        "bone": "RightHandIndex3",
+        "global_error": 0.0000000218017017772354,
+        "local_error": 0.000000000000028421709430404,
+        "parent": "RightHandIndex2"
+      },
+      {
+        "bone": "RightHandMiddle1",
+        "global_error": 0.0000000153597650154325,
+        "local_error": 0.0000000155936774604015,
+        "parent": "RightHand"
+      },
+      {
+        "bone": "RightHandMiddle2",
+        "global_error": 0.000000120137002568299,
+        "local_error": 0.0000000299121687419301,
+        "parent": "RightHandMiddle1"
+      },
+      {
+        "bone": "RightHandMiddle3",
+        "global_error": 0.0000000650593960926926,
+        "local_error": 0.000000000000000631994998868957,
+        "parent": "RightHandMiddle2"
+      },
+      {
+        "bone": "RightHandPinky1",
+        "global_error": 0.0000000596046447753906,
+        "local_error": 0.00000012020358042264,
+        "parent": "RightHand"
+      },
+      {
+        "bone": "RightHandPinky2",
+        "global_error": 0.0000001238343827481,
+        "local_error": 0.0000000737804981554291,
+        "parent": "RightHandPinky1"
+      },
+      {
+        "bone": "RightHandPinky3",
+        "global_error": 0.00000011926748300084,
+        "local_error": 0.000000000000000189464329641842,
+        "parent": "RightHandPinky2"
+      },
+      {
+        "bone": "RightHandRing1",
+        "global_error": 0.0000000245876208282425,
+        "local_error": 0.0000000618983762024072,
+        "parent": "RightHand"
+      },
+      {
+        "bone": "RightHandRing2",
+        "global_error": 0.000000120573005801816,
+        "local_error": 0.00000000000000140490917510672,
+        "parent": "RightHandRing1"
+      },
+      {
+        "bone": "RightHandRing3",
+        "global_error": 0.000000120194741271007,
+        "local_error": 0.00000000000000249872008934587,
+        "parent": "RightHandRing2"
+      },
+      {
+        "bone": "RightHandThumb1",
+        "global_error": 0.0000000596046447753906,
+        "local_error": 0.0000000714643491050992,
+        "parent": "RightHand"
+      },
+      {
+        "bone": "RightHandThumb2",
+        "global_error": 0.000000240274005136598,
+        "local_error": 0.0000000300342506420748,
+        "parent": "RightHandThumb1"
+      },
+      {
+        "bone": "RightHandThumb3",
+        "global_error": 0.0000000421468477895814,
+        "local_error": 0.0000000596046447753906,
+        "parent": "RightHandThumb2"
+      },
+      {
+        "bone": "Weapon_Pickaxe",
+        "global_error": 0.0,
+        "local_error": 0.0,
+        "parent": "Root"
+      },
+      {
+        "bone": "Weapon_Axe",
+        "global_error": 0.0,
+        "local_error": 0.0,
+        "parent": "Root"
+      },
+      {
+        "bone": "Weapon_Carbine",
+        "global_error": 0.0,
+        "local_error": 0.0,
+        "parent": "Root"
+      },
+      {
+        "bone": "Weapon_Magazine",
+        "global_error": 0.0,
+        "local_error": 0.0,
+        "parent": "Weapon_Carbine"
+      }
+    ],
+    "maximum_rest_error": 0.000000240274005136598,
+    "passed": true,
+    "reference_bones": 59,
+    "source_bones": 59,
+    "tolerance": 0.0001
+  },
+  "save_error": 0,
+  "schema": "bg5-fp-human-import-1",
+  "source_carrier_mesh_used_at_runtime": false,
+  "target_skeleton_path": "Human_Rig/Skeleton3D",
+  "track_policy": "Native upper-body transform tracks only. Constant inherited lower-body baseline is checked then omitted; Root/Hips/legs/feet and Weapon_* tracks never enter this layer."
+}

@@ -1,0 +1,34 @@
+{
+  "idle.png": {
+    "sha256": "48ef94eb4831d1eb7d83836b744c31d69a587d289f0cca612cf0fa482f07504a",
+    "source": "tools/preview_px9.gd; actual host human_view.gd and PX9 adapter",
+    "view": "idle",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree FOV; actual camera-local Human presentation; studio lighting",
+    "status": "Engineering preview; user visual review pending"
+  },
+  "aim.png": {
+    "sha256": "430e798d5c98430847a2c6fd64ccf8d05af66975b82dc2ab49022e072e4c29e5",
+    "source": "tools/preview_px9.gd; actual host human_view.gd and PX9 adapter",
+    "view": "aim",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree FOV; actual camera-local Human presentation; studio lighting",
+    "status": "Engineering preview; user visual review pending"
+  },
+  "reload.png": {
+    "sha256": "76c41e37477874f387b9a715c1a56e180fb8918768f0184d88f25b2b172599d1",
+    "source": "tools/preview_px9.gd; actual host human_view.gd and PX9 adapter",
+    "view": "reload",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree FOV; actual camera-local Human presentation; studio lighting",
+    "status": "Engineering preview; user visual review pending"
+  },
+  "rack.png": {
+    "sha256": "4596f7057a90195a1f3fe49cda494b11750fd2b7edabd197eea06c528c75cfc5",
+    "source": "tools/preview_px9.gd; actual host human_view.gd and PX9 adapter",
+    "view": "rack",
+    "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
+    "camera": "75-degree FOV; actual camera-local Human presentation; studio lighting",
+    "status": "Engineering preview; user visual review pending"
+  }
+}

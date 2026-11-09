@@ -1,0 +1,82 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native combat extension available
+PASS new worlds start with optional integrity off and an empty magazine
+PASS magazine capacity enforced
+PASS round consumed once 0
+PASS round consumed once 1
+PASS round consumed once 2
+PASS round consumed once 3
+PASS round consumed once 4
+PASS round consumed once 5
+PASS round consumed once 6
+PASS round consumed once 7
+PASS round consumed once 8
+PASS round consumed once 9
+PASS round consumed once 10
+PASS round consumed once 11
+PASS round consumed once 12
+PASS round consumed once 13
+PASS round consumed once 14
+PASS round consumed once 15
+PASS round consumed once 16
+PASS round consumed once 17
+PASS round consumed once 18
+PASS round consumed once 19
+PASS round consumed once 20
+PASS round consumed once 21
+PASS round consumed once 22
+PASS round consumed once 23
+PASS round consumed once 24
+PASS round consumed once 25
+PASS round consumed once 26
+PASS round consumed once 27
+PASS round consumed once 28
+PASS round consumed once 29
+PASS empty magazine rejects firing
+PASS magazine and optional integrity survive snapshot restore
+PASS invalid snapshot is rejected without mutation
+PASS pending blast records enter bounded native persistence
+PASS save restores exact destruction cursor without reapplying processed cells
+PASS unaligned destruction cursor rejected without replacing valid work
+PASS truncated destruction snapshot rejected
+PASS assault rifle has an independent magazine
+PASS automatic rifle shot leaves carbine ammunition unchanged
+PASS new magazine rejects overflow and unknown weapon identities
+PASS v3 restores both magazines with pending destruction
+PASS invalid assault magazine rejects entire snapshot atomically
+PASS v2 migration preserves carbine and cursor while initializing assault magazine empty
+PASS v1 migration remains supported
+PASS support probes sample terrain beneath each block
+PASS grounded tower carries a short beam; detached block falls
+PASS mining away foundation destabilizes every disconnected block
+PASS unavailable support cannot authorize collapse
+PASS long unsupported cantilever exceeds material span
+PASS spherical blast selects only nearby building cells
+PASS existing authored rifle clip Idle
+PASS existing authored rifle clip Walk
+PASS existing authored rifle clip Run
+PASS existing authored rifle clip Jump
+PASS existing authored rifle clip Aim
+PASS existing authored rifle clip Fire
+PASS existing authored rifle clip HipFire
+PASS existing authored rifle clip Reload
+PASS existing authored rifle clip Equip
+PASS existing authored rifle clip Holster
+PASS rifle equip plays
+PASS hip fire starts after equip
+PASS aim and aimed fire are wired
+PASS reload starts
+PASS reload does not complete during windup
+PASS cancelled reload never completes
+PASS fresh reload starts
+PASS full animation completes reload exactly once
+PASS switching tools plays rifle holster
+PASS holster completes queued tool change
+PASS new assault rifle equips and starts automatic recoil
+PASS automatic recoil fits inside 100ms firing interval
+PASS next automatic shot has no leftover animation lock
+PASS assault rifle uses authored detachable-magazine reload
+PASS assault reload completes once
+PASS new body and independent magazine replace the carbine presentation
+COMBAT_STATE checks=79 failures=0

@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-08",
+  "generator": "OpenAI built-in imagegen",
+  "edition": "PX-9 ECLIPSE — Weapon Skeleton edition",
+  "sources": [
+    {
+      "file": "PX9_OpenAI_CoatedMetal.png",
+      "prompt": "Use case: stylized-concept. Asset type: seamless square material-source texture for the new PX-9 ECLIPSE fictional 3D video-game prop made in Blender. Generate ONLY a flat dark charcoal gunmetal surface, filling the entire square, for a realistic PBR texture bake. Matte to satin dark neutral graphite coating, slightly cool gray. Very fine irregular machining grain, sparse faint short linear scratches and a few thin longer hairline scuffs, tiny worn flecks, subtle uneven surface coloration. Restrained use wear, well maintained, no corrosion or heavy damage. Texture variation should remain readable but low contrast; avoid evenly repeated horizontal bands. Orthographic straight-on surface-scan appearance under perfectly diffuse even light. No shadows, gradients, glare, directional lighting, edge shading, object silhouette, bevels, text, logos, borders or watermark. Seamless tileable edges. This is a surface texture only, not an assembled weapon picture. Square high-resolution image, preferably 2048 by 2048 if supported.",
+      "source_usage": "New OpenAI imagegen material source generated for the Weapon Skeleton edition."
+    },
+    {
+      "file": "PX9_OpenAI_StippledPolymer.png",
+      "prompt": "Use case: stylized-concept. Asset type: seamless square material-source texture for the grip of the new PX-9 ECLIPSE fictional 3D video-game prop made in Blender. Generate ONLY dense fine stippled black graphite polymer across the full square. Molded rubber-like polymer with shallow small irregular pebbles and tiny pores, tightly spaced, subtly rubbed high points. Mostly charcoal black, fine realistic grain, restrained low-contrast color variation. The bumps must be small, not coarse gravel, stone, leather, fabric or regular patterned mesh. No large pits, crack lines, creases, rust, oil, white flecks, text, logo or watermark. Straight-on orthographic surface-scan appearance, flat evenly diffuse illumination, no lighting gradient or cast shadows or specular glare. Consistent tone and seamless tileable edges, no border or visible object shape. This is a color and microdetail source for a Blender PBR bake, not a measured normal or roughness map. Square high-resolution image, preferably 2048 by 2048 if supported.",
+      "source_usage": "New OpenAI imagegen material source generated for the Weapon Skeleton edition."
+    }
+  ]
+}

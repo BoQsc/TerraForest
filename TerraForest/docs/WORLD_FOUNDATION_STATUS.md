@@ -1,3 +1,19 @@
+## PX9 Eclipse source integration — 2026-11-09
+
+The supplied revision-8 handgun is integrated in the isolated `codex/px9-handgun`
+worktree: paired animation/hand-skin adapter, shared catalog/crafting/trader path,
+independent native 15-round magazine and existing Kaino pistol/reload recordings.
+[Issue and evidence](../issues/px9-handgun/README.md) retain intake, exact checks,
+source images and remaining work. Paired presentation, actual temporary-world
+combat, native save migration, universal/physical dropping and graphical G input
+pass. Both player-runtime DLL variants were rebuilt. Performance checkpoint
+64eb3cc7 is preserved; the installed game package is unchanged.
+
+User visual acceptance, third-person qualification, dedicated remaining mechanical
+recordings and packaged-build qualification remain open. Their return triggers
+and required evidence are recorded in the issue; source checks do not close those
+requirements or claim an installed release.
+
 ## World/player performance foundation and rolling trace — 2026-11-09
 
 The latest default Frontier expedition was generated unchanged (seed 1703,

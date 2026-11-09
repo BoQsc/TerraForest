@@ -1,0 +1,256 @@
+CURRENT REVISION: RACK RELEASE THUMB 8. Read the final addendum below;
+earlier sections retain historical source/provenance context.
+
+CURRENT REVISION: RACK THUMB 7. Read the final current addendum below;
+earlier sections retain historical source/provenance context.
+
+CURRENT REVISION: RACK GRASP 6. Read the final current addendum below;
+earlier sections retain historical input/provenance context.
+
+PX-9 ECLIPSE — FIRST-PERSON SOURCE AND CC0 NOTES
+2026-11-08 • BG5
+
+This edition adds synchronized first-person Human R11 / PX9 animations to the
+existing Weapon Skeleton / 20K asset created in this session. It preserves
+the original modular weapon mesh, rigid skinning, UVs and PBR texture bytes.
+The earlier geometry recipe, generated texture prompts and source declarations
+remain documented in reference/Weapon_Original_SOURCE_NOTES.txt and
+reference/Weapon_Original_TEXTURE_PROVENANCE.json. This turn authored animation
+and hand skin refinements; it did not generate substitute weapon textures.
+
+WEAPON INPUT
+
+PX9_Eclipse_Skeleton.blend SHA-256:
+27677ac0c77606a0daf209e5c598d95ef88362938f63f82c5418e24a2761c7fe
+PX9_Eclipse_Skeleton.glb SHA-256:
+707269f8a81e3929b9abe1cc59af81d18ee63f5aead37c5e3dc2337557895d87
+Underlying supplied dense reference actually used: PX-9 ECLIPSE(1).glb.
+The reference's suffix, exact hashes and image identity are retained in the
+original source notes. The newly authored FP file is separately named.
+
+HUMAN INPUT
+
+The earlier successfully extracted TerraForest_PlayerModel_HumanR11_Handoff.zip
+was used. Its source and runtime files have the following SHA-256 identities:
+Human.r11.blend:
+8ad2d2c2d570f9adfa487cfd469957ff61b4fbe172f0b60d28a44529b8d822d3
+Human.r11.glb:
+0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8
+The included runtime GLB remains byte-identical to that reference.
+
+The supplied HANDOFF.md, README.txt and R11.validation.txt identify Human R11
+as CC0-1.0 and retain the statement that inherited asset provenance is retained.
+These supplied records are included in reference/. They are provenance
+statements from the source, not an independent clearance of upstream rights.
+
+The four source handoff author/import scripts were labeled 0BSD. They informed
+the required rig/export contract. Those source scripts are not copied into this
+package; the new modules were written for this edition. THIRD_PARTY_NOTICES.txt
+records the consulted references and source declarations. This release does
+not relabel their original 0BSD attribution as CC0. No stock art or downloaded
+font is added.
+
+AUTHORING COMPATIBILITY
+
+The original Human source has a 4.5.90 file header. Blender 4.3.2 opened it with
+a newer-file warning. A native export/import comparison against the exact
+runtime GLB was used to verify the rest contract. The two example Blender
+scenes have a 5.2 header and were not opened in the available Blender version;
+their supplied text documentation and scripts were readable.
+
+New animation is baked onto the original 59-bone Human rig and the unchanged
+22-bone separate weapon rig. Only the optional duplicate Human_FP_Hands has
+hand-region skin edits; the original Human_Body and original Actions remain.
+The native body variant is selected per item and restored on unequip.
+
+CC0
+
+At the user's request, the new original animation, skin edit, scripts,
+documentation and preview contributions are dedicated under CC0 1.0 Universal
+to the extent of the user's available copyright and related rights.
+The complete legal code is LICENSE.txt. Its terms do not clear rights of other
+parties or grant patent/trademark rights. The earlier weapon's user-provided
+TRELLIS.2 provenance statement remains relied upon, not independently verified.
+The original Human source's inherited provenance is retained as supplied.
+
+Blender, Godot, TRELLIS.2 software/model weights and OpenAI services are not
+included or relicensed. Source-specific and output-specific hashes are in
+reference/source_provenance.json, validation reports and SHA256SUMS.txt.
+
+HAND AND FINGER CORRECTION — REVISION 3
+
+This update starts from the previously delivered FirstPerson CC0 edition.
+Frozen prior ZIP SHA-256:
+c321ba919cbe2e42dd70a285c31f09793a0f9a54dd2d4fc8c002c045595b78d5
+
+It adds bounded central-palm skin corrections, two reviewed proximal web
+weight changes, a continuous elbow-roll solve and revised Rack presentation,
+thumb approach/contact/release and hand withdrawal. The complete original
+body and its rest geometry, UVs, materials, shape blocks and weights remain.
+The optional duplicate/native per-item body variant carries the skin edit.
+The prior patch and hand notes are retained in reference/.
+
+The weapon GLB is byte-identical to the prior first-person edition. Its local
+part animation, 17 separate meshes, 22-bone skeleton and existing PBR textures
+are preserved; Rack presentation is carried by the human attachment motion.
+The Human animation carrier, combined Blender source and native library/body
+variant are rebuilt for this revision. No new external art is introduced.
+
+Revision-3 skin patch SHA-256:
+1908ffec446331c66cbb8c43b19c7dc34931e79844d01770d75043724e945e4f
+
+New corrections, diagnostic scripts, documentation and previews retain the
+CC0-1.0 dedication requested by the user. Existing source declarations and
+the complete license are unchanged.
+
+FRAME 046 GRIP CORRECTION — REVISION 4
+
+The frozen revision-3 package is the comparison baseline. Its ZIP SHA-256:
+622d6a999f0a9ef0ecbb172a601f70bddceb4667c4893e984381ac089a5f7345
+
+This update refits the shared right-hand grip and exterior thumb route,
+retargets the indexed/trigger finger, and changes exactly seven rows of the
+optional hand patch: 3, 9, 109, 118, 121, 123 and 125. The other 1,053 prior
+rows are frozen. reference/hand_weight_patch_v3.json preserves the exact
+previous patch and the revision-4 data can recover its original records.
+GRIP_FIX_NOTES.txt records the current source/pose review and limitations.
+
+The original Human runtime, canonical weapon runtime and complete CC0
+license remain byte-identical. No new external art or code dependency is
+introduced. New scripts, pose/skin edits and previews retain CC0-1.0.
+Revision-4 optional hand-patch SHA-256:
+7f7165d208ced4a8d4259b990d6ffcc8503ba3170f6e382e9dc2654565e68ab3
+
+
+RACK POSE REVISION 5
+
+Based on the delivered grip revision 4. Only the Rack slide-hand station and
+distal thumb pose change; non-thumb finger curves and all skin/geometry remain.
+Nineteen other clips, right-side channels, weapon files, mounts, PBR texture
+bytes and CC0 license are preserved. See RACK_FIX_NOTES.txt and the current
+RACK_REVIEW_ACCEPTANCE.json for exact source identities and scoped evidence.
+
+CURRENT ADDENDUM — RACK GRASP REVISION 6
+
+This addendum supersedes earlier Rack-specific pose and skin statements in
+the historical source notes above. Pose revision 6 rebuilds the left Rack
+grasp; skin patch revision5 changes exactly the
+four reviewed rows 4578, 4597, 4633, 4637. Proximal row 4597
+uses the reviewed 50/50 Middle/previous-Ring web blend. The other 19
+paired animation tracks and protected weapon/reference files are unchanged;
+the four-row variant may change skin appearance in those unchanged clips.
+Original mesh/rest/morph coordinates remain preserved. Current evidence is
+indexed in VALIDATION.txt and RACK_FIX_NOTES.txt. Earlier Rack notes and
+reports are archived under reference/rack_revision5/.
+
+Existing CC0-1.0 licensing and original texture/provenance records are kept.
+This revision does not relicense inherited CC0 sources/assets to 0BSD. New
+animation/pose and four-row skin edits retain the package's CC0 terms.
+No external texture or third-party runtime library is added.
+
+Current source/resource SHA256 identities:
+  source/Human.px9_eclipse.blend
+    9383e231d92fa76225c02de29c742e7ee58b197854faa411acf5af2787eee1d5
+  source/px9_motion.py
+    ae3179d83b7dba682a6e3bf9ec6723c4a5b5bdfd7d31e3dee110bb4bb3070c37
+  source/hand_weight_patch.json
+    bfc8166a664e58641c5243358ebab43c8ca9187bff92b596b4ee8e3bcf82fe5b
+  Human.px9_eclipse.glb
+    07377cd2832f8111168e6525c7b78ec278fd283f9e13b2cbc61f78d2461bea38
+  Human.px9_eclipse.res
+    5928f3e2d3913c14049488980b7967f89ccda029cd63411f38fbe87f582061d6
+  Human.px9_eclipse.body.res
+    72e8e15b2fe4bfff3c201d2a6a271f44a6f8934565849969bb0d70bdfd6a4304
+  Human.px9_eclipse.hand_weights.json
+    bfc8166a664e58641c5243358ebab43c8ca9187bff92b596b4ee8e3bcf82fe5b
+  PX9_Eclipse_FP.glb
+    ae41ea1651ba958de5bc25006ee9fa335ac5c12991090541d518dbde795275cd
+  Human.r11.glb
+    0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8
+  LICENSE.txt
+    8bdc7b952ae0a12e08ccf9463a4750f7288f4d05bf7f2124cc5805ecaabdb01c
+
+CURRENT ADDENDUM — RACK THUMB REVISION 7
+
+This addendum supersedes historical Rack pose statements above. Pose revision 7
+refines the left Rack thumb/hand animation. Skin patch revision 5, original mesh
+coordinates, topology, UVs, morphs and rest bones are preserved. The earlier
+four-row Middle/web repair is retained unchanged. Current checks and exact
+change scope are indexed in RACK_FIX_NOTES.txt and VALIDATION.txt. Prior
+revision 6 source-bound reports are under reference/rack_revision6/.
+
+CC0-1.0 and original texture/provenance records remain unchanged. This revision
+adds no texture or third-party runtime library.
+
+Current source/resource SHA256 identities:
+  source/Human.px9_eclipse.blend
+    6f3a399210253b5021e5ce9a22836e93a65c5bb635ea3e2254740263f8326fe3
+  source/px9_motion.py
+    2e692acfd841e0560699e0102d78b5e38660e613681791f5a8b49ef3e254e93e
+  source/hand_weight_patch.json
+    bfc8166a664e58641c5243358ebab43c8ca9187bff92b596b4ee8e3bcf82fe5b
+  Human.px9_eclipse.glb
+    e49f6b61d250c3beb0ac077bdcd33f220b944dff2954133146df36623ae46a42
+  Human.px9_eclipse.res
+    058711f616b5bf0712f802c8b037c565c6a5a062c93f4f2b96ea7199e1f2ad1b
+  Human.px9_eclipse.body.res
+    72e8e15b2fe4bfff3c201d2a6a271f44a6f8934565849969bb0d70bdfd6a4304
+  Human.px9_eclipse.hand_weights.json
+    bfc8166a664e58641c5243358ebab43c8ca9187bff92b596b4ee8e3bcf82fe5b
+  PX9_Eclipse_FP.glb
+    ae41ea1651ba958de5bc25006ee9fa335ac5c12991090541d518dbde795275cd
+  PX9_Eclipse_FP_RestSpace.glb
+    f34c3f0fceb887073437e2fab6c8f76ec294842abedabc1d328407a4b7e8c1f5
+  Human.r11.glb
+    0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8
+  item_px9.json
+    77372cd442868f9cbe3c5faa6782cdb099fd417f741153da2403066858100fb3
+  LICENSE.txt
+    8bdc7b952ae0a12e08ccf9463a4750f7288f4d05bf7f2124cc5805ecaabdb01c
+  TEXTURE_PROVENANCE.json
+    1c154bb41a4202036ae6800a8920ab75e2011c56ee3bc8aa38224cf5918bd970
+
+CURRENT ADDENDUM — RACK RELEASE THUMB REVISION 8
+
+This addendum supersedes historical Rack release-thumb pose statements above.
+Pose revision 8 changes the left thumb's release/return animation around 044.
+The held pose at 031, earlier Rack motion through 040, samples 058–072,
+other finger/wrist tracks, all other paired clips, original geometry and
+skin patch revision 5 are retained.
+Current evidence is indexed in RACK_FIX_NOTES.txt and VALIDATION.txt. Earlier
+revision 7 source-bound reports are retained under reference/rack_revision7/.
+
+CC0-1.0 and original texture/provenance records are unchanged. This revision
+adds no texture, geometry or third-party runtime library.
+
+Current source/resource SHA256 identities:
+  source/Human.px9_eclipse.blend
+    459443df052272de56da1fbed37b32e9f8ea1578e5de6c87f6685c5bafdc7034
+  source/px9_motion.py
+    09fe305c54b9cb3518566ab0b4dcbf6df315469e621c210335d2c0597d6e4e9b
+  source/author_px9_first_person.py
+    9e7db651efb5736776636e1b60331ddc4b0a4b72dec7a4663101b0ad9a167314
+  source/validation/initialize_native_cache.py
+    5818b6d104ad8620c0dc2e3bbdc95292977d27d3477294505a142ec2c6c31319
+  source/hand_weight_patch.json
+    bfc8166a664e58641c5243358ebab43c8ca9187bff92b596b4ee8e3bcf82fe5b
+  Human.px9_eclipse.glb
+    640af8f4ca9b50b8be1e3782cb5297395bff6474e83a8f5d6b0c0ab33afa046c
+  Human.px9_eclipse.res
+    38cc90ee77a8136bef5551524ed79c2762e11119a107e5e8615314efb001ed02
+  Human.px9_eclipse.body.res
+    72e8e15b2fe4bfff3c201d2a6a271f44a6f8934565849969bb0d70bdfd6a4304
+  Human.px9_eclipse.hand_weights.json
+    bfc8166a664e58641c5243358ebab43c8ca9187bff92b596b4ee8e3bcf82fe5b
+  PX9_Eclipse_FP.glb
+    ae41ea1651ba958de5bc25006ee9fa335ac5c12991090541d518dbde795275cd
+  PX9_Eclipse_FP_RestSpace.glb
+    f34c3f0fceb887073437e2fab6c8f76ec294842abedabc1d328407a4b7e8c1f5
+  Human.r11.glb
+    0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8
+  item_px9.json
+    77372cd442868f9cbe3c5faa6782cdb099fd417f741153da2403066858100fb3
+  LICENSE.txt
+    8bdc7b952ae0a12e08ccf9463a4750f7288f4d05bf7f2124cc5805ecaabdb01c
+  TEXTURE_PROVENANCE.json
+    1c154bb41a4202036ae6800a8920ab75e2011c56ee3bc8aa38224cf5918bd970

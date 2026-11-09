@@ -1,0 +1,280 @@
+PX-9 ECLIPSE — FIRST-PERSON REINTEGRATION
+CC0-1.0 • Native Godot modules • Human R11
+Tested engine: Godot 4.6.3.stable.official.7d41c59c4
+
+WHAT IS PORTABLE
+
+The human and weapon keep separate skeletons. Human R11 retains its original
+59 bones and rest pose. The PX9 keeps its own 22-bone rig and 17 separate meshes.
+A BoneAttachment3D on the existing RightHand bone carries the item. No human
+weapon-specific bone is added, and no original Human animation is overwritten.
+
+item_px9.json is the item-specific contract: files, mount transform, camera,
+named action pairs, frame endpoints, loops, return actions and frame events.
+item_motion.gd is the shared playback clock. item_instance.gd combines mounting,
+the human upper-body layer, the optional body mesh override and cleanup.
+The modules use relative preload paths so their folder can move within a game.
+
+MINIMUM RUNTIME FILES
+
+- Your existing Human.r11.glb model; the included copy is the exact reference.
+- PX9_Eclipse_FP.glb, with its own PBR textures and mechanical animations.
+- Human.px9_eclipse.res, the new human upper-body animation library.
+- Human.px9_eclipse.body.res, the optional per-item repaired hand-skin variant.
+- item_px9.json and item_definition.gd, item_motion.gd, item_mount.gd,
+  item_human_layer.gd, item_instance.gd.
+
+Human.px9_eclipse.glb, hand-weight JSON, .blend and the importer/builder scripts
+are authoring/rebuild inputs. They are not needed by normal playback once the
+AnimationLibrary and mesh variant have been built.
+
+REINTEGRATE
+
+1. Put the runtime item files in a folder of your choice. Update the relative
+   paths in item_px9.json, or use res:// paths. The supplied reference model can
+   be omitted when the game already has the exact Human R11 model.
+
+2. Import the weapon GLB at 60 FPS: animation/import=true, animation/fps=60,
+   skins/use_named_skins=true, and gltf/embedded_image_handling=3. Reimport after
+   changing these settings. Preserve the existing Human model import settings
+   from the handoff (60 FPS, named skins, ensure_tangents=false). The standalone
+   preview decodes native GLB data at 60 FPS directly, independently of cached
+   editor defaults. A game that instantiates the imported PackedScene must use
+   the stated 60 FPS import setting as well.
+
+3. If rebuilding or verifying against your installed Godot version, run:
+
+   godot --headless --path YOUR_GAME --script res://YOUR_ITEM_FOLDER/import_item_animations.gd -- --definition res://YOUR_ITEM_FOLDER/item_px9.json
+
+   The importer checks all 59 human bone names, parents, local/global rests and
+   clip durations against the original model. It checks every authored frame
+   for a constant lower-body baseline, then excludes Root/Hips/legs/feet and
+   unused Weapon_* tracks from the runtime library. The existing 71 clips stay
+   intact. If configured, it also rebuilds and round-trip checks the hand-skin
+   variant. ANIMATION_IMPORT_REPORT.json contains the measured result.
+
+4. Add item_instance.gd to a new Node, then pass the existing Human model scene,
+   an instance of the item scene, the supplied AnimationLibrary and definition
+   to equip(). item_equip_example.gd is a small optional ready-to-adapt example.
+   The adapter consumes the passed item instance, including on equip failure;
+   it never owns Human. The .res contains the verified target rest contract.
+   equip() rejects a different skeleton path, bone count, order, names, parents
+   or local rest transforms before applying the new item layer.
+
+5. Request semantic actions, for example request("inspect"), request("reload")
+   or request("fire"). Connect event_reached(event_name, details) to your own
+   sound, effect, ammunition, inventory and hit logic. No game state changes are
+   embedded in the animations or these modules. The weapon includes an animated
+   casing; a host that spawns its own physical casing should hide that item mesh.
+   Do not spawn a duplicate from case_eject unless the included casing is hidden.
+   Do not schedule a second timer
+   for the same shot/contact: use the authored frame event as the single signal.
+
+6. Call unequip() before replacing/removing the item. It cancels future events,
+   frees the item and its separate FP player, restores the exact original body
+   mesh resource, and restores the captured corrective values. An item with no
+   mesh override then uses the original R11 body automatically.
+
+SMALL HOST BINDING EXAMPLE
+
+The following code uses the existing Human scene root. Choose paths matching
+where the files were copied; no absolute workspace paths are needed at runtime.
+The exported item_scene must already have been imported at 60 FPS.
+
+    extends Node
+    const Definition = preload("item_definition.gd")
+    const ItemInstance = preload("item_instance.gd")
+    @export var existing_human: Node3D
+    var held: Node
+
+    func equip_item(definition_path: String) -> Error:
+        var data := Definition.load_definition(definition_path)
+        if data.is_empty() or existing_human == null:
+            return ERR_INVALID_DATA
+        var scene := load(Definition.resolve_file(definition_path,
+            data.files.item_scene)) as PackedScene
+        var library := load(Definition.resolve_file(definition_path,
+            data.files.human_library)) as AnimationLibrary
+        if scene == null or library == null:
+            return ERR_CANT_OPEN
+        if held == null:
+            held = ItemInstance.new()
+            add_child(held)
+            held.event_reached.connect(_on_item_event)
+        return held.equip(existing_human, scene.instantiate(), library,
+            data, definition_path)
+
+    func play_item_action(action_id: String) -> void:
+        if held != null:
+            held.request(action_id) # Optional second argument: blend seconds.
+
+    func remove_item() -> void:
+        if held != null:
+            held.unequip()
+
+    func _on_item_event(event_name: String, details: Dictionary) -> void:
+        # Dispatch to the host's existing effect/tool/weapon system here.
+        # details includes action_id, frame, time_seconds, cycle, generation,
+        # item_id from the definition, and the authored event payload.
+        print(event_name, " at frame ", details.frame)
+
+item_equip_example.gd provides this as a ready-to-adapt source file. For manual
+host scheduling set held.auto_process=false and call held.advance(delta) once
+after the host's base pose. Do not also let the adapter advance automatically.
+
+LOCOMOTION AND THE UPPER-BODY LAYER
+
+The new .res contains only human upper-body bone transforms. It contains no
+object, method, sound, gameplay, Root, Hips, leg or foot tracks. Existing walking
+and running remain the responsibility of the host. The original Idle frame 1
+lower-body pose is used only as a constant source/review baseline.
+
+The adapter advances at process priority 20 by default. In a host with an
+explicit/manual AnimationTree schedule, set adapter.auto_process=false and
+call adapter.advance(delta) after applying the base locomotion pose. This also
+neutralizes old pose-specific body corrective values before rendering the new
+authored finger poses. Alternatively, use the .res in the host's own filtered
+AnimationTree and reproduce the same synchronized item clock/event contract.
+
+SHARED CLOCK, EVENTS AND TRANSITIONS
+
+Both animation players sample exactly the same clip timestamp. frame_end is an
+inclusive endpoint: frames 0 through 120 span 2 seconds at 60 FPS; this is 121 stored
+frame samples, not an extra 1/60-second hold. Event times are frame/FPS.
+
+Seeking/scrubbing and frame stepping emit no gameplay events. Normal playback
+emits each crossed event once, including large time steps across loops. Pausing
+holds both rigs. Cancelling discards future events. Event handlers may interrupt
+or change an item without causing late events from the previous action.
+
+request(action_id, blend_seconds) optionally blends both rigs into that action's
+frame 0 pose. The default is 0 for exact authored playback. During a nonzero
+transition, authored clip clocks stay at 0 and events wait. Transition time is
+extra runtime time, separate from the documented clip duration. The preview
+uses 0.14 seconds for selected viewpoint changes; its clip selector, scrubbing
+and captured action reel use exact unblended samples.
+
+Automatic return uses the definition's return_action. These declared pairs must
+have matching endpoints. The supplied last-shot actions return to empty-slide
+idle states. The host owns ammunition state, action eligibility, interruption
+rules and the choice between normal/empty reload or hip/aimed firing. The
+preview is an animation reviewer, not a replacement for the game's weapon logic.
+
+MOUNT SPACE — NO DOUBLE CONVERSION
+
+The primary PX9 is canonical item space, with a measured hand_local transform
+in item_px9.json. Apply that transform directly under RightHand's attachment.
+The basis vectors in JSON are columns, and positions use metres/Godot axes.
+
+There are two equivalent rest-space routes:
+
+- Keep the canonical PX9_Eclipse_FP.glb. Set mount.space="human_rest" and use
+  mount.rest_space_transform as mount.transform. The helper computes
+  RightHand_global_rest.inverse() * rest_space_placement exactly once.
+- Load PX9_Eclipse_FP_RestSpace.glb, which already embeds that placement in its
+  PX9_Eclipse_RestSpace child node. Use mount.space="human_rest" and an identity
+  mount.transform on the imported scene root. The helper then applies only
+  RightHand_global_rest.inverse(); the embedded child supplies the placement.
+
+Do not apply the canonical hand_local offset in either of these routes. Do not
+apply rest_space_transform a second time to the already wrapped item. The native
+validation compares both routes against the canonical item after attachment.
+
+The exporter retains joint-local Blender axes: measured native RightHand rest
+is C*H_Blender, with C(x,y,z)=(x,z,-y). Canonical object/mesh coordinates are
+converted on both sides. Thus an authored hand frame H_local in canonical
+weapon Blender space yields the Godot mount H_local.inverse()*C.inverse().
+Use the supplied measured transform; do not infer a second 90-degree rotation.
+
+CAMERA, VISIBILITY AND REVIEW
+
+The supplied camera is human-model-local: position (0, 1.65, -0.03), Euler
+rotation (0, 180, 0) degrees, vertical FOV 60 degrees, near plane 0.015 metres.
+The Human model faces Godot +Z; the canonical item faces glTF/Godot -Z before
+mounting. Camera settings are authored review defaults, not an instruction to
+replace the host's existing camera or player movement.
+
+render_first_person.gd masks the Human.Head and Human.Mouth material surfaces
+with a native transparent StandardMaterial3D and displays Human_Body for its
+first-person view. External review restores the head and clothing. This changes
+MeshInstance surface overrides and visibility only; mesh materials, texture
+resources and original Human files remain intact. Use the existing TerraForest
+first-person masking route in the game. Hosts with both first-person and world
+views should use their per-view character visibility setup rather than hiding
+the shared third-person body globally. The portable item adapter deliberately
+does not change host cameras, render layers or character visibility.
+
+Open project.godot and run render_first_person.tscn (or the project). The preview
+has a clip selector, exact frame slider, +/- one-frame stepping, play/pause,
+speed control, repeat, auto-return, first-person/grip/body camera review, and
+an event log. It defaults to a 60 FPS cap with a 30 FPS cap option. Changing the
+render cap does not alter the 60 FPS authored timeline or event times.
+
+Space pauses. Left/right arrows step a frame. F reviews fire (and holds an
+already locked-open slide), R reload, I inspect and A aim. These are review
+shortcuts; they do not implement host
+ammunition state. The clip selector always exposes all 20 paired actions.
+Existing assembly/disassembly and the other legacy weapon-only clips remain
+inside the weapon GLB and are outside the paired first-person action selector.
+
+Native capture commands (requires a graphical renderer, not --headless):
+
+    godot --path THIS_FOLDER -- --capture /absolute/idle.png --action idle --frame 0
+    godot --path THIS_FOLDER -- --capture-stills /absolute/stills
+    godot --path THIS_FOLDER -- --capture-reel /absolute/reel_frames
+
+The full 20-action reel writes 1,562 frames at 60 FPS (26.0333 seconds) without
+changing action speed. The source has 1,582 inclusive samples, because every
+clip also stores its endpoint key. The reel excludes that extra endpoint hold
+from each section: frames 0 through frame_end-1. It records engine, renderer,
+source asset hashes, camera, section boundaries and timing in reel_manifest.json.
+The reviewer is deliberately separate from reusable item playback modules.
+
+OPTIONAL HAND-SKIN VARIANT
+
+The original R11 body has cross-finger weights that deform poorly for indexed
+pistol grips. Only eligible hand skin records are corrected for this item.
+The original model file, node names, rest skeleton and mesh resource remain
+untouched; the variant is selected at equip and the original is restored later.
+
+The variant builder matches authored rest positions to all native UV seam
+copies. It preserves actual original native non-hand influences exactly, then
+distributes the remaining hand weight. Positions, topology, UV, normal, tangent
+and blend-shape buffers are copied byte-for-byte using native ArrayMesh surface
+serialization. It does not rebuild/requantize those buffers. All 228 runtime
+blend-shape identities are retained. Materials are reused from the original
+instance at equip, not serialized from a headless renderer. Per-bone bounds are
+only expanded conservatively where a vertex gains an influence.
+
+The importer verifies the raw buffers after save/reload and reports weight
+quantization separately. Native ArrayMesh serialization is verified in the
+reported Godot version; rerun the importer when adopting a different engine
+version. The portable JSON weight patch is the rebuild source of truth.
+The builder fails without producing an accepted variant if native surface
+storage or skin packing is incompatible, expected source vertices cannot be
+mapped, a bind cannot be resolved, preserving native non-hand weights exceeds
+the available slots, or the save/reload comparison changes geometry buffers.
+It accepts the measured native four/eight-slot uint16 bind/weight packing; it
+never guesses a different binary layout or silently falls back to a lossy mesh
+rebuild. Equip also rejects incompatible surface or blend-shape structure.
+
+ADD ANOTHER WEAPON OR TOOL
+
+Copy the item definition and give it a new id, file paths, mount and action map.
+Create FP_<Tool>_<Action> clips on the same unchanged Human rig and include their
+frame events. Animated item rigs can have any appropriate separate bone/mesh
+layout; pair their clips with the human clips at the same duration. Ordinary
+rigid tools can leave item_clip empty and have no item AnimationPlayer. The
+same clock, events, mounting and cleanup modules handle both forms.
+
+Omit human.hand_weight_patch and human.mesh_overrides for an item that should
+use the original body. Do not add a catalog number, damage value or inventory
+dependency to the generic modules; those belong to the host's existing systems.
+
+SCOPE
+
+The provided preview and importer can be run independently of TerraForest.
+The full game's current source project was not part of the handoff, so this
+package does not claim that its live catalog, input rules or world tests have
+already been changed. It supplies the art, exact frame metadata, portable
+runtime adapter, rebuilding sources and integration checks for that step.
