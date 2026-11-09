@@ -8,6 +8,13 @@ stalls remain. Source recorder/analyzer and two normal-world saves pass. Package
 refresh waits for the active gameplay session to end; no FPS improvement or
 general nonregression is claimed for this instrumentation.
 
+Whole-world follow-up of that ordinary control also isolates travel selection
+(cover native p99/max 2.092/2.881 ms) and synchronous surface-result handling
+(p99/max 1.988/2.833 ms). Rendering, native streaming/publication and remaining
+physics work are the immediate investigation targets; pursuit is one workstream.
+These overlapping timers are not an additive budget. Dense destruction and
+long-session memory remain required acceptance gates, not deferred successes.
+
 [Native building occlusion](block-occlusion-2026-11-09.md) reduces the
 indoor rendering CPU median from about 5.2 to 2.7 ms in the installed package,
 with unchanged visible room geometry. Native lifecycle, destruction, paging,

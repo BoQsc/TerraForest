@@ -208,6 +208,17 @@ running. Resume that gate once competing engine jobs are absent. Then isolate
 render-list/instance preparation and native world work, alongside the open-view
 occlusion overhead; preserve all broader destruction/memory/navigation gates.
 
+The ordinary-control follow-up also confirms non-navigation travel work:
+native cover selection p99/max is 2.092/2.881 ms, and synchronous surface-result
+handling p99/max is 1.988/2.833 ms across all 535 sweep frames. Publication is
+nested in the receive stage; these are not additive budgets. Source review finds
+simultaneous selection across cover collections and whole-reply soft-budget
+overshoot as concrete investigation targets, while native block horizon,
+residency and collision costs remain unattributed. Resume controlled source and
+installed comparisons after the active interactive session ends, preserving
+draw membership/fade continuity, collisions, destruction and save identity.
+This offline evidence is not a new optimization or FPS/nonregression claim.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,

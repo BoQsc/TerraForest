@@ -5703,5 +5703,513 @@
     "cold pursuit, visual continuity, weak hardware and multiplayer scale",
     "prior water/interaction failing gates"
   ],
-  "implementation_commit": "81b56061602143835e65a1792c38994a0f294b83"
+  "implementation_commit": "81b56061602143835e65a1792c38994a0f294b83",
+  "whole_world_followup": {
+    "scope": "Offline analysis of one existing ordinary-recorder control. No new runtime test or FPS improvement. Triggered frames deduplicated and joined to continuous process-frame IDs; screenshots, preparation, loading and save excluded. Whole normal sample remains a subset; all 535 sweep samples have corresponding trace rows. Nested timers and separate phases must not be added indiscriminately. Absent stage events counted as zero work for these event distributions.",
+    "sources": [
+      {
+        "path": "reports/performance_changes/20261109T181312000989Z_render_setup_control/observation.json",
+        "sha256": "43eefc643b9f7e7742bcb4156b0bc94eb5fa571dde1340136f01cdb53b89f3fc"
+      },
+      {
+        "path": "reports/performance_changes/20261109T181312000989Z_render_setup_control/traces/trace_00.json",
+        "sha256": "2a9e3ad83b82cc4068e8b629fdef538fcce55e4e943a3a85921d16c3444d4793"
+      },
+      {
+        "path": "reports/performance_changes/20261109T181312000989Z_render_setup_control/traces/trace_01.json",
+        "sha256": "71aa9bef8f766c1817774cd3108e2fb82a1f66e96d41a95b02e828c1360cb12e"
+      },
+      {
+        "path": "reports/performance_changes/20261109T181312000989Z_render_setup_control/traces/trace_02.json",
+        "sha256": "2c2068611a7741caab350864756a04c72a7f7ca575ad3f1fd4ee904413498d71"
+      },
+      {
+        "path": "reports/performance_changes/20261109T181312000989Z_render_setup_control/traces/trace_03.json",
+        "sha256": "6cca4c9e4f419758afe40b806b730ebed70a7b6a2ddeb43671f6be798e5e385d"
+      },
+      {
+        "path": "reports/performance_changes/20261109T181312000989Z_render_setup_control/traces/trace_04.json",
+        "sha256": "7a691502e9582fe97d996d61205b4701289dbb685536b4e7587c8774677570fd"
+      },
+      {
+        "path": "reports/performance_changes/20261109T181312000989Z_render_setup_control/traces/trace_05.json",
+        "sha256": "19138e9d519164a319d97afed446978db19bae0109158390359b2f4edf663f97"
+      }
+    ],
+    "included_phases": [
+      "arrival_idle",
+      "outdoor_sweep",
+      "outdoor_view_0",
+      "outdoor_view_1",
+      "outdoor_view_2",
+      "settled_idle",
+      "turning"
+    ],
+    "joined_rows": 3708,
+    "max_callback_offset_us": 1004,
+    "normal_ms": {
+      "cover_native_process_ms": {
+        "samples": 3708,
+        "p50": 0.003,
+        "p99": 0.006,
+        "maximum": 3.171
+      },
+      "cover_native_selection_ms": {
+        "samples": 3708,
+        "p50": 0.0,
+        "p99": 0.002,
+        "maximum": 2.881
+      },
+      "cover_native_cleanup_ms": {
+        "samples": 3708,
+        "p50": 0.001,
+        "p99": 0.003,
+        "maximum": 0.145
+      },
+      "cover_native_upload_ms": {
+        "samples": 3708,
+        "p50": 0.0,
+        "p99": 0.002,
+        "maximum": 0.416
+      },
+      "stage_receive surface_batch_ms": {
+        "samples": 3708,
+        "p50": 0.0,
+        "p99": 1.076,
+        "maximum": 2.833
+      },
+      "stage_LOD requests_ms": {
+        "samples": 3708,
+        "p50": 0.0,
+        "p99": 0.971,
+        "maximum": 2.07
+      },
+      "stage_zombie update_ms": {
+        "samples": 3708,
+        "p50": 0.395,
+        "p99": 1.595,
+        "maximum": 2.752
+      },
+      "stage_world process_ms": {
+        "samples": 3708,
+        "p50": 0.194,
+        "p99": 0.75,
+        "maximum": 2.39
+      }
+    },
+    "sweep_ms": {
+      "cover_native_process_ms": {
+        "samples": 535,
+        "p50": 0.003,
+        "p99": 2.24,
+        "maximum": 3.171
+      },
+      "cover_native_selection_ms": {
+        "samples": 535,
+        "p50": 0.0,
+        "p99": 2.092,
+        "maximum": 2.881
+      },
+      "cover_native_cleanup_ms": {
+        "samples": 535,
+        "p50": 0.001,
+        "p99": 0.031,
+        "maximum": 0.145
+      },
+      "cover_native_upload_ms": {
+        "samples": 535,
+        "p50": 0.0,
+        "p99": 0.203,
+        "maximum": 0.416
+      },
+      "stage_receive surface_batch_ms": {
+        "samples": 535,
+        "p50": 0,
+        "p99": 1.988,
+        "maximum": 2.833
+      },
+      "stage_LOD requests_ms": {
+        "samples": 535,
+        "p50": 0,
+        "p99": 1.075,
+        "maximum": 1.329
+      },
+      "stage_zombie update_ms": {
+        "samples": 535,
+        "p50": 1.164,
+        "p99": 2.542,
+        "maximum": 2.752
+      },
+      "stage_world process_ms": {
+        "samples": 535,
+        "p50": 0.203,
+        "p99": 0.926,
+        "maximum": 1.501
+      }
+    },
+    "selected_frames": [
+      {
+        "frame": 4050,
+        "at_us": 57370295,
+        "frame_ms": 28.331,
+        "process_ms": 1.337,
+        "draw_ms": 21.93,
+        "before_process_ms": 4.552,
+        "physics_ms": 3.305,
+        "physics_steps": 1,
+        "stages_ms": {
+          "actor update": 0.051,
+          "base controller": 0.014,
+          "controller loading": 0.002,
+          "controller process": 0.085,
+          "lighting schedule": 0.004,
+          "player physics": 0.078,
+          "receive": 0.015,
+          "receive poll": 0.006,
+          "retire collision/mesh": 0.0,
+          "staging frame": 0.006,
+          "world authoring": 0.014,
+          "world interaction": 0.023,
+          "world pickups": 0.004,
+          "world presentation": 0.013,
+          "world process": 0.237,
+          "world vehicle": 0.007,
+          "zombie update": 0.482
+        },
+        "cover_render_phases_us": [
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 1,
+            "selection_us": 0,
+            "upload_us": 1
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          }
+        ],
+        "phase": "outdoor_view_0",
+        "sample_at_us": 57370578
+      },
+      {
+        "frame": 4248,
+        "at_us": 60921391,
+        "frame_ms": 23.578,
+        "process_ms": 7.375,
+        "draw_ms": 11.679,
+        "before_process_ms": 4.263,
+        "physics_ms": 3.399,
+        "physics_steps": 1,
+        "stages_ms": {
+          "actor update": 0.026,
+          "base controller": 0.012,
+          "controller loading": 0.001,
+          "controller process": 0.071,
+          "cover picker": 0.159,
+          "cover prepare": 0.081,
+          "cover publish": 1.006,
+          "lighting schedule": 0.005,
+          "player physics": 0.065,
+          "receive": 2.638,
+          "receive poll": 0.005,
+          "receive surface_batch": 2.605,
+          "retire collision/mesh": 0.0,
+          "staging frame": 0.004,
+          "world authoring": 0.011,
+          "world interaction": 0.019,
+          "world pickups": 0.003,
+          "world presentation": 0.012,
+          "world process": 0.184,
+          "world vehicle": 0.005,
+          "zombie update": 0.426
+        },
+        "cover_render_phases_us": [
+          {
+            "cleanup_us": 1,
+            "process_us": 350,
+            "selection_us": 349,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 476,
+            "selection_us": 409,
+            "upload_us": 67
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 1330,
+            "selection_us": 1132,
+            "upload_us": 198
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 68,
+            "selection_us": 67,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 71,
+            "selection_us": 71,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 60,
+            "selection_us": 59,
+            "upload_us": 1
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 335,
+            "selection_us": 335,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 237,
+            "selection_us": 237,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 222,
+            "selection_us": 222,
+            "upload_us": 0
+          }
+        ],
+        "phase": "outdoor_sweep",
+        "sample_at_us": 60921631
+      },
+      {
+        "frame": 4861,
+        "at_us": 69412056,
+        "frame_ms": 25.699,
+        "process_ms": 7.539,
+        "draw_ms": 12.522,
+        "before_process_ms": 5.331,
+        "physics_ms": 4.368,
+        "physics_steps": 1,
+        "stages_ms": {
+          "actor update": 0.045,
+          "base controller": 0.018,
+          "controller loading": 0.002,
+          "controller process": 0.1,
+          "cover picker": 0.19,
+          "cover prepare": 0.094,
+          "cover publish": 1.098,
+          "lighting schedule": 0.008,
+          "player physics": 0.092,
+          "receive": 2.876,
+          "receive poll": 0.006,
+          "receive surface_batch": 2.833,
+          "retire collision/mesh": 0.001,
+          "staging frame": 0.006,
+          "world authoring": 0.015,
+          "world interaction": 0.023,
+          "world pickups": 0.003,
+          "world presentation": 0.023,
+          "world process": 0.39,
+          "world vehicle": 0.007,
+          "zombie update": 1.208
+        },
+        "cover_render_phases_us": [
+          {
+            "cleanup_us": 1,
+            "process_us": 340,
+            "selection_us": 339,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 429,
+            "selection_us": 429,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 757,
+            "selection_us": 459,
+            "upload_us": 297
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 119,
+            "selection_us": 97,
+            "upload_us": 21
+          },
+          {
+            "cleanup_us": 1,
+            "process_us": 79,
+            "selection_us": 78,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 72,
+            "selection_us": 72,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 438,
+            "selection_us": 438,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 289,
+            "selection_us": 288,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 226,
+            "selection_us": 226,
+            "upload_us": 0
+          }
+        ],
+        "phase": "outdoor_sweep",
+        "sample_at_us": 69412321
+      },
+      {
+        "frame": 4166,
+        "at_us": 59405127,
+        "frame_ms": 20.735,
+        "process_ms": 1.576,
+        "draw_ms": 7.591,
+        "before_process_ms": 11.292,
+        "physics_ms": 9.517,
+        "physics_steps": 2,
+        "stages_ms": {
+          "actor update": 0.078,
+          "base controller": 0.015,
+          "controller loading": 0.002,
+          "controller process": 0.149,
+          "lighting schedule": 0.007,
+          "player physics": 0.145,
+          "receive": 0.019,
+          "receive poll": 0.007,
+          "retire collision/mesh": 0.0,
+          "staging frame": 0.008,
+          "world authoring": 0.015,
+          "world interaction": 0.026,
+          "world pickups": 0.003,
+          "world presentation": 0.015,
+          "world process": 0.29,
+          "world vehicle": 0.064,
+          "zombie update": 2.506
+        },
+        "cover_render_phases_us": [
+          {
+            "cleanup_us": 0,
+            "process_us": 1,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 1,
+            "process_us": 1,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 1,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 1,
+            "selection_us": 0,
+            "upload_us": 1
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          },
+          {
+            "cleanup_us": 0,
+            "process_us": 0,
+            "selection_us": 0,
+            "upload_us": 0
+          }
+        ],
+        "phase": "outdoor_sweep",
+        "sample_at_us": 59405474
+      }
+    ],
+    "source_findings": [
+      "NativeStaticBatch::select_render_batches scans group bounds, sorts candidates and allocates per-page wanted/partial sets; each of nine cover collections can select on the same frame. Allocation is a review candidate, not an isolated measured cause.",
+      "TerrainStream::_dispatch_results checks its soft receive budget only after one complete surface reply. TerrainWorld emits surface_batch_ready synchronously; ground-cover filtering/publication can run inside this interval. The 2.833 ms receive stage is not worker surface-query time.",
+      "NativeBlockWorld::_process has no per-frame phase counters for horizon step, residency selection or collision update. Existing upload and occlusion timings do not cover those owners."
+    ],
+    "next_validation": "After the interactive session ends: finish the pending installed trace check, then controlled native cover-selection/response-publication and render-stage work with unchanged density, shadows, bounds, placement/fade identity, collisions and saves. Keep pursuit, dense destruction, long-session memory and known failing regressions open."
+  }
 }

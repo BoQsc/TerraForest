@@ -63,6 +63,32 @@ for every stall. The continuous control sweep median/p99/max is
 13.877/24.999/28.357 ms. These are still failing frame times under the observed
 hardware state; no FPS improvement is claimed for instrumentation.
 
+## Whole-world follow-up, without another engine run
+
+Offline review of the ordinary control joins 3,708 retained frames to the
+continuous process-frame samples; callback timestamps differ by at most 1.004 ms.
+Loading, preparation, screenshots and saves are excluded. All 535 sweep samples
+have corresponding trace rows. This is analysis of the existing run, not a new
+performance comparison or runtime change.
+
+| Independent target | Evidence in the ordinary control | Next investigation |
+| --- | --- | --- |
+| Rendering / presentation | Frame 4050: 21.930 ms drawing, 1.337 ms process | Separate scene-list preparation from other draw work and waits |
+| Native cover selection | Sweep p99/max 2.092/2.881 ms; frame 4248 has 7.375 ms process | Nine collections can reselect together; inspect candidate sorting, per-page allocations and publication invalidation |
+| Surface-result callbacks | Sweep p99/max 1.988/2.833 ms; frame 4861 has 7.539 ms process | Synchronous consumer publication runs inside the receive timer; its soft budget is checked after a whole reply |
+| Physics / actors | Frame 4166: 9.517 ms across two physics steps, including 2.506 ms central zombie update | Attribute remaining body/animation/engine work; preserve response and collisions |
+
+These rows are not additive budgets. Surface-result time includes nested cover
+preparation/publication, and central zombie update is inside physics, not the
+process interval. Cover-native process p99/max during the sweep is 2.240/3.171 ms;
+selection is its largest measured subphase. The source uses per-page ordered
+sets during selection; their allocation cost is a candidate for a controlled
+change, not an isolated measured cause. Uninstrumented native block horizon,
+residency and collision work also needs attribution before assigning residual
+process time. Existing world/player gaps, destruction, leaks and cold pursuit
+remain separate requirements. No visual or gameplay change was made in this
+offline follow-up.
+
 ## Verification and visuals
 
 - Headless recorder fixture passes, including bounded marker reads, explicit
