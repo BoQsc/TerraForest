@@ -30,6 +30,7 @@ func settled(batch:Node,expected:int)->void:
 func _initialize()->void:run.call_deferred()
 func run()->void:
 	if DisplayServer.get_name()=="headless":print("FAIL GPU readback is required");quit(2);return
+	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
 	var scene:=Node3D.new();root.add_child(scene)
 	var batch:Node3D=ClassDB.instantiate("NativeStaticBatch");scene.add_child(batch)
 	var control:Node3D=ClassDB.instantiate("NativeStaticBatch");scene.add_child(control)

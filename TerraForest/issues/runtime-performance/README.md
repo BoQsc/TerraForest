@@ -15,6 +15,11 @@ physics work are the immediate investigation targets; pursuit is one workstream.
 These overlapping timers are not an additive budget. Dense destruction and
 long-session memory remain required acceptance gates, not deferred successes.
 
+Native cover selection now replaces temporary per-page trees with contiguous
+membership arrays. Debug/release placement and rendered partition-continuity
+checks pass; old/new world timings and installation are pending an idle gameplay
+window. This is a source change with verified behavior, not a measured FPS gain.
+
 [Native building occlusion](block-occlusion-2026-11-09.md) reduces the
 indoor rendering CPU median from about 5.2 to 2.7 ms in the installed package,
 with unchanged visible room geometry. Native lifecycle, destruction, paging,

@@ -6211,5 +6211,51 @@
       "NativeBlockWorld::_process has no per-frame phase counters for horizon step, residency selection or collision update. Existing upload and occlusion timings do not cover those owners."
     ],
     "next_validation": "After the interactive session ends: finish the pending installed trace check, then controlled native cover-selection/response-publication and render-stage work with unchanged density, shadows, bounds, placement/fade identity, collisions and saves. Keep pursuit, dense destruction, long-session memory and known failing regressions open."
+  },
+  "cover_selection_change": {
+    "status": "Source functional verification passes. Default-world A/B, outdoor capture review, export and installed marker/save/shutdown checks pending an idle gameplay interval. No speedup claim.",
+    "baseline_commit": "ad990a26",
+    "functional_report": "reports/performance_changes/20261109T183237201450Z_cover_selection_checks",
+    "sources": {
+      "addons/structures/native/static_streaming.cpp": "fc56989841eae3365a103b3fc99ddd9ce211df8f5f9fa65aea18fc6924f86cfb",
+      "tests/render_partitions.gd": "fc87e274708d6174c2f9fd25864f1a918877b0687eb0937a7ee45f6ff7df0b8a",
+      "tests/render_partitions.gd.uid": "bf1d4db22a901147427d227685b1910816b3e0afcbe36f493f7a514a40d6e5e7",
+      "tools/test_native_release.py": "18a01e477a376abc15530207d062cbc362778345b934a578e5103cb75dfa7ae9",
+      "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "e57e221f8c0cdd8aa5082803409dbf0107a472bc225b1362c0c71a296b07de5e",
+      "addons/structures/bin/structures.windows.template_release.x86_64.dll": "530a15f64806b168c711654403249b053d4bb652975fa2d7b87e16e564990c40"
+    },
+    "checks": [
+      {
+        "path": "reports/performance_changes/20261109T183237201450Z_cover_selection_checks/static_placements.json",
+        "sha256": "da57a33f4b3a896add9e28e49bc7bd41368776e5dcb7f1f6800ebe9681a496f3",
+        "checks": 235,
+        "failures": 0
+      },
+      {
+        "path": "reports/performance_changes/20261109T183237201450Z_cover_selection_checks/static_release.json",
+        "sha256": "387d85af1cff375555b8e8e098413735c95303ffaa5a6d29d626fd873c412d93",
+        "checks": 235,
+        "failures": 0
+      },
+      {
+        "path": "reports/performance_changes/20261109T183237201450Z_cover_selection_checks/static_shadow_policy.json",
+        "sha256": "f53c6dc5377cd99cd14a1c9a731c2bc97fea59699e7f2f1a2fa14e43fdeb9209",
+        "checks": 7,
+        "failures": 0
+      },
+      {
+        "path": "reports/performance_changes/20261109T183237201450Z_cover_selection_checks/partitions_debug.json",
+        "sha256": "689e6b41cb02fc231f50e2e5ee4c727e5ec7817db65dcbf7a95b65b6ad9d4cdd",
+        "checks": 28,
+        "failures": 0
+      },
+      {
+        "path": "reports/performance_changes/20261109T183237201450Z_cover_selection_checks/partitions_release.json",
+        "sha256": "974a0e3e1e462b2d9a71477134067572726a2d40ce3b7d3af12ac0879b47f4b5",
+        "checks": 28,
+        "failures": 0
+      }
+    ],
+    "scope": "Temporary membership storage only. Nearest-first admission and pending order, held partial pages, budgets, mesh data and authoritative storage are preserved. Source-only until installed validation; broad performance and visuals remain open."
   }
 }

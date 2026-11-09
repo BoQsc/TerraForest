@@ -219,6 +219,17 @@ installed comparisons after the active interactive session ends, preserving
 draw membership/fade continuity, collisions, destruction and save identity.
 This offline evidence is not a new optimization or FPS/nonregression claim.
 
+The first selection change replaces temporary per-page membership trees with
+sorted arrays while preserving nearest-first admission and all budgets. Debug
+and release each pass 235 placement and 28 rendered partition checks; the debug
+shadow fixture passes seven. Source DLLs are rebuilt, but the installed package
+retains the prior verified versions. World A/B timing, outdoor visual inspection
+and package refresh remain pending because another interactive PX9 checkout
+reopened before comparison. Resume those gates when gameplay is idle, recording
+clocks and competing processes; qualify selection/frame tails and exact resident
+coverage before claiming a gain. The source and receipts are linked in the same
+render-stage report. No broader headroom or regression requirement is closed.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,

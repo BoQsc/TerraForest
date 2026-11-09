@@ -89,6 +89,34 @@ process time. Existing world/player gaps, destruction, leaks and cold pursuit
 remain separate requirements. No visual or gameplay change was made in this
 offline follow-up.
 
+## Native selection allocation change
+
+`NativeStaticBatch::select_render_batches` now retains admission order in one
+contiguous array and uses a sorted copy for wanted-page membership. Held partial
+pages also use a sorted array. This removes the temporary per-page tree-node
+allocations while preserving candidate ordering, byte/logical-page charging,
+eviction order and nearest-first pending uploads. It changes no mesh, density,
+shadow policy, placement, collision or persistence data. Selection remains
+synchronous; sorting and engine publication still need measured qualification.
+
+Both native variants build. Static placement checks pass 235 assertions in each;
+the debug shadow-policy fixture passes seven. Actual GPU readback partition
+checks pass 28 in each variant, including unchanged snapshots, partial-page
+visibility, cross-partition motion, fade ages, region restore and retirement.
+The release-check tool now supports this existing partition fixture in an
+isolated project. Logs and copied reports are retained in
+`reports/performance_changes/20261109T183237201450Z_cover_selection_checks`.
+These are functional checks, not a performance comparison or a broad visual
+acceptance claim. Original AI-assisted 0BSD maintenance; no imported material.
+
+The source DLLs include this change; the installed package still contains the
+previous verified DLLs. Before the planned world A/B, another interactive PX9
+checkout started again. Keep the game intact. Resume paired old/new-DLL default
+world travel with clock/process telemetry when it closes; inspect outdoor
+captures and compare instance counts, selection cost, complete frame tails,
+save/shutdown and memory. Then export and finish the pending installed detailed
+trace gate. No speedup or stable-60-FPS claim is made for this change yet.
+
 ## Verification and visuals
 
 - Headless recorder fixture passes, including bounded marker reads, explicit

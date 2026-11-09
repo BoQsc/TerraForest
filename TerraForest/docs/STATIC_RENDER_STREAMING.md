@@ -34,6 +34,13 @@ deterministic signed group-key tie break. Pending batches upload nearest first.
 At most 4,096 maintained group bounds are scanned and sorted during selection;
 unchanged stationary collections do not repeat that work.
 
+Selection retains nearest-first admission/upload order in a contiguous array.
+A sorted copy answers wanted-page membership, and a second sorted array tracks
+held partial pages. These temporary arrays replace per-page tree allocations;
+the candidate ordering, signed-key tie break, partial-page retention and all
+residency/upload ceilings are unchanged. Selection is still synchronous and
+scales with candidate groups/pages; this is not an aggregate frame-time budget.
+
 Render pages are admission units. Each group is divided by sorted placement ID
 into pages of at most 1,024 instances, reduced further to fit the resident and
 per-tick payload budgets. A dense group can progressively load across frames.

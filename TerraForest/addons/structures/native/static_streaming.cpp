@@ -182,7 +182,8 @@ void NativeStaticBatch::select_render_batches() {
         return a.distance==b.distance?a.key<b.key:a.distance<b.distance;
     });
     render_candidates=render_blocked=0;
-    uint64_t bytes=0,logical_pages=0;std::set<RenderKey> wanted,held_partial;std::vector<RenderKey> ordered;
+    uint64_t bytes=0,logical_pages=0;std::vector<RenderKey> held_partial,ordered;
+    ordered.reserve(batches.size());
     for(const auto &candidate:candidates) {
         const auto keys=render_page_keys(candidate.key);
         uint32_t pages=uint32_t(keys.size());
@@ -199,7 +200,7 @@ void NativeStaticBatch::select_render_batches() {
                 // growth cannot fit. Keep it until a later selection can admit
                 // the full page; it is not queued as an impossible upload.
                 if(appearance_fade&&resident!=resident_ids.end()&&!resident->second.empty()&&fits(resident->second.size())){
-                    count=resident->second.size();held_partial.insert(key);
+                    count=resident->second.size();held_partial.push_back(key);
                 }else{
                     // Only the ordinary non-faded layout can skip intervening
                     // full pages: faded pages may hold a smaller visible prefix.
@@ -208,17 +209,21 @@ void NativeStaticBatch::select_render_batches() {
                 }
             }
             const uint64_t charge=charge_for(count);
-            wanted.insert(key);ordered.push_back(key);bytes+=count*render_stride_bytes();
+            ordered.push_back(key);bytes+=count*render_stride_bytes();
             selected_instances+=count;logical_pages+=charge-group_charge;group_charge=charge;
         }
     }
+    // Preserve nearest-first admission order separately from membership lookup.
+    // Bulk sorting avoids one tree-node allocation for every admitted draw page.
+    auto wanted=ordered;std::sort(wanted.begin(),wanted.end());
+    std::sort(held_partial.begin(),held_partial.end());
     std::vector<RenderKey> evict;
-    for(const auto &batch:batches)if(!wanted.count(batch.first))evict.push_back(batch.first);
+    for(const auto &batch:batches)if(!std::binary_search(wanted.begin(),wanted.end(),batch.first))evict.push_back(batch.first);
     for(auto key:evict)release_batch(key,true);
     for(auto &entry:batches)entry.second->set_cast_shadows_setting(page_casts_shadows(entry.first)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     render_pending.clear();
     for(auto it=ordered.rbegin();it!=ordered.rend();++it)
-        if(!held_partial.count(*it)&&(!batches.count(*it)||resident_ids.at(*it).size()!=render_page_size(*it)))render_pending.push_back(*it);
+        if(!std::binary_search(held_partial.begin(),held_partial.end(),*it)&&(!batches.count(*it)||resident_ids.at(*it).size()!=render_page_size(*it)))render_pending.push_back(*it);
 }
 void NativeStaticBatch::_process(double) {
     const uint64_t started=Time::get_singleton()->get_ticks_usec();
