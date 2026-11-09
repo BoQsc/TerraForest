@@ -42,10 +42,20 @@ func run()->void:
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	if not await wait_for(func():return game.startup_complete and not game.loading_active and not game.player_view.entry.blocks_actions(),120):quit(1);return
 	var trace=root.get_node_or_null("WorldSession/FrameTrace")
+	var initializations:Array=[]
+	for zombie:Node in game.zombies.residents:initializations.append(zombie.initialization_us.duplicate())
 	var initial_yaw:float=game.yaw
 	label="arrival_idle"
 	var short:bool="--trace-short" in OS.get_cmdline_user_args()
 	await wait_for(func():return false,12 if short else 20)
+	if "--trace-save" in OS.get_cmdline_user_args():
+		label="save_during_play"
+		if trace!=null:trace.mark("explicit normal save during gameplay")
+		var completed:=[false]
+		var saved_callback:Callable=func(_success:bool):completed[0]=true
+		game.terrain.save_completed.connect(saved_callback,CONNECT_ONE_SHOT)
+		game.terrain.changed_since_save=true;game.terrain.save_world()
+		await wait_for(func():return completed[0],20)
 	label="turning"
 	var turn_started:=Time.get_ticks_msec()
 	var deadline:=turn_started+(5000 if short else 30000)
@@ -62,6 +72,8 @@ func run()->void:
 	root.get_texture().get_image().save_png(output.path_join("arrival.png"))
 	RenderingServer.frame_post_draw.disconnect(frame)
 	var record:Dictionary={"slot":slot,"samples":samples,"trace_enabled":trace!=null,"position":game.player.position,"temporary":game.temporary_world,"snapshot_readonly":game.terrain.backend.readonly_snapshot,"mouse_captures":preload("res://addons/world_runtime/mouse_ownership.gd").captures}
+	record.initializations=initializations
+	record.last_capture=game.persistence.last_capture.duplicate(true)
 	if trace!=null:record.trace_files=trace.written;record.trace_overhead_last_us=trace.overhead_us
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	game.yaw=initial_yaw;game.player.rotation.y=initial_yaw

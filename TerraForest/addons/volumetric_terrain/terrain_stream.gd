@@ -1489,7 +1489,10 @@ func _flush_manual_save() -> void:
 		return
 	# Capture addon state only after edit publication and its synchronous change
 	# callbacks. A full worker queue leaves one coalesced request for next frame.
-	if backend.submit({"kind":"save"}):
+	var save_begin:=Time.get_ticks_usec()
+	var submitted:bool=backend.submit({"kind":"save"})
+	_record_stage("save capture",(Time.get_ticks_usec()-save_begin)/1000.0)
+	if submitted:
 		_manual_save_requested=false
 		autosave_timer=0.0
 		changed_since_save=false

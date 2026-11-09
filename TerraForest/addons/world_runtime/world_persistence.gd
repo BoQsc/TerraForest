@@ -98,6 +98,9 @@ func _capture() -> Dictionary:
 			var section_begin:=Time.get_ticks_usec()
 			sections[name] = _providers[name]["capture"].call()
 			measurements[name]={"us":Time.get_ticks_usec()-section_begin,"bytes":sections[name].size() if sections[name] is PackedByteArray else -1}
+			if sections[name] is RefCounted:
+				measurements[name].object_id=str(sections[name].get_instance_id())
+				measurements[name].object_class=sections[name].get_class()
 	last_capture={"total_us":Time.get_ticks_usec()-began,"sections":measurements}
 	return {"epoch": _restored_epoch, "sections": sections}
 
