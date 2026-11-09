@@ -24,9 +24,14 @@ def main():
     parser.add_argument('--verbose', action='store_true')
     parser.add_argument('--save', action='store_true', help='Capture one normal save during active gameplay')
     parser.add_argument('--gpu-profile', action='store_true', help='Retain engine GPU pass summaries in the console log')
+    parser.add_argument('--render-inventory', action='store_true', help='Inspect scene geometry/light candidates after all frame timings are saved')
+    parser.add_argument('--render-partition', type=int, choices=[8,16], help='Stationary ABBA diagnostic of exact nearby cover draw partitions')
+    parser.add_argument('--render-full-detail', action='store_true', help='Diagnostic only: disable automatic mesh LOD for every ABBA phase')
     parser.add_argument('--light-abba', action='store_true', help='Compare unchanged versus redundantly submitted pooled lights in one stationary view')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
+    if args.render_full_detail and not args.render_partition:
+        parser.error('--render-full-detail requires --render-partition')
     if not args.source.startswith('StartupBench_FPS_') or not args.label.isidentifier():
         parser.error('Use an owned FPS fixture and an identifier label')
     config, _ = parse_args([])
@@ -59,11 +64,20 @@ def main():
         command.insert(1, '--verbose')
     if args.gpu_profile:
         command.insert(1, '--gpu-profile')
+    if args.render_inventory:
+        command += ['--trace-render-inventory']
+    if args.render_partition:
+        command += ['--trace-render-partition=' + str(args.render_partition)]
+    if args.render_full_detail:
+        command += ['--trace-render-full-detail']
     if args.uncapped:
         command += ['--trace-uncapped']
     if not args.without_trace:
         command += ['--frame-trace', '--frame-trace-dir=' + str(folder / 'traces')]
     record = dict(command=command, clone=copied, **revision_metadata())
+    record['diagnostic_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+                                  for p in [ROOT/'tests/frame_trace_world.gd', ROOT/'tests/render_inventory.gd',
+                                            ROOT/'tests/render_partition_probe.gd', Path(__file__)]}
     if args.executable:
         record['pack_sha256'] = hashlib.sha256((ROOT / 'dist/TerraForest.pck').read_bytes()).hexdigest()
         record['pack_native_sha256'] = native

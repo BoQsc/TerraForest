@@ -10,6 +10,8 @@ var manual_save:Dictionary={"requested":false,"completed":false,"success":false}
 var light_abba:=false
 var repeat_light_setters:=false
 var light_phases:Array[Dictionary]=[]
+var render_probe:=false
+var render_probe_result:Dictionary={}
 func repeat_lights()->void:
 	if not repeat_light_setters or not is_instance_valid(game):return
 	for light:Node in game.structures.resident_lights.get_children():
@@ -33,8 +35,8 @@ func wait_for(predicate:Callable,seconds:float)->bool:
 func frame()->void:
 	var now:=Time.get_ticks_usec()
 	if previous>0:
-		var sample:Dictionary={"phase":label,"frame_ms":(now-previous)/1000.0}
-		if light_abba:
+		var sample:Dictionary={"phase":label,"frame_ms":(now-previous)/1000.0,"frame":Engine.get_frames_drawn(),"at_us":now}
+		if light_abba or render_probe:
 			sample.gpu_ms=RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid())
 			sample.draw_calls=Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
 		samples.append(sample)
@@ -63,6 +65,25 @@ func run()->void:
 	label="arrival_idle"
 	var short:bool="--trace-short" in OS.get_cmdline_user_args()
 	await wait_for(func():return false,12 if short else 20)
+	for arg:String in OS.get_cmdline_user_args():
+		if not arg.begins_with("--trace-render-partition="):continue
+		label="render_preparation"
+		var original_lod:float=root.mesh_lod_threshold
+		if "--trace-render-full-detail" in OS.get_cmdline_user_args():root.mesh_lod_threshold=0.0
+		var partition=load(get_script().resource_path.get_base_dir().path_join("render_partition_probe.gd")).new()
+		partition.prepare(game,float(arg.get_slice("=",1)))
+		render_probe=true;RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
+		render_probe_result={"span":float(arg.get_slice("=",1)),"mesh_lod_threshold":root.mesh_lod_threshold,"original_batches":partition.originals.size(),"replacement_batches":partition.replacements.size(),"instances":partition.instance_count,"unchanged":true}
+		for phase:String in ["original_a","partitioned_b","partitioned_b2","original_a2"]:
+			partition.set_partitioned(phase.begins_with("partitioned"));label="render_warmup"
+			await wait_for(func():return false,2)
+			label="render_"+phase;print("RENDER_PARTITION_PHASE begin=",label)
+			await wait_for(func():return false,5)
+			print("RENDER_PARTITION_PHASE end=",label)
+			render_probe_result.unchanged=render_probe_result.unchanged and partition.unchanged()
+			await RenderingServer.frame_post_draw
+			root.get_texture().get_image().save_png(output.path_join(label+".png"))
+		partition.release();root.mesh_lod_threshold=original_lod
 	light_abba="--trace-light-abba" in OS.get_cmdline_user_args()
 	if light_abba:
 		RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
@@ -104,12 +125,18 @@ func run()->void:
 	record.initializations=initializations
 	record.last_capture=game.persistence.last_capture.duplicate(true)
 	record.manual_save=manual_save.duplicate()
+	if render_probe:record.render_probe=render_probe_result
 	if light_abba:record.light_phases=light_phases
 	if trace!=null:record.trace_files=trace.written;record.trace_overhead_last_us=trace.overhead_us
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
+	if "--trace-render-inventory" in OS.get_cmdline_user_args():
+		# Diagnostic readbacks happen only after all frame observations are saved.
+		var inventory:Dictionary=load(get_script().resource_path.get_base_dir().path_join("render_inventory.gd")).capture(game)
+		FileAccess.open(output.path_join("render_inventory.json"),FileAccess.WRITE).store_string(JSON.stringify(inventory))
 	game.yaw=initial_yaw;game.player.rotation.y=initial_yaw
 	game.shutdown_requested=true
 	var saved:bool=await game.terrain.shutdown_after_edits()
 	game.free();await process_frame;await process_frame
 	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
+	if render_probe:okay=okay and render_probe_result.unchanged and render_probe_result.instances>0
 	print("FRAME_TRACE_WORLD ok=",okay," slot=",slot);quit(0 if okay else 1)
