@@ -16,6 +16,9 @@ func _enter_tree()->void:
 	Presentation.migrate_boot_settings()
 	Presentation.apply(get_window())
 func _ready()->void:
+	if "--frame-trace" in OS.get_cmdline_user_args():
+		var trace:=preload("res://addons/world_runtime/frame_trace.gd").new()
+		trace.name="FrameTrace";add_child(trace)
 	get_tree().scene_changed.connect(_restore_presentation)
 	get_window().focus_entered.connect(_restore_presentation.call_deferred)
 	get_tree().scene_changed.connect(_attach_optional_audio)

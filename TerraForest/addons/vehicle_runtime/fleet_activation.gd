@@ -61,6 +61,7 @@ func parked_identity(collider: Object, rid: RID) -> int:
 		if collider==view:return view.identity_for_body(rid)
 	return 0
 func prepare_parked_view(world: Node,body: RigidBody3D) -> void:
+	var measured:=Time.get_ticks_usec()
 	var parts: Array=[]
 	var inverse: Transform3D=body.global_transform.affine_inverse()
 	for node: MeshInstance3D in body.find_children("*","MeshInstance3D",true,false):
@@ -68,8 +69,16 @@ func prepare_parked_view(world: Node,body: RigidBody3D) -> void:
 	var view: Node3D=ClassDB.instantiate("NativeParkedVehicleRenderer");world.add_child(view)
 	var chassis: CollisionShape3D=owner.adapter(body).collision(body)
 	var kind: String=owner.kind_of(body)
+	world.terrain._record_stage("vehicle prototype collect",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	var distant_parts:Array=owner.adapter(body).parked_render_parts(body,parts)
-	if chassis==null or not view.configure(owner.fleet,parts,64,kind) or not view.configure_collision(chassis.shape,body.global_transform.affine_inverse()*chassis.global_transform) or not view.enable_horizon(distant_parts):parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
+	world.terrain._record_stage("vehicle prototype distant parts",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	var configured:bool=chassis!=null and view.configure(owner.fleet,parts,64,kind)
+	world.terrain._record_stage("vehicle prototype native configure",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	var collision_ready:bool=configured and view.configure_collision(chassis.shape,body.global_transform.affine_inverse()*chassis.global_transform)
+	world.terrain._record_stage("vehicle prototype collision",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	var horizon_ready:bool=collision_ready and view.enable_horizon(distant_parts)
+	world.terrain._record_stage("vehicle prototype horizon",(Time.get_ticks_usec()-measured)/1000.0)
+	if not horizon_ready:parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
 	parked_views[kind]=view
 	if kind==owner.Packs.DEFAULT:parked_view=view
 func prepare_from_saved(world: Node) -> bool:

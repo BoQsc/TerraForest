@@ -35,7 +35,10 @@ func request()->void:
 	if ready_msec==0:ready_msec=Time.get_ticks_msec()
 	slot=game.terrain.save_slot
 	if not slot.is_valid_identifier() or slot.length()>48:return
-	if Pictures.read_image(slot,directory,Vector2i(1,1))!=null:captured=true;return
+	var image_check_started:=Time.get_ticks_usec()
+	var existing:bool=Pictures.read_image(slot,directory,Vector2i(1,1))!=null
+	if game.terrain.has_method("_record_stage"):game.terrain._record_stage("arrival existing image decode",(Time.get_ticks_usec()-image_check_started)/1000.0)
+	if existing:captured=true;return
 	capturing=true
 	# Let the session's resource-loading cover be removed before reading the frame.
 	await get_tree().process_frame

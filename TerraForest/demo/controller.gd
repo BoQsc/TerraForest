@@ -391,19 +391,24 @@ func _additional_loading_ready() -> bool:
 func _update_loading() -> void:
 	if not loading_active:
 		return
+	var measured:=Time.get_ticks_usec()
 	var state: Dictionary = terrain.loading_state(player.position, fly)
+	terrain._record_stage("loading terrain readiness",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	var observation:Dictionary=preload("res://addons/world_runtime/progress_meter.gd").loading(state,terrain.world_ready,waiting_spawn)
 	loading_stage_percent=observation.percent;loading_stage_text=observation.stage
 	loading_work_text=preload("res://addons/world_runtime/progress_meter.gd").loading_work(state,terrain)
 	if Time.get_ticks_usec()>=loading_diagnostics_next_us:
 		loading_diagnostics_next_us=Time.get_ticks_usec()+250000
 		loading_diagnostics.context=preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(self)
+	terrain._record_stage("loading diagnostics snapshot",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	if terrain.latest_error != "":
 		loading_panel.stop_timer("failed")
 		loading_diagnostics.observe("Loading failed",{"error":terrain.latest_error})
 		loading_label.text = "Loading failed\n" + terrain.latest_error + "\nRead the startup log in reports."
 		return
-	if bool(state["ready"]) and not waiting_spawn and _additional_loading_ready():
+	var extra_ready:bool=bool(state["ready"]) and not waiting_spawn and _additional_loading_ready()
+	terrain._record_stage("loading addon readiness",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	if extra_ready:
 		loading_ready_frames += 1
 		loading_stage_percent=97.0;loading_stage_text="Final checks before play"
 	else:
@@ -412,6 +417,7 @@ func _update_loading() -> void:
 	loading_panel.show_progress("Loading your world",preload("res://addons/world_runtime/progress_meter.gd").loading_caption(loading_stage_text,state),display_percent)
 	loading_panel.show_work(loading_work_text)
 	loading_diagnostics.observe(loading_stage_text,{"stage":loading_stage_text,"overall_percent":display_percent,"ready_frames":loading_ready_frames,"required_ready_frames":3,"timing":loading_panel.timing_snapshot()})
+	terrain._record_stage("loading UI publication",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	if loading_ready_frames < 3:
 		return
 	loading_panel.show_progress("Ready to play","Your world is ready",100)
@@ -426,7 +432,9 @@ func _update_loading() -> void:
 	travel_blocked_s = 0.0
 	_clear_motion()
 	_message("Nearby terrain is ready")
+	terrain._record_stage("loading release",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	arrival_photograph.request()
+	terrain._record_stage("loading arrival photograph request",(Time.get_ticks_usec()-measured)/1000.0)
 	if "--human-playtest" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		DisplayServer.window_set_title("TerraForest — Human checkpoint 2026-10-09" if "--playtest-checkpoint" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) else "TerraForest — Human playtest (%s)" % ["temporary world" if temporary_world else "saved world"])
 		print("HUMAN_PLAYTEST_READY ", JSON.stringify({"presentation":Presentation.measurement(get_window()),"vsync":DisplayServer.window_get_vsync_mode(),"fps_cap":Engine.max_fps,"temporary":temporary_world,"slot":terrain.save_slot,"save_path":ProjectSettings.globalize_path(terrain.backend.save_path),"snapshot_terrain":terrain.backend.snapshot_terrain,"regional_terrain":terrain.backend.region_terrain}))

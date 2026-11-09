@@ -149,6 +149,8 @@ func configure_generation_spawn(point:Vector3)->bool:
 	return true
 
 func _ready() -> void:
+	var trace:=get_tree().root.get_node_or_null("WorldSession/FrameTrace")
+	if trace!=null:trace.attach(self)
 	startup_tick=Time.get_ticks_usec()
 	startup_cooperative=get_tree().root.has_node("WorldSession") or get_viewport().has_meta("terraforest_scene_task")
 	var previous_process_mode:=process_mode
@@ -1896,6 +1898,7 @@ func _additional_loading_diagnostics() -> Dictionary:
 
 # Cached water surfaces must be visible before entering the playable world.
 func _additional_loading_ready() -> bool:
+	var measured:=Time.get_ticks_usec()
 	if quests.resetter.busy:
 		loading_stage_percent=50;loading_stage_text="Restoring quest location"
 		loading_work_text="Location reset: "+quests.resetter.phase
@@ -1906,7 +1909,9 @@ func _additional_loading_ready() -> bool:
 			loading_stage_percent=77;loading_stage_text="Preparing world boulders"
 			loading_work_text="Boulder owners %d / %d · %d surface pages pending · %d exclusion retries · %d roots"%[boulders.owners,boulders.total,boulders.pending,boulders.reconcile,boulders.render.roots]
 			return false
+	terrain._record_stage("loading boulder readiness",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	var forest:Dictionary=ecosystem.local_coverage_status(player.global_position) if local_landscape_readiness and not lakes.offline_preparation else ecosystem.coverage_status()
+	terrain._record_stage("loading forest readiness",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	if not forest.ready:
 		loading_stage_percent=78;loading_stage_text="Preparing world forests"
 		loading_work_text="Tree owners %d / %d · %d surface pages pending · %d exclusions pending · %d retries"%[forest.owners,forest.total,forest.pending,forest.reconcile,forest.rejected]
@@ -1947,13 +1952,17 @@ func _additional_loading_ready() -> bool:
 		loading_work_text="Water: lakes %d/%d ready · %d regions pending · %d surfaces dirty · %d staged meshes"%[state.ready,state.lakes,state.pending_regions,state.dirty_meshes,state.staged_meshes]
 		loading_stage_text="Loading water - %d regions remaining"%int(state.pending_regions) if state.pending_regions>0 else "Building water surfaces - %d remaining"%int(state.dirty_meshes)
 		return false
-	if not zombies.population.advance(player.global_position, true):
+	terrain._record_stage("loading object and water readiness",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	var population_ready:bool=zombies.population.advance(player.global_position, true)
+	terrain._record_stage("loading population readiness",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
+	if not population_ready:
 		var population_state: Dictionary = zombies.population.status()
 		loading_stage_percent=94;loading_stage_text="Loading world inhabitants"
 		loading_work_text="Zombies: %d active / %d limit · %d / %d nearby positions checked · terrain sampling %s" % [population_state.active,zombies.residency_limit,population_state.examined,population_state.candidates,"pending" if population_state.sample_pending else "ready"]
 		return false
 	if world_vehicle.fleet_enabled:
 		var prototypes_ready:bool=world_vehicle.activation.prepare_from_saved(self)
+		terrain._record_stage("loading vehicle prototypes",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 		var vehicles:Dictionary=world_vehicle.activation.coverage_status()
 		if not prototypes_ready or not vehicles.ready:
 			loading_stage_percent=95;loading_stage_text="Preparing world vehicles"
@@ -1961,7 +1970,9 @@ func _additional_loading_ready() -> bool:
 			var failure:String=world_vehicle.activation.parked_status.get("reason","")
 			if failure in ["prototype_configuration","provider_unavailable"]:terrain.latest_error="Vehicle presentation preparation failed: "+failure
 			return false
-	if not temporary_world and not lakes.offline_preparation and not world_map.prepare_for_play():
+	var map_ready:bool=temporary_world or lakes.offline_preparation or world_map.prepare_for_play()
+	terrain._record_stage("loading map readiness",(Time.get_ticks_usec()-measured)/1000.0)
+	if not map_ready:
 		loading_stage_percent=96;loading_stage_text="Preparing world map"
 		loading_work_text=world_map.updates.description()
 		return false

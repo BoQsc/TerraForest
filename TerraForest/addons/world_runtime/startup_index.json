@@ -94,6 +94,7 @@
     "res://addons/characters/runtime/house_sleepers.gd"
   ],
   "res://addons/player_runtime/building_assemblies.gd": [],
+  "res://addons/player_runtime/bullet_holes.gd": [],
   "res://addons/player_runtime/character_panel.gd": [
     "res://addons/characters/wearables/clothing.gd",
     "res://addons/player_runtime/character_portrait.gd",
@@ -105,7 +106,8 @@
     "res://addons/player_runtime/combat_barrel.gd",
     "res://addons/player_runtime/durability_catalog.gd",
     "res://addons/player_runtime/destruction_effects.gd",
-    "res://addons/player_runtime/structural_integrity.gd"
+    "res://addons/player_runtime/structural_integrity.gd",
+    "res://addons/player_runtime/bullet_holes.gd"
   ],
   "res://addons/player_runtime/compass.gd": [],
   "res://addons/player_runtime/construction_inventory.gd": [],
