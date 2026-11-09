@@ -8,6 +8,7 @@ class Fixture extends Node3D:
 	var session_menu:={"first_person_toggle":CheckButton.new(),"first_person_shadows_toggle":CheckButton.new()}
 	var temporary_world:=true
 	var loading_active:=false
+	var loading_layer:CanvasLayer
 	var shutdown_requested:=false
 	var config_path:=""
 	var first_person_view=preload("res://addons/player_runtime/first_person_view.gd").new()
@@ -191,6 +192,13 @@ func run()->void:
 	game.world_vehicle.driving=true;protection.update();check(not protection.active,"driving does not overlay held items")
 	game.world_vehicle.driving=false;game.tool_view.hide();protection.update();check(not protection.active,"hidden tools disable the extra pass")
 	game.tool_view.show();game.loading_active=true;protection.update();check(not protection.active,"loading does not render floating hands")
+	game.loading_layer=CanvasLayer.new();game.loading_layer.layer=50;game.add_child(game.loading_layer)
+	var loading_cover:=ColorRect.new();loading_cover.color=Color.BLACK;loading_cover.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);game.loading_layer.add_child(loading_cover)
+	protection.update();await frames()
+	check(protection.active and protection.meshes.depth.active,"protected material variants render behind the opaque loading cover")
+	await RenderingServer.frame_post_draw
+	check(root.get_texture().get_image().get_pixel(960,540).v<.001,"loading cover hides the warmed hands")
+	game.loading_layer.free();game.loading_layer=null
 	game.loading_active=false;protection.update();check(protection.active,"returning to play restores protection")
 	var config_path:=folder.path_join("settings.cfg")
 	game.temporary_world=false;protection.settings_path=config_path

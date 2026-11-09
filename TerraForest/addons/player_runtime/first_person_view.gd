@@ -89,7 +89,12 @@ func remove_light(identity:int)->void:
 
 func update()->void:
 	if not is_instance_valid(game) or not is_instance_valid(game.tool_view):return
-	var wanted:bool=enabled and game.camera.current and not game.player_view.active and not game.world_vehicle.driving and not game.loading_active and not game.shutdown_requested and game.tool_view.is_visible_in_tree()
+	# Render the actual protected materials behind the opaque loading cover too.
+	# Deferring their activation until control release compiles new depth variants
+	# in the first playable frame. Camera, lighting and material quality are identical.
+	var cover:CanvasLayer=game.get("loading_layer")
+	var covered:bool=cover!=null and cover.visible and cover.layer>canvas.layer
+	var wanted:bool=enabled and game.camera.current and not game.player_view.active and not game.world_vehicle.driving and (not game.loading_active or covered) and not game.shutdown_requested and game.tool_view.is_visible_in_tree()
 	var overlay:bool=wanted and shadows_enabled
 	meshes.set_overlay(overlay);meshes.depth.set_active(wanted and not overlay)
 	if wanted!=active:

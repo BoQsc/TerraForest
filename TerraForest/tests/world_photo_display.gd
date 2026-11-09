@@ -59,6 +59,12 @@ func run()->void:
 	await process_frame
 	check(FileAccess.get_sha256(folder.path_join("arrival_fixture.preview/arrival.png"))==first_hash,"existing photographs are preserved without repeated captures")
 	game.free()
+	game=GameProbe.new();root.add_child(game);game.add_child(game.terrain)
+	capture=load("res://addons/world_runtime/arrival_photograph.gd").new();capture.directory=folder;game.add_child(capture);capture.attach(game)
+	check(capture.validation_worker!=null and not capture.validation_complete,"existing photograph validation starts off-thread before control release")
+	capture.request();await until(func():return capture.validation_complete)
+	check(capture.captured and capture.readbacks==0 and FileAccess.get_sha256(folder.path_join("arrival_fixture.preview/arrival.png"))==first_hash,"validated existing photograph prevents readback and preserves its bytes")
+	game.free()
 	var bare:=folder.path_join("bare_only")
 	DirAccess.make_dir_recursive_absolute(bare)
 	var bare_save:=FileAccess.open(bare.path_join("bare_fixture.trw"),FileAccess.WRITE);bare_save.store_string("bare fixture");bare_save.close()

@@ -12,6 +12,8 @@ var game:Node
 var directory:="user://worlds"
 var image:Image
 var worker:Thread
+var validation_worker:Thread
+var validation_complete:=false
 var pending_path:=""
 var slot:=""
 var captured:=false
@@ -25,6 +27,17 @@ var captured_msec:=0
 var wait_started:=0
 func attach(host:Node,ready:Callable=Callable())->void:
 	game=host;presentation_ready=ready;set_process(false);game.terrain.save_completed.connect(_saved)
+	# Validate while the loading cover is still up. Decoding belongs to a worker;
+	# a file's existence alone cannot distinguish a valid photograph from corruption.
+	_start_validation()
+func _start_validation()->void:
+	if validation_complete or validation_worker!=null or not eligible():return
+	slot=game.terrain.save_slot
+	if not slot.is_valid_identifier() or slot.length()>48:return
+	validation_worker=Thread.new()
+	if validation_worker.start(Pictures.has_photograph.bind(slot,directory))!=OK:
+		validation_worker=null;return
+	set_process(true)
 func eligible()->bool:
 	return is_instance_valid(game) and not game.temporary_world and not game.terrain.backend.readonly_snapshot and not game.shutdown_requested and DisplayServer.get_name()!="headless" and game.get_viewport() is Window
 func request()->void:
@@ -33,12 +46,10 @@ func request()->void:
 		_retry()
 		return
 	if ready_msec==0:ready_msec=Time.get_ticks_msec()
-	slot=game.terrain.save_slot
-	if not slot.is_valid_identifier() or slot.length()>48:return
-	var image_check_started:=Time.get_ticks_usec()
-	var existing:bool=Pictures.read_image(slot,directory,Vector2i(1,1))!=null
-	if game.terrain.has_method("_record_stage"):game.terrain._record_stage("arrival existing image decode",(Time.get_ticks_usec()-image_check_started)/1000.0)
-	if existing:captured=true;return
+	if not validation_complete:
+		_start_validation()
+		if validation_worker==null:_retry()
+		return
 	capturing=true
 	# Let the session's resource-loading cover be removed before reading the frame.
 	await get_tree().process_frame
@@ -83,6 +94,10 @@ func _encode_if_saved()->void:
 	# Keep the Image alive until the worker's native encoder has returned.
 	set_process(true)
 func _process(_delta:float)->void:
+	if validation_worker!=null and not validation_worker.is_alive():
+		captured=bool(validation_worker.wait_to_finish());validation_worker=null;validation_complete=true
+		if not captured:request.call_deferred()
+	if validation_worker==null and worker==null:set_process(false)
 	if worker==null or worker.is_alive():return
 	_publish(worker.wait_to_finish());worker=null;image=null;set_process(false)
 func _publish(result:Error)->void:
@@ -96,4 +111,5 @@ func _publish(result:Error)->void:
 		print("ARRIVAL_PHOTO slot=",slot," capture_ms=",captured_msec-ready_msec," published_ms=",Time.get_ticks_msec()-ready_msec," attempts=",attempts," readbacks=",readbacks)
 	elif FileAccess.file_exists(pending_path):DirAccess.remove_absolute(pending_path)
 func _exit_tree()->void:
+	if validation_worker!=null:validation_worker.wait_to_finish();validation_worker=null
 	if worker!=null:_publish(worker.wait_to_finish());worker=null
