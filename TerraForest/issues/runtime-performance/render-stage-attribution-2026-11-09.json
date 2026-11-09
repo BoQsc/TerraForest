@@ -6213,7 +6213,7 @@
     "next_validation": "After the interactive session ends: finish the pending installed trace check, then controlled native cover-selection/response-publication and render-stage work with unchanged density, shadows, bounds, placement/fade identity, collisions and saves. Keep pursuit, dense destruction, long-session memory and known failing regressions open."
   },
   "cover_selection_change": {
-    "status": "Source functional verification passes. Default-world A/B, outdoor capture review, export and installed marker/save/shutdown checks pending an idle gameplay interval. No speedup claim.",
+    "status": "Implemented in 83554b22; debug/release functional checks, one clean source A/B and installed marker/save/shutdown verification pass. Broader frame-time nonregression and endurance remain open.",
     "baseline_commit": "ad990a26",
     "functional_report": "reports/performance_changes/20261109T183237201450Z_cover_selection_checks",
     "sources": {
@@ -6257,5 +6257,1488 @@
       }
     ],
     "scope": "Temporary membership storage only. Nearest-first admission and pending order, held partial pages, budgets, mesh data and authoritative storage are preserved. Source-only until installed validation; broad performance and visuals remain open."
+  },
+  "cover_selection_comparison": {
+    "implementation_commit": "83554b22",
+    "scope": "One clean previous-DLL/new-DLL source pair at unchanged default Frontier poses/settings, uncapped fly travel. First vector run retained but excluded due concurrent PX9 headless test. Event subset selection_over_0_1ms is explicitly filtered, not all frame cost. Nested timers are not additive. GPU/actors/wind remain live and timings do not prove general nonregression. Authoritative indexed count matches at 81497; final resident count differs by 61, so draw loads are not bit-identical.",
+    "runs": [
+      {
+        "report": "reports/performance_changes/20261109T183903413922Z_cover_selection_vector_a",
+        "passed": true,
+        "observation_sha256": "e137b0fec093c207b3062ce9c5fa2c7554cc2aedb114b977a007487b88ca2648",
+        "run_sha256": "bff111d7c99179c735c6a8a45a0ad82db58f67ba405956a8ac523635fa0ed719",
+        "native_sha256": {
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+          "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "e57e221f8c0cdd8aa5082803409dbf0107a472bc225b1362c0c71a296b07de5e",
+          "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "530a15f64806b168c711654403249b053d4bb652975fa2d7b87e16e564990c40",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+        },
+        "phases": {
+          "arrival_idle": {
+            "frame_ms": {
+              "samples": 1285,
+              "median": 8.72,
+              "p99": 20.16,
+              "maximum": 28.056
+            },
+            "captured_rows": 1285,
+            "native_selection_ms": {
+              "samples": 1285,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 1285,
+              "median": 0.003,
+              "p99": 0.006,
+              "maximum": 0.104
+            }
+          },
+          "outdoor_sweep": {
+            "frame_ms": {
+              "samples": 811,
+              "median": 9.141,
+              "p99": 22.4,
+              "maximum": 37.362
+            },
+            "captured_rows": 811,
+            "native_selection_ms": {
+              "samples": 811,
+              "median": 0.0,
+              "p99": 1.898,
+              "maximum": 5.273
+            },
+            "selection_over_0_1ms": {
+              "samples": 15,
+              "median": 1.926,
+              "p99": 5.273,
+              "maximum": 5.273
+            },
+            "native_process_ms": {
+              "samples": 811,
+              "median": 0.003,
+              "p99": 2.011,
+              "maximum": 6.478
+            }
+          },
+          "outdoor_view_0": {
+            "frame_ms": {
+              "samples": 558,
+              "median": 6.382,
+              "p99": 12.428,
+              "maximum": 16.727
+            },
+            "captured_rows": 558,
+            "native_selection_ms": {
+              "samples": 558,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 558,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.017
+            }
+          },
+          "outdoor_view_1": {
+            "frame_ms": {
+              "samples": 411,
+              "median": 9.855,
+              "p99": 17.148,
+              "maximum": 21.865
+            },
+            "captured_rows": 411,
+            "native_selection_ms": {
+              "samples": 411,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 411,
+              "median": 0.003,
+              "p99": 0.006,
+              "maximum": 0.006
+            }
+          },
+          "outdoor_view_2": {
+            "frame_ms": {
+              "samples": 443,
+              "median": 8.777,
+              "p99": 16.398,
+              "maximum": 20.522
+            },
+            "captured_rows": 443,
+            "native_selection_ms": {
+              "samples": 443,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.002
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 443,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.008
+            }
+          },
+          "turning": {
+            "frame_ms": {
+              "samples": 589,
+              "median": 8.138,
+              "p99": 16.868,
+              "maximum": 23.202
+            },
+            "captured_rows": 589,
+            "native_selection_ms": {
+              "samples": 589,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 589,
+              "median": 0.003,
+              "p99": 0.006,
+              "maximum": 0.011
+            }
+          },
+          "settled_idle": {
+            "frame_ms": {
+              "samples": 903,
+              "median": 8.434,
+              "p99": 16.136,
+              "maximum": 21.228
+            },
+            "captured_rows": 658,
+            "native_selection_ms": {
+              "samples": 658,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.002
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 658,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.01
+            }
+          },
+          "save_during_play": {
+            "frame_ms": {
+              "samples": 113,
+              "median": 9.56,
+              "p99": 18.948,
+              "maximum": 22.715
+            },
+            "captured_rows": 113,
+            "native_selection_ms": {
+              "samples": 113,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 113,
+              "median": 0.003,
+              "p99": 0.007,
+              "maximum": 0.008
+            }
+          }
+        },
+        "resources": {
+          "samples": 148,
+          "gpu_samples": 147,
+          "peak_private_commit_bytes": 3966529536,
+          "peak_working_set_bytes": 2395287552,
+          "peak_dedicated_gpu_bytes": 1483853824,
+          "checks": {
+            "ram": {
+              "bytes": 3966529536,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1483853824,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "cover_render": [
+          {
+            "resident_instances": 381,
+            "indexed_instances": 497,
+            "resident_batches": 218,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 24384,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 124
+          },
+          {
+            "resident_instances": 4407,
+            "indexed_instances": 5299,
+            "resident_batches": 368,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 282048,
+            "byte_limit": 1600000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 128
+          },
+          {
+            "resident_instances": 61785,
+            "indexed_instances": 73911,
+            "resident_batches": 389,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 3954240,
+            "byte_limit": 7000000,
+            "batch_limit": 7168,
+            "partition_subdivisions": 2,
+            "selection_queries": 128
+          },
+          {
+            "resident_instances": 60,
+            "indexed_instances": 85,
+            "resident_batches": 51,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 3840,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 75
+          },
+          {
+            "resident_instances": 44,
+            "indexed_instances": 82,
+            "resident_batches": 38,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 2816,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 74
+          },
+          {
+            "resident_instances": 50,
+            "indexed_instances": 71,
+            "resident_batches": 40,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 3200,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 70
+          },
+          {
+            "resident_instances": 514,
+            "indexed_instances": 650,
+            "resident_batches": 243,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 32896,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 127
+          },
+          {
+            "resident_instances": 405,
+            "indexed_instances": 512,
+            "resident_batches": 233,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 25920,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 128
+          },
+          {
+            "resident_instances": 295,
+            "indexed_instances": 390,
+            "resident_batches": 179,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 18880,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 124
+          }
+        ],
+        "outdoor": {
+          "ok": true,
+          "poses": [
+            {
+              "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 60.20123, 353.6957)]",
+              "player": "(1085.203, 58.52123, 353.6957)",
+              "screenshot_us": 554246
+            },
+            {
+              "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1093.203, 60.20123, 353.6957)]",
+              "player": "(1093.203, 58.52123, 353.6957)",
+              "screenshot_us": 490180
+            },
+            {
+              "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1101.203, 60.20123, 353.6957)]",
+              "player": "(1101.203, 58.52123, 353.6957)",
+              "screenshot_us": 449137
+            }
+          ],
+          "scope": "16 m camera sweep through production cover; fly mode holds height, no density or quality overrides; not a walking/collision qualification",
+          "target": "(1085.203, 58.42123, 349.6957)"
+        },
+        "worst_ordinary_rows": [
+          {
+            "frame": 5542,
+            "at_us": 59098915,
+            "frame_ms": 37.245,
+            "process_ms": 7.882,
+            "draw_ms": 18.953,
+            "before_process_ms": 10.148,
+            "physics_ms": 7.978,
+            "physics_steps": 2,
+            "render_setup_cpu_ms": 3.001,
+            "gpu_ms": 4.83799982070923,
+            "phase": "outdoor_sweep",
+            "cover_native_us": 2161
+          },
+          {
+            "frame": 6587,
+            "at_us": 69909730,
+            "frame_ms": 36.715,
+            "process_ms": 8.683,
+            "draw_ms": 22.012,
+            "before_process_ms": 5.541,
+            "physics_ms": 4.406,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 3.004,
+            "gpu_ms": 5.17700004577637,
+            "phase": "outdoor_sweep",
+            "cover_native_us": 6478
+          },
+          {
+            "frame": 5541,
+            "at_us": 59061670,
+            "frame_ms": 32.83,
+            "process_ms": 13.642,
+            "draw_ms": 12.99,
+            "before_process_ms": 6.062,
+            "physics_ms": 4.743,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 1.94,
+            "gpu_ms": 4.99700021743774,
+            "phase": "outdoor_sweep",
+            "cover_native_us": 2808
+          },
+          {
+            "frame": 5783,
+            "at_us": 61448987,
+            "frame_ms": 29.46,
+            "process_ms": 5.455,
+            "draw_ms": 17.537,
+            "before_process_ms": 6.33,
+            "physics_ms": 5.007,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 2.865,
+            "gpu_ms": 4.71000003814697,
+            "phase": "outdoor_sweep",
+            "cover_native_us": 3727
+          }
+        ],
+        "image_review": "Retained; not inspected in this follow-up. Contended sample excluded from A/B."
+      },
+      {
+        "report": "reports/performance_changes/20261109T184036101085Z_cover_selection_tree_a",
+        "passed": true,
+        "observation_sha256": "57993b01569d4a5b61d3f64b2e3bcbc0ba10cf2f4ac1e2a157934b0405374a41",
+        "run_sha256": "ecea844a6fcd1b396f6d7f60c26c402ee39a270df3adb1d54a850e149574c37f",
+        "native_sha256": {
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+          "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "8f5bad37e4c8b50d81d95851de67e29c2a185f56cce6d1831d92a63e2023da51",
+          "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "530a15f64806b168c711654403249b053d4bb652975fa2d7b87e16e564990c40",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+        },
+        "phases": {
+          "arrival_idle": {
+            "frame_ms": {
+              "samples": 1229,
+              "median": 9.196,
+              "p99": 20.064,
+              "maximum": 27.996
+            },
+            "captured_rows": 1229,
+            "native_selection_ms": {
+              "samples": 1229,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 1229,
+              "median": 0.003,
+              "p99": 0.006,
+              "maximum": 0.009
+            }
+          },
+          "outdoor_sweep": {
+            "frame_ms": {
+              "samples": 891,
+              "median": 8.592,
+              "p99": 22.346,
+              "maximum": 31.58
+            },
+            "captured_rows": 891,
+            "native_selection_ms": {
+              "samples": 891,
+              "median": 0.0,
+              "p99": 1.898,
+              "maximum": 3.513
+            },
+            "selection_over_0_1ms": {
+              "samples": 13,
+              "median": 2.058,
+              "p99": 3.513,
+              "maximum": 3.513
+            },
+            "native_process_ms": {
+              "samples": 891,
+              "median": 0.003,
+              "p99": 2.063,
+              "maximum": 3.666
+            }
+          },
+          "outdoor_view_0": {
+            "frame_ms": {
+              "samples": 442,
+              "median": 9.2135,
+              "p99": 19.03,
+              "maximum": 25.192
+            },
+            "captured_rows": 442,
+            "native_selection_ms": {
+              "samples": 442,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 442,
+              "median": 0.003,
+              "p99": 0.006,
+              "maximum": 0.01
+            }
+          },
+          "outdoor_view_1": {
+            "frame_ms": {
+              "samples": 499,
+              "median": 7.675,
+              "p99": 13.132,
+              "maximum": 15.98
+            },
+            "captured_rows": 499,
+            "native_selection_ms": {
+              "samples": 499,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.002
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 499,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.136
+            }
+          },
+          "outdoor_view_2": {
+            "frame_ms": {
+              "samples": 432,
+              "median": 8.754,
+              "p99": 20.11,
+              "maximum": 24.495
+            },
+            "captured_rows": 432,
+            "native_selection_ms": {
+              "samples": 432,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.046
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 432,
+              "median": 0.003,
+              "p99": 0.007,
+              "maximum": 0.049
+            }
+          },
+          "turning": {
+            "frame_ms": {
+              "samples": 516,
+              "median": 9.5855,
+              "p99": 19.053,
+              "maximum": 24.61
+            },
+            "captured_rows": 516,
+            "native_selection_ms": {
+              "samples": 516,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 516,
+              "median": 0.003,
+              "p99": 0.006,
+              "maximum": 0.01
+            }
+          },
+          "settled_idle": {
+            "frame_ms": {
+              "samples": 880,
+              "median": 8.835999999999999,
+              "p99": 17.695,
+              "maximum": 23.543
+            },
+            "captured_rows": 644,
+            "native_selection_ms": {
+              "samples": 644,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 644,
+              "median": 0.003,
+              "p99": 0.006,
+              "maximum": 0.008
+            }
+          },
+          "save_during_play": {
+            "frame_ms": {
+              "samples": 107,
+              "median": 10.611,
+              "p99": 16.296,
+              "maximum": 19.015
+            },
+            "captured_rows": 107,
+            "native_selection_ms": {
+              "samples": 107,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.002
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 107,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.006
+            }
+          }
+        },
+        "resources": {
+          "samples": 154,
+          "gpu_samples": 153,
+          "peak_private_commit_bytes": 3980890112,
+          "peak_working_set_bytes": 2400485376,
+          "peak_dedicated_gpu_bytes": 1483849728,
+          "checks": {
+            "ram": {
+              "bytes": 3980890112,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1483849728,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "cover_render": [
+          {
+            "resident_instances": 381,
+            "indexed_instances": 497,
+            "resident_batches": 218,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 24384,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 124
+          },
+          {
+            "resident_instances": 4297,
+            "indexed_instances": 5299,
+            "resident_batches": 360,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 275008,
+            "byte_limit": 1600000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 128
+          },
+          {
+            "resident_instances": 61785,
+            "indexed_instances": 73911,
+            "resident_batches": 389,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 3954240,
+            "byte_limit": 7000000,
+            "batch_limit": 7168,
+            "partition_subdivisions": 2,
+            "selection_queries": 128
+          },
+          {
+            "resident_instances": 60,
+            "indexed_instances": 85,
+            "resident_batches": 51,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 3840,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 75
+          },
+          {
+            "resident_instances": 44,
+            "indexed_instances": 82,
+            "resident_batches": 38,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 2816,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 74
+          },
+          {
+            "resident_instances": 50,
+            "indexed_instances": 71,
+            "resident_batches": 40,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 3200,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 70
+          },
+          {
+            "resident_instances": 514,
+            "indexed_instances": 650,
+            "resident_batches": 243,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 32896,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 127
+          },
+          {
+            "resident_instances": 405,
+            "indexed_instances": 512,
+            "resident_batches": 233,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 25920,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 128
+          },
+          {
+            "resident_instances": 295,
+            "indexed_instances": 390,
+            "resident_batches": 179,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 18880,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 124
+          }
+        ],
+        "outdoor": {
+          "ok": true,
+          "poses": [
+            {
+              "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 60.20123, 353.6957)]",
+              "player": "(1085.203, 58.52123, 353.6957)",
+              "screenshot_us": 563787
+            },
+            {
+              "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1093.203, 60.20123, 353.6957)]",
+              "player": "(1093.203, 58.52123, 353.6957)",
+              "screenshot_us": 463966
+            },
+            {
+              "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1101.203, 60.20123, 353.6957)]",
+              "player": "(1101.203, 58.52123, 353.6957)",
+              "screenshot_us": 491122
+            }
+          ],
+          "scope": "16 m camera sweep through production cover; fly mode holds height, no density or quality overrides; not a walking/collision qualification",
+          "target": "(1085.203, 58.42123, 349.6957)"
+        },
+        "worst_ordinary_rows": [
+          {
+            "frame": 5414,
+            "at_us": 62504600,
+            "frame_ms": 31.672,
+            "process_ms": 8.336,
+            "draw_ms": 17.408,
+            "before_process_ms": 5.811,
+            "physics_ms": 4.616,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 2.09,
+            "gpu_ms": 4.76399993896484,
+            "phase": "outdoor_sweep",
+            "cover_native_us": 2912
+          },
+          {
+            "frame": 6399,
+            "at_us": 71177135,
+            "frame_ms": 28.921,
+            "process_ms": 7.791,
+            "draw_ms": 16.674,
+            "before_process_ms": 4.331,
+            "physics_ms": 3.185,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 1.676,
+            "gpu_ms": 6.03999996185303,
+            "phase": "outdoor_sweep",
+            "cover_native_us": 2490
+          },
+          {
+            "frame": 3219,
+            "at_us": 41642742,
+            "frame_ms": 28.1,
+            "process_ms": 10.371,
+            "draw_ms": 6.404,
+            "before_process_ms": 11.147,
+            "physics_ms": 9.143,
+            "physics_steps": 2,
+            "render_setup_cpu_ms": 0.448,
+            "gpu_ms": 5.36100006103516,
+            "phase": "arrival_idle",
+            "cover_native_us": 3
+          },
+          {
+            "frame": 6386,
+            "at_us": 70992703,
+            "frame_ms": 27.096,
+            "process_ms": 6.934,
+            "draw_ms": 16.421,
+            "before_process_ms": 3.505,
+            "physics_ms": 2.592,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 1.663,
+            "gpu_ms": 6.44199991226196,
+            "phase": "outdoor_sweep",
+            "cover_native_us": 3666
+          }
+        ],
+        "image_review": "All three outdoor captures inspected; no obvious missing geometry or cover patch."
+      },
+      {
+        "report": "reports/performance_changes/20261109T184217320778Z_cover_selection_vector_b",
+        "passed": true,
+        "observation_sha256": "a6a9c76714ad31ad647d0f0f2d6237ffa910c94e70566dc0a5c336f35c857e72",
+        "run_sha256": "571591a360c8d1b7919aa189429d12edf20882825310b76d2a45ee4065fd2279",
+        "native_sha256": {
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+          "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "e57e221f8c0cdd8aa5082803409dbf0107a472bc225b1362c0c71a296b07de5e",
+          "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "530a15f64806b168c711654403249b053d4bb652975fa2d7b87e16e564990c40",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+        },
+        "phases": {
+          "arrival_idle": {
+            "frame_ms": {
+              "samples": 1274,
+              "median": 8.381499999999999,
+              "p99": 20.559,
+              "maximum": 29.906
+            },
+            "captured_rows": 1274,
+            "native_selection_ms": {
+              "samples": 1274,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.024
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 1274,
+              "median": 0.003,
+              "p99": 0.006,
+              "maximum": 0.026
+            }
+          },
+          "outdoor_sweep": {
+            "frame_ms": {
+              "samples": 1024,
+              "median": 7.4135,
+              "p99": 18.641,
+              "maximum": 28.281
+            },
+            "captured_rows": 1024,
+            "native_selection_ms": {
+              "samples": 1024,
+              "median": 0.0,
+              "p99": 1.629,
+              "maximum": 2.922
+            },
+            "selection_over_0_1ms": {
+              "samples": 14,
+              "median": 1.699,
+              "p99": 2.922,
+              "maximum": 2.922
+            },
+            "native_process_ms": {
+              "samples": 1024,
+              "median": 0.003,
+              "p99": 1.674,
+              "maximum": 3.037
+            }
+          },
+          "outdoor_view_0": {
+            "frame_ms": {
+              "samples": 576,
+              "median": 6.2695,
+              "p99": 10.665,
+              "maximum": 18.683
+            },
+            "captured_rows": 576,
+            "native_selection_ms": {
+              "samples": 576,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.062
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 576,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.07
+            }
+          },
+          "outdoor_view_1": {
+            "frame_ms": {
+              "samples": 530,
+              "median": 7.3055,
+              "p99": 10.413,
+              "maximum": 12.164
+            },
+            "captured_rows": 530,
+            "native_selection_ms": {
+              "samples": 530,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 530,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.076
+            }
+          },
+          "outdoor_view_2": {
+            "frame_ms": {
+              "samples": 503,
+              "median": 7.525,
+              "p99": 11.922,
+              "maximum": 20.689
+            },
+            "captured_rows": 503,
+            "native_selection_ms": {
+              "samples": 503,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.003
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 503,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.008
+            }
+          },
+          "turning": {
+            "frame_ms": {
+              "samples": 621,
+              "median": 7.697,
+              "p99": 12.361,
+              "maximum": 14.678
+            },
+            "captured_rows": 621,
+            "native_selection_ms": {
+              "samples": 621,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.002
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 621,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.01
+            }
+          },
+          "settled_idle": {
+            "frame_ms": {
+              "samples": 941,
+              "median": 8.131,
+              "p99": 17.579,
+              "maximum": 23.791
+            },
+            "captured_rows": 941,
+            "native_selection_ms": {
+              "samples": 941,
+              "median": 0.0,
+              "p99": 0.002,
+              "maximum": 0.004
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 941,
+              "median": 0.003,
+              "p99": 0.006,
+              "maximum": 0.077
+            }
+          },
+          "save_during_play": {
+            "frame_ms": {
+              "samples": 121,
+              "median": 7.753,
+              "p99": 13.666,
+              "maximum": 14.524
+            },
+            "captured_rows": 121,
+            "native_selection_ms": {
+              "samples": 121,
+              "median": 0.0,
+              "p99": 0.001,
+              "maximum": 0.002
+            },
+            "selection_over_0_1ms": null,
+            "native_process_ms": {
+              "samples": 121,
+              "median": 0.003,
+              "p99": 0.005,
+              "maximum": 0.007
+            }
+          }
+        },
+        "resources": {
+          "samples": 150,
+          "gpu_samples": 150,
+          "peak_private_commit_bytes": 3987922944,
+          "peak_working_set_bytes": 2408427520,
+          "peak_dedicated_gpu_bytes": 1483849728,
+          "checks": {
+            "ram": {
+              "bytes": 3987922944,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1483849728,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "cover_render": [
+          {
+            "resident_instances": 381,
+            "indexed_instances": 497,
+            "resident_batches": 218,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 24384,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 125
+          },
+          {
+            "resident_instances": 4358,
+            "indexed_instances": 5299,
+            "resident_batches": 364,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 278912,
+            "byte_limit": 1600000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 129
+          },
+          {
+            "resident_instances": 61785,
+            "indexed_instances": 73911,
+            "resident_batches": 389,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 3954240,
+            "byte_limit": 7000000,
+            "batch_limit": 7168,
+            "partition_subdivisions": 2,
+            "selection_queries": 129
+          },
+          {
+            "resident_instances": 60,
+            "indexed_instances": 85,
+            "resident_batches": 51,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 3840,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 76
+          },
+          {
+            "resident_instances": 44,
+            "indexed_instances": 82,
+            "resident_batches": 38,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 2816,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 75
+          },
+          {
+            "resident_instances": 50,
+            "indexed_instances": 71,
+            "resident_batches": 40,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 3200,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 70
+          },
+          {
+            "resident_instances": 514,
+            "indexed_instances": 650,
+            "resident_batches": 243,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 32896,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 128
+          },
+          {
+            "resident_instances": 405,
+            "indexed_instances": 512,
+            "resident_batches": 233,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 25920,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 129
+          },
+          {
+            "resident_instances": 295,
+            "indexed_instances": 390,
+            "resident_batches": 179,
+            "pending_batches": 0,
+            "selection_pending": false,
+            "retained_render_bytes": 18880,
+            "byte_limit": 200000,
+            "batch_limit": 1536,
+            "partition_subdivisions": 2,
+            "selection_queries": 125
+          }
+        ],
+        "outdoor": {
+          "ok": true,
+          "poses": [
+            {
+              "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 60.19567, 353.6957)]",
+              "player": "(1085.203, 58.51567, 353.6957)",
+              "screenshot_us": 510939
+            },
+            {
+              "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1093.203, 60.19567, 353.6957)]",
+              "player": "(1093.203, 58.51567, 353.6957)",
+              "screenshot_us": 465606
+            },
+            {
+              "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1101.203, 60.19567, 353.6957)]",
+              "player": "(1101.203, 58.51567, 353.6957)",
+              "screenshot_us": 434214
+            }
+          ],
+          "scope": "16 m camera sweep through production cover; fly mode holds height, no density or quality overrides; not a walking/collision qualification",
+          "target": "(1085.203, 58.42123, 349.6957)"
+        },
+        "worst_ordinary_rows": [
+          {
+            "frame": 3147,
+            "at_us": 38656394,
+            "frame_ms": 29.868,
+            "process_ms": 7.206,
+            "draw_ms": 17.737,
+            "before_process_ms": 4.75,
+            "physics_ms": 3.662,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 2.234,
+            "gpu_ms": 5.30000019073486,
+            "phase": "arrival_idle",
+            "cover_native_us": 5
+          },
+          {
+            "frame": 6742,
+            "at_us": 68728505,
+            "frame_ms": 28.407,
+            "process_ms": 7.665,
+            "draw_ms": 13.677,
+            "before_process_ms": 6.763,
+            "physics_ms": 5.31,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 1.657,
+            "gpu_ms": 5.62400007247925,
+            "phase": "outdoor_sweep",
+            "cover_native_us": 3037
+          },
+          {
+            "frame": 5697,
+            "at_us": 60229375,
+            "frame_ms": 27.432,
+            "process_ms": 7.846,
+            "draw_ms": 16.311,
+            "before_process_ms": 3.145,
+            "physics_ms": 2.095,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 2.198,
+            "gpu_ms": 4.9539999961853,
+            "phase": "outdoor_sweep",
+            "cover_native_us": 1953
+          },
+          {
+            "frame": 3087,
+            "at_us": 37788830,
+            "frame_ms": 24.876,
+            "process_ms": 10.015,
+            "draw_ms": 9.356,
+            "before_process_ms": 5.286,
+            "physics_ms": 3.763,
+            "physics_steps": 1,
+            "render_setup_cpu_ms": 0.633,
+            "gpu_ms": 5.30100011825562,
+            "phase": "arrival_idle",
+            "cover_native_us": 5
+          }
+        ],
+        "image_review": "All three outdoor captures inspected; no obvious missing geometry or cover patch."
+      }
+    ],
+    "host_telemetry": [
+      {
+        "label": "cover_selection_vector_a",
+        "report": "reports/performance_changes/host_cover_selection_20261109T183903261444Z",
+        "result_sha256": "6af057f9e2fc6a77efbe93e8868e7232f8406a95407d05f235fde914beb82d6e",
+        "process_log_sha256": "55750fa23cb0afc4343532d3bf9a82ba8a0f0947abfb0daa09fbb474a2241e8c",
+        "gpu_log_sha256": "ae9f6b7cd45b083119cc5ede5b68dc339f14607e6664639a456e8821e1a13e3e",
+        "foreign_engine_or_compiler": {
+          "34080": [
+            "godot.windows.opt.tools.64.exe",
+            3620
+          ]
+        },
+        "graphics_clock_mhz": {
+          "minimum": 420.0,
+          "median": 2257.5,
+          "maximum": 2535.0
+        },
+        "scope": "One-second engine/compiler process samples; excludes verified idle Project Manager PID 41740 and direct child of the run coordinator. Not proof of an otherwise idle OS or absence of sub-second jobs."
+      },
+      {
+        "label": "cover_selection_tree_a",
+        "report": "reports/performance_changes/host_cover_selection_20261109T183903261444Z",
+        "result_sha256": "6af057f9e2fc6a77efbe93e8868e7232f8406a95407d05f235fde914beb82d6e",
+        "process_log_sha256": "57beb3498ef23d48ed5585f05c7429558b69ed272d0af16a7e81150582adb01d",
+        "gpu_log_sha256": "e4740270d6f1a321d2b036e86e3b4b66ea94f832f1341524dcc45967121ac1fb",
+        "foreign_engine_or_compiler": {},
+        "graphics_clock_mhz": {
+          "minimum": 465.0,
+          "median": 2280.0,
+          "maximum": 2520.0
+        },
+        "scope": "One-second engine/compiler process samples; excludes verified idle Project Manager PID 41740 and direct child of the run coordinator. Not proof of an otherwise idle OS or absence of sub-second jobs."
+      },
+      {
+        "label": "cover_selection_vector_b",
+        "report": "reports/performance_changes/host_cover_selection_20261109T184217173141Z",
+        "result_sha256": "887018100498c8080f74f0328b7b89eb4c673df912248cfdc6970e136039b1cf",
+        "process_log_sha256": "d8558f6104195a318f42a10a8413efd6788718c0419dcc1b4d5f97813bb43fcc",
+        "gpu_log_sha256": "288d5a93bf6e8d8bdcd2be6928959c7a55a952212a1917e5783238367b467711",
+        "foreign_engine_or_compiler": {},
+        "graphics_clock_mhz": {
+          "minimum": 210.0,
+          "median": 2250.0,
+          "maximum": 2520.0
+        },
+        "scope": "One-second engine/compiler process samples; excludes verified idle Project Manager PID 41740 and direct child of the run coordinator. Not proof of an otherwise idle OS or absence of sub-second jobs."
+      }
+    ],
+    "installed_status": "Verified matching package; detailed profiler validates marker/lifecycle availability. Two other engine jobs overlapped; reject installed pacing qualification.",
+    "installed": {
+      "report": "reports/performance_changes/20261109T184652480549Z_cover_selection_pack_markers",
+      "run_sha256": "f9346ae3606b37c35571c865f1fda663a02bd819e56c434ac3893ac2d2320ede",
+      "observation_sha256": "eed0bfe2d9e028b49686f59f4b5e54f1c1447c43cfa14dc1490ead13796831d9",
+      "pack_sha256": "a856edb0232bfb150fb66fc4d6edb59626e194f79ce07efc64717906324661b6",
+      "pack_bytes": 556869136,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "e57e221f8c0cdd8aa5082803409dbf0107a472bc225b1362c0c71a296b07de5e",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "530a15f64806b168c711654403249b053d4bb652975fa2d7b87e16e564990c40",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 30228,
+        "exit_code": 0,
+        "resources": {
+          "samples": 149,
+          "gpu_samples": 148,
+          "peak_private_commit_bytes": 4042932224,
+          "peak_working_set_bytes": 2400296960,
+          "peak_dedicated_gpu_bytes": 1550962688,
+          "checks": {
+            "ram": {
+              "bytes": 4042932224,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1550962688,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 91.93632179999258,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        },
+        "render_markers_available": true
+      },
+      "marker_summary": {
+        "completed_frames": 6282,
+        "truncated_frames": 0,
+        "unmatched_gaps": 8,
+        "scope": "Adjacent CPU marker gaps matched by absolute timestamps inside retained draw intervals. Delayed device frames are not current gameplay frames. Partial top-gap sample, not inclusive scopes or a complete CPU sum."
+      },
+      "summary_sha256": "2ce336e66ab4fa92a759e25f342d6b47c602e1739a9ef4cd89fc8fc4856c359c",
+      "host_report": "reports/performance_changes/host_cover_selection_20261109T184652333707Z",
+      "foreign_engine_or_compiler": {
+        "28836": {
+          "pid": 28836,
+          "parent": 22588,
+          "name": "godot.windows.opt.tools.64.exe",
+          "observed_samples": 29,
+          "first_utc": "2026-11-09T18:47:22.981691+00:00",
+          "last_utc": "2026-11-09T18:47:51.614366+00:00"
+        },
+        "33904": {
+          "pid": 33904,
+          "parent": 23972,
+          "name": "godot.windows.opt.tools.64.exe",
+          "observed_samples": 6,
+          "first_utc": "2026-11-09T18:48:19.128971+00:00",
+          "last_utc": "2026-11-09T18:48:24.212588+00:00"
+        }
+      },
+      "reviewed_images": [
+        "arrival.png",
+        "outdoor_0.png",
+        "outdoor_1.png",
+        "outdoor_2.png"
+      ],
+      "scope": "Profiled, uncapped default-world lifecycle/diagnostics check. Two extra engine processes observed; a no-competing-engine assertion was rejected during offline analysis. Four captures inspected. Not ordinary FPS, uncontended hardware, foreground latency, walking, memory endurance or user visual acceptance."
+    }
   }
 }

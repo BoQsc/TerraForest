@@ -183,5 +183,23 @@
     "sha256": "74866dd390464a461d686bdaf9997ab2977eddbeef0ebfca930a6c9ea3b7393f",
     "revision": "40691310 plus source render setup/marker instrumentation; native DLLs unchanged",
     "status": "Inspected source ordinary-recorder control endpoint at 1920x1080, retained Frontier generator29 seed1703. Uncapped diagnostic, no production graphics/gameplay change. Existing assets retain provenance; no user visual acceptance claimed."
+  },
+  "cover-selection-tree-outdoor.png": {
+    "source": "reports/performance_changes/20261109T184036101085Z_cover_selection_tree_a/outdoor_2.png",
+    "sha256": "4743b5111612838da80a6322beba81b2a7e4ddcdb493c05caa6243599941b6e3",
+    "revision": "ad990a26 debug DLL with current trace scripts",
+    "status": "Inspected previous-DLL endpoint; exact camera pose, normal assets and live wind. Not user visual acceptance. Existing project assets retain their provenance; screenshot only."
+  },
+  "cover-selection-vector-outdoor.png": {
+    "source": "reports/performance_changes/20261109T184217320778Z_cover_selection_vector_b/outdoor_2.png",
+    "sha256": "1a266339336d34fba51ad0e9c3c55c323f895c21d3c1584e58e10f1c6479fb55",
+    "revision": "83554b22",
+    "status": "Inspected contiguous-membership endpoint; exact camera pose, normal assets and live wind. Final residency differs slightly; not pixel-equality or user acceptance. Existing project assets retain their provenance; screenshot only."
+  },
+  "cover-selection-pack-outdoor.png": {
+    "source": "reports/performance_changes/20261109T184652480549Z_cover_selection_pack_markers/outdoor_2.png",
+    "sha256": "3a06362497868522e2f308e72921fb8a4cf0f90c0486019f89676184756b6c51",
+    "revision": "83554b22 installed PCK a856edb0232bfb150fb66fc4d6edb59626e194f79ce07efc64717906324661b6",
+    "status": "Inspected installed endpoint with diagnostic render markers; profiler timing and overlap with other engine jobs exclude ordinary pacing qualification. Existing project assets retain their provenance; screenshot only."
   }
 }

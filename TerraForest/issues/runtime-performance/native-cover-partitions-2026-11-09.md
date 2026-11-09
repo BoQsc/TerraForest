@@ -56,6 +56,12 @@ additional selection/upload work and draw nodes. The rolling trace now records
 each collection's native selection, cleanup and upload phases so these costs
 remain visible. Stationary native processing is only a few microseconds.
 
+The [subsequent contiguous-selection change](render-stage-attribution-2026-11-09.md#native-selection-allocation-change)
+reduces allocation work without changing admission. A clean later source pair
+shows active-selection median 2.058→1.699 ms, with functional and installed checks.
+That limited comparison does not close this earlier travel-cost regression or
+the full frame-time gate; workloads/clocks differ and broader tails remain.
+
 Inspected source views retain near/far grass, rocks, terrain, building edges and
 shadows without an obvious missing patch at the sampled boundaries. Smaller
 bounds can alter automatic mesh LOD selection; this is scoped engineering

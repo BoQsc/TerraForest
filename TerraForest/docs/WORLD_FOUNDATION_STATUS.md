@@ -202,9 +202,10 @@ retained draw intervals instead of assuming a device counter is the current
 gameplay frame. A 9.409 ms ordinary-view gap is localized to 3D scene setup, but
 other >20 ms draw intervals have only about 0.3 ms shared setup. A profiled
 224 ms before-process pause remains unexplained. This is source diagnostic
-progress, not an FPS fix. Source checks pass; export and installed availability/
-save/shutdown validation are pending because another interactive checkout is
-running. Resume that gate once competing engine jobs are absent. Then isolate
+progress, not an FPS fix. Source checks and the matching installed availability/
+save/shutdown validation now pass; all 14 packaged DLLs match source and four
+installed captures were inspected. The earlier active-session wait is closed.
+Next isolate
 render-list/instance preparation and native world work, alongside the open-view
 occlusion overhead; preserve all broader destruction/memory/navigation gates.
 
@@ -219,16 +220,23 @@ installed comparisons after the active interactive session ends, preserving
 draw membership/fade continuity, collisions, destruction and save identity.
 This offline evidence is not a new optimization or FPS/nonregression claim.
 
-The first selection change replaces temporary per-page membership trees with
-sorted arrays while preserving nearest-first admission and all budgets. Debug
-and release each pass 235 placement and 28 rendered partition checks; the debug
-shadow fixture passes seven. Source DLLs are rebuilt, but the installed package
-retains the prior verified versions. World A/B timing, outdoor visual inspection
-and package refresh remain pending because another interactive PX9 checkout
-reopened before comparison. Resume those gates when gameplay is idle, recording
-clocks and competing processes; qualify selection/frame tails and exact resident
-coverage before claiming a gain. The source and receipts are linked in the same
-render-stage report. No broader headroom or regression requirement is closed.
+The first selection change (`83554b22`) replaces temporary per-page membership
+trees with sorted arrays while preserving nearest-first admission and budgets.
+Debug and release each pass 235 placement and 28 rendered partition checks; the
+debug shadow fixture passes seven. One clean source pair changes active-selection
+median 2.058→1.699 ms and sweep p99 22.346→18.641 ms. The first contended sample is
+excluded; all six clean-pair outdoor images were inspected. Indexed authoritative
+cover counts match at 81,497, but final render residency differs by 61 records;
+arrival p99 slightly worsens. General performance nonregression is still open.
+The matching 556,869,136-byte PCK (`a856edb0232bfb150fb66fc4d6edb59626e194f79ce07efc64717906324661b6`)
+passes installed detailed-marker availability/save/shutdown with 14 matching
+DLLs and no error/leak diagnostics. Peak private/GPU allocation is 4.043/1.551 GB.
+Two other engine jobs overlap that diagnostic run; installed pacing is not
+qualified. This closes functional installation, not long-session memory or
+stable-60-FPS acceptance.
+A new-build arrival frame remains 29.868 ms with only 0.005 ms native cover work;
+return to native world callbacks and render costs. Wider traversal, dense
+destruction, pursuit and the known water/interaction failures remain open.
 
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction

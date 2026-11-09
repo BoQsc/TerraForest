@@ -1,6 +1,7 @@
 # Render setup and delayed frame attribution
 
-Status: source implementation `81b56061` and scoped checks pass; package refresh pending.
+Status: trace implementation `81b56061`, selection change `83554b22` and scoped
+installed checks pass. One clean source comparison supports lower selection cost.
 Stable 60 FPS, whole-world headroom and general nonregression remain open.
 User visual review: not received. [Exact evidence](render-stage-attribution-2026-11-09.json).
 
@@ -109,13 +110,56 @@ isolated project. Logs and copied reports are retained in
 These are functional checks, not a performance comparison or a broad visual
 acceptance claim. Original AI-assisted 0BSD maintenance; no imported material.
 
-The source DLLs include this change; the installed package still contains the
-previous verified DLLs. Before the planned world A/B, another interactive PX9
-checkout started again. Keep the game intact. Resume paired old/new-DLL default
-world travel with clock/process telemetry when it closes; inspect outdoor
-captures and compare instance counts, selection cost, complete frame tails,
-save/shutdown and memory. Then export and finish the pending installed detailed
-trace gate. No speedup or stable-60-FPS claim is made for this change yet.
+The first new-DLL world run overlapped a PX9 headless test. Its successful
+save/shutdown remains evidence, but it is excluded from the performance pair.
+After that test exited, the old DLL and a new-DLL repeat ran with no competing
+engine/compiler observed in one-second process samples. This is not proof of
+an otherwise idle OS. Normal graphics, default Frontier world, three camera
+poses and 16 m uncapped fly travel are retained; this is not walking physics.
+
+| Source comparison, milliseconds | Previous tree membership | Contiguous membership |
+| --- | ---: | ---: |
+| Selection median on frames exceeding 0.1 ms selection | 2.058 (13 frames) | 1.699 (14 frames) |
+| Selection p99 / maximum across the whole sweep | 1.898 / 3.513 | 1.629 / 2.922 |
+| Whole sweep median / p99 / maximum | 8.592 / 22.346 / 31.580 | 7.413 / 18.641 / 28.281 |
+| Arrival frame p99 | 20.064 | 20.559 |
+| Settled frame maximum | 23.543 | 23.791 |
+
+The filtered selection median improves about 17%; it is not the median of all
+frames. The complete sweep remains above the 16.67 ms budget at p99. Other tails
+vary or worsen, so general frame-time nonregression remains unproven. Whole-run
+median GPU clocks are 2280/2250 MHz, with full clock/limiting telemetry retained.
+Both runs have 81,497 indexed authoritative cover records. Final resident counts
+are 67,831/67,892, a 61-record difference in one collection; these live runs are
+not bit-identical draw workloads. All six outdoor captures were inspected with
+no obvious missing geometry or cover patch. Exact placement/partial-page/fade
+continuity is covered by the native fixtures, not inferred from these pictures.
+
+| Previous endpoint | New endpoint |
+| --- | --- |
+| ![Previous membership endpoint](images/cover-selection-tree-outdoor.png) | ![Contiguous membership endpoint](images/cover-selection-vector-outdoor.png) |
+
+Same 1920×1080 camera pose with normal assets and live wind. User visual approval
+and continuous traversal acceptance remain separate.
+
+The exported package now includes both this change and the completed-frame
+render markers. Its installed run passes the marker-availability gate, saves and
+shuts down without error/leak diagnostics. All 14 external DLLs match source.
+Four installed captures were inspected. Peak private commit is 4.043 GB and
+dedicated GPU allocation 1.551 GB; this short run is not memory endurance.
+The analyzer retains 6,282 completed marker frames, zero truncated frames and
+eight unmatched gaps; at most 163 markers are read in a frame. This profiled
+run validates diagnostics and lifecycle, not ordinary pacing. Screenshot and
+shutdown intervals must not be reported as gameplay FPS. Host telemetry also
+detects two other engine processes during this installed run (29 and six sampled
+seconds); its uncontended-timing assumption was rejected during analysis. This
+does not invalidate marker availability or successful save/shutdown. The export refreshes
+only the shape-icon receipt's DLL identity; its atlas hash is unchanged.
+
+![Installed diagnostic endpoint](images/cover-selection-pack-outdoor.png)
+
+Installed 1920×1080 endpoint with normal assets and detailed diagnostics enabled.
+Visual inspection only; profiling/host contention excludes FPS qualification.
 
 ## Verification and visuals
 
@@ -139,15 +183,18 @@ visible. Scoped inspection only; no continuous-walking or user art approval.
 
 ## Remaining and resume criteria
 
-The installed PCK remains the prior verified occlusion build
-`112c554377f8693b2ad37af9a47d3807a512039bcaadb08e105f829a89b0a176`.
-An interactive game in another checkout became active after the source checks.
-Leave it intact. Once no competing developer/game session is active, export and
-run the installed marker-availability/save/shutdown check. The tool now fails a
-requested detailed probe if no marker data is actually collected.
+The installed 556,869,136-byte PCK is
+`a856edb0232bfb150fb66fc4d6edb59626e194f79ce07efc64717906324661b6`.
+The earlier installation wait is closed by the actual executable run in
+`reports/performance_changes/20261109T184652480549Z_cover_selection_pack_markers`.
+The tool fails a requested detailed probe if marker data is absent.
 
 Next isolate render-list/instance preparation and unmeasured native world work;
 retain normal-graphics controls rather than attributing all stalls to pursuit.
+A new-build ordinary arrival frame still takes 29.868 ms, with 7.206 ms process,
+17.737 ms draw and only 0.005 ms native cover work. Reducing cover selection does
+not account for this independent stall. Attribute native block horizon,
+residency and collision callbacks before assigning residual process cost.
 The 0.18–0.26 ms open-view occlusion CPU overhead from the preceding milestone
 also needs policy refinement or broader controlled evidence. Dense explosives,
 long-session leaks, traversal, cold pursuit, weak hardware and multiplayer scale

@@ -4,9 +4,9 @@ Latest: [render-stage attribution](render-stage-attribution-2026-11-09.md) adds
 shared render-setup timing and optional bounded device CPU markers in source.
 The analyzer correctly maps delayed markers to earlier draw intervals. A 9.409 ms
 ordinary-view gap narrows one cost to 3D scene setup; independent draw/before-process
-stalls remain. Source recorder/analyzer and two normal-world saves pass. Package
-refresh waits for the active gameplay session to end; no FPS improvement or
-general nonregression is claimed for this instrumentation.
+stalls remain. Source recorder/analyzer checks and the installed marker-availability,
+save and shutdown gate pass. The matching package includes all 14 native DLLs;
+no FPS improvement is claimed for instrumentation itself.
 
 Whole-world follow-up of that ordinary control also isolates travel selection
 (cover native p99/max 2.092/2.881 ms) and synchronous surface-result handling
@@ -17,8 +17,12 @@ long-session memory remain required acceptance gates, not deferred successes.
 
 Native cover selection now replaces temporary per-page trees with contiguous
 membership arrays. Debug/release placement and rendered partition-continuity
-checks pass; old/new world timings and installation are pending an idle gameplay
-window. This is a source change with verified behavior, not a measured FPS gain.
+checks pass. One clean old/new pair changes active-selection median 2.058→1.699 ms
+and sweep p99 22.346→18.641 ms. All six outdoor comparisons and four installed
+captures were inspected. Arrival p99 slightly worsens and final residency differs
+by 61 of roughly 68,000 records; general frame-time nonregression remains open.
+The first contended sample is excluded. The change is installed and still leaves
+independent ~30 ms process/draw stalls, destruction and endurance work.
 
 [Native building occlusion](block-occlusion-2026-11-09.md) reduces the
 indoor rendering CPU median from about 5.2 to 2.7 ms in the installed package,
