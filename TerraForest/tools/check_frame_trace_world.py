@@ -36,12 +36,21 @@ def main():
     parser.add_argument('--render-full-detail', action='store_true', help='Diagnostic only: disable automatic mesh LOD for every ABBA phase')
     parser.add_argument('--legacy-cover', action='store_true', help='Diagnostic only: use the prior 32 m cover layout before first admission')
     parser.add_argument('--outdoor-cover', action='store_true', help='Repeatable 16 m outdoor camera sweep with normal world services and quality')
+    parser.add_argument('--grounded-walk', action='store_true', help='Use real grounded player movement during the outdoor route instead of fly-camera motion')
     parser.add_argument('--destruction-load', action='store_true', help='Real three-barrel chain and full debris population in the owned default-world clone')
     parser.add_argument('--legacy-owner-bounds', action='store_true', help='Diagnostic control: use original forest/boulder invalidation scans')
     parser.add_argument('--collision-piece-triangles', type=int, choices=[256, 512, 1024], help='Diagnostic only: configure exact terrain collision partitions before worker startup')
     parser.add_argument('--light-abba', action='store_true', help='Compare unchanged versus redundantly submitted pooled lights in one stationary view')
+    parser.add_argument('--player-abba', action='store_true', help='Grounded stationary and turning comparisons of player feel on/off; restores the preference')
+    parser.add_argument('--legacy-hidden-hud', action='store_true', help='Diagnostic control: rebuild the hidden developer HUD as before')
+    parser.add_argument('--render-thread', choices=['safe', 'separate'], help='Diagnostic engine rendering thread comparison')
+    parser.add_argument('--without-gpu-timers', action='store_true', help='Avoid synchronous renderer timer queries; requires --without-trace')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
+    if args.grounded_walk and not args.outdoor_cover:
+        parser.error('--grounded-walk requires --outdoor-cover')
+    if args.without_gpu_timers and not args.without_trace:
+        parser.error('--without-gpu-timers requires --without-trace')
     if args.require_native_process_profiles and args.without_trace:
         parser.error('--require-native-process-profiles requires the recorder')
     if args.render_stages and args.without_trace:
@@ -57,6 +66,10 @@ def main():
     slot = 'StartupBench_FPS_' + stamp[:-1]
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     copied = clone_once(worlds, args.source, slot)
+    (worlds / (slot + '.diagnostic.json')).write_text(json.dumps({
+        'owner': 'check_frame_trace_world', 'source': args.source,
+        'report': str(folder), 'purpose': 'Isolated performance capture, explicit launch only'
+    }, indent=2), encoding='utf-8')
     for suffix in ('.preview', '.generation.json', '.presentation.json'):
         source, target = worlds / (args.source + suffix), worlds / (slot + suffix)
         if source.is_dir():
@@ -78,6 +91,14 @@ def main():
         command += ['--trace-legacy-structure-capture']
     if args.light_abba:
         command += ['--trace-light-abba']
+    if args.player_abba:
+        command += ['--trace-player-abba']
+    if args.legacy_hidden_hud:
+        command += ['--trace-legacy-hidden-hud']
+    if args.render_thread:
+        command[1:1] = ['--render-thread', args.render_thread]
+    if args.without_gpu_timers:
+        command += ['--trace-without-gpu-timers']
     if args.verbose:
         command.insert(1, '--verbose')
     if args.gpu_profile or args.render_stages:
@@ -102,6 +123,8 @@ def main():
         command += ['--trace-legacy-cover']
     if args.outdoor_cover:
         command += ['--trace-outdoor-cover']
+    if args.grounded_walk:
+        command += ['--trace-grounded-walk']
     if args.destruction_load:
         command += ['--trace-destruction-load']
     if args.legacy_owner_bounds:

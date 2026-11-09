@@ -12,6 +12,10 @@ func _initialize()->void:
  if launch.saved_slots(directory,false,"played")!=PackedStringArray(["beta","gamma","alpha"]):failures+=1
  if launch.saved_slots(directory,false,"created")!=PackedStringArray(["alpha","gamma","beta"]):failures+=1
  if launch.saved_slots(directory,false,"name")!=PackedStringArray(["alpha","beta","gamma"]):failures+=1
+ FileAccess.open(directory.path_join("beta.diagnostic.json"),FileAccess.WRITE).store_string("{}")
+ if launch.saved_slots(directory)!=PackedStringArray(["gamma","alpha"]) or "beta" in launch.saved_slots(directory,true):failures+=1
+ if not launch.command("beta",false,29,1703,true,directory).ok or FileAccess.get_file_as_string(directory.path_join("beta.trw"))!="unchanged":failures+=1
+ DirAccess.remove_absolute(directory.path_join("beta.diagnostic.json"))
  var presentation=preload("res://addons/world_runtime/world_presentation.gd")
  if not presentation.mark_played("alpha",directory) or launch.saved_slots(directory)[0]!="alpha":failures+=1
  if FileAccess.get_file_as_string(directory.path_join("alpha.trw"))!="unchanged":failures+=1

@@ -105,6 +105,8 @@ var flashlight := SpotLight3D.new()
 var app_focused: bool = true
 var mouse_capture_requested := false
 var background_fps: int = 15
+# Test-only control for comparing the former hidden developer-HUD polling cost.
+var background_hud_updates:=false
 var last_frame_us: int = 0
 var last_physics_us: int = 0
 var wall_frame_ms: float = 0.0
@@ -875,6 +877,11 @@ func _process(delta: float) -> void:
 			_close_journal()
 	if frame_samples.size() > 300:
 		frame_samples.pop_front()
+	# Gameplay keeps wall samples and optional journals, but an invisible debug
+	# label must not poll the renderer, scan terrain or repeatedly reshape text.
+	if not background_hud_updates and not hud.is_visible_in_tree():
+		hud_timer=0.0
+		return
 	hud_timer -= delta
 	if hud_timer > 0.0:
 		return

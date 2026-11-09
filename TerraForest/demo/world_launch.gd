@@ -56,6 +56,9 @@ static func saved_slots(directory: String="user://worlds",include_preparation:bo
 		if file.ends_with(".trw") and valid_slot(file.trim_suffix(".trw")) and (include_preparation or not preparation_slot(file.trim_suffix(".trw"))):slots.append(file.trim_suffix(".trw"))
 	var rows:Array=[]
 	for slot:String in slots:
+		# Owned automated captures must not replace the player's Continue target.
+		# An explicit slot launch still opens them; no save bytes are changed.
+		if FileAccess.file_exists(directory.path_join(slot+".diagnostic.json")):continue
 		var path:=directory.path_join(slot+".trw")
 		var data:Dictionary=preload("res://addons/world_runtime/world_presentation.gd").metadata(slot,directory)
 		rows.append({"slot":slot,"time":int(data.get("last_played",0)) if order=="played" else int(data.get("created",0)),"saved":FileAccess.get_modified_time(path)})

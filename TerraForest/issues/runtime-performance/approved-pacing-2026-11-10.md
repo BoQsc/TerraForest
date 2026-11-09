@@ -50,3 +50,16 @@ Return gate: repeat actual gameplay with approved cap/VSync, validate remaining
 draft changes independently, compare complete frame distributions and resource
 growth, inspect relevant visuals, and verify the eventual installed package.
 Do not claim stable 60 FPS or general nonregression before these gates pass.
+
+Follow-up diagnostic isolation: the hidden developer-HUD guard is now checked in
+the actual world (`20261109T221945772960Z_hidden_hud_gameplay_check`): no hidden
+text rebuild, visible HUD refresh succeeds, wall samples continue, and normal
+save/shutdown pass. It does not change the visible gameplay HUD or pacing. This
+is functional verification, not an isolated claim about frame-time improvement.
+New benchmark clones carry an explicit diagnostic marker and are excluded from
+normal world listing/Continue while remaining explicitly launchable. Existing
+unmarked saves are not hidden or migrated. World-presentation checks preserve
+ordering and canonical bytes. Test-only controls, runtime script hashes and a
+real grounded walking route improve repeatability; none changes normal input,
+rendering quality or pacing. The separate-render-thread switch remains only a
+diagnostic option; its failed experiment was not adopted.
