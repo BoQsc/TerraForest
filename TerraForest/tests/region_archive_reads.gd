@@ -67,14 +67,14 @@ func run() -> void:
 	check(surveyed.get("ok",false) and surveyed.survey.columns(0).get("ok",false) and not surveyed.has("bytes"),"survey returns decoded bounded source rather than a gameplay packet")
 	check(archive.region_read_stats().reserved_bytes==0,"survey consumption releases queue reservation")
 	var decoder_ids:=PackedInt64Array([surveyed.survey.get_instance_id()])
-	surveyed.clear()
+	surveyed={}
 	var repeated_surveys:=true
 	for iteration in 32:
 		var probe:int=archive.request_survey_region_read(Vector3i(-1,0,0),digest,checkpoint,16)
 		if probe<=0 or not await until(func():return archive.region_read_stats().survey_completed==1):repeated_surveys=false;break
 		var reply:Dictionary=archive.take_survey_region_read(probe)
 		if not reply.get("ok",false) or not reply.has("survey"):repeated_surveys=false;break
-		decoder_ids.append(reply.survey.get_instance_id());reply.clear()
+		decoder_ids.append(reply.survey.get_instance_id());reply={}
 	await process_frame;await process_frame
 	var survivors:=0
 	for identity:int in decoder_ids:survivors+=int(is_instance_id_valid(identity))
@@ -179,6 +179,7 @@ func run() -> void:
 	archive.release()
 	check(archive.region_read_stats().outstanding==0 and archive.region_read_stats().reserved_bytes==0,"final shutdown leaves no reserved payloads")
 	check_destructor(directory,c,packet,digest)
+	await check_out_of_order_surveys(directory,c,packet,digest)
 	await check_models(directory)
 	w.free()
 	var report := {"checks":checks,"failures":failures,"scope":"Bounded block/model reads sharing one world archive worker, concurrent publication, asset isolation and exact-version restore; automatic model admission remains pending."}
@@ -187,6 +188,38 @@ func run() -> void:
 	file.close()
 	print("REGION_ARCHIVE_READS checks=",checks," failures=",failures)
 	quit(1 if failures else 0)
+
+func consume_survey_identity(archive: RefCounted,ticket: int) -> int:
+	var reply: Dictionary=archive.take_survey_region_read(ticket)
+	if not reply.get("ok",false) or not reply.has("survey"):return 0
+	# Drop this reference normally; clearing the shared Dictionary would conceal
+	# a leaked container reference by removing its object entry too.
+	return reply.survey.get_instance_id()
+
+func check_out_of_order_surveys(directory: String,c: RefCounted,packet: PackedByteArray,digest: PackedByteArray) -> void:
+	var archive:=make_archive(c)
+	var path:=directory.path_join("out_of_order.trw")
+	var world: Node3D=ClassDB.instantiate("NativeBlockWorld")
+	world.restore_region(packet,world.capture_region(Vector3i(-1,0,0)))
+	var ok:bool=archive.acquire(path) and archive.publish(path,archive.encode({"structures":c.encode(world.capture_snapshot(),{}),"terrain":PackedByteArray([1])}))==OK
+	world.free()
+	ok=archive.start_region_reads(5,5*RESERVATION) and ok
+	var identities:=PackedInt64Array()
+	for cycle in 16:
+		var tickets:=PackedInt64Array()
+		for index in 5:tickets.append(archive.request_survey_region_read(Vector3i(-1,0,0),digest,PackedByteArray(),cycle))
+		if not await until(func():return archive.region_read_stats().survey_completed==5):ok=false;break
+		# Erase from both halves of a completed queue, as independent map and
+		# horizon consumers do in the live world.
+		for index in [2,1,3,0,4]:identities.append(consume_survey_identity(archive,tickets[index]))
+		ok=archive.region_read_stats().reserved_bytes==0 and ok
+	archive.release()
+	archive=null
+	check(ok and identities.size()==80 and not identities.has(0),"80 survey reads complete out of order with balanced reservations")
+	var survivors:=0
+	for identity in identities:survivors+=int(is_instance_id_valid(identity))
+	print("SURVEY_LIFETIME consumed=",identities.size()," surviving=",survivors)
+	check(survivors==0,"out-of-order survey wrappers die when consumers drop their references")
 
 func check_destructor(directory: String,c: RefCounted,packet: PackedByteArray,digest: PackedByteArray) -> void:
 	var ok := true

@@ -13,9 +13,31 @@ python tools/build_native.py --target all
 python tools/validate.py --test native_runtime
 ```
 
-The bootstrap verifies download length and SHA-256 **before extraction or execution**. Existing matching Zig on PATH or at `ZIG_EXECUTABLE` is reusable. Otherwise the default cache is `%LOCALAPPDATA%/TerraForest/toolchains`; `TERRAFOREST_TOOLCHAINS` overrides it. No machine-wide PATH modification, administrator install, SCons installation or local godot-cpp build is required.
+The bootstrap verifies download length and SHA-256 **before extraction or execution**. Existing matching Zig on PATH or at `ZIG_EXECUTABLE` is reusable. Otherwise the default cache is `%LOCALAPPDATA%/TerraForest/toolchains`; `TERRAFOREST_TOOLCHAINS` overrides it. No machine-wide PATH modification, administrator install or SCons installation is required. One binding translation unit is rebuilt for the lifetime repair below; the rest remains prebuilt.
 
-The build validates `BUILD_INFO.json`, compiles our `world_runtime`, `volumetric_water` and `volumetric_terrain` native sources, and links each addon against the matching prebuilt archive. Use `--addon` with one of those names to select one; the default builds all three. Object files and Zig caches are retained; unchanged input produces no C++ recompilation or relink. Local `.h`/`.hpp` headers, flags, pinned SDK identity and archive content participate in the build signature. A first Zig link may build Zig's own C/C++ runtime cache; that is distinct from rebuilding godot-cpp.
+The build validates `BUILD_INFO.json` and builds all seven native addon families by default; use `--addon` to select one. Each links the repaired Dictionary object before the matching prebuilt archive. Object files and Zig caches are retained; unchanged input produces no C++ recompilation or relink. Local `.h`/`.hpp` headers, flags, pinned SDK identity, archive content and repaired binding object participate in the build signature. A first Zig link may build Zig's own C/C++ runtime cache.
+
+### Pinned Dictionary lifetime repair — 2026-11-09
+
+The supplied SDK's Dictionary move assignment overwrites a live reference without
+releasing it. Erasing an interior archive-completion queue entry reproduced **48
+surviving survey wrappers out of 80**; ordinary in-order consumption concealed it.
+The same test releases all 80 after the repair. This affects other native
+Dictionary assignments too, so all fourteen debug/release addon DLLs use the fix.
+
+`tools/build_native.py` verifies the exact SDK `gen/src/variant/dictionary.cpp`
+SHA-256 `cbeecb1484782dc2896a57061e52d7d2c0d4a90f6db2e27186b5eb7aab7f4ecd`,
+then creates a derived file under `.build/native/bindings` with its original MIT
+copyright/license header intact. Only move assignment changes, to swap ownership.
+This matches the behavior of [upstream repair #2055](https://github.com/godotengine/godot-cpp/pull/2055).
+The original SDK cache and dependency version remain unchanged. The complete
+Dictionary object resolves before archive extraction, excluding the defective
+prebuilt object; no duplicate symbol suppression is enabled. The repair is
+cached once per target and recorded in each native build report. A changed SDK
+source fails closed until this compatibility repair is reviewed or removed.
+This is maintenance of existing MIT exception EX-002, not newly admitted code
+or a project-wide relicensing claim. Archive workers additionally transfer the
+result dictionary under their mutex before consumers can attach engine objects.
 
 Stop processes that have the DLL loaded before rebuilding it. Output publication uses a completed temporary DLL; a failed build does not overwrite the previous one. Hot reload is disabled. The C++ addon uses Godot's official bindings from the downloaded package; the prebuilt distribution itself is community-maintained. Its MIT license accompanies our linked addon.
 

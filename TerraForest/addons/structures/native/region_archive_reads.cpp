@@ -166,7 +166,12 @@ void NativeRegionWorldArchive::run_region_reads(Ref<NativeBlockRegionStore> stor
                 if(render_page)model_render_completed_.emplace(request.ticket,std::move(render_page));
                 if(block_survey)block_survey_completed_.emplace(request.ticket,std::move(block_survey));
                 if(model_survey)model_survey_completed_.emplace(request.ticket,std::move(model_survey));
-                (request.survey?survey_read_completed_:(request.asset.is_empty()?read_completed_:model_read_completed_)).push_back(std::move(result));
+                auto &completed=request.survey?survey_read_completed_:(request.asset.is_empty()?read_completed_:model_read_completed_);
+                // Dictionary's move constructor retains a shared reference.
+                // Our repaired move assignment swaps ownership, leaving this
+                // worker an empty dictionary before the consumer can add any
+                // engine objects to the result after unlocking.
+                completed.emplace_back();completed.back()=std::move(result);
             }
             ++read_finished_;read_active_=false;read_active_model_ticket_=0;read_active_survey_ticket_=0;read_discard_active_=false;
         }

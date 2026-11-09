@@ -29,7 +29,7 @@
       "status": "retained_exception",
       "declared_terms": "MIT",
       "scope": ["addons/*/native/", "addons/*/bin/*.dll", "native_toolchain.lock.json", "tools/build_native.py"],
-      "origin": "Pinned upstream commit d7b6162249ed52796a8301d216c24ee71d68c2bf; BoQsc/godot-cpp-prebuilt release api-4.7-d7b6162-zig. Archive identity is in native_toolchain.lock.json.",
+      "origin": "Pinned upstream commit d7b6162249ed52796a8301d216c24ee71d68c2bf; BoQsc/godot-cpp-prebuilt release api-4.7-d7b6162-zig. Archive identity is in native_toolchain.lock.json. Since 2026-11-09, tools/build_native.py derives one Dictionary translation unit from this exact SDK, retaining its MIT header and repairing move assignment; source hash, behavior equivalent to upstream PR 2055, and build provenance are documented in docs/NATIVE_DEVELOPMENT.md. SDK/version and seven-addon scope remain unchanged.",
       "evidence": ["native_toolchain.lock.json", "tools/build_native.py", "docs/NATIVE_DEVELOPMENT.md", "addons/world_runtime/GODOT_CPP_LICENSE.md", "addons/volumetric_water/GODOT_CPP_LICENSE.md", "addons/volumetric_terrain/GODOT_CPP_LICENSE.md", "addons/vehicle_runtime/GODOT_CPP_LICENSE.md", "addons/vegetation_runtime/GODOT_CPP_LICENSE.md"],
       "distribution_boundary": "The build links the prebuilt static library into seven native addon families. The resulting DLLs are distributed with the project; external SDK storage does not remove linked-code obligations.",
       "reason_retained": "Current native integrations use the pinned Godot C++ binding API.",
