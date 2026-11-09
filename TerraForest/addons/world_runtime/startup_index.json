@@ -125,6 +125,7 @@
     "res://addons/player_runtime/structural_integrity.gd",
     "res://addons/player_runtime/firearm_impact_audio.gd",
     "res://addons/player_runtime/bullet_holes.gd",
+    "res://addons/player_runtime/pistol_sound_trial.gd",
     "res://addons/audio_runtime/wav_decoder.gd"
   ],
   "res://addons/player_runtime/compass.gd": [],
@@ -220,9 +221,14 @@
   ],
   "res://addons/player_runtime/map_markers.gd": [],
   "res://addons/player_runtime/mining_rewards.gd": [],
+  "res://addons/player_runtime/pistol_sound_trial.gd": [
+    "res://addons/audio_runtime/packs/happysoul_px9_trial/shot.mp3",
+    "res://addons/audio_runtime/packs/happysoul_px9_trial/reload.mp3"
+  ],
   "res://addons/player_runtime/player_actions.gd": [
     "res://addons/world_runtime/mouse_ownership.gd"
   ],
+  "res://addons/player_runtime/player_feel_trial.gd": [],
   "res://addons/player_runtime/player_hud.gd": [
     "res://addons/player_runtime/text_input_focus.gd",
     "res://addons/world_runtime/mouse_ownership.gd",
@@ -245,6 +251,7 @@
     "res://addons/player_runtime/consumables.gd"
   ],
   "res://addons/player_runtime/player_view.gd": [
+    "res://addons/player_runtime/player_feel_trial.gd",
     "res://addons/player_runtime/entry_fly_in.gd"
   ],
   "res://addons/player_runtime/progression_rules.gd": [],
