@@ -1,3 +1,13 @@
+## Approved FPS pacing retained - 2026-11-10
+
+Keep the approved foreground cap, VSync and background cap while reducing actual
+world/player/rendering costs. The uncommitted limiter-policy experiment was
+reverted and never installed. [Evidence and open gates](../issues/runtime-performance/approved-pacing-2026-11-10.md)
+retain the rejected rendering-thread trial, failing browser assertions and
+unqualified draft HUD change. Stable 60 FPS with headroom remains unresolved;
+normal-policy gameplay, visuals, resources and installed-package validation are
+required before claiming completion.
+
 ## Firearm impact feedback trial - 2026-11-09
 
 Confirmed projectile hits now drive compact material-aware chips, dust, sparks

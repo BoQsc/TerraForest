@@ -1,5 +1,11 @@
 # Runtime performance
 
+[Approved pacing policy, 2026-11-10](approved-pacing-2026-11-10.md): the user
+reaffirmed the foreground cap, VSync and background cap. The uncommitted limiter
+experiment and its changed test expectations were reverted; it never entered
+the installed package. Remaining draft optimizations need normal-policy world
+validation. Uncapped capacity measurements do not establish stable gameplay.
+
 Latest source correction: [terrain publication budget boundary](terrain-publication-budget-2026-11-09.md)
 prevents a completed collision-preparation unit from immediately starting the
 atomic swap after its slice is exhausted. The old complete surface stays live;
