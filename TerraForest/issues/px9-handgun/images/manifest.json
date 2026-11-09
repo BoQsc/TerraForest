@@ -96,5 +96,23 @@
     "renderer": "Godot 4.7.2 Compatibility / RTX 4050",
     "camera": "75-degree first-person camera; 1920x1080 capture",
     "status": "Agent inspected; user feel/visual review pending"
+  },
+  "independent_aim_during_recoil_100ms.png": {
+    "sha256": "2bb7384f667f386bf0b38d9f580a603f2a8dd2ab93ca0a7e5c378898364fd3c0",
+    "source": "tools/preview_px9_flash.gd -- --aim-flow; same uninterrupted hip-shot clock; aim starts at shot time 0.05 s",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050; split first-person renderer and depth protection",
+    "status": "Agent inspected intermediate and reversed poses; user feel review pending"
+  },
+  "independent_aimed_recoil_160ms.png": {
+    "sha256": "f2fe2a050961af9a56fe5245af87447c325c7772f8a9f6b9b18fde8dd5e5e5d3",
+    "source": "tools/preview_px9_flash.gd -- --aim-flow; same uninterrupted hip-shot clock; aim starts at shot time 0.05 s",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050; split first-person renderer and depth protection",
+    "status": "Agent inspected intermediate and reversed poses; user feel review pending"
+  },
+  "independent_reverse_aim_mid_recoil.png": {
+    "sha256": "811d4caefd10e2c689335d44dd319b7870d0782792d7969dc30f9505a3737154",
+    "source": "tools/preview_px9_flash.gd -- --aim-flow; same uninterrupted hip-shot clock; aim starts at shot time 0.05 s",
+    "renderer": "Godot 4.7.2 Forward+ / RTX 4050; split first-person renderer and depth protection",
+    "status": "Agent inspected intermediate and reversed poses; user feel review pending"
   }
 }

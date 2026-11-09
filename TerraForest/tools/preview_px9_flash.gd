@@ -25,6 +25,16 @@ func run()->void:
     tools.equip(9);human.handgun_empty=false;human._process(1)
     var label:=Label.new();label.position=Vector2(25,25);label.add_theme_font_size_override("font_size",24);root.add_child(label)
     var fx:Node3D=human.handgun_flash;fx.random.seed=910
+    if "--aim-flow" in OS.get_cmdline_user_args():
+        human.rifle_aiming=false;human._process(.3)
+        human.rifle_action("HipFire");human._process(.05)
+        for sample in [{"name":"hip_recoil","aim":false,"dt":0.0},{"name":"aim_during_recoil_40ms","aim":true,"dt":.04},{"name":"aim_during_recoil_100ms","aim":true,"dt":.06},{"name":"aimed_recoil_160ms","aim":true,"dt":.06},{"name":"reverse_aim_mid_recoil","aim":false,"dt":.06}]:
+            human.rifle_aiming=sample.aim;human._process(sample.dt);split.sync()
+            label.text="Independent aim · "+sample.name
+            print(sample.name," action=",human.px9.motion.current_action," time=",human.px9.motion.time_seconds," aim_weight=",human.handgun_aim.weight)
+            await process_frame;await RenderingServer.frame_post_draw
+            root.get_texture().get_image().save_png(folder.path_join(sample.name+".png"))
+        split.dispose();stage.free();label.free();await process_frame;quit();return
     for aimed in [false,true]:
         for dark in [false,true]:
             key.light_energy=.08 if dark else 1.5

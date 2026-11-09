@@ -97,8 +97,7 @@ func fire()->bool:
 	var weapon:int=game.equipped_tool
 	if not can_use() or weapon not in WEAPONS or reload_slot>=0 or timer+.000001<next_shot or projectiles.size()>=PROJECTILE_LIMIT:return false
 	var human:Node=game.tool_view.human
-	var aim_transition:bool=weapon==9 and human.px9!=null and human.px9.motion.current_action in ["aim_in","aim_out"]
-	if human.current!=weapon or (human.action_remaining>0 and not aim_transition):return false
+	if human.current!=weapon or human.action_remaining>0:return false
 	if state.get_rounds(weapon)<=0:
 		next_shot=timer+.4
 		if weapon!=9 or rounds_in_bag(9)>0:reload()

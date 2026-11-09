@@ -222,3 +222,34 @@ Validation passes: [temporary world 32/32](logs/px9-aim-flow-final.log), maximum
 shot gap 0.467 s during aim changes (0.4 s authored recoil plus the short blend),
 and [paired handgun 68/68](logs/px9-aim-flow-handgun.log). No user saves or installed
 builds were modified. This supersedes the earlier full aim-transition priority.
+
+## Independent aim and recoil - 2026-11-09
+
+User rejected the previous transition workaround: aiming still waited for a shot
+to finish. That workaround is superseded. A new original 0BSD host pose layer,
+`addons/characters/runtime/px9_aim_layer.gd`, samples the supplied hip and aimed
+animations at the same action phase and blends both human and weapon skeletons.
+Aim weight responds every presentation frame, reaching its target in 160 ms and
+reversing immediately when released. It runs during hip/aimed fire and their
+last-round variants as well as loaded/empty locomotion. It never restarts or
+pauses the action clock, emits events, or consumes a separate aim action slot.
+There is no aim-transition shot-admission gate or extra shot-start blend.
+Equip/reload/inspect/holster retain their authored action ownership.
+
+Evidence: [72 paired checks](logs/px9-independent-aim.log) include an aim press
+40 ms into active recoil, actual firing-hand displacement, and release during
+the same shot, with uninterrupted timestamps. [32 world checks](logs/px9-independent-world.log)
+measure a maximum shot gap of 0.417 s across aim press/release (normal 0.4 s recoil
+plus physics-frame scheduling). Loaded and empty 400-frame movement checks pass:
+[loaded](logs/px9-independent-motion.log), [empty](logs/px9-independent-empty.log).
+[Rendered timeline](logs/px9-independent-visual.log) keeps action `fire` throughout,
+with aim weights 0, .25, .625, 1, .625 at shot times .05, .09, .15, .21, .27 s.
+
+[Mid-recoil aim](images/independent_aim_during_recoil_100ms.png),
+[fully aimed during that same recoil](images/independent_aimed_recoil_160ms.png),
+and [immediate aim reversal](images/independent_reverse_aim_mid_recoil.png) were
+inspected with the live split first-person renderer under Forward+. Reproduce
+with `tools/preview_px9_flash.gd -- --aim-flow`. No new third-party material was
+imported; supplied CC0 clips remain unchanged. User gameplay feel acceptance
+remains pending: next playtest should hold fire while repeatedly pressing and
+releasing aim, including near the start and middle of each recoil.

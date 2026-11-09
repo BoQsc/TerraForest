@@ -3,6 +3,7 @@ extends Node3D
 ## Camera-local presentation. The existing native motor remains the player owner.
 signal handgun_event(event_name:String,details:Dictionary)
 var px9:Node
+var handgun_aim=preload("res://addons/characters/runtime/px9_aim_layer.gd").new()
 var handgun_flash:Node3D
 var handgun_empty:=true
 var handgun_aiming:=false
@@ -259,6 +260,7 @@ func equip(item: int, water_ml:int=-1) -> void:
 			body_mesh.mesh.set_meta("px9_hand_skin",true)
 			px9.item.set_meta("first_person_equipment",true)
 			_collect_px9(px9.item)
+			handgun_aim.prepare(px9.motion)
 			_prepare_px9_flash()
 			px9.event_reached.connect(func(event:String,details:Dictionary):handgun_event.emit(event,details))
 			px9.action_finished.connect(func(action:String):
@@ -359,9 +361,8 @@ func flash_handgun()->void:
 func handgun_action(action:String)->bool:
 	if current!=9 or px9==null or rifle_holster_item>=0:return false
 	var interrupt_reload:bool=action in ["reload","reload_empty"] and px9.motion.current_action in ["fire","fire_last","aim_fire","aim_fire_last","dry_fire","aim_in","aim_out"]
-	var interrupt_aim:bool=action in ["fire","fire_last","aim_fire","aim_fire_last"] and px9.motion.current_action in ["aim_in","aim_out"]
-	if action_remaining>0 and not interrupt_reload and not interrupt_aim:return false
-	var result:int=px9.request(action,.04 if interrupt_reload else (.06 if interrupt_aim or rifle_aiming!=handgun_aiming else 0.0))
+	if action_remaining>0 and not interrupt_reload:return false
+	var result:int=px9.request(action,.04 if interrupt_reload else 0.0)
 	if result==OK and action in ["fire","fire_last","aim_fire","aim_fire_last"]:handgun_aiming=rifle_aiming
 	if result==OK:action_remaining=px9.motion.duration_seconds()
 	return result==OK
@@ -470,14 +471,15 @@ func _process_handgun(delta:float)->void:
 	var ambient:=["idle","idle_empty","walk","run","jump","walk_empty","run_empty","jump_empty","aim_idle","aim_idle_empty"]
 	if clock.current_action in ambient or not clock.active:
 		var target:String=("aim_idle_empty" if handgun_empty else "aim_idle") if rifle_aiming else (motion+"_empty" if handgun_empty else motion)
-		if rifle_aiming!=handgun_aiming:
-			handgun_aiming=rifle_aiming;px9.request("aim_in" if rifle_aiming else "aim_out")
-		elif clock.current_action!=target:px9.request(target,.06)
+		if clock.current_action!=target:px9.request(target)
 	# Jump is a single authored action, held at its endpoint until landing.
 	# Returning to idle here would restart it during a longer flight.
 	clock.auto_return=clock.current_action not in ["jump","jump_empty"]
 	px9.advance(delta)
 	if clock.current_action in ["jump","jump_empty"] and not clock.active:clock.seek_seconds(clock.time_seconds)
+	handgun_aiming=rifle_aiming
+	handgun_aim.advance(delta,rifle_aiming,clock)
+	px9._after_pose(clock.current_action,clock.time_seconds,clock.current_frame())
 	if rifle_holster_item>=0 and (clock.current_action!="holster" or not clock.active):
 		var next:=rifle_holster_item;var water:=rifle_holster_water
 		px9.unequip();px9.queue_free();px9=null;current=-1;rifle_holster_item=-1;equip(next,water);return

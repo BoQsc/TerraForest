@@ -1,3 +1,13 @@
+## PX9 independent aim/recoil - 2026-11-09
+
+User rejected the previous shortened transition pause. Aim now blends paired
+hip/aimed poses every frame during the same recoil clock, including immediate
+release/reversal. Separate aim clips no longer own a blocking action slot.
+72 paired and 32 world checks plus loaded/empty movement pass; same-shot rendered
+transitions inspected. [Evidence](../issues/px9-handgun/README.md#independent-aim-and-recoil---2026-11-09).
+Earlier aim-priority/interruption approaches below are superseded. User gameplay
+feel review remains pending for repeated aim changes while holding fire.
+
 ## PX9 continuous aim/fire - 2026-11-09
 
 User reports aiming still pauses held shooting. Confirmed shots now interrupt

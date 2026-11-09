@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+hip_recoil action=fire time=0.05 aim_weight=0.0
+aim_during_recoil_40ms action=fire time=0.09 aim_weight=0.25
+aim_during_recoil_100ms action=fire time=0.15 aim_weight=0.625
+aimed_recoil_160ms action=fire time=0.21 aim_weight=1.0
+reverse_aim_mid_recoil action=fire time=0.27 aim_weight=0.625

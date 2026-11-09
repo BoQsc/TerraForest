@@ -75,7 +75,7 @@ func run()->void:
  var longest_gap:=0.0
  for i in range(1,shot_times.size()):longest_gap=maxf(longest_gap,shot_times[i]-shot_times[i-1])
  print("Aim/fire maximum shot gap: ",longest_gap)
- check(shot_times.size()>=3 and longest_gap<.55,"aim press/release keeps held-fire cadence without a full aim-animation pause")
+ check(shot_times.size()>=3 and longest_gap<.44,"aim press/release adds no delay to normal recoil cadence")
  check(game.combat.reload(),"reload interrupts recoil while the trigger remains held")
  var reload_shots:int=game.combat.shots
  await ticks(30)

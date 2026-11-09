@@ -49,6 +49,23 @@ func run()->void:
  check(human.rifle_action("Reload"),"reload restarts after cancellation")
  human._process(3.3)
  check(completed.size()==1,"reload finishes exactly once")
+ human.handgun_empty=false;human.rifle_aiming=false;human._process(.2)
+ check(human.rifle_action("HipFire"),"hip shot begins independent aim test")
+ human._process(.05)
+ human.rifle_aiming=true;human._process(.04)
+ check(human.px9.motion.current_action=="fire" and is_equal_approx(human.px9.motion.time_seconds,.09) and human.handgun_aim.weight>0,"aim responds within recoil without restarting or delaying the shot clock")
+ var aim_weight:float=human.handgun_aim.weight
+ var skeleton:Skeleton3D=human.px9.attachment.get_skeleton()
+ var hand:int=skeleton.find_bone("RightHand")
+ skeleton.force_update_all_bone_transforms()
+ var blended:Vector3=skeleton.get_bone_global_pose(hand).origin
+ human.handgun_aim.weight=0;human.handgun_aim.advance(0,false,human.px9.motion)
+ skeleton.force_update_all_bone_transforms()
+ check(blended.distance_to(skeleton.get_bone_global_pose(hand).origin)>.001,"aim layer actually moves the firing hand during unfinished hip recoil")
+ human.handgun_aim.weight=aim_weight
+ human.rifle_aiming=false;human._process(.02)
+ check(human.px9.motion.current_action=="fire" and human.handgun_aim.weight<aim_weight and is_equal_approx(human.px9.motion.time_seconds,.11),"aim reversal responds during the same uninterrupted recoil")
+ human._process(.4)
  human.handgun_empty=false;human.rifle_aiming=true;human._process(.1);human._process(.4)
  check(human.px9.motion.current_action=="aim_idle","right mouse enters aimed hold")
  human.handgun_empty=true;human.action_remaining=0
