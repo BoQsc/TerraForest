@@ -48,5 +48,20 @@
     "sha256": "352c975b61b37973d8601cdaca61aaf4746e14464eb6daf3583ad1c96c87afaf",
     "source": "motion_diagnostic.gd, physics-driven running jump; Godot 4.7.2 Compatibility",
     "status": "Reproduced defect, before correction"
+  },
+  "motion_fixed_068.png": {
+    "sha256": "1d5bdca0f15c724def78ca5c8e10213a3ef171826610ef1e2f40a52465ee6410",
+    "source": "tests/px9_locomotion.gd; real physics and split renderer, Godot Compatibility",
+    "status": "Corrected first-person baseline; agent inspected; user review pending"
+  },
+  "motion_fixed_071.png": {
+    "sha256": "f9f641e530ec9f963b7fcb48b8d10b4ea5dbd7b5dce468a4dacfae708bb622af",
+    "source": "tests/px9_locomotion.gd; real physics and split renderer, Godot Compatibility",
+    "status": "Corrected first-person baseline; agent inspected; user review pending"
+  },
+  "motion_fixed_250.png": {
+    "sha256": "1569d24c772cb9613ea97e3662ac4b753b0a9ed7aadce91aa55128495582af91",
+    "source": "tests/px9_locomotion.gd; real physics and split renderer, Godot Compatibility",
+    "status": "Corrected first-person baseline; agent inspected; user review pending"
   }
 }

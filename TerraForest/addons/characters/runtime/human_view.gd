@@ -135,6 +135,7 @@ func _ready() -> void:
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
 	_prepare_item_locomotion()
+	_prepare_px9_locomotion()
 	# Retimed recoil keeps both hands and the weapon together at automatic cadence.
 	# All carry/equip/reload/holster actions retain their existing authored timing.
 	var automatic:=AnimationLibrary.new()
@@ -147,6 +148,28 @@ func _ready() -> void:
 		var name:=source.replace("Rifle","Ranger");automatic.add_animation(name,recoil);clips[name]="ranger/"+name
 	animation_player.add_animation_library("ranger",automatic)
 	equip(current)
+
+func _prepare_px9_locomotion()->void:
+	# Authored item motion assumes the original Idle root/hip baseline. Generic
+	# jump root motion can lift the torso through the camera. Keep legs animated
+	# while the paired item player exclusively owns the upper body.
+	var library:=AnimationLibrary.new()
+	var idle:Animation=animation_player.get_animation(clips["Idle"])
+	for source:String in ["Idle","Walk","Run","Jump","Player_Crouch"]:
+		var animation:Animation=animation_player.get_animation(clips[source]).duplicate(true)
+		for track in range(animation.get_track_count()-1,-1,-1):
+			var path:=animation.track_get_path(track)
+			var bone:=String(path.get_subname(0)) if path.get_subname_count()==1 else ""
+			if not ("Leg" in bone or "Foot" in bone or "Toe" in bone):animation.remove_track(track)
+		for track in idle.get_track_count():
+			var path:=idle.track_get_path(track)
+			if path.get_subname_count()!=1 or String(path.get_subname(0)) not in ["Root","Hips"]:continue
+			idle.copy_track(track,animation)
+			var added:=animation.get_track_count()-1
+			for key in range(animation.track_get_key_count(added)-1,0,-1):animation.track_remove_key(added,key)
+			animation.track_set_key_time(added,0,0)
+		library.add_animation(source,animation);clips["PX9_Base_"+source]="px9_base/"+source
+	animation_player.add_animation_library("px9_base",library)
 
 func _prepare_item_locomotion()->void:
 	# Keep existing feet/hips locomotion under the baseline's upper-body hold.
@@ -388,9 +411,9 @@ func _process_handgun(delta:float)->void:
 	model.position=Vector3.ZERO if third_person else Vector3(0,0,.06)
 	if not is_visible_in_tree():return
 	var moving:=is_instance_valid(body) and Vector2(body.velocity.x,body.velocity.z).length()>.15
-	var motion:String="run" if moving and body.velocity.length()>6.5 else ("walk" if moving else "idle")
-	if is_instance_valid(body) and not body.is_on_floor() and absf(body.velocity.y)>.5:motion="jump"
-	_play("Player_Crouch" if third_person and crouched else {"idle":"Idle","walk":"Walk","run":"Run","jump":"Jump"}[motion],false,0)
+	var motion:String="run" if moving and Vector2(body.velocity.x,body.velocity.z).length()>6.5 else ("walk" if moving else "idle")
+	if is_instance_valid(body) and not body.is_on_floor():motion="jump"
+	_play(("" if third_person else "PX9_Base_")+("Player_Crouch" if third_person and crouched else {"idle":"Idle","walk":"Walk","run":"Run","jump":"Jump"}[motion]),false,0)
 	animation_player.advance(delta)
 	var clock:Node=px9.motion
 	var ambient:=["idle","idle_empty","walk","run","jump","aim_idle","aim_idle_empty"]
@@ -399,7 +422,11 @@ func _process_handgun(delta:float)->void:
 		if rifle_aiming!=handgun_aiming:
 			handgun_aiming=rifle_aiming;px9.request("aim_in" if rifle_aiming else "aim_out")
 		elif clock.current_action!=target:px9.request(target,.06)
+	# Jump is a single authored action, held at its endpoint until landing.
+	# Returning to idle here would restart it during a longer flight.
+	clock.auto_return=clock.current_action!="jump"
 	px9.advance(delta)
+	if clock.current_action=="jump" and not clock.active:clock.seek_seconds(clock.time_seconds)
 	if rifle_holster_item>=0 and (clock.current_action!="holster" or not clock.active):
 		var next:=rifle_holster_item;var water:=rifle_holster_water
 		px9.unequip();px9.queue_free();px9=null;current=-1;rifle_holster_item=-1;equip(next,water);return

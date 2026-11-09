@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [PX9 Eclipse handgun](px9-handgun/README.md) | Source integrated / player review pending | Supplied paired animations, native 15-round magazine, existing pistol/reload SFX and universal dropping; isolated source checks pass; installed build unchanged |
+| [PX9 Eclipse handgun](px9-handgun/README.md) | Source integrated / player review pending | Corrected live hands and running/jump state, paired animations, native 15-round magazine and pistol/reload SFX; isolated source checks pass; installed build unchanged |
 | [Last World browser flash](last-world-startup/README.md) | Fixed for reproduced path / desktop review pending | Loading cover starts before save scan, survives auto-continue dispatch and falls back on errors; 11 source + 11 executable presentation checks pass |
 | [Generic held-item hand posing](generic-item-hand-pose/README.md) | First version selected / further tuning deferred | User preferred the integrated first animation; revision 02 retained as a rejected comparison; baseline stiffness remains a known limitation |
 | [Torch attack arm deformation and motion](torch-attack-motion/README.md) | First-person integrated / third-person art deferred | User requested revision 02 integration; frame-26 melee contact, full recovery and cancellation verified in actual world; rejected first preview preserved; third-person presentation still needs a dedicated art pass |

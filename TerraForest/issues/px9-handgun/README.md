@@ -60,7 +60,7 @@ animation rewrite was retained. User gameplay re-review remains pending.
 
 ## Running/jumping glitch diagnosis - 2026-11-09
 
-Status: Reproduced; behavior not changed, per user request to detect first.
+Initial diagnosis: Reproduced before correction; see the following correction entry.
 The physics-driven diagnostic uses the real human presentation and split renderer.
 In one running jump it selects jump at frame 45, switches back to run while
 still airborne at frame 68 (vertical speed 0.33), then restarts jump at frame 71
@@ -74,3 +74,22 @@ Evidence: [apex](images/motion_068.png), [restarted jump](images/motion_071.png)
 Fix/resume trigger: proceed with locomotion-state correction after this diagnosis
 is reviewed. Verify one jump presentation per airborne interval, stable apex,
 landing transitions, longer falls, and running-only continuity in gameplay.
+
+## Running/jumping correction - 2026-11-09
+
+First-person PX9 movement now uses grounded state throughout flight, not a
+vertical-speed threshold. Its single jump clip holds its endpoint until landing
+instead of returning to idle and restarting. Sprint selection uses horizontal
+speed only. The base layer retains animated legs with the original Idle root/hip
+baseline and leaves the upper body to the paired weapon clock. This also removes
+generic jump root motion that drove the torso through the first-person camera.
+Third-person base animation is retained; broader third-person review remains open.
+
+Physics-driven short and long jumps both produce exactly one jump start and one
+landing, with 118 held-endpoint frames in the long flight and no failures. Root/hip
+poses are checked throughout 400 frames, including continuous running. Existing
+handgun checks pass 62/62. Graphical apex/descent/long-flight views were inspected:
+[apex](images/motion_fixed_068.png), [descent](images/motion_fixed_071.png),
+[long flight](images/motion_fixed_250.png). Prior rejected captures are retained.
+Run tests/px9_locomotion.gd for the physics regression and optional graphical
+captures. User feel/visual review remains pending in the actual game.

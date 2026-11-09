@@ -1,9 +1,11 @@
-## PX9 running/jumping diagnosis - 2026-11-09
+## PX9 running/jumping correction - 2026-11-09
 
-Running jump glitch reproduced: airborne apex selects run, then jump restarts;
-hands/weapon can leave the view. No behavior change yet: user requested detection
-first. [Evidence and remaining correction](../issues/px9-handgun/README.md#runningjumping-glitch-diagnosis---2026-11-09)
-record the reproduction and closure checks. Running-only continuity remains unqualified.
+The reproduced apex switch/restart is corrected: airborne state persists until
+landing and the authored jump holds its endpoint during long flights. First-person
+PX9 base animation keeps root/hips at the authored baseline while legs animate;
+this removes torso/camera intersections. Short/long physics flights, continuous
+running and 62 handgun checks pass. [Evidence and retained rejected views](../issues/px9-handgun/README.md#runningjumping-correction---2026-11-09)
+record the scoped checks. Actual player feel and third-person review remain open.
 
 ## PX9 live grip correction — 2026-11-09
 
