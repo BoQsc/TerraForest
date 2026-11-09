@@ -13,6 +13,7 @@ var light_phases:Array[Dictionary]=[]
 var render_probe:=false
 var render_probe_result:Dictionary={}
 var outdoor_result:Dictionary={}
+var occlusion_result:Dictionary={}
 func repeat_lights()->void:
 	if not repeat_light_setters or not is_instance_valid(game):return
 	for light:Node in game.structures.resident_lights.get_children():
@@ -46,6 +47,7 @@ func frame()->void:
 	previous=now
 func run()->void:
 	if not slot.begins_with("StartupBench_FPS_") or not slot.is_valid_identifier() or output.is_empty():quit(2);return
+	var original_occlusion:bool=root.use_occlusion_culling
 	DirAccess.make_dir_recursive_absolute(output)
 	# The recorder-off control must retain the same root GPU timing instrumentation.
 	RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
@@ -73,8 +75,12 @@ func run()->void:
 	label="arrival_idle"
 	var short:bool="--trace-short" in OS.get_cmdline_user_args()
 	await wait_for(func():return false,12 if short else 20)
+	if "--trace-block-occlusion" in OS.get_cmdline_user_args() and not "--trace-outdoor-cover" in OS.get_cmdline_user_args():
+		occlusion_result=await load(get_script().resource_path.get_base_dir().path_join("render_occlusion_probe.gd")).new().run(self,game,output)
 	if "--trace-outdoor-cover" in OS.get_cmdline_user_args():
 		outdoor_result=await load(get_script().resource_path.get_base_dir().path_join("cover_outdoor_probe.gd")).new().run(self,game,output)
+		if "--trace-block-occlusion" in OS.get_cmdline_user_args() and outdoor_result.ok:
+			occlusion_result=await load(get_script().resource_path.get_base_dir().path_join("render_occlusion_probe.gd")).new().run(self,game,output,"outdoor_occlusion")
 	for arg:String in OS.get_cmdline_user_args():
 		if not arg.begins_with("--trace-render-partition="):continue
 		label="render_preparation"
@@ -142,11 +148,12 @@ func run()->void:
 	if game.structures._cached_save!=null:record.structure_capture_stats=game.structures._cached_save.stats()
 	record.cover_render=[]
 	if not outdoor_result.is_empty():record.outdoor=outdoor_result
+	if not occlusion_result.is_empty():record.occlusion=occlusion_result
+	if game.structures.blocks.has_method("occlusion_stats"):record.block_occlusion=game.structures.blocks.occlusion_stats()
 	for batch:Node in game.ground_cover.batches:record.cover_render.append(batch.render_stats())
 	if render_probe:record.render_probe=render_probe_result
 	if light_abba:record.light_phases=light_phases
 	if trace!=null:record.trace_files=trace.written;record.trace_overhead_last_us=trace.overhead_us
-	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	if "--trace-render-inventory" in OS.get_cmdline_user_args():
 		# Diagnostic readbacks happen only after all frame observations are saved.
 		var inventory:Dictionary=load(get_script().resource_path.get_base_dir().path_join("render_inventory.gd")).capture(game)
@@ -155,7 +162,11 @@ func run()->void:
 	game.shutdown_requested=true
 	var saved:bool=await game.terrain.shutdown_after_edits()
 	game.free();await process_frame;await process_frame
+	record.viewport_occlusion_restored=root.use_occlusion_culling==original_occlusion
+	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
+	okay=okay and record.viewport_occlusion_restored
 	if render_probe:okay=okay and render_probe_result.unchanged and render_probe_result.instances>0
 	if not outdoor_result.is_empty():okay=okay and outdoor_result.ok
+	if not occlusion_result.is_empty():okay=okay and occlusion_result.ok
 	print("FRAME_TRACE_WORLD ok=",okay," slot=",slot);quit(0 if okay else 1)

@@ -135,8 +135,11 @@ var startup_complete:=false
 var startup_stage:="Starting world services"
 var startup_cooperative:=false
 var startup_worker:Thread
+var _occlusion_viewport:Viewport
+var _previous_occlusion:=false
 func _exit_tree()->void:
 	if startup_worker!=null and startup_worker.is_started():startup_worker.wait_to_finish()
+	if is_instance_valid(_occlusion_viewport):_occlusion_viewport.use_occlusion_culling=_previous_occlusion
 func _startup_step(stage:String)->void:
 	var now:=Time.get_ticks_usec()
 	startup_timings[startup_stage]=(now-startup_tick)/1000.0
@@ -299,6 +302,9 @@ func _ready() -> void:
 	terrain.density_batch_ready.connect(foundation_check.receive)
 	structures.blocks.configure_history(16*1024*1024,128)
 	structures.blocks.configure_streaming(true,384,256,64*1024*1024,32*1024*1024)
+	if DisplayServer.get_name()!="headless" and structures.blocks.configure_occlusion(true,96,128,2*1024*1024):
+		_occlusion_viewport=get_viewport();_previous_occlusion=_occlusion_viewport.use_occlusion_culling
+		_occlusion_viewport.use_occlusion_culling=true
 	structures.blocks.set_distant_rendering_enabled(true)
 	structures.model("architecture/metal_beam/v1").configure_collision(beam.get_aabb(),64,512,8)
 	door_models.configure_compound_collision(doorway.get_meta("collision_boxes"),64,512,8,1536,24)

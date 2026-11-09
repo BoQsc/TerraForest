@@ -78,6 +78,9 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
   performed by other engine threads.
 - Terrain/controller/loading/vehicle stages, publication queues, forest/cover
   work, zombie phases and newly admitted zombie initialization breakdowns.
+- Native block occluder counts, pending/retiring work, accounted geometry bytes
+  and publication timing. The geometry limit excludes the engine's acceleration
+  structures; use process memory telemetry to assess total memory.
 - Native navigation readiness/support/hazard/clearance times, requested support
   rays versus actual raycasts, and support-cache hits/limits. `zombie_navigation`
   is the last-pass snapshot; `zombie_navigation_ticks.samples` retains every

@@ -1,5 +1,6 @@
 #include "block_world.hpp"
 #include "block_horizon.hpp"
+#include "block_occlusion.hpp"
 #include "block_shapes.hpp"
 #include "modular_mesher.hpp"
 #include <godot_cpp/core/class_db.hpp>
@@ -79,6 +80,8 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_navigation_interest","points"),&NativeBlockWorld::set_navigation_interest);
     ClassDB::bind_method(D_METHOD("configure_streaming","enabled","radius","chunk_limit","mesh_byte_limit","cache_byte_limit"),&NativeBlockWorld::configure_streaming);
     ClassDB::bind_method(D_METHOD("streaming_stats"),&NativeBlockWorld::streaming_stats);
+    ClassDB::bind_method(D_METHOD("configure_occlusion","enabled","radius","chunk_limit","geometry_byte_limit"),&NativeBlockWorld::configure_occlusion);
+    ClassDB::bind_method(D_METHOD("occlusion_stats"),&NativeBlockWorld::occlusion_stats);
     ClassDB::bind_method(D_METHOD("set_geometry_lod_enabled","enabled"),&NativeBlockWorld::set_geometry_lod_enabled);
     ClassDB::bind_method(D_METHOD("is_geometry_lod_enabled"),&NativeBlockWorld::is_geometry_lod_enabled);
     ClassDB::bind_method(D_METHOD("geometry_lod_stats"),&NativeBlockWorld::geometry_lod_stats);
@@ -99,6 +102,7 @@ uint16_t NativeBlockWorld::cell(int x,int y,int z) const {
     auto it=chunks.find(key_for(x,y,z)); return it==chunks.end()?0:it->second.cells[index(x,y,z)];
 }
 void NativeBlockWorld::invalidate(BlockKey key,bool authored) {
+    if(occlusion)occlusion->invalidate(key);
     if(horizon&&authored)horizon->invalidate(key);
     residency_dirty=true;settled.erase(key);budget_blocked.erase(key);erase_cached(key);
     bool active=worker_active&&!(key<worker_key)&&!(worker_key<key);
@@ -453,6 +457,7 @@ bool NativeBlockWorld::publish(BlockBake &&b) {
     auto *instance=memnew(MeshInstance3D);instance->set_mesh(mesh);instance->set_position(Vector3(b.key.x*16,b.key.y*16,b.key.z*16));add_child(instance);
     instance->set_lod_bias(geometry_lod?4.f:1e8f);
     visuals[b.key]={instance,nullptr,int(b.indices.size()/3),payload,b.lattice_width,vertices,indices};mesh_bytes+=payload;
+    if(occlusion)occlusion->changed();
     if(horizon)horizon->near_changed(b.key);
     auto &visual=visuals[b.key];visual.lod_levels=int(b.lods.size());visual.lod_min_triangles=visual.triangles;
     for(const auto &lod:b.lods){visual.lod_index_bytes+=lod.indices.size()*sizeof(int32_t);visual.lod_min_triangles=int(lod.indices.size()/3);}
@@ -487,6 +492,7 @@ void NativeBlockWorld::_process(double) {
     upload_high_chunks=std::max(upload_high_chunks,upload_last_chunks);upload_high_bytes=std::max(upload_high_bytes,upload_last_bytes);
     if(upload_last_bytes>upload_byte_limit)++upload_oversize_ticks;
     update_collisions();
+    if(occlusion)occlusion->step();
 }
 void NativeBlockWorld::flush_bakes() {
     refresh_residency();
@@ -496,6 +502,7 @@ void NativeBlockWorld::flush_bakes() {
         if(take_bake(completed,true))publish(std::move(completed));
     }
     while(update_collisions()) {}
+    if(occlusion)occlusion->flush();
 }
 Dictionary NativeBlockWorld::stats() const {
     int cells=0,triangles=0,bodies=0;

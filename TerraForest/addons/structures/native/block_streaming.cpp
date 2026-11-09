@@ -1,5 +1,6 @@
 #include "block_world.hpp"
 #include "block_horizon.hpp"
+#include "block_occlusion.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -44,6 +45,7 @@ void NativeBlockWorld::release_visual(BlockKey key) {
     collision_work_pending=true;
     mesh_bytes-=it->second.payload_bytes;
     retire_collision(it->second);
+    if(occlusion)occlusion->forget(key);
     memdelete(it->second.mesh);visuals.erase(it);
     if(horizon)horizon->near_changed(key);
 }

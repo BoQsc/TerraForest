@@ -21,6 +21,7 @@
 namespace terraforest {
 using namespace godot;
 class BlockHorizon;
+class BlockOcclusion;
 class NativeRegionWorldArchive;
 struct BlockKey {
     int x=0,y=0,z=0;
@@ -64,7 +65,9 @@ class NativeBlockWorld : public Node3D {
     friend class NativeStructuresCapture;
     friend class NativeBlockPager;
     friend class BlockHorizon;
+    friend class BlockOcclusion;
     BlockHorizon *horizon=nullptr;
+    BlockOcclusion *occlusion=nullptr;
     void set_distant_archive(const Ref<NativeRegionWorldArchive> &archive,const PackedByteArray &checkpoint);
     uint64_t storage_epoch=0,history_revision=0,mutation_revision=0,content_revision=0;
     String survey_saved_identity;
@@ -231,6 +234,8 @@ public:
     bool set_navigation_interest(const PackedVector3Array &points);
     bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
     Dictionary streaming_stats() const;
+    bool configure_occlusion(bool enabled,double radius,int chunk_limit,int64_t geometry_byte_limit);
+    Dictionary occlusion_stats() const;
     void set_geometry_lod_enabled(bool enabled);
     bool is_geometry_lod_enabled() const { return geometry_lod; }
     Dictionary geometry_lod_stats() const;

@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: 0BSD
 #include "block_world.hpp"
 #include "block_horizon.hpp"
+#include "block_occlusion.hpp"
 
 namespace terraforest {
 NativeBlockWorld::~NativeBlockWorld() {
     delete horizon;
+    delete occlusion; // SceneTree owns the occluder children, as it owns meshes.
     {
         std::lock_guard<std::mutex> lock(worker_mutex);
         worker_stopping=true;
