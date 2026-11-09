@@ -7,7 +7,7 @@
   "sources": {
     "res://addons/characters/runtime/assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
     "res://addons/characters/runtime/assets/Zombie.r4.glb.import": "a7defd3dd42620045bd2e2a39e9d3afae20de2eee998a49fe3a1f1ea7b3dac9c",
-    "res://addons/characters/runtime/zombie.gd": "7b31fa57429afdb8bbe330b5c11cad6cdd4824848bd733858c19c4fbecf299c6",
+    "res://addons/characters/runtime/zombie.gd": "a887545d5d4959b43ddb003b9e072b866c362c2f863b484c0015fd823c26a08a",
     "res://addons/characters/runtime/zombie_geometry_data.gd": "eca79f040e03c21108852b4a6255990f21a31b8cc987fefe8ede14a80a0b3000",
     "res://addons/world_runtime/native/zombie_anatomy.cpp": "dff0d041948ece7649f5295e7ce1cd71e9807b8e702d314347f9b6f11c45ac52",
     "res://addons/world_runtime/native/zombie_anatomy.hpp": "bed8344d459e0ca7989f2ad0478c74b1a7f94ee387168bc6fa62e834e5185ee7",

@@ -1,6 +1,7 @@
 # Shared animation cache invalidation
 
-Status: source correction verified; stable 60 FPS with headroom remains open.
+Status: installed correction verified in the bounded world fixture; stable 60 FPS
+with headroom remains open.
 Original code/test changes are 0BSD. Approved cap, VSync, background cap,
 animation clocks, assets, loop modes, density and gameplay rules are unchanged.
 
@@ -75,10 +76,36 @@ added. The paired runs above keep selected source unchanged for the whole run
 and validate loaded script hashes. Their driver/source snapshots/host telemetry
 remain in `reports/performance_changes/host_animation_guard_20261109T220949524605Z`.
 
+## Installed follow-up
+
+Export after `17ef0690` passes building standards, smoke and packaged house-light
+gates with 14 matching external native libraries. PCK SHA-256:
+`914a3acb700d8cad18bffb7b6d64c5a305868c09a069bf9520c044686bca0ebe`.
+The geometry bake receipt changes only the source-script hash; geometry assets
+are unchanged. The six-assertion regression also passes against the actual pack:
+`reports/checks/animation_guard_pack_20261109T222257Z`.
+
+`20261109T222259936532Z_animation_guard_installed_capped` passes normal-policy
+walking (16.868 m, 184/184 grounded samples), destruction, visible/hidden HUD,
+save and shutdown without error/leak diagnostics. The installed outdoor-end view
+was inspected; terrain, grass, buildings, held tool and collision clearance remain
+present. Outdoor p99/max is **20.402/25.243 ms**, so installed FPS stability still
+fails. VSync remains enabled and the software cap remains 60 throughout gameplay.
+
+The installed recorder-off control `20261109T222836240885Z_animation_guard_installed_off`
+also passes walking (16.776 m, 184/184 grounded), destruction, HUD, save and clean
+shutdown. Detailed tracing and per-frame GPU timer queries are disabled. Walking
+p99/max remains **20.689/24.462 ms**, arrival max 29.651 ms, destruction recovery
+p99/max **19.335/26.749 ms**. Peak sampled private commit is 3.90 GiB. These
+separate runs do not isolate recorder overhead, but confirm that recording does
+not explain all long frames. Synchronous screenshots are excluded from gameplay
+timing. Both captures use an off-screen test window; visible-window presentation,
+longer movement and endurance remain unqualified.
+
 ## Remaining gate
 
 Rendering waits, live admission peaks, broader traversal, terrain edit latency,
-endurance and installed-package verification remain required. Windows WPR CPU
+endurance and broader installed-package coverage remain required. Windows WPR CPU
 profiling fails with `0xc5585011` (profiling policy unavailable); no system policy
 was changed and no stack-level diagnosis is claimed. Continue reducing actual
 work with the [approved pacing policy](approved-pacing-2026-11-10.md) intact.

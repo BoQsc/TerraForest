@@ -4,14 +4,17 @@
 is corrected and verified with the approved limiters. Normal-world physics work
 decreases; grounded walking, damage, save/shutdown, pose and behavior checks pass.
 Rendering waits still reach 49.358 ms total frame time in the corrected capture.
-Installed validation, broader traversal and endurance remain open; follow the
+The installed bounded walking/destruction check passes but still reaches 25.243 ms.
+The recorder-off control retains 24.462 ms walking / 26.749 ms recovery tails;
+visible-window presentation and longer movement are still required.
+Broader installed validation, traversal and endurance remain open; follow the
 linked evidence and do not treat this local CPU gain as stable-60-FPS completion.
 
 Keep the approved foreground cap, VSync and background cap while reducing actual
 world/player/rendering costs. The uncommitted limiter-policy experiment was
 reverted and never installed. [Evidence and open gates](../issues/runtime-performance/approved-pacing-2026-11-10.md)
 retain the rejected rendering-thread trial, failing browser assertions and
-unqualified draft HUD change. Stable 60 FPS with headroom remains unresolved;
+the HUD change's subsequent normal-world verification. Stable 60 FPS with headroom remains unresolved;
 normal-policy gameplay, visuals, resources and installed-package validation are
 required before claiming completion.
 

@@ -3,8 +3,11 @@
 [Shared animation cache correction](animation-cache-2026-11-10.md) removes
 same-value writes that invalidated all residents' animation caches. The old/new
 capped world pair reduces settled physics median 2.612→1.929 ms; behavior,
-pose, grounded walking and destruction checks pass. A separate 49.358 ms
-rendering-heavy frame remains unresolved. This is not stable-FPS acceptance.
+pose, grounded walking and destruction checks pass in source and the installed
+package. A separate 49.358 ms source rendering-heavy frame remains unresolved;
+the installed walking capture reaches 25.243 ms. A recorder-off control still
+reaches 24.462 ms walking and 26.749 ms after destruction. This is not stable-FPS
+acceptance; visible-window presentation and longer movement remain open.
 
 [Approved pacing policy, 2026-11-10](approved-pacing-2026-11-10.md): the user
 reaffirmed the foreground cap, VSync and background cap. The uncommitted limiter
@@ -17,8 +20,8 @@ prevents a completed collision-preparation unit from immediately starting the
 atomic swap after its slice is exhausted. The old complete surface stays live;
 an ample-budget batch still publishes in the same call. The new regression fails
 on old source and all 50 assertions pass with the correction; coverage and recovery
-checks also pass. Installed-world timing, edit latency and rendered continuity
-remain pending. This change is not yet in the installed package.
+checks also pass. The correction is now installed and the normal-world three-barrel
+fixture passes; isolated edit latency and broader rendered continuity remain open.
 
 Latest world fix: [native forest/boulder invalidation](destruction-owner-bounds-2026-11-09.md)
 replaces repeated owner scans during local destruction with exact native bounds

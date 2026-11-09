@@ -55,11 +55,13 @@ scoped atomicity contract, not visual-quality or whole-world acceptance.
 
 ## Resume and remaining work
 
-The previous installed package remains
-`acccce4d9b176cc7c23a559116eda4672e7917039263d0ba55bdd9c45b77c7be`.
-This source correction is not in that package or in already-running sessions.
-The user has live source gameplay and an explicitly uncommitted pistol-audio trial;
-that trial must not be bundled into this change's export or commit.
+At the original capture this correction was not installed. The later player trial
+was committed separately as `dd78a924`; the subsequent export after `17ef0690`
+includes this correction and the animation-cache fix. The installed PCK is
+`914a3acb700d8cad18bffb7b6d64c5a305868c09a069bf9520c044686bca0ebe`.
+The capped grounded-walking/three-barrel/save/shutdown fixture passes in
+`reports/performance_changes/20261109T222259936532Z_animation_guard_installed_capped`.
+This does not isolate the terrain correction's timing or close its remaining gates.
 
 When an uncontended test window and a package containing only authorized changes
 are available, repeat the default-world three-barrel and normal movement captures.
