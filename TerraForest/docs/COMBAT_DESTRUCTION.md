@@ -1,5 +1,12 @@
 # Firearms, explosions and optional structural integrity
 
+2026-11-09 performance update: destructive edits now use revision-checked native
+batches (24 blast candidates / 12 collapse cells per tick). The 704 exact debris
+collision poses are baked into a 56 KB binary resource instead of decomposing
+meshes during explosions. Rejected edits retain cursor and durability; visual
+geometry, physics properties and limits are preserved. [Measurements, regression
+evidence and remaining dense-combat work](../issues/runtime-performance/foundation-2026-11-09.md).
+
 Source and packaged verification: 2026-11-01. The feature is implemented, included
 in the combined game package, and checked through the existing game executable. See the
 [combat issue](../issues/explosive-combat/README.md) for current verification.

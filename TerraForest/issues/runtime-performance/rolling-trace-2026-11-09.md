@@ -128,6 +128,11 @@ packaged trace. These failures are retained, not rewritten as passes.
 
 ## Resume and evidence
 
+Implementation follow-up: [world/player foundation](foundation-2026-11-09.md)
+now records the controlled fixes, binary debris bake, persistence checks and
+repaired audio export boundary. The failure descriptions above are retained as
+historical evidence; they do not describe the latest delivery state.
+
 Prioritize first-person warmup and arrival PNG availability, then staged admission/
 prototype preparation and bounded immutable save capture. Return to the independent
 presentation wait with a foreground scheduling trace. Validate every fix with

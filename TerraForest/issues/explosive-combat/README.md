@@ -6,6 +6,15 @@
 - Scope: Existing carbine animations, projectiles and zombie firearm responses,
   explosive barrels, volumetric craters, individual block debris, optional integrity.
 
+Performance follow-up, 2026-11-09: [native destructive batching and exact baked
+debris collision](../runtime-performance/foundation-2026-11-09.md) remove the
+measured repeated runtime convex-decomposition stall. The controlled actual-world
+64-cell workload now takes 0.795–2.125 ms per batch, retaining existing physics,
+visuals and damage settings. Installed combat passes 51 creation + 12 reload
+checks in `reports/combat_world/20261109T091611473955Z`. Dense repeated barrel
+chains, streamed-boundary collapse and whole-frame headroom remain unqualified;
+this is a scoped performance improvement, not closure of the frame-rate issue.
+
 ## Images
 
 ![Packaged carbine](images/rifle-packaged.png)

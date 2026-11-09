@@ -1,18 +1,26 @@
 # Runtime performance
 
-- Status: Improved-partial; installed and packaged walking verified.
+- Status: Improved-partial; 60 FPS with headroom remains open.
 - Updated: 2026-11-09. Initial baseline: `5bfe87f4`; maintenance: `304206cc`; readiness: `87afcdfe`.
 - User review: Not reviewed. No visual quality reduction intended.
 
 Resource follow-up: [4 GiB GPU / 5 GB content targets and cache policy](../../docs/RESOURCE_BUDGETS.md).
 
-Latest [fresh-default-world / rolling-trace investigation](rolling-trace-2026-11-09.md):
+Latest [implemented world/player foundation](foundation-2026-11-09.md): native
+destruction batches, exact baked debris collision, native water snapshot sharing,
+first-person preparation and worker resource validation are implemented. Actual
+64-block destructive calls now cost 0.8–2.1 ms per batch; default-world arrival
+223.6 → 26.6 ms. Rendering, later physics/draw stalls and zombie route latency
+remain open. The audio export boundary is repaired; package validation is recorded
+in the linked evidence. No graphics or gameplay limit was reduced.
+
+Earlier [fresh-default-world / rolling-trace investigation](rolling-trace-2026-11-09.md):
 normal Frontier expedition generation completed; first-person depth activation,
 arrival PNG decoding, first zombie admission, parked-prototype preparation and
 save capture are now localized. Opt-in [rolling capture](../../docs/FRAME_TRACE.md)
 is implemented in source; stable 60 FPS/headroom and independent presentation waits
-remain open. Package refresh is blocked by unrelated unsupported Kaino WAV imports;
-the prior installed pack is retained.
+remain open. Its audio package blocker and old-pack limitation are historical;
+the implementation report tracks the repaired boundary and new checks.
 
 Earlier [diagnostic playtest, 2026-11-09](playtest-2026-11-09.md): current source
 still fails pacing gates on a populated road fixture. Capped walking/sprinting/

@@ -1,40 +1,41 @@
-## Fresh default world and rolling frame trace — 2026-11-09
+## World/player performance foundation and rolling trace — 2026-11-09
 
-Generated the unchanged Frontier expedition default (seed 1703, generator 29,
-three settlements/two districts, introduction/material veins); 51 buildings and
-12 lakes publish successfully. First readiness 74.467 s, player control 82.497 s.
-Source rolling capture is implemented with bounded pre/post history, isolated and
-sustained triggers, a manual marker and worker JSON/file output. See
-[usage](FRAME_TRACE.md) and the [causal investigation](../issues/runtime-performance/rolling-trace-2026-11-09.md).
+The latest default Frontier expedition was generated unchanged (seed 1703,
+generator 29, three settlements/two districts, 51 buildings, 12 lakes). The
+[original diagnosis](../issues/runtime-performance/rolling-trace-2026-11-09.md)
+is now followed by [implemented fixes and exact evidence](../issues/runtime-performance/foundation-2026-11-09.md).
 
-Matched control localizes a 223.587 ms arrival to first-person depth activation
-(160.549 ms draw interval / eight new specializations; depth-disabled diagnostic
-7.077 ms draw), plus 34–47 ms of needless synchronous arrival-image decoding.
-Separate 139–264 ms first-zombie admission, 61–84 ms parked-prototype preparation
-and 15–38 ms save capture need bounded preparation. Rendering GPU tails reach
-15–16 ms in the new room/world; the old road fixture overstated general headroom.
-No optimization or visual reduction is installed. Recorder/analyzer, photo,
-vehicle loading and loading UI checks pass; one matched trace-off run retains a
-shutdown object leak and is not a clean verification pass.
+Native destruction uses revision-checked batched removal and exact binary-baked
+debris collision. Actual 64-block batch calls now cost 0.8–2.1 ms; all bodies,
+damage, visuals and physics settings are retained. Native water snapshot arrays
+share immutable storage and detach on edits, reducing the 1,024-region capture
+from 2.7–9.2 ms to 0.25–0.33 ms. Debug/release storage and destructive admission,
+actual compound-water reopen, combat, first-person and provider checks pass.
 
-Remaining: first-person variant warmup preserving clipping/lighting, cached or
-off-thread validated photo availability, staged entity/prototype preparation,
-revision-safe bounded save capture, render-pass attribution and foreground OS/
-presentation wait tracing. These are deferred from instrumentation/diagnosis
-because controlled fixes and their correctness/tail evidence have not been built.
-Return on the retained fresh default fixture with matched before/after traces,
-normal visual settings, persistence and interaction checks; stable 60 FPS with
-headroom is not established. Combat/caves/driving/endurance/weaker hardware remain
-unqualified.
+First-person materials prepare behind the loading cover; photograph validation
+and parked resource validation run on workers. Matched existing-photo release
+fell from 223.6 to 26.6 ms. Built-in zombie loading joins startup dependency
+preparation, but scene/anatomy admission and slow multi-floor pursuit remain open.
 
-Package follow-up: required building/notice/index gates pass, but export cannot
-publish because 211 original Kaino WAVs reject Godot's importer (unsupported
-non-PCM WAVE format), leaving referenced `.sample` outputs missing. A full import
-and clearing stale metadata for only those missing cache outputs confirms the
-format error; audio sources/formats and export scope are unchanged. The previous
-installed pack is retained. Source normal gameplay can use `--frame-trace` now;
-resume package refresh after the audio import/export boundary is repaired and
-run a fresh packaged trace. Do not claim packaged recorder parity yet.
+Stable 60 FPS with headroom is NOT established: the combined trace still has a
+91.4 ms gameplay frame and ~15 ms root GPU work. Rendering pass/batch costs,
+physics/draw tails, staged zombie admission, native regional route connectivity,
+other save owners, first-ever photograph readback, dense barrel/collapse chains
+and long-session/weak-hardware qualification are continuation requirements.
+The linked table states each prerequisite and closing evidence. These are not
+silently deferred as completed work; multiplayer authority, replication and
+population-scale latency remain separate unimplemented requirements.
+
+The [rolling recorder](FRAME_TRACE.md) remains opt-in during normal gameplay.
+The prior audio export blocker is repaired using unchanged raw assets and
+PCK-compatible reads; exports pass with fourteen matching native DLLs. Exact
+source/package checks and remaining lifecycle caveats are tracked in the linked
+implementation report. Final installed gameplay save succeeds (7.239 ms capture,
+0.810 ms water, 5.173 ms structures), but its strict run fails on three anonymous
+ObjectDB leaks; an earlier installed run leaked seven and the baseline one.
+The latest source run exits cleanly. Ownership is unknown and a lifecycle
+regression cannot be excluded. Final installed triggered p99 is 21.106 ms,
+maximum 26.913 ms; short-run improvement does not close the earlier 91 ms stall.
 
 ## Frame-rate diagnostic playtest — 2026-11-09
 

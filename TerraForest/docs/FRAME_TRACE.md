@@ -3,9 +3,9 @@
 Opt-in diagnostic recorder; it does not change graphics, the FPS cap, physics,
 world saves or power settings. It is absent in ordinary launches without the flag.
 
-Current delivery is verified in source. Package refresh is blocked by pre-existing
-unsupported Kaino WAV imports; the previous installed PCK does not contain this
-recorder. Use the source command below until package parity is verified.
+Current source and refreshed package contain the recorder. The previous Kaino
+audio import blocker is repaired; [implementation and package evidence](../issues/runtime-performance/foundation-2026-11-09.md)
+tracks scoped checks and the remaining shutdown/performance limitations.
 
 From the repository root, open the normal browser with tracing enabled:
 
@@ -97,3 +97,16 @@ records stationary arrival and time-based camera turns. It writes its owned
 fixture on shutdown and restores the initial yaw. Diagnostic flags for uncapped
 presentation and disabling first-person depth correction are test-only controls;
 they are not production fixes or saved preference changes.
+
+The wrapper makes a new owned clone of the retained fresh-default fixture and
+records source/package hashes, resource counters, console output and trace files:
+
+```text
+python TerraForest/tools/check_frame_trace_world.py --short --save --label source_capture
+python TerraForest/tools/check_frame_trace_world.py --short --save --executable --label installed_capture
+```
+
+`--save` asserts that a normal gameplay save completes successfully before the
+shutdown save. Its observation retains per-component capture costs and initial
+zombie setup timings. A successful save does not override a strict shutdown
+diagnostic failure; the wrapper retains both results in the report.
