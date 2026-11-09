@@ -375,11 +375,20 @@ now extends the earlier resource-only fixture with live-body attachment. Its
 median cold setup/attachment is 0.086/1.358 ms; live-reused attachment is 0.029 ms.
 Smaller pieces reduce the largest individual unit but increase total work;
 deferred admission concentrates cooking into a larger final operation. The
-user's interactive playtest overlaps this diagnostic, so clean quantitative
-comparison remains required. Production policy is unchanged. Next use the
-existing pre-worker piece-size configuration for actual-world comparisons and
-walking/slope/mining/boundary, atomic-readiness, cancellation and recovery gates.
-Identical triangles alone do not establish unchanged contact behavior or 60 FPS.
+user's interactive playtest overlaps that microbenchmark. The subsequent four
+default-world runs have no competing engine/compiler observed and pass startup,
+configuration, save and shutdown without leak diagnostics. Typical attachments
+shrink at 512, but no consistent frame benefit is established and more shapes
+remain resident. Shared-section triangle hashes match in every pair, while final
+resident sets differ. Eight inspected views show no obvious missing assets.
+The 1024/512/512/1024 comparison rejects a production size change. The final
+default sweep still reaches 25.081 ms with terrain staging below 0.139 ms;
+return to broader physics and rendering/draw waits, not repeated size tuning.
+The linked evidence retains host/GPU variation and all frame distributions.
+Walking/slope/mining/cave/boundary, atomic-readiness, cancellation and recovery
+gates remain prerequisites for any future collision publication redesign; they
+were not run for this rejected candidate. Identical triangles alone do not
+establish unchanged contact behavior or 60 FPS. Endurance remains unqualified.
 
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction

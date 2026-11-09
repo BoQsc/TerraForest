@@ -1,0 +1,1802 @@
+{
+  "schema": 1,
+  "host_evidence": "reports/performance_changes/host_collision_partition_abba_20261109T194447433621Z",
+  "revision": "e7cc09563ed78987d7d3bee512861291dc1fedda",
+  "runs": [
+    {
+      "label": "collision_1024_a",
+      "folder": "reports/performance_changes/20261109T194447597636Z_collision_1024_a",
+      "passed": true,
+      "diagnostics": [],
+      "configured": true,
+      "requested_triangles": 1024,
+      "ready_ms": 34653.567,
+      "dropped": 0,
+      "census": {
+        "largest_piece": 1024,
+        "shapes": 497,
+        "triangles": 396580
+      },
+      "resident_tiles": 444,
+      "engine_static_bytes": 848963166.0,
+      "resources": {
+        "peak_private_commit_bytes": 4187611136,
+        "peak_working_set_bytes": 2341224448,
+        "peak_dedicated_gpu_bytes": 1752227840
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "ac7335cd2f3281f404109cf35aed06d98561070f4a0553c29b08a479c73cafc4",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "addons\\world_runtime\\frame_trace.gd": "36a1b26e37f80db370bfe0a94fdc1c7089a35475816ec1106d822b1e0093de9c",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "2b2c53f6688238c05ecd4c233314cd354914de9e21c6836920e9c0496219f1a3"
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "95f041bb88827a2f3fa6796d09f3dbcfed8d676eddc6456f356dfbdc9933972d",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c05d2c5113d967dc4501503eddc5f086cb9a602c983c0a6d67293ac4c311970a",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T194447597636",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 1358,
+            "median_ms": 8.322,
+            "p95_ms": 14.97,
+            "p99_ms": 19.653,
+            "max_ms": 23.867,
+            "total_ms": 12004.332
+          },
+          "gpu_ms": {
+            "count": 1358,
+            "median_ms": 5.3784999847412145,
+            "p95_ms": 6.24499988555908,
+            "p99_ms": 6.63899993896484,
+            "max_ms": 6.98999977111816,
+            "total_ms": 7327.967004299164
+          },
+          "render_cpu_ms": {
+            "count": 1358,
+            "median_ms": 2.68900001049042,
+            "p95_ms": 3.90100002288818,
+            "p99_ms": 5.75099992752075,
+            "max_ms": 7.27600002288818,
+            "total_ms": 3864.017999649048
+          },
+          "render_setup_cpu_ms": {
+            "count": 1358,
+            "median_ms": 0.303,
+            "p95_ms": 0.469,
+            "p99_ms": 0.785,
+            "max_ms": 1.404,
+            "total_ms": 422.541
+          },
+          "physics_monitor_ms": {
+            "count": 1358,
+            "median_ms": 5.264,
+            "p95_ms": 7.432,
+            "p99_ms": 7.432,
+            "max_ms": 7.432,
+            "total_ms": 7764.8240000000005
+          },
+          "frames_over_16_667_ms": 36
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 981,
+            "median_ms": 7.669,
+            "p95_ms": 13.195,
+            "p99_ms": 19.642,
+            "max_ms": 28.114,
+            "total_ms": 8002.498
+          },
+          "gpu_ms": {
+            "count": 981,
+            "median_ms": 5.64099979400635,
+            "p95_ms": 6.58300018310547,
+            "p99_ms": 7.00299978256226,
+            "max_ms": 7.50099992752075,
+            "total_ms": 5538.2320013046265
+          },
+          "render_cpu_ms": {
+            "count": 981,
+            "median_ms": 2.69199991226196,
+            "p95_ms": 4.17999982833862,
+            "p99_ms": 8.48400020599365,
+            "max_ms": 18.3610000610352,
+            "total_ms": 2878.177001953125
+          },
+          "render_setup_cpu_ms": {
+            "count": 981,
+            "median_ms": 0.291,
+            "p95_ms": 0.437,
+            "p99_ms": 1.545,
+            "max_ms": 2.233,
+            "total_ms": 296.618
+          },
+          "physics_monitor_ms": {
+            "count": 981,
+            "median_ms": 4.738,
+            "p95_ms": 8.621,
+            "p99_ms": 8.621,
+            "max_ms": 8.621,
+            "total_ms": 5077.768
+          },
+          "frames_over_16_667_ms": 15
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 608,
+            "median_ms": 7.8505,
+            "p95_ms": 11.746,
+            "p99_ms": 14.301,
+            "max_ms": 18.405,
+            "total_ms": 5000.298
+          },
+          "gpu_ms": {
+            "count": 608,
+            "median_ms": 6.1545000076293945,
+            "p95_ms": 7.10200023651123,
+            "p99_ms": 7.54899978637695,
+            "max_ms": 7.80600023269653,
+            "total_ms": 3787.7449984550476
+          },
+          "render_cpu_ms": {
+            "count": 608,
+            "median_ms": 2.767499923706055,
+            "p95_ms": 3.81100010871887,
+            "p99_ms": 5.13500022888184,
+            "max_ms": 9.0019998550415,
+            "total_ms": 1763.1689977645874
+          },
+          "render_setup_cpu_ms": {
+            "count": 608,
+            "median_ms": 0.2915,
+            "p95_ms": 0.419,
+            "p99_ms": 0.521,
+            "max_ms": 0.866,
+            "total_ms": 174.515
+          },
+          "physics_monitor_ms": {
+            "count": 608,
+            "median_ms": 5.963,
+            "p95_ms": 7.541,
+            "p99_ms": 7.541,
+            "max_ms": 7.541,
+            "total_ms": 3635.317
+          },
+          "frames_over_16_667_ms": 1
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 590,
+            "median_ms": 8.362,
+            "p95_ms": 13.495,
+            "p99_ms": 18.493,
+            "max_ms": 31.787,
+            "total_ms": 5008.368
+          },
+          "gpu_ms": {
+            "count": 590,
+            "median_ms": 5.952000141143801,
+            "p95_ms": 6.85400009155273,
+            "p99_ms": 7.11299991607666,
+            "max_ms": 7.41099977493286,
+            "total_ms": 3562.5690026283264
+          },
+          "render_cpu_ms": {
+            "count": 590,
+            "median_ms": 2.7445000410079947,
+            "p95_ms": 4.34899997711182,
+            "p99_ms": 5.72700023651123,
+            "max_ms": 25.2770004272461,
+            "total_ms": 1747.3429985046387
+          },
+          "render_setup_cpu_ms": {
+            "count": 590,
+            "median_ms": 0.287,
+            "p95_ms": 0.43,
+            "p99_ms": 0.563,
+            "max_ms": 1.501,
+            "total_ms": 170.166
+          },
+          "physics_monitor_ms": {
+            "count": 590,
+            "median_ms": 6.059,
+            "p95_ms": 7.911,
+            "p99_ms": 7.911,
+            "max_ms": 7.911,
+            "total_ms": 3736.502
+          },
+          "frames_over_16_667_ms": 9
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "count": 114,
+            "median_ms": 8.5715,
+            "p95_ms": 12.256,
+            "p99_ms": 14.685,
+            "max_ms": 15.982,
+            "total_ms": 955.561
+          },
+          "gpu_ms": {
+            "count": 114,
+            "median_ms": 5.72149991989136,
+            "p95_ms": 6.79199981689453,
+            "p99_ms": 6.92799997329712,
+            "max_ms": 7.00799989700317,
+            "total_ms": 660.4870004653931
+          },
+          "render_cpu_ms": {
+            "count": 114,
+            "median_ms": 2.85500001907349,
+            "p95_ms": 4.09200000762939,
+            "p99_ms": 4.32499980926514,
+            "max_ms": 4.73799991607666,
+            "total_ms": 339.92199897766113
+          },
+          "render_setup_cpu_ms": {
+            "count": 114,
+            "median_ms": 0.301,
+            "p95_ms": 0.463,
+            "p99_ms": 0.504,
+            "max_ms": 0.553,
+            "total_ms": 33.86
+          },
+          "physics_monitor_ms": {
+            "count": 114,
+            "median_ms": 5.071,
+            "p95_ms": 5.071,
+            "p99_ms": 5.071,
+            "max_ms": 5.071,
+            "total_ms": 555.178
+          },
+          "frames_over_16_667_ms": 0
+        }
+      },
+      "stages": {
+        "arrival_idle:collision node attach": {
+          "count": 166,
+          "median_ms": 0.5734999999999999,
+          "p95_ms": 0.921,
+          "p99_ms": 1.24,
+          "max_ms": 1.248,
+          "total_ms": 94.341
+        },
+        "arrival_idle:collision piece": {
+          "count": 170,
+          "median_ms": 0.596,
+          "p95_ms": 1.002,
+          "p99_ms": 1.349,
+          "max_ms": 1.372,
+          "total_ms": 103.691
+        },
+        "arrival_idle:retire collision/mesh": {
+          "count": 1358,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.666
+        },
+        "arrival_idle:staging frame": {
+          "count": 1358,
+          "median_ms": 0.005,
+          "p95_ms": 0.693,
+          "p99_ms": 2.596,
+          "max_ms": 3.238,
+          "total_ms": 139.574
+        },
+        "loading:collision node attach": {
+          "count": 384,
+          "median_ms": 0.5665,
+          "p95_ms": 0.895,
+          "p99_ms": 1.3,
+          "max_ms": 2.594,
+          "total_ms": 211.758
+        },
+        "loading:collision piece": {
+          "count": 1684,
+          "median_ms": 0.001,
+          "p95_ms": 0.717,
+          "p99_ms": 1.027,
+          "max_ms": 3.154,
+          "total_ms": 232.495
+        },
+        "loading:retire collision/mesh": {
+          "count": 2959,
+          "median_ms": 0.001,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.46,
+          "total_ms": 2.445
+        },
+        "loading:staging frame": {
+          "count": 2959,
+          "median_ms": 0.005,
+          "p95_ms": 1.933,
+          "p99_ms": 2.784,
+          "max_ms": 3.8,
+          "total_ms": 608.965
+        },
+        "outdoor_sweep:collision node attach": {
+          "count": 40,
+          "median_ms": 0.5945,
+          "p95_ms": 1.166,
+          "p99_ms": 1.191,
+          "max_ms": 1.191,
+          "total_ms": 23.027
+        },
+        "outdoor_sweep:collision piece": {
+          "count": 40,
+          "median_ms": 0.646,
+          "p95_ms": 1.251,
+          "p99_ms": 1.441,
+          "max_ms": 1.441,
+          "total_ms": 25.309
+        },
+        "outdoor_sweep:retire collision/mesh": {
+          "count": 981,
+          "median_ms": 0.001,
+          "p95_ms": 0.001,
+          "p99_ms": 0.045,
+          "max_ms": 0.722,
+          "total_ms": 5.201
+        },
+        "outdoor_sweep:staging frame": {
+          "count": 981,
+          "median_ms": 0.005,
+          "p95_ms": 0.008,
+          "p99_ms": 1.564,
+          "max_ms": 3.558,
+          "total_ms": 36.087
+        },
+        "save_during_play:retire collision/mesh": {
+          "count": 114,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.049
+        },
+        "save_during_play:staging frame": {
+          "count": 114,
+          "median_ms": 0.005,
+          "p95_ms": 0.008,
+          "p99_ms": 0.009,
+          "max_ms": 0.054,
+          "total_ms": 0.671
+        },
+        "settled_idle:retire collision/mesh": {
+          "count": 590,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.28300000000000003
+        },
+        "settled_idle:staging frame": {
+          "count": 590,
+          "median_ms": 0.005,
+          "p95_ms": 0.008,
+          "p99_ms": 0.01,
+          "max_ms": 0.705,
+          "total_ms": 4.005
+        },
+        "turning:retire collision/mesh": {
+          "count": 608,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.002,
+          "total_ms": 0.292
+        },
+        "turning:staging frame": {
+          "count": 608,
+          "median_ms": 0.005,
+          "p95_ms": 0.007,
+          "p99_ms": 0.009,
+          "max_ms": 0.121,
+          "total_ms": 3.513
+        }
+      },
+      "images": {
+        "arrival.png": "b13532e1929b8e47f9091f45546dd657876d585147949f2a13654147e8762158",
+        "outdoor_0.png": "f58ed6383bf3f96e497d0103067545914022536844d879cc4c500d571e08e230",
+        "outdoor_1.png": "d57bfc52f14a683e6f9656cd773c3bb8842e98e75c875145d5612c9a19051216",
+        "outdoor_2.png": "97d4d4155fd7cc072cd48542f0c10744537797bddc1703a21873205c537ec91e"
+      },
+      "competing_engines_or_compilers_observed": [],
+      "trace_enabled": false,
+      "position": "(1101.203, 58.52123, 353.6957)",
+      "outdoor_target": "(1085.203, 58.42123, 349.6957)",
+      "outdoor_poses": [
+        "(1085.203, 58.52123, 353.6957)",
+        "(1093.203, 58.52123, 353.6957)",
+        "(1101.203, 58.52123, 353.6957)"
+      ],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 39.995,
+        "temperature.gpu": 59.0,
+        "clocks.current.graphics [MHz]": 2212.5
+      }
+    },
+    {
+      "label": "collision_512_b",
+      "folder": "reports/performance_changes/20261109T194618181679Z_collision_512_b",
+      "passed": true,
+      "diagnostics": [],
+      "configured": true,
+      "requested_triangles": 512,
+      "ready_ms": 35214.434,
+      "dropped": 0,
+      "census": {
+        "largest_piece": 512,
+        "shapes": 1041,
+        "triangles": 440676
+      },
+      "resident_tiles": 484,
+      "engine_static_bytes": 858049466.0,
+      "resources": {
+        "peak_private_commit_bytes": 4177522688,
+        "peak_working_set_bytes": 2331074560,
+        "peak_dedicated_gpu_bytes": 1752158208
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "ac7335cd2f3281f404109cf35aed06d98561070f4a0553c29b08a479c73cafc4",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "addons\\world_runtime\\frame_trace.gd": "36a1b26e37f80db370bfe0a94fdc1c7089a35475816ec1106d822b1e0093de9c",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "2b2c53f6688238c05ecd4c233314cd354914de9e21c6836920e9c0496219f1a3"
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "95f041bb88827a2f3fa6796d09f3dbcfed8d676eddc6456f356dfbdc9933972d",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c05d2c5113d967dc4501503eddc5f086cb9a602c983c0a6d67293ac4c311970a",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T194618181679",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 1284,
+            "median_ms": 9.0815,
+            "p95_ms": 15.199,
+            "p99_ms": 19.835,
+            "max_ms": 24.157,
+            "total_ms": 12008.937
+          },
+          "gpu_ms": {
+            "count": 1284,
+            "median_ms": 5.125,
+            "p95_ms": 5.94299983978271,
+            "p99_ms": 6.27899980545044,
+            "max_ms": 6.53900003433228,
+            "total_ms": 6641.162997722626
+          },
+          "render_cpu_ms": {
+            "count": 1284,
+            "median_ms": 2.829499959945675,
+            "p95_ms": 4.0460000038147,
+            "p99_ms": 7.28299999237061,
+            "max_ms": 11.8649997711182,
+            "total_ms": 3875.682998657227
+          },
+          "render_setup_cpu_ms": {
+            "count": 1284,
+            "median_ms": 0.321,
+            "p95_ms": 0.494,
+            "p99_ms": 0.811,
+            "max_ms": 1.895,
+            "total_ms": 428.851
+          },
+          "physics_monitor_ms": {
+            "count": 1284,
+            "median_ms": 5.837,
+            "p95_ms": 7.309,
+            "p99_ms": 8.121,
+            "max_ms": 8.121,
+            "total_ms": 7146.3640000000005
+          },
+          "frames_over_16_667_ms": 37
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 879,
+            "median_ms": 8.804,
+            "p95_ms": 14.622,
+            "p99_ms": 23.262,
+            "max_ms": 31.629,
+            "total_ms": 8004.336
+          },
+          "gpu_ms": {
+            "count": 879,
+            "median_ms": 5.51000022888184,
+            "p95_ms": 6.51100015640259,
+            "p99_ms": 6.88500022888184,
+            "max_ms": 7.14699983596802,
+            "total_ms": 4818.408996582031
+          },
+          "render_cpu_ms": {
+            "count": 879,
+            "median_ms": 3.04900002479553,
+            "p95_ms": 5.04400014877319,
+            "p99_ms": 9.69799995422363,
+            "max_ms": 14.2259998321533,
+            "total_ms": 2941.0209984779362
+          },
+          "render_setup_cpu_ms": {
+            "count": 879,
+            "median_ms": 0.33,
+            "p95_ms": 0.524,
+            "p99_ms": 1.82,
+            "max_ms": 3.446,
+            "total_ms": 316.229
+          },
+          "physics_monitor_ms": {
+            "count": 879,
+            "median_ms": 4.757,
+            "p95_ms": 7.67,
+            "p99_ms": 7.67,
+            "max_ms": 7.67,
+            "total_ms": 4741.025
+          },
+          "frames_over_16_667_ms": 25
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 614,
+            "median_ms": 7.795,
+            "p95_ms": 11.848,
+            "p99_ms": 15.088,
+            "max_ms": 22.461,
+            "total_ms": 5003.293
+          },
+          "gpu_ms": {
+            "count": 614,
+            "median_ms": 6.01200008392334,
+            "p95_ms": 6.94500017166138,
+            "p99_ms": 7.28800010681152,
+            "max_ms": 7.58500003814697,
+            "total_ms": 3750.2129969596863
+          },
+          "render_cpu_ms": {
+            "count": 614,
+            "median_ms": 2.872499942779545,
+            "p95_ms": 4.24200010299683,
+            "p99_ms": 5.39300012588501,
+            "max_ms": 6.00899982452393,
+            "total_ms": 1850.6720016002655
+          },
+          "render_setup_cpu_ms": {
+            "count": 614,
+            "median_ms": 0.301,
+            "p95_ms": 0.444,
+            "p99_ms": 0.564,
+            "max_ms": 0.884,
+            "total_ms": 183.589
+          },
+          "physics_monitor_ms": {
+            "count": 614,
+            "median_ms": 5.933,
+            "p95_ms": 6.481,
+            "p99_ms": 6.481,
+            "max_ms": 6.481,
+            "total_ms": 3574.338
+          },
+          "frames_over_16_667_ms": 3
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 676,
+            "median_ms": 6.977,
+            "p95_ms": 9.698,
+            "p99_ms": 12.184,
+            "max_ms": 15.955,
+            "total_ms": 5006.538
+          },
+          "gpu_ms": {
+            "count": 676,
+            "median_ms": 5.929499864578245,
+            "p95_ms": 6.78900003433228,
+            "p99_ms": 7.11899995803833,
+            "max_ms": 7.28299999237061,
+            "total_ms": 4087.085997581482
+          },
+          "render_cpu_ms": {
+            "count": 676,
+            "median_ms": 2.64549994468689,
+            "p95_ms": 3.36100006103516,
+            "p99_ms": 4.15299987792969,
+            "max_ms": 10.2770004272461,
+            "total_ms": 1837.2529969215393
+          },
+          "render_setup_cpu_ms": {
+            "count": 676,
+            "median_ms": 0.276,
+            "p95_ms": 0.364,
+            "p99_ms": 0.437,
+            "max_ms": 0.765,
+            "total_ms": 176.113
+          },
+          "physics_monitor_ms": {
+            "count": 676,
+            "median_ms": 4.134,
+            "p95_ms": 5.407,
+            "p99_ms": 5.407,
+            "max_ms": 5.407,
+            "total_ms": 2854.351
+          },
+          "frames_over_16_667_ms": 0
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "count": 130,
+            "median_ms": 8.698,
+            "p95_ms": 13.05,
+            "p99_ms": 15.121,
+            "max_ms": 15.635,
+            "total_ms": 1139.015
+          },
+          "gpu_ms": {
+            "count": 130,
+            "median_ms": 5.86649990081787,
+            "p95_ms": 6.65100002288818,
+            "p99_ms": 6.82999992370605,
+            "max_ms": 6.90500020980835,
+            "total_ms": 773.5360007286072
+          },
+          "render_cpu_ms": {
+            "count": 130,
+            "median_ms": 3.072499990463255,
+            "p95_ms": 4.60900020599365,
+            "p99_ms": 5.54500007629395,
+            "max_ms": 6.47200012207031,
+            "total_ms": 425.9839992523193
+          },
+          "render_setup_cpu_ms": {
+            "count": 130,
+            "median_ms": 0.333,
+            "p95_ms": 0.47,
+            "p99_ms": 0.544,
+            "max_ms": 0.59,
+            "total_ms": 43.209
+          },
+          "physics_monitor_ms": {
+            "count": 130,
+            "median_ms": 6.165,
+            "p95_ms": 6.165,
+            "p99_ms": 6.165,
+            "max_ms": 6.165,
+            "total_ms": 702.634
+          },
+          "frames_over_16_667_ms": 0
+        }
+      },
+      "stages": {
+        "arrival_idle:collision node attach": {
+          "count": 334,
+          "median_ms": 0.3205,
+          "p95_ms": 0.534,
+          "p99_ms": 0.676,
+          "max_ms": 1.137,
+          "total_ms": 98.541
+        },
+        "arrival_idle:collision piece": {
+          "count": 338,
+          "median_ms": 0.3565,
+          "p95_ms": 0.617,
+          "p99_ms": 0.78,
+          "max_ms": 1.244,
+          "total_ms": 111.833
+        },
+        "arrival_idle:retire collision/mesh": {
+          "count": 1284,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.002,
+          "total_ms": 0.595
+        },
+        "arrival_idle:staging frame": {
+          "count": 1284,
+          "median_ms": 0.006,
+          "p95_ms": 0.861,
+          "p99_ms": 2.485,
+          "max_ms": 2.927,
+          "total_ms": 151.625
+        },
+        "loading:collision node attach": {
+          "count": 717,
+          "median_ms": 0.32,
+          "p95_ms": 0.496,
+          "p99_ms": 0.671,
+          "max_ms": 1.346,
+          "total_ms": 221.507
+        },
+        "loading:collision piece": {
+          "count": 2017,
+          "median_ms": 0.001,
+          "p95_ms": 0.466,
+          "p99_ms": 0.605,
+          "max_ms": 1.43,
+          "total_ms": 247.923
+        },
+        "loading:retire collision/mesh": {
+          "count": 2706,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.504,
+          "total_ms": 2.838
+        },
+        "loading:staging frame": {
+          "count": 2706,
+          "median_ms": 0.005,
+          "p95_ms": 2.502,
+          "p99_ms": 2.764,
+          "max_ms": 3.211,
+          "total_ms": 644.299
+        },
+        "outdoor_sweep:retire collision/mesh": {
+          "count": 879,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.002,
+          "total_ms": 0.426
+        },
+        "outdoor_sweep:staging frame": {
+          "count": 879,
+          "median_ms": 0.006,
+          "p95_ms": 0.008,
+          "p99_ms": 0.011,
+          "max_ms": 0.02,
+          "total_ms": 5.377
+        },
+        "save_during_play:retire collision/mesh": {
+          "count": 130,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.064
+        },
+        "save_during_play:staging frame": {
+          "count": 130,
+          "median_ms": 0.006,
+          "p95_ms": 0.009,
+          "p99_ms": 0.01,
+          "max_ms": 0.01,
+          "total_ms": 0.8230000000000001
+        },
+        "settled_idle:retire collision/mesh": {
+          "count": 676,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.253
+        },
+        "settled_idle:staging frame": {
+          "count": 676,
+          "median_ms": 0.005,
+          "p95_ms": 0.007,
+          "p99_ms": 0.013,
+          "max_ms": 0.138,
+          "total_ms": 3.8040000000000003
+        },
+        "turning:retire collision/mesh": {
+          "count": 614,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.255
+        },
+        "turning:staging frame": {
+          "count": 614,
+          "median_ms": 0.005,
+          "p95_ms": 0.008,
+          "p99_ms": 0.01,
+          "max_ms": 0.015,
+          "total_ms": 3.48
+        }
+      },
+      "images": {
+        "arrival.png": "ce2922047ada2b3d62d1847d0d1248a22fb42c5c3a8ff75564a3c8f59d978f2e",
+        "outdoor_0.png": "790c29aa3a00b3d37e69a147aec36da2d158bb475c09d176071f447c990488dc",
+        "outdoor_1.png": "b78cacc4b6468f5f5ce0f07260b1a6b21077f4982c732287b5ff12d54ee3b364",
+        "outdoor_2.png": "d2979b42bb5fd1b698f045ba9a81788dd32c19ec84d762d5b1a0a48abbc0b798"
+      },
+      "competing_engines_or_compilers_observed": [],
+      "trace_enabled": false,
+      "position": "(1101.203, 58.52123, 353.6957)",
+      "outdoor_target": "(1085.203, 58.42123, 349.6957)",
+      "outdoor_poses": [
+        "(1085.203, 58.52123, 353.6957)",
+        "(1093.203, 58.52123, 353.6957)",
+        "(1101.203, 58.52123, 353.6957)"
+      ],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 40.53,
+        "temperature.gpu": 62.0,
+        "clocks.current.graphics [MHz]": 2310.0
+      }
+    },
+    {
+      "label": "collision_512_b2",
+      "folder": "reports/performance_changes/20261109T194749113487Z_collision_512_b2",
+      "passed": true,
+      "diagnostics": [],
+      "configured": true,
+      "requested_triangles": 512,
+      "ready_ms": 33314.009,
+      "dropped": 0,
+      "census": {
+        "largest_piece": 512,
+        "shapes": 1065,
+        "triangles": 448256
+      },
+      "resident_tiles": 496,
+      "engine_static_bytes": 857167759.0,
+      "resources": {
+        "peak_private_commit_bytes": 4172861440,
+        "peak_working_set_bytes": 2329305088,
+        "peak_dedicated_gpu_bytes": 1752227840
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "ac7335cd2f3281f404109cf35aed06d98561070f4a0553c29b08a479c73cafc4",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "addons\\world_runtime\\frame_trace.gd": "36a1b26e37f80db370bfe0a94fdc1c7089a35475816ec1106d822b1e0093de9c",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "2b2c53f6688238c05ecd4c233314cd354914de9e21c6836920e9c0496219f1a3"
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "95f041bb88827a2f3fa6796d09f3dbcfed8d676eddc6456f356dfbdc9933972d",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c05d2c5113d967dc4501503eddc5f086cb9a602c983c0a6d67293ac4c311970a",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T194749113487",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 1458,
+            "median_ms": 7.8025,
+            "p95_ms": 14.163,
+            "p99_ms": 18.398,
+            "max_ms": 24.192,
+            "total_ms": 12008.646
+          },
+          "gpu_ms": {
+            "count": 1458,
+            "median_ms": 5.123500108718875,
+            "p95_ms": 5.89200019836426,
+            "p99_ms": 6.17700004577637,
+            "max_ms": 6.58099985122681,
+            "total_ms": 7533.004998207092
+          },
+          "render_cpu_ms": {
+            "count": 1458,
+            "median_ms": 2.61999988555908,
+            "p95_ms": 3.68499994277954,
+            "p99_ms": 4.7350001335144,
+            "max_ms": 15.8319997787476,
+            "total_ms": 4026.945996761322
+          },
+          "render_setup_cpu_ms": {
+            "count": 1458,
+            "median_ms": 0.291,
+            "p95_ms": 0.417,
+            "p99_ms": 0.542,
+            "max_ms": 1.344,
+            "total_ms": 416.498
+          },
+          "physics_monitor_ms": {
+            "count": 1458,
+            "median_ms": 4.719,
+            "p95_ms": 7.191,
+            "p99_ms": 7.191,
+            "max_ms": 7.191,
+            "total_ms": 7362.867
+          },
+          "frames_over_16_667_ms": 27
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 1062,
+            "median_ms": 6.8,
+            "p95_ms": 11.181,
+            "p99_ms": 17.301,
+            "max_ms": 23.418,
+            "total_ms": 8005.773
+          },
+          "gpu_ms": {
+            "count": 1062,
+            "median_ms": 5.4860000610351545,
+            "p95_ms": 6.40500020980835,
+            "p99_ms": 6.85300016403198,
+            "max_ms": 7.40100002288818,
+            "total_ms": 5816.092998981476
+          },
+          "render_cpu_ms": {
+            "count": 1062,
+            "median_ms": 2.636500000953675,
+            "p95_ms": 3.48300004005432,
+            "p99_ms": 7.32600021362305,
+            "max_ms": 11.043999671936,
+            "total_ms": 2934.381002664566
+          },
+          "render_setup_cpu_ms": {
+            "count": 1062,
+            "median_ms": 0.2865,
+            "p95_ms": 0.387,
+            "p99_ms": 1.428,
+            "max_ms": 1.877,
+            "total_ms": 299.528
+          },
+          "physics_monitor_ms": {
+            "count": 1062,
+            "median_ms": 5.296,
+            "p95_ms": 8.146,
+            "p99_ms": 8.146,
+            "max_ms": 8.146,
+            "total_ms": 5666.585
+          },
+          "frames_over_16_667_ms": 12
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 649,
+            "median_ms": 7.015,
+            "p95_ms": 10.335,
+            "p99_ms": 11.88,
+            "max_ms": 15.427,
+            "total_ms": 5000.201
+          },
+          "gpu_ms": {
+            "count": 649,
+            "median_ms": 5.71999979019165,
+            "p95_ms": 6.63199996948242,
+            "p99_ms": 6.95100021362305,
+            "max_ms": 7.12400007247925,
+            "total_ms": 3803.3419947624207
+          },
+          "render_cpu_ms": {
+            "count": 649,
+            "median_ms": 2.71799993515015,
+            "p95_ms": 3.4449999332428,
+            "p99_ms": 4.05100011825562,
+            "max_ms": 5.2189998626709,
+            "total_ms": 1785.2510020732882
+          },
+          "render_setup_cpu_ms": {
+            "count": 649,
+            "median_ms": 0.293,
+            "p95_ms": 0.367,
+            "p99_ms": 0.488,
+            "max_ms": 0.626,
+            "total_ms": 179.706
+          },
+          "physics_monitor_ms": {
+            "count": 649,
+            "median_ms": 4.925,
+            "p95_ms": 5.552,
+            "p99_ms": 5.552,
+            "max_ms": 5.552,
+            "total_ms": 3173.637
+          },
+          "frames_over_16_667_ms": 0
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 628,
+            "median_ms": 7.332000000000001,
+            "p95_ms": 10.99,
+            "p99_ms": 15.197,
+            "max_ms": 18.097,
+            "total_ms": 4999.54
+          },
+          "gpu_ms": {
+            "count": 628,
+            "median_ms": 5.77600002288818,
+            "p95_ms": 6.66900014877319,
+            "p99_ms": 7.01700019836426,
+            "max_ms": 7.20100021362305,
+            "total_ms": 3703.0650005340576
+          },
+          "render_cpu_ms": {
+            "count": 628,
+            "median_ms": 2.789000034332275,
+            "p95_ms": 3.82699990272522,
+            "p99_ms": 4.93800020217896,
+            "max_ms": 5.97100019454956,
+            "total_ms": 1818.188000202179
+          },
+          "render_setup_cpu_ms": {
+            "count": 628,
+            "median_ms": 0.307,
+            "p95_ms": 0.418,
+            "p99_ms": 0.513,
+            "max_ms": 0.647,
+            "total_ms": 186.343
+          },
+          "physics_monitor_ms": {
+            "count": 628,
+            "median_ms": 5.286,
+            "p95_ms": 6.593,
+            "p99_ms": 6.914,
+            "max_ms": 6.914,
+            "total_ms": 3275.254
+          },
+          "frames_over_16_667_ms": 3
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "count": 118,
+            "median_ms": 7.6735,
+            "p95_ms": 12.204,
+            "p99_ms": 13.774,
+            "max_ms": 16.214,
+            "total_ms": 957.795
+          },
+          "gpu_ms": {
+            "count": 118,
+            "median_ms": 5.576500177383425,
+            "p95_ms": 6.51700019836426,
+            "p99_ms": 6.80600023269653,
+            "max_ms": 6.88399982452393,
+            "total_ms": 669.4400019645691
+          },
+          "render_cpu_ms": {
+            "count": 118,
+            "median_ms": 2.941499948501585,
+            "p95_ms": 4.29699993133545,
+            "p99_ms": 5.98400020599365,
+            "max_ms": 7.03499984741211,
+            "total_ms": 362.2659990787506
+          },
+          "render_setup_cpu_ms": {
+            "count": 118,
+            "median_ms": 0.3095,
+            "p95_ms": 0.433,
+            "p99_ms": 0.574,
+            "max_ms": 0.762,
+            "total_ms": 36.587
+          },
+          "physics_monitor_ms": {
+            "count": 118,
+            "median_ms": 6.139,
+            "p95_ms": 6.139,
+            "p99_ms": 6.139,
+            "max_ms": 6.139,
+            "total_ms": 698.392
+          },
+          "frames_over_16_667_ms": 0
+        }
+      },
+      "stages": {
+        "arrival_idle:collision node attach": {
+          "count": 310,
+          "median_ms": 0.315,
+          "p95_ms": 0.486,
+          "p99_ms": 0.608,
+          "max_ms": 0.643,
+          "total_ms": 88.983
+        },
+        "arrival_idle:collision piece": {
+          "count": 314,
+          "median_ms": 0.3515,
+          "p95_ms": 0.545,
+          "p99_ms": 0.692,
+          "max_ms": 0.752,
+          "total_ms": 100.133
+        },
+        "arrival_idle:retire collision/mesh": {
+          "count": 1458,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.577
+        },
+        "arrival_idle:staging frame": {
+          "count": 1458,
+          "median_ms": 0.005,
+          "p95_ms": 0.267,
+          "p99_ms": 2.548,
+          "max_ms": 2.836,
+          "total_ms": 134.812
+        },
+        "loading:collision node attach": {
+          "count": 705,
+          "median_ms": 0.306,
+          "p95_ms": 0.519,
+          "p99_ms": 0.932,
+          "max_ms": 2.629,
+          "total_ms": 221.649
+        },
+        "loading:collision piece": {
+          "count": 2005,
+          "median_ms": 0.001,
+          "p95_ms": 0.454,
+          "p99_ms": 0.71,
+          "max_ms": 2.797,
+          "total_ms": 247.731
+        },
+        "loading:retire collision/mesh": {
+          "count": 2728,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.507,
+          "total_ms": 2.193
+        },
+        "loading:staging frame": {
+          "count": 2728,
+          "median_ms": 0.005,
+          "p95_ms": 2.4,
+          "p99_ms": 2.814,
+          "max_ms": 4.916,
+          "total_ms": 638.406
+        },
+        "outdoor_sweep:collision node attach": {
+          "count": 8,
+          "median_ms": 0.196,
+          "p95_ms": 0.551,
+          "p99_ms": 0.551,
+          "max_ms": 0.551,
+          "total_ms": 1.8290000000000002
+        },
+        "outdoor_sweep:collision piece": {
+          "count": 8,
+          "median_ms": 0.218,
+          "p95_ms": 0.578,
+          "p99_ms": 0.578,
+          "max_ms": 0.578,
+          "total_ms": 2.024
+        },
+        "outdoor_sweep:retire collision/mesh": {
+          "count": 1062,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.426
+        },
+        "outdoor_sweep:staging frame": {
+          "count": 1062,
+          "median_ms": 0.005,
+          "p95_ms": 0.006,
+          "p99_ms": 0.008,
+          "max_ms": 2.622,
+          "total_ms": 8.193
+        },
+        "save_during_play:retire collision/mesh": {
+          "count": 118,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.045
+        },
+        "save_during_play:staging frame": {
+          "count": 118,
+          "median_ms": 0.006,
+          "p95_ms": 0.008,
+          "p99_ms": 0.008,
+          "max_ms": 0.009,
+          "total_ms": 0.679
+        },
+        "settled_idle:retire collision/mesh": {
+          "count": 628,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.028,
+          "total_ms": 0.28500000000000003
+        },
+        "settled_idle:staging frame": {
+          "count": 628,
+          "median_ms": 0.005,
+          "p95_ms": 0.007,
+          "p99_ms": 0.008,
+          "max_ms": 0.638,
+          "total_ms": 4.034
+        },
+        "turning:retire collision/mesh": {
+          "count": 649,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.002,
+          "total_ms": 0.277
+        },
+        "turning:staging frame": {
+          "count": 649,
+          "median_ms": 0.005,
+          "p95_ms": 0.007,
+          "p99_ms": 0.009,
+          "max_ms": 0.167,
+          "total_ms": 3.696
+        }
+      },
+      "images": {
+        "arrival.png": "264ea01d7630724c16e05b4b521b134e078c14322765555c17af6d4497330eb9",
+        "outdoor_0.png": "61acccf374c4a9993c7f9490c719cb440cba395f6052ad3341df4f05075e45c9",
+        "outdoor_1.png": "fc60c03e9387988c9ce35e0b5058b47923c7a443aa574c8562dfed0d0a44191f",
+        "outdoor_2.png": "2108c250645f308f6c38f6134f0fadb0bcf7f54771363d2207ad4939f498c6ff"
+      },
+      "competing_engines_or_compilers_observed": [],
+      "trace_enabled": false,
+      "position": "(1101.203, 58.52123, 353.6957)",
+      "outdoor_target": "(1085.203, 58.42123, 349.6957)",
+      "outdoor_poses": [
+        "(1085.203, 58.52123, 353.6957)",
+        "(1093.203, 58.52123, 353.6957)",
+        "(1101.203, 58.52123, 353.6957)"
+      ],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 44.55,
+        "temperature.gpu": 64.0,
+        "clocks.current.graphics [MHz]": 2295.0
+      }
+    },
+    {
+      "label": "collision_1024_a2",
+      "folder": "reports/performance_changes/20261109T194917764026Z_collision_1024_a2",
+      "passed": true,
+      "diagnostics": [],
+      "configured": true,
+      "requested_triangles": 1024,
+      "ready_ms": 33002.547,
+      "dropped": 0,
+      "census": {
+        "largest_piece": 1024,
+        "shapes": 517,
+        "triangles": 410350
+      },
+      "resident_tiles": 464,
+      "engine_static_bytes": 850582162.0,
+      "resources": {
+        "peak_private_commit_bytes": 4172427264,
+        "peak_working_set_bytes": 2326335488,
+        "peak_dedicated_gpu_bytes": 1752162304
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "ac7335cd2f3281f404109cf35aed06d98561070f4a0553c29b08a479c73cafc4",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\render_occlusion_probe.gd": "2b12c084928d4406155a0c424f54b7a44dd997803856f4b73d0ceb2438a81b89",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "addons\\world_runtime\\frame_trace.gd": "36a1b26e37f80db370bfe0a94fdc1c7089a35475816ec1106d822b1e0093de9c",
+        "addons\\world_runtime\\render_trace.gd": "c4c8245833a6a7e53592d5b35ead5ef057874fde16f99582f9fce2fbfc7023c5",
+        "tools\\check_frame_trace_world.py": "2b2c53f6688238c05ecd4c233314cd354914de9e21c6836920e9c0496219f1a3"
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "95f041bb88827a2f3fa6796d09f3dbcfed8d676eddc6456f356dfbdc9933972d",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c05d2c5113d967dc4501503eddc5f086cb9a602c983c0a6d67293ac4c311970a",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "clone": {
+        "created": true,
+        "slot": "StartupBench_FPS_20261109T194917764026",
+        "source_slot": "StartupBench_FPS_20261109T073252",
+        "source_sha256": "91e0038b5a4f70551a984db6140b3e772cd5a09bb2feb1b2ccd64d1a5f1feda8",
+        "map_cache_copied": false
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 1474,
+            "median_ms": 7.726,
+            "p95_ms": 13.85,
+            "p99_ms": 17.283,
+            "max_ms": 24.492,
+            "total_ms": 12008.269
+          },
+          "gpu_ms": {
+            "count": 1474,
+            "median_ms": 5.1399998664856,
+            "p95_ms": 5.92500019073486,
+            "p99_ms": 6.27199983596802,
+            "max_ms": 6.72499990463257,
+            "total_ms": 7686.263993263245
+          },
+          "render_cpu_ms": {
+            "count": 1474,
+            "median_ms": 2.58100008964539,
+            "p95_ms": 3.65300011634827,
+            "p99_ms": 4.74700021743774,
+            "max_ms": 14.3610000610352,
+            "total_ms": 4017.9070014953613
+          },
+          "render_setup_cpu_ms": {
+            "count": 1474,
+            "median_ms": 0.283,
+            "p95_ms": 0.413,
+            "p99_ms": 0.544,
+            "max_ms": 1.321,
+            "total_ms": 409.91
+          },
+          "physics_monitor_ms": {
+            "count": 1474,
+            "median_ms": 5.385,
+            "p95_ms": 7.045,
+            "p99_ms": 7.045,
+            "max_ms": 7.045,
+            "total_ms": 7834.832
+          },
+          "frames_over_16_667_ms": 18
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 1023,
+            "median_ms": 7.369,
+            "p95_ms": 11.852,
+            "p99_ms": 17.213,
+            "max_ms": 25.081,
+            "total_ms": 8005.226
+          },
+          "gpu_ms": {
+            "count": 1023,
+            "median_ms": 5.56199979782104,
+            "p95_ms": 6.58900022506714,
+            "p99_ms": 7.06300020217896,
+            "max_ms": 7.3899998664856,
+            "total_ms": 5707.082007408142
+          },
+          "render_cpu_ms": {
+            "count": 1023,
+            "median_ms": 2.62100005149841,
+            "p95_ms": 3.60899996757507,
+            "p99_ms": 7.55499982833862,
+            "max_ms": 11.5799999237061,
+            "total_ms": 2829.1299982070923
+          },
+          "render_setup_cpu_ms": {
+            "count": 1023,
+            "median_ms": 0.286,
+            "p95_ms": 0.391,
+            "p99_ms": 1.402,
+            "max_ms": 2.099,
+            "total_ms": 297.143
+          },
+          "physics_monitor_ms": {
+            "count": 1023,
+            "median_ms": 4.472,
+            "p95_ms": 7.295,
+            "p99_ms": 7.295,
+            "max_ms": 7.295,
+            "total_ms": 5221.054
+          },
+          "frames_over_16_667_ms": 11
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 654,
+            "median_ms": 7.1045,
+            "p95_ms": 9.953,
+            "p99_ms": 11.839,
+            "max_ms": 15.852,
+            "total_ms": 5002.199
+          },
+          "gpu_ms": {
+            "count": 654,
+            "median_ms": 5.954999923706055,
+            "p95_ms": 6.86800003051758,
+            "p99_ms": 7.14599990844727,
+            "max_ms": 7.4060001373291,
+            "total_ms": 3938.172007083893
+          },
+          "render_cpu_ms": {
+            "count": 654,
+            "median_ms": 2.62100005149841,
+            "p95_ms": 3.16700005531311,
+            "p99_ms": 4.27299976348877,
+            "max_ms": 4.86199998855591,
+            "total_ms": 1728.8820009231567
+          },
+          "render_setup_cpu_ms": {
+            "count": 654,
+            "median_ms": 0.269,
+            "p95_ms": 0.342,
+            "p99_ms": 0.405,
+            "max_ms": 1.066,
+            "total_ms": 170.295
+          },
+          "physics_monitor_ms": {
+            "count": 654,
+            "median_ms": 4.937,
+            "p95_ms": 6.498,
+            "p99_ms": 6.498,
+            "max_ms": 6.498,
+            "total_ms": 3362.4480000000003
+          },
+          "frames_over_16_667_ms": 0
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 660,
+            "median_ms": 7.0605,
+            "p95_ms": 9.952,
+            "p99_ms": 11.101,
+            "max_ms": 15.791,
+            "total_ms": 5008.297
+          },
+          "gpu_ms": {
+            "count": 660,
+            "median_ms": 5.94199991226196,
+            "p95_ms": 6.81599998474121,
+            "p99_ms": 7.06199979782104,
+            "max_ms": 7.34899997711182,
+            "total_ms": 3968.083002090454
+          },
+          "render_cpu_ms": {
+            "count": 660,
+            "median_ms": 2.641499996185305,
+            "p95_ms": 3.24300003051758,
+            "p99_ms": 4.24900007247925,
+            "max_ms": 5.32000017166138,
+            "total_ms": 1754.107002735138
+          },
+          "render_setup_cpu_ms": {
+            "count": 660,
+            "median_ms": 0.2725,
+            "p95_ms": 0.341,
+            "p99_ms": 0.418,
+            "max_ms": 0.999,
+            "total_ms": 172.231
+          },
+          "physics_monitor_ms": {
+            "count": 660,
+            "median_ms": 4.669,
+            "p95_ms": 6.498,
+            "p99_ms": 6.498,
+            "max_ms": 6.498,
+            "total_ms": 3286.083
+          },
+          "frames_over_16_667_ms": 0
+        },
+        "save_during_play": {
+          "frame_ms": {
+            "count": 112,
+            "median_ms": 8.546,
+            "p95_ms": 12.505,
+            "p99_ms": 13.963,
+            "max_ms": 15.412,
+            "total_ms": 938.05
+          },
+          "gpu_ms": {
+            "count": 112,
+            "median_ms": 5.680499792098995,
+            "p95_ms": 6.4850001335144,
+            "p99_ms": 6.66099977493286,
+            "max_ms": 6.87200021743774,
+            "total_ms": 644.1100001335144
+          },
+          "render_cpu_ms": {
+            "count": 112,
+            "median_ms": 2.88950002193451,
+            "p95_ms": 4.05000019073486,
+            "p99_ms": 4.43699979782104,
+            "max_ms": 4.5479998588562,
+            "total_ms": 334.5549995899201
+          },
+          "render_setup_cpu_ms": {
+            "count": 112,
+            "median_ms": 0.3055,
+            "p95_ms": 0.413,
+            "p99_ms": 0.443,
+            "max_ms": 0.564,
+            "total_ms": 33.847
+          },
+          "physics_monitor_ms": {
+            "count": 112,
+            "median_ms": 5.128,
+            "p95_ms": 5.128,
+            "p99_ms": 5.128,
+            "max_ms": 5.128,
+            "total_ms": 537.742
+          },
+          "frames_over_16_667_ms": 0
+        }
+      },
+      "stages": {
+        "arrival_idle:collision node attach": {
+          "count": 177,
+          "median_ms": 0.522,
+          "p95_ms": 0.867,
+          "p99_ms": 1.127,
+          "max_ms": 1.25,
+          "total_ms": 93.739
+        },
+        "arrival_idle:collision piece": {
+          "count": 181,
+          "median_ms": 0.55,
+          "p95_ms": 0.916,
+          "p99_ms": 1.226,
+          "max_ms": 1.372,
+          "total_ms": 102.722
+        },
+        "arrival_idle:retire collision/mesh": {
+          "count": 1474,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.602
+        },
+        "arrival_idle:staging frame": {
+          "count": 1474,
+          "median_ms": 0.005,
+          "p95_ms": 0.622,
+          "p99_ms": 2.56,
+          "max_ms": 3.488,
+          "total_ms": 137.269
+        },
+        "loading:collision node attach": {
+          "count": 389,
+          "median_ms": 0.586,
+          "p95_ms": 0.899,
+          "p99_ms": 1.946,
+          "max_ms": 3.891,
+          "total_ms": 224.603
+        },
+        "loading:collision piece": {
+          "count": 1689,
+          "median_ms": 0.001,
+          "p95_ms": 0.754,
+          "p99_ms": 1.018,
+          "max_ms": 4.036,
+          "total_ms": 246.697
+        },
+        "loading:retire collision/mesh": {
+          "count": 2673,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.381,
+          "total_ms": 2.19
+        },
+        "loading:staging frame": {
+          "count": 2673,
+          "median_ms": 0.005,
+          "p95_ms": 2.224,
+          "p99_ms": 2.935,
+          "max_ms": 4.735,
+          "total_ms": 623.1129999999999
+        },
+        "outdoor_sweep:retire collision/mesh": {
+          "count": 1023,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.002,
+          "total_ms": 0.424
+        },
+        "outdoor_sweep:staging frame": {
+          "count": 1023,
+          "median_ms": 0.005,
+          "p95_ms": 0.007,
+          "p99_ms": 0.009,
+          "max_ms": 0.139,
+          "total_ms": 5.398
+        },
+        "save_during_play:collision node attach": {
+          "count": 4,
+          "median_ms": 0.8325,
+          "p95_ms": 0.852,
+          "p99_ms": 0.852,
+          "max_ms": 0.852,
+          "total_ms": 3.175
+        },
+        "save_during_play:collision piece": {
+          "count": 4,
+          "median_ms": 0.8975,
+          "p95_ms": 0.919,
+          "p99_ms": 0.919,
+          "max_ms": 0.919,
+          "total_ms": 3.439
+        },
+        "save_during_play:retire collision/mesh": {
+          "count": 112,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.047
+        },
+        "save_during_play:staging frame": {
+          "count": 112,
+          "median_ms": 0.005,
+          "p95_ms": 0.007,
+          "p99_ms": 0.968,
+          "max_ms": 3.298,
+          "total_ms": 4.862
+        },
+        "settled_idle:retire collision/mesh": {
+          "count": 660,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.001,
+          "total_ms": 0.243
+        },
+        "settled_idle:staging frame": {
+          "count": 660,
+          "median_ms": 0.005,
+          "p95_ms": 0.006,
+          "p99_ms": 0.007,
+          "max_ms": 0.008,
+          "total_ms": 3.235
+        },
+        "turning:retire collision/mesh": {
+          "count": 654,
+          "median_ms": 0.0,
+          "p95_ms": 0.001,
+          "p99_ms": 0.001,
+          "max_ms": 0.004,
+          "total_ms": 0.252
+        },
+        "turning:staging frame": {
+          "count": 654,
+          "median_ms": 0.005,
+          "p95_ms": 0.006,
+          "p99_ms": 0.008,
+          "max_ms": 0.071,
+          "total_ms": 3.22
+        }
+      },
+      "images": {
+        "arrival.png": "2cd09c4edf82a0256cf8daac52c568a8b6d9742d16d938ac216a0b5189f0b56a",
+        "outdoor_0.png": "a8cf62eb41223a46f330d6642e31864817799e20b3b273e7c6adfba9ac665d79",
+        "outdoor_1.png": "0b9c12655849aff64d4e2dd195659f6f1acbc339de174ee3a908f8ceaffd6217",
+        "outdoor_2.png": "c3c2808e76db3e7c6fd4d6745ddc41e48b04764946c0797442b89847a1d53a36"
+      },
+      "competing_engines_or_compilers_observed": [],
+      "trace_enabled": false,
+      "position": "(1101.203, 58.52123, 353.6957)",
+      "outdoor_target": "(1085.203, 58.42123, 349.6957)",
+      "outdoor_poses": [
+        "(1085.203, 58.52123, 353.6957)",
+        "(1093.203, 58.52123, 353.6957)",
+        "(1101.203, 58.52123, 353.6957)"
+      ],
+      "whole_lifetime_gpu_medians": {
+        "power.draw [W]": 44.64,
+        "temperature.gpu": 66.0,
+        "clocks.current.graphics [MHz]": 2250.0
+      }
+    }
+  ],
+  "geometry_comparisons": [
+    {
+      "a": "collision_1024_a",
+      "b": "collision_512_b",
+      "shared": 228,
+      "different": 0,
+      "only_a": 20,
+      "only_b": 56
+    },
+    {
+      "a": "collision_1024_a",
+      "b": "collision_512_b2",
+      "shared": 224,
+      "different": 0,
+      "only_a": 24,
+      "only_b": 72
+    },
+    {
+      "a": "collision_1024_a",
+      "b": "collision_1024_a2",
+      "shared": 244,
+      "different": 0,
+      "only_a": 4,
+      "only_b": 24
+    },
+    {
+      "a": "collision_512_b",
+      "b": "collision_512_b2",
+      "shared": 280,
+      "different": 0,
+      "only_a": 4,
+      "only_b": 16
+    },
+    {
+      "a": "collision_512_b",
+      "b": "collision_1024_a2",
+      "shared": 228,
+      "different": 0,
+      "only_a": 56,
+      "only_b": 40
+    },
+    {
+      "a": "collision_512_b2",
+      "b": "collision_1024_a2",
+      "shared": 244,
+      "different": 0,
+      "only_a": 52,
+      "only_b": 24
+    }
+  ],
+  "scope": "Four sequential source runs in 1024/512/512/1024 order. Same retained default-world source, camera route and render settings. Rolling recorder off; bounded collision-stage diagnostic on. Continuous post-draw intervals, screenshot phases excluded. Physics monitor is an engine monitor, not per-tick elapsed work. Async resident sets vary, so frame and total-work differences are not an isolated causal estimate. Short checks do not qualify movement, edits, endurance or stable 60 FPS.",
+  "decision": "Keep production 1024; no consistent whole-frame benefit, varying residency, more shapes. Do not treat this diagnostic as stable 60 FPS or contact qualification.",
+  "reviewed_images_per_run": [
+    "arrival.png",
+    "outdoor_2.png"
+  ],
+  "review_scope": "Eight final arrival/end-outdoor images inspected: no obvious missing terrain, building frontage, road, cover, trees, boulders or held tool. Intermediate images retained but unreviewed; no continuous motion or world-design approval.",
+  "stage_sample_limit_per_phase_and_stage": 20000,
+  "attachment_scope": "Loading and gameplay stage samples include all attachments; this integrated listener does not classify cold versus reused shapes. The separate attachment microbenchmark does."
+}

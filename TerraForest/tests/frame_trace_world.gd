@@ -14,6 +14,42 @@ var render_probe:=false
 var render_probe_result:Dictionary={}
 var outdoor_result:Dictionary={}
 var occlusion_result:Dictionary={}
+var collision_piece_triangles:=0
+var collision_configured:=false
+var collision_stages:Dictionary={}
+var collision_stages_dropped:=0
+var world_opened_us:=0
+var world_ready_ms:=0.0
+
+func collision_stage(stage_name:String,milliseconds:float)->void:
+	if stage_name not in ["collision node attach","collision piece","staging frame","atomic publish","retire collision/mesh"]:return
+	var key:=label+":"+stage_name
+	if not collision_stages.has(key):collision_stages[key]=[]
+	if collision_stages[key].size()<20000:collision_stages[key].append(milliseconds)
+	else:collision_stages_dropped+=1
+
+func collision_census(entries:Dictionary)->Dictionary:
+	# Post-measurement census; hashing full geometry must never enter frame timings.
+	var result:Dictionary={"shapes":0,"triangles":0,"largest_piece":0,"geometry":{}}
+	for key:Variant in entries:
+		var entry:Dictionary=entries[key]
+		if entry.has("bricks"):
+			var child:=collision_census(entry.bricks)
+			result.shapes+=child.shapes;result.triangles+=child.triangles
+			result.largest_piece=maxi(result.largest_piece,child.largest_piece)
+			for brick:String in child.geometry:result.geometry[str(key)+"/"+brick]=child.geometry[brick]
+			continue
+		if not is_instance_valid(entry.get("body")):continue
+		var faces:=PackedVector3Array()
+		for shape_node:Node in entry.body.get_children():
+			if not shape_node is CollisionShape3D:continue
+			var piece:PackedVector3Array=shape_node.shape.get_faces()
+			faces.append_array(piece);result.shapes+=1
+			result.triangles+=piece.size()/3
+			result.largest_piece=maxi(result.largest_piece,piece.size()/3)
+		var hashing:=HashingContext.new();hashing.start(HashingContext.HASH_SHA256)
+		hashing.update(faces.to_byte_array());result.geometry[str(key)]=hashing.finish().hex_encode()
+	return result
 func repeat_lights()->void:
 	if not repeat_light_setters or not is_instance_valid(game):return
 	for light:Node in game.structures.resident_lights.get_children():
@@ -22,9 +58,15 @@ func repeat_lights()->void:
 			light.light_energy=light.light_energy
 func _initialize()->void:
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
+	for arg:String in OS.get_cmdline_user_args():
+		if arg.begins_with("--trace-collision-piece-triangles="):collision_piece_triangles=int(arg.get_slice("=",1))
 	var legacy_cover:bool="--trace-legacy-cover" in OS.get_cmdline_user_args()
 	node_added.connect(func(node:Node):
-		if node.scene_file_path=="res://demo/world.tscn":ProjectSettings.set_setting("terraforest/offscreen_session",true)
+		if node.scene_file_path=="res://demo/world.tscn":
+			ProjectSettings.set_setting("terraforest/offscreen_session",true)
+			if collision_piece_triangles>0:
+				collision_configured=node.terrain.backend.configure_collision_piece_size(collision_piece_triangles)
+				node.terrain.stage_measured.connect(collision_stage)
 		if legacy_cover and node.get_script()!=null and node.get_script().resource_path=="res://addons/world_ecosystem/ground_cover.gd":node.render_partition_subdivisions=1)
 	for arg:String in OS.get_cmdline_user_args():
 		if arg.begins_with("--trace-world-slot="):slot=arg.trim_prefix("--trace-world-slot=")
@@ -44,6 +86,8 @@ func frame()->void:
 		sample.render_cpu_ms=RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid())
 		sample.render_setup_cpu_ms=RenderingServer.get_frame_setup_time_cpu()
 		sample.draw_calls=Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
+		if collision_piece_triangles>0:
+			sample.physics_monitor_ms=Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000.0
 		samples.append(sample)
 	previous=now
 func run()->void:
@@ -57,6 +101,7 @@ func run()->void:
 	var browser=current_scene
 	if not await wait_for(func():return not browser.library.loading,60):quit(1);return
 	var command:Dictionary=preload("res://demo/world_launch.gd").command(slot,false,29,1703,true)
+	world_opened_us=Time.get_ticks_usec()
 	browser._open_game(command.args)
 	if not await wait_for(func():return is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn",90):quit(1);return
 	game=current_scene;game.background_fps=60;game.app_focused=true
@@ -66,6 +111,7 @@ func run()->void:
 		game.max_fps=0;game.background_fps=0;Engine.max_fps=0
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	if not await wait_for(func():return game.startup_complete and not game.loading_active and not game.player_view.entry.blocks_actions(),120):quit(1);return
+	world_ready_ms=(Time.get_ticks_usec()-world_opened_us)/1000.0
 	# Registration occurs asynchronously during startup; replace only after ready.
 	var legacy_structure_capture:bool="--trace-legacy-structure-capture" in OS.get_cmdline_user_args()
 	if legacy_structure_capture:game.persistence._providers["structures"].capture=game.structures.capture_storage_snapshot
@@ -143,6 +189,8 @@ func run()->void:
 	RenderingServer.frame_post_draw.disconnect(frame)
 	var record:Dictionary={"slot":slot,"samples":samples,"trace_enabled":trace!=null,"position":game.player.position,"temporary":game.temporary_world,"snapshot_readonly":game.terrain.backend.readonly_snapshot,"mouse_captures":preload("res://addons/world_runtime/mouse_ownership.gd").captures}
 	record.initializations=initializations
+	if collision_piece_triangles>0:
+		record.collision={"configured":collision_configured,"requested_triangles":collision_piece_triangles,"ready_ms":world_ready_ms,"stages":collision_stages,"stages_dropped":collision_stages_dropped,"census":collision_census(game.terrain.tiles),"resident_tiles":game.terrain.tiles.size(),"engine_static_bytes":Performance.get_monitor(Performance.MEMORY_STATIC)}
 	record.last_capture=game.persistence.last_capture.duplicate(true)
 	record.manual_save=manual_save.duplicate()
 	record.legacy_structure_capture=legacy_structure_capture
@@ -167,6 +215,7 @@ func run()->void:
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
 	okay=okay and record.viewport_occlusion_restored
+	if collision_piece_triangles>0:okay=okay and collision_configured and collision_stages_dropped==0 and record.collision.census.shapes>0 and record.collision.census.largest_piece<=collision_piece_triangles
 	if render_probe:okay=okay and render_probe_result.unchanged and render_probe_result.instances>0
 	if not outdoor_result.is_empty():okay=okay and outdoor_result.ok
 	if not occlusion_result.is_empty():okay=okay and occlusion_result.ok

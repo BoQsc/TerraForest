@@ -36,6 +36,7 @@ def main():
     parser.add_argument('--render-full-detail', action='store_true', help='Diagnostic only: disable automatic mesh LOD for every ABBA phase')
     parser.add_argument('--legacy-cover', action='store_true', help='Diagnostic only: use the prior 32 m cover layout before first admission')
     parser.add_argument('--outdoor-cover', action='store_true', help='Repeatable 16 m outdoor camera sweep with normal world services and quality')
+    parser.add_argument('--collision-piece-triangles', type=int, choices=[256, 512, 1024], help='Diagnostic only: configure exact terrain collision partitions before worker startup')
     parser.add_argument('--light-abba', action='store_true', help='Compare unchanged versus redundantly submitted pooled lights in one stationary view')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
@@ -99,6 +100,8 @@ def main():
         command += ['--trace-legacy-cover']
     if args.outdoor_cover:
         command += ['--trace-outdoor-cover']
+    if args.collision_piece_triangles:
+        command += ['--trace-collision-piece-triangles=' + str(args.collision_piece_triangles)]
     if args.uncapped:
         command += ['--trace-uncapped']
     if not args.without_trace:

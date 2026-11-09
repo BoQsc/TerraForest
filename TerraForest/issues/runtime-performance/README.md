@@ -3,9 +3,12 @@
 Latest diagnosis: [terrain collision publication](terrain-collision-publication-2026-11-09.md)
 measures actual live-body attachment, which the old resource-setup timer omitted.
 The 144-check fixture preserves all triangles and distinguishes cold/reused
-shapes. Smaller pieces shorten individual operations but add total work;
-deferred body admission concentrates the cook into one larger unit. Production
-collision policy remains unchanged pending uncontended world/contact checks.
+shapes. A four-run 1024/512/512/1024 default-world comparison now rejects a size
+change: shorter typical attachments do not establish improved frame tails, and
+resident shape counts increase. All four save/shutdown checks pass without leak
+diagnostics; eight views were inspected. A default repeat still reaches 25.081 ms
+outdoors while terrain staging stays below 0.139 ms. Production remains at 1024;
+physics, rendering/draw waits and total recorder overhead are the next targets.
 
 Latest source follow-up: [native world callback attribution](native-world-process-2026-11-09.md)
 separates block residency/upload/collision/occlusion, distant model pages and
