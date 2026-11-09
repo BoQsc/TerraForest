@@ -745,6 +745,14 @@ func _drain_staging() -> void:
 			return
 	while Time.get_ticks_usec() - begin < main_build_budget_us:
 		var unit_begin: int = Time.get_ticks_usec()
+		# Atomic publication is its own indivisible unit. A final collision piece
+		# may already have exhausted this slice; keep the old complete surface
+		# until the next available slice rather than stacking the swap on top.
+		if pending_edit and edit_worker_done and batch_remaining==0:
+			if not latest_error.is_empty():break
+			_commit_batch()
+			last_publish_ms=last_commit_ms
+			continue
 		_select_preparation_work()
 		if preparation.is_empty():
 			if staging.is_empty():
@@ -790,8 +798,6 @@ func _drain_staging() -> void:
 						continue
 					staged_batch[key] = entry
 					batch_remaining -= 1
-					if batch_remaining == 0 and edit_worker_done:
-						_commit_batch()
 				else:
 					_install(key, entry)
 					if str(data.get("kind", "")) == "relight":

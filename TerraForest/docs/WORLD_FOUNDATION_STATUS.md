@@ -441,6 +441,19 @@ using recorder-on/off captures; close with comparable pacing, normal player trav
 collapse/water-boundary recovery and endurance evidence. Callback improvement and
 short cleanup checks do not establish whole-world nonregression or memory stability.
 
+[A source-only terrain scheduling correction](../issues/runtime-performance/terrain-publication-budget-2026-11-09.md)
+now checks the build boundary before final atomic publication. A recorded 10.120 ms
+staging frame contained 5.072 ms of final publication after preparation already
+exceeded the 2.5 ms slice. The new real-mesh/collider regression fails six assertions
+on old source and passes all 50 on the correction; coverage and edit recovery pass.
+An overrun retains the old complete surface until the next available slice; an
+ample-budget batch keeps same-call publication. This may add one process frame of
+edit latency and is not yet exported. Return when user gameplay is closed and a
+clean test/export window is available: compare populated destruction and travel,
+vegetation edits, visual/collider continuity, edit latency, save/shutdown and frame
+tails. Preserve the unrelated uncommitted pistol-audio trial. Functional atomicity
+does not close rendering, frame-time, player responsiveness or endurance acceptance.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,

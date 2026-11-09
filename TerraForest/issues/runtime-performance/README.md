@@ -1,5 +1,13 @@
 # Runtime performance
 
+Latest source correction: [terrain publication budget boundary](terrain-publication-budget-2026-11-09.md)
+prevents a completed collision-preparation unit from immediately starting the
+atomic swap after its slice is exhausted. The old complete surface stays live;
+an ample-budget batch still publishes in the same call. The new regression fails
+on old source and all 50 assertions pass with the correction; coverage and recovery
+checks also pass. Installed-world timing, edit latency and rendered continuity
+remain pending. This change is not yet in the installed package.
+
 Latest world fix: [native forest/boulder invalidation](destruction-owner-bounds-2026-11-09.md)
 replaces repeated owner scans during local destruction with exact native bounds
 queries. The same-package control reduces forest/boulder callback medians from

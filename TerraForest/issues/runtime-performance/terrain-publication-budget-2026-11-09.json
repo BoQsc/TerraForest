@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "status": "Source correction and focused functional checks pass; not exported; whole-world FPS and latency comparison pending.",
+  "scope": "Four real native terrain regions, live collider queries, injected final-preparation overrun, worker completion ordering, same-call publication when budget remains, exactly-once revision; plus existing coverage/recovery. Headless below-normal-priority checks during user gameplay, not performance measurements.",
+  "source_sha256": {
+    "addons/volumetric_terrain/terrain_stream.gd": "e12119e040b61dba3e66bd36607c2b3c2b6be6fa9d194c87632c83ae398b2e48",
+    "tests/terrain_publication_probe.gd": "9a27dfc359471becc22587d7806840318579ac42a18bc7d2586aa106faea60f1"
+  },
+  "baseline_commit": "ff8949b2",
+  "baseline_stream_git_blob_sha256": "250a382f8c3082e1200ab3ed228125d4f1fd531118c5b877b17dcc9e9ad77b49",
+  "evidence_frame": {
+    "run": "reports/performance_changes/20261109T210342400008Z_destruction_index_pack",
+    "frame": 8350,
+    "frame_ms": 29.494,
+    "staging_ms": 10.12,
+    "nested_atomic_ms": 5.072,
+    "configured_build_budget_us": 2500
+  },
+  "runs": [
+    {
+      "label": "expected_old_failure",
+      "folder": "reports/checks/20261109T212028505684Z",
+      "required_text": "TERRAIN_PUBLICATION_PROBE failures=0",
+      "test_sha256": "9a27dfc359471becc22587d7806840318579ac42a18bc7d2586aa106faea60f1",
+      "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+      "revision": "ff8949b2244b9cf97d5de9a9a7eb620b474b47a3",
+      "passed": false,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL deferred publication keeps the complete old physical surface (1280, 1280, 16)",
+        "FAIL deferred publication keeps the complete old physical surface (1280, 1296, 16)",
+        "FAIL deferred publication keeps the complete old physical surface (1296, 1280, 16)",
+        "FAIL deferred publication keeps the complete old physical surface (1296, 1296, 16)",
+        "FAIL exhausted preparation slice defers the atomic publication unit",
+        "FAIL overrun cannot partially switch visuals or colliders"
+      ],
+      "assertions_passed": 44,
+      "assertions_failed": 6,
+      "elapsed_seconds": 0.8808260000078008,
+      "log_sha256": "749a2c1db019aaf052dd6d58b27b19b2413bc293a929bc58c8e496c03fcc2492"
+    },
+    {
+      "label": "corrected_publication",
+      "folder": "reports/checks/20261109T212116469155Z",
+      "required_text": "TERRAIN_PUBLICATION_PROBE failures=0",
+      "test_sha256": "9a27dfc359471becc22587d7806840318579ac42a18bc7d2586aa106faea60f1",
+      "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+      "revision": "ff8949b2244b9cf97d5de9a9a7eb620b474b47a3",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "assertions_passed": 50,
+      "assertions_failed": 0,
+      "elapsed_seconds": 0.82951939990744,
+      "log_sha256": "312865c26a9ddfd7140002b3a2fd6bb82ecae2cee3114ed98c65cd7f192aff20"
+    },
+    {
+      "label": "coverage",
+      "folder": "reports/checks/20261109T212210386247Z",
+      "required_text": "TERRAIN_STREAM_COVERAGE failures=0",
+      "test_sha256": "65f7ec7796647b1f6004841306886242a85786d9dd95b2f7cce6bcd1b8f20d0b",
+      "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+      "revision": "ff8949b2244b9cf97d5de9a9a7eb620b474b47a3",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "assertions_passed": 14,
+      "assertions_failed": 0,
+      "elapsed_seconds": 0.9247890999540687,
+      "log_sha256": "21600198b332af3624da9a341db78e97637140b156a6605428f51b6fd30ce1c3"
+    },
+    {
+      "label": "edit_recovery",
+      "folder": "reports/checks/20261109T212211753230Z",
+      "required_text": "TERRAIN_EDIT_RECOVERY failures=0",
+      "test_sha256": "a8ceca6b911b6add6be51c9dec0fe9c60f4e333f5cdd1855a038da2a22534b74",
+      "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+      "revision": "ff8949b2244b9cf97d5de9a9a7eb620b474b47a3",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "assertions_passed": 18,
+      "assertions_failed": 0,
+      "elapsed_seconds": 0.8354594999691471,
+      "log_sha256": "086032db5f7d96492387639b9bb701abadebdd9662374777fe3d2381b0869736"
+    }
+  ],
+  "installed_package_contains_correction": false,
+  "remaining": [
+    "uncontended default-world on/off capture",
+    "populated vegetation-edit regression",
+    "edit-to-visible latency",
+    "rendered continuity",
+    "save/shutdown integration",
+    "rendering waits and physics callbacks",
+    "collapse/water-boundary recovery",
+    "pursuit and endurance"
+  ]
+}

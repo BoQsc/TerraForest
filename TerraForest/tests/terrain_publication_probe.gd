@@ -7,6 +7,17 @@ class FixedCut extends Stream:
 	func _update_cut(_covered:Dictionary={}) -> void:
 		pass
 
+class BudgetedCut extends FixedCut:
+	# Original 0BSD regression: simulate one indivisible collision preparation
+	# overrunning its slice, while retaining the real mesh/body publication path.
+	var force_budget_overrun:=false
+	func _prepare_piece()->bool:
+		var finished:bool=super._prepare_piece()
+		if finished and force_budget_overrun:
+			OS.delay_usec(main_build_budget_us+1000)
+			force_budget_overrun=false
+		return finished
+
 var world: Stream
 var core: RefCounted
 var recipes: RefCounted
@@ -63,7 +74,7 @@ func run() -> void:
 	GDExtensionManager.load_extension("res://addons/volumetric_terrain/terrain_core.gdextension")
 	core = ClassDB.instantiate("TerrainCore")
 	recipes = ClassDB.instantiate("NativeTerrainCollision")
-	world = FixedCut.new()
+	world = BudgetedCut.new()
 	root.add_child(world)
 	world.set_process(false)
 	world.material = StandardMaterial3D.new()
@@ -133,6 +144,7 @@ func run() -> void:
 	for i in range(4):
 		if new_heights[i]<old_heights[i]-0.01: lower_hits += 1
 	check(lower_hits==4,"all four physics rays observe the excavated surface")
+	await check_publication_budget(point)
 	world.shutdown()
 	world.free()
 	await process_frame
@@ -140,4 +152,40 @@ func run() -> void:
 	var file := FileAccess.open("res://reports/terrain_publication_probe.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"failures":failures,"checks":checks,"timings":timings,"old_ray_heights":old_heights,"new_ray_heights":new_heights,"scope":"Headless existing-stream publication with four native 16 m fixtures, fixed visible cut and physics-step ray queries. No worker scheduling, quadtree transitions, draw/GPU, new mesher, endurance or FPS qualification."},"  "))
 	file.close()
+	print("TERRAIN_PUBLICATION_PROBE failures=",failures," checks=",checks.size())
 	quit(0 if failures==0 else 1)
+
+func check_publication_budget(point:Vector3)->void:
+	var previous:Dictionary=world.tiles.duplicate()
+	var edit:PackedByteArray=core.execute(Codec.brush(point,point,5,0,false,1))
+	check(Codec.reply_ok(edit) and edit.decode_u32(16)>0,"second boundary excavation supplies real replacement geometry")
+	world.pending_edit=true;world.edit_ticket=4;world.batch_remaining=4
+	world.edit_started_us=Time.get_ticks_usec();world.edit_worker_done=false
+	world._receive({"kind":"edit_done","epoch":world.epoch,"ticket":4,"build_total_ms":0.0,"worker_finished_us":Time.get_ticks_usec()})
+	check(world.pending_edit and world.edit_worker_done,"early worker completion waits for prepared geometry")
+	for at in world.visible_cut.size():
+		var key:Vector3i=world.visible_cut[at];world.stamps[key]=4
+		var data:=build(key,4);data.kind="edit_chunk";data.ticket=4
+		world._receive(data)
+		if at==world.visible_cut.size()-1:world.set("force_budget_overrun",true)
+		drain()
+	check(world.pending_edit and world.batch_remaining==0 and world.staged_batch.size()==4 and world.published_revision==1,"exhausted preparation slice defers the atomic publication unit")
+	var old_intact:=true
+	for key in previous:
+		old_intact=old_intact and world.tiles[key]==previous[key] and previous[key].node.visible and previous[key].body.collision_layer==1
+	check(old_intact,"overrun cannot partially switch visuals or colliders")
+	await physics_hits(previous,"deferred publication keeps the complete old physical surface")
+	world._drain_staging()
+	check(not world.pending_edit and world.staged_batch.is_empty() and world.published_revision==2,"next available build slice publishes the complete batch once")
+	await physics_hits(world.tiles,"budgeted publication exposes all replacement colliders")
+	# A small prepared batch still commits in the same drain call when it fits;
+	# the correction must not impose an unconditional extra frame of latency.
+	world.main_build_budget_us=1000000
+	world.pending_edit=true;world.edit_ticket=5;world.batch_remaining=1;world.edit_worker_done=false
+	world._receive({"kind":"edit_done","epoch":world.epoch,"ticket":5,"build_total_ms":0.0,"worker_finished_us":Time.get_ticks_usec()})
+	var first:Vector3i=world.visible_cut[0];world.stamps[first]=5
+	var small:=build(first,5);small.kind="edit_chunk";small.ticket=5
+	world._receive(small);world._drain_staging()
+	check(not world.pending_edit and world.published_revision==3,"available budget preserves same-call publication")
+	world._drain_staging()
+	check(world.published_revision==3,"a consumed publication cannot run twice")
