@@ -340,8 +340,10 @@ func _collect_px9(node:Node)->void:
 	for child in node.get_children():_collect_px9(child)
 
 func handgun_action(action:String)->bool:
-	if current!=9 or px9==null or action_remaining>0:return false
-	var result:int=px9.request(action)
+	if current!=9 or px9==null or rifle_holster_item>=0:return false
+	var interrupt_reload:bool=action in ["reload","reload_empty"] and px9.motion.current_action in ["fire","fire_last","aim_fire","aim_fire_last","dry_fire","aim_in","aim_out"]
+	if action_remaining>0 and not interrupt_reload:return false
+	var result:int=px9.request(action,.04 if interrupt_reload else 0.0)
 	if result==OK:action_remaining=px9.motion.duration_seconds()
 	return result==OK
 

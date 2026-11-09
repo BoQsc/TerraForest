@@ -1,3 +1,10 @@
+## PX9 held-fire action priority - 2026-11-09
+
+Reload now interrupts PX9 recoil/dry fire and aim transitions; active reloads
+retain their shot gate. Held fire yields to aim-in/out before the next shot.
+[Evidence](../issues/px9-handgun/README.md#reloadaim-priority-during-held-fire---2026-11-09)
+records focused input checks. User feel re-review remains pending.
+
 ## PX9 empty-magazine locomotion - 2026-11-09
 
 Empty ammunition no longer overrides moving presentation with fixed idle. Paired

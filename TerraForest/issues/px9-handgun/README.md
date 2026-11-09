@@ -118,3 +118,19 @@ and no movement interruption at the apex. Paired-action/reload/holster checks pa
 68/68. The [rendered empty moving pose](images/empty-moving.png) was inspected.
 Logs are retained in logs/px9-empty-*.log and logs/px9-loaded-motion.log. Reproduce
 with tests/px9_locomotion.gd -- --empty. User gameplay review remains pending.
+
+## Reload/aim priority during held fire - 2026-11-09
+
+Reload can now interrupt PX9 recoil, dry fire and aim transitions with a short
+paired-pose blend; it still cannot interrupt holster or an existing reload.
+Combat continues to block shots while reload is active. Held shooting waits for
+a requested aim-in/aim-out transition before admitting the next round, preventing
+recoil from continually taking that transition slot. Movement clips and inherited
+source animation data are unchanged. User feel re-review remains pending.
+
+Validation: temporary-world checks 23/23 and paired handgun checks 68/68 pass.
+The world regression sends held left/right mouse events, observes aim-in/aim-out
+and aimed recoil, starts reload with the trigger held, verifies zero reload-time
+shots and resumed fire after completion. Logs: [world](logs/px9-action-priority.log)
+and [paired presentation](logs/px9-priority-handgun.log). An initial GDScript type
+inference compile error was corrected with an explicit bool before these reruns.

@@ -50,6 +50,21 @@ func run()->void:
  await ticks(90)
  var held_rounds:int=game.combat.state.get_rounds(9)
  check(held_rounds<=12 and held_rounds>0,"holding left mouse repeats shots at the existing recoil cadence")
+ var human:Node=game.tool_view.human
+ var actions:Array=[];human.px9.action_started.connect(func(action:String):actions.append(action))
+ var aim:=InputEventMouseButton.new();aim.button_index=MOUSE_BUTTON_RIGHT;aim.pressed=true
+ Input.parse_input_event(aim);Input.flush_buffered_events();await ticks(70)
+ check(actions.has("aim_in") and actions.has("aim_fire") and human.handgun_aiming,"held fire waits for aim-in before resuming aimed recoil")
+ aim=InputEventMouseButton.new();aim.button_index=MOUSE_BUTTON_RIGHT;aim.pressed=false
+ Input.parse_input_event(aim);Input.flush_buffered_events();await ticks(50)
+ check(actions.has("aim_out") and not human.handgun_aiming,"aim release while firing plays aim-out")
+ check(game.combat.reload(),"reload interrupts recoil while the trigger remains held")
+ var reload_shots:int=game.combat.shots
+ await ticks(30)
+ check(game.combat.shots==reload_shots and game.combat.reload_slot>=0,"held trigger cannot interrupt active reload")
+ await ticks(210)
+ check(game.combat.reload_slot<0 and game.combat.shots>reload_shots,"held fire resumes after reload completes")
+ held_rounds=game.combat.state.get_rounds(9)
  press=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=false
  Input.parse_input_event(press);Input.flush_buffered_events()
  await ticks(40)

@@ -98,6 +98,8 @@ func fire()->bool:
 	if not can_use() or weapon not in WEAPONS or reload_slot>=0 or timer+.000001<next_shot or projectiles.size()>=PROJECTILE_LIMIT:return false
 	var human:Node=game.tool_view.human
 	if human.current!=weapon or human.action_remaining>0:return false
+	# Let the presentation enter/leave aim before admitting another held shot.
+	if weapon==9 and human.rifle_aiming!=human.handgun_aiming:return false
 	if state.get_rounds(weapon)<=0:
 		next_shot=timer+.4
 		if weapon==9:human.handgun_action("dry_fire")
