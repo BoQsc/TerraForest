@@ -12,6 +12,7 @@ var repeat_light_setters:=false
 var light_phases:Array[Dictionary]=[]
 var render_probe:=false
 var render_probe_result:Dictionary={}
+var outdoor_result:Dictionary={}
 func repeat_lights()->void:
 	if not repeat_light_setters or not is_instance_valid(game):return
 	for light:Node in game.structures.resident_lights.get_children():
@@ -20,8 +21,10 @@ func repeat_lights()->void:
 			light.light_energy=light.light_energy
 func _initialize()->void:
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
+	var legacy_cover:bool="--trace-legacy-cover" in OS.get_cmdline_user_args()
 	node_added.connect(func(node:Node):
-		if node.scene_file_path=="res://demo/world.tscn":ProjectSettings.set_setting("terraforest/offscreen_session",true))
+		if node.scene_file_path=="res://demo/world.tscn":ProjectSettings.set_setting("terraforest/offscreen_session",true)
+		if legacy_cover and node.get_script()!=null and node.get_script().resource_path=="res://addons/world_ecosystem/ground_cover.gd":node.render_partition_subdivisions=1)
 	for arg:String in OS.get_cmdline_user_args():
 		if arg.begins_with("--trace-world-slot="):slot=arg.trim_prefix("--trace-world-slot=")
 		if arg.begins_with("--trace-world-output="):output=arg.trim_prefix("--trace-world-output=")
@@ -65,6 +68,8 @@ func run()->void:
 	label="arrival_idle"
 	var short:bool="--trace-short" in OS.get_cmdline_user_args()
 	await wait_for(func():return false,12 if short else 20)
+	if "--trace-outdoor-cover" in OS.get_cmdline_user_args():
+		outdoor_result=await load(get_script().resource_path.get_base_dir().path_join("cover_outdoor_probe.gd")).new().run(self,game,output)
 	for arg:String in OS.get_cmdline_user_args():
 		if not arg.begins_with("--trace-render-partition="):continue
 		label="render_preparation"
@@ -125,6 +130,9 @@ func run()->void:
 	record.initializations=initializations
 	record.last_capture=game.persistence.last_capture.duplicate(true)
 	record.manual_save=manual_save.duplicate()
+	record.cover_render=[]
+	if not outdoor_result.is_empty():record.outdoor=outdoor_result
+	for batch:Node in game.ground_cover.batches:record.cover_render.append(batch.render_stats())
 	if render_probe:record.render_probe=render_probe_result
 	if light_abba:record.light_phases=light_phases
 	if trace!=null:record.trace_files=trace.written;record.trace_overhead_last_us=trace.overhead_us
@@ -139,4 +147,5 @@ func run()->void:
 	game.free();await process_frame;await process_frame
 	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
 	if render_probe:okay=okay and render_probe_result.unchanged and render_probe_result.instances>0
+	if not outdoor_result.is_empty():okay=okay and outdoor_result.ok
 	print("FRAME_TRACE_WORLD ok=",okay," slot=",slot);quit(0 if okay else 1)

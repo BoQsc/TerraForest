@@ -151,6 +151,8 @@ func _end_draw()->void:
 		if stages.has("save capture"):row.save_components=game.persistence.last_capture.duplicate(true)
 		row.forest_us=game.vegetation.renderer.stats.get("update_us",0);row.ecosystem_us=game.ecosystem.last_process_us
 		row.cover_us=game.ground_cover.last_process_us;row.cover_cells=game.ground_cover.resident.size();row.cover_wanted=game.ground_cover._wanted.size()
+		row.cover_render_phases_us=[]
+		for batch:Node in game.ground_cover.batches:row.cover_render_phases_us.append(batch.render_frame_profile())
 		row.phase="loading" if game.loading_active else ("entry" if row.entry else ("menu" if row.menu or row.inventory else "gameplay"))
 	else:row.phase="startup" if is_instance_valid(game) else "browser"
 	row.zombie_navigation_ticks=take_navigation_samples()

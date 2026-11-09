@@ -140,3 +140,14 @@ These are test-only controls, not production rendering changes. The wrapper
 retains diagnostic source hashes; observation samples include frame/time IDs.
 [Results and native integration requirements](../issues/runtime-performance/cover-render-partitions-2026-11-09.md)
 remain separate from stable-frame-rate and visual acceptance.
+
+The production cover renderer uses native 16 m draw partitions. `--legacy-cover`
+selects the previous 32 m layout before admission for matched comparisons; use
+it with the older `--render-partition` prototype when repeating that experiment.
+`--outdoor-cover` adds a deterministic 16 m camera sweep across resident grass,
+three stationary views and screenshots. It holds height with fly mode while
+world services keep running; it is not a walking/collision check. Screenshots
+have a separate phase. The recorder includes each cover batch's native
+`render_frame_profile()` as `cover_render_phases_us`, separating selection,
+cleanup and upload work from the GDScript cover owner. These are nested costs,
+not values to add to total frame time. Recorder overhead includes collecting them.
