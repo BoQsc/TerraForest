@@ -57,6 +57,8 @@ func run() -> void:
 		check(collection.upsert_instances(ids, transforms), "native GLB placements accepted: " + key)
 	pool.set_focus(Vector3(4, 1, 0)); await pump()
 	check(pool.statistics().active == 4 and pool.get_child_count() == 4, "eighteen objects use exactly four pooled light nodes")
+	var callback_profile:Dictionary=pool.process_frame_profile()
+	check(callback_profile.available and callback_profile.ended_us>=callback_profile.started_us and callback_profile.process_us==callback_profile.ended_us-callback_profile.started_us,"configured light pool retains one complete native process interval")
 	for light:OmniLight3D in pool.get_children():
 		light.set_script(TransformProbe);light.set_notify_transform(true)
 	await pump(2)
@@ -84,6 +86,7 @@ func run() -> void:
 	check(pool.statistics().active == 4, "restored object residency restores pooled light")
 	pool.set_enabled(false)
 	check(pool.statistics().active == 0 and not pool.is_processing(), "disabled pool contributes no processing or lights")
+	check(not pool.process_frame_profile().available,"disabled light pool cannot report its old callback as available")
 	pool.set_enabled(true); pool.set_focus(Vector3(1000, 1, 1000)); await pump()
 	check(pool.statistics().active == 0, "far objects retain mesh ownership without real light nodes")
 	pool.set_focus(Vector3(4, 1, 0)); await pump()

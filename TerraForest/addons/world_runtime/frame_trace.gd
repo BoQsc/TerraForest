@@ -73,8 +73,16 @@ func attach(host:Node)->void:
 		previous_profiling[key]=game.get(key).profiling_enabled;game.get(key).profiling_enabled=true
 	previous_profiling["forest"]=game.vegetation.renderer.profiling_enabled
 	game.vegetation.renderer.profiling_enabled=true
+	_attach_block_profile()
 	game.tree_exiting.connect(detach,CONNECT_ONE_SHOT)
 	stage("trace world attached",0)
+
+func _attach_block_profile()->void:
+	# The world attaches its trace before cooperative startup creates blocks.
+	if previous_profiling.has("blocks") or not is_instance_valid(game):return
+	if is_instance_valid(game.structures.blocks) and game.structures.blocks.has_method("set_process_profiling_enabled"):
+		previous_profiling["blocks"]=game.structures.blocks.is_process_profiling_enabled()
+		game.structures.blocks.set_process_profiling_enabled(true)
 
 func detach()->void:
 	if is_instance_valid(game):
@@ -83,6 +91,7 @@ func detach()->void:
 		for key:String in ["zombies","ground_cover"]:
 			if previous_profiling.has(key):game.get(key).profiling_enabled=previous_profiling[key]
 		if previous_profiling.has("forest"):game.vegetation.renderer.profiling_enabled=previous_profiling.forest
+		if previous_profiling.has("blocks") and is_instance_valid(game.structures.blocks):game.structures.blocks.set_process_profiling_enabled(previous_profiling.blocks)
 	game=null;previous_profiling.clear();resident_ids.clear()
 
 func stage(label:String,milliseconds:float)->void:
@@ -91,6 +100,7 @@ func stage(label:String,milliseconds:float)->void:
 func _begin_process()->void:
 	process_started=Time.get_ticks_usec()
 	work_start=_sample_work()
+	if not previous_profiling.has("blocks"):_attach_block_profile()
 func _begin_physics()->void:
 	physics_started=Time.get_ticks_usec();physics_steps+=1
 	work_physics=_sample_work()
@@ -147,6 +157,15 @@ static func add_work(row:Dictionary,label:String,older:PackedInt64Array,newer:Pa
 	if cycles>=0:row["thread_cycles" if label.is_empty() else label+"_cycles"]=cycles
 	if cpu_us>=0:row[("" if label.is_empty() else label+"_")+"thread_cpu_ms"]=cpu_us/1000.0
 
+func native_process_sample(owner:Node)->Dictionary:
+	if not is_instance_valid(owner):return {"available":false,"current":false,"reason":"owner unavailable"}
+	if not owner.has_method("process_frame_profile"):return {"available":false,"current":false,"reason":"provider unavailable"}
+	var sample:Dictionary=owner.process_frame_profile()
+	# A disabled/paused/manual-only owner can retain an older measurement.
+	# Only a complete interval inside this process callback window is current.
+	sample.current=bool(sample.get("available",false)) and int(sample.started_us)>=process_started and int(sample.ended_us)>=int(sample.started_us) and int(sample.ended_us)<=process_finished
+	return sample
+
 func _end_draw()->void:
 	var began:=Time.get_ticks_usec()
 	var work:=_main_thread_work()
@@ -199,6 +218,7 @@ func _end_draw()->void:
 		row.forest_us=game.vegetation.renderer.stats.get("update_us",0);row.ecosystem_us=game.ecosystem.last_process_us
 		row.cover_us=game.ground_cover.last_process_us;row.cover_cells=game.ground_cover.resident.size();row.cover_wanted=game.ground_cover._wanted.size()
 		row.block_occlusion=game.structures.blocks.occlusion_stats()
+		row.native_world_process={"blocks":native_process_sample(game.structures.blocks),"model_horizon":native_process_sample(game.structures._model_horizon),"resident_lights":native_process_sample(game.structures.resident_lights)}
 		row.cover_render_phases_us=[]
 		for batch:Node in game.ground_cover.batches:row.cover_render_phases_us.append(batch.render_frame_profile())
 		row.phase="loading" if game.loading_active else ("entry" if row.entry else ("menu" if row.menu or row.inventory else "gameplay"))

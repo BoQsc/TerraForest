@@ -44,6 +44,20 @@ class TraceAnalysisTests(unittest.TestCase):
         self.assertEqual(result['largest_cpu_gaps'], [])
         self.assertEqual(result['unmatched_gaps'], 1)
 
+    def test_native_samples_exclude_stale_and_unavailable_without_losing_zero(self):
+        samples = [{'available': True, 'current': True, 'process_us': 0, 'started_us': 100, 'ended_us': 100},
+                   {'available': True, 'current': True, 'process_us': 200, 'started_us': 200, 'ended_us': 400},
+                   {'available': True, 'current': False, 'process_us': 9999},
+                   {'available': False, 'current': False, 'process_us': 9999}]
+        rows = [self.row(index) | {'native_world_process': {'blocks': sample}} for index, sample in enumerate(samples, 1)]
+        rows.append(self.row(5))
+        result = summarize([{'schema': 1, 'frames': rows}])['phases']['gameplay']['native_world_process']['blocks']
+        self.assertEqual(result['current_samples'], 2)
+        self.assertEqual(result['stale_samples'], 1)
+        self.assertEqual(result['unavailable_samples'], 2)
+        self.assertEqual(result['timings_us']['process_us']['mean'], 100)
+        self.assertEqual(set(result['timings_us']), {'process_us'})
+
 
 if __name__ == "__main__":
     unittest.main()

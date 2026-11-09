@@ -142,6 +142,9 @@ class NativeBlockWorld : public Node3D {
     uint64_t upload_last_bytes=0,upload_high_bytes=0,upload_oversize_ticks=0;
     double upload_last_us=0,upload_max_us=0;
     bool measure_uploads=false;
+    bool process_profiling_enabled=false;
+    uint64_t process_profile_started=0,process_profile_ended=0;
+    std::array<uint64_t,5> process_profile_phases{};
     Vector3 residency_focus;
     std::set<BlockKey> wanted,settled,budget_blocked;
     std::map<BlockKey,CachedBlockBake> bake_cache;
@@ -234,6 +237,9 @@ public:
     bool set_navigation_interest(const PackedVector3Array &points);
     bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
     Dictionary streaming_stats() const;
+    void set_process_profiling_enabled(bool enabled);
+    bool is_process_profiling_enabled() const { return process_profiling_enabled; }
+    Dictionary process_frame_profile() const;
     bool configure_occlusion(bool enabled,double radius,int chunk_limit,int64_t geometry_byte_limit);
     Dictionary occlusion_stats() const;
     void set_geometry_lod_enabled(bool enabled);

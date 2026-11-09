@@ -238,6 +238,20 @@ A new-build arrival frame remains 29.868 ms with only 0.005 ms native cover work
 return to native world callbacks and render costs. Wider traversal, dense
 destruction, pursuit and the known water/interaction failures remain open.
 
+[Native world callback attribution](../issues/runtime-performance/native-world-process-2026-11-09.md)
+is source-verified with 53 recorder checks in each native variant, 65 headless
+debug/68 rendered release model checks, 36 light checks and six analyzer tests.
+The integrated run found and fixed a late-created block-owner tracing defect;
+all three providers now have 6,061 current gameplay samples. Save/shutdown pass
+without error/leak diagnostics, and eight source images were inspected. In a
+34.638 ms frame, block/model/light callbacks total 0.056 ms, while physics is
+10.806 ms; terrain collision attachment also reaches 2.182 ms in a selected
+frame. This contended functional run is not an FPS baseline or an attribution of
+all physics to zombies. Return to terrain publication, physics and render costs.
+Installed verification waits for the user-authorized pistol/player merge window;
+resume with a merged export, matching DLLs and the required-profile/save/shutdown
+gate. Matched recorder overhead and long-session memory remain open.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,

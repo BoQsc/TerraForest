@@ -14,6 +14,7 @@ class NativeResidentLights : public godot::Node3D {
     godot::Vector3 focus;
     double timer=0;
     uint64_t updates=0,visited=0,total_visited=0,last_us=0,max_us=0;
+    uint64_t last_started_us=0,last_ended_us=0;
     size_t source_cursor=0,cell_cursor=0;
     int64_t after_identity=0;
     std::vector<BlockKey> scan_cells;
@@ -30,5 +31,6 @@ public:
     void set_enabled(bool value);
     void _process(double delta) override;
     godot::Dictionary statistics() const;
+    godot::Dictionary process_frame_profile() const;
 };
 }

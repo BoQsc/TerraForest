@@ -26,6 +26,7 @@ def main():
     parser.add_argument('--legacy-structure-capture', action='store_true', help='Diagnostic control: serialize structures on the main thread during save')
     parser.add_argument('--gpu-profile', action='store_true', help='Retain engine GPU pass summaries in the console log')
     parser.add_argument('--render-stages', action='store_true', help='Diagnostic only: bounded completed-frame render-device CPU marker gaps')
+    parser.add_argument('--require-native-process-profiles', action='store_true', help='Require current gameplay block/model/light callback samples')
     parser.add_argument('--script-profile', action='store_true', help='Diagnostic only: enable the engine script debugger profiler')
     parser.add_argument('--render-inventory', action='store_true', help='Inspect scene geometry/light candidates after all frame timings are saved')
     parser.add_argument('--render-partition', type=int, choices=[8,16], help='Stationary ABBA diagnostic of exact nearby cover draw partitions')
@@ -38,6 +39,8 @@ def main():
     parser.add_argument('--light-abba', action='store_true', help='Compare unchanged versus redundantly submitted pooled lights in one stationary view')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
+    if args.require_native_process_profiles and args.without_trace:
+        parser.error('--require-native-process-profiles requires the recorder')
     if args.render_stages and args.without_trace:
         parser.error('--render-stages requires the rolling recorder')
     if args.render_full_detail and not args.render_partition:
@@ -122,6 +125,16 @@ def main():
                         for row in json.loads(path.read_text(encoding='utf-8')).get('frames', []))
         record['result']['render_markers_available'] = available
         record['result']['passed'] &= available
+    if args.require_native_process_profiles:
+        frames = {(row['frame'], row['at_us']): row
+                  for path in (folder / 'traces').glob('trace_*.json')
+                  for row in json.loads(path.read_text(encoding='utf-8')).get('frames', [])
+                  if row.get('phase') == 'gameplay'}
+        counts = {owner: sum(bool(row.get('native_world_process', {}).get(owner, {}).get('current'))
+                             for row in frames.values())
+                  for owner in ('blocks', 'model_horizon', 'resident_lights')}
+        record['result']['native_process_current_frames'] = counts
+        record['result']['passed'] &= all(counts.values())
     manifest.write_text(json.dumps(record, indent=2), encoding='utf-8')
     print(('PASS ' if record['result']['passed'] else 'FAIL ') + str(folder), flush=True)
     return 0 if record['result']['passed'] else 1

@@ -10,6 +10,7 @@ void NativeModelHorizon::_bind_methods() {
     ClassDB::bind_method(D_METHOD("clear"),&NativeModelHorizon::clear);
     ClassDB::bind_method(D_METHOD("advance","max_records","max_uploads","max_usec"),&NativeModelHorizon::advance,DEFVAL(1024),DEFVAL(2),DEFVAL(1500));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeModelHorizon::statistics);
+    ClassDB::bind_method(D_METHOD("process_frame_profile"),&NativeModelHorizon::process_frame_profile);
     ClassDB::bind_method(D_METHOD("represented_ids","collection"),&NativeModelHorizon::represented_ids);
     ClassDB::bind_method(D_METHOD("visual_record","collection","identity"),&NativeModelHorizon::visual_record);
 }
@@ -253,7 +254,13 @@ void NativeModelHorizon::advance(int64_t max_records,int64_t max_uploads,int64_t
     if(shadow==pages.end())shadow_cursor=0;
     last_usec=Time::get_singleton()->get_ticks_usec()-began;advancing=false;
 }
-void NativeModelHorizon::_process(double){advance();}
+void NativeModelHorizon::_process(double){
+    last_started_us=Time::get_singleton()->get_ticks_usec();advance();last_ended_us=Time::get_singleton()->get_ticks_usec();
+}
+Dictionary NativeModelHorizon::process_frame_profile()const {
+    Dictionary out;out["available"]=archive.is_valid()&&last_ended_us!=0;
+    out["started_us"]=int64_t(last_started_us);out["ended_us"]=int64_t(last_ended_us);out["process_us"]=int64_t(last_ended_us-last_started_us);return out;
+}
 Dictionary NativeModelHorizon::statistics()const {
     uint64_t changes=0;bool current=true;
     for(const auto &entry:collections)if(auto *batch=source(entry.first)){changes+=batch->world_render_changes.size();current=current&&batch->world_render_epoch==entry.second.epoch;}else current=false;

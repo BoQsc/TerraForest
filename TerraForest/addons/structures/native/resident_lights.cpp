@@ -11,6 +11,7 @@ void NativeResidentLights::_bind_methods(){
     ClassDB::bind_method(D_METHOD("set_focus","position"),&NativeResidentLights::set_focus);
     ClassDB::bind_method(D_METHOD("set_enabled","enabled"),&NativeResidentLights::set_enabled);
     ClassDB::bind_method(D_METHOD("statistics"),&NativeResidentLights::statistics);
+    ClassDB::bind_method(D_METHOD("process_frame_profile"),&NativeResidentLights::process_frame_profile);
 }
 bool NativeResidentLights::configure(const Array &definitions,int limit){
     if(!sources.empty()||!slots.empty()||definitions.is_empty()||definitions.size()>8||limit<1||limit>8)return false;
@@ -120,7 +121,11 @@ void NativeResidentLights::_process(double delta){
         }
     }
     timer+=std::max(0.0,delta);if(timer>=.1){timer=0;select();}
-    last_us=Time::get_singleton()->get_ticks_usec()-started;max_us=std::max(max_us,last_us);
+    last_started_us=started;last_ended_us=Time::get_singleton()->get_ticks_usec();last_us=last_ended_us-started;max_us=std::max(max_us,last_us);
+}
+Dictionary NativeResidentLights::process_frame_profile() const {
+    Dictionary out;out["available"]=enabled&&!sources.empty()&&last_ended_us!=0;
+    out["started_us"]=int64_t(last_started_us);out["ended_us"]=int64_t(last_ended_us);out["process_us"]=int64_t(last_us);return out;
 }
 Dictionary NativeResidentLights::statistics() const {
     Dictionary result;int active=0;Array records;

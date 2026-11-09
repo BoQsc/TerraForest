@@ -14,6 +14,7 @@
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/texture2d.hpp>
 #include <godot_cpp/classes/os.hpp>
+#include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/classes/texture2d_array.hpp>
 #include <godot_cpp/classes/shader.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
@@ -80,6 +81,9 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_navigation_interest","points"),&NativeBlockWorld::set_navigation_interest);
     ClassDB::bind_method(D_METHOD("configure_streaming","enabled","radius","chunk_limit","mesh_byte_limit","cache_byte_limit"),&NativeBlockWorld::configure_streaming);
     ClassDB::bind_method(D_METHOD("streaming_stats"),&NativeBlockWorld::streaming_stats);
+    ClassDB::bind_method(D_METHOD("set_process_profiling_enabled","enabled"),&NativeBlockWorld::set_process_profiling_enabled);
+    ClassDB::bind_method(D_METHOD("is_process_profiling_enabled"),&NativeBlockWorld::is_process_profiling_enabled);
+    ClassDB::bind_method(D_METHOD("process_frame_profile"),&NativeBlockWorld::process_frame_profile);
     ClassDB::bind_method(D_METHOD("configure_occlusion","enabled","radius","chunk_limit","geometry_byte_limit"),&NativeBlockWorld::configure_occlusion);
     ClassDB::bind_method(D_METHOD("occlusion_stats"),&NativeBlockWorld::occlusion_stats);
     ClassDB::bind_method(D_METHOD("set_geometry_lod_enabled","enabled"),&NativeBlockWorld::set_geometry_lod_enabled);
@@ -470,8 +474,14 @@ void NativeBlockWorld::set_collision_radius(double radius) {
     collision_radius=radius;collisions=radius>0;
 }
 void NativeBlockWorld::_process(double) {
+    const bool profiling=process_profiling_enabled;
+    const uint64_t started=profiling?Time::get_singleton()->get_ticks_usec():0;
+    uint64_t checkpoint=started;
+    auto phase=[&](size_t index){if(profiling){const uint64_t now=Time::get_singleton()->get_ticks_usec();process_profile_phases[index]=now-checkpoint;checkpoint=now;}};
     if(horizon)horizon->step();
+    phase(0);
     refresh_residency();
+    phase(1);
     const auto begin=std::chrono::steady_clock::now();
     auto elapsed=[&](){return std::chrono::duration<double,std::micro>(std::chrono::steady_clock::now()-begin).count();};
     upload_last_chunks=0;upload_last_bytes=0;measure_uploads=true;
@@ -491,8 +501,23 @@ void NativeBlockWorld::_process(double) {
     measure_uploads=false;upload_last_us=elapsed();upload_max_us=std::max(upload_max_us,upload_last_us);
     upload_high_chunks=std::max(upload_high_chunks,upload_last_chunks);upload_high_bytes=std::max(upload_high_bytes,upload_last_bytes);
     if(upload_last_bytes>upload_byte_limit)++upload_oversize_ticks;
+    phase(2);
     update_collisions();
+    phase(3);
     if(occlusion)occlusion->step();
+    phase(4);
+    if(profiling){process_profile_started=started;process_profile_ended=checkpoint;}
+}
+void NativeBlockWorld::set_process_profiling_enabled(bool enabled) {
+    if(process_profiling_enabled==enabled)return;
+    process_profiling_enabled=enabled;process_profile_started=process_profile_ended=0;process_profile_phases.fill(0);
+}
+Dictionary NativeBlockWorld::process_frame_profile() const {
+    Dictionary out;out["available"]=process_profiling_enabled&&process_profile_ended!=0;
+    out["started_us"]=int64_t(process_profile_started);out["ended_us"]=int64_t(process_profile_ended);
+    out["process_us"]=int64_t(process_profile_ended-process_profile_started);
+    out["horizon_us"]=int64_t(process_profile_phases[0]);out["residency_us"]=int64_t(process_profile_phases[1]);
+    out["upload_us"]=int64_t(process_profile_phases[2]);out["collision_us"]=int64_t(process_profile_phases[3]);out["occlusion_us"]=int64_t(process_profile_phases[4]);return out;
 }
 void NativeBlockWorld::flush_bakes() {
     refresh_residency();

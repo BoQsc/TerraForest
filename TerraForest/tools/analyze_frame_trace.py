@@ -46,6 +46,21 @@ def render_marker_gaps(rows):
             'scope': 'Adjacent CPU marker gaps matched by absolute timestamps inside retained draw intervals. Delayed device frames are not current gameplay frames. Partial top-gap sample, not inclusive scopes or a complete CPU sum.'}
 
 
+def native_process_profiles(rows):
+    owners = sorted({owner for row in rows for owner in row.get('native_world_process', {})})
+    result = {}
+    for owner in owners:
+        samples = [row.get('native_world_process', {}).get(owner, {}) for row in rows]
+        available = [sample for sample in samples if sample.get('available', False)]
+        current = [sample for sample in available if sample.get('current', False)]
+        keys = sorted({key for sample in current for key in sample
+                       if key.endswith('_us') and key not in ('started_us', 'ended_us')})
+        result[owner] = {'current_samples': len(current), 'stale_samples': len(available) - len(current),
+                         'unavailable_samples': len(samples) - len(available),
+                         'timings_us': {key: distribution(sample[key] for sample in current if key in sample) for key in keys}}
+    return result
+
+
 def summarize(captures):
     frames = {}
     for capture in captures:
@@ -65,6 +80,7 @@ def summarize(captures):
                    ("frame_ms", "process_ms", "draw_ms", "before_process_ms", "after_process_ms",
                     "physics_ms", "gpu_ms", "render_cpu_ms", "render_setup_cpu_ms", "recorder_previous_us", "draw_calls", "primitives")}
         metrics["over_20ms_frames"] = sum(r["frame_ms"] > 20 for r in selected)
+        metrics["native_world_process"] = native_process_profiles(selected)
         phases[phase] = metrics
     worst = []
     for row in sorted(rows, key=lambda r: r["frame_ms"], reverse=True)[:20]:

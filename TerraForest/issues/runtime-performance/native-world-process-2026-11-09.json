@@ -1,0 +1,334 @@
+{
+  "schema": 1,
+  "status": "source verified; installed and uncontended overhead gates open",
+  "baseline_revision": "5a1fa28ee5cbde0db60334aae2c481f04daffd15",
+  "source_run": "reports/performance_changes/20261109T191539218026Z_native_world_profile_lifecycle",
+  "required_profile_counts": {
+    "blocks": 6061,
+    "model_horizon": 6061,
+    "resident_lights": 6061
+  },
+  "native_world_process_gameplay": {
+    "blocks": {
+      "current_samples": 6061,
+      "stale_samples": 0,
+      "unavailable_samples": 0,
+      "timings_us": {
+        "collision_us": {
+          "samples": 6061,
+          "mean": 6.938953967992081,
+          "p50": 0,
+          "p95": 26,
+          "p99": 78,
+          "maximum": 822
+        },
+        "horizon_us": {
+          "samples": 6061,
+          "mean": 2.505197162184458,
+          "p50": 2,
+          "p95": 3,
+          "p99": 4,
+          "maximum": 103
+        },
+        "occlusion_us": {
+          "samples": 6061,
+          "mean": 8.492492987955783,
+          "p50": 8,
+          "p95": 12,
+          "p99": 14,
+          "maximum": 516
+        },
+        "process_us": {
+          "samples": 6061,
+          "mean": 19.863553868998515,
+          "p50": 12,
+          "p95": 40,
+          "p99": 157,
+          "maximum": 834
+        },
+        "residency_us": {
+          "samples": 6061,
+          "mean": 1.3288236264642799,
+          "p50": 0,
+          "p95": 1,
+          "p99": 1,
+          "maximum": 173
+        },
+        "upload_us": {
+          "samples": 6061,
+          "mean": 0.5980861244019139,
+          "p50": 1,
+          "p95": 1,
+          "p99": 1,
+          "maximum": 6
+        }
+      }
+    },
+    "model_horizon": {
+      "current_samples": 6061,
+      "stale_samples": 0,
+      "unavailable_samples": 0,
+      "timings_us": {
+        "process_us": {
+          "samples": 6061,
+          "mean": 53.687180333278334,
+          "p50": 56,
+          "p95": 71,
+          "p99": 91,
+          "maximum": 215
+        }
+      }
+    },
+    "resident_lights": {
+      "current_samples": 6061,
+      "stale_samples": 0,
+      "unavailable_samples": 0,
+      "timings_us": {
+        "process_us": {
+          "samples": 6061,
+          "mean": 2.9349942253753505,
+          "p50": 1,
+          "p95": 8,
+          "p99": 16,
+          "maximum": 138
+        }
+      }
+    }
+  },
+  "selected_frames": [
+    {
+      "frame": 3193,
+      "at_us": 39276017,
+      "frame_ms": 34.638,
+      "process_ms": 14.302,
+      "physics_ms": 10.806,
+      "draw_ms": 7.217,
+      "native_world_process": {
+        "blocks": {
+          "available": true,
+          "collision_us": 0,
+          "current": true,
+          "ended_us": 39256022,
+          "horizon_us": 3,
+          "occlusion_us": 11,
+          "process_us": 15,
+          "residency_us": 0,
+          "started_us": 39256007,
+          "upload_us": 1
+        },
+        "model_horizon": {
+          "available": true,
+          "current": true,
+          "ended_us": 39256065,
+          "process_us": 35,
+          "started_us": 39256030
+        },
+        "resident_lights": {
+          "available": true,
+          "current": true,
+          "ended_us": 39256029,
+          "process_us": 6,
+          "started_us": 39256023
+        }
+      },
+      "stages_ms": {
+        "actor update": 0.143,
+        "base controller": 0.017,
+        "controller loading": 0.001,
+        "controller process": 0.097,
+        "lighting schedule": 0.005,
+        "player physics": 0.672,
+        "receive": 1.252,
+        "receive cache_accounting": 0.024,
+        "receive poll": 0.015,
+        "receive surface_batch": 1.172,
+        "retire collision/mesh": 0.0,
+        "staging frame": 0.007,
+        "world authoring": 0.014,
+        "world interaction": 0.025,
+        "world pickups": 0.003,
+        "world presentation": 0.016,
+        "world process": 0.267,
+        "world vehicle": 0.007,
+        "zombie update": 1.221
+      }
+    },
+    {
+      "frame": 3135,
+      "at_us": 38234498,
+      "frame_ms": 24.346,
+      "process_ms": 12.905,
+      "physics_ms": 4.271,
+      "draw_ms": 5.832,
+      "native_world_process": {
+        "blocks": {
+          "available": true,
+          "collision_us": 0,
+          "current": true,
+          "ended_us": 38219726,
+          "horizon_us": 4,
+          "occlusion_us": 12,
+          "process_us": 17,
+          "residency_us": 0,
+          "started_us": 38219709,
+          "upload_us": 1
+        },
+        "model_horizon": {
+          "available": true,
+          "current": true,
+          "ended_us": 38219805,
+          "process_us": 71,
+          "started_us": 38219734
+        },
+        "resident_lights": {
+          "available": true,
+          "current": true,
+          "ended_us": 38219733,
+          "process_us": 6,
+          "started_us": 38219727
+        }
+      },
+      "stages_ms": {
+        "actor update": 0.034,
+        "base controller": 0.018,
+        "collision exact match": 0.002,
+        "collision node attach": 2.182,
+        "collision physics cook": 0.107,
+        "collision piece": 2.349,
+        "controller loading": 0.001,
+        "controller process": 0.106,
+        "lighting schedule": 0.007,
+        "mesh upload/create": 0.318,
+        "player physics": 0.238,
+        "prepared subtree attach": 0.046,
+        "receive": 0.772,
+        "receive cache_accounting": 0.02,
+        "receive poll": 0.016,
+        "receive surface_batch": 0.707,
+        "retire collision/mesh": 0.001,
+        "staging frame": 2.785,
+        "world authoring": 0.015,
+        "world interaction": 0.026,
+        "world pickups": 0.005,
+        "world presentation": 0.021,
+        "world process": 0.269,
+        "world vehicle": 0.007,
+        "zombie update": 0.487
+      }
+    },
+    {
+      "frame": 3162,
+      "at_us": 38746896,
+      "frame_ms": 26.145,
+      "process_ms": 14.736,
+      "physics_ms": 4.842,
+      "draw_ms": 5.022,
+      "native_world_process": {
+        "blocks": {
+          "available": true,
+          "collision_us": 0,
+          "current": true,
+          "ended_us": 38731092,
+          "horizon_us": 4,
+          "occlusion_us": 14,
+          "process_us": 20,
+          "residency_us": 1,
+          "started_us": 38731072,
+          "upload_us": 1
+        },
+        "model_horizon": {
+          "available": true,
+          "current": true,
+          "ended_us": 38731204,
+          "process_us": 83,
+          "started_us": 38731121
+        },
+        "resident_lights": {
+          "available": true,
+          "current": true,
+          "ended_us": 38731119,
+          "process_us": 26,
+          "started_us": 38731093
+        }
+      },
+      "stages_ms": {
+        "LOD coverage": 1.305,
+        "LOD eviction": 0.005,
+        "LOD requests": 1.277,
+        "LOD schedule/cut/evict": 2.612,
+        "actor update": 0.043,
+        "base controller": 0.021,
+        "controller loading": 0.002,
+        "controller process": 0.588,
+        "lighting schedule": 0.006,
+        "player physics": 0.287,
+        "receive": 0.357,
+        "receive cache_accounting": 0.028,
+        "receive poll": 0.021,
+        "receive surface_batch": 0.27,
+        "retire collision/mesh": 0.0,
+        "staging frame": 0.006,
+        "world authoring": 0.017,
+        "world interaction": 0.03,
+        "world pickups": 0.465,
+        "world presentation": 0.021,
+        "world process": 0.809,
+        "world vehicle": 0.009,
+        "zombie update": 0.584
+      }
+    }
+  ],
+  "source_identities": {
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "95f041bb88827a2f3fa6796d09f3dbcfed8d676eddc6456f356dfbdc9933972d",
+    "addons/structures/bin/structures.windows.template_release.x86_64.dll": "c05d2c5113d967dc4501503eddc5f086cb9a602c983c0a6d67293ac4c311970a",
+    "addons/world_runtime/frame_trace.gd": "36a1b26e37f80db370bfe0a94fdc1c7089a35475816ec1106d822b1e0093de9c",
+    "tests/frame_trace.gd": "ffe896e4134a4936e9f61bc2f36b86b9e11cc5733914fa43c84adabf0b31298e",
+    "tools/check_frame_trace_world.py": "5ed8d2b1a3b4b6d814f065a5807cda86ae7e35a495d02753e5b78a11a04dbafb"
+  },
+  "verification": {
+    "frame_trace_debug_release": 53,
+    "model_debug_headless": 65,
+    "model_release_rendered": 68,
+    "lights_debug_headless": 36,
+    "analyzer": 6,
+    "save_shutdown": true,
+    "diagnostics": []
+  },
+  "resources": {
+    "peak_private_commit_bytes": 3984162816,
+    "peak_dedicated_gpu_bytes": 1483849728
+  },
+  "limitations": [
+    "Contended functional capture; no FPS/nonregression or recorder-overhead claim",
+    "Native callback profiles omit work invoked outside those callbacks",
+    "Short shutdown diagnostics do not establish leak-free endurance",
+    "Export/installed gates resume after authorized pistol/player merge",
+    "Terrain/physics/rendering, destruction, pursuit and wider world/player qualification remain open"
+  ],
+  "images": [
+    {
+      "path": "reports/performance_changes/20261109T191539218026Z_native_world_profile_lifecycle/arrival.png",
+      "sha256": "f523a0caf9b791203205ee9e0351beef650fcce5c2489d183816b4c17d2ee266",
+      "review": "Inspected: no obvious new missing building/cover/boulder/tool geometry in this view; not continuous-motion or world-quality acceptance",
+      "origin": "Original unedited runtime capture of owned default-world fixture"
+    },
+    {
+      "path": "reports/performance_changes/20261109T191539218026Z_native_world_profile_lifecycle/outdoor_0.png",
+      "sha256": "6cdaa8bd3e560c70ef1e9103efb3124e56d86133b8dab684d596e4c06f2d9296",
+      "review": "Inspected: no obvious new missing building/cover/boulder/tool geometry in this view; not continuous-motion or world-quality acceptance",
+      "origin": "Original unedited runtime capture of owned default-world fixture"
+    },
+    {
+      "path": "reports/performance_changes/20261109T191539218026Z_native_world_profile_lifecycle/outdoor_1.png",
+      "sha256": "813eda8fbe1e3443f04dcaa200cec2da6c130674414ce091d00a6477be9ea339",
+      "review": "Inspected: no obvious new missing building/cover/boulder/tool geometry in this view; not continuous-motion or world-quality acceptance",
+      "origin": "Original unedited runtime capture of owned default-world fixture"
+    },
+    {
+      "path": "reports/performance_changes/20261109T191539218026Z_native_world_profile_lifecycle/outdoor_2.png",
+      "sha256": "715d2edd8251c1379c939fe85e628db10c4afab3ce8b61f96e476c61fa1829ab",
+      "review": "Inspected: no obvious new missing building/cover/boulder/tool geometry in this view; not continuous-motion or world-quality acceptance",
+      "origin": "Original unedited runtime capture of owned default-world fixture"
+    }
+  ]
+}

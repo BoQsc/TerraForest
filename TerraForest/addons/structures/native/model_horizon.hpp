@@ -43,6 +43,7 @@ class NativeModelHorizon : public Node {
     std::deque<Seed> seeds;
     uint64_t next_page=1,byte_limit=128*1024*1024,records=0,rendered=0,gpu_bytes=0;
     uint64_t uploads=0,uploaded_bytes=0,reads=0,last_records=0,last_uploads=0,last_usec=0,shadow_cursor=0;
+    uint64_t last_started_us=0,last_ended_us=0;
     bool advancing=false,capacity_error=false;
     int read_slots=0;
     String error;
@@ -71,6 +72,7 @@ public:
     void advance(int64_t max_records=1024,int64_t max_uploads=2,int64_t max_usec=1500);
     void _process(double delta)override;
     Dictionary statistics()const;
+    Dictionary process_frame_profile()const;
     PackedInt64Array represented_ids(NativeStaticBatch *batch)const;
     Dictionary visual_record(NativeStaticBatch *batch,int64_t identity)const;
 };

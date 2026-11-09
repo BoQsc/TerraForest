@@ -1,5 +1,15 @@
 # Runtime performance
 
+Latest source follow-up: [native world callback attribution](native-world-process-2026-11-09.md)
+separates block residency/upload/collision/occlusion, distant model pages and
+pooled lights. The real-world run exposed and fixed late block-owner attachment;
+all three providers then capture 6,061 current gameplay frames. Source fixtures,
+save/shutdown and eight inspected views pass their scoped checks. A 34.638 ms
+frame spends just 0.056 ms in these callbacks; physics, terrain publication and
+rendering remain the next targets. Contended timing is not an FPS comparison.
+Export/installed verification awaits the authorized pistol/player merge window;
+recorder overhead, endurance and stable 60 FPS remain unqualified.
+
 Latest: [render-stage attribution](render-stage-attribution-2026-11-09.md) adds
 shared render-setup timing and optional bounded device CPU markers in source.
 The analyzer correctly maps delayed markers to earlier draw intervals. A 9.409 ms

@@ -107,6 +107,19 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
 - Native block occluder counts, pending/retiring work, accounted geometry bytes
   and publication timing. The geometry limit excludes the engine's acceleration
   structures; use process memory telemetry to assess total memory.
+- `native_world_process` retains constant-size callback profiles for blocks,
+  distant model pages and pooled lights. Block phases partition its callback into
+  horizon, residency, upload, collision and occlusion work. They are nested in
+  `process_us` and the frame's process interval, not additional frame costs.
+  Absolute `started_us`/`ended_us` must fit inside that frame's process window
+  before `current` becomes true. Missing, disabled and stale providers remain
+  explicit; the analyzer excludes them from timing distributions and retains
+  valid zero-duration samples. Collection-wide statistics are not read here.
+  Block timing is enabled on attachment and its previous setting restored on
+  detach. Light timing reuses existing clock reads; model callbacks add two
+  clock reads even without the recorder. Manual model `advance()` calls do not
+  overwrite callback attribution. Recorder overhead includes three provider
+  snapshots; matched trace-on/off runs are needed to qualify its total cost.
 - Native navigation readiness/support/hazard/clearance times, requested support
   rays versus actual raycasts, and support-cache hits/limits. `zombie_navigation`
   is the last-pass snapshot; `zombie_navigation_ticks.samples` retains every

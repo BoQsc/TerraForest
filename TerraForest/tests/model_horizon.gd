@@ -58,6 +58,13 @@ func run()->void:
 	var first:MultiMeshInstance3D=batch.get_child(0)
 	check(first.multimesh.mesh==mesh and first.multimesh.instance_count<=256,"draw pages share the exact source mesh in bounded batches")
 	if DisplayServer.get_name()!="headless":check(first.multimesh.get_instance_transform(0).origin.is_equal_approx(Vector3.ZERO+Vector3(0,1,0)),"native GPU buffer retains first canonical transform")
+	horizon.set_process(true)
+	await process_frame;await process_frame
+	horizon.set_process(false)
+	var callback_profile:Dictionary=horizon.process_frame_profile()
+	check(callback_profile.available and callback_profile.ended_us>=callback_profile.started_us and callback_profile.process_us==callback_profile.ended_us-callback_profile.started_us,"configured model horizon retains one complete process interval")
+	horizon.advance()
+	check(horizon.process_frame_profile()==callback_profile and horizon.represented_ids(batch)==ids,"manual model advance preserves callback attribution and canonical representation")
 	var before:Dictionary=horizon.statistics()
 	for iteration in 12:horizon.advance()
 	check(horizon.statistics().uploaded_bytes==before.uploaded_bytes and horizon.statistics().last_records==0,"idle scene does not rescan model records or upload transforms")
