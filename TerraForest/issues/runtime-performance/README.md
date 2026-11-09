@@ -1,5 +1,12 @@
 # Runtime performance
 
+Latest diagnosis: [terrain collision publication](terrain-collision-publication-2026-11-09.md)
+measures actual live-body attachment, which the old resource-setup timer omitted.
+The 144-check fixture preserves all triangles and distinguishes cold/reused
+shapes. Smaller pieces shorten individual operations but add total work;
+deferred body admission concentrates the cook into one larger unit. Production
+collision policy remains unchanged pending uncontended world/contact checks.
+
 Latest source follow-up: [native world callback attribution](native-world-process-2026-11-09.md)
 separates block residency/upload/collision/occlusion, distant model pages and
 pooled lights. The real-world run exposed and fixed late block-owner attachment;

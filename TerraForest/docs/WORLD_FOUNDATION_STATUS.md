@@ -369,10 +369,17 @@ samples. Recorder-off outdoor p99/max remains 17.169/27.356 ms. All eight instal
 views were inspected. The recorder callback median is 0.291 ms, but larger
 whole-frame and GPU differences prevent isolating total overhead from this one
 sequential pair. That qualification and long-session memory remain open.
-Next measure terrain collision attachment itself: the current fixture excludes
-the engine's live-body shape construction, even though that stage reaches
-2.182 ms in the actual world. Compare exact cold/reused/deferred publication
-before selecting a change; preserve all collision triangles and atomic readiness.
+[Actual terrain collision publication](../issues/runtime-performance/terrain-collision-publication-2026-11-09.md)
+now extends the earlier resource-only fixture with live-body attachment. Its
+144 checks pass on 2,356 unchanged triangles. With the current 1024-piece limit,
+median cold setup/attachment is 0.086/1.358 ms; live-reused attachment is 0.029 ms.
+Smaller pieces reduce the largest individual unit but increase total work;
+deferred admission concentrates cooking into a larger final operation. The
+user's interactive playtest overlaps this diagnostic, so clean quantitative
+comparison remains required. Production policy is unchanged. Next use the
+existing pre-worker piece-size configuration for actual-world comparisons and
+walking/slope/mining/boundary, atomic-readiness, cancellation and recovery gates.
+Identical triangles alone do not establish unchanged contact behavior or 60 FPS.
 
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
