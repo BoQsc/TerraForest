@@ -15,7 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sampling', action='store_true')
     parser.add_argument('--navigation-profile', action='store_true')
-    parser.add_argument('--tests', nargs='+', choices=['navigation_treads', 'regional_navigation', 'navigation_residency', 'zombie_step_guard', 'player_cottage_stairs', 'actor_route_sampling', 'actor_route_contract', 'navigation_support_cache', 'navigation_invalidation'])
+    parser.add_argument('--tests', nargs='+', choices=['navigation_treads', 'regional_navigation', 'navigation_residency', 'zombie_step_guard', 'player_cottage_stairs', 'actor_route_sampling', 'actor_route_contract', 'navigation_support_cache', 'navigation_invalidation', 'navigation_model_changes'])
     parser.add_argument('--baseline-native-ref', help='Use a committed world_runtime release DLL only in the isolated project for comparison')
     args = parser.parse_args()
     config, _ = parse_args([])
@@ -66,7 +66,8 @@ def main():
         tests = [('actor_route_sampling', 'ACTOR_ROUTE_SAMPLING checks='),
                  ('actor_route_contract', 'ACTOR_ROUTE_CONTRACT checks='),
                  ('navigation_support_cache', 'NAVIGATION_SUPPORT_CACHE checks='),
-                 ('navigation_invalidation', 'NAVIGATION_INVALIDATION checks=')]
+                 ('navigation_invalidation', 'NAVIGATION_INVALIDATION checks='),
+                 ('navigation_model_changes', 'NAVIGATION_MODEL_CHANGES checks=')]
     if args.tests:
         markers = dict(tests)
         markers.update(zombie_step_guard='ZOMBIE_STEP_GUARD PASS', player_cottage_stairs='PLAYER_COTTAGE_STAIRS failures=0')

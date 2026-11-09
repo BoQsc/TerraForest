@@ -276,7 +276,7 @@ Dictionary NativePrefabPlacement::commit(const Array &protected_boxes) {
     if(!p.prefab->cells.empty())if(auto *live=ObjectDB::get_instance(p.block_id))live->emit_signal("changed");
     for(const auto &entry:p.staged) {
         if(auto *live=ObjectDB::get_instance(entry.second.id))live->emit_signal("changed");
-        if(auto *live=ObjectDB::get_instance(entry.second.id))live->emit_signal("exclusion_changed");
+        if(auto *live=Object::cast_to<NativeStaticBatch>(ObjectDB::get_instance(entry.second.id)))live->publish_exclusion();
     }
     busy=false;
     Dictionary result;result["ok"]=true;result["status"]="committed";result["models"]=int64_t(p.model_at);result["placements"]=identities;result["block_probes"]=p.probes;result["model_comparisons"]=p.comparisons;

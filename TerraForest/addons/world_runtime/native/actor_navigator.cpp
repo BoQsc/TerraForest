@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "actor_navigator.hpp"
+#include "resource_usage.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/classes/world3d.hpp>
@@ -14,6 +15,7 @@ void NativeActorNavigator::_bind_methods(){
     ClassDB::bind_method(D_METHOD("set_support_cache_enabled","enabled"),&NativeActorNavigator::set_support_cache_enabled);
     ClassDB::bind_method(D_METHOD("set_exclusions","ids"),&NativeActorNavigator::set_exclusions);
     ClassDB::bind_method(D_METHOD("set_interactions","ids"),&NativeActorNavigator::set_interactions);
+    ClassDB::bind_method(D_METHOD("set_interactions_scoped","ids","bounds"),&NativeActorNavigator::set_interactions_scoped);
     ClassDB::bind_method(D_METHOD("set_water_depth","depth"),&NativeActorNavigator::set_water_depth);
     ClassDB::bind_method(D_METHOD("set_agent","id","feet","goal","profile","active"),&NativeActorNavigator::set_agent);
     ClassDB::bind_method(D_METHOD("remove_agent","id"),&NativeActorNavigator::remove_agent);
@@ -38,15 +40,6 @@ bool NativeActorNavigator::configure(int capacity){
 void NativeActorNavigator::set_water_depth(const Callable &depth){
     if(depth==water_depth_)return;water_depth_=depth;invalidate();
     for(auto &agent:agents_){agent.continuing=false;agent.route.water_depth=depth;agent.route.invalidate();agent.journey.invalidate();}
-}
-void NativeActorNavigator::set_exclusions(const TypedArray<RID> &ids){
-    if(ids.size()>64)return;exclusions_=ids.duplicate();
-    invalidate();
-    TypedArray<RID> planning=exclusions_.duplicate();planning.append_array(interactions_);
-    for(auto &agent:agents_){agent.continuing=false;agent.ray->set_exclude(planning);agent.shape->set_exclude(planning);agent.motion_ray->set_exclude(exclusions_);agent.motion_shape->set_exclude(exclusions_);agent.route.invalidate();agent.journey.invalidate();}
-}
-void NativeActorNavigator::set_interactions(const TypedArray<RID> &ids){
-    if(ids.size()>64||ids==interactions_)return;interactions_=ids.duplicate();set_exclusions(exclusions_);
 }
 bool NativeActorNavigator::set_agent(int64_t id,const Vector3 &feet,const Vector3 &goal,int profile,bool active){
     if(id<=0 || !feet.is_finite() || !goal.is_finite() || profile<0 || profile>1 || !capacity_)return false;
@@ -144,6 +137,7 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
     if(!is_inside_tree() || !readiness.is_valid() || !std::isfinite(delta) || delta<=0 || delta>.1)return out;
     readiness_=readiness;admission_=admission;auto *space=get_world_3d()->get_direct_space_state();
     const uint64_t started=Time::get_singleton()->get_ticks_usec();
+    const auto thread_start=query_profiling_?NativeResourceUsage::read_thread_work():std::array<int64_t,2>{-1,-1};
     readiness_cache_.regions.clear();readiness_cache_.probes=readiness_cache_.hits=0;
     PackedVector3Array pending;
     for(int i=0;i<graph_.requests.size();++i){
@@ -217,6 +211,11 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
     out["readiness_cache_entries"]=int(readiness_cache_.regions.size());
     out["graph_nodes"]=int(graph_.live_size());out["graph_node_limit"]=RegionalGraph::NODE_LIMIT;
     out["graph_cache_hits"]=int64_t(graph_.hits);out["streaming_requests"]=graph_.requests.size();
+    if(query_profiling_){
+        const auto thread_end=NativeResourceUsage::read_thread_work();
+        out["planning_thread_cycles"]=thread_start[0]<0||thread_end[0]<0?int64_t(-1):thread_end[0]-thread_start[0];
+        out["planning_thread_cpu_us"]=thread_start[1]<0||thread_end[1]<0?int64_t(-1):thread_end[1]-thread_start[1];
+    }
     out["planning_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-started);out["agents"]=int(agents_.size());return out;
 }
 Vector3 NativeActorNavigator::steering_target(int64_t id){

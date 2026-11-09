@@ -74,8 +74,7 @@ void NativeStaticHistory::publish(NativeStaticBatch *collection,bool notify_excl
     const auto identity=collection->get_instance_id();
     revisions[identity]=collection->edit_revision;
     collection->defer_change_signal=false;
-    collection->emit_signal("changed");
-    if(notify_exclusion)if(auto *live=ObjectDB::get_instance(identity))live->emit_signal("exclusion_changed");
+    collection->publish_notifications(notify_exclusion);
     busy=false;
     synchronize(); // A callback may mutate or destroy any registered collection.
 }

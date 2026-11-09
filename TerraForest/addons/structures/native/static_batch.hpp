@@ -146,7 +146,12 @@ class NativeStaticBatch : public Node3D {
     uint64_t edit_revision=0;
     String survey_saved_identity;
     bool defer_change_signal=false;
-    void publish_change(bool storage_only=false,bool notify_exclusion=true);
+    AABB pending_obstacle_bounds;
+    bool pending_obstacles=false,pending_obstacles_global=false;
+    void publish_change(bool storage_only=false,bool notify_exclusion=true,const AABB &bounds=AABB());
+    void publish_notifications(bool notify_exclusion);
+    void publish_exclusion(const AABB &bounds=AABB());
+    AABB placement_obstacle_bounds(const Placement &) const;
     bool placement_clear(const PackedFloat32Array &transform,const AABB &protection) const;
     struct ProxyBody { RID body; std::vector<RID> shapes; };
     std::map<int64_t,ProxyBody> collision_bodies;
@@ -196,6 +201,7 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    AABB instance_obstacle_bounds(int64_t id) const;
     Dictionary placement_patch_state() const;
     PackedByteArray capture_placement_patch(Vector3i origin,Vector3i size,int64_t expected_revision,int64_t expected_owner) const;
     bool validate_placement_patch(const PackedByteArray &bytes) const;

@@ -493,7 +493,7 @@ func _shop_door_access()->void:
 	var local_anchor:Transform3D=prefab.get_meta("trader_anchor")
 	var bounds:AABB=prefab.placement_bounds(Vector3i.ZERO,0)
 	bounds.position+=state.home-local_anchor.origin
-	var doors:Array[RID]=[];shop_doors.clear()
+	var doors:Array[RID]=[];var door_bounds:Array[AABB]=[];shop_doors.clear()
 	for entry:Dictionary in game.doors.types.values():
 		for id:int in entry.collection.collision_identities():
 			if shop_doors.size()>=16:break
@@ -503,8 +503,9 @@ func _shop_door_access()->void:
 			if not bounds.grow(.5).has_point(position):continue
 			shop_doors.append({"entry":entry,"id":id,"position":position})
 			var rid:RID=entry.collection.collision_body_for(id)
-			if rid.is_valid() and not entry.state.is_open(id):doors.append(rid)
-	navigator.set_interactions(doors)
+			if rid.is_valid() and not entry.state.is_open(id):
+				doors.append(rid);door_bounds.append(entry.collection.instance_obstacle_bounds(id))
+	if not navigator.set_interactions_scoped(doors,door_bounds):navigator.set_interactions(doors)
 
 func _driver_exit()->bool:
 	if not is_instance_valid(host.actor) or car.linear_velocity.length()>.25:return false

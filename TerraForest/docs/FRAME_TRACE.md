@@ -74,6 +74,13 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
   count. Each includes immutable navigation and zombie-phase values, so catch-up
   ticks cannot hide an earlier slow planner pass. Timing categories overlap the
   planner/physics intervals and must not be added to their parents.
+- Profiled native navigation passes also include `planning_thread_cycles` and
+  `planning_thread_cpu_us` from the current Windows thread. CPU time is quantized;
+  cycles are not elapsed microseconds. Compare them with `planning_us` to identify
+  wall-time spikes with little measured CPU work without claiming a specific wait
+  cause. Ordinary unprofiled passes perform neither OS measurement. The saved-world
+  regional journey test retains its 32 slowest passes over 2 ms, in addition to its
+  once-per-second route log, so an isolated maximum retains query-category evidence.
 - Native navigation invalidation counts, global-reset counts, cumulative and
   maximum invalidation wall time, last affected-query/edge/vertex counts and
   current live/allocated/free graph slots. These appear under the opt-in

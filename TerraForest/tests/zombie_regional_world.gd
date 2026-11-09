@@ -8,6 +8,7 @@ var trace:Array=[]
 var peak_work:=0
 var peak_us:=0
 var phases:Array=[]
+var slow_plans:Array[Dictionary]=[]
 var details:Dictionary={}
 var door_identity:=0
 var door_centre:=Vector3.ZERO
@@ -44,6 +45,10 @@ func chase(zombie:CharacterBody3D,seconds:float,label:String)->bool:
 		for key:String in stats.get("query_profile",{}):query_totals[key]=query_totals.get(key,0)+stats.query_profile[key]
 		peak_work=maxi(peak_work,stats.get("route_work",0));peak_us=maxi(peak_us,stats.get("planning_us",0))
 		var route_state:Dictionary=game.zombies.navigator.status(zombie.get_instance_id())
+		if stats.get("planning_us",0)>2000:
+			slow_plans.append({"phase":label,"tick":tick,"navigation":stats.duplicate(true),"route":route_state.duplicate(true)})
+			slow_plans.sort_custom(func(a:Dictionary,b:Dictionary):return a.navigation.planning_us>b.navigation.planning_us)
+			if slow_plans.size()>32:slow_plans.pop_back()
 		if first_path<0 and route_state.get("complete_path",false) and route_state.goal.distance_to(game.player.global_position)<.2:first_path=(now-started)/1000000.0
 		if tick%60==0:
 			var row:Dictionary={"phase":label,"tick":tick,"position":zombie.global_position,"navigation":game.zombies.navigator.status(zombie.get_instance_id())}
@@ -163,6 +168,6 @@ func run()->void:
 func finish()->void:
 	DirAccess.make_dir_recursive_absolute("res://reports/zombie_regional_world/"+kind)
 	var file:=FileAccess.open("res://reports/zombie_regional_world/"+kind+"/result.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"case":kind,"details":details,"trace":trace,"phases":phases,"peak_work":peak_work,"peak_planning_us":peak_us,"slot":game.terrain.save_slot,"generator":game.terrain.backend.world_generator,"readonly":game.terrain.backend.readonly_snapshot},"  "));file.close()
+	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"case":kind,"details":details,"trace":trace,"phases":phases,"slow_plans":slow_plans,"peak_work":peak_work,"peak_planning_us":peak_us,"slot":game.terrain.save_slot,"generator":game.terrain.backend.world_generator,"readonly":game.terrain.backend.readonly_snapshot},"  "));file.close()
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;await process_frame
 	print("ZOMBIE_REGIONAL_WORLD case=",kind," checks=",checks," failures=",failures);quit(1 if failures else 0)

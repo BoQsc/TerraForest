@@ -80,20 +80,14 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("placement_for_body","body"),&NativeStaticBatch::placement_for_body);
     ADD_SIGNAL(MethodInfo("changed"));
     ADD_SIGNAL(MethodInfo("exclusion_changed"));
+    ADD_SIGNAL(MethodInfo("exclusion_region_changed",PropertyInfo(Variant::AABB,"bounds")));
+    ADD_SIGNAL(MethodInfo("obstacles_changed",PropertyInfo(Variant::AABB,"bounds")));
+    ClassDB::bind_method(D_METHOD("instance_obstacle_bounds","identity"),&NativeStaticBatch::instance_obstacle_bounds);
 }
 bool NativeStaticBatch::valid_transform(const float *t) {
     for(int j=0;j<12;j++)if(!std::isfinite(t[j])||std::abs(t[j])>1048575)return false;
     double determinant=t[0]*(double(t[5])*t[10]-double(t[6])*t[9])-t[1]*(double(t[4])*t[10]-double(t[6])*t[8])+t[2]*(double(t[4])*t[9]-double(t[5])*t[8]);
     return std::abs(determinant)>=1e-9;
-}
-void NativeStaticBatch::publish_change(bool storage_only,bool notify_exclusion) {
-    if(!storage_only)survey_saved_identity=String();
-    ++edit_revision;
-    if(!defer_change_signal) {
-        const auto identity=get_instance_id();
-        emit_signal("changed");
-        if(notify_exclusion)if(auto *live=ObjectDB::get_instance(identity))live->emit_signal("exclusion_changed");
-    }
 }
 bool NativeStaticBatch::placement_clear(const PackedFloat32Array &transform,const AABB &protection) const {
     if(source_mesh.is_null()||transform.size()!=12||!valid_transform(transform.ptr())||!protection.position.is_finite()||!protection.size.is_finite()||
@@ -141,7 +135,7 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
     for(auto &e:batches){auto multi=e.second->get_multimesh();multi->set_mesh(mesh);update_render_bounds(e.first,multi);}
     // Invalidate journals before either notification can call back into editing.
     if(changed){++edit_revision;survey_saved_identity=String();reset_world_render();}
-    emit_signal("exclusion_changed");
+    publish_exclusion();
     if(changed&&!defer_change_signal)emit_signal("changed");return true;
 }
 bool NativeStaticBatch::lock_asset_identity() {if(!valid_asset(asset_id)||source_mesh.is_null())return false;asset_locked=true;return true;}
@@ -235,9 +229,13 @@ bool NativeStaticBatch::upsert_instances_impl(const PackedInt64Array &ids,const 
     if(group_count+unloaded_regions.size()>4096)return false;
     std::set<BlockKey> touched;
     std::map<BlockKey,std::vector<int64_t>> local_updates;
+    AABB changed_bounds;bool has_bounds=false;
     for(auto &e:staged) {
         auto old=placements.find(e.first);
         if(old!=placements.end()&&old->second==e.second)continue;
+        AABB bounds=placement_obstacle_bounds(e.second);
+        if(old!=placements.end())bounds=bounds.merge(placement_obstacle_bounds(old->second));
+        changed_bounds=has_bounds?changed_bounds.merge(bounds):bounds;has_bounds=true;
         if(motion)move_proxy(e.first,placement_transform(e.second));else invalidate_proxy(e.first);
         if(old!=placements.end()) {
             auto a=group_for(old->second),b=group_for(e.second);
@@ -284,7 +282,7 @@ bool NativeStaticBatch::upsert_instances_impl(const PackedInt64Array &ids,const 
             multi->set_instance_transform(slots.at(id),Transform3D(basis,Vector3(p[3]-e.first.x*32,p[7]-e.first.y*32,p[11]-e.first.z*32)));instance_updates++;
         }
     }
-    if(!touched.empty()||!local_updates.empty()){for(const auto &entry:staged)change_world_render(entry.first);publish_change(false,!motion);}return true;
+    if(!touched.empty()||!local_updates.empty()){for(const auto &entry:staged)change_world_render(entry.first);publish_change(false,!motion,changed_bounds);}return true;
 }
 bool NativeStaticBatch::set_instance_visual_hidden(int64_t id,bool hidden) {
     if((visual_hidden.count(id)!=0)==hidden)return true;
@@ -391,6 +389,8 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
         ++removed_counts[key];
         records.push_back(record);
     }
+    AABB changed_bounds;bool has_bounds=false;
+    for(auto record:records){const AABB bounds=placement_obstacle_bounds(record->second);changed_bounds=has_bounds?changed_bounds.merge(bounds):bounds;has_bounds=true;}
     auto validated=Time::get_singleton()->get_ticks_usec();removal_validation_us+=validated-began;
     // Interactive single removal swaps the final member into the vacated slot.
     // Only two bounded pages can change; never retire a whole visible group.
@@ -411,7 +411,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
         auto &members=groups.at(key);members.erase(id);if(members.empty())groups.erase(key);
         refresh_collision_bounds({key});
         for(auto draw:resident)if(render_page_size(draw))upload_batch(draw);
-        change_world_render(id);publish_change();return true;
+        change_world_render(id);publish_change(false,true,changed_bounds);return true;
     }
     for(const auto &entry:removed_counts) {
         auto group=groups.find(entry.first);
@@ -427,7 +427,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     if(render_streaming&&appearance_fade&&!collision_only)remove_render_members(touched);
     else rebuild(touched,true);
     removal_render_us+=Time::get_singleton()->get_ticks_usec()-erased;
-    if(!touched.empty()){for(auto identity:unique)change_world_render(identity);publish_change();}return true;
+    if(!touched.empty()){for(auto identity:unique)change_world_render(identity);publish_change(false,true,changed_bounds);}return true;
 }
 bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms) {
     if(admission||!unloaded_regions.empty()||!removal_protected.empty())return false;

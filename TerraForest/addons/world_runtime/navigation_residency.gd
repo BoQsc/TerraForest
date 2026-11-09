@@ -5,7 +5,6 @@ var game:Node
 var last_points:=PackedVector3Array()
 var next_refresh:=0
 var rejected_points:=0
-var last_doors:Array[RID]=[]
 var service_points:=PackedVector3Array()
 var local_points:=PackedVector3Array()
 var last_service:=false
@@ -19,15 +18,15 @@ func set_service(points:PackedVector3Array)->void:
 func update(points:PackedVector3Array)->void:
 	if not is_instance_valid(game):return
 	var now:=Time.get_ticks_msec()
-	if now<next_refresh and not points.is_empty():return
+	if now<next_refresh and (not points.is_empty() or local_points.is_empty()):return
 	next_refresh=now+250
 	local_points=points
 	_publish(points)
 func _publish(points:PackedVector3Array)->void:
 	if not is_instance_valid(game):return
-	var doors:Array[RID]=game.doors.breakable_bodies(64)
-	if doors!=last_doors:
-		last_doors=doors;game.zombies.navigator.set_interactions(doors)
+	var doors:Dictionary=game.doors.breakable_navigation(64)
+	if not game.zombies.navigator.set_interactions_scoped(doors.bodies,doors.bounds):
+		game.zombies.navigator.set_interactions(doors.bodies)
 	var admitted:=PackedVector3Array()
 	for point in service_points:admitted.append(point.snapped(Vector3(4,1,4)))
 	for point in points:

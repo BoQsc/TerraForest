@@ -167,7 +167,8 @@ int64_t NativeHingedDoors::advance(NativeStaticBatch *batch,double delta){
         next.last=pose;motion=next;++changed;
         if(finished){
             // Refresh grass/footprint exclusion once at rest, not at 60 Hz.
-            batch->emit_signal("exclusion_changed");
+            const Transform3D frame=batch->is_inside_tree()?batch->get_global_transform():batch->get_transform();
+            batch->publish_exclusion(sweep_bounds(frame*unpack(closed)));
             if(!motion.target)opened.erase(id);it=motions.erase(it);
         }else ++it;
     }if(changed||altered)++revision;return changed;

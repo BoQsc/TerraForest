@@ -134,12 +134,18 @@ func _sync_visuals(entry:Dictionary)->void:
 		if not entry.collection.is_instance_visual_hidden(identity):entry.collection.set_instance_visual_hidden(identity,true)
 
 func breakable_bodies(limit: int = 64) -> Array[RID]:
-	var result: Array[RID] = []
+	return breakable_navigation(limit).bodies
+
+func breakable_navigation(limit: int = 64) -> Dictionary:
+	var bodies:Array[RID]=[]
+	var bounds:Array[AABB]=[]
+	var result:Dictionary={"bodies":bodies,"bounds":bounds}
 	for entry: Dictionary in types.values():
 		if not entry.definition.behavior.zombie_breakable: continue
 		for identity: int in entry.collection.collision_identities():
-			if result.size() >= limit: return result
+			if bodies.size() >= limit: return result
 			if entry.state.is_open(identity) or entry.collection.is_removal_protected(identity): continue
 			var rid: RID = entry.collection.collision_body_for(identity)
-			if rid.is_valid(): result.append(rid)
+			if rid.is_valid():
+				bodies.append(rid);bounds.append(entry.collection.instance_obstacle_bounds(identity))
 	return result

@@ -21,17 +21,21 @@ void NativeResourceUsage::_bind_methods(){
     ClassDB::bind_method(D_METHOD("cancel_scan"),&NativeResourceUsage::cancel_scan);
     ClassDB::bind_method(D_METHOD("scan_status"),&NativeResourceUsage::scan_status);
 }
-PackedInt64Array NativeResourceUsage::thread_work() const {
-    PackedInt64Array result;result.resize(2);result.set(0,-1);result.set(1,-1);
+std::array<int64_t,2> NativeResourceUsage::read_thread_work() {
+    std::array<int64_t,2> result{-1,-1};
     const HANDLE current=GetCurrentThread();ULONG64 cycles=0;
-    if(QueryThreadCycleTime(current,&cycles))result.set(0,int64_t(cycles));
+    if(QueryThreadCycleTime(current,&cycles))result[0]=int64_t(cycles);
     FILETIME created{},exited{},kernel{},user{};
     if(GetThreadTimes(current,&created,&exited,&kernel,&user)){
         const uint64_t kernel_ticks=(uint64_t(kernel.dwHighDateTime)<<32)|kernel.dwLowDateTime;
         const uint64_t user_ticks=(uint64_t(user.dwHighDateTime)<<32)|user.dwLowDateTime;
-        result.set(1,int64_t((kernel_ticks+user_ticks)/10));
+        result[1]=int64_t((kernel_ticks+user_ticks)/10);
     }
     return result;
+}
+PackedInt64Array NativeResourceUsage::thread_work() const {
+    const auto measured=read_thread_work();PackedInt64Array result;result.resize(2);
+    result.set(0,measured[0]);result.set(1,measured[1]);return result;
 }
 void NativeResourceUsage::initialize_gpu(){
     if(pdh_)return;

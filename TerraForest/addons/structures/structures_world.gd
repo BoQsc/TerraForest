@@ -202,10 +202,9 @@ func _snapshot_changed() -> void:
 	_dirty = true
 	_cached_storage = PackedByteArray()
 
-func _exclusion_changed() -> void:
+func _exclusion_changed(bounds:AABB=AABB()) -> void:
 	_snapshot_changed()
-	vegetation_changed.emit(AABB())
-	obstacles_changed.emit(AABB())
+	vegetation_changed.emit(bounds)
 	changed.emit()
 
 func overlap_mask(transforms: Array[Transform3D], bounds: AABB) -> PackedByteArray:
@@ -256,7 +255,8 @@ func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 	_empty_models[asset_id] = collection.capture_snapshot()
 	add_child(collection)
 	collection.changed.connect(_snapshot_changed)
-	collection.exclusion_changed.connect(_exclusion_changed)
+	collection.exclusion_region_changed.connect(_exclusion_changed)
+	collection.obstacles_changed.connect(func(bounds:AABB):obstacles_changed.emit(bounds))
 	return collection
 
 func model(asset_id: String) -> Node3D:

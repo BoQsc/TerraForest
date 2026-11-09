@@ -66,7 +66,7 @@ bool NativeStructuresSnapshot::restore_bootstrap(const PackedByteArray &bytes,Na
     if(auto *world=ObjectDB::get_instance(block_id))world->emit_signal("changed");
     for(auto &stage:prepared) {
         if(auto *batch=ObjectDB::get_instance(stage.object_id))batch->emit_signal("changed");
-        if(auto *batch=ObjectDB::get_instance(stage.object_id))batch->emit_signal("exclusion_changed");
+        if(auto *batch=Object::cast_to<NativeStaticBatch>(ObjectDB::get_instance(stage.object_id)))batch->publish_exclusion();
     }
     restore_busy=false;return true;
 }

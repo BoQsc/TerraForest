@@ -40,6 +40,7 @@ protected:
 public:
     ~NativeResourceUsage();
     godot::Dictionary sample(const godot::String &volume_path);
+    static std::array<int64_t,2> read_thread_work();
     godot::PackedInt64Array thread_work() const;
     bool start_scan(const godot::Array &locations,int64_t budget_ms=8000);
     void cancel_scan();

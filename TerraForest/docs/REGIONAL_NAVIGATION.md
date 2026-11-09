@@ -65,10 +65,18 @@ stale query references. Unaffected complete paths and cached edges remain usable
 The support-ray cache still changes generation on every publication.
 
 Callers must publish the union of old and new affected geometry in world space.
-Empty, malformed or unbounded notifications remain global barriers. Recipient,
-water-provider and conditional-door policy changes also remain global. Native
-block edits now preserve their changed-cell bounds through the world and trader
-hosts; model/tree notifications without reliable bounds still reset globally.
+Empty, malformed or unbounded notifications remain global barriers. Recipient
+and water-provider changes also remain global. Native block edits preserve their
+changed-cell bounds through the world and trader hosts. Model insertion, removal
+and movement publish the union of old/new collision or exclusion geometry,
+including deferred edit-history publication. Door motion publishes collision
+bounds each changed pose; vegetation waits until rest and receives the full swing
+bounds. Whole-collection/prototype/restore and unbounded tree changes stay global.
+The bounded conditional-door API validates at most 64 RID/bounds pairs atomically.
+Added, removed or moved policies invalidate their old/new regions, retain unrelated
+queries and update only planning exclusions; live movement still sees intact doors.
+Unknown old policy bounds and the legacy RID-only setter retain a global barrier.
+Unchanged policies do not invalidate, regardless of their input ordering.
 Live collision readiness and movement guards remain mandatory. Query envelopes
 are conservative unions, so some unaffected queries may still restart.
 

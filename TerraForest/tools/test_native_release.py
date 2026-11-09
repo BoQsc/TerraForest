@@ -165,7 +165,7 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
                 shutil.copy2(path,addon/path.name)
             shutil.copytree(source/'objects',addon/'objects')
             shutil.copytree(source/'door_animation',addon/'door_animation')
-            for relative in ['addons/world_runtime/world_persistence.gd','addons/player_runtime/durability_catalog.gd','addons/presentation/fullscreen_policy.gd']:
+            for relative in ['addons/world_runtime/world_persistence.gd','addons/world_runtime/location_capture.gd','addons/volumetric_terrain/mesh_codec.gd','addons/exploration/coal_resource.gd','addons/player_runtime/durability_catalog.gd','addons/presentation/fullscreen_policy.gd']:
                 destination=project/relative;destination.parent.mkdir(parents=True,exist_ok=True)
                 shutil.copy2(ROOT/relative,destination)
             shutil.copytree(ROOT/'mods/example_doors',project/'mods/example_doors')

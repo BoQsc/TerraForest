@@ -3,6 +3,8 @@ extends SceneTree
 const MOTION=preload("res://addons/structures/door_animation/bg5_motion.scn")
 var checks:=0
 var failures:=0
+var obstacle_regions:Array[AABB]=[]
+var exclusion_regions:Array[AABB]=[]
 func check(ok:bool,label:String)->void:
 	checks+=1
 	if not ok:failures+=1
@@ -22,6 +24,9 @@ func run()->void:
 	batch.upsert_instances(PackedInt64Array([7]),closed);batch.set_collision_focus(Vector3.ZERO);batch.set_render_focus(Vector3.ZERO)
 	for frame in 15:await physics_frame;await process_frame
 	var body:RID=batch.collision_body_for(7);var builds:int=batch.collision_stats().body_builds
+	var closed_bounds:AABB=batch.instance_obstacle_bounds(7)
+	batch.obstacles_changed.connect(func(bounds:AABB):obstacle_regions.append(bounds))
+	batch.exclusion_region_changed.connect(func(bounds:AABB):exclusion_regions.append(bounds))
 	check(body.is_valid(),"ordinary native door collision is resident")
 	var rig:Node3D=MOTION.instantiate();root.add_child(rig);var player:AnimationPlayer=rig.get_node("AnimationPlayer")
 	check(player.has_animation("Open") and player.has_animation("Close"),"runtime retains authored Open and Close")
@@ -42,6 +47,8 @@ func run()->void:
 	var middle:PackedFloat32Array=batch.get_instance(7)
 	check(middle!=closed and hinges.motion_state(7).fraction>0 and hinges.motion_state(7).fraction<1,"leaf reaches an intermediate authored pose")
 	check(batch.collision_body_for(7)==body and batch.collision_stats().body_builds==builds,"motion retains its collision body without proxy rebuilds")
+	check(not obstacle_regions.is_empty() and obstacle_regions.back().size!=Vector3.ZERO and obstacle_regions.back().encloses(batch.instance_obstacle_bounds(7)),"animated collision publishes bounded current and previous leaf geometry")
+	check(exclusion_regions.is_empty(),"vegetation exclusion waits for the settled leaf")
 	var pose:=Transform3D(Basis(Vector3(middle[0],middle[4],middle[8]),Vector3(middle[1],middle[5],middle[9]),Vector3(middle[2],middle[6],middle[10])),Vector3(middle[3],middle[7],middle[11]))
 	var centre:Vector3=pose*Vector3(.5,1,0)
 	var ray=root.world_3d.direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(centre+pose.basis.z,centre-pose.basis.z,2))
@@ -66,6 +73,7 @@ func run()->void:
 	check(restored.motion_state(7).time==hinges.motion_state(7).time,"restore retains authored playback time")
 	for frame in 14:restored.advance(batch,.1)
 	check(not restored.is_moving(7) and restored.is_open(7),"restored clip completes at the open endpoint")
+	check(not exclusion_regions.is_empty() and exclusion_regions.back().size!=Vector3.ZERO and exclusion_regions.back().grow(.001).encloses(closed_bounds) and exclusion_regions.back().grow(.001).encloses(batch.instance_obstacle_bounds(7)),"settled vegetation publication covers the complete closed and open sweep")
 	check(restored.capture_storage_snapshot().decode_u32(0)==0x31524454,"finished motion retains the legacy settled-state packet")
 	check(restored.animate_toggle(batch,7,AABB()).ok,"authored Close starts")
 	for frame in 14:restored.advance(batch,.1)

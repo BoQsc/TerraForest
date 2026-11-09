@@ -127,5 +127,6 @@ func check_host()->void:
 	structures.obstacles_changed.connect(func(bounds:AABB):published.append(bounds))
 	structures.blocks.set_cells(PackedInt32Array([8,0,8,1]))
 	check(published.size()==1 and published[0].has_point(Vector3(508.5,.5,8.5)) and published[0].size.length()<4,"native block edit publishes local transformed navigation bounds")
-	structures._exclusion_changed()
+	var batch:Node3D=structures.register_model("test/invalidation/v1",BoxMesh.new())
+	batch.configure_collision(AABB(-Vector3.ONE*.5,Vector3.ONE),16,8,4)
 	check(published.size()==2 and published.back().size==Vector3.ZERO,"unbounded model changes preserve global invalidation")

@@ -54,7 +54,7 @@ void NativeStaticBatch::clear_proxies() {
 }
 NativeStaticBatch::~NativeStaticBatch() {clear_proxies();}
 void NativeStaticBatch::_notification(int what) {
-    if(what==NOTIFICATION_TRANSFORM_CHANGED)emit_signal("exclusion_changed");
+    if(what==NOTIFICATION_TRANSFORM_CHANGED)publish_exclusion();
     if(what==NOTIFICATION_EXIT_TREE||what==NOTIFICATION_EXIT_WORLD) {clear_proxies();collision_dirty=true;}
     if(what==NOTIFICATION_ENTER_TREE||what==NOTIFICATION_ENTER_WORLD)collision_dirty=true;
     if(what==NOTIFICATION_EXIT_TREE&&render_streaming) {
@@ -85,7 +85,7 @@ bool NativeStaticBatch::configure_compound_collision(const TypedArray<AABB> &box
     proxy_shape_limit=int(shape_limit);proxy_shapes_per_tick=int(shapes_per_tick);
     proxy_limit=int(instance_limit);proxy_build_limit=int(builds_per_tick);collision_dirty=true;
     std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
-    set_physics_process(radius>0);emit_signal("exclusion_changed");return true;
+    set_physics_process(radius>0);publish_exclusion();return true;
 }
 void NativeStaticBatch::set_collision_focus(Vector3 p) {
     if(!p.is_finite())return;
