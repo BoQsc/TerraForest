@@ -9,18 +9,22 @@ The main world enables this mode for its registered model assets.
 All authored placements and mesh resources remain in RAM. This change releases
 derived MultiMesh nodes, buffers and GPU slot mappings during travel; it does
 not implement disk regions, geometry LOD or an aggregate city asset budget.
-The existing 100,000-placement and 4,096-page limits still apply per collection.
+The existing 100,000-placement and 4,096 logical-page limits apply per collection.
+Opt-in draw partitioning reserves additional physical pages as described below.
 
 ## API contract
 
 `configure_render_streaming(enabled, radius, batch_limit, byte_limit,
 uploads_per_tick, bytes_per_tick)` validates the entire configuration before
 changing state. Radius is finite, 0–16,384 collection-local units; page limit
-is 1–4,096 render pages; both payload budgets are 48–4,800,000 bytes; uploads are 1–64 per
+is 1–4,096 logical pages. Resident payload is one instance stride through
+8,000,000 bytes; per-tick payload is one stride through 4,800,000 bytes (a stride
+is 48 bytes normally, 64 with appearance data). Uploads are 1–64 per
 process tick. Both enabled and disabled calls require valid limits. Invalid
 calls preserve existing state. Reconfiguration releases old rendering
 immediately, ensuring a smaller budget is respected without an over-budget
-frame. Disabling streaming synchronously restores eager rendering.
+frame. Disabling streaming synchronously restores eager rendering unless spatial
+partitions are enabled; that combination is rejected.
 
 `set_render_focus(position)` takes a finite collection-local position. Selection
 runs after edits/reconfiguration or four units of movement, using four units of
@@ -56,7 +60,7 @@ generic static-model collections retain their existing rebuild contract. See
 `render_stats()` reports authored groups, resident pages/instances/payload,
 pending pages, candidate and deferred counts, selection status/count, evictions
 and cumulative uploaded transform bytes. Payload accounting uses 48 bytes per
-resident transform. It excludes mesh resources, driver allocations, Godot nodes,
+resident transform, or 64 including appearance data. It excludes mesh resources, driver allocations, Godot nodes,
 map/vector overhead and authored records, and must not be described as measured
 VRAM or total memory. Limits apply independently to each collection.
 
@@ -65,6 +69,44 @@ continue to use authored data independently of rendering. Entering/exiting the
 scene rebuilds/releases streamed rendering. Mesh changes require application
 asset reconfiguration so maintained bounds are refreshed. All residency and
 authoring APIs are scene-thread operations.
+
+## Spatial draw partitions
+
+`configure_render_partitions(subdivisions, bounds_padding)` opts an empty,
+streamed, appearance-faded collection into 1, 2 or 4 subdivisions per axis.
+It rejects active admission/retirement, existing placements/unloaded regions,
+or a separate world-render owner. Finite padding is 0–1 local mesh units.
+Ground cover uses two subdivisions (16 m); other collections remain unchanged.
+Canonical placement IDs, 32 m storage/region packets, collision ownership,
+render admission distance and parent-group shadow distance remain independent.
+
+Each subcell has stable derived ID ranges, split by the existing page capacity.
+A linear native counting partition builds the ranges; no instance transforms are
+duplicated into a second resident renderer. Edited visible identities precede
+pending identities in each subcell. A scene-thread reconciliation preserves
+visible survivors and fade ages across subcell moves/removals. Partial pages stay
+visible when their pending growth cannot fit; impossible growth is deferred.
+As with the existing continuity path, immediate edit work is not a hard deadline.
+Partitioned archive admission derives its layout at publication in O(records);
+ground cover uses transient collections. This optional archive path is not a
+bounded-publication claim for a dense 100,000-record region.
+
+Logical admission charges the selected instance count per canonical group in
+page-capacity units. The physical draw-node ceiling is the logical limit times
+`subdivisions³`; transform-byte and background upload budgets are unchanged.
+`render_stats().logical_page_limit` reports the configured logical budget;
+`batch_limit` reports the physical ceiling. Callers that reconfigure a collection
+must use the logical value. `layout_capacity_bytes` estimates vector capacity and
+map payload, including retired layouts; it excludes allocator/map-node overhead.
+Layouts join existing bounded retirement and are released on clear. Tree exit
+releases GPU residency; authored records and their derived ranges survive reentry.
+
+Each draw AABB unions exact transformed mesh bounds grown by shader displacement
+padding **before** instance scaling/rotation. Cover uses 0.05 m, enclosing its
+current local bend and wind. Mesh replacement refreshes bounds. These smaller
+MultiMeshes also affect automatic mesh LOD selection, so unchanged meshes and
+density do not alone establish visual parity; outdoor checks remain required.
+See [production integration evidence](../issues/runtime-performance/native-cover-partitions-2026-11-09.md).
 
 ## Evidence
 

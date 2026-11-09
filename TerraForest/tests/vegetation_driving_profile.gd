@@ -32,7 +32,7 @@ func sample(label:String,seconds:float)->void:
 		if ground_upload_kib>0:
 			for batch:Node3D in game.ground_cover.batches:
 				var settings:Dictionary=batch.render_stats()
-				if not batch.configure_render_streaming(settings.enabled,settings.radius,settings.batch_limit,settings.byte_limit,settings.uploads_per_tick,ground_upload_kib*1024):
+				if not batch.configure_render_streaming(settings.enabled,settings.radius,settings.logical_page_limit,settings.byte_limit,settings.uploads_per_tick,ground_upload_kib*1024):
 					push_error("Ground renderer experiment rejected");await finish(false);return
 		boulder_baseline=boulder_identities()
 		game.fly=true;game.player.velocity=Vector3.ZERO

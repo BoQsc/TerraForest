@@ -132,7 +132,7 @@ Dictionary NativeStaticBatch::advance_region_admission_impl(int64_t max_records,
             if(job.count) {
                 missing.bounds=collision_bounds.at(key).merge(render_bounds.at(key));
                 job.ids=std::move(groups.at(key));groups.erase(key);
-                job.ordered=std::move(render_ids.at(key));render_ids.erase(key);
+                job.ordered=std::move(render_ids.at(key));render_ids.erase(key);render_layout.erase(key);
             }
             unloaded_regions.emplace(key,std::move(missing));
             unloaded_bounds.insert(key,unloaded_regions.at(key).bounds);
@@ -143,11 +143,13 @@ Dictionary NativeStaticBatch::advance_region_admission_impl(int64_t max_records,
             publish_change(true,false);break;
         }
         if(!job.retiring&&job.ids.size()==job.count) {
-            // All indexes were prepared a record at a time. Publication moves
-            // container ownership, without traversing the dense region again.
+            // Canonical indexes were prepared a record at a time. Their
+            // publication moves ownership. Opt-in draw partitions additionally
+            // derive an O(records) layout here; this is not a hard time budget.
             const auto key=job.key;
             if(job.count) {
                 groups.emplace(key,std::move(job.ids));render_ids.emplace(key,std::move(job.ordered));
+                rebuild_render_layout(key);
                 collision_bounds.emplace(key,job.collision);render_bounds.emplace(key,job.visual);
                 collision_index.insert(key,job.collision);
             }

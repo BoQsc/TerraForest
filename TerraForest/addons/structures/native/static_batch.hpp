@@ -103,6 +103,18 @@ class NativeStaticBatch : public Node3D {
     std::unordered_map<int64_t,int> slots;
     std::map<RenderKey,std::vector<int64_t>> resident_ids;
     std::map<BlockKey,std::vector<int64_t>> render_ids;
+    // Derived draw ranges only. Storage, collision and region keys remain 32 m.
+    struct RenderSpan {uint32_t page;uint64_t start,count,retained;};
+    std::map<BlockKey,std::vector<RenderSpan>> render_layout;
+    int render_partitions=1;
+    double render_bounds_padding=0;
+    void rebuild_render_layout(BlockKey key,bool retain_visible=false);
+    void reconcile_partition_pages(const std::set<BlockKey> &keys);
+    uint64_t render_draw_limit() const {return uint64_t(render_batch_limit)*render_partitions*render_partitions*render_partitions;}
+    RenderSpan render_span(RenderKey key) const;
+    std::vector<uint32_t> render_page_keys(BlockKey key) const;
+    uint32_t render_page_at(BlockKey key,uint64_t index) const;
+    void update_render_bounds(RenderKey key,const Ref<MultiMesh> &multi);
     std::map<BlockKey,AABB> render_bounds;
     std::vector<RenderKey> render_pending;
     bool render_streaming=false,render_dirty=true;
@@ -157,7 +169,7 @@ class NativeStaticBatch : public Node3D {
     void release_proxy(int64_t id);
     void clear_proxies();
     void invalidate_proxy(int64_t id);
-    void refresh_collision_bounds(const std::set<BlockKey> &keys);
+    void refresh_collision_bounds(const std::set<BlockKey> &keys,bool retain_visible=false);
     void select_proxies();
     static bool valid_transform(const float *t);
     static BlockKey group_for(const Placement &p);
@@ -173,6 +185,7 @@ class NativeStaticBatch : public Node3D {
         decltype(appearance_birth) old_birth;
         decltype(resident_ids) old_resident;
         decltype(render_ids) old_render;
+        decltype(render_layout) old_layout;
         decltype(render_bounds) old_bounds;
         decltype(collision_bounds) old_collision_bounds;
         ModelBoundsIndex old_collision_index;
@@ -231,6 +244,7 @@ public:
     void set_casts_shadows(bool enabled);
     bool set_shadow_distance(double radius);
     bool configure_appearance_fade();
+    bool configure_render_partitions(int subdivisions,double bounds_padding);
     bool configure_collision(const AABB &box,double radius,int64_t instance_limit,int64_t builds_per_tick);
     bool configure_compound_collision(const TypedArray<AABB> &boxes,double radius,int64_t instance_limit,int64_t builds_per_tick,int64_t shape_limit,int64_t shapes_per_tick);
     void set_collision_focus(Vector3 focus);

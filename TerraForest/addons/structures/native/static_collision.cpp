@@ -114,15 +114,16 @@ void NativeStaticBatch::move_proxy(int64_t id,const Transform3D &pose) {
     }
     server->body_set_state(found->second.body,PhysicsServer3D::BODY_STATE_TRANSFORM,Transform3D(Basis(),world.origin));
 }
-void NativeStaticBatch::refresh_collision_bounds(const std::set<BlockKey> &keys) {
+void NativeStaticBatch::refresh_collision_bounds(const std::set<BlockKey> &keys,bool retain_visible) {
     if(source_mesh.is_null())return;
     const AABB prototype=proxy_parts.empty()?source_mesh->get_aabb():proxy_box;
     const AABB visual=source_mesh->get_aabb();
     for(auto key:keys) {
         auto group=groups.find(key);collision_bounds.erase(key);
         render_bounds.erase(key);
-        if(group==groups.end()) {collision_index.erase(key);render_ids.erase(key);continue;}
+        if(group==groups.end()) {collision_index.erase(key);render_ids.erase(key);render_layout.erase(key);continue;}
         if(!render_ids.count(key))render_ids[key].assign(group->second.begin(),group->second.end());
+        rebuild_render_layout(key,retain_visible);
         bool first=true;AABB box,render_box;
         for(auto id:group->second) {
             Transform3D transform=placement_transform(placements.at(id));

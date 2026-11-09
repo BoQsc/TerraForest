@@ -66,6 +66,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("render_frame_profile"),&NativeStaticBatch::render_frame_profile);
     ClassDB::bind_method(D_METHOD("is_render_region_ready","world_bounds"),&NativeStaticBatch::is_render_region_ready);
     ClassDB::bind_method(D_METHOD("configure_appearance_fade"),&NativeStaticBatch::configure_appearance_fade);
+    ClassDB::bind_method(D_METHOD("configure_render_partitions","subdivisions","bounds_padding"),&NativeStaticBatch::configure_render_partitions);
     ClassDB::bind_method(D_METHOD("set_casts_shadows","enabled"),&NativeStaticBatch::set_casts_shadows);
     ClassDB::bind_method(D_METHOD("set_shadow_distance","radius"),&NativeStaticBatch::set_shadow_distance);
     ClassDB::bind_method(D_METHOD("configure_collision","box","radius","instance_limit","builds_per_tick"),&NativeStaticBatch::configure_collision);
@@ -137,7 +138,7 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
     bool changed=asset_id!=id||source_mesh!=mesh;
     asset_id=id;source_mesh=mesh;
     std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
-    for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
+    for(auto &e:batches){auto multi=e.second->get_multimesh();multi->set_mesh(mesh);update_render_bounds(e.first,multi);}
     // Invalidate journals before either notification can call back into editing.
     if(changed){++edit_revision;survey_saved_identity=String();reset_world_render();}
     emit_signal("exclusion_changed");
@@ -178,7 +179,8 @@ void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys,bool continuous) 
             std::set<int64_t> indexed(ordered.begin(),ordered.end());
             for(auto id:members)if(!indexed.count(id))ordered.push_back(id);
         }
-        refresh_collision_bounds(keys);
+        refresh_collision_bounds(keys,true);
+        if(render_partitions>1){reconcile_partition_pages(keys);return;}
         std::map<RenderKey,uint64_t> changed;
         for(auto key:keys) {
             auto page=batches.lower_bound({key,0});
@@ -188,7 +190,7 @@ void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys,bool continuous) 
                 bool same=count==old.size();
                 if(same&&count) {
                     const auto &ordered=render_ids.at(key);
-                    same=std::equal(old.begin(),old.end(),ordered.begin()+uint64_t(draw.second)*render_page_capacity());
+                    same=std::equal(old.begin(),old.end(),ordered.begin()+render_span(draw).start);
                 }
                 if(!same)changed.emplace(draw,count);
             }
@@ -248,6 +250,8 @@ bool NativeStaticBatch::upsert_instances_impl(const PackedInt64Array &ids,const 
         }
         auto k=group_for(e.second);placements[e.first]=e.second;groups[k].insert(e.first);touched.insert(k);
     }
+    // Crossing a draw partition changes derived ranges, not storage ownership.
+    if(render_partitions>1)for(const auto &entry:local_updates)touched.insert(entry.first);
     // A few moves inside an existing group update GPU slots directly. Large
     // edits use one buffer upload instead of thousands of renderer API calls.
     for(auto &e:local_updates)if(!render_streaming&&e.second.size()>64)touched.insert(e.first);
@@ -262,7 +266,7 @@ bool NativeStaticBatch::upsert_instances_impl(const PackedInt64Array &ids,const 
             const auto &ordered=render_ids.at(e.first);std::set<uint32_t> pages;
             for(auto id:e.second) {
                 auto index=std::find(ordered.begin(),ordered.end(),id)-ordered.begin();
-                pages.insert(uint32_t(index/render_page_capacity()));
+                pages.insert(render_page_at(e.first,uint64_t(index)));
             }
             for(auto page:pages) {
                 RenderKey draw{e.first,page};
@@ -317,10 +321,10 @@ bool NativeStaticBatch::begin_transient_clear() {
     auto retired=std::make_unique<CollectionRetirement>();
     retired->render_bytes=render_bytes;retired->stride_bytes=render_stride_bytes();
     retired->units=placements.size()*2+groups.size()+batches.size()+slots.size()+appearance_birth.size()+
-        resident_ids.size()+render_ids.size()+render_bounds.size()+collision_bounds.size();
+        resident_ids.size()+render_ids.size()+render_layout.size()+render_bounds.size()+collision_bounds.size();
     retired->old_placements.swap(placements);retired->old_groups.swap(groups);retired->old_batches.swap(batches);
     retired->old_slots.swap(slots);retired->old_birth.swap(appearance_birth);retired->old_resident.swap(resident_ids);
-    retired->old_render.swap(render_ids);retired->old_bounds.swap(render_bounds);retired->old_collision_bounds.swap(collision_bounds);
+    retired->old_render.swap(render_ids);retired->old_layout.swap(render_layout);retired->old_bounds.swap(render_bounds);retired->old_collision_bounds.swap(collision_bounds);
     std::swap(retired->old_collision_index,collision_index);
     for(auto &entry:retired->old_batches)entry.second->set_visible(false);
     render_pending.clear();render_bytes=0;render_candidates=0;render_blocked=0;render_dirty=true;collision_dirty=true;
@@ -343,7 +347,7 @@ Dictionary NativeStaticBatch::advance_transient_clear(int64_t max_records,int64_
         else if(!r.old_groups.empty()) {
             auto it=r.old_groups.begin();if(it->second.empty())r.old_groups.erase(it);else it->second.erase(it->second.begin());
         }
-        else if(erase_one(r.old_slots)||erase_one(r.old_birth)||erase_one(r.old_resident)||erase_one(r.old_render)||erase_one(r.old_bounds)){}
+        else if(erase_one(r.old_slots)||erase_one(r.old_birth)||erase_one(r.old_resident)||erase_one(r.old_render)||erase_one(r.old_layout)||erase_one(r.old_bounds)){}
         else if(!r.old_collision_bounds.empty()) {r.old_collision_index.erase(r.old_collision_bounds.begin()->first);erase_one(r.old_collision_bounds);}
         else {collection_retirement.reset();break;}
         --r.units;++processed;
@@ -366,7 +370,7 @@ bool NativeStaticBatch::clear_instances() {
     for(auto &entry:batches)memdelete(entry.second);
     batches.clear();render_bytes=0;render_candidates=0;render_blocked=0;
     clear_proxies();visual_hidden.clear();placements.clear();groups.clear();slots.clear();appearance_birth.clear();
-    resident_ids.clear();render_ids.clear();render_bounds.clear();render_pending.clear();
+    resident_ids.clear();render_ids.clear();render_layout.clear();render_bounds.clear();render_pending.clear();
     collision_bounds.clear();collision_index.clear();collision_dirty=true;render_dirty=true;
     reset_world_render();publish_change();return true;
 }
@@ -390,7 +394,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     auto validated=Time::get_singleton()->get_ticks_usec();removal_validation_us+=validated-began;
     // Interactive single removal swaps the final member into the vacated slot.
     // Only two bounded pages can change; never retire a whole visible group.
-    if(render_streaming&&!collision_only&&unique.size()==1) {
+    if(render_partitions==1&&render_streaming&&!collision_only&&unique.size()==1) {
         const auto id=*unique.begin();const auto key=group_for(placements.at(id));
         auto &ordered=render_ids.at(key);
         auto found=std::find(ordered.begin(),ordered.end(),id);

@@ -20,6 +20,7 @@ var grass_material: ShaderMaterial
 var grass_texture_enabled:=false
 var foliage_materials:Array[ShaderMaterial]=[]
 var batches: Array[Node3D]=[]
+var render_partition_subdivisions:=2
 var preview_meshes:Array[Mesh]=[]
 var rock_collision:Node3D
 var fractures:Node3D
@@ -80,6 +81,10 @@ func _ready() -> void:
 		if species==0:stone_geometry=geometry
 		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,geometry) or not batch.configure_render_streaming(true,maxf(144.0,Catalog.DISTANCES[species]),896 if species==2 else 192,7000000 if species==2 else (1600000 if species==1 else 200000),2,RENDER_UPLOAD_BYTES):
 			push_error("Ground cover renderer initialization failed");set_process(false);return
+		# Draw partitions are independent of 32 m storage/collision ownership.
+		# Five centimetres encloses the shader's local bend and wind displacement.
+		if not batch.configure_render_partitions(render_partition_subdivisions,0.05 if render_partition_subdivisions>1 else 0.0):
+			push_error("Ground cover render partition initialization failed");set_process(false);return
 		batch.set_casts_shadows(true)
 		batch.set_shadow_distance(24.0 if species==2 else 48.0)
 		batches.append(batch)
