@@ -30,12 +30,37 @@ The [rolling recorder](FRAME_TRACE.md) remains opt-in during normal gameplay.
 The prior audio export blocker is repaired using unchanged raw assets and
 PCK-compatible reads; exports pass with fourteen matching native DLLs. Exact
 source/package checks and remaining lifecycle caveats are tracked in the linked
-implementation report. Final installed gameplay save succeeds (7.239 ms capture,
-0.810 ms water, 5.173 ms structures), but its strict run fails on three anonymous
-ObjectDB leaks; an earlier installed run leaked seven and the baseline one.
-The latest source run exits cleanly. Ownership is unknown and a lifecycle
-regression cannot be excluded. Final installed triggered p99 is 21.106 ms,
-maximum 26.913 ms; short-run improvement does not close the earlier 91 ms stall.
+implementation report. The earlier installed run's three anonymous ObjectDB
+leaks prompted allocation-ID tracing. An orphaned NativeBlockMapRegion was
+identified; immutable native survey payloads now cross workers, with engine
+wrappers created by the consuming thread. Three source repeats exited cleanly,
+but the first refreshed packaged run still leaked one object. Out-of-order
+consumption then reproduced 48 surviving wrappers out of 80: the pinned binding's
+Dictionary move assignment leaks its previous reference during queue erasure.
+All fourteen native DLLs now use a source-hash-verified repair of that binding
+translation unit, with original MIT notices and SDK version retained. The same
+test has zero survivors in debug/release; four serial packaged enter/save/turn/exit
+runs are clean. The reproduced leak is closed; endurance and other lifetime
+defects remain unqualified. Earlier failures remain visible.
+
+The furnished-tower failure is corrected by probing individual legal risers in
+travel order, retaining the same geometry/safety/budget constraints. Its full
+18-check fixture and 13-check saved tower round trip pass, including recovery from
+live capsule-clearance rejection while preserving conditional door attacks.
+Cold planning still takes about 18 seconds in the fixture and 35–45 seconds in
+the full host. The
+same-view light comparison preserves visuals and finds no material GPU win from
+avoiding redundant setters: point-light shadows still cost about 4–5 ms. The
+latest isolated source trace catches a 70.435 ms gameplay frame, mostly in the
+draw interval, without new pipelines or substantial zombie work. Short clean
+functional runs do not close rendering headroom, pursuit latency or later stalls.
+The final longer ordinary-output packaged control still has p99 27.096 ms and
+36.532 ms maximum in triggered gameplay windows, with mean root GPU work 14.665 ms.
+A profiled run also captures an unexplained 480.259 ms interval mostly before
+game processing (coarse main-thread CPU 31.25 ms); it does not recur in the
+ordinary-output control. Keep that attribution open. First zombie anatomy setup
+still costs 51–60 ms. The legacy unfinished-lake shutdown/ID-reuse assertions
+fail equally with the pre-repair and repaired native binaries; they remain open.
 
 ## Frame-rate diagnostic playtest — 2026-11-09
 

@@ -12,7 +12,15 @@ first-person preparation and worker resource validation are implemented. Actual
 64-block destructive calls now cost 0.8–2.1 ms per batch; default-world arrival
 223.6 → 26.6 ms. Rendering, later physics/draw stalls and zombie route latency
 remain open. The audio export boundary is repaired; package validation is recorded
-in the linked evidence. No graphics or gameplay limit was reduced.
+in the linked evidence. Follow-up fixes the tower's aligned-riser rejection and
+native map-decoder worker ownership. A remaining packaged leak was traced to
+Dictionary move assignment in the pinned bindings; all native modules now use
+the repair, with zero of 80 wrappers retained versus 48 before and four clean
+serial packaged save/shutdown runs. Cold planning
+still takes about 18 s in the fixture and 35–45 s in the host; point-light shadows
+cost about 5 ms and independent draw/scheduling stalls remain. The final ordinary
+long control has p99 27.096 ms; a 480 ms interval in the profiled run has no proven
+cause and did not recur in that control. No graphics or gameplay limit was reduced.
 
 Earlier [fresh-default-world / rolling-trace investigation](rolling-trace-2026-11-09.md):
 normal Frontier expedition generation completed; first-person depth activation,

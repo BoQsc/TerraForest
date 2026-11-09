@@ -5,6 +5,29 @@
 - User review: Follow-up reports awake sleepers still mostly standing inside houses/mine. Earlier response/wake changes did not establish complete behavior acceptance.
 - Symptom: Sleepers ignored a silent nearby player, rose slowly and failed to commit; ordinary zombies could disregard attacks or an obvious close threat.
 
+## Stair support and pursuit follow-up — 2026-11-09
+
+The previously failing furnished-tower search now passes its 18 assertions.
+Midpoint-first probing merged adjacent legal 25 cm risers into a rejected 50 cm
+step at exact grid alignments. Native support probes now run in travel order;
+the actual collision regression fails three entrance cases before the correction
+and passes all 12 checks afterward, including a genuinely impassable tall step.
+No step, slope, capsule, readiness, water, scheduling or memory limit was widened.
+
+The saved-world follow-up exposed replay of a connection rejected by live
+capsule clearance. Bounded waypoint rejection now requests another complete
+route, while a declared breakable door retains its approach and solid collision.
+The 13-check actual tower round trip now passes, including attack contact and
+return to the street; all 200 source save files retain their hashes.
+
+Cold planning remains slow: 1,068 ticks / 17.8 seconds in the corrected debug
+tower fixture and 35.2/45.0 seconds for outbound/return queries in the full host.
+This fixes reachability/repeated blockage, not acceptable pursuit response time.
+Moving-goal, physical stair/slope and release checks are tracked with the
+[performance follow-up](../runtime-performance/foundation-2026-11-09.md).
+Earlier failures below remain historical evidence; player acceptance and wider
+world/multiplayer navigation remain open.
+
 ## Recalculation pauses — 2026-11-05 follow-up
 
 User feedback: zombies take too long to recalculate and act. The focused baseline

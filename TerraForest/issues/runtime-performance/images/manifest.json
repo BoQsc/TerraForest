@@ -34,5 +34,40 @@
     "sha256": "b0b5b498a0c2129365f2491f2138813b52c4750acc62271bf70c679e32f08d71",
     "revision": "87afcdfe plus readiness pass; exact hashes in readiness-evidence.json",
     "status": "Seed 1703, same 248 m road route, 2963 trees / 376 owners; camera/wind differ slightly. Inspected engineering evidence, not user approval."
+  },
+  "20261109-lights-guarded.png": {
+    "source": "reports\\performance_changes\\20261109T100041668853Z_immutable_handoffs_repeat2_abba\\lights_guarded_a2.png",
+    "sha256": "07aea984042445c49b84fc1c0ed4c96c795f991af19b2ba6693dcc097d56ce8e",
+    "revision": "74149a5f plus native ownership/stair/light changes; exact native hashes in source run.json",
+    "world": "Frontier generator 29 seed 1703, unchanged 1080p, default sanctuary view",
+    "status": "Inspected same-view ABBA control. Same four light bindings, geometry, materials and shadows; animation/time and notice text differ. No measurable GPU win established; not user visual approval."
+  },
+  "20261109-lights-repeated.png": {
+    "source": "reports\\performance_changes\\20261109T100041668853Z_immutable_handoffs_repeat2_abba\\lights_repeated_b2.png",
+    "sha256": "4c6471de8642154550de77e0af8f3e5307a5486c928df971f03704866c6b480a",
+    "revision": "74149a5f plus native ownership/stair/light changes; exact native hashes in source run.json",
+    "world": "Frontier generator 29 seed 1703, unchanged 1080p, default sanctuary view",
+    "status": "Inspected same-view ABBA control. Same four light bindings, geometry, materials and shadows; animation/time and notice text differ. No measurable GPU win established; not user visual approval."
+  },
+  "20261109-tower-contact.png": {
+    "source": "reports\\checks\\20261109T102255010655Z\\tower\\arrival.png",
+    "sha256": "9725413f1b8ac8ac31133ae96788e7636ac2a5de84ef4d99179da635e68c37a1",
+    "revision": "d50ea0c1 plus tread-order and live-clearance recovery fixes; native hashes in run.json",
+    "world": "Owned regional_districts_20261018, generator 12 seed 1703, read-only; 1080p scripted camera and test light",
+    "status": "Inspected autonomous climb/contact or return after 13/13 world checks. Historical district art and user visual approval are not qualified."
+  },
+  "20261109-tower-return.png": {
+    "source": "reports\\checks\\20261109T102255010655Z\\tower\\return.png",
+    "sha256": "5b9efe1bf10b2e7c403327ced45fa11be06fb7b22a3110bab8bb702f100c3d3f",
+    "revision": "d50ea0c1 plus tread-order and live-clearance recovery fixes; native hashes in run.json",
+    "world": "Owned regional_districts_20261018, generator 12 seed 1703, read-only; 1080p scripted camera and test light",
+    "status": "Inspected autonomous climb/contact or return after 13/13 world checks. Historical district art and user visual approval are not qualified."
+  },
+  "20261109-package-binding-repair.png": {
+    "source": "reports/performance_changes/20261109T110022679396Z_dictionary_lifetime3_long/arrival.png",
+    "sha256": "79ae87ad9db7e7f572eb7c6548c4371301a21b1b86e6a9de0ddebffb091ff4b0",
+    "revision": "130c8f05; exact PCK and fourteen native hashes in run.json",
+    "world": "Owned clone of default Frontier generator 29 seed 1703, unchanged 1080p sanctuary view after a full turn and normal gameplay save",
+    "status": "Inspected against source repeat3 arrival and repaired package repeat1. Existing material, geometry, tool/hand appearance and HUD preserved; prior art defects and user visual approval are not closed. GPU-profile/verbose mode used; screenshot is not FPS evidence."
   }
 }
