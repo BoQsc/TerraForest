@@ -105,5 +105,17 @@
     "sha256": "c2d222529881d647154b6f1565fe9e2b4b4d93ec2cf4e64b849d7953b57b54b4",
     "revision": "2e730410 (captured with matching uncommitted implementation; source run.json retains hashes)",
     "status": "Inspected indoor arrival: brick, door, HUD and held item present. Camera faces wall; this does not qualify zombie traversal visuals or broad visual acceptance. Same inherited pickaxe grip limitation remains."
+  },
+  "cover-partition-baseline.png": {
+    "source": "reports/performance_changes/20261109T124042309591Z_cover_partition16_abba/render_original_a.png",
+    "sha256": "cc9b1d21d88683e30ff8e64332dfc58b6a41d3c926aa916e5da44be3a343f695",
+    "revision": "a973da7e diagnostic with unchanged aeff4c0e package (see run.json)",
+    "status": "Original 32 m cover batches. Same indoor camera inspected; source/instance parity checked. Wall-facing view does not qualify outdoor vegetation or user visual approval."
+  },
+  "cover-partition-prototype.png": {
+    "source": "reports/performance_changes/20261109T124042309591Z_cover_partition16_abba/render_partitioned_b.png",
+    "sha256": "effe23c462abdbeab2f635f8c9422a1e8b3894133cc013d95fd92153743d79b5",
+    "revision": "a973da7e diagnostic with unchanged aeff4c0e package (see run.json)",
+    "status": "Test-only 16 m near-cover render partitions. Same indoor camera inspected; source/instance parity checked. Wall-facing view does not qualify outdoor vegetation or user visual approval."
   }
 }

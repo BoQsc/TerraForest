@@ -34,6 +34,14 @@ now preserve exact ray answers in a bounded 3 MiB native cache. The fixture avoi
 round trip, but return planning remains about 50 seconds and full-host timing is
 mixed. Rolling captures retain every navigation tick before a rendered frame.
 
+[Ground-cover render partition diagnostics](cover-render-partitions-2026-11-09.md)
+identify a major rendering cost: whole 32 m cover batches participate in nearby
+light shadows. Exact 16 m prototype partitions reduce stationary GPU medians
+from about 12 to 7.5 ms and point-shadow buckets from 4.3–4.5 to 1.36 ms.
+A full-detail control also improves, but this remains a test-only prototype.
+Bounded native publication, outdoor visual checks and remaining draw waits are
+the immediate continuation; stable 60 FPS is not established.
+
 Earlier [fresh-default-world / rolling-trace investigation](rolling-trace-2026-11-09.md):
 normal Frontier expedition generation completed; first-person depth activation,
 arrival PNG decoding, first zombie admission, parked-prototype preparation and

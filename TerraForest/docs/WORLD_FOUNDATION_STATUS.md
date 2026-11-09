@@ -45,6 +45,19 @@ sample. Rendering has not received a matched A/B explanation; it remains an
 explicit performance regression candidate. These local gameplay samples have
 zero support-cache hits, so only the regional fixture establishes reuse benefit.
 
+[Controlled cover-render partition probes](../issues/runtime-performance/cover-render-partitions-2026-11-09.md)
+now support excessive 32 m cover-batch shadow submission as a major GPU cost.
+The 16 m diagnostic preserves 4,707 instance records and changes GPU phase
+medians from 12.143/11.750 to 7.490/7.475 ms; point shadows fall from about
+4.3–4.5 to 1.36 ms. An all-full-detail control also saves GPU time. This is
+**not yet a production rendering fix**: the script creates duplicate buffers and
+nodes synchronously. The immediate next milestone is bounded native render
+partitioning independent of archive/collision groups, preserving old coverage,
+fade identities, shadows and conservative wind bounds. Outdoor moving-camera,
+edit/retirement, memory and packaged visual checks must pass before admission.
+The linked report retains the exact implementation requirements and a separate
+97.573 ms draw-dominated stall despite 7.634 ms reported GPU time.
+
 Stable 60 FPS with headroom is NOT established: the combined trace still has a
 91.4 ms gameplay frame and ~15 ms root GPU work. Rendering pass/batch costs,
 physics/draw tails, staged zombie admission, native regional route connectivity,

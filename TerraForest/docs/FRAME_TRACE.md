@@ -127,3 +127,16 @@ changing light counts, positions, energy, shadows or graphics preferences.
 This is a diagnostic control, not evidence that redundant setters dominate GPU
 cost. Run one game at a time; concurrent game processes invalidate performance
 comparisons. Screenshot readback and optional verbose profiling can perturb timing.
+
+`--render-inventory` records visible scene geometry and conservative point-light
+candidate bounds **after** observations are saved; its instance readbacks are
+not part of the timed sample. `--render-partition 8` or `16` runs a stationary
+ABBA probe that copies nearby cover into smaller render groups with the same
+instance records, mesh/material references and shadow settings. The final driver
+fails if original/replacement buffers change during measurement, restores original
+visibility and frees the prototype pages. `--render-full-detail` requires that
+probe and disables automatic mesh LOD for every phase, then restores it.
+These are test-only controls, not production rendering changes. The wrapper
+retains diagnostic source hashes; observation samples include frame/time IDs.
+[Results and native integration requirements](../issues/runtime-performance/cover-render-partitions-2026-11-09.md)
+remain separate from stable-frame-rate and visual acceptance.

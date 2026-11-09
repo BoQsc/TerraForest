@@ -1,0 +1,1506 @@
+{
+  "schema": 1,
+  "date": "2026-11-09",
+  "diagnostic_commit": "a973da7e",
+  "production_render_change": false,
+  "scope": "Stationary offscreen 1920x1080 ABBA probes on fresh owned clones of generator-29 default seed-1703 world. No shipped rendering, density, lighting or gameplay settings changed. Original diagnostic code 0BSD.",
+  "runs": [
+    {
+      "path": "reports/performance_changes/20261109T123449192437Z_cover_partition8_abba",
+      "manifest_sha256": "43f6a1015858fbf277fe7b3eba2d8426a6c90fb57e9ab8dd86a6dbd807a7d24f",
+      "observation_sha256": "73b5922defb9771abddd810277ea5d6342fa72cf9f1e562bafcc6cac5e66c70e",
+      "pack_sha256": "aeff4c0e6e5cef8db1b2972252b66e3eee2996fe1343dbd9c7e36e9b52ddb762",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 31524,
+        "exit_code": 0,
+        "resources": {
+          "samples": 150,
+          "gpu_samples": 149,
+          "peak_private_commit_bytes": 3905638400,
+          "peak_working_set_bytes": 2296635392,
+          "peak_dedicated_gpu_bytes": 1542103040,
+          "checks": {
+            "ram": {
+              "bytes": 3905638400,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1542103040,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 91.96887720003724,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "probe": {
+        "instances": 4709,
+        "original_batches": 30,
+        "replacement_batches": 275,
+        "span": 8.0,
+        "unchanged": true
+      },
+      "diagnostic_sha256": "Not recorded by the initial prototype wrapper; manifest retains dirty source paths and native/package hashes.",
+      "phases": {
+        "render_original_a": {
+          "frame_ms": {
+            "samples": 301,
+            "mean": 16.718906976744186,
+            "p50": 16.632,
+            "p95": 18.108,
+            "p99": 19.495,
+            "maximum": 32.524
+          },
+          "gpu_ms": {
+            "samples": 301,
+            "mean": 12.925225888375826,
+            "p50": 12.8219995498657,
+            "p95": 13.8680000305176,
+            "p99": 14.1750001907349,
+            "maximum": 14.4160003662109
+          },
+          "draw_calls": {
+            "samples": 301,
+            "mean": 4983.0,
+            "p50": 4983.0,
+            "p95": 4983.0,
+            "p99": 4983.0,
+            "maximum": 4983.0
+          }
+        },
+        "render_partitioned_b": {
+          "frame_ms": {
+            "samples": 296,
+            "mean": 17.042236486486487,
+            "p50": 16.689,
+            "p95": 20.552,
+            "p99": 30.11,
+            "maximum": 97.573
+          },
+          "gpu_ms": {
+            "samples": 296,
+            "mean": 7.5927500015980485,
+            "p50": 7.62099981307983,
+            "p95": 8.10000038146973,
+            "p99": 8.60000038146973,
+            "maximum": 8.66399955749512
+          },
+          "draw_calls": {
+            "samples": 296,
+            "mean": 5208.0,
+            "p50": 5208.0,
+            "p95": 5208.0,
+            "p99": 5208.0,
+            "maximum": 5208.0
+          }
+        },
+        "render_partitioned_b2": {
+          "frame_ms": {
+            "samples": 301,
+            "mean": 16.70474418604651,
+            "p50": 16.521,
+            "p95": 19.971,
+            "p99": 21.094,
+            "maximum": 28.359
+          },
+          "gpu_ms": {
+            "samples": 301,
+            "mean": 6.981867105857875,
+            "p50": 6.90399980545044,
+            "p95": 7.82399988174438,
+            "p99": 8.23200035095215,
+            "maximum": 8.39700031280518
+          },
+          "draw_calls": {
+            "samples": 301,
+            "mean": 5226.0,
+            "p50": 5226.0,
+            "p95": 5226.0,
+            "p99": 5226.0,
+            "maximum": 5226.0
+          }
+        },
+        "render_original_a2": {
+          "frame_ms": {
+            "samples": 288,
+            "mean": 17.475010416666667,
+            "p50": 16.809,
+            "p95": 22.617,
+            "p99": 33.316,
+            "maximum": 33.608
+          },
+          "gpu_ms": {
+            "samples": 288,
+            "mean": 14.41853470603625,
+            "p50": 14.4079999923706,
+            "p95": 15.5150003433228,
+            "p99": 15.8850002288818,
+            "maximum": 16.1849994659424
+          },
+          "draw_calls": {
+            "samples": 288,
+            "mean": 5001.0,
+            "p50": 5001.0,
+            "p95": 5001.0,
+            "p99": 5001.0,
+            "maximum": 5001.0
+          }
+        }
+      },
+      "images": [
+        {
+          "path": "reports/performance_changes/20261109T123449192437Z_cover_partition8_abba/render_original_a.png",
+          "sha256": "6dca5f573a0e27f722a1fe9948f92d96ba8e39009185dc1c9381f619cf265042"
+        },
+        {
+          "path": "reports/performance_changes/20261109T123449192437Z_cover_partition8_abba/render_partitioned_b.png",
+          "sha256": "74e71dcb4b7d3d43dc9449eebca203d9c5354b4a517eb6d72b82b35a76d38823"
+        },
+        {
+          "path": "reports/performance_changes/20261109T123449192437Z_cover_partition8_abba/render_partitioned_b2.png",
+          "sha256": "74e71dcb4b7d3d43dc9449eebca203d9c5354b4a517eb6d72b82b35a76d38823"
+        },
+        {
+          "path": "reports/performance_changes/20261109T123449192437Z_cover_partition8_abba/render_original_a2.png",
+          "sha256": "191c56edae337dad02c66868e1d60c95fec0c91387fda5da32b7befbb1b58f34"
+        }
+      ]
+    },
+    {
+      "path": "reports/performance_changes/20261109T123814055792Z_cover_partition8_full_detail",
+      "manifest_sha256": "ae4f392216a237cbed21f012fe5d39a6979ec3e0ba91d2bb25537cf0ea5c8af4",
+      "observation_sha256": "9a506e22ecc7405877aec59a9099b71cdc28d9e8c0994a1a7b7321abaf440f65",
+      "pack_sha256": "aeff4c0e6e5cef8db1b2972252b66e3eee2996fe1343dbd9c7e36e9b52ddb762",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 12948,
+        "exit_code": 0,
+        "resources": {
+          "samples": 148,
+          "gpu_samples": 147,
+          "peak_private_commit_bytes": 3888611328,
+          "peak_working_set_bytes": 2337861632,
+          "peak_dedicated_gpu_bytes": 1491767296,
+          "checks": {
+            "ram": {
+              "bytes": 3888611328,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1491767296,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 90.26954320003279,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "probe": {
+        "instances": 4709,
+        "mesh_lod_threshold": 0.0,
+        "original_batches": 30,
+        "replacement_batches": 275,
+        "span": 8.0,
+        "unchanged": true
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "b9f1e9764b33308521996d34252132e03a478547961911577017eb1301134113",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "446aeb9c702abaf8fa13d358487e27ea19375ab11d5331a1c0b8fc87ea0bbbb0",
+        "tools\\check_frame_trace_world.py": "5f84ccf2d0fc2dddb26c4758b51041d9910b5acb3a90a579c46991df1589d306"
+      },
+      "phases": {
+        "render_original_a": {
+          "frame_ms": {
+            "samples": 181,
+            "mean": 27.918320441988953,
+            "p50": 27.829,
+            "p95": 29.044,
+            "p99": 30.243,
+            "maximum": 41.282
+          },
+          "gpu_ms": {
+            "samples": 181,
+            "mean": 27.23102758207374,
+            "p50": 27.2049999237061,
+            "p95": 28.3799991607666,
+            "p99": 28.6240005493164,
+            "maximum": 28.9680004119873
+          },
+          "draw_calls": {
+            "samples": 181,
+            "mean": 5007.0,
+            "p50": 5007.0,
+            "p95": 5007.0,
+            "p99": 5007.0,
+            "maximum": 5007.0
+          }
+        },
+        "render_partitioned_b": {
+          "frame_ms": {
+            "samples": 222,
+            "mean": 22.789941441441442,
+            "p50": 22.659,
+            "p95": 24.088,
+            "p99": 25.31,
+            "maximum": 39.212
+          },
+          "gpu_ms": {
+            "samples": 222,
+            "mean": 22.06657212918944,
+            "p50": 22.007999420166,
+            "p95": 23.2220001220703,
+            "p99": 23.8150005340576,
+            "maximum": 23.9489994049072
+          },
+          "draw_calls": {
+            "samples": 222,
+            "mean": 5232.0,
+            "p50": 5232.0,
+            "p95": 5232.0,
+            "p99": 5232.0,
+            "maximum": 5232.0
+          }
+        },
+        "render_partitioned_b2": {
+          "frame_ms": {
+            "samples": 225,
+            "mean": 22.442013333333335,
+            "p50": 22.308,
+            "p95": 23.725,
+            "p99": 25.167,
+            "maximum": 41.403
+          },
+          "gpu_ms": {
+            "samples": 225,
+            "mean": 21.61609777662489,
+            "p50": 21.6299991607666,
+            "p95": 22.4790000915527,
+            "p99": 22.8139991760254,
+            "maximum": 23.0200004577637
+          },
+          "draw_calls": {
+            "samples": 225,
+            "mean": 5232.0,
+            "p50": 5232.0,
+            "p95": 5232.0,
+            "p99": 5232.0,
+            "maximum": 5232.0
+          }
+        },
+        "render_original_a2": {
+          "frame_ms": {
+            "samples": 183,
+            "mean": 27.566650273224045,
+            "p50": 26.747,
+            "p95": 31.32,
+            "p99": 44.678,
+            "maximum": 48.744
+          },
+          "gpu_ms": {
+            "samples": 183,
+            "mean": 26.276650225529906,
+            "p50": 26.125,
+            "p95": 27.8840007781982,
+            "p99": 29.7320003509521,
+            "maximum": 29.871000289917
+          },
+          "draw_calls": {
+            "samples": 183,
+            "mean": 5025.918032786885,
+            "p50": 5025.0,
+            "p95": 5035.0,
+            "p99": 5035.0,
+            "maximum": 5035.0
+          }
+        }
+      },
+      "images": [
+        {
+          "path": "reports/performance_changes/20261109T123814055792Z_cover_partition8_full_detail/render_original_a.png",
+          "sha256": "4ef964298d397891a5370ff4ca66e395370c3c09e43be2a2f632f61a8f9ecc80"
+        },
+        {
+          "path": "reports/performance_changes/20261109T123814055792Z_cover_partition8_full_detail/render_partitioned_b.png",
+          "sha256": "5bc9bd683c21e49bab7dbca7db379e6cc695af7c6a711fbb992f85f901f0f894"
+        },
+        {
+          "path": "reports/performance_changes/20261109T123814055792Z_cover_partition8_full_detail/render_partitioned_b2.png",
+          "sha256": "87bc7490912b3a10be90c5947379e1bd4279ace99ff47eba5ddcf2b930c05f55"
+        },
+        {
+          "path": "reports/performance_changes/20261109T123814055792Z_cover_partition8_full_detail/render_original_a2.png",
+          "sha256": "aef461cb6fc1e1dba85ffb6faf5672a0b82ebb4e1beb4094a556a4676cfb34fd"
+        }
+      ]
+    },
+    {
+      "path": "reports/performance_changes/20261109T124042309591Z_cover_partition16_abba",
+      "manifest_sha256": "3fbcdae25cd04489bf3d8766f324a9c259243aaeede1fabbf4776246146fb2b8",
+      "observation_sha256": "46b217d78a31af8069666e3c9147013de24d9062029d483f5fbecd03fa906e61",
+      "pack_sha256": "aeff4c0e6e5cef8db1b2972252b66e3eee2996fe1343dbd9c7e36e9b52ddb762",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 19840,
+        "exit_code": 0,
+        "resources": {
+          "samples": 148,
+          "gpu_samples": 146,
+          "peak_private_commit_bytes": 3843047424,
+          "peak_working_set_bytes": 2298978304,
+          "peak_dedicated_gpu_bytes": 1474990080,
+          "checks": {
+            "ram": {
+              "bytes": 3843047424,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1474990080,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 90.08192169992253,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "probe": {
+        "instances": 4707,
+        "mesh_lod_threshold": 1.0,
+        "original_batches": 29,
+        "replacement_batches": 100,
+        "span": 16.0,
+        "unchanged": true
+      },
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "5253cd23c8a8d5cb64a3f8f08583da92c59c23927c661ec7b6e8a2b52abccf11",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tools\\check_frame_trace_world.py": "2cdc1150b38eeabe50756891e6b91b4270a331e554fe46daae0bf7b5229e60cd"
+      },
+      "phases": {
+        "render_original_a": {
+          "frame_ms": {
+            "samples": 302,
+            "mean": 16.738652317880796,
+            "p50": 16.634,
+            "p95": 18.242,
+            "p99": 28.395,
+            "maximum": 39.43
+          },
+          "gpu_ms": {
+            "samples": 302,
+            "mean": 12.241274855784235,
+            "p50": 12.1429996490479,
+            "p95": 13.206000328064,
+            "p99": 13.8120002746582,
+            "maximum": 14.3940000534058
+          },
+          "draw_calls": {
+            "samples": 302,
+            "mean": 4983.0,
+            "p50": 4983.0,
+            "p95": 4983.0,
+            "p99": 4983.0,
+            "maximum": 4983.0
+          }
+        },
+        "render_partitioned_b": {
+          "frame_ms": {
+            "samples": 302,
+            "mean": 16.737529801324506,
+            "p50": 16.698,
+            "p95": 18.804,
+            "p99": 28.519,
+            "maximum": 38.828
+          },
+          "gpu_ms": {
+            "samples": 302,
+            "mean": 7.659596029496351,
+            "p50": 7.48999977111816,
+            "p95": 8.20199966430664,
+            "p99": 8.5930004119873,
+            "maximum": 8.80900001525879
+          },
+          "draw_calls": {
+            "samples": 302,
+            "mean": 5037.0,
+            "p50": 5037.0,
+            "p95": 5037.0,
+            "p99": 5037.0,
+            "maximum": 5037.0
+          }
+        },
+        "render_partitioned_b2": {
+          "frame_ms": {
+            "samples": 302,
+            "mean": 16.7500761589404,
+            "p50": 16.674,
+            "p95": 18.035,
+            "p99": 28.956,
+            "maximum": 41.918
+          },
+          "gpu_ms": {
+            "samples": 302,
+            "mean": 7.64279800850824,
+            "p50": 7.47499990463257,
+            "p95": 8.19099998474121,
+            "p99": 8.71000003814697,
+            "maximum": 8.98600006103516
+          },
+          "draw_calls": {
+            "samples": 302,
+            "mean": 5037.87417218543,
+            "p50": 5037.0,
+            "p95": 5040.0,
+            "p99": 5040.0,
+            "maximum": 5040.0
+          }
+        },
+        "render_original_a2": {
+          "frame_ms": {
+            "samples": 302,
+            "mean": 16.741566225165563,
+            "p50": 16.679,
+            "p95": 18.005,
+            "p99": 28.819,
+            "maximum": 38.581
+          },
+          "gpu_ms": {
+            "samples": 302,
+            "mean": 11.888009949235729,
+            "p50": 11.75,
+            "p95": 12.6470003128052,
+            "p99": 12.9759998321533,
+            "maximum": 13.6260004043579
+          },
+          "draw_calls": {
+            "samples": 302,
+            "mean": 4986.0,
+            "p50": 4986.0,
+            "p95": 4986.0,
+            "p99": 4986.0,
+            "maximum": 4986.0
+          }
+        }
+      },
+      "images": [
+        {
+          "path": "reports/performance_changes/20261109T124042309591Z_cover_partition16_abba/render_original_a.png",
+          "sha256": "cc9b1d21d88683e30ff8e64332dfc58b6a41d3c926aa916e5da44be3a343f695"
+        },
+        {
+          "path": "reports/performance_changes/20261109T124042309591Z_cover_partition16_abba/render_partitioned_b.png",
+          "sha256": "effe23c462abdbeab2f635f8c9422a1e8b3894133cc013d95fd92153743d79b5"
+        },
+        {
+          "path": "reports/performance_changes/20261109T124042309591Z_cover_partition16_abba/render_partitioned_b2.png",
+          "sha256": "cc9b1d21d88683e30ff8e64332dfc58b6a41d3c926aa916e5da44be3a343f695"
+        },
+        {
+          "path": "reports/performance_changes/20261109T124042309591Z_cover_partition16_abba/render_original_a2.png",
+          "sha256": "effe23c462abdbeab2f635f8c9422a1e8b3894133cc013d95fd92153743d79b5"
+        }
+      ],
+      "gpu_pass_buckets": {
+        "render_original_a": {
+          "Cull DirectionalLight3D, Split 3": {
+            "samples": 5,
+            "mean": 0.037608296917838,
+            "p50": 0.03785245535804,
+            "p95": 0.03808195473718,
+            "p99": 0.03808195473718,
+            "maximum": 0.03808195473718
+          },
+          "Render Depth Pre-Pass": {
+            "samples": 5,
+            "mean": 0.987443853345012,
+            "p50": 0.98932791537926,
+            "p95": 1.00418034537894,
+            "p99": 1.00418034537894,
+            "maximum": 1.00418034537894
+          },
+          "Render OmniLight Shadows": {
+            "samples": 5,
+            "mean": 4.43081531252324,
+            "p50": 4.45967177094006,
+            "p95": 4.49681966812884,
+            "p99": 4.49681966812884,
+            "maximum": 4.49681966812884
+          },
+          "Render Directional/SpotLight Shadows": {
+            "samples": 5,
+            "mean": 1.420285914525476,
+            "p50": 1.41682286416331,
+            "p95": 1.46090160432409,
+            "p99": 1.46090160432409,
+            "maximum": 1.46090160432409
+          },
+          "Render 3D Cluster Elements": {
+            "samples": 5,
+            "mean": 0.015608980291927999,
+            "p50": 0.01567212186876,
+            "p95": 0.01577048223527,
+            "p99": 0.01577048223527,
+            "maximum": 0.01577048223527
+          },
+          "Render Opaque Pass": {
+            "samples": 5,
+            "mean": 3.9076686138957983,
+            "p50": 3.90973700851691,
+            "p95": 3.96950843685963,
+            "p99": 3.96950843685963,
+            "maximum": 3.96950843685963
+          },
+          "Render Sky": {
+            "samples": 2,
+            "mean": 0.020704921640335,
+            "p50": 0.02663935012505,
+            "p95": 0.02663935012505,
+            "p99": 0.02663935012505,
+            "maximum": 0.02663935012505
+          },
+          "Resolve MSAA": {
+            "samples": 5,
+            "mean": 0.156254662867264,
+            "p50": 0.15232252305554,
+            "p95": 0.17026233673096,
+            "p99": 0.17026233673096,
+            "maximum": 0.17026233673096
+          },
+          "Copy Screen Texture": {
+            "samples": 5,
+            "mean": 0.186441688598118,
+            "p50": 0.18555738105149,
+            "p95": 0.19655740456503,
+            "p99": 0.19655740456503,
+            "maximum": 0.19655740456503
+          },
+          "Copy Depth Texture": {
+            "samples": 5,
+            "mean": 0.080680863104568,
+            "p50": 0.0791639421807,
+            "p95": 0.09072129452815,
+            "p99": 0.09072129452815,
+            "maximum": 0.09072129452815
+          },
+          "Render 3D Transparent Pass": {
+            "samples": 5,
+            "mean": 0.691600925641234,
+            "p50": 0.70357363341285,
+            "p95": 0.70770495055152,
+            "p99": 0.70770495055152,
+            "maximum": 0.70770495055152
+          },
+          "Resolve": {
+            "samples": 5,
+            "mean": 0.153102982075742,
+            "p50": 0.15226229683298,
+            "p95": 0.16359679929672,
+            "p99": 0.16359679929672,
+            "maximum": 0.16359679929672
+          },
+          "Tonemap": {
+            "samples": 5,
+            "mean": 0.07365173047841,
+            "p50": 0.07424585154799,
+            "p95": 0.0745409433959,
+            "p99": 0.0745409433959,
+            "maximum": 0.0745409433959
+          },
+          "Render CanvasItems": {
+            "samples": 5,
+            "mean": 0.074377589979732,
+            "p50": 0.07073776057509,
+            "p95": 0.08382223498437,
+            "p99": 0.08382223498437,
+            "maximum": 0.08382223498437
+          }
+        },
+        "render_partitioned_b": {
+          "Cull DirectionalLight3D, Split 3": {
+            "samples": 5,
+            "mean": 0.034599633648056,
+            "p50": 0.03465574686645,
+            "p95": 0.03485246955371,
+            "p99": 0.03485246955371,
+            "maximum": 0.03485246955371
+          },
+          "Render Depth Pre-Pass": {
+            "samples": 5,
+            "mean": 0.790476290149578,
+            "p50": 0.78959674219931,
+            "p95": 0.79212908590994,
+            "p99": 0.79212908590994,
+            "maximum": 0.79212908590994
+          },
+          "Render OmniLight Shadows": {
+            "samples": 5,
+            "mean": 1.359325147091176,
+            "p50": 1.36060645932057,
+            "p95": 1.36958029962355,
+            "p99": 1.36958029962355,
+            "maximum": 1.36958029962355
+          },
+          "Render Directional/SpotLight Shadows": {
+            "samples": 5,
+            "mean": 0.783367447270596,
+            "p50": 0.78306468840568,
+            "p95": 0.78409826560099,
+            "p99": 0.78409826560099,
+            "maximum": 0.78409826560099
+          },
+          "Render 3D Cluster Elements": {
+            "samples": 5,
+            "mean": 0.014605651483026,
+            "p50": 0.01458063817793,
+            "p95": 0.01469354091152,
+            "p99": 0.01469354091152,
+            "maximum": 0.01469354091152
+          },
+          "Render Opaque Pass": {
+            "samples": 5,
+            "mean": 3.360707177818292,
+            "p50": 3.37195144161101,
+            "p95": 3.37827424080141,
+            "p99": 3.37827424080141,
+            "maximum": 3.37827424080141
+          },
+          "Resolve MSAA": {
+            "samples": 5,
+            "mean": 0.14581569129988198,
+            "p50": 0.14534429643975,
+            "p95": 0.15658069426014,
+            "p99": 0.15658069426014,
+            "maximum": 0.15658069426014
+          },
+          "Copy Screen Texture": {
+            "samples": 5,
+            "mean": 0.164110451914658,
+            "p50": 0.16409833313989,
+            "p95": 0.16422580903576,
+            "p99": 0.16422580903576,
+            "maximum": 0.16422580903576
+          },
+          "Copy Depth Texture": {
+            "samples": 5,
+            "mean": 0.072842252525562,
+            "p50": 0.07169354346491,
+            "p95": 0.07740983806673,
+            "p99": 0.07740983806673,
+            "maximum": 0.07740983806673
+          },
+          "Render 3D Transparent Pass": {
+            "samples": 5,
+            "mean": 0.6044261635831261,
+            "p50": 0.60275412387535,
+            "p95": 0.61419677734375,
+            "p99": 0.61419677734375,
+            "maximum": 0.61419677734375
+          },
+          "Resolve": {
+            "samples": 5,
+            "mean": 0.139672465200844,
+            "p50": 0.14003278388352,
+            "p95": 0.14769348021477,
+            "p99": 0.14769348021477,
+            "maximum": 0.14769348021477
+          },
+          "Tonemap": {
+            "samples": 5,
+            "mean": 0.069198204108106,
+            "p50": 0.06930645050541,
+            "p95": 0.07257377905924,
+            "p99": 0.07257377905924,
+            "maximum": 0.07257377905924
+          },
+          "Render CanvasItems": {
+            "samples": 5,
+            "mean": 0.06304128220445801,
+            "p50": 0.06303298668783,
+            "p95": 0.06327439123584,
+            "p99": 0.06327439123584,
+            "maximum": 0.06327439123584
+          }
+        },
+        "render_partitioned_b2": {
+          "Cull DirectionalLight3D, Split 3": {
+            "samples": 5,
+            "mean": 0.034854468638656,
+            "p50": 0.03493549746852,
+            "p95": 0.0350163842811,
+            "p99": 0.0350163842811,
+            "maximum": 0.0350163842811
+          },
+          "Render Depth Pre-Pass": {
+            "samples": 5,
+            "mean": 0.791225748652194,
+            "p50": 0.79119685438813,
+            "p95": 0.79200012453141,
+            "p99": 0.79200012453141,
+            "maximum": 0.79200012453141
+          },
+          "Render OmniLight Shadows": {
+            "samples": 5,
+            "mean": 1.350554251506934,
+            "p50": 1.35462263763928,
+            "p95": 1.36943509501796,
+            "p99": 1.36943509501796,
+            "maximum": 1.36943509501796
+          },
+          "Render Directional/SpotLight Shadows": {
+            "samples": 5,
+            "mean": 0.78326804323968,
+            "p50": 0.78332800943343,
+            "p95": 0.7836613193635,
+            "p99": 0.7836613193635,
+            "maximum": 0.7836613193635
+          },
+          "Render 3D Cluster Elements": {
+            "samples": 5,
+            "mean": 0.014635160270664,
+            "p50": 0.01463933753186,
+            "p95": 0.01464515443771,
+            "p99": 0.01464515443771,
+            "maximum": 0.01464515443771
+          },
+          "Render Opaque Pass": {
+            "samples": 5,
+            "mean": 3.344330643321522,
+            "p50": 3.34224184097782,
+            "p95": 3.37739362873015,
+            "p99": 3.37739362873015,
+            "maximum": 3.37739362873015
+          },
+          "Resolve MSAA": {
+            "samples": 5,
+            "mean": 0.142221742808536,
+            "p50": 0.14190327736639,
+            "p95": 0.16248392289685,
+            "p99": 0.16248392289685,
+            "maximum": 0.16248392289685
+          },
+          "Copy Screen Texture": {
+            "samples": 5,
+            "mean": 0.16426037092930199,
+            "p50": 0.16426227131828,
+            "p95": 0.16439340935379,
+            "p99": 0.16439340935379,
+            "maximum": 0.16439340935379
+          },
+          "Copy Depth Texture": {
+            "samples": 5,
+            "mean": 0.074283383877298,
+            "p50": 0.0718852418368,
+            "p95": 0.08490161426732,
+            "p99": 0.08490161426732,
+            "maximum": 0.08490161426732
+          },
+          "Render 3D Transparent Pass": {
+            "samples": 5,
+            "mean": 0.602604775350604,
+            "p50": 0.60211488067127,
+            "p95": 0.60620984723491,
+            "p99": 0.60620984723491,
+            "maximum": 0.60620984723491
+          },
+          "Resolve": {
+            "samples": 5,
+            "mean": 0.153185664277302,
+            "p50": 0.14268848544261,
+            "p95": 0.18298358604556,
+            "p99": 0.18298358604556,
+            "maximum": 0.18298358604556
+          },
+          "Tonemap": {
+            "samples": 5,
+            "mean": 0.07090095969371199,
+            "p50": 0.06942623951396,
+            "p95": 0.08049180077725,
+            "p99": 0.08049180077725,
+            "maximum": 0.08049180077725
+          },
+          "Render CanvasItems": {
+            "samples": 5,
+            "mean": 0.06677305644180201,
+            "p50": 0.06629531109919,
+            "p95": 0.06819368177845,
+            "p99": 0.06819368177845,
+            "maximum": 0.06819368177845
+          },
+          "Render Sky": {
+            "samples": 1,
+            "mean": 0.01437097307174,
+            "p50": 0.01437097307174,
+            "p95": 0.01437097307174,
+            "p99": 0.01437097307174,
+            "maximum": 0.01437097307174
+          }
+        },
+        "render_original_a2": {
+          "Cull DirectionalLight3D, Split 3": {
+            "samples": 5,
+            "mean": 0.035294608222562,
+            "p50": 0.03521311478537,
+            "p95": 0.03549180656183,
+            "p99": 0.03549180656183,
+            "maximum": 0.03549180656183
+          },
+          "Render Depth Pre-Pass": {
+            "samples": 5,
+            "mean": 0.9594777706878521,
+            "p50": 0.95888538047916,
+            "p95": 0.96247532328621,
+            "p99": 0.96247532328621,
+            "maximum": 0.96247532328621
+          },
+          "Render OmniLight Shadows": {
+            "samples": 5,
+            "mean": 4.294127912839084,
+            "p50": 4.29567080638448,
+            "p95": 4.29782004434554,
+            "p99": 4.29782004434554,
+            "maximum": 4.29782004434554
+          },
+          "Render Directional/SpotLight Shadows": {
+            "samples": 5,
+            "mean": 1.391845601050076,
+            "p50": 1.38406433597688,
+            "p95": 1.42057350033619,
+            "p99": 1.42057350033619,
+            "maximum": 1.42057350033619
+          },
+          "Render 3D Cluster Elements": {
+            "samples": 5,
+            "mean": 0.015127541847421998,
+            "p50": 0.0151639248504,
+            "p95": 0.01519671131353,
+            "p99": 0.01519671131353,
+            "maximum": 0.01519671131353
+          },
+          "Render Opaque Pass": {
+            "samples": 5,
+            "mean": 3.8257664100005497,
+            "p50": 3.8275896916624,
+            "p95": 3.84439337058146,
+            "p99": 3.84439337058146,
+            "maximum": 3.84439337058146
+          },
+          "Resolve MSAA": {
+            "samples": 5,
+            "mean": 0.140250258745812,
+            "p50": 0.13472133386331,
+            "p95": 0.16118033987577,
+            "p99": 0.16118033987577,
+            "maximum": 0.16118033987577
+          },
+          "Copy Screen Texture": {
+            "samples": 5,
+            "mean": 0.175707496731828,
+            "p50": 0.17696721436547,
+            "p95": 0.19167213752622,
+            "p99": 0.19167213752622,
+            "maximum": 0.19167213752622
+          },
+          "Copy Depth Texture": {
+            "samples": 5,
+            "mean": 0.07553909744048601,
+            "p50": 0.07068853690976,
+            "p95": 0.09283610640979,
+            "p99": 0.09283610640979,
+            "maximum": 0.09283610640979
+          },
+          "Render 3D Transparent Pass": {
+            "samples": 5,
+            "mean": 0.6144200819752841,
+            "p50": 0.61785263311668,
+            "p95": 0.62029503994301,
+            "p99": 0.62029503994301,
+            "maximum": 0.62029503994301
+          },
+          "Resolve": {
+            "samples": 5,
+            "mean": 0.13667346549879,
+            "p50": 0.13924584623243,
+            "p95": 0.14358062128867,
+            "p99": 0.14358062128867,
+            "maximum": 0.14358062128867
+          },
+          "Tonemap": {
+            "samples": 5,
+            "mean": 0.07122670531209799,
+            "p50": 0.06963933882166,
+            "p95": 0.08134426836108,
+            "p99": 0.08134426836108,
+            "maximum": 0.08134426836108
+          },
+          "Render CanvasItems": {
+            "samples": 5,
+            "mean": 0.07526089213374801,
+            "p50": 0.07559011803299,
+            "p95": 0.08240280612823,
+            "p99": 0.08240280612823,
+            "maximum": 0.08240280612823
+          }
+        }
+      }
+    }
+  ],
+  "inventory": {
+    "path": "reports/performance_changes/20261109T123147701410Z_rendering_inventory",
+    "sha256": "5b0fb41db7ee8ac4ba5987dd4c2466449225dc281a817997b6bf10f78fa442c5",
+    "scope": "Post-capture scene inventory. Conservative light-sphere/AABB candidates, not actual renderer draw submissions or occlusion. Triangle counts omit non-ArrayMesh and non-triangle primitives.",
+    "geometry_nodes": 5746,
+    "lights": [
+      {
+        "caster_mask": 524287,
+        "mode": 1,
+        "path": "Structures/@NativeResidentLights@357/@OmniLight3D@361",
+        "position": "(1054.5, 58.94, 322.5)",
+        "range": 8.0
+      },
+      {
+        "caster_mask": 524287,
+        "mode": 1,
+        "path": "Structures/@NativeResidentLights@357/@OmniLight3D@360",
+        "position": "(1056.5, 62.94, 324.5)",
+        "range": 8.0
+      },
+      {
+        "caster_mask": 524287,
+        "mode": 1,
+        "path": "Structures/@NativeResidentLights@357/@OmniLight3D@359",
+        "position": "(1054.5, 62.94, 322.5)",
+        "range": 8.0
+      },
+      {
+        "caster_mask": 524287,
+        "mode": 1,
+        "path": "Structures/@NativeResidentLights@357/@OmniLight3D@358",
+        "position": "(1054.5, 58.94, 324.5)",
+        "range": 8.0
+      }
+    ],
+    "largest_candidate_waste": [
+      {
+        "instances": 693,
+        "mesh": "",
+        "path": "@Node3D@1876/@NativeStaticBatch@1879/@MultiMeshInstance3D@5108",
+        "point_light_candidates": [
+          {
+            "batch_instances": 693,
+            "light": 0,
+            "overlapping_instance_bounds": 26
+          },
+          {
+            "batch_instances": 693,
+            "light": 1,
+            "overlapping_instance_bounds": 2
+          },
+          {
+            "batch_instances": 693,
+            "light": 2,
+            "overlapping_instance_bounds": 12
+          },
+          {
+            "batch_instances": 693,
+            "light": 3,
+            "overlapping_instance_bounds": 12
+          }
+        ],
+        "shadow": 1,
+        "surfaces": 1,
+        "triangles_per_instance": 468,
+        "world_bounds": "[P: (1023.481, 56.10527, 293.4516), S: (32.98145, 4.618572, 27.18378)]"
+      },
+      {
+        "instances": 543,
+        "mesh": "",
+        "path": "@Node3D@1876/@NativeStaticBatch@1879/@MultiMeshInstance3D@4348",
+        "point_light_candidates": [
+          {
+            "batch_instances": 543,
+            "light": 0,
+            "overlapping_instance_bounds": 51
+          },
+          {
+            "batch_instances": 543,
+            "light": 1,
+            "overlapping_instance_bounds": 20
+          },
+          {
+            "batch_instances": 543,
+            "light": 2,
+            "overlapping_instance_bounds": 34
+          },
+          {
+            "batch_instances": 543,
+            "light": 3,
+            "overlapping_instance_bounds": 58
+          }
+        ],
+        "shadow": 1,
+        "surfaces": 1,
+        "triangles_per_instance": 468,
+        "world_bounds": "[P: (1023.548, 57.87488, 319.3266), S: (32.60266, 5.036163, 33.23578)]"
+      },
+      {
+        "instances": 212,
+        "mesh": "",
+        "path": "@Node3D@1876/@NativeStaticBatch@1879/@MultiMeshInstance3D@4366",
+        "point_light_candidates": [
+          {
+            "batch_instances": 212,
+            "light": 0,
+            "overlapping_instance_bounds": 3
+          },
+          {
+            "batch_instances": 212,
+            "light": 1,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 212,
+            "light": 2,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 212,
+            "light": 3,
+            "overlapping_instance_bounds": 0
+          }
+        ],
+        "shadow": 1,
+        "surfaces": 1,
+        "triangles_per_instance": 468,
+        "world_bounds": "[P: (1055.605, 55.00245, 293.737), S: (32.61926, 2.856964, 26.70496)]"
+      },
+      {
+        "instances": 144,
+        "mesh": "",
+        "path": "@Node3D@1876/@NativeStaticBatch@1879/@MultiMeshInstance3D@2703",
+        "point_light_candidates": [
+          {
+            "batch_instances": 144,
+            "light": 0,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 144,
+            "light": 1,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 144,
+            "light": 2,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 144,
+            "light": 3,
+            "overlapping_instance_bounds": 0
+          }
+        ],
+        "shadow": 1,
+        "surfaces": 1,
+        "triangles_per_instance": 468,
+        "world_bounds": "[P: (1055.779, 56.0791, 319.5301), S: (32.85645, 4.116299, 32.98087)]"
+      },
+      {
+        "instances": 36,
+        "mesh": "",
+        "path": "@Node3D@1876/@NativeStaticBatch@1878/@MultiMeshInstance3D@5107",
+        "point_light_candidates": [
+          {
+            "batch_instances": 36,
+            "light": 0,
+            "overlapping_instance_bounds": 1
+          },
+          {
+            "batch_instances": 36,
+            "light": 1,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 36,
+            "light": 2,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 36,
+            "light": 3,
+            "overlapping_instance_bounds": 0
+          }
+        ],
+        "shadow": 1,
+        "surfaces": 1,
+        "triangles_per_instance": 1512,
+        "world_bounds": "[P: (1023.734, 56.47373, 293.8163), S: (31.79504, 3.914047, 25.6525)]"
+      },
+      {
+        "instances": 32,
+        "mesh": "",
+        "path": "@Node3D@1876/@NativeStaticBatch@1878/@MultiMeshInstance3D@4347",
+        "point_light_candidates": [
+          {
+            "batch_instances": 32,
+            "light": 0,
+            "overlapping_instance_bounds": 1
+          },
+          {
+            "batch_instances": 32,
+            "light": 1,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 32,
+            "light": 2,
+            "overlapping_instance_bounds": 1
+          },
+          {
+            "batch_instances": 32,
+            "light": 3,
+            "overlapping_instance_bounds": 2
+          }
+        ],
+        "shadow": 1,
+        "surfaces": 1,
+        "triangles_per_instance": 1512,
+        "world_bounds": "[P: (1024.354, 58.07832, 320.678), S: (30.31812, 4.079094, 31.67654)]"
+      },
+      {
+        "instances": 16,
+        "mesh": "",
+        "path": "@Node3D@1876/@NativeStaticBatch@1878/@MultiMeshInstance3D@4365",
+        "point_light_candidates": [
+          {
+            "batch_instances": 16,
+            "light": 0,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 16,
+            "light": 1,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 16,
+            "light": 2,
+            "overlapping_instance_bounds": 0
+          },
+          {
+            "batch_instances": 16,
+            "light": 3,
+            "overlapping_instance_bounds": 0
+          }
+        ],
+        "shadow": 1,
+        "surfaces": 1,
+        "triangles_per_instance": 1512,
+        "world_bounds": "[P: (1055.56, 55.10253, 301.4448), S: (18.61353, 2.328876, 18.13184)]"
+      },
+      {
+        "instances": 10,
+        "mesh": "res://addons/structures/prefabs/door_model.tres",
+        "path": "Structures/@NativeStaticBatch@343/WorldModelPage93",
+        "point_light_candidates": [
+          {
+            "batch_instances": 10,
+            "light": 0,
+            "overlapping_instance_bounds": 6
+          },
+          {
+            "batch_instances": 10,
+            "light": 1,
+            "overlapping_instance_bounds": 6
+          },
+          {
+            "batch_instances": 10,
+            "light": 2,
+            "overlapping_instance_bounds": 4
+          },
+          {
+            "batch_instances": 10,
+            "light": 3,
+            "overlapping_instance_bounds": 8
+          }
+        ],
+        "shadow": 1,
+        "surfaces": 3,
+        "triangles_per_instance": 4048,
+        "world_bounds": "[P: (1057.46, 53.0, 318.9901), S: (6.079834, 10.0, 31.5499)]"
+      }
+    ]
+  },
+  "unresolved_stall": {
+    "after_process_ms": 0.16,
+    "at_us": 54816850,
+    "before_process_ms": 6.087,
+    "cadence_ms": 21.6343333333333,
+    "cover_cells": 99,
+    "cover_us": 72,
+    "cover_wanted": 99,
+    "draw_calls": 5208.0,
+    "draw_ms": 89.706,
+    "driving": false,
+    "ecosystem_us": 6,
+    "entry": false,
+    "first_person": {
+      "active": true,
+      "detailed_shadows": false,
+      "enabled": true,
+      "overlay": false
+    },
+    "focus_admitted": true,
+    "focused": false,
+    "forest_us": 9,
+    "fps_cap": 60,
+    "frame": 2969,
+    "frame_ms": 97.573,
+    "gpu_ms": 7.63399982452393,
+    "inventory": false,
+    "loading": false,
+    "menu": false,
+    "phase": "gameplay",
+    "physics_ms": 4.457,
+    "physics_steps": 1,
+    "pipeline_draw": 0.0,
+    "pipeline_specialization": 68.0,
+    "position": "(1058.5, 61.00056, 325.0)",
+    "primitives": 4246182.0,
+    "process_cycles": 4029405,
+    "process_ms": 1.62,
+    "recorder_previous_us": 239,
+    "render_cpu_ms": 7.9229998588562,
+    "stages_ms": {
+      "player physics": 0.93,
+      "zombie update": 0.419,
+      "world process": 0.282,
+      "controller process": 0.112,
+      "actor update": 0.03,
+      "world interaction": 0.028,
+      "receive": 0.025,
+      "world presentation": 0.02,
+      "base controller": 0.018,
+      "world authoring": 0.017,
+      "receive poll": 0.008,
+      "staging frame": 0.007,
+      "world vehicle": 0.007,
+      "lighting schedule": 0.006,
+      "world pickups": 0.005,
+      "controller loading": 0.002,
+      "retire collision/mesh": 0.0
+    },
+    "surface_backlog": 0,
+    "terrain_pending_edit": false,
+    "terrain_queued": 0,
+    "thread_cpu_ms": 15.625,
+    "thread_cycles": 43362936,
+    "trace_writer_active": false,
+    "velocity": "(0.0, 0.0, 0.0)",
+    "vsync": 1,
+    "zombie_navigation": {
+      "agents": 6,
+      "goal_probes": 0,
+      "graph_cache_hits": 0,
+      "graph_node_limit": 32768,
+      "graph_nodes": 0,
+      "ok": true,
+      "perception_probe_limit": 2,
+      "perception_probes": 0,
+      "planning_us": 15,
+      "query_profile": {
+        "admission_queries": 0,
+        "clearance_us": 0.0,
+        "edges": 0,
+        "hazard_us": 0.0,
+        "readiness_us": 0.0,
+        "shape_queries": 0,
+        "support_cache_hits": 0,
+        "support_raycasts": 0,
+        "support_rays": 0,
+        "support_us": 0.0,
+        "sweeps": 0,
+        "water_queries": 0
+      },
+      "readiness_cache_entries": 0,
+      "readiness_cache_hits": 0,
+      "readiness_probes": 0,
+      "route_work": 0,
+      "route_work_limit": 12,
+      "streaming_requests": 0,
+      "support_cache_bytes": 3145728,
+      "support_cache_hits": 0,
+      "support_cache_limit": 65536,
+      "support_cache_misses": 0
+    },
+    "zombie_navigation_ticks": {
+      "dropped": 0,
+      "samples": [
+        {
+          "navigation": {
+            "agents": 6,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 0,
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_us": 15,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "phases_us": {
+            "intent": 175,
+            "interest_spacing": 29,
+            "planning": 32,
+            "population": 10,
+            "residency": 148,
+            "steering": 7
+          },
+          "physics_frame": 3125
+        }
+      ]
+    },
+    "zombie_phases_us": {
+      "intent": 175,
+      "interest_spacing": 29,
+      "planning": 32,
+      "population": 10,
+      "residency": 148,
+      "steering": 7
+    },
+    "zombies": 6,
+    "pipeline_deltas": {
+      "pipeline_draw": 0.0,
+      "pipeline_specialization": 0.0
+    }
+  },
+  "limits": [
+    "Only a stationary indoor viewpoint was compared; no outdoor grass/wind/frustum, walking, editing or streaming qualification.",
+    "Preserving source meshes/records retains the authored LOD choices, but smaller bounds may select different LODs. Full-detail control disables automatic LOD in every phase and still saves GPU time.",
+    "GPU pass buckets are approximate intervals and can straddle phase boundaries; root GPU timing may lag.",
+    "Other actors remain active. Draw counts rise by 18 during the 8 m run and by 3 during the 16 m run.",
+    "Prototype creates all replacements synchronously and retains original GPU buffers. It is test-only and not an acceptable gameplay publication path.",
+    "97.573 ms draw-dominated stall remains despite 7.634 ms reported GPU work; no new pipeline counts, writer inactive and native planning 15 us. Do not attribute this stall to navigation or claim stable frame pacing."
+  ]
+}
