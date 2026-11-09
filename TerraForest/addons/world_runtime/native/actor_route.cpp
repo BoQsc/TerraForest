@@ -75,7 +75,10 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     Ref<CapsuleShape3D> capsule=shape->get_shape();
     const real_t radius=capsule.is_valid()?std::max(real_t(.4),capsule->get_radius()+real_t(.05)):real_t(.4);
     AABB region(from-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2));
-    region=region.merge(AABB(to-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2)));include(region);
+    region=region.merge(AABB(to-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2)));edge_bounds_=region;
+    // Publish once on every success/failure exit, rather than merging the
+    // entire query envelope for each of the dense support samples.
+    struct PublishBounds {ActorRoute &owner;~PublishBounds(){owner.include(owner.edge_bounds_);}} publish{*this};
     if(!collision_ready(region,readiness)){unknown_=true;edge_unavailable_=true;return false;}
     // Validate individual treads in travel order. Testing the midpoint first
     // merges two legal risers when a ray on their shared edge selects the upper
@@ -86,6 +89,11 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     auto support=[&](Vector3 &point,real_t base)->bool {
         if(query_profile)++query_profile->support_rays;
         const Vector3 from(point.x,base-.28,point.z);const real_t to_y=base-1.5;
+        // Interpolated X/Z already lie inside the initial edge envelope.
+        // Only the support ray's adaptive vertical interval can expand it.
+        const real_t low=std::min(edge_bounds_.position.y,to_y);
+        const real_t high=std::max(edge_bounds_.position.y+edge_bounds_.size.y,from.y);
+        edge_bounds_.position.y=low;edge_bounds_.size.y=high-low;
         edge_failure_="missing_support";
         SupportCache::Entry *cached=support_cache?&support_cache->entries[support_cache->slot(from,to_y)]:nullptr;
         bool hit=false;Vector3 normal;real_t height=0;
@@ -119,6 +127,10 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
         }
         middle=supports[1];to=supports[2];
     }
+    // Supported heights can differ from the nominal endpoint. Include the
+    // complete footprint before a hazard callback can reject this candidate.
+    include_edge(AABB(middle-Vector3(radius,1.9,radius),Vector3(radius*2,3.8,radius*2)));
+    include_edge(AABB(to-Vector3(radius,1.9,radius),Vector3(radius*2,3.8,radius*2)));
     if(admission.is_valid()||water_depth.is_valid()){
         QueryTimer measured(query_profile?&query_profile->hazard_ns:nullptr);
         edge_failure_="hazard";
@@ -150,6 +162,7 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     }
     QueryTimer measured(query_profile?&query_profile->clearance_ns:nullptr);
     auto clear=[&](const Vector3 &point)->bool {
+        include_edge(AABB(point-Vector3(radius,1.9,radius),Vector3(radius*2,3.8,radius*2)));
         if(query_profile)++query_profile->shape_queries;
         shape->set_transform(Transform3D(Basis(),point));shape->set_motion(Vector3());
         const TypedArray<Dictionary> contacts=space->intersect_shape(shape,1);
@@ -157,6 +170,8 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
         const Dictionary contact=contacts[0];edge_obstacle_=contact.get("rid",RID());return false;
     };
     auto sweep=[&](const Vector3 &a,const Vector3 &b)->bool {
+        include_edge(AABB(a-Vector3(radius,1.9,radius),Vector3(radius*2,3.8,radius*2)).merge(
+            AABB(b-Vector3(radius,1.9,radius),Vector3(radius*2,3.8,radius*2))));
         if(query_profile)++query_profile->sweeps;
         shape->set_transform(Transform3D(Basis(),a));shape->set_motion(b-a);
         PackedFloat32Array travel=space->cast_motion(shape);return travel.size()==2 && travel[0]>.999;

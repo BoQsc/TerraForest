@@ -55,8 +55,30 @@ Planning may reuse positive readiness for containing4m-aligned boxes, at most128
 entries during one synchronous pass. Callbacks must report the whole input volume
 and remain pure. A larger-box miss falls back to the exact query. The cache is
 discarded between passes; actual motion guards always ask live providers.
-Geometry,
-water, exclusion and authorized-door changes invalidate the cache and queries.
+Local geometry/water publications invalidate intersecting graph certificates
+and query envelopes. Each certificate includes the actual support-ray, hazard
+footprint and capsule/sweep bounds, including failed candidates and partly built
+links. An 8 m spatial index finds possible sources; a conservative maximum
+dependency extent covers tall sampled geometry. Incoming edges to retired
+vertices reset before bounded free slots can be reused. Generation checks reject
+stale query references. Unaffected complete paths and cached edges remain usable.
+The support-ray cache still changes generation on every publication.
+
+Callers must publish the union of old and new affected geometry in world space.
+Empty, malformed or unbounded notifications remain global barriers. Recipient,
+water-provider and conditional-door policy changes also remain global. Native
+block edits now preserve their changed-cell bounds through the world and trader
+hosts; model/tree notifications without reliable bounds still reset globally.
+Live collision readiness and movement guards remain mandatory. Query envelopes
+are conservative unions, so some unaffected queries may still restart.
+
+Graph storage remains capped at 32,768 slots. Certificates increase each native
+vertex from 176 to 384 bytes in the pinned build: at capacity, 12 MiB of vertex
+storage, plus bounded indices/free slots and the existing 3 MiB ray cache. Broad
+edits can scan every live vertex synchronously; this is measured work, not a hard
+deadline. `invalidation_stats()` exposes live/allocated/free slots, scanned and
+retired vertices, reset edges/queries, duration and cumulative event counters.
+Opt-in query profiling includes these in the existing rolling physics trace.
 Final path reconstruction, query reset, physics calls and script callbacks can
 overrun the deadline; it is not a hard frame-time guarantee.
 
@@ -82,7 +104,7 @@ A moving-goal refresh can continue to the next already-validated waypoint from
 its previous complete path, within 2.5 m. The replacement plans from that fixed
 join, so the body cannot outrun its new start or be sent back to the old one.
 New partial paths remain unpublished. At the join it waits for the full query.
-Geometry/profile/exclusion/water invalidation clears continuation; unavailable or
+Relevant geometry or global profile/exclusion/water invalidation clears continuation; unavailable or
 failed routes stop it, and every retained step still checks live motion safety.
 Physical blockage releases the retained point after one second. Keeping a query
 alive through a brief hit reaction avoids rebuilding it after the animation.

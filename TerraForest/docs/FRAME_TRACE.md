@@ -74,6 +74,11 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
   count. Each includes immutable navigation and zombie-phase values, so catch-up
   ticks cannot hide an earlier slow planner pass. Timing categories overlap the
   planner/physics intervals and must not be added to their parents.
+- Native navigation invalidation counts, global-reset counts, cumulative and
+  maximum invalidation wall time, last affected-query/edge/vertex counts and
+  current live/allocated/free graph slots. These appear under the opt-in
+  navigation `invalidation` field. Cumulative counters preserve multiple events
+  between captures; last-operation values must not be summed across frames.
 - Component snapshot measurements on save-capture frames, position, motion,
   focus, menus, entry/loading state, first-person rendering mode and presentation
   settings. Stage parents/children overlap; never sum their maxima.

@@ -58,7 +58,7 @@ func _ready()->void:
 	navigator=ClassDB.instantiate("NativeActorNavigator");add_child(navigator);navigator.configure(1)
 	navigator.set_water_depth(func(point:Vector3):return game.lakes.depth_at(point))
 	motor=ClassDB.instantiate("NativePlayerMovement");motor.set_step_radius(.34)
-	game.structures.changed.connect(func():navigator.invalidate())
+	game.structures.obstacles_changed.connect(func(bounds:AABB):navigator.invalidate(bounds))
 	game.terrain.region_changed.connect(func(bounds:AABB,_revision:int):navigator.invalidate(bounds))
 	game.lakes.exclusion_changed.connect(func(bounds:AABB):navigator.invalidate(bounds))
 	game.world_vehicle.fleet.obstacles_changed.connect(func(bounds:AABB):navigator.invalidate(bounds))

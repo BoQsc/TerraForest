@@ -19,6 +19,7 @@ void NativeActorNavigator::_bind_methods(){
     ClassDB::bind_method(D_METHOD("remove_agent","id"),&NativeActorNavigator::remove_agent);
     ClassDB::bind_method(D_METHOD("clear"),&NativeActorNavigator::clear);
     ClassDB::bind_method(D_METHOD("invalidate","bounds"),&NativeActorNavigator::invalidate,DEFVAL(AABB()));
+    ClassDB::bind_method(D_METHOD("invalidation_stats"),&NativeActorNavigator::invalidation_stats);
     ClassDB::bind_method(D_METHOD("advance","delta","readiness","admission"),&NativeActorNavigator::advance);
     ClassDB::bind_method(D_METHOD("steering_target","id"),&NativeActorNavigator::steering_target);
     ClassDB::bind_method(D_METHOD("guard_motion","id","direction","travel"),&NativeActorNavigator::guard_motion);
@@ -35,12 +36,12 @@ bool NativeActorNavigator::configure(int capacity){
     capacity_=capacity;agents_.reserve(capacity);return true;
 }
 void NativeActorNavigator::set_water_depth(const Callable &depth){
-    if(depth==water_depth_)return;water_depth_=depth;graph_.clear();
+    if(depth==water_depth_)return;water_depth_=depth;invalidate();
     for(auto &agent:agents_){agent.continuing=false;agent.route.water_depth=depth;agent.route.invalidate();agent.journey.invalidate();}
 }
 void NativeActorNavigator::set_exclusions(const TypedArray<RID> &ids){
     if(ids.size()>64)return;exclusions_=ids.duplicate();
-    graph_.clear();
+    invalidate();
     TypedArray<RID> planning=exclusions_.duplicate();planning.append_array(interactions_);
     for(auto &agent:agents_){agent.continuing=false;agent.ray->set_exclude(planning);agent.shape->set_exclude(planning);agent.motion_ray->set_exclude(exclusions_);agent.motion_shape->set_exclude(exclusions_);agent.route.invalidate();agent.journey.invalidate();}
 }
@@ -109,11 +110,34 @@ bool NativeActorNavigator::set_agent(int64_t id,const Vector3 &feet,const Vector
 void NativeActorNavigator::remove_agent(int64_t id){
     agents_.erase(std::remove_if(agents_.begin(),agents_.end(),[&](const Agent &agent){return agent.id==id;}),agents_.end());
 }
-void NativeActorNavigator::clear(){agents_.clear();cursor_=0;graph_.clear();}
+void NativeActorNavigator::clear(){agents_.clear();cursor_=0;invalidate();}
 void NativeActorNavigator::invalidate(const AABB &bounds){
-    // Cache entries may participate in any pursuit. A publication mutation
-    // resets the derived graph atomically, never the authoritative world data.
-    graph_.clear();for(auto &agent:agents_){agent.continuing=false;agent.route.invalidate(bounds);agent.journey.invalidate();}
+    const auto began=Time::get_singleton()->get_ticks_usec();
+    invalidation_global_=graph_.invalidate(bounds);invalidation_queries_=0;
+    for(auto &agent:agents_){
+        if(!agent.active)continue;
+        bool affected=invalidation_global_||(agent.regional?agent.journey.affected(bounds):agent.route.affected(bounds));
+        if(agent.continuing){
+            const real_t radius=agent.profile==0?.4:.8;
+            const Vector3 extent(radius,1.9,radius);
+            const AABB segment=AABB(agent.position-extent,extent*2).merge(AABB(agent.continuation-extent,extent*2));
+            affected=affected||segment.intersects(bounds.grow(.001));
+        }
+        if(affected){++invalidation_queries_;agent.continuing=false;agent.route.invalidate();agent.journey.invalidate();}
+    }
+    invalidation_us_=Time::get_singleton()->get_ticks_usec()-began;
+    ++invalidation_count_;if(invalidation_global_)++invalidation_global_count_;
+    invalidation_total_us_+=invalidation_us_;invalidation_max_us_=std::max(invalidation_max_us_,invalidation_us_);
+}
+Dictionary NativeActorNavigator::invalidation_stats()const{
+    Dictionary out;out["global"]=invalidation_global_;out["elapsed_us"]=int64_t(invalidation_us_);
+    out["count"]=int64_t(invalidation_count_);out["global_count"]=int64_t(invalidation_global_count_);
+    out["total_us"]=int64_t(invalidation_total_us_);out["max_us"]=int64_t(invalidation_max_us_);
+    out["queries_reset"]=int64_t(invalidation_queries_);out["vertices_scanned"]=int64_t(graph_.invalidation_scanned);
+    out["vertices_retired"]=int64_t(graph_.invalidation_vertices);out["edges_reset"]=int64_t(graph_.invalidation_edges);
+    out["live_vertices"]=int64_t(graph_.live_size());out["allocated_slots"]=int64_t(graph_.vertices.size());
+    out["free_slots"]=int64_t(graph_.free_slots());out["vertex_capacity_bytes"]=int64_t(graph_.vertices.capacity()*sizeof(RegionalGraph::Vertex));
+    out["revision"]=int64_t(graph_.revision);return out;
 }
 Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,const Callable &admission){
     Dictionary out;out["ok"]=false;out["route_work"]=0;out["route_work_limit"]=12;
@@ -187,10 +211,11 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
         measured["water_queries"]=int64_t(profile.water_queries);measured["admission_queries"]=int64_t(profile.admission_queries);
         measured["shape_queries"]=int64_t(profile.shape_queries);measured["sweeps"]=int64_t(profile.sweeps);
         out["query_profile"]=measured;
+        out["invalidation"]=invalidation_stats();
     }
     out["readiness_probes"]=readiness_cache_.probes;out["readiness_cache_hits"]=readiness_cache_.hits;
     out["readiness_cache_entries"]=int(readiness_cache_.regions.size());
-    out["graph_nodes"]=int(graph_.vertices.size());out["graph_node_limit"]=RegionalGraph::NODE_LIMIT;
+    out["graph_nodes"]=int(graph_.live_size());out["graph_node_limit"]=RegionalGraph::NODE_LIMIT;
     out["graph_cache_hits"]=int64_t(graph_.hits);out["streaming_requests"]=graph_.requests.size();
     out["planning_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-started);out["agents"]=int(agents_.size());return out;
 }

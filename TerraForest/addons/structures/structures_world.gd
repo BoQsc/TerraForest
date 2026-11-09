@@ -1,6 +1,7 @@
 extends Node3D
 signal changed
 signal vegetation_changed(bounds: AABB)
+signal obstacles_changed(bounds: AABB)
 var _block_change_bounds:=AABB()
 var _block_content_revision:=0
 ## Scene/persistence integration only. Storage, validation and rendering are native.
@@ -191,6 +192,7 @@ func _mark_dirty() -> void:
 	if revision==_block_content_revision:return
 	_block_content_revision=revision
 	vegetation_changed.emit(bounds)
+	obstacles_changed.emit(bounds)
 	changed.emit()
 
 func _block_cells_changed(bounds: AABB) -> void:
@@ -203,6 +205,7 @@ func _snapshot_changed() -> void:
 func _exclusion_changed() -> void:
 	_snapshot_changed()
 	vegetation_changed.emit(AABB())
+	obstacles_changed.emit(AABB())
 	changed.emit()
 
 func overlap_mask(transforms: Array[Transform3D], bounds: AABB) -> PackedByteArray:

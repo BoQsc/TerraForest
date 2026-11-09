@@ -50,6 +50,7 @@ func chase(zombie:CharacterBody3D,seconds:float,label:String)->bool:
 			row.velocity=zombie.velocity;row.grounded=zombie.is_on_floor();row.behavior=zombie.state
 			row.planning_readiness_hits=stats.get("readiness_cache_hits",0);row.planning_readiness_probes=stats.get("readiness_probes",0)
 			row.query_profile=stats.get("query_profile",{}).duplicate()
+			row.invalidation=stats.get("invalidation",{}).duplicate()
 			var direction:Vector3=zombie.navigation_target-zombie.global_position;direction.y=0;direction=direction.normalized()
 			# guard_motion is stateful: speculative longer probes can reject the
 			# live route. Observe its recorded result without steering the test.

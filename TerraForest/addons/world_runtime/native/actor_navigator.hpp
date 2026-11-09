@@ -33,6 +33,9 @@ class NativeActorNavigator : public godot::Node3D {
     bool query_profiling_=false;
     bool support_cache_enabled_=true;
     ActorRoute::SupportCache support_cache_;
+    uint64_t invalidation_us_=0,invalidation_queries_=0;
+    uint64_t invalidation_count_=0,invalidation_global_count_=0,invalidation_total_us_=0,invalidation_max_us_=0;
+    bool invalidation_global_=false;
     Agent *find(int64_t id);
 protected:
     static void _bind_methods();
@@ -47,6 +50,7 @@ public:
     void remove_agent(int64_t id);
     void clear();
     void invalidate(const godot::AABB &bounds=godot::AABB());
+    godot::Dictionary invalidation_stats()const;
     godot::Dictionary advance(double delta,const godot::Callable &readiness,const godot::Callable &admission);
     godot::Vector3 steering_target(int64_t id);
     bool guard_motion(int64_t id,const godot::Vector3 &direction,double travel);

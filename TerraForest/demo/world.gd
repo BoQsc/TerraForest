@@ -424,10 +424,10 @@ func _ready() -> void:
 	player_hud.inventory_changed.connect(func(): terrain.changed_since_save=true)
 	player_hud.drop_requested.connect(_drop_inventory_supply)
 	pickups.changed.connect(func(): terrain.changed_since_save=true)
-	structures.changed.connect(func():
-		terrain.changed_since_save=true
-		if actors.pool!=null:actors.pool.invalidate_navigation()
-		zombies.invalidate_navigation())
+	structures.changed.connect(func():terrain.changed_since_save=true)
+	structures.obstacles_changed.connect(func(bounds:AABB):
+		if actors.pool!=null:actors.pool.invalidate_navigation(bounds)
+		zombies.invalidate_navigation(bounds))
 	terrain.region_changed.connect(func(bounds: AABB,_revision: int):
 		if actors.pool!=null:actors.pool.invalidate_navigation(bounds)
 		zombies.invalidate_navigation(bounds))

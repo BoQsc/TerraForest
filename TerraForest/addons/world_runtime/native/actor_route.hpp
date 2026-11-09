@@ -26,6 +26,7 @@ class ActorRoute {
     bool direct_=true;
     godot::Vector3 origin_,goal_,expected_;
     godot::AABB bounds_;
+    godot::AABB edge_bounds_;
     bool has_bounds_=false;
     bool edge_unavailable_=false;
     const char *edge_failure_="none";
@@ -34,6 +35,7 @@ class ActorRoute {
     int stalls_=0;
     void start(const godot::Vector3 &position,const godot::Vector3 &goal);
     void include(const godot::AABB &bounds);
+    void include_edge(const godot::AABB &bounds){edge_bounds_=edge_bounds_.merge(bounds);}
     bool edge(godot::PhysicsDirectSpaceState3D *space,const godot::Vector3 &from,
         godot::Vector3 &to,const godot::Callable &readiness,const godot::Callable &admission,
         const godot::Ref<godot::PhysicsRayQueryParameters3D> &ray,
@@ -78,7 +80,9 @@ public:
     godot::RID edge_obstacle() const {return edge_obstacle_;}
     int expansions=0;
     void invalidate(){state=IDLE;}
-    void invalidate(const godot::AABB &bounds){if(!has_bounds_ || bounds.size==godot::Vector3() || bounds_.intersects(bounds))invalidate();}
+    bool affected(const godot::AABB &bounds)const{return !has_bounds_ || bounds.size==godot::Vector3() || bounds_.intersects(bounds.grow(.001));}
+    void invalidate(const godot::AABB &bounds){if(affected(bounds))invalidate();}
+    const godot::AABB &last_edge_bounds()const{return edge_bounds_;}
     void prepare(const godot::Vector3 &position,const godot::Vector3 &goal,double delta);
     // Exactly one candidate edge per call (at most 75 physics queries with stair clearance).
     void step(godot::PhysicsDirectSpaceState3D *space,const godot::Callable &readiness,

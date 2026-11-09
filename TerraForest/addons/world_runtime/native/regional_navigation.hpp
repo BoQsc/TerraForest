@@ -12,22 +12,38 @@ class RegionalGraph {
 public:
     static constexpr int NODE_LIMIT=32768;
     struct Vertex {godot::Vector3 p;int profile;std::array<int,8> edge,progress{};std::array<godot::Vector3,8> probe;
+        std::array<godot::AABB,8> dependencies;
+        uint64_t generation=1;uint8_t dependency_mask=0;bool valid=true;
         Vertex(godot::Vector3 point,int kind):p(point),profile(kind){edge.fill(-2);}};
     std::vector<Vertex> vertices;
     std::map<std::tuple<int,int,int,int>,int> index;
     godot::PackedVector3Array requests;
     uint64_t hits=0,queries=0,revision=0;
     real_t lowest=0,highest=0;
-    void clear(){vertices.clear();index.clear();requests.clear();++revision;}
+    godot::AABB last_dependency;
+    uint64_t invalidation_scanned=0,invalidation_vertices=0,invalidation_edges=0;
+    void clear();
+    // True denotes a global barrier. Finite local edits preserve unrelated
+    // certificates; query owners independently invalidate their dependencies.
+    bool invalidate(const godot::AABB &bounds);
+    size_t live_size()const{return index.size();}
+    size_t free_slots()const{return free_.size();}
     void request(const godot::Vector3 &point);
     int candidate(int from,const godot::Vector3 &origin,int profile,int direction,
         ActorRoute &validator,godot::PhysicsDirectSpaceState3D *space,
         const godot::Callable &readiness,const godot::Callable &admission,
         const godot::Ref<godot::PhysicsRayQueryParameters3D> &ray,
         const godot::Ref<godot::PhysicsShapeQueryParameters3D> &shape);
+private:
+    using Cell=std::tuple<int,int,int>;
+    std::map<Cell,std::set<int>> spatial_;
+    std::vector<int> free_;
+    godot::Vector3 dependency_extent_=godot::Vector3(4,4,4);
+    static Cell cell(godot::Vector3 p);
+    void record_dependency(int from,int direction,const godot::AABB &bounds);
 };
 class RegionalRoute {
-    struct Node {int vertex,parent;double g;bool closed=false;};
+    struct Node {int vertex,parent;double g;bool closed=false;uint64_t generation=0;};
     struct Entry {double score;int node;bool operator<(const Entry &b)const{return score>b.score||(score==b.score&&node>b.node);}};
     std::vector<Node> nodes_;
     std::map<int,int> visited_;
@@ -45,6 +61,10 @@ class RegionalRoute {
     bool finishing_=false;
     std::vector<godot::Vector3> finish_samples_;
     std::vector<godot::Vector3> rejected_;
+    godot::AABB bounds_;
+    bool has_bounds_=false;
+    void include(const godot::AABB &bounds){bounds_=has_bounds_?bounds_.merge(bounds):bounds;has_bounds_=true;}
+    bool valid(const Node &node,const RegionalGraph &graph)const;
     bool rejected_edge(godot::Vector3 from,godot::Vector3 to)const;
     godot::Vector3 position(const Node &node,const RegionalGraph &graph)const{return node.vertex<0?start_:graph.vertices[node.vertex].p;}
 public:
@@ -54,6 +74,7 @@ public:
     int expansions=0;
     void begin(godot::Vector3 start,godot::Vector3 goal,int profile);
     void invalidate(){state=ActorRoute::IDLE;rejected_.clear();}
+    bool affected(const godot::AABB &bounds)const{return !has_bounds_||bounds.size==godot::Vector3()||bounds_.intersects(bounds.grow(.001));}
     void reject_motion();
     void prepare(godot::Vector3 point,godot::Vector3 goal,int profile,double delta);
     void step(RegionalGraph &graph,ActorRoute &validator,godot::PhysicsDirectSpaceState3D *space,

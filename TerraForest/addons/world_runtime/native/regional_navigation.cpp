@@ -28,16 +28,19 @@ int RegionalGraph::candidate(int from,const Vector3 &origin,int profile,int dire
     Vector3 next(std::round(previous.x*2)*.5+DX[direction]*.5,previous.y,std::round(previous.z*2)*.5+DZ[direction]*.5);
     if(cached&&vertices[from].edge[direction]>=0)next=vertices[vertices[from].edge[direction]].p;
     // A cached edge still needs live collision coverage. Geometry edits and
-    // changed recipient exclusions clear the graph; missing coverage never
+    // changed recipient exclusions invalidate certificates; missing coverage never
     // becomes a cached negative edge.
     const real_t radius=profile==0?.4:.8;
     AABB region(p-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2));
     region=region.merge(AABB(next-Vector3(radius,1.9,radius),Vector3(radius*2,3.7,radius*2)));
+    last_dependency=region;
     if(cached){
+        last_dependency=vertices[from].dependencies[direction];
         if(!validator.collision_ready(region,readiness)){request(next);return -3;}
         ++hits;return vertices[from].edge[direction];
     }
     const bool permitted=validator.sample_motion(space,previous,next,readiness,admission,ray,shape);
+    record_dependency(from,direction,validator.last_edge_bounds());
     if(!permitted){
         if(validator.edge_unavailable()){request(next);return -3;}
         if(!progress){if(from>=0)vertices[from].edge[direction]=-1;return -1;}
@@ -51,15 +54,18 @@ int RegionalGraph::candidate(int from,const Vector3 &origin,int profile,int dire
     auto key=std::make_tuple(profile,int(std::round(next.x*2)),int(std::round(next.z*2)),int(std::round(next.y*100)));
     auto found=index.find(key);int id;
     if(found==index.end()){
-        if(vertices.size()>=NODE_LIMIT)return -4;
-        if(vertices.empty())lowest=highest=next.y;else {lowest=std::min(lowest,next.y);highest=std::max(highest,next.y);}
-        id=int(vertices.size());vertices.emplace_back(next,profile);index.emplace(key,id);
+        if(vertices.size()>=NODE_LIMIT&&free_.empty())return -4;
+        if(index.empty())lowest=highest=next.y;else {lowest=std::min(lowest,next.y);highest=std::max(highest,next.y);}
+        if(free_.empty()){id=int(vertices.size());vertices.emplace_back(next,profile);}
+        else {id=free_.back();free_.pop_back();const uint64_t generation=vertices[id].generation+1;vertices[id]=Vertex(next,profile);vertices[id].generation=generation;}
+        index.emplace(key,id);spatial_[cell(next)].insert(id);
     }else id=found->second;
     if(from>=0)vertices[from].edge[direction]=id;
     return id;
 }
 void RegionalRoute::begin(Vector3 start,Vector3 goal,int profile){
     start_=expected_=progress_anchor_=start;goal_=goal;profile_=profile;nodes_.clear();visited_.clear();open_={};path_.clear();
+    has_bounds_=false;
     expanding_=-1;direction_=0;waypoint_=0;retry_=stuck_=0;waiting_=false;finishing_=false;finish_samples_.clear();expansions=0;
     direct_=true;direct_samples_.clear();direct_samples_.push_back(start);
     height_weight_=goal.y>start.y+.5?16:2;
@@ -109,7 +115,8 @@ void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirec
         const double remaining=planar(from,goal_);
         Vector3 next=goal_;next.y=from.y;
         if(remaining>.5)next=from+(next-from)*(.5/remaining);
-        if(validator.sample_motion(space,from,next,readiness,admission,ray,shape)){
+        const bool permitted=validator.sample_motion(space,from,next,readiness,admission,ray,shape);include(validator.last_edge_bounds());
+        if(permitted){
             if(rejected_edge(from,next)){direct_=false;direct_samples_.clear();return;}
             if(remaining>.5||std::abs(next.y-goal_.y)<.3){
                 direct_samples_.push_back(next);
@@ -128,7 +135,9 @@ void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirec
         expanding_=open_.top().node;open_.pop();nodes_[expanding_].closed=true;++expansions;
         direction_=-1;
     }
-    const int parent=expanding_;const Node current=nodes_[parent];const Vector3 p=position(current,graph);
+    const int parent=expanding_;const Node current=nodes_[parent];
+    if(!valid(current,graph)){begin(expected_,goal_,profile_);return;}
+    const Vector3 p=position(current,graph);
     if(direction_==-1&&!finishing_){
         finishing_=planar(p,goal_)<2.9&&std::abs(p.y-goal_.y)<.3;
         finish_samples_.clear();
@@ -141,7 +150,8 @@ void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirec
         if(rejected_edge(from,end)){
             finishing_=false;direction_=current.vertex<0?8:0;return;
         }
-        if(!validator.sample_motion(space,from,end,readiness,admission,ray,shape)){
+        const bool permitted=validator.sample_motion(space,from,end,readiness,admission,ray,shape);include(validator.last_edge_bounds());
+        if(!permitted){
             if(validator.edge_unavailable()){graph.request(end);state=ActorRoute::UNAVAILABLE;retry_=.1;return;}
             finishing_=false;direction_=current.vertex<0?8:0;return;
         }
@@ -149,7 +159,10 @@ void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirec
         if(distance<=.5){
             finishing_=false;
             if(std::abs(end.y-goal_.y)<.3){
-                for(int n=parent;n>=0;n=nodes_[n].parent)path_.push_back(position(nodes_[n],graph));
+                for(int n=parent;n>=0;n=nodes_[n].parent){
+                    if(!valid(nodes_[n],graph)){begin(expected_,goal_,profile_);return;}
+                    path_.push_back(position(nodes_[n],graph));
+                }
                 std::reverse(path_.begin(),path_.end());path_.insert(path_.end(),finish_samples_.begin(),finish_samples_.end());
                 waypoint_=1;state=ActorRoute::FOLLOWING;return;
             }
@@ -160,6 +173,7 @@ void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirec
     const int direction=direction_;
     // Root first tries the nearest aligned cell, then the eight neighbours.
     int id=graph.candidate(current.vertex,p,profile_,direction,validator,space,readiness,admission,ray,shape);
+    include(graph.last_dependency);
     if(id==-5)return;
     if(id==-3){state=ActorRoute::UNAVAILABLE;retry_=.1;waiting_=true;return;}
     if(id>=0&&rejected_edge(p,graph.vertices[id].p))id=-1;
@@ -172,12 +186,16 @@ void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirec
     if(std::abs(next.x-start_.x)>RADIUS||std::abs(next.z-start_.z)>RADIUS||std::abs(next.y-start_.y)>64)return;
     const double g=current.g+p.distance_to(next);auto old=visited_.find(id);
     if(old!=visited_.end()){
+        if(!valid(nodes_[old->second],graph)){begin(expected_,goal_,profile_);return;}
         Node &node=nodes_[old->second];if(node.closed||node.g<=g)return;
         node.g=g;node.parent=parent;open_.push({g+estimate(next,goal_,height_weight_),old->second});return;
     }
     if(nodes_.size()>=QUERY_LIMIT){state=ActorRoute::SEARCH_LIMIT;return;}
-    const int n=int(nodes_.size());nodes_.push_back({id,parent,g});visited_[id]=n;
+    const int n=int(nodes_.size());nodes_.push_back({id,parent,g,false,graph.vertices[id].generation});visited_[id]=n;
     open_.push({g+estimate(next,goal_,height_weight_),n});
+}
+bool RegionalRoute::valid(const Node &node,const RegionalGraph &graph)const{
+    return node.vertex<0||(size_t(node.vertex)<graph.vertices.size()&&graph.vertices[node.vertex].valid&&graph.vertices[node.vertex].generation==node.generation);
 }
 Vector3 RegionalRoute::target(Vector3 point){
     if(state!=ActorRoute::FOLLOWING)return point;
@@ -203,7 +221,7 @@ Dictionary RegionalRoute::status(const RegionalGraph &graph)const{
     Dictionary out;out["state"]=names[state];out["nodes"]=int(nodes_.size());out["expansions"]=expansions;
     out["node_limit"]=QUERY_LIMIT;out["radius_m"]=RADIUS;out["waypoints"]=int(path_.size());out["waypoint_index"]=int(waypoint_);
     out["direct_planning"]=direct_&&state==ActorRoute::PLANNING;out["direct_samples"]=int(direct_samples_.size());
-    out["stuck_seconds"]=stuck_;out["replans"]=stalls_;out["graph_nodes"]=int(graph.vertices.size());out["graph_node_limit"]=RegionalGraph::NODE_LIMIT;
+    out["stuck_seconds"]=stuck_;out["replans"]=stalls_;out["graph_nodes"]=int(graph.live_size());out["graph_node_limit"]=RegionalGraph::NODE_LIMIT;
     out["rejected_waypoints"]=int(rejected_.size());out["rejected_waypoint_limit"]=16;
     out["graph_cache_hits"]=int64_t(graph.hits);out["graph_revision"]=int64_t(graph.revision);out["complete_path"]=!path_.empty();
     out["lowest_surface"]=graph.lowest-.93;out["highest_surface"]=graph.highest-.93;
