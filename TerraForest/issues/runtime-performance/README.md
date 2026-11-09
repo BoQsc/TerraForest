@@ -9,6 +9,10 @@ the installed walking capture reaches 25.243 ms. A recorder-off control still
 reaches 24.462 ms walking and 26.749 ms after destruction. This is not stable-FPS
 acceptance; visible-window presentation and longer movement remain open.
 
+[Rendering API diagnostic](render-api-diagnostic-2026-11-10.md) adds explicit
+driver selection to the test launcher with runtime verification. Its first D3D12
+capture does not establish a driver advantage; production remains Vulkan.
+
 [Approved pacing policy, 2026-11-10](approved-pacing-2026-11-10.md): the user
 reaffirmed the foreground cap, VSync and background cap. The uncommitted limiter
 experiment and its changed test expectations were reverted; it never entered

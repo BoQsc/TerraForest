@@ -231,6 +231,8 @@ func run()->void:
 	record.initializations=initializations
 	record.runtime_source_sha256={"zombie":load("res://addons/characters/runtime/zombie.gd").source_code.sha256_text(),"controller":load("res://demo/controller.gd").source_code.sha256_text()}
 	record.gpu_timers=gpu_timers
+	record.rendering_driver=RenderingServer.get_current_rendering_driver_name()
+	record.rendering_method=RenderingServer.get_current_rendering_method()
 	record.presentation={"requested_cap":game.max_fps,"effective_cap":Engine.max_fps,"vsync":DisplayServer.window_get_vsync_mode(),"refresh_hz":DisplayServer.screen_get_refresh_rate(),"hidden_hud_control":game.background_hud_updates}
 	var pacing_mismatches:=0
 	if "--trace-uncapped" in OS.get_cmdline_user_args():
@@ -263,6 +265,8 @@ func run()->void:
 	record.viewport_occlusion_restored=root.use_occlusion_culling==original_occlusion
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
+	for arg:String in OS.get_cmdline_user_args():
+		if arg.begins_with("--trace-expected-driver="):okay=okay and record.rendering_driver==arg.get_slice("=",1) and record.rendering_method=="forward_plus"
 	okay=okay and hidden_hud_stable and visible_hud_updated
 	okay=okay and record.viewport_occlusion_restored and pacing_mismatches==0
 	if collision_piece_triangles>0:okay=okay and collision_configured and collision_stages_dropped==0 and record.collision.census.shapes>0 and record.collision.census.largest_piece<=collision_piece_triangles

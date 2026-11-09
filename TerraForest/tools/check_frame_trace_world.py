@@ -44,6 +44,7 @@ def main():
     parser.add_argument('--player-abba', action='store_true', help='Grounded stationary and turning comparisons of player feel on/off; restores the preference')
     parser.add_argument('--legacy-hidden-hud', action='store_true', help='Diagnostic control: rebuild the hidden developer HUD as before')
     parser.add_argument('--render-thread', choices=['safe', 'separate'], help='Diagnostic engine rendering thread comparison')
+    parser.add_argument('--rendering-driver', choices=['vulkan', 'd3d12'], help='Diagnostic graphics API comparison; keeps Forward+ quality and normal pacing')
     parser.add_argument('--without-gpu-timers', action='store_true', help='Avoid synchronous renderer timer queries; requires --without-trace')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
@@ -97,6 +98,9 @@ def main():
         command += ['--trace-legacy-hidden-hud']
     if args.render_thread:
         command[1:1] = ['--render-thread', args.render_thread]
+    if args.rendering_driver:
+        command[1:1] = ['--rendering-driver', args.rendering_driver]
+        command += ['--trace-expected-driver=' + args.rendering_driver]
     if args.without_gpu_timers:
         command += ['--trace-without-gpu-timers']
     if args.verbose:
