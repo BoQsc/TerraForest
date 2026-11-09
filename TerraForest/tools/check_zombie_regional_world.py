@@ -6,6 +6,8 @@ import hashlib
 import json
 import os
 import re
+import shutil
+import time
 from pathlib import Path
 from run import ROOT, parse_args
 from run_godot_check import execute
@@ -16,6 +18,7 @@ def main():
     parser.add_argument('--slot',required=True)
     parser.add_argument('--case',required=True,choices=['cave','tower'])
     parser.add_argument('--headless',action='store_true')
+    parser.add_argument('--navigation-profile',action='store_true',help='Measure native query phases without changing movement or planning budgets')
     args=parser.parse_args()
     if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,63}',args.slot):parser.error('Invalid slot identifier')
     source=Path(os.environ['APPDATA'])/'Godot/app_userdata/TerraForest/worlds'/(args.slot+'.trw')
@@ -40,6 +43,7 @@ def main():
              '--max-fps','60','--script','res://tests/zombie_regional_world.gd','--',
              '--snapshot-readonly','--world-slot='+args.slot,'--derived-cache=user://zombie_regional_'+folder.name,
              '--navigation-case='+args.case,'--gameplay-construction','--zombies']
+    if args.navigation_profile:command.append('--navigation-profile')
     record=dict(command=command,source_archive_sha256=before,**revision_metadata())
     record['source_data_before']=before_data
     record['engine_sha256']=hashlib.sha256(Path(config.godot).read_bytes()).hexdigest()
@@ -47,7 +51,16 @@ def main():
     record['native_sha256']={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest()
                              for p in sorted((ROOT/'addons').glob('*/bin/*.dll'))}
     (folder/'run.json').write_text(json.dumps(record,indent=2))
+    started=time.time()
     record['result']=execute(command,folder,600,'ZOMBIE_REGIONAL_WORLD case='+args.case)
+    evidence=ROOT/'reports/zombie_regional_world'/args.case
+    if evidence.is_dir():
+        for output in evidence.iterdir():
+            # Headless runs leave older graphical evidence in the shared source
+            # folder. Retain only files actually produced by this invocation.
+            if output.is_file() and output.stat().st_mtime>=started:
+                (folder/args.case).mkdir(exist_ok=True)
+                shutil.copy2(output,folder/args.case/output.name)
     record['source_archive_unchanged']=before==digest()
     after_data=source_data()
     record['source_data_unchanged']=before_data==after_data

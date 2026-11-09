@@ -2,11 +2,30 @@
 #include "actor_route.hpp"
 #include <cmath>
 #include <algorithm>
+#include <chrono>
+#include <functional>
 using namespace godot;
 namespace terraforest {
+namespace {
+struct QueryTimer {
+    uint64_t *total;
+    std::chrono::steady_clock::time_point began;
+    explicit QueryTimer(uint64_t *value):total(value){if(total)began=std::chrono::steady_clock::now();}
+    ~QueryTimer(){if(total)*total+=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-began).count();}
+};
+}
+size_t ActorRoute::SupportCache::slot(const Vector3 &from,real_t to_y)const{
+    // Equality below checks all components; collisions replace one entry and
+    // only reduce hit rate. +/-zero hash identically, as they compare equal.
+    size_t key=0;
+    for(real_t value:{from.x,from.y,from.z,to_y})key^=std::hash<real_t>{}(value)+size_t(0x9e3779b97f4a7c15ULL)+(key<<6)+(key>>2);
+    key^=key>>30;key*=size_t(0xbf58476d1ce4e5b9ULL);key^=key>>27;key*=size_t(0x94d049bb133111ebULL);key^=key>>31;
+    return key&(LIMIT-1);
+}
 static double horizontal(const Vector3 &a,const Vector3 &b){Vector3 d=a-b;d.y=0;return d.length();}
 void ActorRoute::include(const AABB &b){bounds_=has_bounds_?bounds_.merge(b):b;has_bounds_=true;}
 bool ActorRoute::collision_ready(const AABB &bounds,const Callable &readiness){
+    QueryTimer measured(query_profile?&query_profile->readiness_ns:nullptr);
     auto query=[&](const AABB &region){
         if(readiness_cache)++readiness_cache->probes;
         Variant value=readiness.call(region);return value.get_type()==Variant::BOOL&&bool(value);
@@ -51,6 +70,7 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     const Callable &readiness,const Callable &admission,const Ref<PhysicsRayQueryParameters3D> &ray,
     const Ref<PhysicsShapeQueryParameters3D> &shape){
     edge_unavailable_=false;edge_failure_="unavailable";edge_obstacle_=RID();
+    if(query_profile)++query_profile->edges;
     // Include the full capsule, support rays and bounded stair clearance.
     Ref<CapsuleShape3D> capsule=shape->get_shape();
     const real_t radius=capsule.is_valid()?std::max(real_t(.4),capsule->get_radius()+real_t(.05)):real_t(.4);
@@ -64,27 +84,43 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     // poses are used; it does not increase the physical step-height allowance.
     Vector3 middle=(from+to)*.5;
     auto support=[&](Vector3 &point,real_t base)->bool {
-        ray->set_from(Vector3(point.x,base-.28,point.z));ray->set_to(Vector3(point.x,base-1.5,point.z));
+        if(query_profile)++query_profile->support_rays;
+        const Vector3 from(point.x,base-.28,point.z);const real_t to_y=base-1.5;
         edge_failure_="missing_support";
-        Dictionary hit=space->intersect_ray(ray);if(hit.is_empty())return false;
-        edge_failure_="steep_support";if(Vector3(hit["normal"]).y<minimum_floor_normal)return false;
-        point.y=Vector3(hit["position"]).y+.93;return true;
-    };
-    Vector3 supports[3]={from,middle,to};
-    for(int half=0;half<2;++half){
-        const Vector3 &begin=supports[half],&end=supports[half+1];
-        const int intervals=std::max(1,int(std::ceil(horizontal(begin,end)/.025)));
-        Vector3 previous=begin;
-        for(int sample=1;sample<=intervals;++sample){
-            Vector3 point=begin.lerp(end,double(sample)/intervals);
-            if(!support(point,previous.y))return false;
-            edge_failure_="step_height";if(std::abs(point.y-previous.y)>maximum_step+(half==0&&sample==1?.03:.001))return false;
-            previous=point;
+        SupportCache::Entry *cached=support_cache?&support_cache->entries[support_cache->slot(from,to_y)]:nullptr;
+        bool hit=false;Vector3 normal;real_t height=0;
+        if(cached&&cached->revision==support_cache->revision&&cached->from==from&&cached->to_y==to_y){
+            ++support_cache->hits;hit=cached->hit;normal=cached->normal;height=cached->height;
+        }else{
+            if(support_cache)++support_cache->misses;
+            ray->set_from(from);ray->set_to(Vector3(point.x,to_y,point.z));
+            Dictionary result=space->intersect_ray(ray);hit=!result.is_empty();
+            if(hit){normal=result["normal"];height=Vector3(result["position"]).y;}
+            if(cached){cached->from=from;cached->to_y=to_y;cached->hit=hit;cached->normal=normal;cached->height=height;cached->revision=support_cache->revision;}
         }
-        supports[half+1]=previous;
+        if(!hit)return false;
+        edge_failure_="steep_support";if(normal.y<minimum_floor_normal)return false;
+        point.y=height+.93;return true;
+    };
+    {
+        QueryTimer measured(query_profile?&query_profile->support_ns:nullptr);
+        Vector3 supports[3]={from,middle,to};
+        for(int half=0;half<2;++half){
+            const Vector3 &begin=supports[half],&end=supports[half+1];
+            const int intervals=std::max(1,int(std::ceil(horizontal(begin,end)/.025)));
+            Vector3 previous=begin;
+            for(int sample=1;sample<=intervals;++sample){
+                Vector3 point=begin.lerp(end,double(sample)/intervals);
+                if(!support(point,previous.y))return false;
+                edge_failure_="step_height";if(std::abs(point.y-previous.y)>maximum_step+(half==0&&sample==1?.03:.001))return false;
+                previous=point;
+            }
+            supports[half+1]=previous;
+        }
+        middle=supports[1];to=supports[2];
     }
-    middle=supports[1];to=supports[2];
     if(admission.is_valid()||water_depth.is_valid()){
+        QueryTimer measured(query_profile?&query_profile->hazard_ns:nullptr);
         edge_failure_="hazard";
         // Conservative square footprint, including segment interiors. Endpoint
         // and midpoint-only tests can skip a shoreline corner which the smaller
@@ -98,25 +134,30 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
             const Vector3 point=t<=.5?from.lerp(middle,t*2):middle.lerp(to,(t-.5)*2);
             for(const Vector3 &offset:offsets){
                 if(water_depth.is_valid()){
+                    if(query_profile)++query_profile->water_queries;
                     // Query the native water owner directly. Preserve the same
                     // feet+10cm footprint policy without per-sample script glue.
                     Variant depth=water_depth.call(point+offset*radius-Vector3(0,.83,0));
                     if((depth.get_type()!=Variant::FLOAT&&depth.get_type()!=Variant::INT)||!std::isfinite(double(depth))||double(depth)>0)return false;
                 }
                 if(admission.is_valid()){
+                    if(query_profile)++query_profile->admission_queries;
                     Variant allowed=admission.call(point+offset*radius);
                     if(allowed.get_type()!=Variant::BOOL || !bool(allowed))return false;
                 }
             }
         }
     }
+    QueryTimer measured(query_profile?&query_profile->clearance_ns:nullptr);
     auto clear=[&](const Vector3 &point)->bool {
+        if(query_profile)++query_profile->shape_queries;
         shape->set_transform(Transform3D(Basis(),point));shape->set_motion(Vector3());
         const TypedArray<Dictionary> contacts=space->intersect_shape(shape,1);
         if(contacts.is_empty())return true;
         const Dictionary contact=contacts[0];edge_obstacle_=contact.get("rid",RID());return false;
     };
     auto sweep=[&](const Vector3 &a,const Vector3 &b)->bool {
+        if(query_profile)++query_profile->sweeps;
         shape->set_transform(Transform3D(Basis(),a));shape->set_motion(b-a);
         PackedFloat32Array travel=space->cast_motion(shape);return travel.size()==2 && travel[0]>.999;
     };

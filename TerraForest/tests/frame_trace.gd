@@ -11,6 +11,16 @@ func run()->void:
 	RenderingServer.frame_pre_draw.disconnect(trace._begin_draw);RenderingServer.frame_post_draw.disconnect(trace._end_draw)
 	trace.set_process(false);trace.set_physics_process(false)
 	trace.output="res://reports/frame_trace_test";DirAccess.make_dir_recursive_absolute(trace.output)
+	var first_query:Dictionary={"planning_us":50000,"query_profile":{"support_us":49000}}
+	trace.capture_navigation(first_query,{"planning":50000})
+	first_query.query_profile.support_us=0
+	trace.capture_navigation({"planning_us":0},{"planning":0})
+	var ticks:Dictionary=trace.take_navigation_samples()
+	check(ticks.samples.size()==2 and ticks.samples[0].navigation.query_profile.support_us==49000 and ticks.samples[1].navigation.planning_us==0,"catch-up physics ticks must retain the earlier slow query as an immutable sample")
+	check(trace.take_navigation_samples().samples.is_empty(),"rendered frames must not repeat prior physics samples")
+	for i in Trace.NAVIGATION_SAMPLE_LIMIT+2:trace.capture_navigation({}, {})
+	var bounded:Dictionary=trace.take_navigation_samples()
+	check(bounded.samples.size()==Trace.NAVIGATION_SAMPLE_LIMIT and bounded.dropped==2,"unusual catch-up workloads must remain bounded and report omitted samples")
 	for i in 1300:trace.record({"at_us":i*16667,"frame_ms":16.667,"frame":i,"stages_ms":{}},false)
 	var history:=trace.history(1299*16667)
 	check(trace.count==Trace.CAPACITY,"ring must remain bounded")

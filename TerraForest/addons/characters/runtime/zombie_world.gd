@@ -40,6 +40,7 @@ var _capsule: CapsuleShape3D
 var _resident_capsule: CapsuleShape3D
 var geometry_template:RefCounted
 var profiling_enabled:=false
+var _navigation_profiling:=false
 var update_phase_us:Dictionary={}
 var _response_trace_left:=0.
 var _response_trace_clock:=0.
@@ -152,6 +153,8 @@ func invalidate_navigation(bounds: AABB=AABB()) -> void:
 	_obstacle_clock.clear()
 
 func _update_navigation(delta: float, available: bool) -> void:
+	if _navigation_profiling!=profiling_enabled:
+		_navigation_profiling=profiling_enabled;navigator.set_query_profiling(profiling_enabled)
 	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
 	navigator.set_water_depth(water_depth)
 	var noise_speed:=0.0

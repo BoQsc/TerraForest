@@ -3,6 +3,7 @@ extends Node
 ## Opt-in rolling recorder. Inserted rows are immutable, including their stages.
 const CAPACITY:=1200
 const MAX_FILES:=8
+const NAVIGATION_SAMPLE_LIMIT:=16
 const PRE_US:=10000000
 const POST_US:=2000000
 const COOLDOWN_US:=10000000
@@ -14,6 +15,9 @@ var stages:Dictionary={}
 var physics_started:=0
 var physics_elapsed_us:=0
 var physics_steps:=0
+var navigation_samples:Array[Dictionary]=[]
+var navigation_samples_dropped:=0
+var navigation_capture_us:=0
 var process_started:=0
 var process_finished:=0
 var draw_started:=0
@@ -85,6 +89,20 @@ func _begin_physics()->void:
 func _physics_process(_delta:float)->void:
 	if physics_started>0:physics_elapsed_us+=Time.get_ticks_usec()-physics_started
 	physics_started=0
+	if is_instance_valid(game) and game.startup_complete and game.zombies.update_phase_us.has("planning"):
+		capture_navigation(game.zombies.navigation_status,game.zombies.update_phase_us)
+
+func capture_navigation(status:Dictionary,phases:Dictionary)->void:
+	var began:=Time.get_ticks_usec()
+	if navigation_samples.size()<NAVIGATION_SAMPLE_LIMIT:
+		navigation_samples.append({"physics_frame":Engine.get_physics_frames(),"navigation":status.duplicate(true),"phases_us":phases.duplicate()})
+	else:navigation_samples_dropped+=1
+	navigation_capture_us+=Time.get_ticks_usec()-began
+
+func take_navigation_samples()->Dictionary:
+	var result:Dictionary={"samples":navigation_samples,"dropped":navigation_samples_dropped}
+	navigation_samples=[];navigation_samples_dropped=0
+	return result
 func _process(_delta:float)->void:
 	process_finished=Time.get_ticks_usec()
 	if probe!=null:work_process=probe.thread_work()
@@ -121,6 +139,7 @@ func _end_draw()->void:
 		row.focus_admitted=game.app_focused;row.terrain_queued=game.terrain.backend.queued()
 		row.terrain_pending_edit=game.terrain.pending_edit;row.surface_backlog=game.terrain._surface_replies.size()
 		row.zombies=game.zombies.residents.size();row.zombie_phases_us=game.zombies.update_phase_us.duplicate()
+		row.zombie_navigation=game.zombies.navigation_status.duplicate(true)
 		var current_ids:Dictionary={}
 		for zombie:Node3D in game.zombies.residents:
 			if not is_instance_valid(zombie):continue
@@ -134,10 +153,11 @@ func _end_draw()->void:
 		row.cover_us=game.ground_cover.last_process_us;row.cover_cells=game.ground_cover.resident.size();row.cover_wanted=game.ground_cover._wanted.size()
 		row.phase="loading" if game.loading_active else ("entry" if row.entry else ("menu" if row.menu or row.inventory else "gameplay"))
 	else:row.phase="startup" if is_instance_valid(game) else "browser"
+	row.zombie_navigation_ticks=take_navigation_samples()
 	var eligible:bool=active and not game.shutdown_requested and not game.loading_active and not row.menu and not row.inventory and game.app_focused
 	record(row,eligible)
 	previous=began;stages={};physics_elapsed_us=0;physics_steps=0
-	overhead_us=Time.get_ticks_usec()-began
+	overhead_us=Time.get_ticks_usec()-began+navigation_capture_us;navigation_capture_us=0
 
 func record(row:Dictionary,auto_trigger:bool)->void:
 	if auto_trigger:

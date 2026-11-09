@@ -11,6 +11,9 @@ var pending:=false
 var rows:Array=[]
 var state_matches:=true
 var state_timings:Dictionary={}
+var query_profile:Dictionary={}
+var support_hits:=0
+var support_misses:=0
 func check(ok:bool,label:String)->void:
 	checks+=1
 	if not ok:failures+=1
@@ -24,6 +27,8 @@ func plan(start:Vector3,goal:Vector3,seconds:float=30,stop_unavailable:bool=true
 	for tick in int(seconds*Engine.physics_ticks_per_second):
 		await physics_frame
 		var measured:Dictionary=nav.advance(1.0/Engine.physics_ticks_per_second,ready,Callable())
+		for key:String in measured.get("query_profile",{}):query_profile[key]=query_profile.get(key,0)+measured.query_profile[key]
+		support_hits+=measured.get("support_cache_hits",0);support_misses+=measured.get("support_cache_misses",0)
 		peak_work=maxi(peak_work,measured.route_work);peak_us=maxi(peak_us,measured.planning_us)
 		peak_readiness_hits=maxi(peak_readiness_hits,measured.readiness_cache_hits)
 		var state:Dictionary=nav.status(1)
@@ -36,6 +41,8 @@ func _initialize()->void:run.call_deferred()
 func run()->void:
 	scene=Node3D.new();root.add_child(scene);box(Vector3(24,-.5,0),Vector3(100,1,80))
 	nav=ClassDB.instantiate("NativeActorNavigator");scene.add_child(nav);nav.configure(6)
+	nav.set_query_profiling("--navigation-profile" in OS.get_cmdline_user_args())
+	nav.set_support_cache_enabled(not "--no-support-cache" in OS.get_cmdline_user_args())
 	check(nav.state(999)==nav.status(999).state,"lightweight state preserves missing-agent semantics")
 	nav.set_agent(1,Vector3.ZERO,Vector3.ONE,0,false)
 	check(nav.state(1)=="idle" and nav.state(1)==nav.status(1).state,"lightweight state preserves inactive local-agent semantics")
@@ -88,6 +95,10 @@ func run()->void:
 	check(state_matches,"lightweight state matches full diagnostics throughout regional planning and mutations")
 	nav.set_agent(1,Vector3(200,0,0),Vector3(240,0,0),0,false)
 	check(nav.state(1)=="idle" and nav.state(1)==nav.status(1).state,"inactive regional route reports idle without exposing its retained path")
+	if "--navigation-profile" in OS.get_cmdline_user_args():
+		check(query_profile.get("support_rays",0)>0 and query_profile.get("shape_queries",0)>0 and query_profile.get("readiness_us",0)>0,"opt-in query profiling measures real support, clearance and readiness work")
+		nav.set_query_profiling(false)
+		check(not nav.advance(1.0/60,ready,Callable()).has("query_profile"),"disabling query profiling removes diagnostics from ordinary passes")
 	DirAccess.make_dir_recursive_absolute("res://reports/regional_navigation")
-	var file:=FileAccess.open("res://reports/regional_navigation/result.json",FileAccess.WRITE);file.store_string(JSON.stringify({"checks":checks,"failures":failures,"peak_work":peak_work,"peak_planning_us":peak_us,"routes":rows,"last":state,"state_timings":state_timings},"  "));file.close()
+	var file:=FileAccess.open("res://reports/regional_navigation/result.json",FileAccess.WRITE);file.store_string(JSON.stringify({"checks":checks,"failures":failures,"peak_work":peak_work,"peak_planning_us":peak_us,"routes":rows,"last":state,"state_timings":state_timings,"query_profile":query_profile,"support_cache_hits":support_hits,"support_cache_misses":support_misses},"  "));file.close()
 	scene.free();await process_frame;print("REGIONAL_NAVIGATION checks=",checks," failures=",failures);quit(1 if failures else 0)

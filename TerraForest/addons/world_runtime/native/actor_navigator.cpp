@@ -10,6 +10,8 @@ namespace terraforest {
 static const Vector3 CENTRE(0,.93,0);
 void NativeActorNavigator::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","capacity"),&NativeActorNavigator::configure);
+    ClassDB::bind_method(D_METHOD("set_query_profiling","enabled"),&NativeActorNavigator::set_query_profiling);
+    ClassDB::bind_method(D_METHOD("set_support_cache_enabled","enabled"),&NativeActorNavigator::set_support_cache_enabled);
     ClassDB::bind_method(D_METHOD("set_exclusions","ids"),&NativeActorNavigator::set_exclusions);
     ClassDB::bind_method(D_METHOD("set_interactions","ids"),&NativeActorNavigator::set_interactions);
     ClassDB::bind_method(D_METHOD("set_water_depth","depth"),&NativeActorNavigator::set_water_depth);
@@ -151,7 +153,14 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
         else {agent.route.prepare(origin,agent.goal,elapsed);agent.route.moved(origin,elapsed);}
     }
     int work=0,limit=12;size_t idle=0;
-    for(auto &agent:agents_)agent.route.readiness_cache=&readiness_cache_;
+    ActorRoute::QueryProfile profile;
+    // Every geometry, water, recipient or conditional-door invalidation changes
+    // this revision. Coverage is still checked before every sampled edge.
+    support_cache_.revision=graph_.revision+1;support_cache_.hits=support_cache_.misses=0;
+    for(auto &agent:agents_){
+        agent.route.readiness_cache=&readiness_cache_;agent.route.query_profile=query_profiling_?&profile:nullptr;
+        agent.route.support_cache=support_cache_enabled_?&support_cache_:nullptr;
+    }
     for(const auto &agent:agents_)if(agent.active&&agent.regional&&agent.journey.state==ActorRoute::PLANNING){limit=48;break;}
     out["route_work_limit"]=limit;
     while(space && !agents_.empty() && work<limit && idle<agents_.size()){
@@ -164,7 +173,21 @@ Dictionary NativeActorNavigator::advance(double delta,const Callable &readiness,
         if(Time::get_singleton()->get_ticks_usec()-started>=750)break;
     }
     out["ok"]=true;out["route_work"]=work;out["goal_probes"]=0;
-    for(auto &agent:agents_)agent.route.readiness_cache=nullptr;
+    for(auto &agent:agents_){agent.route.readiness_cache=nullptr;agent.route.query_profile=nullptr;agent.route.support_cache=nullptr;}
+    out["support_cache_hits"]=int64_t(support_cache_.hits);out["support_cache_misses"]=int64_t(support_cache_.misses);
+    out["support_cache_limit"]=int64_t(ActorRoute::SupportCache::LIMIT);
+    out["support_cache_bytes"]=int64_t(sizeof(ActorRoute::SupportCache::Entry)*support_cache_.entries.size());
+    if(query_profiling_){
+        Dictionary measured;
+        measured["readiness_us"]=profile.readiness_ns/1000.0;measured["support_us"]=profile.support_ns/1000.0;
+        measured["hazard_us"]=profile.hazard_ns/1000.0;measured["clearance_us"]=profile.clearance_ns/1000.0;
+        measured["edges"]=int64_t(profile.edges);measured["support_rays"]=int64_t(profile.support_rays);
+        measured["support_cache_hits"]=int64_t(support_cache_.hits);
+        measured["support_raycasts"]=int64_t(profile.support_rays-support_cache_.hits);
+        measured["water_queries"]=int64_t(profile.water_queries);measured["admission_queries"]=int64_t(profile.admission_queries);
+        measured["shape_queries"]=int64_t(profile.shape_queries);measured["sweeps"]=int64_t(profile.sweeps);
+        out["query_profile"]=measured;
+    }
     out["readiness_probes"]=readiness_cache_.probes;out["readiness_cache_hits"]=readiness_cache_.hits;
     out["readiness_cache_entries"]=int(readiness_cache_.regions.size());
     out["graph_nodes"]=int(graph_.vertices.size());out["graph_node_limit"]=RegionalGraph::NODE_LIMIT;

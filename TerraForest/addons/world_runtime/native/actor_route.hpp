@@ -39,6 +39,29 @@ class ActorRoute {
         const godot::Ref<godot::PhysicsRayQueryParameters3D> &ray,
         const godot::Ref<godot::PhysicsShapeQueryParameters3D> &shape);
 public:
+    // Optional, synchronous planning diagnostics. Motion guards and ordinary
+    // non-profiled callers leave this pointer null; no timings survive a pass.
+    struct QueryProfile {
+        uint64_t readiness_ns=0,support_ns=0,hazard_ns=0,clearance_ns=0;
+        uint64_t edges=0,support_rays=0,water_queries=0,admission_queries=0,shape_queries=0,sweeps=0;
+    };
+    QueryProfile *query_profile=nullptr;
+    // Exact ray answers for one navigator's static-query policy and graph
+    // revision. Direct-mapped storage has fixed cost and never rounds queries.
+    struct SupportCache {
+        static constexpr size_t LIMIT=65536;
+        struct Entry {
+            godot::Vector3 from,normal;
+            real_t to_y=0,height=0;
+            uint64_t revision=0;
+            bool hit=false;
+        };
+        std::vector<Entry> entries;
+        uint64_t revision=1,hits=0,misses=0;
+        SupportCache():entries(LIMIT){}
+        size_t slot(const godot::Vector3 &from,real_t to_y)const;
+    };
+    SupportCache *support_cache=nullptr;
     struct ReadinessCache {
         std::map<std::tuple<int,int,int,int,int,int>,bool> regions;
         int probes=0,hits=0;

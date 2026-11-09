@@ -51,7 +51,8 @@ def main():
              ('player_cottage_stairs', 'PLAYER_COTTAGE_STAIRS failures=0')]
     if args.sampling:
         tests = [('actor_route_sampling', 'ACTOR_ROUTE_SAMPLING checks='),
-                 ('actor_route_contract', 'ACTOR_ROUTE_CONTRACT checks=')]
+                 ('actor_route_contract', 'ACTOR_ROUTE_CONTRACT checks='),
+                 ('navigation_support_cache', 'NAVIGATION_SUPPORT_CACHE checks=')]
     record = dict(project=str(project), native_sha256=libraries,
                   scope='Release DLL physics/API contracts in an isolated project; no exported-game or full-host release qualification.',
                   **revision_metadata())
@@ -65,6 +66,9 @@ def main():
         outcome = dict(test=test, command=command, test_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
                        result=execute(command, folder, 120, marker))
         outcomes.append(outcome)
+        result_file = project/'reports'/test/'result.json'
+        if result_file.is_file():
+            shutil.copy2(result_file, folder/'result.json')
         print(('PASS ' if outcome['result']['passed'] else 'FAIL ')+test, flush=True)
         record['outcomes'] = outcomes
         (report/'run.json').write_text(json.dumps(record, indent=2))
