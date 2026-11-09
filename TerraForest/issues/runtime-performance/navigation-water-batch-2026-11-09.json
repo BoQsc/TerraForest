@@ -1,0 +1,4021 @@
+{
+  "schema": 1,
+  "scope": "Native route-water ABI batching; exact fixture path parity and scoped CPU improvement. Not stable 60 FPS, cold pursuit, water cut-cell contract, or endurance acceptance.",
+  "implementation_commit": "1df22d86372a645d66b9f04c23a74e481aa11158",
+  "provenance": "Original AI-assisted implementation, fixtures and tools authored for TerraForest under 0BSD; existing project fixtures and packet contracts referenced, no external code or assets imported.",
+  "runs": {
+    "source_initial_failure": {
+      "path": "reports/checks/20261109T151557339284Z",
+      "manifest_sha256": "f6d29759bf029e918726c2de89164fbed44dab1a55e7aff9e966f000a1656c63",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T151557339284Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/navigation_water_footprint.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_a20485d4d2bb46c68799cf38584efdcd",
+        "--derived-cache=user://navigation_water_footprint_a20485d4d2bb46c68799cf38584efdcd"
+      ],
+      "test_sha256": "6f49ae4449b385944d28d5d994d858d21b45bbf86598e81208f3039530526240",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [
+          "FAIL invalid batch-provider return rejects rather than authorizing movement"
+        ],
+        "elapsed_seconds": 2.8561421999474987,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 98873344,
+          "peak_working_set_bytes": 106463232,
+          "peak_dedicated_gpu_bytes": null,
+          "exceeded": false,
+          "within_sampled_limits": false,
+          "telemetry_complete": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    },
+    "source_first_pass": {
+      "path": "reports/checks/20261109T151630812627Z",
+      "manifest_sha256": "09e86a6795a84ca8a780dae5e9b650650b146dcc37b8403abf6bfae718232f3d",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T151630812627Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/navigation_water_footprint.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_738de91b715644dc92bbd43de5779234",
+        "--derived-cache=user://navigation_water_footprint_738de91b715644dc92bbd43de5779234"
+      ],
+      "test_sha256": "355d8706fd140fe3a02c6020b3546f1222445636cfe3fadde557405102558615",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 3.0710690999403596,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 98357248,
+          "peak_working_set_bytes": 106496000,
+          "peak_dedicated_gpu_bytes": null,
+          "exceeded": false,
+          "within_sampled_limits": false,
+          "telemetry_complete": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    },
+    "release_sampling_six": {
+      "path": "reports/regional_release/20261109T151634600614Z",
+      "manifest_sha256": "fdf61ee0c86635ccf4cd43bf1409b4dd820792ad2037d47e63f2139a406732a2",
+      "native_sha256": {
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a"
+      },
+      "baseline_world_runtime_commit": null,
+      "outcomes": [
+        {
+          "test": "actor_route_sampling",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T151634600614Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T151634600614Z\\actor_route_sampling\\engine.log",
+            "--script",
+            "res://tests/actor_route_sampling.gd"
+          ],
+          "test_sha256": "448fe069c7725466828bd96cf86a37c688c5d0834e1da71f68b5493445d997bd",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 42104,
+            "exit_code": 0,
+            "resources": {
+              "samples": 6,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 47628288,
+              "peak_working_set_bytes": 99979264,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 47628288,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 3.3338399999774992,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        },
+        {
+          "test": "actor_route_contract",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T151634600614Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T151634600614Z\\actor_route_contract\\engine.log",
+            "--script",
+            "res://tests/actor_route_contract.gd"
+          ],
+          "test_sha256": "1f99ac178f43082c117d2d5a30bc02b6b4114c6a2d6aa6c762def83a5aef2713",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 38820,
+            "exit_code": 0,
+            "resources": {
+              "samples": 9,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 44417024,
+              "peak_working_set_bytes": 96702464,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 44417024,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 5.357617200003006,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        },
+        {
+          "test": "navigation_support_cache",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T151634600614Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T151634600614Z\\navigation_support_cache\\engine.log",
+            "--script",
+            "res://tests/navigation_support_cache.gd"
+          ],
+          "test_sha256": "2bbe863e247a914833bb7e890cd54792b4a0204824c66882729f2d48df975523",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 41784,
+            "exit_code": 0,
+            "resources": {
+              "samples": 10,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 47411200,
+              "peak_working_set_bytes": 99373056,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 47411200,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 5.782602300052531,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        },
+        {
+          "test": "navigation_invalidation",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T151634600614Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T151634600614Z\\navigation_invalidation\\engine.log",
+            "--script",
+            "res://tests/navigation_invalidation.gd",
+            "--",
+            "--native-only"
+          ],
+          "test_sha256": "60f9c744859159b1fa1f029d25c0bcd992d998b9a69e49bc2f23c7256dd8ceed",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 8916,
+            "exit_code": 0,
+            "resources": {
+              "samples": 25,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 47837184,
+              "peak_working_set_bytes": 99917824,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 47837184,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 15.13521810004022,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        },
+        {
+          "test": "navigation_model_changes",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T151634600614Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T151634600614Z\\navigation_model_changes\\engine.log",
+            "--script",
+            "res://tests/navigation_model_changes.gd"
+          ],
+          "test_sha256": "d37d45f5e89344474f0fd88f3b0c59f569658bd2a1e1bb93c44ffa63d10673a3",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 42884,
+            "exit_code": 0,
+            "resources": {
+              "samples": 6,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 48381952,
+              "peak_working_set_bytes": 100372480,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 48381952,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 3.525430199922994,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        },
+        {
+          "test": "navigation_water_footprint",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T151634600614Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T151634600614Z\\navigation_water_footprint\\engine.log",
+            "--script",
+            "res://tests/navigation_water_footprint.gd"
+          ],
+          "test_sha256": "355d8706fd140fe3a02c6020b3546f1222445636cfe3fadde557405102558615",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 32800,
+            "exit_code": 0,
+            "resources": {
+              "samples": 5,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 47431680,
+              "peak_working_set_bytes": 99762176,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 47431680,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 2.4929020000854507,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        }
+      ]
+    },
+    "source_final_abba": {
+      "path": "reports/checks/20261109T153032296323Z",
+      "manifest_sha256": "a93bf8a99c0541b56ec38fdd9d2d4a0d7d484ce3a60d8ca3038dab2b0f9f933c",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T153032296323Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/navigation_water_footprint.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_1a409222c18045bd98e8813fcb6a941a",
+        "--derived-cache=user://navigation_water_footprint_1a409222c18045bd98e8813fcb6a941a"
+      ],
+      "test_sha256": "be2fc0040276ac0ef0677a2444689d0350b8d978894560b92b79a6fb9c76de5c",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 6.5316163001116365,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 98918400,
+          "peak_working_set_bytes": 106315776,
+          "peak_dedicated_gpu_bytes": null,
+          "exceeded": false,
+          "within_sampled_limits": false,
+          "telemetry_complete": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    },
+    "release_final_abba": {
+      "path": "reports/regional_release/20261109T153350234920Z",
+      "manifest_sha256": "1e14d2ccfe5405584bb56105dc4dcd687ac53a2a2f515fdb0330dc53e018c60a",
+      "native_sha256": {
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a"
+      },
+      "baseline_world_runtime_commit": null,
+      "outcomes": [
+        {
+          "test": "navigation_water_footprint",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T153350234920Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T153350234920Z\\navigation_water_footprint\\engine.log",
+            "--script",
+            "res://tests/navigation_water_footprint.gd"
+          ],
+          "test_sha256": "be2fc0040276ac0ef0677a2444689d0350b8d978894560b92b79a6fb9c76de5c",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 4976,
+            "exit_code": 0,
+            "resources": {
+              "samples": 8,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 47919104,
+              "peak_working_set_bytes": 100249600,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 47919104,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 4.629934899974614,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        }
+      ]
+    },
+    "release_traversal_five": {
+      "path": "reports/regional_release/20261109T153355625876Z",
+      "manifest_sha256": "f58220c4e50465b9b740a047de48a821e96fff64f745e732567770cff4762128",
+      "native_sha256": {
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a"
+      },
+      "baseline_world_runtime_commit": null,
+      "outcomes": [
+        {
+          "test": "navigation_treads",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T153355625876Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T153355625876Z\\navigation_treads\\engine.log",
+            "--script",
+            "res://tests/navigation_treads.gd"
+          ],
+          "test_sha256": "ce6f52e0bf841758b7040b925bea3ff5ba81f4c8cfbaf4f1932d69a7e18e0d5f",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 26212,
+            "exit_code": 0,
+            "resources": {
+              "samples": 1,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 24387584,
+              "peak_working_set_bytes": 55803904,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 24387584,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 0.5756633999990299,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        },
+        {
+          "test": "regional_navigation",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T153355625876Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T153355625876Z\\regional_navigation\\engine.log",
+            "--script",
+            "res://tests/regional_navigation.gd"
+          ],
+          "test_sha256": "34f835fb901b44314a63322dc6fa3899e671b570722d51c34e9b59d3ed2a4a0e",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 35192,
+            "exit_code": 0,
+            "resources": {
+              "samples": 36,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 49672192,
+              "peak_working_set_bytes": 102305792,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 49672192,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 22.132700300076976,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        },
+        {
+          "test": "navigation_residency",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T153355625876Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T153355625876Z\\navigation_residency\\engine.log",
+            "--script",
+            "res://tests/navigation_residency.gd"
+          ],
+          "test_sha256": "1517cdc1f9990003c527f8004326d383e4ee89d824c8433f5f8e3a9cf971c9b4",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 44388,
+            "exit_code": 0,
+            "resources": {
+              "samples": 2,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 45670400,
+              "peak_working_set_bytes": 97763328,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 45670400,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 0.7467656000517309,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        },
+        {
+          "test": "zombie_step_guard",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T153355625876Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T153355625876Z\\zombie_step_guard\\engine.log",
+            "--script",
+            "res://tests/zombie_step_guard.gd"
+          ],
+          "test_sha256": "6e1fe5ef93d59f2f8fb4b28e0f2fc8b8dee4a543ae038d65e1664fb9c0901df6",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 31364,
+            "exit_code": 0,
+            "resources": {
+              "samples": 23,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 48349184,
+              "peak_working_set_bytes": 101543936,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 48349184,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 13.99226389999967,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        },
+        {
+          "test": "player_cottage_stairs",
+          "command": [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+            "--headless",
+            "--path",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\regional_release_20261109T153355625876Z",
+            "--max-fps",
+            "60",
+            "--log-file",
+            "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\regional_release\\20261109T153355625876Z\\player_cottage_stairs\\engine.log",
+            "--script",
+            "res://tests/player_cottage_stairs.gd"
+          ],
+          "test_sha256": "57a17960275123a55bbf1b4d670d504298731381279c8c577a1b6e541acb4116",
+          "result": {
+            "timed_out": false,
+            "launch_error": null,
+            "cancelled": false,
+            "pid": 20112,
+            "exit_code": 0,
+            "resources": {
+              "samples": 17,
+              "gpu_samples": 0,
+              "peak_private_commit_bytes": 44978176,
+              "peak_working_set_bytes": 97570816,
+              "peak_dedicated_gpu_bytes": null,
+              "checks": {
+                "ram": {
+                  "bytes": 44978176,
+                  "status": "within_budget"
+                },
+                "vram": {
+                  "bytes": null,
+                  "status": "unavailable"
+                },
+                "redistributable": {
+                  "bytes": null,
+                  "status": "unavailable"
+                }
+              },
+              "limits": {
+                "schema": 1,
+                "vram_warning_bytes": 3758096384,
+                "vram_limit_bytes": 4294967296,
+                "ram_warning_bytes": 4294967296,
+                "ram_limit_bytes": 6442450944,
+                "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+                "redistributable_warning_bytes": 4000000000,
+                "redistributable_limit_bytes": 5000000000,
+                "derived_cache_total_bytes": 3221225472,
+                "failed_test_cache_bytes": 1073741824,
+                "saved_world_warning_bytes": 10737418240,
+                "free_space_warning_bytes": 10737418240,
+                "minimum_free_bytes": 2147483648,
+                "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+              },
+              "errors": [],
+              "exceeded": false,
+              "telemetry_complete": false,
+              "within_sampled_limits": false,
+              "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+            },
+            "diagnostics": [],
+            "required_text_found": true,
+            "elapsed_seconds": 10.111027200007811,
+            "passed": true,
+            "cache_retention": {
+              "managed": false
+            }
+          }
+        }
+      ]
+    },
+    "source_zombie_navigation": {
+      "path": "reports/checks/20261109T153051679408Z",
+      "manifest_sha256": "d34397aa87597a94e00ff3072063a8917f65a29f0d55a47ff95c9a85eb4202f8",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T153051679408Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/zombie_navigation.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_1b35289f4ecf4ee3ba8fea402b8c4b6d",
+        "--derived-cache=user://zombie_navigation_1b35289f4ecf4ee3ba8fea402b8c4b6d"
+      ],
+      "test_sha256": "8cc52a72506166ffc4202c140d0292fbcfbbae239ccfaa3d55c6f3174a4f791c",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 40.02831739990506,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 123265024,
+          "peak_working_set_bytes": 137007104,
+          "peak_dedicated_gpu_bytes": null,
+          "exceeded": false,
+          "within_sampled_limits": false,
+          "telemetry_complete": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    },
+    "source_water_cut_cells_failure": {
+      "path": "reports/checks/20261109T153132385271Z",
+      "manifest_sha256": "500f197f151bfd0f96c1a6fba15e13c1957753db7062a3558d52b4ce3021db0b",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T153132385271Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/water_cut_cells.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_8afffe0a0b174586a2f958f24d0de84c",
+        "--derived-cache=user://water_cut_cells_8afffe0a0b174586a2f958f24d0de84c"
+      ],
+      "test_sha256": "f236df4a5f73451d6ea459bb65e4bd60838de3435cc8c4d2bf8547eca2a378f7",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": false,
+        "exit_code": 6,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [
+          "FAIL Partial-bottom migration recovers real air capacity without changing water or resampling terrain",
+          "FAIL Sloping-film depth is pointwise and never extends into solid terrain",
+          "FAIL Ten litres form a 40 mm film over a quarter-square-metre sloping floor",
+          "FAIL Version 2 upgrade wakes changed cut capacity using cached terrain",
+          "FAIL Version 3 partial-top migration wakes cached water without losing volume",
+          "FAIL Version 6 upgrade preserves every millilitre"
+        ],
+        "elapsed_seconds": 0.2828506000805646,
+        "required_text_found": false,
+        "resources": {
+          "peak_private_commit_bytes": 30289920,
+          "peak_working_set_bytes": 60104704,
+          "peak_dedicated_gpu_bytes": null,
+          "exceeded": false,
+          "within_sampled_limits": false,
+          "telemetry_complete": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    },
+    "tower_overwritten_point_control": {
+      "path": "reports/checks/20261109T151741186175Z",
+      "manifest_sha256": "ee99a41eb640e3caa672068a7e1a9f1855fa8b5b67d55fa6f5169690077ad589",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T151741186175Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/zombie_regional_world.gd",
+        "--",
+        "--snapshot-readonly",
+        "--world-slot=regional_districts_20261018",
+        "--derived-cache=user://zombie_regional_20261109T151741186175Z",
+        "--navigation-case=tower",
+        "--gameplay-construction",
+        "--zombies",
+        "--navigation-profile",
+        "--point-water-queries"
+      ],
+      "test_sha256": "5108cf004cd61ef329f1605d5884064479412777c7ef4e16c5ecda5c1f124dcd",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 226.02566469996236,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 1576480768,
+          "peak_working_set_bytes": 1570938880,
+          "peak_dedicated_gpu_bytes": null,
+          "exceeded": false,
+          "within_sampled_limits": false,
+          "telemetry_complete": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      },
+      "source_archive_unchanged": true,
+      "source_data_unchanged": true,
+      "source_data_changed_paths": [],
+      "protected_save_files": 200
+    },
+    "tower_batch": {
+      "path": "reports/checks/20261109T152128179837Z",
+      "manifest_sha256": "5b20701404cfb2d1921ee6cbed1492fcf7e8f7c8d0d109aa29c220565ca2a1ec",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T152128179837Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/zombie_regional_world.gd",
+        "--",
+        "--snapshot-readonly",
+        "--world-slot=regional_districts_20261018",
+        "--derived-cache=user://zombie_regional_20261109T152128179837Z",
+        "--navigation-case=tower",
+        "--gameplay-construction",
+        "--zombies",
+        "--navigation-profile"
+      ],
+      "test_sha256": "a2e3455736e32cad2dad08d1cd4ef47b0d74dbd7803e81a5ec98fa803fb439ce",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 218.90956129995175,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 1579286528,
+          "peak_working_set_bytes": 1573830656,
+          "peak_dedicated_gpu_bytes": null,
+          "exceeded": false,
+          "within_sampled_limits": false,
+          "telemetry_complete": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      },
+      "source_archive_unchanged": true,
+      "source_data_unchanged": true,
+      "source_data_changed_paths": [],
+      "protected_save_files": 200
+    },
+    "tower_point": {
+      "path": "reports/checks/20261109T152519540540Z",
+      "manifest_sha256": "314b1730572202ffab8e23fcf2e6536cfa53e305948e49d8997505a1c84aa846",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261109T152519540540Z\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/zombie_regional_world.gd",
+        "--",
+        "--snapshot-readonly",
+        "--world-slot=regional_districts_20261018",
+        "--derived-cache=user://zombie_regional_20261109T152519540540Z",
+        "--navigation-case=tower",
+        "--gameplay-construction",
+        "--zombies",
+        "--navigation-profile",
+        "--point-water-queries"
+      ],
+      "test_sha256": "a2e3455736e32cad2dad08d1cd4ef47b0d74dbd7803e81a5ec98fa803fb439ce",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 245.26290520001203,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 1576058880,
+          "peak_working_set_bytes": 1570840576,
+          "peak_dedicated_gpu_bytes": null,
+          "exceeded": false,
+          "within_sampled_limits": false,
+          "telemetry_complete": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      },
+      "source_archive_unchanged": true,
+      "source_data_unchanged": true,
+      "source_data_changed_paths": [],
+      "protected_save_files": 200
+    },
+    "packaged_replan": {
+      "path": "reports/zombie_pressure/20261109T153719926112Z",
+      "manifest_sha256": "5adce81ed2b6ebb188cdfc6b9286898ebd4625d9d9b9a1c56230eeb37f41e33d",
+      "command": [
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1280x720",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\zombie_pressure\\20261109T153719926112Z\\engine.log",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\zombie_replan_latency.gd",
+        "--",
+        "--pressure-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/zombie_pressure/20261109T153719926112Z"
+      ],
+      "script_sha256": "6a256c5058e9aa8dfd18587c5cd67bb40f6aa05f4604e8be39f7c80b8da79da3",
+      "pack_sha256": "60e22b63ebd9890d92a31b5acaa4fbcfab0c003e40048f015b9a7bbedc3b287e",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 9.563890100107528,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 737685504,
+          "peak_working_set_bytes": 553861120,
+          "peak_dedicated_gpu_bytes": 153927680,
+          "exceeded": false,
+          "within_sampled_limits": true,
+          "telemetry_complete": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    },
+    "packaged_response": {
+      "path": "reports/zombie_pressure/20261109T153730750355Z",
+      "manifest_sha256": "1d0be5bf7222560c142b07d35e9b53fefe4ef8745bfd6e408cb094d037007c74",
+      "command": [
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1280x720",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\zombie_pressure\\20261109T153730750355Z\\engine.log",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\zombie_route_response.gd",
+        "--",
+        "--pressure-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/zombie_pressure/20261109T153730750355Z"
+      ],
+      "script_sha256": "432bf9c5e276f627aaf96f2f0079be2f35bb0c51cfc0f6afd95ef9c13ee5abf1",
+      "pack_sha256": "60e22b63ebd9890d92a31b5acaa4fbcfab0c003e40048f015b9a7bbedc3b287e",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 8.782199000008404,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 737329152,
+          "peak_working_set_bytes": 552259584,
+          "peak_dedicated_gpu_bytes": 153927680,
+          "exceeded": false,
+          "within_sampled_limits": true,
+          "telemetry_complete": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    },
+    "packaged_interiors": {
+      "path": "reports/zombie_interior_pursuit/20261109T153740366984Z",
+      "manifest_sha256": "6d1aa6d1839df6c9bba8b3106a5cceecbd46562d1326377f84a60041bb16500a",
+      "command": [
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1280x720",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\zombie_interior_pursuit\\20261109T153740366984Z\\engine.log",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\zombie_interior_pursuit.gd",
+        "--",
+        "--interior-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/zombie_interior_pursuit/20261109T153740366984Z",
+        "--moving-target"
+      ],
+      "script_sha256": "267b82e185c18ac906ff8509b964c212a3283c3daf9bd38e9b035bff68a01f45",
+      "pack_sha256": "60e22b63ebd9890d92a31b5acaa4fbcfab0c003e40048f015b9a7bbedc3b287e",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 43.49411620001774,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 1436442624,
+          "peak_working_set_bytes": 731418624,
+          "peak_dedicated_gpu_bytes": 661975040,
+          "exceeded": false,
+          "within_sampled_limits": true,
+          "telemetry_complete": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    },
+    "packaged_trace": {
+      "path": "reports/performance_changes/20261109T153824670858Z_native_water_footprint",
+      "manifest_sha256": "e07d773af3e2aff227809416967ed266ad366fe935547906c0401880e4b736c5",
+      "command": [
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T153824670858Z_native_water_footprint\\engine.log",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\frame_trace_world.gd",
+        "--",
+        "--trace-world-slot=StartupBench_FPS_20261109T153824670858",
+        "--trace-world-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/performance_changes/20261109T153824670858Z_native_water_footprint",
+        "--trace-short",
+        "--trace-save",
+        "--frame-trace",
+        "--frame-trace-dir=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T153824670858Z_native_water_footprint\\traces"
+      ],
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "0f07db4b2ebec5292b68f931dc17433efca6dbfb5dcfb60b693121083331548a",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tools\\check_frame_trace_world.py": "0a00627c038f75939c2cf8db47341e1db45bff81f80d018b4490df55d588524a"
+      },
+      "pack_sha256": "60e22b63ebd9890d92a31b5acaa4fbcfab0c003e40048f015b9a7bbedc3b287e",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 63.779893700033426,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 3849494528,
+          "peak_working_set_bytes": 2312765440,
+          "peak_dedicated_gpu_bytes": 1474994176,
+          "exceeded": false,
+          "within_sampled_limits": true,
+          "telemetry_complete": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    },
+    "packaged_trace_repeat": {
+      "path": "reports/performance_changes/20261109T154543686826Z_native_water_footprint_repeat",
+      "manifest_sha256": "5fb8d347128afc5336f72c99007cf11bf67cf27679b625927e622991dc3bf922",
+      "command": [
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T154543686826Z_native_water_footprint_repeat\\engine.log",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\frame_trace_world.gd",
+        "--",
+        "--trace-world-slot=StartupBench_FPS_20261109T154543686826",
+        "--trace-world-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/performance_changes/20261109T154543686826Z_native_water_footprint_repeat",
+        "--trace-short",
+        "--trace-save",
+        "--frame-trace",
+        "--frame-trace-dir=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\performance_changes\\20261109T154543686826Z_native_water_footprint_repeat\\traces"
+      ],
+      "diagnostic_sha256": {
+        "tests\\frame_trace_world.gd": "0f07db4b2ebec5292b68f931dc17433efca6dbfb5dcfb60b693121083331548a",
+        "tests\\render_inventory.gd": "434226ab3d839d7a69b903df44c06aecd4f47affa518bf477c71e4af296c2214",
+        "tests\\render_partition_probe.gd": "d464b40fefefeba3a16ed1865884eabc94d52e407d5dc30736d5de4f54f141d0",
+        "tests\\cover_outdoor_probe.gd": "1e7cc8887c5225537cdd7f483f4e4c5472b22da0cc98720d7528619a42c482d6",
+        "tools\\check_frame_trace_world.py": "0a00627c038f75939c2cf8db47341e1db45bff81f80d018b4490df55d588524a"
+      },
+      "pack_sha256": "60e22b63ebd9890d92a31b5acaa4fbcfab0c003e40048f015b9a7bbedc3b287e",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false,
+        "cancelled": false,
+        "launch_error": null,
+        "diagnostics": [],
+        "elapsed_seconds": 62.751786899985746,
+        "required_text_found": true,
+        "resources": {
+          "peak_private_commit_bytes": 3862786048,
+          "peak_working_set_bytes": 2320359424,
+          "peak_dedicated_gpu_bytes": 1474994176,
+          "exceeded": false,
+          "within_sampled_limits": true,
+          "telemetry_complete": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        }
+      }
+    }
+  },
+  "fixtures": {
+    "source_final": {
+      "checks": 14,
+      "comparisons": 1500,
+      "dry": 815,
+      "failures": 0,
+      "runs": [
+        {
+          "batched": false,
+          "hazard_us": 25714.7,
+          "planning_peak_us": 1456,
+          "planning_us": 79135,
+          "points": "[(40.0, 41.5, 41.75), (40.0, 41.5, 42.0), (42.0, 41.5, 44.0), (44.0, 41.5, 44.0), (46.0, 41.5, 44.0), (48.0, 41.5, 44.0), (50.0, 41.5, 46.0), (52.0, 41.5, 46.0), (54.0, 41.5, 46.0), (56.0, 41.5, 44.0), (58.0, 41.5, 44.0), (60.0, 41.5, 44.0), (62.0, 41.5, 42.0), (62.49614, 41.5, 41.93798), (62.99228, 41.5, 41.87597), (63.48842, 41.5, 41.81395), (63.98456, 41.5, 41.75193), (64.0, 41.5, 41.75)]",
+          "slowest": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 74,
+            "invalidation": {
+              "allocated_slots": 74,
+              "count": 2,
+              "edges_reset": 0,
+              "elapsed_us": 0,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 2,
+              "live_vertices": 74,
+              "max_us": 2,
+              "queries_reset": 0,
+              "revision": 2,
+              "total_us": 2,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 871365,
+            "planning_us": 1456,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 6.8,
+              "edges": 5,
+              "hazard_us": 91.5,
+              "readiness_us": 4.1,
+              "shape_queries": 4,
+              "support_cache_hits": 0,
+              "support_raycasts": 130,
+              "support_rays": 130,
+              "support_us": 1330.3,
+              "sweeps": 4,
+              "water_batches": 0,
+              "water_queries": 324
+            },
+            "readiness_cache_entries": 3,
+            "readiness_cache_hits": 2,
+            "readiness_probes": 3,
+            "route_work": 5,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 130
+          },
+          "state": "following",
+          "thread_cycles": 188764140,
+          "ticks": 93,
+          "water_batches": 0,
+          "water_queries": 63452,
+          "work": 989
+        },
+        {
+          "batched": true,
+          "hazard_us": 3971.2,
+          "planning_peak_us": 9800,
+          "planning_us": 79881,
+          "points": "[(40.0, 41.5, 41.75), (40.0, 41.5, 42.0), (42.0, 41.5, 44.0), (44.0, 41.5, 44.0), (46.0, 41.5, 44.0), (48.0, 41.5, 44.0), (50.0, 41.5, 46.0), (52.0, 41.5, 46.0), (54.0, 41.5, 46.0), (56.0, 41.5, 44.0), (58.0, 41.5, 44.0), (60.0, 41.5, 44.0), (62.0, 41.5, 42.0), (62.49614, 41.5, 41.93798), (62.99228, 41.5, 41.87597), (63.48842, 41.5, 41.81395), (63.98456, 41.5, 41.75193), (64.0, 41.5, 41.75)]",
+          "slowest": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 23,
+            "invalidation": {
+              "allocated_slots": 23,
+              "count": 4,
+              "edges_reset": 0,
+              "elapsed_us": 0,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 4,
+              "live_vertices": 23,
+              "max_us": 7,
+              "queries_reset": 0,
+              "revision": 4,
+              "total_us": 9,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 532253,
+            "planning_us": 9800,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 16.3,
+              "edges": 2,
+              "hazard_us": 16.6,
+              "readiness_us": 5.5,
+              "shape_queries": 2,
+              "support_cache_hits": 1,
+              "support_raycasts": 59,
+              "support_rays": 60,
+              "support_us": 9719.7,
+              "sweeps": 2,
+              "water_batches": 2,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 1,
+            "readiness_cache_hits": 1,
+            "readiness_probes": 1,
+            "route_work": 2,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 1,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 59
+          },
+          "state": "following",
+          "thread_cycles": 153593820,
+          "ticks": 80,
+          "water_batches": 955,
+          "water_queries": 0,
+          "work": 989
+        },
+        {
+          "batched": true,
+          "hazard_us": 3256.9,
+          "planning_peak_us": 3098,
+          "planning_us": 62616,
+          "points": "[(40.0, 41.5, 41.75), (40.0, 41.5, 42.0), (42.0, 41.5, 44.0), (44.0, 41.5, 44.0), (46.0, 41.5, 44.0), (48.0, 41.5, 44.0), (50.0, 41.5, 46.0), (52.0, 41.5, 46.0), (54.0, 41.5, 46.0), (56.0, 41.5, 44.0), (58.0, 41.5, 44.0), (60.0, 41.5, 44.0), (62.0, 41.5, 42.0), (62.49614, 41.5, 41.93798), (62.99228, 41.5, 41.87597), (63.48842, 41.5, 41.81395), (63.98456, 41.5, 41.75193), (64.0, 41.5, 41.75)]",
+          "slowest": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 29,
+            "invalidation": {
+              "allocated_slots": 29,
+              "count": 5,
+              "edges_reset": 0,
+              "elapsed_us": 11,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 5,
+              "live_vertices": 29,
+              "max_us": 11,
+              "queries_reset": 0,
+              "revision": 5,
+              "total_us": 20,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 2235577,
+            "planning_us": 3098,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 47.9,
+              "edges": 5,
+              "hazard_us": 51.6,
+              "readiness_us": 36.4,
+              "shape_queries": 5,
+              "support_cache_hits": 1,
+              "support_raycasts": 149,
+              "support_rays": 150,
+              "support_us": 2886.2,
+              "sweeps": 5,
+              "water_batches": 5,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 3,
+            "readiness_cache_hits": 2,
+            "readiness_probes": 3,
+            "route_work": 5,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 1,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 149
+          },
+          "state": "following",
+          "thread_cycles": 139987552,
+          "ticks": 74,
+          "water_batches": 955,
+          "water_queries": 0,
+          "work": 989
+        },
+        {
+          "batched": false,
+          "hazard_us": 29666.7,
+          "planning_peak_us": 1288,
+          "planning_us": 94923,
+          "points": "[(40.0, 41.5, 41.75), (40.0, 41.5, 42.0), (42.0, 41.5, 44.0), (44.0, 41.5, 44.0), (46.0, 41.5, 44.0), (48.0, 41.5, 44.0), (50.0, 41.5, 46.0), (52.0, 41.5, 46.0), (54.0, 41.5, 46.0), (56.0, 41.5, 44.0), (58.0, 41.5, 44.0), (60.0, 41.5, 44.0), (62.0, 41.5, 42.0), (62.49614, 41.5, 41.93798), (62.99228, 41.5, 41.87597), (63.48842, 41.5, 41.81395), (63.98456, 41.5, 41.75193), (64.0, 41.5, 41.75)]",
+          "slowest": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 26,
+            "invalidation": {
+              "allocated_slots": 26,
+              "count": 7,
+              "edges_reset": 0,
+              "elapsed_us": 0,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 7,
+              "live_vertices": 26,
+              "max_us": 11,
+              "queries_reset": 0,
+              "revision": 7,
+              "total_us": 28,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 1615246,
+            "planning_us": 1288,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 29.3,
+              "edges": 3,
+              "hazard_us": 199.4,
+              "readiness_us": 12.2,
+              "shape_queries": 3,
+              "support_cache_hits": 2,
+              "support_raycasts": 88,
+              "support_rays": 90,
+              "support_us": 986.7,
+              "sweeps": 3,
+              "water_batches": 0,
+              "water_queries": 243
+            },
+            "readiness_cache_entries": 2,
+            "readiness_cache_hits": 1,
+            "readiness_probes": 2,
+            "route_work": 3,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 2,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 88
+          },
+          "state": "following",
+          "thread_cycles": 220296681,
+          "ticks": 113,
+          "water_batches": 0,
+          "water_queries": 63452,
+          "work": 989
+        }
+      ],
+      "wet": 685
+    },
+    "release_final": {
+      "checks": 14,
+      "comparisons": 1500,
+      "dry": 815,
+      "failures": 0,
+      "runs": [
+        {
+          "batched": false,
+          "hazard_us": 23430.3,
+          "planning_peak_us": 4641,
+          "planning_us": 73400,
+          "points": "[(40.0, 41.5, 41.75), (40.0, 41.5, 42.0), (42.0, 41.5, 44.0), (44.0, 41.5, 44.0), (46.0, 41.5, 44.0), (48.0, 41.5, 44.0), (50.0, 41.5, 46.0), (52.0, 41.5, 46.0), (54.0, 41.5, 46.0), (56.0, 41.5, 44.0), (58.0, 41.5, 44.0), (60.0, 41.5, 44.0), (62.0, 41.5, 42.0), (62.49614, 41.5, 41.93798), (62.99228, 41.5, 41.87597), (63.48842, 41.5, 41.81395), (63.98456, 41.5, 41.75193), (64.0, 41.5, 41.75)]",
+          "slowest": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 95,
+            "invalidation": {
+              "allocated_slots": 95,
+              "count": 2,
+              "edges_reset": 0,
+              "elapsed_us": 0,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 2,
+              "live_vertices": 95,
+              "max_us": 6,
+              "queries_reset": 0,
+              "revision": 2,
+              "total_us": 6,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 1795032,
+            "planning_us": 4641,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 51.9,
+              "edges": 9,
+              "hazard_us": 194.8,
+              "readiness_us": 9.1,
+              "shape_queries": 9,
+              "support_cache_hits": 0,
+              "support_raycasts": 200,
+              "support_rays": 200,
+              "support_us": 4325.9,
+              "sweeps": 9,
+              "water_batches": 0,
+              "water_queries": 540
+            },
+            "readiness_cache_entries": 4,
+            "readiness_cache_hits": 5,
+            "readiness_probes": 4,
+            "route_work": 10,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 200
+          },
+          "state": "following",
+          "thread_cycles": 167499464,
+          "ticks": 85,
+          "water_batches": 0,
+          "water_queries": 63398,
+          "work": 989
+        },
+        {
+          "batched": true,
+          "hazard_us": 2112.8,
+          "planning_peak_us": 829,
+          "planning_us": 38475,
+          "points": "[(40.0, 41.5, 41.75), (40.0, 41.5, 42.0), (42.0, 41.5, 44.0), (44.0, 41.5, 44.0), (46.0, 41.5, 44.0), (48.0, 41.5, 44.0), (50.0, 41.5, 46.0), (52.0, 41.5, 46.0), (54.0, 41.5, 46.0), (56.0, 41.5, 44.0), (58.0, 41.5, 44.0), (60.0, 41.5, 44.0), (62.0, 41.5, 42.0), (62.49614, 41.5, 41.93798), (62.99228, 41.5, 41.87597), (63.48842, 41.5, 41.81395), (63.98456, 41.5, 41.75193), (64.0, 41.5, 41.75)]",
+          "slowest": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 82,
+            "invalidation": {
+              "allocated_slots": 82,
+              "count": 4,
+              "edges_reset": 0,
+              "elapsed_us": 0,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 4,
+              "live_vertices": 82,
+              "max_us": 9,
+              "queries_reset": 0,
+              "revision": 4,
+              "total_us": 15,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 1986407,
+            "planning_us": 829,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 70.9,
+              "edges": 21,
+              "hazard_us": 44.3,
+              "readiness_us": 10.3,
+              "shape_queries": 29,
+              "support_cache_hits": 197,
+              "support_raycasts": 383,
+              "support_rays": 580,
+              "support_us": 661.7,
+              "sweeps": 20,
+              "water_batches": 21,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 7,
+            "readiness_cache_hits": 14,
+            "readiness_probes": 7,
+            "route_work": 21,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 197,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 383
+          },
+          "state": "following",
+          "thread_cycles": 94682742,
+          "ticks": 49,
+          "water_batches": 954,
+          "water_queries": 0,
+          "work": 989
+        },
+        {
+          "batched": true,
+          "hazard_us": 2065.0,
+          "planning_peak_us": 1388,
+          "planning_us": 39837,
+          "points": "[(40.0, 41.5, 41.75), (40.0, 41.5, 42.0), (42.0, 41.5, 44.0), (44.0, 41.5, 44.0), (46.0, 41.5, 44.0), (48.0, 41.5, 44.0), (50.0, 41.5, 46.0), (52.0, 41.5, 46.0), (54.0, 41.5, 46.0), (56.0, 41.5, 44.0), (58.0, 41.5, 44.0), (60.0, 41.5, 44.0), (62.0, 41.5, 42.0), (62.49614, 41.5, 41.93798), (62.99228, 41.5, 41.87597), (63.48842, 41.5, 41.81395), (63.98456, 41.5, 41.75193), (64.0, 41.5, 41.75)]",
+          "slowest": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 66,
+            "invalidation": {
+              "allocated_slots": 66,
+              "count": 5,
+              "edges_reset": 0,
+              "elapsed_us": 9,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 5,
+              "live_vertices": 66,
+              "max_us": 9,
+              "queries_reset": 0,
+              "revision": 5,
+              "total_us": 24,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 1520513,
+            "planning_us": 1388,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 44.7,
+              "edges": 19,
+              "hazard_us": 38.7,
+              "readiness_us": 9.1,
+              "shape_queries": 19,
+              "support_cache_hits": 221,
+              "support_raycasts": 289,
+              "support_rays": 510,
+              "support_us": 1255.9,
+              "sweeps": 19,
+              "water_batches": 19,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 7,
+            "readiness_cache_hits": 12,
+            "readiness_probes": 7,
+            "route_work": 19,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 221,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 289
+          },
+          "state": "following",
+          "thread_cycles": 92917857,
+          "ticks": 50,
+          "water_batches": 954,
+          "water_queries": 0,
+          "work": 989
+        },
+        {
+          "batched": false,
+          "hazard_us": 19448.1,
+          "planning_peak_us": 1127,
+          "planning_us": 57070,
+          "points": "[(40.0, 41.5, 41.75), (40.0, 41.5, 42.0), (42.0, 41.5, 44.0), (44.0, 41.5, 44.0), (46.0, 41.5, 44.0), (48.0, 41.5, 44.0), (50.0, 41.5, 46.0), (52.0, 41.5, 46.0), (54.0, 41.5, 46.0), (56.0, 41.5, 44.0), (58.0, 41.5, 44.0), (60.0, 41.5, 44.0), (62.0, 41.5, 42.0), (62.49614, 41.5, 41.93798), (62.99228, 41.5, 41.87597), (63.48842, 41.5, 41.81395), (63.98456, 41.5, 41.75193), (64.0, 41.5, 41.75)]",
+          "slowest": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 33,
+            "invalidation": {
+              "allocated_slots": 33,
+              "count": 7,
+              "edges_reset": 0,
+              "elapsed_us": 1,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 7,
+              "live_vertices": 33,
+              "max_us": 9,
+              "queries_reset": 0,
+              "revision": 7,
+              "total_us": 34,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 1621704,
+            "planning_us": 1127,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 77.9,
+              "edges": 8,
+              "hazard_us": 177.6,
+              "readiness_us": 10.3,
+              "shape_queries": 24,
+              "support_cache_hits": 21,
+              "support_raycasts": 199,
+              "support_rays": 220,
+              "support_us": 824.1,
+              "sweeps": 6,
+              "water_batches": 0,
+              "water_queries": 594
+            },
+            "readiness_cache_entries": 5,
+            "readiness_cache_hits": 3,
+            "readiness_probes": 5,
+            "route_work": 9,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 21,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 199
+          },
+          "state": "following",
+          "thread_cycles": 136950358,
+          "ticks": 72,
+          "water_batches": 0,
+          "water_queries": 63398,
+          "work": 989
+        }
+      ],
+      "wet": 685
+    }
+  },
+  "tower": {
+    "tower_overwritten_point_control": {
+      "checks": 13,
+      "failures": 0,
+      "details": {
+        "destination": "(965.0, 62.0, 205.0)",
+        "door_identity": 18,
+        "journey_allowance_seconds": 150.0,
+        "minimum_intact_door_clearance": 0.821517944335938,
+        "start": "(968.5, 53.06, 195.5)",
+        "walk_speed": 0.72
+      },
+      "slot": "regional_districts_20261018",
+      "generator": 12,
+      "readonly": true,
+      "peak_work": 48,
+      "peak_planning_us": 14221,
+      "phases": [
+        {
+          "contact": true,
+          "elapsed_seconds": 90.954351,
+          "first_complete_path_seconds": 23.974159,
+          "frame_interval_max_us": 49259,
+          "frame_interval_p50_us": 16666,
+          "frame_interval_p95_us": 16783,
+          "phase": "outbound",
+          "physics_frames": 5458,
+          "query_profile_observed": {
+            "admission_queries": 0,
+            "clearance_us": 160036.3,
+            "edges": 14074,
+            "hazard_us": 87150.4999999999,
+            "readiness_us": 145650.4,
+            "shape_queries": 19237,
+            "support_cache_hits": 221475,
+            "support_raycasts": 123980,
+            "support_rays": 345455,
+            "support_us": 811326.300000001,
+            "sweeps": 13197,
+            "water_batches": 13116,
+            "water_queries": 0
+          }
+        },
+        {
+          "contact": true,
+          "elapsed_seconds": 95.977836,
+          "first_complete_path_seconds": 37.824188,
+          "frame_interval_max_us": 64916,
+          "frame_interval_p50_us": 16666,
+          "frame_interval_p95_us": 16834,
+          "phase": "return",
+          "physics_frames": 5759,
+          "query_profile_observed": {
+            "admission_queries": 0,
+            "clearance_us": 244467.1,
+            "edges": 18028,
+            "hazard_us": 116543.5,
+            "readiness_us": 186901.9,
+            "shape_queries": 28826,
+            "support_cache_hits": 233201,
+            "support_raycasts": 210583,
+            "support_rays": 443784,
+            "support_us": 1354128.8,
+            "sweeps": 18204,
+            "water_batches": 17120,
+            "water_queries": 0
+          }
+        }
+      ],
+      "slowest_plans": [
+        {
+          "navigation": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 19347,
+            "graph_node_limit": 32768,
+            "graph_nodes": 1628,
+            "invalidation": {
+              "allocated_slots": 1628,
+              "count": 43,
+              "edges_reset": 9,
+              "elapsed_us": 81,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 34,
+              "live_vertices": 1628,
+              "max_us": 88,
+              "queries_reset": 1,
+              "revision": 43,
+              "total_us": 177,
+              "vertex_capacity_bytes": 786432,
+              "vertices_retired": 0,
+              "vertices_scanned": 557
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 113726,
+            "planning_us": 14221,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "phase": "return",
+          "route": {
+            "complete_path": true,
+            "conditional_door_count": 3,
+            "continuing_previous_path": false,
+            "direct_planning": false,
+            "direct_samples": 0,
+            "expansions": 188,
+            "goal": "(968.5, 53.11, 195.5)",
+            "graph_cache_hits": 19347,
+            "graph_node_limit": 32768,
+            "graph_nodes": 1628,
+            "graph_revision": 43,
+            "highest_surface": 62.0000003051758,
+            "local_horizon": false,
+            "lowest_surface": 53.0000003051758,
+            "minimum_floor_normal_y": 0.7072,
+            "motion_rejection": "none",
+            "node_limit": 16384,
+            "nodes": 357,
+            "planner": "regional",
+            "portals": 5,
+            "profile": 0,
+            "radius_m": 96.0,
+            "regions": 6,
+            "rejected_waypoint_limit": 16,
+            "rejected_waypoints": 2,
+            "replans": 0,
+            "state": "following",
+            "stuck_seconds": 0.0,
+            "waypoint_index": 2,
+            "waypoint_target": "(967.5, 58.43, 206.5)",
+            "waypoints": 25
+          },
+          "tick": 3970
+        },
+        {
+          "navigation": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 19347,
+            "graph_node_limit": 32768,
+            "graph_nodes": 1628,
+            "invalidation": {
+              "allocated_slots": 1628,
+              "count": 43,
+              "edges_reset": 9,
+              "elapsed_us": 81,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 34,
+              "live_vertices": 1628,
+              "max_us": 88,
+              "queries_reset": 1,
+              "revision": 43,
+              "total_us": 177,
+              "vertex_capacity_bytes": 786432,
+              "vertices_retired": 0,
+              "vertices_scanned": 557
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 99334,
+            "planning_us": 7610,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "phase": "return",
+          "route": {
+            "complete_path": true,
+            "conditional_door_count": 3,
+            "continuing_previous_path": false,
+            "direct_planning": false,
+            "direct_samples": 0,
+            "expansions": 188,
+            "goal": "(968.5, 53.11, 195.5)",
+            "graph_cache_hits": 19347,
+            "graph_node_limit": 32768,
+            "graph_nodes": 1628,
+            "graph_revision": 43,
+            "highest_surface": 62.0000003051758,
+            "local_horizon": false,
+            "lowest_surface": 53.0000003051758,
+            "minimum_floor_normal_y": 0.7072,
+            "motion_rejection": "none",
+            "node_limit": 16384,
+            "nodes": 357,
+            "planner": "regional",
+            "portals": 5,
+            "profile": 0,
+            "radius_m": 96.0,
+            "regions": 6,
+            "rejected_waypoint_limit": 16,
+            "rejected_waypoints": 2,
+            "replans": 0,
+            "state": "following",
+            "stuck_seconds": 0.0166666666666667,
+            "waypoint_index": 2,
+            "waypoint_target": "(967.5, 58.43, 206.5)",
+            "waypoints": 25
+          },
+          "tick": 3971
+        }
+      ]
+    },
+    "tower_batch": {
+      "checks": 14,
+      "failures": 0,
+      "details": {
+        "destination": "(965.0, 62.0, 205.0)",
+        "door_identity": 18,
+        "journey_allowance_seconds": 150.0,
+        "minimum_intact_door_clearance": 0.911956787109375,
+        "start": "(968.5, 53.06, 195.5)",
+        "walk_speed": 0.72,
+        "water_provider": "batch"
+      },
+      "slot": "regional_districts_20261018",
+      "generator": 12,
+      "readonly": true,
+      "peak_work": 48,
+      "peak_planning_us": 7182,
+      "phases": [
+        {
+          "contact": true,
+          "elapsed_seconds": 82.220283,
+          "first_complete_path_seconds": 15.60335,
+          "frame_interval_max_us": 34928,
+          "frame_interval_p50_us": 16666,
+          "frame_interval_p95_us": 16853,
+          "phase": "outbound",
+          "physics_frames": 4934,
+          "query_profile_observed": {
+            "admission_queries": 0,
+            "clearance_us": 94380.2999999999,
+            "edges": 14061,
+            "hazard_us": 70701.8,
+            "readiness_us": 92457.5000000001,
+            "shape_queries": 19214,
+            "support_cache_hits": 221290,
+            "support_raycasts": 123821,
+            "support_rays": 345111,
+            "support_us": 565483.0,
+            "sweeps": 13192,
+            "water_batches": 13106,
+            "water_queries": 0
+          }
+        },
+        {
+          "contact": true,
+          "elapsed_seconds": 98.856786,
+          "first_complete_path_seconds": 40.608778,
+          "frame_interval_max_us": 30741,
+          "frame_interval_p50_us": 16666,
+          "frame_interval_p95_us": 16786,
+          "phase": "return",
+          "physics_frames": 5932,
+          "query_profile_observed": {
+            "admission_queries": 0,
+            "clearance_us": 263866.2,
+            "edges": 18028,
+            "hazard_us": 117373.2,
+            "readiness_us": 196544.1,
+            "shape_queries": 28826,
+            "support_cache_hits": 233201,
+            "support_raycasts": 210583,
+            "support_rays": 443784,
+            "support_us": 1478033.6,
+            "sweeps": 18204,
+            "water_batches": 17120,
+            "water_queries": 0
+          }
+        }
+      ],
+      "slowest_plans": [
+        {
+          "navigation": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 8094,
+            "graph_node_limit": 32768,
+            "graph_nodes": 906,
+            "invalidation": {
+              "allocated_slots": 906,
+              "count": 43,
+              "edges_reset": 2,
+              "elapsed_us": 90,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 34,
+              "live_vertices": 906,
+              "max_us": 93,
+              "queries_reset": 1,
+              "revision": 43,
+              "total_us": 194,
+              "vertex_capacity_bytes": 393216,
+              "vertices_retired": 0,
+              "vertices_scanned": 557
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 2519515,
+            "planning_us": 7182,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 249.1,
+              "edges": 4,
+              "hazard_us": 54.0,
+              "readiness_us": 110.0,
+              "shape_queries": 4,
+              "support_cache_hits": 21,
+              "support_raycasts": 59,
+              "support_rays": 80,
+              "support_us": 6503.5,
+              "sweeps": 4,
+              "water_batches": 4,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 3,
+            "readiness_cache_hits": 1,
+            "readiness_probes": 3,
+            "route_work": 4,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 21,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 59
+          },
+          "phase": "return",
+          "route": {
+            "complete_path": false,
+            "conditional_door_count": 3,
+            "continuing_previous_path": false,
+            "direct_planning": false,
+            "direct_samples": 0,
+            "expansions": 9,
+            "goal": "(968.5, 53.11, 195.5)",
+            "graph_cache_hits": 8094,
+            "graph_node_limit": 32768,
+            "graph_nodes": 906,
+            "graph_revision": 43,
+            "highest_surface": 62.0000003051758,
+            "local_horizon": false,
+            "lowest_surface": 53.0000003051758,
+            "minimum_floor_normal_y": 0.7072,
+            "motion_rejection": "none",
+            "node_limit": 16384,
+            "nodes": 26,
+            "planner": "regional",
+            "portals": 0,
+            "profile": 0,
+            "radius_m": 96.0,
+            "regions": 0,
+            "rejected_waypoint_limit": 16,
+            "rejected_waypoints": 0,
+            "replans": 0,
+            "state": "planning",
+            "stuck_seconds": 0.0,
+            "waypoint_index": 0,
+            "waypoints": 0
+          },
+          "tick": 36
+        },
+        {
+          "navigation": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 102,
+            "invalidation": {
+              "allocated_slots": 102,
+              "count": 41,
+              "edges_reset": 0,
+              "elapsed_us": 2,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 34,
+              "live_vertices": 102,
+              "max_us": 2,
+              "queries_reset": 0,
+              "revision": 41,
+              "total_us": 11,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 2096550,
+            "planning_us": 4475,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 73.4,
+              "edges": 11,
+              "hazard_us": 88.0,
+              "readiness_us": 103.6,
+              "shape_queries": 10,
+              "support_cache_hits": 258,
+              "support_raycasts": 62,
+              "support_rays": 320,
+              "support_us": 4141.4,
+              "sweeps": 10,
+              "water_batches": 10,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 4,
+            "readiness_cache_hits": 7,
+            "readiness_probes": 4,
+            "route_work": 11,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 258,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 62
+          },
+          "phase": "outbound",
+          "route": {
+            "complete_path": false,
+            "conditional_door_count": 4,
+            "continuing_previous_path": false,
+            "direct_planning": false,
+            "direct_samples": 0,
+            "expansions": 30,
+            "goal": "(965.0, 62.05, 205.0)",
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 102,
+            "graph_revision": 41,
+            "highest_surface": 54.0000003051758,
+            "local_horizon": false,
+            "lowest_surface": 53.0000003051758,
+            "minimum_floor_normal_y": 0.7072,
+            "motion_rejection": "none",
+            "node_limit": 16384,
+            "nodes": 103,
+            "planner": "regional",
+            "portals": 0,
+            "profile": 0,
+            "radius_m": 96.0,
+            "regions": 0,
+            "rejected_waypoint_limit": 16,
+            "rejected_waypoints": 0,
+            "replans": 0,
+            "state": "planning",
+            "stuck_seconds": 0.0,
+            "waypoint_index": 0,
+            "waypoints": 0
+          },
+          "tick": 66
+        }
+      ]
+    },
+    "tower_point": {
+      "checks": 14,
+      "failures": 0,
+      "details": {
+        "destination": "(965.0, 62.0, 205.0)",
+        "door_identity": 18,
+        "journey_allowance_seconds": 150.0,
+        "minimum_intact_door_clearance": 0.911956787109375,
+        "start": "(968.5, 53.06, 195.5)",
+        "walk_speed": 0.72,
+        "water_provider": "point"
+      },
+      "slot": "regional_districts_20261018",
+      "generator": 12,
+      "readonly": true,
+      "peak_work": 48,
+      "peak_planning_us": 11457,
+      "phases": [
+        {
+          "contact": true,
+          "elapsed_seconds": 99.20089,
+          "first_complete_path_seconds": 32.636352,
+          "frame_interval_max_us": 50527,
+          "frame_interval_p50_us": 16666,
+          "frame_interval_p95_us": 16811,
+          "phase": "outbound",
+          "physics_frames": 5953,
+          "query_profile_observed": {
+            "admission_queries": 0,
+            "clearance_us": 176680.3,
+            "edges": 14059,
+            "hazard_us": 490257.300000001,
+            "readiness_us": 176979.0,
+            "shape_queries": 19201,
+            "support_cache_hits": 221291,
+            "support_raycasts": 123771,
+            "support_rays": 345062,
+            "support_us": 807926.100000001,
+            "sweeps": 13191,
+            "water_batches": 0,
+            "water_queries": 869040
+          }
+        },
+        {
+          "contact": true,
+          "elapsed_seconds": 106.811328,
+          "first_complete_path_seconds": 48.337637,
+          "frame_interval_max_us": 56404,
+          "frame_interval_p50_us": 16666,
+          "frame_interval_p95_us": 16817,
+          "phase": "return",
+          "physics_frames": 6409,
+          "query_profile_observed": {
+            "admission_queries": 0,
+            "clearance_us": 258982.000000001,
+            "edges": 18027,
+            "hazard_us": 656781.099999998,
+            "readiness_us": 216378.099999999,
+            "shape_queries": 28835,
+            "support_cache_hits": 233200,
+            "support_raycasts": 210562,
+            "support_rays": 443762,
+            "support_us": 1348850.0,
+            "sweeps": 18203,
+            "water_batches": 0,
+            "water_queries": 1138311
+          }
+        }
+      ],
+      "slowest_plans": [
+        {
+          "navigation": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 850,
+            "invalidation": {
+              "allocated_slots": 850,
+              "count": 42,
+              "edges_reset": 0,
+              "elapsed_us": 1,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 35,
+              "live_vertices": 850,
+              "max_us": 2,
+              "queries_reset": 0,
+              "revision": 42,
+              "total_us": 13,
+              "vertex_capacity_bytes": 393216,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 1080573,
+            "planning_us": 11457,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 1,
+              "hazard_us": 0.0,
+              "readiness_us": 4048.5,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 30,
+              "support_rays": 30,
+              "support_us": 270.1,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 1,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 1,
+            "route_work": 1,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 30
+          },
+          "phase": "outbound",
+          "route": {
+            "complete_path": false,
+            "conditional_door_count": 4,
+            "continuing_previous_path": false,
+            "direct_planning": false,
+            "direct_samples": 0,
+            "expansions": 518,
+            "goal": "(965.0, 62.05, 205.0)",
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 850,
+            "graph_revision": 42,
+            "highest_surface": 61.5000003051758,
+            "local_horizon": false,
+            "lowest_surface": 53.0000003051758,
+            "minimum_floor_normal_y": 0.7072,
+            "motion_rejection": "none",
+            "node_limit": 16384,
+            "nodes": 851,
+            "planner": "regional",
+            "portals": 0,
+            "profile": 0,
+            "radius_m": 96.0,
+            "regions": 0,
+            "rejected_waypoint_limit": 16,
+            "rejected_waypoints": 0,
+            "replans": 0,
+            "state": "planning",
+            "stuck_seconds": 0.0,
+            "waypoint_index": 0,
+            "waypoints": 0
+          },
+          "tick": 1940
+        },
+        {
+          "navigation": {
+            "agents": 1,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 168,
+            "invalidation": {
+              "allocated_slots": 168,
+              "count": 42,
+              "edges_reset": 0,
+              "elapsed_us": 1,
+              "free_slots": 0,
+              "global": true,
+              "global_count": 35,
+              "live_vertices": 168,
+              "max_us": 2,
+              "queries_reset": 0,
+              "revision": 42,
+              "total_us": 13,
+              "vertex_capacity_bytes": 98304,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 1830449,
+            "planning_us": 6599,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 175.7,
+              "edges": 5,
+              "hazard_us": 334.9,
+              "readiness_us": 5896.9,
+              "shape_queries": 5,
+              "support_cache_hits": 147,
+              "support_raycasts": 3,
+              "support_rays": 150,
+              "support_us": 103.6,
+              "sweeps": 5,
+              "water_batches": 0,
+              "water_queries": 405
+            },
+            "readiness_cache_entries": 3,
+            "readiness_cache_hits": 2,
+            "readiness_probes": 3,
+            "route_work": 5,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 147,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 3
+          },
+          "phase": "outbound",
+          "route": {
+            "complete_path": false,
+            "conditional_door_count": 4,
+            "continuing_previous_path": false,
+            "direct_planning": false,
+            "direct_samples": 0,
+            "expansions": 63,
+            "goal": "(965.0, 62.05, 205.0)",
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 168,
+            "graph_revision": 42,
+            "highest_surface": 54.0000003051758,
+            "local_horizon": false,
+            "lowest_surface": 53.0000003051758,
+            "minimum_floor_normal_y": 0.7072,
+            "motion_rejection": "none",
+            "node_limit": 16384,
+            "nodes": 169,
+            "planner": "regional",
+            "portals": 0,
+            "profile": 0,
+            "radius_m": 96.0,
+            "regions": 0,
+            "rejected_waypoint_limit": 16,
+            "rejected_waypoints": 0,
+            "replans": 0,
+            "state": "planning",
+            "stuck_seconds": 0.0,
+            "waypoint_index": 0,
+            "waypoints": 0
+          },
+          "tick": 253
+        }
+      ]
+    }
+  },
+  "rendered_traces": {
+    "packaged_trace": {
+      "analysis_sha256": "8f1a84951bb15b82f35ffe093ce537a7e9b9e853f3b1a9b7bb517c783f85964b",
+      "scope": "Triggered windows only, not an unbiased whole-session distribution. Overlapping frames deduplicated. Stages/physics overlap wall intervals. GPU timers may lag. Missing adjacent frames give unknown compilation deltas.",
+      "phases": {
+        "loading": {
+          "frame_ms": {
+            "samples": 598,
+            "mean": 16.68323244147157,
+            "p50": 16.506,
+            "p95": 20.449,
+            "p99": 23.704,
+            "maximum": 43.287
+          },
+          "process_ms": {
+            "samples": 598,
+            "mean": 4.9135,
+            "p50": 4.525,
+            "p95": 7.156,
+            "p99": 10.9,
+            "maximum": 32.189
+          },
+          "draw_ms": {
+            "samples": 598,
+            "mean": 7.340436454849499,
+            "p50": 7.215,
+            "p95": 8.513,
+            "p99": 9.861,
+            "maximum": 10.858
+          },
+          "before_process_ms": {
+            "samples": 598,
+            "mean": 4.262354515050167,
+            "p50": 4.631,
+            "p95": 6.231,
+            "p99": 6.547,
+            "maximum": 6.865
+          },
+          "after_process_ms": {
+            "samples": 598,
+            "mean": 0.16694147157190636,
+            "p50": 0.112,
+            "p95": 0.347,
+            "p99": 0.463,
+            "maximum": 1.557
+          },
+          "physics_ms": {
+            "samples": 598,
+            "mean": 0.5070334448160535,
+            "p50": 0.492,
+            "p95": 0.676,
+            "p99": 0.879,
+            "maximum": 1.21
+          },
+          "gpu_ms": {
+            "samples": 598,
+            "mean": 7.997984938796946,
+            "p50": 7.89400005340576,
+            "p95": 8.81799983978271,
+            "p99": 9.16499996185303,
+            "maximum": 9.71300029754639
+          },
+          "render_cpu_ms": {
+            "samples": 598,
+            "mean": 5.123996646109234,
+            "p50": 5.0019998550415,
+            "p95": 6.06400012969971,
+            "p99": 6.80100011825562,
+            "maximum": 7.67199993133545
+          },
+          "recorder_previous_us": {
+            "samples": 598,
+            "mean": 191.33444816053512,
+            "p50": 182,
+            "p95": 244,
+            "p99": 521,
+            "maximum": 882
+          },
+          "draw_calls": {
+            "samples": 598,
+            "mean": 5184.2040133779265,
+            "p50": 5237.0,
+            "p95": 5237.0,
+            "p99": 5237.0,
+            "maximum": 5237.0
+          },
+          "primitives": {
+            "samples": 598,
+            "mean": 4068637.0133779263,
+            "p50": 4067160.0,
+            "p95": 4145486.0,
+            "p99": 4145486.0,
+            "maximum": 4145572.0
+          },
+          "over_20ms_frames": 40
+        },
+        "gameplay": {
+          "frame_ms": {
+            "samples": 1581,
+            "mean": 16.774848829854523,
+            "p50": 16.586,
+            "p95": 19.952,
+            "p99": 25.393,
+            "maximum": 34.446
+          },
+          "process_ms": {
+            "samples": 1581,
+            "mean": 2.0665262492093612,
+            "p50": 1.387,
+            "p95": 4.802,
+            "p99": 8.171,
+            "maximum": 16.036
+          },
+          "draw_ms": {
+            "samples": 1581,
+            "mean": 8.653461733080329,
+            "p50": 8.272,
+            "p95": 11.123,
+            "p99": 15.246,
+            "maximum": 21.652
+          },
+          "before_process_ms": {
+            "samples": 1581,
+            "mean": 5.93997596457938,
+            "p50": 6.327,
+            "p95": 8.131,
+            "p99": 8.779,
+            "maximum": 11.205
+          },
+          "after_process_ms": {
+            "samples": 1581,
+            "mean": 0.11488488298545226,
+            "p50": 0.099,
+            "p95": 0.171,
+            "p99": 0.381,
+            "maximum": 3.576
+          },
+          "physics_ms": {
+            "samples": 1581,
+            "mean": 2.628999367488931,
+            "p50": 2.558,
+            "p95": 3.453,
+            "p99": 4.951,
+            "maximum": 8.918
+          },
+          "gpu_ms": {
+            "samples": 1581,
+            "mean": 7.905255537557873,
+            "p50": 7.82499980926514,
+            "p95": 8.77200031280518,
+            "p99": 9.20699977874756,
+            "maximum": 9.72900009155273
+          },
+          "render_cpu_ms": {
+            "samples": 1581,
+            "mean": 5.8523130899437765,
+            "p50": 5.52899980545044,
+            "p95": 7.77199983596802,
+            "p99": 10.6899995803833,
+            "maximum": 15.9759998321533
+          },
+          "recorder_previous_us": {
+            "samples": 1581,
+            "mean": 224.40607210626186,
+            "p50": 211,
+            "p95": 297,
+            "p99": 385,
+            "maximum": 1096
+          },
+          "draw_calls": {
+            "samples": 1581,
+            "mean": 5375.94623655914,
+            "p50": 5394.0,
+            "p95": 5394.0,
+            "p99": 5394.0,
+            "maximum": 5394.0
+          },
+          "primitives": {
+            "samples": 1581,
+            "mean": 4221160.354838709,
+            "p50": 4231229.0,
+            "p95": 4231229.0,
+            "p99": 4231229.0,
+            "maximum": 4231229.0
+          },
+          "over_20ms_frames": 79
+        },
+        "browser": {
+          "frame_ms": {
+            "samples": 2,
+            "mean": 966.7280000000001,
+            "p50": 1905.41,
+            "p95": 1905.41,
+            "p99": 1905.41,
+            "maximum": 1905.41
+          },
+          "process_ms": {
+            "samples": 2,
+            "mean": 0.9965,
+            "p50": 1.971,
+            "p95": 1.971,
+            "p99": 1.971,
+            "maximum": 1.971
+          },
+          "draw_ms": {
+            "samples": 2,
+            "mean": 13.158,
+            "p50": 25.919,
+            "p95": 25.919,
+            "p99": 25.919,
+            "maximum": 25.919
+          },
+          "before_process_ms": {
+            "samples": 2,
+            "mean": 952.547,
+            "p50": 1904.971,
+            "p95": 1904.971,
+            "p99": 1904.971,
+            "maximum": 1904.971
+          },
+          "after_process_ms": {
+            "samples": 2,
+            "mean": 0.026500000000000003,
+            "p50": 0.033,
+            "p95": 0.033,
+            "p99": 0.033,
+            "maximum": 0.033
+          },
+          "physics_ms": {
+            "samples": 2,
+            "mean": 0.0795,
+            "p50": 0.159,
+            "p95": 0.159,
+            "p99": 0.159,
+            "maximum": 0.159
+          },
+          "gpu_ms": {
+            "samples": 2,
+            "mean": 8.69600009918213,
+            "p50": 8.82800006866455,
+            "p95": 8.82800006866455,
+            "p99": 8.82800006866455,
+            "maximum": 8.82800006866455
+          },
+          "render_cpu_ms": {
+            "samples": 2,
+            "mean": 5.287499904632565,
+            "p50": 5.38299989700317,
+            "p95": 5.38299989700317,
+            "p99": 5.38299989700317,
+            "maximum": 5.38299989700317
+          },
+          "recorder_previous_us": {
+            "samples": 2,
+            "mean": 142.5,
+            "p50": 203,
+            "p95": 203,
+            "p99": 203,
+            "maximum": 203
+          },
+          "draw_calls": {
+            "samples": 2,
+            "mean": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "maximum": 0.0
+          },
+          "primitives": {
+            "samples": 2,
+            "mean": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "maximum": 0.0
+          },
+          "over_20ms_frames": 2
+        }
+      },
+      "slowest_gameplay": [
+        {
+          "frame": 2552,
+          "at_us": 46771537,
+          "frame_ms": 34.446,
+          "before_process_ms": 5.053,
+          "process_ms": 16.036,
+          "process_cycles": 25295483,
+          "after_process_ms": 0.136,
+          "draw_ms": 13.221,
+          "gpu_ms": 7.70800018310547,
+          "physics_ms": 2.724,
+          "thread_cycles": 68064503,
+          "thread_cpu_ms": 46.875,
+          "largest_stages_ms": {
+            "save capture": 14.786,
+            "zombie update": 0.352,
+            "world process": 0.229,
+            "player physics": 0.167,
+            "controller process": 0.079,
+            "actor update": 0.036
+          },
+          "navigation_planning_us": 19
+        },
+        {
+          "frame": 2065,
+          "at_us": 38516886,
+          "frame_ms": 33.743,
+          "before_process_ms": 9.059,
+          "process_ms": 6.33,
+          "process_cycles": 15768055,
+          "after_process_ms": 0.173,
+          "draw_ms": 18.181,
+          "gpu_ms": 7.27400016784668,
+          "physics_ms": 6.281,
+          "thread_cycles": 81331360,
+          "thread_cpu_ms": 31.25,
+          "largest_stages_ms": {
+            "staging frame": 2.862,
+            "collision piece": 2.401,
+            "collision node attach": 2.222,
+            "zombie update": 0.885,
+            "mesh upload/create": 0.343,
+            "world process": 0.335
+          },
+          "navigation_planning_us": 36
+        },
+        {
+          "frame": 2256,
+          "at_us": 41742701,
+          "frame_ms": 33.374,
+          "before_process_ms": 6.663,
+          "process_ms": 4.896,
+          "process_cycles": 11011740,
+          "after_process_ms": 0.163,
+          "draw_ms": 21.652,
+          "gpu_ms": 9.15900039672852,
+          "physics_ms": 5.016,
+          "thread_cycles": 80202722,
+          "thread_cpu_ms": 31.25,
+          "largest_stages_ms": {
+            "world process": 0.956,
+            "zombie update": 0.856,
+            "controller process": 0.616,
+            "world pickups": 0.506,
+            "player physics": 0.407,
+            "receive": 0.332
+          },
+          "navigation_planning_us": 21
+        },
+        {
+          "frame": 2267,
+          "at_us": 41958252,
+          "frame_ms": 32.319,
+          "before_process_ms": 11.205,
+          "process_ms": 9.875,
+          "process_cycles": 24614906,
+          "after_process_ms": 0.147,
+          "draw_ms": 11.092,
+          "gpu_ms": 7.82999992370605,
+          "physics_ms": 8.918,
+          "thread_cycles": 76854785,
+          "thread_cpu_ms": 31.25,
+          "largest_stages_ms": {
+            "zombie update": 1.942,
+            "player physics": 0.539,
+            "world process": 0.214,
+            "receive": 0.161,
+            "receive surface_batch": 0.112,
+            "actor update": 0.082
+          },
+          "navigation_planning_us": 33
+        },
+        {
+          "frame": 2064,
+          "at_us": 38483143,
+          "frame_ms": 29.822,
+          "before_process_ms": 3.713,
+          "process_ms": 11.737,
+          "process_cycles": 25658037,
+          "after_process_ms": 0.109,
+          "draw_ms": 14.263,
+          "gpu_ms": 7.22499990463257,
+          "physics_ms": 2.889,
+          "thread_cycles": 66826143,
+          "thread_cpu_ms": 31.25,
+          "largest_stages_ms": {
+            "LOD schedule/cut/evict": 1.484,
+            "receive": 0.987,
+            "receive surface_batch": 0.931,
+            "LOD requests": 0.836,
+            "LOD coverage": 0.636,
+            "zombie update": 0.349
+          },
+          "navigation_planning_us": 18
+        },
+        {
+          "frame": 2066,
+          "at_us": 38546213,
+          "frame_ms": 29.327,
+          "before_process_ms": 7.374,
+          "process_ms": 5.938,
+          "process_cycles": 14811574,
+          "after_process_ms": 0.145,
+          "draw_ms": 15.87,
+          "gpu_ms": 8.70400047302246,
+          "physics_ms": 5.958,
+          "thread_cycles": 71720440,
+          "thread_cpu_ms": 31.25,
+          "largest_stages_ms": {
+            "staging frame": 2.731,
+            "collision piece": 2.374,
+            "collision node attach": 2.193,
+            "zombie update": 0.841,
+            "player physics": 0.482,
+            "world process": 0.242
+          },
+          "navigation_planning_us": 20
+        }
+      ],
+      "images_reviewed": [
+        "arrival.png"
+      ],
+      "observation_sha256": "4b5bdd582b4d703241a03f8ad2e9d2e1fa9b64d6565315f46004a481b450a545",
+      "manual_save": {
+        "completed": true,
+        "requested": true,
+        "success": true
+      }
+    },
+    "packaged_trace_repeat": {
+      "analysis_sha256": "e5be64495f568b808316be2d927f7e3ede06a17b2bb72dac7c2a557a5cc24df3",
+      "scope": "Triggered windows only, not an unbiased whole-session distribution. Overlapping frames deduplicated. Stages/physics overlap wall intervals. GPU timers may lag. Missing adjacent frames give unknown compilation deltas.",
+      "phases": {
+        "loading": {
+          "frame_ms": {
+            "samples": 586,
+            "mean": 17.03475255972696,
+            "p50": 16.713,
+            "p95": 20.743,
+            "p99": 30.357,
+            "maximum": 34.165
+          },
+          "process_ms": {
+            "samples": 586,
+            "mean": 4.922252559726963,
+            "p50": 4.253,
+            "p95": 8.493,
+            "p99": 11.115,
+            "maximum": 22.835
+          },
+          "draw_ms": {
+            "samples": 586,
+            "mean": 10.327046075085326,
+            "p50": 10.745,
+            "p95": 13.174,
+            "p99": 16.566,
+            "maximum": 28.43
+          },
+          "before_process_ms": {
+            "samples": 586,
+            "mean": 1.615206484641638,
+            "p50": 0.738,
+            "p95": 5.303,
+            "p99": 5.899,
+            "maximum": 6.274
+          },
+          "after_process_ms": {
+            "samples": 586,
+            "mean": 0.17024744027303754,
+            "p50": 0.123,
+            "p95": 0.366,
+            "p99": 0.641,
+            "maximum": 1.416
+          },
+          "physics_ms": {
+            "samples": 586,
+            "mean": 0.40831228668941977,
+            "p50": 0.374,
+            "p95": 0.68,
+            "p99": 1.254,
+            "maximum": 2.94
+          },
+          "gpu_ms": {
+            "samples": 586,
+            "mean": 7.825424917728828,
+            "p50": 7.69399976730347,
+            "p95": 8.81700038909912,
+            "p99": 9.46300029754639,
+            "maximum": 9.86299991607666
+          },
+          "render_cpu_ms": {
+            "samples": 586,
+            "mean": 5.395682590406502,
+            "p50": 5.16400003433228,
+            "p95": 6.90799999237061,
+            "p99": 9.48999977111816,
+            "maximum": 16.2889995574951
+          },
+          "recorder_previous_us": {
+            "samples": 586,
+            "mean": 183.4556313993174,
+            "p50": 175,
+            "p95": 254,
+            "p99": 299,
+            "maximum": 706
+          },
+          "draw_calls": {
+            "samples": 586,
+            "mean": 5190.373720136518,
+            "p50": 5261.0,
+            "p95": 5261.0,
+            "p99": 5261.0,
+            "maximum": 5261.0
+          },
+          "primitives": {
+            "samples": 586,
+            "mean": 4061278.9556313995,
+            "p50": 4074360.0,
+            "p95": 4152686.0,
+            "p99": 4152686.0,
+            "maximum": 4152772.0
+          },
+          "over_20ms_frames": 35
+        },
+        "gameplay": {
+          "frame_ms": {
+            "samples": 1550,
+            "mean": 16.792934193548387,
+            "p50": 16.644,
+            "p95": 19.875,
+            "p99": 25.053,
+            "maximum": 36.094
+          },
+          "process_ms": {
+            "samples": 1550,
+            "mean": 1.9759767741935486,
+            "p50": 1.351,
+            "p95": 4.577,
+            "p99": 7.548,
+            "maximum": 12.423
+          },
+          "draw_ms": {
+            "samples": 1550,
+            "mean": 9.148105161290323,
+            "p50": 8.464,
+            "p95": 12.709,
+            "p99": 14.6,
+            "maximum": 25.143
+          },
+          "before_process_ms": {
+            "samples": 1550,
+            "mean": 5.555256129032259,
+            "p50": 5.985,
+            "p95": 8.36,
+            "p99": 9.426,
+            "maximum": 14.892
+          },
+          "after_process_ms": {
+            "samples": 1550,
+            "mean": 0.11359612903225808,
+            "p50": 0.096,
+            "p95": 0.174,
+            "p99": 0.35,
+            "maximum": 3.122
+          },
+          "physics_ms": {
+            "samples": 1550,
+            "mean": 2.600375483870968,
+            "p50": 2.481,
+            "p95": 3.503,
+            "p99": 5.51,
+            "maximum": 12.551
+          },
+          "gpu_ms": {
+            "samples": 1550,
+            "mean": 7.893105150345833,
+            "p50": 7.78599977493286,
+            "p95": 9.03299999237061,
+            "p99": 9.53800010681152,
+            "maximum": 9.9980001449585
+          },
+          "render_cpu_ms": {
+            "samples": 1550,
+            "mean": 5.759343229724515,
+            "p50": 5.48899984359741,
+            "p95": 7.48600006103516,
+            "p99": 10.0290002822876,
+            "maximum": 15.128999710083
+          },
+          "recorder_previous_us": {
+            "samples": 1550,
+            "mean": 214.4116129032258,
+            "p50": 203,
+            "p95": 280,
+            "p99": 365,
+            "maximum": 1307
+          },
+          "draw_calls": {
+            "samples": 1550,
+            "mean": 5403.983225806452,
+            "p50": 5418.0,
+            "p95": 5421.0,
+            "p99": 5421.0,
+            "maximum": 5421.0
+          },
+          "primitives": {
+            "samples": 1550,
+            "mean": 4229004.996129032,
+            "p50": 4238307.0,
+            "p95": 4238327.0,
+            "p99": 4238327.0,
+            "maximum": 4238327.0
+          },
+          "over_20ms_frames": 73
+        },
+        "browser": {
+          "frame_ms": {
+            "samples": 2,
+            "mean": 1070.2545,
+            "p50": 2110.65,
+            "p95": 2110.65,
+            "p99": 2110.65,
+            "maximum": 2110.65
+          },
+          "process_ms": {
+            "samples": 2,
+            "mean": 1.3255,
+            "p50": 2.635,
+            "p95": 2.635,
+            "p99": 2.635,
+            "maximum": 2.635
+          },
+          "draw_ms": {
+            "samples": 2,
+            "mean": 13.856499999999999,
+            "p50": 27.063,
+            "p95": 27.063,
+            "p99": 27.063,
+            "maximum": 27.063
+          },
+          "before_process_ms": {
+            "samples": 2,
+            "mean": 1055.043,
+            "p50": 2109.973,
+            "p95": 2109.973,
+            "p99": 2109.973,
+            "maximum": 2109.973
+          },
+          "after_process_ms": {
+            "samples": 2,
+            "mean": 0.0295,
+            "p50": 0.048,
+            "p95": 0.048,
+            "p99": 0.048,
+            "maximum": 0.048
+          },
+          "physics_ms": {
+            "samples": 2,
+            "mean": 0.0065,
+            "p50": 0.013,
+            "p95": 0.013,
+            "p99": 0.013,
+            "maximum": 0.013
+          },
+          "gpu_ms": {
+            "samples": 2,
+            "mean": 7.702499866485596,
+            "p50": 7.90999984741211,
+            "p95": 7.90999984741211,
+            "p99": 7.90999984741211,
+            "maximum": 7.90999984741211
+          },
+          "render_cpu_ms": {
+            "samples": 2,
+            "mean": 5.690000057220455,
+            "p50": 6.11600017547607,
+            "p95": 6.11600017547607,
+            "p99": 6.11600017547607,
+            "maximum": 6.11600017547607
+          },
+          "recorder_previous_us": {
+            "samples": 2,
+            "mean": 148.0,
+            "p50": 218,
+            "p95": 218,
+            "p99": 218,
+            "maximum": 218
+          },
+          "draw_calls": {
+            "samples": 2,
+            "mean": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "maximum": 0.0
+          },
+          "primitives": {
+            "samples": 2,
+            "mean": 0.0,
+            "p50": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "maximum": 0.0
+          },
+          "over_20ms_frames": 2
+        }
+      },
+      "slowest_gameplay": [
+        {
+          "frame": 2573,
+          "at_us": 47909235,
+          "frame_ms": 36.094,
+          "before_process_ms": 14.892,
+          "process_ms": 2.119,
+          "process_cycles": 5281141,
+          "after_process_ms": 0.165,
+          "draw_ms": 18.918,
+          "gpu_ms": 8.76500034332275,
+          "physics_ms": 12.551,
+          "thread_cycles": 75517176,
+          "thread_cpu_ms": 31.25,
+          "largest_stages_ms": {
+            "zombie update": 1.433,
+            "player physics": 1.204,
+            "world process": 0.521,
+            "actor update": 0.121,
+            "controller process": 0.114,
+            "world interaction": 0.03
+          },
+          "navigation_planning_us": 32
+        },
+        {
+          "frame": 2588,
+          "at_us": 48255900,
+          "frame_ms": 35.524,
+          "before_process_ms": 12.972,
+          "process_ms": 2.97,
+          "process_cycles": 7402355,
+          "after_process_ms": 0.957,
+          "draw_ms": 18.625,
+          "gpu_ms": 8.86600017547607,
+          "physics_ms": 10.788,
+          "thread_cycles": 74580286,
+          "thread_cpu_ms": 46.875,
+          "largest_stages_ms": {
+            "zombie update": 2.731,
+            "lighting schedule": 0.623,
+            "player physics": 0.491,
+            "world process": 0.246,
+            "actor update": 0.103,
+            "controller process": 0.097
+          },
+          "navigation_planning_us": 499
+        },
+        {
+          "frame": 2716,
+          "at_us": 50402465,
+          "frame_ms": 33.193,
+          "before_process_ms": 4.849,
+          "process_ms": 1.923,
+          "process_cycles": 4600861,
+          "after_process_ms": 1.278,
+          "draw_ms": 25.143,
+          "gpu_ms": 7.85699987411499,
+          "physics_ms": 3.494,
+          "thread_cycles": 49849146,
+          "thread_cpu_ms": 15.625,
+          "largest_stages_ms": {
+            "zombie update": 0.484,
+            "world process": 0.293,
+            "player physics": 0.253,
+            "controller process": 0.107,
+            "actor update": 0.058,
+            "world interaction": 0.027
+          },
+          "navigation_planning_us": 27
+        },
+        {
+          "frame": 2574,
+          "at_us": 47940728,
+          "frame_ms": 31.493,
+          "before_process_ms": 12.407,
+          "process_ms": 3.295,
+          "process_cycles": 7902984,
+          "after_process_ms": 0.136,
+          "draw_ms": 15.655,
+          "gpu_ms": 7.29400014877319,
+          "physics_ms": 10.268,
+          "thread_cycles": 73917736,
+          "thread_cpu_ms": 31.25,
+          "largest_stages_ms": {
+            "zombie update": 1.24,
+            "LOD schedule/cut/evict": 1.005,
+            "LOD requests": 0.986,
+            "world process": 0.922,
+            "player physics": 0.69,
+            "controller process": 0.648
+          },
+          "navigation_planning_us": 32
+        },
+        {
+          "frame": 2569,
+          "at_us": 47796193,
+          "frame_ms": 31.304,
+          "before_process_ms": 14.883,
+          "process_ms": 1.68,
+          "process_cycles": 4182063,
+          "after_process_ms": 0.141,
+          "draw_ms": 14.6,
+          "gpu_ms": 7.36399984359741,
+          "physics_ms": 6.573,
+          "thread_cycles": 76279888,
+          "thread_cpu_ms": 31.25,
+          "largest_stages_ms": {
+            "zombie update": 0.648,
+            "player physics": 0.366,
+            "world process": 0.245,
+            "controller process": 0.093,
+            "actor update": 0.045,
+            "world interaction": 0.026
+          },
+          "navigation_planning_us": 32
+        },
+        {
+          "frame": 2585,
+          "at_us": 48164974,
+          "frame_ms": 31.256,
+          "before_process_ms": 14.684,
+          "process_ms": 3.615,
+          "process_cycles": 5780489,
+          "after_process_ms": 0.263,
+          "draw_ms": 12.694,
+          "gpu_ms": 8.46599960327148,
+          "physics_ms": 10.729,
+          "thread_cycles": 62312440,
+          "thread_cpu_ms": 31.25,
+          "largest_stages_ms": {
+            "zombie update": 1.025,
+            "world process": 0.537,
+            "player physics": 0.45,
+            "controller process": 0.151,
+            "actor update": 0.078,
+            "world interaction": 0.05
+          },
+          "navigation_planning_us": 33
+        }
+      ],
+      "images_reviewed": [
+        "arrival.png"
+      ],
+      "observation_sha256": "4a1df0cca9180904d72ed0bf032c3d60c63727dc5d31c14c00181a7ceb0470d0",
+      "manual_save": {
+        "completed": true,
+        "requested": true,
+        "success": true
+      }
+    }
+  },
+  "failed_attempts": [
+    {
+      "run": "source_initial_failure",
+      "reason": "Invalid-provider assertion retained a custom admission callback, selecting intentional point fallback. Test callback cleared before checking batch result; runtime policy unchanged."
+    },
+    {
+      "run": "tower_overwritten_point_control",
+      "reason": "Async world loading reinstalled batch provider; excluded as point control, retained as batch observation. Control now applied after load and verified against observed counters."
+    },
+    {
+      "run": "source_water_cut_cells_failure",
+      "reason": "Six quantity/head/migration/depth assertions fail. Previous committed and candidate release water DLLs also have identical PASS/FAIL lines; unresolved existing contract gate."
+    }
+  ],
+  "water_cut_cells_comparison": {
+    "baseline": {
+      "path": "reports/water_cut_cells_baseline_20261109.json",
+      "sha256": "5f37a6a09e2d076423adbba59c7fe3c12b1f0e8852914d095379afb9fa9171ea",
+      "result": {
+        "capacity_ml": 93750,
+        "failures": 6,
+        "head": 41.6414213590324,
+        "vertices": 60,
+        "library": "volumetric_water.windows.template_release.x86_64.dll",
+        "library_sha256": "3b43aa4c1d9a22531752313c732f9ea4a79182fd609e88c6511f96022a1d116e",
+        "baseline_native_commit": "7af3434e532b780681e9cedc323d22f9c07f70a5"
+      },
+      "log_sha256": "57144b5a032153afb29a9e62e8ed2bf3c9b1d34ef6e4cd7b23ecbc0f2f7a7cf4",
+      "assertions": [
+        "PASS Old cached terrain restores without resampling",
+        "FAIL Ten litres form a 40 mm film over a quarter-square-metre sloping floor",
+        "FAIL Version 2 upgrade wakes changed cut capacity using cached terrain",
+        "PASS Version 3 partial-top archive restores",
+        "FAIL Version 3 partial-top migration wakes cached water without losing volume",
+        "PASS Version 4 partial-bottom archive restores",
+        "FAIL Partial-bottom migration recovers real air capacity without changing water or resampling terrain",
+        "PASS Equal-level lake neighbour preserves the horizontal shoreline wedge",
+        "FAIL Version 6 upgrade preserves every millilitre",
+        "PASS Cut-cell archive roundtrip preserves cached data and pending work",
+        "FAIL Sloping-film depth is pointwise and never extends into solid terrain",
+        "PASS Cut-cell stored-volume envelope is closed with two incident triangles per edge",
+        "PASS Bucket query hits the same finite cut-cell surface",
+        "PASS Meshing and picking never alter cut-cell quantities"
+      ]
+    },
+    "candidate": {
+      "path": "reports/water_cut_cells_candidate_20261109.json",
+      "sha256": "3b3781ef514f1371228fcaa137cea8052fbd1fedcec39a2ee2746f50b52652b2",
+      "result": {
+        "capacity_ml": 93750,
+        "failures": 6,
+        "head": 41.6414213590324,
+        "vertices": 60,
+        "library": "volumetric_water.windows.template_release.x86_64.dll",
+        "library_sha256": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "baseline_native_commit": null
+      },
+      "log_sha256": "57144b5a032153afb29a9e62e8ed2bf3c9b1d34ef6e4cd7b23ecbc0f2f7a7cf4",
+      "assertions": [
+        "PASS Old cached terrain restores without resampling",
+        "FAIL Ten litres form a 40 mm film over a quarter-square-metre sloping floor",
+        "FAIL Version 2 upgrade wakes changed cut capacity using cached terrain",
+        "PASS Version 3 partial-top archive restores",
+        "FAIL Version 3 partial-top migration wakes cached water without losing volume",
+        "PASS Version 4 partial-bottom archive restores",
+        "FAIL Partial-bottom migration recovers real air capacity without changing water or resampling terrain",
+        "PASS Equal-level lake neighbour preserves the horizontal shoreline wedge",
+        "FAIL Version 6 upgrade preserves every millilitre",
+        "PASS Cut-cell archive roundtrip preserves cached data and pending work",
+        "FAIL Sloping-film depth is pointwise and never extends into solid terrain",
+        "PASS Cut-cell stored-volume envelope is closed with two incident triangles per edge",
+        "PASS Bucket query hits the same finite cut-cell surface",
+        "PASS Meshing and picking never alter cut-cell quantities"
+      ]
+    }
+  },
+  "package": {
+    "path": "dist/TerraForest.pck",
+    "bytes": 556865068,
+    "sha256": "60e22b63ebd9890d92a31b5acaa4fbcfab0c003e40048f015b9a7bbedc3b287e",
+    "export_log": "reports/export_water_navigation_20261109.log",
+    "export_log_sha256": "9bab69acdf1de81f3e8d24d5449ac68a0cab71e9e83374129ec6821dded8ec96",
+    "all_14_source_dist_dlls_match": true,
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "277bc967f779120337a9371e29448662181ada5f619ca281494786a941112e8f",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "b38efbaccf06e189dd0056e6215308bdd2dba069e329c121727d8383b2da43b1",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "470ae068139549cae253a3f1b548598785b3ca8be2fa243097b2ff96a882891b",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "c6cef4b2bcda33f6c10f05080748379ca002bfe04109f03427bc328bfabbdc2c",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "76a6fdc0acf315735bb6e55bcf768ee9d6dba2d001ee438c300d522fc952556b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "bff6181d426741dc574247467d929a2f4edf20e4bba6219ec25a635bea255551",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+    },
+    "visual_review": "Viewed both moving-pursuit furnished interiors and both packaged arrival captures. No visual reduction observed; scoped engineering review, not user quality acceptance."
+  },
+  "remaining": [
+    "Cold tower planning still 15\u201341 seconds in the selected batch run; needs fewer sampled candidates/prepared connectivity with physical and edit validation.",
+    "Low-cycle wall-time spikes need scheduler/wait attribution.",
+    "Triggered gameplay p99 remains approximately 25 ms and maximum 34\u201336 ms, versus the prior single run at 23.210/27.710 ms. This is not a pacing improvement claim; idle navigation takes only tens of microseconds in the largest candidate frames.",
+    "Save capture, physics and draw/presentation intervals remain substantial.",
+    "Water cut-cell contract failures, dense destruction/crowd scale, whole-world navigation, multiplayer and long-session leak endurance remain open."
+  ],
+  "scheduler_probe": {
+    "tool": "Windows Performance Recorder 10.0.19041 (existing OS tool)",
+    "command": [
+      "wpr",
+      "-start",
+      "CPU.Light",
+      "-instancename",
+      "TerraForestStalls_20261109"
+    ],
+    "exit_code": 1,
+    "error_code": "0xc5585011",
+    "message": "Failed to enable the policy to profile system performance.",
+    "status_after": "WPR is not recording",
+    "scope": "No scheduler capture was obtained. No elevation, system policy change or cancellation of another recording was attempted."
+  }
+}

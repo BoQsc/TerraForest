@@ -116,6 +116,34 @@ reaches 7.682 ms in a long frame. This is an incomplete pacing result, not a new
 60-FPS acceptance claim; remaining save-owner, draw and scheduling costs need
 separate attribution and repeated traces.
 
+[Native route-water footprints](../issues/runtime-performance/navigation-water-batch-2026-11-09.md)
+now evaluate the same bounded hazard samples inside the water owner, removing
+repeated Callable crossings without caching water answers. Source/release ABBA
+fixtures retain identical complete paths and 989 work units; the selected release
+uses 38% fewer thread cycles and 90% less hazard time. Both provider modes pass
+14 actual tower checks with all 200 save files unchanged. Total hazard time falls
+1.147→0.188 seconds; first paths change 32.636→15.603 s outbound and 48.338→40.609 s
+return. Host timing varies, and these latencies still require fewer search
+candidates or prepared connectivity with physical validation. A failed fixture
+setup and an overwritten test control remain retained; observed counters now
+enforce the selected mode. A 14.221 ms zero-work planner interval with very few
+thread cycles calls for CSwitch/ReadyThread attribution; no scheduler trace has
+yet established its cause. Starting the owned Windows `CPU.Light` capture fails
+under the current system profiling policy (`0xc5585011`); no recording is active.
+`water_cut_cells` fails the same six assertions with
+the previous and candidate DLLs. Reconcile its legacy quantity/head/migration
+contract before changing that water behavior; this remains an unresolved gate,
+not a pass or a newly introduced footprint regression. Sustained frame time,
+rendering, saves, destruction/crowd scale and leak endurance remain open.
+The installed package passes replan (14), response (11), furnished moving pursuit
+(23), and two clean save/shutdown traces with matching 14 native DLLs. Inspected
+room/arrival captures show no scoped visual reduction. Triggered gameplay p99 is
+25.393/25.053 ms with maxima 34.446/36.094 ms, worse than the prior single-run
+23.210/27.710 ms checkpoint; this is explicitly not a pacing improvement. Those
+largest frames have only 19/32 us navigation planning, alongside save capture,
+physics and long draw intervals. Attribute those owners and waits before closing
+the tail-regression concern; GPU averages near 7.9 ms alone cannot qualify 60 FPS.
+
 Stable 60 FPS with headroom is NOT established. Earlier combined traces include
 a 91.4 ms gameplay frame and ~15 ms root GPU work; the native cover correction
 improves sampled GPU headroom but leaves frame tails and waits. Rendering costs,

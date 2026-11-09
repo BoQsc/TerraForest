@@ -1,6 +1,12 @@
 # Runtime performance
 
-Latest: [bounded model and door updates](navigation-model-invalidation-2026-11-09.md)
+Latest: [native route-water footprints](navigation-water-batch-2026-11-09.md)
+retain every hazard sample while removing repeated engine-call crossings. The
+release comparison preserves all paths and uses 38% fewer thread cycles; saved
+tower hazard time falls about 84%. Cold pursuit still takes seconds, and waits,
+rendering and an existing cut-cell fixture failure remain open.
+
+[Bounded model and door updates](navigation-model-invalidation-2026-11-09.md)
 preserve the graph through actual door destruction and reduce the selected
 same-path replan work by 65%. The saved tower passes with all 200 files unchanged;
 cold planning, broad/unbounded owner events and frame tails remain open. Per-pass
