@@ -108,7 +108,9 @@
     "res://addons/characters/runtime/house_sleepers.gd"
   ],
   "res://addons/player_runtime/building_assemblies.gd": [],
-  "res://addons/player_runtime/bullet_holes.gd": [],
+  "res://addons/player_runtime/bullet_holes.gd": [
+    "res://addons/player_runtime/bullet_mark.gdshader"
+  ],
   "res://addons/player_runtime/character_panel.gd": [
     "res://addons/characters/wearables/clothing.gd",
     "res://addons/player_runtime/character_portrait.gd",
@@ -121,6 +123,7 @@
     "res://addons/player_runtime/durability_catalog.gd",
     "res://addons/player_runtime/destruction_effects.gd",
     "res://addons/player_runtime/structural_integrity.gd",
+    "res://addons/player_runtime/firearm_impact_audio.gd",
     "res://addons/player_runtime/bullet_holes.gd",
     "res://addons/audio_runtime/wav_decoder.gd"
   ],
@@ -165,6 +168,9 @@
   ],
   "res://addons/player_runtime/escape_policy.gd": [
     "res://addons/world_runtime/mouse_ownership.gd"
+  ],
+  "res://addons/player_runtime/firearm_impact_audio.gd": [
+    "res://addons/audio_runtime/wav_decoder.gd"
   ],
   "res://addons/player_runtime/first_person_depth.gd": [],
   "res://addons/player_runtime/first_person_meshes.gd": [
