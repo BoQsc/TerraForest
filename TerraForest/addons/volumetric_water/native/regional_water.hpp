@@ -112,6 +112,12 @@ class NativeRegionalWater : public godot::RefCounted {
         std::shared_ptr<const TerrainWaterContacts> contacts;
         std::shared_ptr<const StructureWaterContacts> structures;
         bool valid=false,has_density=false,replace_water=false;
+        // Event-driven settling; the pending flag survives snapshots. The
+        // cursor is disposable: replaying a scan never replays a transfer.
+        bool settle_pending=false;
+        // Five outgoing faces per cell; fixed storage, no per-cell heap queue.
+        std::array<uint64_t,40> settle_mask{};
+        uint16_t settle_cursor=0;
         // 0 ordinary, 1 regenerable ocean, 2 ocean touched by gameplay/terrain.
         uint8_t ocean_state=0;
         bool limited_building_edit=false;
@@ -213,6 +219,11 @@ class NativeRegionalWater : public godot::RefCounted {
     void changed(const godot::Vector3i &p);
     void request(Key k);
     void invalidate_regions(const godot::AABB &bounds,bool replace_water,bool buildings=false);
+    std::deque<Key> settling;
+    std::unordered_set<Key> settling_set;
+    uint64_t settle_steps=0,settle_transfers=0,settle_us=0;
+    void wake_settling(Key k,int cell_index=-1);
+    void settle_cell(const godot::Vector3i &p,int direction);
     using Placement=std::vector<std::pair<godot::Vector3i,uint64_t>>;
     bool plan_connected_scoop(Placement &cells,uint64_t amount,godot::Dictionary &out,double floor_level=-1e30) const;
     bool bucket_footprint(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,bool collect,int &x0,int &z0,godot::Dictionary &out);
@@ -232,6 +243,8 @@ class NativeRegionalWater : public godot::RefCounted {
     bool decode(const godot::PackedByteArray &data,bool install,bool prepare_render=true);
 protected: static void _bind_methods();
 public:
+    void settle_after_edit(const godot::AABB &bounds);
+    int64_t advance_settling(int64_t budget=256);
     void set_western_ocean(bool enabled){if(western_ocean!=enabled){western_ocean=enabled;invalidate_snapshot();}}
     void set_surrounding_ocean(bool enabled){if(surrounding_ocean!=enabled){surrounding_ocean=enabled;invalidate_snapshot();}}
     godot::Dictionary water_patch_state() const;

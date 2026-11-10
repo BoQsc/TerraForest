@@ -33,6 +33,7 @@ var _epoch:=-1
 # Offline preparation publishes completed generated fills, not each frontier.
 var offline_preparation:=false
 var loading_active:Callable
+var settling_active:Callable
 var _filling_id:=0
 var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
@@ -210,8 +211,11 @@ func _measured_step(delta:float)->void:
  # Show edits before advancing their flow. Native immutable batches retain
  # that state if publication spans more than one frame.
  if (not offline_preparation or _filling_id==0) and not _ocean_admitting:_publish_meshes()
- # Explicit lake creation only. Resting or edited water has no flow tick.
+ # Authored filling and blast-woken settling have separate native budgets.
  if _filling_id!=0:water.advance(2048,delta)
+ elif not terrain.pending_edit and (not loading_active.is_valid() or not loading_active.call()) and settling_active.is_valid() and settling_active.call():
+  var settle_us:int=water.advance_settling(256)
+  terrain._record_stage("water blast settling",settle_us/1000.0)
  if not _busy and not terrain.pending_edit and _occupancy_failure.is_empty():
   var request:Dictionary=water.next_request()
   if not request.is_empty():

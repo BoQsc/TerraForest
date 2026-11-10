@@ -1,3 +1,21 @@
+## Distant blasts and crater water - 2026-11-10
+
+Removed blast admission's player-relative actor-collision dependency, retaining
+terrain/block/water transaction admission. The existing default-world fixture
+passes three actual explosions with the player stationary 160 m away; source
+save unchanged. Installation remains pending packaged validation.
+
+Native blast-woken water settling passes finite-volume, interrupted-save, region
+paging and actual-terrain mesh/query checks. It is **opt-in only**: cooperative
+1 ms scheduling does not yet prove the performance budget, and normal-world
+visual qualification is outstanding. The old water surface suite fails the same
+14 assertions on the installed baseline and candidate; this remains visible,
+not dismissed as visual acceptance. Return to per-face cost attribution, region
+edge/compound-save qualification and installed gameplay checks before enabling
+the water change. Details and retained failures:
+[explosion/water follow-up](../issues/explosive-combat/distance-water-2026-11-10.md).
+No new world, worktree, export, increased radius or raised resource cap was used.
+
 ## Roof material flicker - 2026-11-10
 
 The native building shader now carries rounded, flat material IDs; interpolated

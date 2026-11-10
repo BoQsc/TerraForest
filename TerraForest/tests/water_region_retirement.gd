@@ -38,6 +38,11 @@ func run()->void:
  var loaded:Dictionary=await receive(io)
  check(water.restore_region_snapshot(p,loaded.packet,water.survey_revision_id(),true) and water.capture_region_snapshot(p)==newer,"reload restores exact edited packet")
  check(water.statistics().water_ml==124000 and water.statistics().deferred_regions==0,"reload restores exact quantity once")
+ water.settle_after_edit(AABB(Vector3(p)*4,Vector3(4,4,4)))
+ var awake:PackedByteArray=water.capture_region_snapshot(p)
+ var awake_reply:Dictionary=store.publish_region(p,awake)
+ check(awake_reply.get("ok",false) and not water.retire_region(awake_reply.receipt,water.survey_revision_id()) and water.statistics().water_ml==124000,"pending blast settling stays resident despite a verified disk receipt")
+ check(water.restore_snapshot(newer),"completed pre-wake fixture restores for independent empty-region check")
  # Empty ownership must survive the same path; it suppresses procedural sea.
  water.brush(Vector3(4.25,36.25,1000.25),0.1,-1000000)
  var empty:PackedByteArray=water.capture_region_snapshot(p);reply=store.publish_region(p,empty)

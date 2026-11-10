@@ -1,5 +1,10 @@
 # Water in the playable world
 
+2026-11-10 source follow-up: the user requested water settling after explosions.
+An opt-in native implementation is under qualification; the installed static
+behavior described below is unchanged. See the [blast-water follow-up](../issues/explosive-combat/distance-water-2026-11-10.md)
+for exact scope, persistence, test evidence and outstanding timing/visual gates.
+
 Updated 2026-10-14. Water is static, editable volumetric water. Automatic flow,
 settling and spillage are deliberately out of scope. This guide describes the
 installed implementation; [older implementation notes](WATER_IMPLEMENTATION_HISTORY.md)
