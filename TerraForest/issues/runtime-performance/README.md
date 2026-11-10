@@ -7,6 +7,11 @@ pending. Bounded event tracing, verified trace archival and a native block/damag
 store boundary are implemented. Building compound retirement is about four times
 cheaper in the dense slice comparison; normal gameplay still misses frame-tail
 targets. The full terrain/building publication redesign remains in progress.
+The 96-slot debris pool is implemented and headless-tested but remains opt-in;
+the user deferred foreground qualification. The expanded coalesced publication
+test fails at 59.100 ms, dominated by field editing and mesh work. Bounded GPU
+stage gaps now extend the existing opt-in rolling trace; GPU and overall FPS
+acceptance remain open.
 
 [World/player headroom and terrain retirement](world-player-headroom-2026-11-10.md)
 records the valid installed baseline, renderer gap, rejected detached-preparation

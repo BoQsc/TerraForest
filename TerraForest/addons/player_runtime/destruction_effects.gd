@@ -13,6 +13,28 @@ var geometry:Dictionary={}
 var materials:Array[Material]=[]
 var convex_builds:=0
 var geometry_loads:=0
+# Qualification switch: do not change ordinary gameplay before the foreground
+# baseline/candidate/baseline and visual gates pass.
+var pooled:=OS.get_cmdline_user_args().has("--pooled-debris") and not OS.get_cmdline_user_args().has("--legacy-debris-nodes")
+var available:Array[RigidBody3D]=[]
+var pool:Array[RigidBody3D]=[]
+func _ready()->void:
+	if not pooled:return
+	for index in LIMIT:
+		var body:=RigidBody3D.new()
+		body.process_mode=Node.PROCESS_MODE_DISABLED;body.visible=false
+		body.collision_layer=1<<20;body.collision_mask=1|2|4;body.continuous_cd=true
+		var view:=MeshInstance3D.new();view.position=-Vector3.ONE*.5;body.add_child(view)
+		var collision:=CollisionShape3D.new();collision.position=-Vector3.ONE*.5;body.add_child(collision)
+		add_child(body);pool.append(body);available.append(body)
+func _retire(body:RigidBody3D)->void:
+	if not pooled:body.queue_free();return
+	# Remove the body from Jolt before changing its shape or transform. Inactive
+	# slots have neither a physics-space registration nor a visible mesh.
+	body.process_mode=Node.PROCESS_MODE_DISABLED;body.visible=false
+	# Keep shared baked resources in these bounded slots. Clearing and restoring
+	# an identical shape/material only shifts extra server work into reuse.
+	available.append(body)
 func _geometry(definition:Dictionary)->Dictionary:
 	var key:=Vector2i(definition.shape,definition.rotation)
 	if geometry.has(key):return geometry[key]
@@ -36,18 +58,34 @@ func block(cell:Vector3i,word:int,origin:Vector3,force:float)->void:
 	var profiling:bool=block_profiled.has_connections()
 	var started:int=Time.get_ticks_usec() if profiling else 0
 	if fragments.size()>=LIMIT:
-		fragments.pop_front().body.queue_free()
+		_retire(fragments.pop_front().body)
 	var definition:Dictionary=blocks.decode_block(word)
 	var prototype:=_geometry(definition)
 	if prototype.is_empty():return
 	var geometry_done:int=Time.get_ticks_usec() if profiling else 0
-	var body:=RigidBody3D.new();body.mass=[12.0,5.0,18.0,20.0][definition.material]
-	body.collision_layer=1<<20;body.collision_mask=1|2|4;body.continuous_cd=true
-	var view:=MeshInstance3D.new();view.mesh=prototype.mesh;view.position=-Vector3.ONE*.5
-	view.material_override=_material(definition.material);body.add_child(view)
-	var collision:=CollisionShape3D.new();collision.shape=prototype.shape;collision.position=-Vector3.ONE*.5;body.add_child(collision)
+	var body:RigidBody3D=available.pop_back() if pooled else RigidBody3D.new()
+	var mass:float=[12.0,5.0,18.0,20.0][definition.material]
+	if body.mass!=mass:body.mass=mass
+	if not pooled:body.collision_layer=1<<20;body.collision_mask=1|2|4;body.continuous_cd=true
+	var view:MeshInstance3D=body.get_child(0) if pooled else MeshInstance3D.new()
+	if view.mesh!=prototype.mesh:view.mesh=prototype.mesh
+	view.position=-Vector3.ONE*.5
+	var material:=_material(definition.material)
+	if view.material_override!=material:view.material_override=material
+	if not pooled:body.add_child(view)
+	var collision:CollisionShape3D=body.get_child(1) if pooled else CollisionShape3D.new()
+	if collision.shape!=prototype.shape:collision.shape=prototype.shape
+	collision.position=-Vector3.ONE*.5
+	if not pooled:body.add_child(collision)
 	var nodes_done:int=Time.get_ticks_usec() if profiling else 0
-	add_child(body);body.global_position=Vector3(cell)+Vector3.ONE*.5
+	if pooled:
+		body.global_transform=Transform3D(Basis.IDENTITY,Vector3(cell)+Vector3.ONE*.5)
+		body.constant_force=Vector3.ZERO;body.constant_torque=Vector3.ZERO
+		body.freeze=suspended;body.sleeping=false
+		body.process_mode=Node.PROCESS_MODE_INHERIT;body.visible=true
+		body.reset_physics_interpolation()
+	else:
+		add_child(body);body.global_position=Vector3(cell)+Vector3.ONE*.5
 	var attached:int=Time.get_ticks_usec() if profiling else 0
 	var outward:Vector3=(body.global_position-origin).normalized()
 	if outward.is_zero_approx():outward=Vector3.UP
@@ -70,13 +108,13 @@ func step(delta:float,active:bool)->void:
 	if not active:return
 	for index in range(fragments.size()-1,-1,-1):
 		fragments[index].remaining-=delta
-		if fragments[index].remaining<=0:fragments[index].body.queue_free();fragments.remove_at(index)
+		if fragments[index].remaining<=0:_retire(fragments[index].body);fragments.remove_at(index)
 	for index in range(flashes.size()-1,-1,-1):
 		var flash:Dictionary=flashes[index];flash.age+=delta
 		if flash.age>=.5:flash.node.queue_free();flashes.remove_at(index);continue
 		flash.node.scale=Vector3.ONE*(.2+flash.age*13)
 		flash.node.material_override.albedo_color.a=.8*(1-flash.age/.5)
 func clear()->void:
-	for fragment in fragments:fragment.body.queue_free()
+	for fragment in fragments:_retire(fragment.body)
 	for flash in flashes:flash.node.queue_free()
 	fragments.clear();flashes.clear()

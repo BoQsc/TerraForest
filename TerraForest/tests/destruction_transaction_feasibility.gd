@@ -42,9 +42,13 @@ func run()->void:
 	var old:Dictionary=world.tiles.duplicate()
 	var before:=await physics_hits(old,"prototype original collision")
 	var stage_max:Dictionary={}
+	var stage_total:Dictionary={}
+	var stage_count:Dictionary={}
 	var publication:Dictionary={}
 	world.stage_measured.connect(func(label:String,ms:float):
 		stage_max[label]=maxf(float(stage_max.get(label,0.0)),ms)
+		stage_total[label]=float(stage_total.get(label,0.0))+ms
+		stage_count[label]=int(stage_count.get(label,0))+1
 		if label=="atomic publish":
 			publication.tick=Engine.get_physics_frames()
 			publication.at_us=Time.get_ticks_usec())
@@ -53,6 +57,7 @@ func run()->void:
 	check(await pump_until(func():return not world.pending_edit),"coalesced native worker and actual physics publication complete")
 	var elapsed_us:=int(publication.get("at_us",Time.get_ticks_usec()))-began
 	var publication_tick:=int(publication.get("tick",Engine.get_physics_frames()))
+	print("DESTRUCTION_PUBLICATION_STAGES ",JSON.stringify({"stage_total_ms":stage_total,"stage_count":stage_count,"note":"Nested stage totals overlap; do not add them together or treat polling waits as CPU execution."}))
 	check(world.backend.submitted_commands==256 and world.latest_member_changes.size()==256,"all 256 ordered sphere commands executed")
 	check(world.published_revision==1 and world.batch_remaining==0,"one atomic terrain publication replaces the cohort")
 	var after:=await physics_hits(world.tiles,"prototype replacement collision")

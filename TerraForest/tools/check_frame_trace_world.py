@@ -30,6 +30,7 @@ def main():
     parser.add_argument('--legacy-structure-capture', action='store_true', help='Diagnostic control: serialize structures on the main thread during save')
     parser.add_argument('--gpu-profile', action='store_true', help='Retain engine GPU pass summaries in the console log')
     parser.add_argument('--render-stages', action='store_true', help='Diagnostic only: bounded completed-frame render-device CPU marker gaps')
+    parser.add_argument('--render-gpu-stages', action='store_true', help='Diagnostic only: also retain bounded completed-frame GPU timestamp gaps')
     parser.add_argument('--quiet-render-stages', action='store_true', help='Diagnostic only: retain render markers while suppressing per-second engine profile printing')
     parser.add_argument('--require-native-process-profiles', action='store_true', help='Require current gameplay block/model/light callback samples')
     parser.add_argument('--script-profile', action='store_true', help='Diagnostic only: enable the engine script debugger profiler')
@@ -46,6 +47,8 @@ def main():
     parser.add_argument('--normal-window', action='store_true', help='Use normal fullscreen/window preference and require foreground gameplay; no background-cap override')
     parser.add_argument('--destruction-load', action='store_true', help='Real three-barrel chain and full debris population in the owned default-world clone')
     parser.add_argument('--legacy-blast-batches', action='store_true', help='Diagnostic control: prior script block/damage batches, unchanged limits')
+    parser.add_argument('--legacy-debris-nodes', action='store_true', help='Diagnostic control: create fragment nodes per hit instead of reusing the 96 slots')
+    parser.add_argument('--pooled-debris', action='store_true', help='Qualify the experimental 96-slot fragment pool; ordinary gameplay is unchanged')
     parser.add_argument('--legacy-structure-retirement', action='store_true', help='Diagnostic control: retain obsolete building bodies in physics during shape retirement')
     parser.add_argument('--destruction-deadline', type=int, choices=[1,3,32,256], help='Strict next-physics-tick feasibility gate; incomplete publication intentionally fails')
     parser.add_argument('--legacy-owner-bounds', action='store_true', help='Diagnostic control: use original forest/boulder invalidation scans')
@@ -59,6 +62,8 @@ def main():
     parser.add_argument('--without-gpu-timers', action='store_true', help='Avoid synchronous renderer timer queries; requires --without-trace')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
+    if args.pooled_debris and args.legacy_debris_nodes:
+        parser.error('--pooled-debris and --legacy-debris-nodes are mutually exclusive')
     if args.destruction_deadline and (args.destruction_load or args.without_trace):
         parser.error('--destruction-deadline requires tracing and excludes --destruction-load')
     if args.grounded_walk and not args.outdoor_cover:
@@ -71,6 +76,8 @@ def main():
         parser.error('--require-native-process-profiles requires the recorder')
     if args.render_stages and args.without_trace:
         parser.error('--render-stages requires the rolling recorder')
+    if args.render_gpu_stages and not args.render_stages:
+        parser.error('--render-gpu-stages requires --render-stages')
     if args.quiet_render_stages and (not args.render_stages or args.verbose):
         parser.error('--quiet-render-stages requires --render-stages and excludes --verbose')
     if args.render_full_detail and not args.render_partition:
@@ -184,6 +191,12 @@ def main():
         command += ['--trace-destruction-load']
     if args.legacy_blast_batches:
         command += ['--legacy-blast-batches']
+    if args.legacy_debris_nodes:
+        command += ['--legacy-debris-nodes']
+    if args.pooled_debris:
+        command += ['--pooled-debris']
+    if args.render_gpu_stages:
+        command += ['--frame-trace-render-gpu-stages']
     if args.legacy_structure_retirement:
         command += ['--legacy-structure-retirement']
     if args.destruction_deadline:

@@ -13,6 +13,7 @@ class MarkerDevice extends RefCounted:
 		last_index=maxi(last_index,index)
 		return stamps[index] if index<stamps.size() else 1100+index
 	func get_captured_timestamp_name(index:int)->String:return "marker_%d"%index
+	func get_captured_timestamp_gpu_time(index:int)->int:return get_captured_timestamp_cpu_time(index)*1000+9000000000
 class ProcessOwner extends Node:
 	var sample:Dictionary={"available":true,"started_us":100,"ended_us":200,"process_us":100}
 	func process_frame_profile()->Dictionary:return sample.duplicate()
@@ -41,9 +42,13 @@ func run()->void:
 	check(render_sample.device_frame==7 and render_sample.begin_cpu_us==100 and render_sample.end_cpu_us==1100,"completed render frame and absolute CPU timestamps remain explicit")
 	check(render_sample.reversed==1 and render_sample.largest_cpu_gaps[0].cpu_us==590,"reversed timestamps are omitted rather than reported as negative work")
 	check(render_trace.capture(device).repeated,"a stale device frame does not duplicate marker work")
+	render_trace.gpu_enabled=true;device.frame+=1
+	render_sample=render_trace.capture(device)
+	check(render_sample.gpu_reversed==1 and render_sample.largest_gpu_gaps[0].gpu_ns==590000 and render_sample.begin_gpu_ns==9000100000,"GPU gaps preserve nanoseconds and an independent completed-frame clock")
 	device.frame+=1;device.count=1000
 	render_sample=render_trace.capture(device)
 	check(render_sample.truncated and device.last_index==RenderTrace.MAX_MARKERS-1 and render_sample.largest_cpu_gaps.size()==RenderTrace.MAX_GAPS,"marker reads and retained gaps stay bounded")
+	check(render_sample.largest_gpu_gaps.size()==RenderTrace.MAX_GAPS,"GPU marker retention obeys the same bound")
 	var trace:=Trace.new();root.add_child(trace)
 	var owner:=ProcessOwner.new()
 	trace.process_started=90;trace.process_finished=210

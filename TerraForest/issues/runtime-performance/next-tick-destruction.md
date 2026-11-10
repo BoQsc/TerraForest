@@ -213,7 +213,67 @@ exposed terrain defects still visible and unaccepted. Live geometry, shadows,
 draw distances, density, pacing and resource limits are unchanged. Baked debris
 and icon outputs are unchanged; their native-source receipts were refreshed.
 
-### Outstanding redesign and acceptance
+### Opt-in debris pool and publication attribution (2026-11-10 follow-up)
+
+The 96-slot rigid-body pool is implemented behind `--pooled-debris`; ordinary
+source gameplay and the installed package still use the prior debris lifecycle.
+Slots are allocated during startup, absent from physics while inactive, reused
+oldest first, and retain shared baked mesh/shape resources. Reuse resets transform,
+forces, velocities, mass, sleeping/freeze state and interpolation. CCD, masks,
+eight-second lifetime and damage independence remain unchanged. No new storage,
+debris or frame budget was introduced. Flashes/audio pooling remains outstanding.
+
+`reports/checks/20261110T125137995836Z` passes repeated replacement/clear, original
+node identity and bounded counts, real Jolt landing, paused contact, expiry,
+material/mass changes, force/transform reset and inactive physics-space checks.
+Its warmed 96-body enqueue ABBA values (legacy/pool/pool/legacy) are
+1.499/1.099/0.793/1.818 ms; clear values are 0.056/0.117/0.113/0.060 ms. These
+exclude subsequent physics/render work and are not whole-frame acceptance.
+The first pool version cleared shared geometry unnecessarily; its retained
+`reports/checks/20261110T124947533819Z` timings show cleanup offsetting much of
+the enqueue saving. The final version retains exact shared resources in the
+bounded slots instead.
+
+Integrated headless combat with the pool passed 50 checks in
+`reports/checks/20261110T124806501342Z`. The earlier invocation
+`20261110T124607510648Z` omitted the fixture's required `--zombies` flag and failed
+its two zombie admission checks; that failed result is preserved, not relabeled.
+Final resource-retention revision also passes all 50 integrated combat checks:
+`reports/checks/20261110T125314710419Z`.
+Editor import and UID generation pass in
+`reports/checks/20261110T125455899860Z_pool_import`; startup index and Python
+launcher compilation checks pass. The installed PCK hash above and all 14 native
+library pairs remain unchanged. No candidate export was created.
+
+Foreground baseline `reports/performance_changes/20261110T124321991740Z_debris_pool_baseline`
+lost focus for 179 gameplay frames and is **invalid performance evidence**.
+The user explicitly deferred foreground comparisons. Do not enable/install the
+pool until baseline/candidate/baseline gameplay, matched visuals and contact
+checks pass without changing the approved background cap.
+
+The existing rolling trace now optionally retains eight largest adjacent GPU
+timestamp gaps, independently from its CPU gaps, with the completed device-frame
+identity and recorder CPU cost. Use `--render-stages --render-gpu-stages` through
+the existing launcher. Reads are bounded to 256 markers; repeated frames and
+reversed timestamps remain explicit. No synchronous readback or new profiler is
+introduced. Vulkan timestamp results are nanoseconds (confirmed against the
+[upstream driver implementation](https://github.com/godotengine/godot/blob/master/drivers/vulkan/rendering_device_driver_vulkan.cpp)); CPU timestamps are microseconds.
+No upstream code was copied. `reports/checks/20261110T125213825203Z` passes the
+recorder regression including independent clocks and bounded GPU retention.
+On-device GPU validation and instrumentation overhead comparison remain pending.
+
+The 256-command terrain prototype now records stage counts and totals as well as
+maxima. `reports/checks/20261110T125032612762Z` **fails** next-tick publication:
+59.100 ms elapsed, trigger tick 16, required tick 17, actual tick 20. Field work
+is 26.614 ms, mesh work 8.009 ms, four collision attachments total 2.034 ms,
+four Jolt cooks total 0.102 ms, and the final atomic swap 0.122 ms. Nested stage
+totals overlap and cannot be summed. All four collision surfaces match the
+excavation. No buildings, damage, effects or GPU costs are included in that lower
+bound. Field evaluation is the dominant measured prerequisite here; faster
+publication scheduling alone cannot meet the deadline. Full atomic geometry and
+physics publication is still unfinished, and no new deadline pass is claimed.
+
+### Remaining requirements
 
 - Build the native destruction coordinator with deterministic overlap ordering,
   compact event records, bounded memory, indexed region queries, revision-checked

@@ -1,5 +1,16 @@
 ## Next-tick destruction implementation - 2026-11-10
 
+Follow-up: the 96-body debris pool passes scoped reset/lifetime/contact checks
+and reduces isolated enqueue work, but remains opt-in (`--pooled-debris`) and is
+not installed. The baseline lost focus; the user deferred foreground comparisons.
+Revisit adoption after valid gameplay ABAs and matched visuals/contact checks.
+GPU gaps are now available in the existing opt-in trace with separate units and
+completed-frame identity; on-device/observer-overhead checks remain pending.
+The instrumented coalesced terrain gate still fails at 59.100 ms (26.614 ms field,
+8.009 ms mesh, 2.034 ms collision attachment, 0.122 ms final swap). Full next-tick
+publication requires field/geometry redesign; scheduling alone is insufficient.
+The linked issue preserves the failed gate and exact remaining acceptance work.
+
 The native block-store/durability coordinator now stages bounded hit records and
 commits both stores before observer notification, rejecting stale/reentrant
 admission and unsafe mid-commit saves. Exact damage/impulse parity and normal
