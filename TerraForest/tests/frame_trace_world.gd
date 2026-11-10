@@ -22,6 +22,7 @@ var collision_stages_dropped:=0
 var world_opened_us:=0
 var world_ready_ms:=0.0
 var gpu_timers:=true
+var normal_window:=false
 
 func collision_stage(stage_name:String,milliseconds:float)->void:
 	if stage_name not in ["collision node attach","collision piece","staging frame","atomic publish","retire collision/mesh"]:return
@@ -59,6 +60,7 @@ func repeat_lights()->void:
 			light.global_position=light.global_position
 			light.light_energy=light.light_energy
 func _initialize()->void:
+	normal_window="--trace-normal-window" in OS.get_cmdline_user_args()
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
 	gpu_timers=not "--trace-without-gpu-timers" in OS.get_cmdline_user_args()
 	for arg:String in OS.get_cmdline_user_args():
@@ -76,10 +78,18 @@ func _initialize()->void:
 		if arg.begins_with("--trace-world-slot="):slot=arg.trim_prefix("--trace-world-slot=")
 		if arg.begins_with("--trace-world-output="):output=arg.trim_prefix("--trace-world-output=")
 	run.call_deferred()
+func update_test_focus()->void:
+	if not is_instance_valid(game):return
+	if normal_window:
+		var focused:=DisplayServer.window_is_focused()
+		if game.app_focused!=focused:
+			game.app_focused=focused
+			game._refresh_frame_cap()
+	else:game.app_focused=true
 func wait_for(predicate:Callable,seconds:float)->bool:
 	var deadline:=Time.get_ticks_msec()+int(seconds*1000)
 	while Time.get_ticks_msec()<deadline and not predicate.call():
-		if is_instance_valid(game):game.app_focused=true
+		update_test_focus()
 		await process_frame
 	return predicate.call()
 func frame()->void:
@@ -115,7 +125,13 @@ func run()->void:
 	world_opened_us=Time.get_ticks_usec()
 	browser._open_game(command.args)
 	if not await wait_for(func():return is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn",90):quit(1);return
-	game=current_scene;game.app_focused=true
+	game=current_scene;update_test_focus()
+	if normal_window:
+		root.grab_focus()
+		if not await wait_for(func():return DisplayServer.window_is_focused(),8):
+			push_error("Foreground frame capture could not acquire OS window focus; no gameplay comparison is valid")
+			quit(1);return
+		update_test_focus()
 	if not "--trace-normal-window" in OS.get_cmdline_user_args():game.background_fps=60
 	game.background_hud_updates="--trace-legacy-hidden-hud" in OS.get_cmdline_user_args()
 	if not await wait_for(func():return game.startup_complete,90):quit(1);return
@@ -156,7 +172,7 @@ func run()->void:
 				label="player_"+motion+"_"+setting
 				var began:=Time.get_ticks_msec()
 				while Time.get_ticks_msec()-began<6000:
-					game.app_focused=true
+					update_test_focus()
 					if motion=="turn":game.yaw=initial_yaw+float(Time.get_ticks_msec()-began)*TAU/30000.0
 					await process_frame
 		game.player_view.set_feel_enabled(original_feel,false)
@@ -217,7 +233,7 @@ func run()->void:
 	var turn_started:=Time.get_ticks_msec()
 	var deadline:=turn_started+(5000 if short else 30000)
 	while Time.get_ticks_msec()<deadline:
-		game.app_focused=true;game.yaw=initial_yaw+(Time.get_ticks_msec()-turn_started)*TAU/30000.0
+		update_test_focus();game.yaw=initial_yaw+(Time.get_ticks_msec()-turn_started)*TAU/30000.0
 		await process_frame
 	label="settled_idle"
 	await wait_for(func():return false,5 if short else 15)
@@ -286,7 +302,9 @@ func run()->void:
 	record.viewport_occlusion_restored=root.use_occlusion_culling==original_occlusion
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
-	if "--trace-normal-window" in OS.get_cmdline_user_args():okay=okay and unfocused_gameplay_frames==0 and record.presentation.background_cap==15
+	if normal_window:
+		okay=okay and unfocused_gameplay_frames==0 and record.presentation.background_cap==15
+		if unfocused_gameplay_frames>0:push_error("Foreground frame capture lost OS focus for %d gameplay frames"%unfocused_gameplay_frames)
 	for arg:String in OS.get_cmdline_user_args():
 		if arg.begins_with("--trace-expected-driver="):okay=okay and record.rendering_driver==arg.get_slice("=",1) and record.rendering_method=="forward_plus"
 	okay=okay and hidden_hud_stable and visible_hud_updated
@@ -296,4 +314,9 @@ func run()->void:
 	if not outdoor_result.is_empty():okay=okay and outdoor_result.ok
 	if not destruction_result.is_empty():okay=okay and destruction_result.ok
 	if not occlusion_result.is_empty():okay=okay and occlusion_result.ok
+	var completion:=FileAccess.open(output.path_join("completion.json"),FileAccess.WRITE)
+	if completion==null:
+		push_error("Could not retain frame-trace completion receipt");quit(1);return
+	completion.store_string(JSON.stringify({"schema":1,"slot":slot,"ok":okay,"shutdown_saved":saved}))
+	completion.close()
 	print("FRAME_TRACE_WORLD ok=",okay," slot=",slot);quit(0 if okay else 1)

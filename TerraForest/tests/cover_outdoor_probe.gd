@@ -40,7 +40,7 @@ func run(driver:SceneTree,game:Node,output:String)->Dictionary:
 			var began:=Time.get_ticks_msec()
 			if grounded:game.controls.set_key(KEY_D,true,Time.get_ticks_usec())
 			while Time.get_ticks_msec()-began<(int(walk_seconds*1000) if grounded else 4000):
-				game.app_focused=true
+				driver.update_test_focus()
 				if grounded:
 					movement_frames+=1
 					if game.player.is_on_floor():grounded_frames+=1

@@ -29,6 +29,7 @@ def main():
     parser.add_argument('--legacy-structure-capture', action='store_true', help='Diagnostic control: serialize structures on the main thread during save')
     parser.add_argument('--gpu-profile', action='store_true', help='Retain engine GPU pass summaries in the console log')
     parser.add_argument('--render-stages', action='store_true', help='Diagnostic only: bounded completed-frame render-device CPU marker gaps')
+    parser.add_argument('--quiet-render-stages', action='store_true', help='Diagnostic only: retain render markers while suppressing per-second engine profile printing')
     parser.add_argument('--require-native-process-profiles', action='store_true', help='Require current gameplay block/model/light callback samples')
     parser.add_argument('--script-profile', action='store_true', help='Diagnostic only: enable the engine script debugger profiler')
     parser.add_argument('--render-inventory', action='store_true', help='Inspect scene geometry/light candidates after all frame timings are saved')
@@ -64,6 +65,8 @@ def main():
         parser.error('--require-native-process-profiles requires the recorder')
     if args.render_stages and args.without_trace:
         parser.error('--render-stages requires the rolling recorder')
+    if args.quiet_render_stages and (not args.render_stages or args.verbose):
+        parser.error('--quiet-render-stages requires --render-stages and excludes --verbose')
     if args.render_full_detail and not args.render_partition:
         parser.error('--render-full-detail requires --render-partition')
     if not args.source.startswith('StartupBench_FPS_') or not args.label.isidentifier():
@@ -146,6 +149,8 @@ def main():
         command.insert(1, '--verbose')
     if args.gpu_profile or args.render_stages:
         command.insert(1, '--gpu-profile')
+    if args.quiet_render_stages:
+        command.insert(1, '--quiet')
     if args.render_stages:
         command += ['--frame-trace-render-stages']
     if args.script_profile:
@@ -198,7 +203,17 @@ def main():
                 'addons/world_ecosystem/boulder_horizon.gd', 'addons/volumetric_water/lake_world.gd')}
     manifest = folder / 'run.json'
     manifest.write_text(json.dumps(record, indent=2), encoding='utf-8')
-    record['result'] = execute(command, folder, 300, 'FRAME_TRACE_WORLD ok=true')
+    record['result'] = execute(command, folder, 300, '' if args.quiet_render_stages else 'FRAME_TRACE_WORLD ok=true')
+    if args.quiet_render_stages:
+        completion_path = folder / 'completion.json'
+        try:
+            completion = json.loads(completion_path.read_text(encoding='utf-8'))
+        except (ValueError, OSError):
+            completion = {}
+        verified = completion == dict(schema=1, slot=slot, ok=True, shutdown_saved=True)
+        record['result']['required_text_found'] = None
+        record['result']['completion_file_verified'] = verified
+        record['result']['passed'] &= verified
     if args.script_profile:
         record['result']['script_profiler_started'] = 'BEGIN PROFILING' in (folder / 'console.log').read_text(encoding='utf-8', errors='replace')
         record['result']['passed'] &= record['result']['script_profiler_started']
