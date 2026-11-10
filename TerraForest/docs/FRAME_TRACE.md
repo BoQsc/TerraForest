@@ -201,6 +201,14 @@ they are not production fixes or saved preference changes.
 The wrapper makes a new owned clone of the retained fresh-default fixture and
 records source/package hashes, resource counters, console output and trace files:
 
+Before creating files it checks the existing hard free-space reserve plus the
+source clone size and planned report allowance (256 MiB with traces, 32 MiB
+without). Package/native pairing is checked at the same point. The existing
+10 GiB warning is reported and the planned storage retained in `run.json`.
+The eight trace files are bounded **per session**, not across report directories;
+world clones and historical reports still need an archival lifecycle. See the
+[storage audit and open work](../issues/runtime-performance/storage-audit-2026-11-10.md).
+
 ```text
 python TerraForest/tools/check_frame_trace_world.py --short --save --label source_capture
 python TerraForest/tools/check_frame_trace_world.py --short --save --executable --label installed_capture

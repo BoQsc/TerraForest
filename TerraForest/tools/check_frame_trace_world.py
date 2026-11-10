@@ -12,6 +12,7 @@ from clone_world import clone_once
 from play_checkpoint import revision_metadata
 from run import ROOT, parse_args
 from run_godot_check import execute, verify_pack_native
+from resource_limits import load_budgets, require_free_space
 
 
 def main():
@@ -66,11 +67,35 @@ def main():
     if not args.source.startswith('StartupBench_FPS_') or not args.label.isidentifier():
         parser.error('Use an owned FPS fixture and an identifier label')
     config, _ = parse_args([])
+    worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
+    clone_bytes = 0
+    for suffix in ('.trw', '.trw.regions', '.trw.models', '.trw.water', '.trw.terrain',
+                   '.trw.baselines', '.preview', '.generation.json', '.presentation.json'):
+        source = worlds / (args.source + suffix)
+        if source.is_dir():
+            clone_bytes += sum(p.stat().st_size for p in source.rglob('*') if p.is_file())
+        elif source.is_file():
+            clone_bytes += source.stat().st_size
+    # Preflight before creating a save clone or report folder. Reserve expected
+    # capture space as well as the existing hard free-space floor; never lower it.
+    report_bytes = (256 if not args.without_trace else 32) * 2**20
+    require_free_space(worlds, clone_bytes + report_bytes)
+    require_free_space(ROOT, clone_bytes + report_bytes)
+    native = verify_pack_native() if args.executable else None
+    limits = load_budgets()
+    storage = dict(source_clone_bytes=clone_bytes, planned_capture_bytes=report_bytes,
+                   minimum_free_bytes=limits['minimum_free_bytes'],
+                   free_space_warning_bytes=limits['free_space_warning_bytes'],
+                   free_before=shutil.disk_usage(ROOT).free,
+                   scope='Preflight before cloning; retained evidence/worlds are not automatically deleted')
+    if storage['free_before'] < limits['free_space_warning_bytes']:
+        print('STORAGE_WARNING: {:.2f} GiB free, below the existing {:.0f} GiB warning; '
+              'review retained development artifacts before further batches.'.format(
+                  storage['free_before'] / 2**30, limits['free_space_warning_bytes'] / 2**30), flush=True)
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder = ROOT / 'reports/performance_changes' / (stamp + '_' + args.label)
     folder.mkdir(parents=True)
     slot = 'StartupBench_FPS_' + stamp[:-1]
-    worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
     copied = clone_once(worlds, args.source, slot)
     (worlds / (slot + '.diagnostic.json')).write_text(json.dumps({
         'owner': 'check_frame_trace_world', 'source': args.source,
@@ -82,7 +107,6 @@ def main():
             shutil.copytree(source, target)
         elif source.is_file():
             shutil.copy2(source, target)
-    native = verify_pack_native() if args.executable else None
     runtime = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')] if args.executable else []
     command = [str(ROOT / 'TerraForest.exe' if args.executable else config.godot), *runtime,
                '--path', str(ROOT / 'dist' if args.executable else ROOT), '--windowed', '--position', '-2400,-1600',
@@ -150,7 +174,7 @@ def main():
         command += ['--trace-uncapped']
     if not args.without_trace:
         command += ['--frame-trace', '--frame-trace-dir=' + str(folder / 'traces')]
-    record = dict(command=command, clone=copied, **revision_metadata())
+    record = dict(command=command, clone=copied, storage_preflight=storage, **revision_metadata())
     record['diagnostic_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                   for p in [ROOT/'tests/frame_trace_world.gd', ROOT/'tests/render_inventory.gd',
                                             ROOT/'tests/render_partition_probe.gd', ROOT/'tests/render_occlusion_probe.gd', ROOT/'tests/cover_outdoor_probe.gd', ROOT/'tests/destruction_load_probe.gd',

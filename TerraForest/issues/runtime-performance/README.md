@@ -1,5 +1,11 @@
 # Runtime performance
 
+[Storage audit](storage-audit-2026-11-10.md) confirms accumulated development
+outputs: 22.67 GiB reports and 5.41 GiB across 113 FPS fixture slots. The launcher
+now reserves clone/report space before writing anything and retains the approved
+2 GiB floor. Existing trace compression preserves every content hash; aggregate
+archival retention and the remaining renderer stalls are still open.
+
 [Canopy snapshot stalls](canopy-snapshot-2026-11-10.md) are confirmed in normal
 fullscreen walking: main-thread snapshot preparation reaches 5.333 ms. A native
 buffer removes repeated dictionary traversal while preserving exact shadow-mask

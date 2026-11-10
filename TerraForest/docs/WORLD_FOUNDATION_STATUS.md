@@ -1,5 +1,15 @@
 ## Approved FPS pacing retained - 2026-11-10
 
+[Development storage audit](../issues/runtime-performance/storage-audit-2026-11-10.md)
+records the accumulated report/build/world copies and the failed late launch
+preflight. Reserve plus planned clone/capture space is now checked before files
+are created; the approved limits remain intact. Hash-verified trace compression
+recovers space without losing evidence. Aggregate archival retention remains
+unfinished: preserve referenced evidence and source fixtures, establish explicit
+ownership for retirement, and account for output before further large batches.
+The blocked renderer-marker attempt supplied no gameplay evidence; resume it
+when maintenance is idle and the reserve plus planned work is available.
+
 [Canopy snapshot preparation](../issues/runtime-performance/canopy-snapshot-2026-11-10.md)
 is another confirmed source of stalls: up to 5.333 ms on the main thread in a
 foreground fullscreen 88 m walk. Native snapshot/index correctness and debug/
