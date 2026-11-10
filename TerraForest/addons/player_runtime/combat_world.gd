@@ -25,7 +25,7 @@ var blast_jobs:Array[Dictionary]=[]
 var destruction_trace=preload("res://addons/player_runtime/destruction_trace.gd").new()
 var destruction_coordinator:RefCounted
 var native_blast_batches:=not OS.get_cmdline_user_args().has("--legacy-blast-batches")
-var blast_water_settling:=OS.get_cmdline_user_args().has("--blast-water-settling")
+var blast_water_settling:=OS.get_cmdline_user_args().has("--blast-water-settling") or OS.get_cmdline_user_args().has("--terrain-water-settling")
 var destruction_commit_active:=false
 var reload_slot:=-1
 var reload_epoch:=-1
@@ -59,6 +59,7 @@ func prepare(host:Node)->bool:
 	action_input_owned=func()->bool:return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 	if state==null or destruction_coordinator==null or barrels==null:return false
 	game.terrain.edit_measured.connect(_trace_terrain_publication)
+	game.lakes.settling_enabled=func()->bool:return blast_water_settling
 	game.lakes.settling_active=func()->bool:return blast_water_settling and active()
 	impact_audio=preload("res://addons/player_runtime/firearm_impact_audio.gd").new()
 	add_child(impact_audio);add_child(effects);effects.blocks=game.structures.blocks;integrity.attach(game,self)
@@ -309,9 +310,8 @@ func detonate(id:int)->bool:
 	# The same native density edit, publication, water, vegetation and save path
 	# as mining. The environmental admission does not pay mining rewards.
 	if not game.mining_rewards.excavate_blast(base+Vector3.UP*.2,3.5):return false
-	# Persist the wake before the blast is consumed. Water waits for committed
-	# terrain occupancy, then conservatively settles with bounded native work.
-	if blast_water_settling:game.lakes.water.settle_after_edit(AABB(center-Vector3.ONE*4,Vector3.ONE*8))
+	# Water wake-up belongs to the shared committed terrain-edit listener.
+	# Mining and explosions therefore use the same revision and pause rules.
 	var trace_identity:=""
 	if destruction_trace.enabled:
 		trace_identity=destruction_trace.trigger(game.terrain.epoch,id,Engine.get_physics_frames(),Time.get_ticks_usec())

@@ -19,8 +19,9 @@ collision check changed.
 
 Water was intentionally static under the October gameplay contract: terrain
 invalidation rebuilt occupancy but never redistributed water. The clarified
-November request supersedes that behavior for blast-affected water. A native
-prototype wakes local regions after accepted blast submission, waits for valid
+November request supersedes that behavior for terrain-edited water. A native
+prototype now wakes local regions from the shared committed terrain revision
+(mining and explosions), including commits while paused, and waits for valid
 terrain occupancy, moves integer quantities down and through connected faces,
 and sleeps again. It reuses exact terrain/building profiles and existing mesh/query
 publication. No per-cell nodes, global fluid tick or source of new water is added.
@@ -136,3 +137,13 @@ Use `tools/run_godot_check.py` with `combat_remote_blast`,
 `combat_remote_world.gd` uses the existing fixture and must be launched offscreen
 and nonactivating while foreground checks remain deferred; its exact command is
 in the retained run manifest. Do not generate a replacement world for a label.
+
+### Shared mining wake - 2026-11-10
+
+`lake_world` now queues settling from `terrain.region_changed`, not the earlier
+explosion-only submission callback. `--terrain-water-settling` aliases the
+existing opt-in flag; the default stays off. Advancement retains its separate
+active-gameplay gate. Source `20261110T154414593064Z` passes 25 checks including
+paused commit, unchanged quantities before advancement, mining/blast shared wake,
+save interruption and conservative redistribution. This is not installation or
+visual/performance acceptance; the mesh and timing blockers above remain.

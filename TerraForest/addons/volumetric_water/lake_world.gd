@@ -34,6 +34,7 @@ var _epoch:=-1
 var offline_preparation:=false
 var loading_active:Callable
 var settling_active:Callable
+var settling_enabled:Callable
 var _filling_id:=0
 var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
@@ -118,6 +119,7 @@ func _ready() -> void:
  _material.shader=preload("res://addons/volumetric_water/water.gdshader")
  _material.set_shader_parameter("ripple_normal",preload("res://addons/volumetric_water/textures/water_ripples_normal.png"))
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
+ terrain.region_changed.connect(_settle_committed_edit)
  terrain.water_edit_admission=func(bounds:AABB,_selected:Array)->bool:return not water.has_deferred_overlap(bounds.grow(0.5))
  terrain.solid_deposited.connect(func(bounds:AABB):water.invalidate(bounds,true))
  # Mining is admitted normally. Invalid regions retain their water and wait for
@@ -163,6 +165,10 @@ func clear(preserve_store:bool=false) -> void:
   var empty:=PackedByteArray();empty.resize(500*500);empty.fill(0);_surrounding_ocean.publish(empty)
  _discard_builder()
  _have_bounds=false;_last_changes=0
+func _settle_committed_edit(bounds:AABB,_revision:int)->void:
+ # Mining, blasts and other terrain edits share the committed revision. Queue
+ # even while paused; advancement remains separately gated by gameplay state.
+ if settling_enabled.is_valid() and settling_enabled.call():water.settle_after_edit(bounds)
 func _invalidate(bounds:AABB) -> void:
  _occupancy_failure=""
  water.invalidate(bounds)

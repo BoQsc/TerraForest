@@ -88,5 +88,17 @@ func _initialize()->void:
 	water=fixture({high:[0,500,125000],low:[0,500,0]})
 	water.settle_after_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5));settle(water)
 	check(amounts(water)=={low:125000},"settling crosses a resident region seam")
+	var lake=preload("res://addons/volumetric_water/lake_world.gd").new()
+	lake.water=fixture({high:[0,500,125000],low:[0,500,0]})
+	lake.settling_enabled=func()->bool:return false
+	lake._settle_committed_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5),1)
+	check(lake.water.statistics().settling_regions==0,"unqualified water flow stays disabled by default")
+	lake.settling_enabled=func()->bool:return true
+	lake.settling_active=func()->bool:return false
+	lake._settle_committed_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5),2)
+	check(lake.water.statistics().settling_regions>0 and amounts(lake.water)=={high:125000},"committed mining/blast edit queues conserved water even while paused")
+	settle(lake.water)
+	check(amounts(lake.water)=={low:125000},"shared terrain publication wake settles into newly opened space")
+	lake.free()
 	print("WATER_BLAST_SETTLING checks=",checks," failures=",failures)
 	quit(1 if failures else 0)
