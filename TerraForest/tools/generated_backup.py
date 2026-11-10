@@ -16,6 +16,7 @@ import re
 import shutil
 import subprocess
 import urllib.parse
+import urllib.error
 import urllib.request
 import zipfile
 
@@ -100,9 +101,13 @@ def source_path(record, row):
 
 
 def groups(record, maximum=512*2**20):
-    objects = {r['sha256']: r for r in record['files']}
+    # Keep related paths near one another so a single report restore does not
+    # require every volume. Shared objects retain their first catalog owner.
+    objects = {}
+    for row in record['files']:
+        objects.setdefault(row['sha256'], row)
     batch, size = [], 0
-    for key, row in sorted(objects.items()):
+    for row in sorted(objects.values(), key=lambda r:r['path']):
         if row['bytes'] > 1800 * 2**20:
             raise ValueError('Object requires chunking before publication: ' + row['path'])
         if batch and size + row['bytes'] > maximum:
@@ -152,7 +157,8 @@ class GitHub:
 
     def request(self, path, data=None, method=None):
         body = None if data is None else json.dumps(data).encode()
-        request = urllib.request.Request(self.base + path, data=body, headers=self.headers, method=method)
+        request = urllib.request.Request(self.base + path, data=body,
+            headers={**self.headers, 'Content-Type':'application/json'}, method=method)
         with urllib.request.urlopen(request, timeout=60) as response:
             return json.load(response)
 
@@ -187,6 +193,63 @@ class GitHub:
             raise ValueError('Remote asset is incomplete')
         if remote.get('digest') != 'sha256:' + expected['sha256']:
             raise ValueError('Remote SHA-256 differs or is unavailable; local volume retained')
+
+    def download(self, asset_id):
+        class NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                return None
+        request = urllib.request.Request(self.base + '/releases/assets/' + str(asset_id),
+            headers={**self.headers, 'Accept':'application/octet-stream'})
+        try:
+            return urllib.request.build_opener(NoRedirect).open(request, timeout=60)
+        except urllib.error.HTTPError as error:
+            if error.code != 302:
+                raise
+            location = error.headers['Location']
+            target = urllib.parse.urlsplit(location)
+            if target.scheme != 'https' or target.hostname != 'release-assets.githubusercontent.com':
+                raise ValueError('Unexpected asset download destination')
+            # Signed object URL needs no GitHub credential; never forward it.
+            return urllib.request.urlopen(location, timeout=60)
+
+
+def read_json(path):
+    opener = gzip.open if path.suffix == '.gz' else open
+    with opener(path, 'rt', encoding='utf-8') as source:
+        return json.load(source)
+
+
+def download(catalog_path, receipt_path, folder, prefix=''):
+    record, receipt = read_json(catalog_path), read_json(receipt_path)
+    if receipt.get('complete') is not True:
+        raise ValueError('Backup publication is incomplete')
+    wanted = {r['sha256'] for r in record['files'] if r['path'].startswith(prefix)}
+    assets = [a for a in receipt['assets'] if wanted.intersection(a['objects'])]
+    if wanted - {key for a in assets for key in a['objects']}:
+        raise ValueError('Backup index omits required objects')
+    ordinary_ancestors(folder); folder.mkdir(parents=True, exist_ok=True)
+    require_free_space(folder, sum(a['bytes'] for a in assets if not (folder / a['name']).exists()))
+    api = GitHub(receipt['repository'])
+    for asset in assets:
+        if not re.fullmatch(r'objects-[0-9]{3}\.zip', asset['name']):
+            raise ValueError('Unsafe volume name')
+        destination = folder / asset['name']
+        if destination.exists():
+            ordinary(destination)
+            if destination.stat().st_size != asset['bytes'] or digest(destination) != asset['sha256']:
+                raise ValueError('Existing download differs; retained for inspection')
+            continue
+        api.verify_asset(asset, asset)
+        checksum, size = hashlib.sha256(), 0
+        with api.download(asset['id']) as source, destination.open('xb') as output:
+            while block := source.read(1024*1024):
+                size += len(block)
+                if size > asset['bytes']:
+                    raise ValueError('Download exceeds recorded size')
+                output.write(block); checksum.update(block)
+        if size != asset['bytes'] or checksum.hexdigest() != asset['sha256']:
+            raise ValueError('Downloaded volume failed verification')
+        print('Downloaded and verified', asset['name'], flush=True)
 
 
 def publish(catalog_path, folder, repository, branch, tag):
@@ -245,9 +308,7 @@ def publish(catalog_path, folder, repository, branch, tag):
 
 
 def restore(catalog_path, volumes, destination, prefix=''):
-    opener = gzip.open if catalog_path.suffix == '.gz' else open
-    with opener(catalog_path, 'rt', encoding='utf-8') as source:
-        record = json.load(source)
+    record = read_json(catalog_path)
     ordinary_ancestors(destination)
     if destination.exists():
         raise FileExistsError('Restore requires a new directory')
@@ -289,11 +350,14 @@ if __name__ == '__main__':
     make = sub.add_parser('catalog'); make.add_argument('spec', type=Path); make.add_argument('output', type=Path)
     send = sub.add_parser('publish'); send.add_argument('catalog', type=Path); send.add_argument('folder', type=Path)
     send.add_argument('--repository', required=True); send.add_argument('--branch', required=True); send.add_argument('--tag', required=True)
+    fetch = sub.add_parser('download'); fetch.add_argument('catalog', type=Path); fetch.add_argument('receipt', type=Path); fetch.add_argument('folder', type=Path); fetch.add_argument('--prefix', default='')
     unpack = sub.add_parser('restore'); unpack.add_argument('catalog', type=Path); unpack.add_argument('volumes', type=Path); unpack.add_argument('destination', type=Path); unpack.add_argument('--prefix', default='')
     args = parser.parse_args()
     if args.action == 'catalog':
         catalog(json.loads(args.spec.read_text()), args.output)
     elif args.action == 'publish':
         publish(args.catalog, args.folder, args.repository, args.branch, args.tag)
+    elif args.action == 'download':
+        download(args.catalog, args.receipt, args.folder, args.prefix)
     else:
         print(restore(args.catalog, args.volumes, args.destination, args.prefix))
