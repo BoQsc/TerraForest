@@ -88,7 +88,13 @@ func run() -> void:
 	check(world.tiles.size()==4,"four native fine regions installed")
 	for key in world.visible_cut:
 		check(originals[key].node.visible and originals[key].body.collision_layer==1,"initial visual and collider active %s" % key)
+		check(PhysicsServer3D.body_get_space(originals[key].body.get_rid()).is_valid(),"published terrain compound is registered in physics")
 	var old_heights: Array[float] = await physics_hits(originals,"physics ray sees original collider")
+	for key in world.visible_cut:
+		world._set_active(originals[key],false)
+		check(originals[key].body.collision_layer==0 and PhysicsServer3D.body_get_space(originals[key].body.get_rid()).is_valid(),"cached compound stays registered without collision participation")
+		world._set_active(originals[key],true)
+		check(originals[key].body.process_mode==Node.PROCESS_MODE_INHERIT and originals[key].body.collision_layer==1,"cached compound reactivation preserves prepared physics ownership")
 	# An obsolete reply must not clear a newer in-flight request or enter staging.
 	var first: Vector3i = world.visible_cut[0]
 	world.stamps[first] = 1
@@ -122,6 +128,8 @@ func run() -> void:
 		data.ticket = 3
 		world._receive(data)
 		drain()
+		var prepared_body:StaticBody3D=world.staged_batch[key].body
+		check(prepared_body.collision_layer==0 and PhysicsServer3D.body_get_space(prepared_body.get_rid()).is_valid(),"replacement compound prepares incrementally on collision layer zero")
 		var untouched := true
 		for old_key in originals:
 			untouched = untouched and world.tiles[old_key]==originals[old_key] and originals[old_key].node.visible and originals[old_key].body.collision_layer==1
@@ -134,6 +142,8 @@ func run() -> void:
 	check(world.pending_edit and world.staged_batch.size()==4,"obsolete completion cannot publish batch")
 	world._receive({"kind":"edit_done","epoch":world.epoch,"ticket":3,"build_total_ms":0.0,"worker_finished_us":Time.get_ticks_usec()})
 	check(not world.pending_edit and world.published_revision==1 and world.staged_batch.is_empty(),"matching completion publishes once")
+	for old_key in originals:
+		check(not PhysicsServer3D.body_get_space(originals[old_key].body.get_rid()).is_valid() and PhysicsServer3D.body_get_space(world.tiles[old_key].body.get_rid()).is_valid(),"publication replaces physics ownership without a ghost compound")
 	world._receive({"kind":"edit_done","epoch":world.epoch,"ticket":3,"build_total_ms":0.0,"worker_finished_us":Time.get_ticks_usec()})
 	check(world.published_revision==1,"duplicate completion cannot republish the finished transaction")
 	for key in world.visible_cut:

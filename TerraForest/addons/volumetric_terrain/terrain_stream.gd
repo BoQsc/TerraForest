@@ -865,12 +865,18 @@ func _staging_valid(data: Dictionary) -> bool:
 		return int(data["light_ticket"]) == int(lighting_dirty.get(key, -1))
 	return true
 
-func _destroy_entry(entry: Dictionary) -> void:
+func _detach_retired_collision(entry: Dictionary) -> void:
+	# Layer zero alone still rebuilds Jolt compounds when shapes are freed.
+	# Only retiring entries leave physics; cached LOD entries stay registered.
 	if entry.has("bricks"):
-		for child: Dictionary in entry.bricks.values(): _set_active(child,false,true)
+		for child: Dictionary in entry.bricks.values(): _detach_retired_collision(child)
 	var body: StaticBody3D = entry.get("body")
 	if is_instance_valid(body):
 		body.collision_layer = 0
+		body.process_mode = Node.PROCESS_MODE_DISABLED
+
+func _destroy_entry(entry: Dictionary) -> void:
+	_detach_retired_collision(entry)
 	var node: Node3D = entry.get("node")
 	if is_instance_valid(node):
 		node.visible = false

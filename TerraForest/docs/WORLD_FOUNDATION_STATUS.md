@@ -1,3 +1,15 @@
+## World/player headroom and terrain retirement - 2026-11-10
+
+[Measurements, rejected experiments and retained fix](../issues/runtime-performance/world-player-headroom-2026-11-10.md)
+record the valid installed baseline: walking p99 21.028 ms / maximum 37.807 ms.
+The renderer gap remains open. Detached preparation and prewarming experiments
+regressed terrain activation and are removed. Only obsolete collision-body
+retirement is changed; cached registration, incremental preparation and approved
+limits remain intact. Actual publication, worker/slab and installed gameplay
+checks pass. Walking p99/max is 20.525/22.202 ms; a 39.991 ms recovery frame
+contains a 22.508 ms occlusion-update gap. Renderer dispatch diagnosis continues. Existing destruction-view terrain/vegetation
+visual defects remain open. Stable 60 FPS with headroom is not achieved.
+
 ## Ground-cover render selection - 2026-11-10
 
 [Measured native selection work](../issues/runtime-performance/render-selection-2026-11-10.md)
@@ -7,10 +19,11 @@ preserving all page/byte/upload limits and placement payloads. GPU partition
 checks and headless static-placement checks pass; the GPU static-placement run
 retains its failed exclusive-fullscreen assertion. Release static-placement and
 GPU partition checks also pass; both native DLLs are installed with all 14 pairs
-matching and the PCK unchanged. The normal-world run lost focus for 1,519 gameplay
-frames and is rejected; its walking/destruction checks did not complete. Saves
-passed. A valid foreground comparison, draw/physics stall fixes and stable 60 FPS
-with headroom remain open; the component result is not whole-world acceptance.
+matching and the PCK unchanged at installation. The initial normal-world attempt
+lost focus and remains rejected. The subsequent installed capture `094742623629`
+passes walking, destruction and saving with zero lost-focus samples. Draw/physics
+stall fixes and stable 60 FPS with headroom remain open; the component result and
+functional pass are not whole-world performance acceptance.
 
 ## Approved FPS pacing retained - 2026-11-10
 

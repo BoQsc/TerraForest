@@ -66,7 +66,9 @@ reject lost focus. The earlier valid quiet baseline above passed; later
 `084113618751`, `084728067330` and this changed-build run are rejected controls,
 not performance comparisons. These harness changes are not runtime FPS fixes.
 
-Remaining closure requires a valid foreground walking/destruction comparison,
-visual comparison and investigation of the remaining draw/physics stalls. Do not
-infer stable FPS from this isolated benchmark. No further large world captures
-are justified until a usable foreground comparison can be obtained.
+The subsequent installed capture `20261110T094742623629Z_world_player_headroom`
+passes with zero lost-focus samples, grounded walking, barrel destruction and
+saves. This closes the missing functional gameplay check. Walking p99 remains
+21.028 ms and maximum 37.807 ms; there is no claim of stable FPS or an isolated
+whole-game gain. [Current world/player investigation](world-player-headroom-2026-11-10.md)
+tracks the remaining renderer wait and collision-preparation costs.
