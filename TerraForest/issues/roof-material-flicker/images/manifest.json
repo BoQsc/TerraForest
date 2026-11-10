@@ -1,0 +1,26 @@
+[
+  {
+    "path": "reports\\checks\\20261110T133532774772Z_roof_baseline_roi\\roof_actual.png",
+    "sha256": "adb9855065210c0e9c064fbf103daaeacaa69873ae11ff9cb12b4055bb89b3b2",
+    "label": "baseline",
+    "provenance": "Original TerraForest test render, existing project zinc texture; existing asset licenses retained; no new imported art."
+  },
+  {
+    "path": "reports\\checks\\20261110T133532774772Z_roof_baseline_roi\\roof_reference.png",
+    "sha256": "519cb1882e31a6f4b930d0258b6f90a5a51d46f3d6fc9e651311f14a62d1135f",
+    "label": "baseline",
+    "provenance": "Original TerraForest test render, existing project zinc texture; existing asset licenses retained; no new imported art."
+  },
+  {
+    "path": "reports\\checks\\20261110T133647824922Z_roof_candidate\\roof_actual.png",
+    "sha256": "519cb1882e31a6f4b930d0258b6f90a5a51d46f3d6fc9e651311f14a62d1135f",
+    "label": "candidate",
+    "provenance": "Original TerraForest test render, existing project zinc texture; existing asset licenses retained; no new imported art."
+  },
+  {
+    "path": "reports\\checks\\20261110T133647824922Z_roof_candidate\\roof_reference.png",
+    "sha256": "519cb1882e31a6f4b930d0258b6f90a5a51d46f3d6fc9e651311f14a62d1135f",
+    "label": "candidate",
+    "provenance": "Original TerraForest test render, existing project zinc texture; existing asset licenses retained; no new imported art."
+  }
+]

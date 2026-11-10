@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Roof material flicker](roof-material-flicker/README.md) | Fixed for reproduced shader case / world review pending | Flat categorical material codes preserve zinc shading during camera motion; eight rendered reference comparisons and 19 roof checks pass |
 | [PX9 Eclipse handgun](px9-handgun/README.md) | First-person accepted / impact feedback trial | Corrected live hands, running/jump state and empty-magazine locomotion, paired animations, native 15-round magazine, pistol/reload SFX and procedural muzzle flash/light/smoke; combined master checks pass; installed build unchanged |
 | [Last World browser flash](last-world-startup/README.md) | Fixed for reproduced path / desktop review pending | Loading cover starts before save scan, survives auto-continue dispatch and falls back on errors; 11 source + 11 executable presentation checks pass |
 | [Generic held-item hand posing](generic-item-hand-pose/README.md) | First version selected / further tuning deferred | User preferred the integrated first animation; revision 02 retained as a rejected comparison; baseline stiffness remains a known limitation |

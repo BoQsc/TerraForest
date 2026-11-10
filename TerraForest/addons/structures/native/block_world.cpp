@@ -663,10 +663,16 @@ void NativeBlockWorld::ensure_material() {
 shader_type spatial;
 uniform sampler2DArray tiles : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2DArray appearances : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
+// Material codes are categorical. Perspective interpolation must not change
+// metal/roughness selection or the joint flag while the camera moves.
+varying flat float material_code;
+void vertex() {
+    material_code = floor(UV2.x + 0.5);
+}
 void fragment() {
-    float layer = mod(UV2.x,16.0);
+    float layer = mod(material_code,16.0);
     ALBEDO = layer < 3.5 ? texture(tiles,vec3(UV,layer)).rgb : texture(appearances,vec3(UV,layer-4.0)).rgb;
-    if (UV2.x > 15.5) {
+    if (material_code > 15.5) {
         vec2 edge = min(fract(UV),1.0-fract(UV));
         float joint = smoothstep(.006,.012+max(fwidth(UV.x),fwidth(UV.y)),min(edge.x,edge.y));
         ALBEDO *= mix(.55,1.0,joint);

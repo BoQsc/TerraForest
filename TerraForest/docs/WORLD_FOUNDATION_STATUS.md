@@ -1,3 +1,14 @@
+## Roof material flicker - 2026-11-10
+
+The native building shader now carries rounded, flat material IDs; interpolated
+IDs could incorrectly switch zinc pixels between metal and non-metal shading.
+Eight offscreen moving-camera comparisons match the exact-zinc reference, and
+19 roof geometry checks pass. Structures-only DLLs installed with verified hashes;
+textures, geometry, approved limits and the PCK are unchanged. Normal-world
+movement review awaits resumed foreground testing and user visual review. See
+[the issue](../issues/roof-material-flicker/README.md) for before/after evidence,
+rejected checks and closure requirements. FPS/destruction work remains open below.
+
 ## Next-tick destruction implementation - 2026-11-10
 
 Native field/mesh follow-up: the opt-in cohort preparation API and exact shading
