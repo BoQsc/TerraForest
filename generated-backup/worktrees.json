@@ -1,0 +1,54 @@
+[
+  {
+    "worktree": "C:/Users/windows10/.codex/worktrees/character-integration/Godot Terrain",
+    "HEAD": "c50d433008c16a4342f035971d40b6e4bc6691c6",
+    "branch": "refs/heads/codex/character-integration",
+    "prunable": "gitdir file points to non-existent location",
+    "exists": false
+  },
+  {
+    "worktree": "C:/Users/windows10/.codex/worktrees/door-content/Godot Terrain",
+    "HEAD": "e34d9b7425c9d23c608c371909ef6c43a4ccba76",
+    "branch": "refs/heads/codex/door-content",
+    "exists": true,
+    "status": "",
+    "unique_commits": [
+      "e34d9b7425c9d23c608c371909ef6c43a4ccba76 Record BG5 integration and installed-pack validation",
+      "351473388f575f283120ec799255816189898aad Prepare supplied BG5 models for native runtime and GLB mods"
+    ]
+  },
+  {
+    "worktree": "C:/Users/windows10/.codex/worktrees/px9-handgun/Godot Terrain",
+    "HEAD": "a0079d05094b13a5c47439a8a118ebf871a359aa",
+    "branch": "refs/heads/codex/px9-handgun",
+    "exists": true,
+    "status": "",
+    "unique_commits": []
+  },
+  {
+    "worktree": "C:/Users/windows10/.codex/worktrees/seeded-world-regions/Godot Terrain",
+    "HEAD": "521aaa27d74e5ebdadddec7c6ee93451279ac633",
+    "exists": true,
+    "status": "",
+    "unique_commits": []
+  },
+  {
+    "worktree": "C:/Users/windows10/.codex/worktrees/trader-civic-buildings/Godot Terrain",
+    "HEAD": "967271e23c0ddbd672bf518efae009ee138b7e13",
+    "branch": "refs/heads/codex/trader-civic-buildings",
+    "exists": true,
+    "status": "",
+    "unique_commits": [
+      "967271e23c0ddbd672bf518efae009ee138b7e13 Record installed town signs and entry fly-in verification",
+      "6259def4d8dd3fc1f2303c9bb9761af554e5726d Record town signs integration prerequisite and final review trigger",
+      "2c0de2783333b4684dadf19f8f85a708521da504 Add persistent named town signs along approach roads",
+      "13145a68ac8d7336f053e4a93f867930b4d4fbb1 Keep camera package checks from activating the desktop window",
+      "30d1af8d1e73cf6ffad1b460e38723e27cea91ea Verify frozen camera package and pin installed validation runner",
+      "a5ad2b4dba6ca94e7a119d26667ba0e018ad8ec0 Retain requested fly-in performance optimization follow-up",
+      "d45ed1152683bbcb02768b447df9640eaf80e79a Measure fly-in frame pacing without capture overhead",
+      "13c90f21bd7d1ed2b2072b594615685e54ad24ff Track integrated fly-in awaiting coordinated installed validation",
+      "e3ee32158ae54e3f8b0ea4d04e033eef9fe20f66 Sync camera worktree with integrated quest and clothing milestone",
+      "d34557e03bd90984ce17589bb75f793c4095c558 Add default-on three-second world entry fly-in"
+    ]
+  }
+]
