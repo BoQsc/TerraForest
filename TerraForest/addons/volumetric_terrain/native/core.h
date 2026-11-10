@@ -66,7 +66,15 @@ struct PageAccess {
  virtual void removed(World&,int)=0;
  virtual ~PageAccess()=default;
 };
+// Stack-owned by one serialized edit cohort. Generator inputs cannot change
+// during its lifetime. Exact keyed values; collisions only cause recomputation.
+struct EditHeightCache {
+ struct Entry {u32 key=0xffffffffu;float value=0;};
+ Entry entries[1024];
+ u32 requests=0,hits=0;
+};
 struct World {
+ EditHeightCache *edit_height_cache=nullptr; // Non-owning, never serialized.
  BuildControl *build_control=nullptr;
  Map pages_by_key,blocks; List<Page> pages; List<Cave> caves; List<List<u32>> block_columns;
  u32 *edit_columns=nullptr;
@@ -91,6 +99,7 @@ struct World {
  int surface_style=0;
  // Optional diagnostics, worker-owned and never serialized.
  bool profile_mesh=false;
+ bool cache_mesh_heights=false; // Qualification-only, scoped exact shader inputs.
  mutable float mesh_stage_ms[4]={}; // extraction, simplification, blocks, shading
  mutable GeometryCache *geometry_cache=nullptr;
  // Worker-owned immutable generator samples for the current reconstruction column.
@@ -106,6 +115,7 @@ struct World {
  bool set_block(u32 key,int material);void erase_block(u32 key);
  bool has_geology()const{return generator_id==3||generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id>=REGIONAL_WORLD_GENERATOR_ID;}
  float height(float x,float z,bool developed=true)const;
+ float edit_height(int x,int z)const;
  float inland_height(float x,float z,bool developed)const;
  float regional_height(float x,float z,float original)const;
  bool regional_asphalt(float x,float z)const;

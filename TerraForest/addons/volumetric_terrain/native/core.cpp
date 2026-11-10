@@ -216,6 +216,16 @@ float World::buildable_height(float x,float z,float original)const{
  float weight=(near_weight*(1.f-blend_z)+far_weight*blend_z)/255.f;
  return terraforest::generation_contact::terrain_height(original,weight,generator_id>=EMBED_REGION_GENERATOR_ID);
 }
+static float cached_height(const World &world,EditHeightCache *storage,int x,int z){
+ if(!storage||x<0||z<0||x>WORLD||z>WORLD)return world.height(float(x),float(z));
+ auto &cache=*storage;const u32 key=u32(x)|(u32(z)<<12);
+ // A contiguous 32x32 lattice window occupies distinct slots. A general hash
+ // needlessly evicted neighboring samples in overlapping explosion footprints.
+ auto &entry=cache.entries[(u32(x)&31)|((u32(z)&31)<<5)];++cache.requests;
+ if(entry.key==key){++cache.hits;return entry.value;}
+ entry.value=world.height(float(x),float(z));entry.key=key;return entry.value;
+}
+float World::edit_height(int x,int z)const{return cached_height(*this,edit_height_cache,x,z);}
 float World::height(float x,float z,bool developed)const{
  float h=inland_height(x,z,developed);
   if(surrounding_coast(generator_id)){
@@ -651,12 +661,13 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  auto discard=[&](){staged.release();new_keys.release();planned.release();};
  int x0=fl(lo.x),x1=fl(hi.x),y0=fl(lo.y),y1=fl(hi.y),z0=fl(lo.z),z1=fl(hi.z);
  V3 arch_axis={b.x-a.x,0,b.z-a.z};float arch_inverse=shape==8?1.f/mx(dot(arch_axis,arch_axis),1e-8f):0;
+ const bool point_sphere=edit_height_cache&&shape==0&&a.x==b.x&&a.y==b.y&&a.z==b.z;
  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
-  float h=height(float(x),float(z));int lastpy=-1,idx=-1,reference=0;bool present=false;u32 key=0;
+  float h=edit_height(x,z);int lastpy=-1,idx=-1,reference=0;bool present=false;u32 key=0;
   float arch_floor=shape==8?a.y+(b.y-a.y)*clampf(dot(V3{float(x)-a.x,0,float(z)-a.z},arch_axis)*arch_inverse,0,1)-depth:0;
   for(int y=y0;y<=y1;y++){
    bool graded=shape==2||(shape>=5&&shape<=7),rectangular=shape==5||shape==7,level_caps=shape==6||shape==7;
-   V3 p={float(x),float(y),float(z)};float brush=graded?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index,0,false,rectangular,level_caps):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
+   V3 p={float(x),float(y),float(z)};float brush=graded?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index,0,false,rectangular,level_caps):(shape==1?box_distance(p,b,radius):(point_sphere?length(p-a)-radius:capsule(p,a,b,radius)));
    if(shape==8)brush=mx(brush,arch_floor-p.y);
    float cut=graded&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,shoulder,curve,curve_count,curve_index,clearance,true,rectangular,level_caps,rectangular&&!add):SDF_BAND+1;
    if(brush>SDF_BAND&&cut>SDF_BAND)continue;
@@ -1223,12 +1234,12 @@ static bool has_cover_candidates(const World&w,V3 p,float original_height){
  for(int zz=imx(0,cz-1);zz<=imn(63,cz+1);zz++)for(int xx=imx(0,cx-1);xx<=imn(63,cx+1);xx++)if(w.block_columns[xx+64*zz].n)return true;
  return false;
 }
-static float owned_lattice_height(const World&w,int x,int z){
+static float owned_lattice_height(const World&w,int x,int z,EditHeightCache *cache){
  int rx=x-w.owned_height_x+1,rz=z-w.owned_height_z+1,n=w.owned_height_size+2;
  if(w.owned_height_size>0&&w.owned_height_seed==w.seed&&w.owned_heights.n==n*n&&rx>=0&&rz>=0&&rx<n&&rz<n)return w.owned_heights[rx+n*rz];
- return w.height(float(x),float(z));
+ return cached_height(w,cache,x,z);
 }
-void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
+static void shade_mesh_impl(const World&w,Mesh&m,u32 expected_epoch,EditHeightCache *cache){
  const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
  if(cancelled(w,epoch))return;
  for(int i=0;i<m.v.n;i++){
@@ -1240,7 +1251,7 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
    int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,asphalt=0,paved=0,solid=0,original[8];V3 influence{};
    for(int k=0;k<8;k++){
     int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);u8 mat=0;
-    float sample_height=owned_lattice_height(w,sx,sz);
+    float sample_height=owned_lattice_height(w,sx,sz,cache);
     float original_sample=w.base({float(sx),float(sy),float(sz)},sample_height);
     if(w.generator_id>=REGIONAL_WORLD_GENERATOR_ID && sy>=sample_height-1.5f && sy<=sample_height+1.f && w.regional_asphalt(float(sx),float(sz)))mat=4;
     float base=float(quant(original_sample))/SDF_SCALE;
@@ -1271,6 +1282,10 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
   }
  }
  if(!cancelled(w,epoch))shade_visibility(w,m,epoch);
+}
+void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
+ if(w.cache_mesh_heights){EditHeightCache cache;shade_mesh_impl(w,m,expected_epoch,&cache);}
+ else shade_mesh_impl(w,m,expected_epoch,nullptr);
 }
 // Project a representative from the cached mesh to the AIR side of the sampled
 // field before testing visibility. Surface Nets representatives need not lie

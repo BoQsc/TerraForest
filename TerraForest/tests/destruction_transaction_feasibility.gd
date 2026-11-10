@@ -6,6 +6,27 @@ extends "res://tests/terrain_worker_publication_probe.gd"
 class CohortBackend extends "res://addons/volumetric_terrain/terrain_backend.gd":
 	var cohort:Array[PackedByteArray]=[]
 	var submitted_commands:=0
+	var native_cohort:=OS.get_cmdline_user_args().has("--native-cohort")
+	func _build(key:Vector3i,allow_base_cache:bool,expected_build_epoch:int,relight_cache:bool=false,brick_bottoms:Array=[],foreground:bool=false)->Dictionary:
+		var result:Dictionary=super._build(key,allow_base_cache,expected_build_epoch,relight_cache,brick_bottoms,foreground)
+		if profile_regions:
+			var stages:PackedByteArray=_call(Codec.command(19))
+			result["region_stages"]={"extraction_ms":stages.decode_float(12),"simplify_ms":stages.decode_float(16),"blocks_ms":stages.decode_float(20),"shading_ms":stages.decode_float(24)}
+		return result
+	func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
+		if not native_cohort:return super._execute_edit_commands(commands,revision_before)
+		var execution:Dictionary=native.execute_explosion_cohort(commands)
+		var changed:Array[bool]=[]
+		var removed_samples:=PackedInt64Array();removed_samples.resize(16)
+		var reply:=PackedByteArray()
+		for index in execution.replies.size():
+			reply=execution.replies[index]
+			var removed:=Codec.excavation_samples(reply)
+			for material in 16:removed_samples[material]+=removed[material]
+			changed.append(execution.revisions[index]!=revision_before);revision_before=execution.revisions[index]
+			if not Codec.reply_ok(reply):removed_samples.fill(0);break
+		print("NATIVE_COHORT_HEIGHTS ",execution.height_hits,"/",execution.height_requests)
+		return {"reply":reply,"changed":changed,"removed":removed_samples}
 	func submit(job:Dictionary,priority:bool=false)->bool:
 		if job.get("kind","")=="edit":
 			job=job.duplicate()
@@ -22,6 +43,7 @@ func run()->void:
 	world.backend.disk_cache.enabled=false
 	check(world.backend.start(true)==OK,"prototype worker starts without saved world or cache")
 	check(await pump_until(func():return world.world_ready),"prototype native world is ready")
+	if OS.get_cmdline_user_args().has("--native-mesh-height-cache"):world.backend.native.configure_mesh_height_cache(true)
 	for z in [1280,1296]:
 		for x in [1280,1296]:world.visible_cut.append(Vector3i(x,z,16))
 	for key in world.visible_cut:
@@ -57,6 +79,8 @@ func run()->void:
 	check(await pump_until(func():return not world.pending_edit),"coalesced native worker and actual physics publication complete")
 	var elapsed_us:=int(publication.get("at_us",Time.get_ticks_usec()))-began
 	var publication_tick:=int(publication.get("tick",Engine.get_physics_frames()))
+	for event:Dictionary in worker_events:
+		if event.kind=="edit_chunk" and not event.region_stages.is_empty():print("DESTRUCTION_MESH_STAGES ",JSON.stringify(event.region_stages))
 	print("DESTRUCTION_PUBLICATION_STAGES ",JSON.stringify({"stage_total_ms":stage_total,"stage_count":stage_count,"note":"Nested stage totals overlap; do not add them together or treat polling waits as CPU execution."}))
 	check(world.backend.submitted_commands==256 and world.latest_member_changes.size()==256,"all 256 ordered sphere commands executed")
 	check(world.published_revision==1 and world.batch_remaining==0,"one atomic terrain publication replaces the cohort")

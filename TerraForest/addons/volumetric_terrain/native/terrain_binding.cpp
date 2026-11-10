@@ -73,6 +73,8 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("execute_explosion_cohort","commands"), &TerrainCore::execute_explosion_cohort);
+        godot::ClassDB::bind_method(godot::D_METHOD("configure_mesh_height_cache","enabled"), &TerrainCore::configure_mesh_height_cache);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_material_deposits","earthworks"), &TerrainCore::material_deposits);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_exploration_sites","layouts","reservations","earthworks","road_stops"), &TerrainCore::exploration_sites,DEFVAL(godot::PackedVector3Array()));
         godot::ClassDB::bind_method(godot::D_METHOD("capture_storage_snapshot"),&TerrainCore::capture_storage_snapshot);
@@ -612,11 +614,44 @@ public:
                                            : __atomic_load_n(&control_.epoch,__ATOMIC_RELAXED);
             return reply(command,0,epoch,true);
         }
+        std::lock_guard<std::mutex> lock(mutex_);
+        return execute_locked(packet);
+    }
+    // Preparation primitive, NOT a rollback-capable destruction transaction.
+    // Preserve every ordered receipt and stop on failure, reporting partial progress.
+    godot::Dictionary execute_explosion_cohort(const godot::Array &commands) {
+        godot::Dictionary out;out["ok"]=false;out["processed"]=0;out["completed"]=0;
+        if(commands.is_empty()||commands.size()>256)return out;
+        for(int i=0;i<commands.size();++i){
+            if(commands[i].get_type()!=godot::Variant::PACKED_BYTE_ARRAY)return out;
+            godot::PackedByteArray p=commands[i];
+            if(p.size()!=44||p.decode_u32(0)!=2||p.decode_u32(32)!=0||p.decode_u32(36)!=0)return out;
+        }
+        std::lock_guard<std::mutex> lock(mutex_);
+        godot::Array replies;godot::PackedInt32Array revisions;
+        if(replies.resize(commands.size())!=godot::OK||revisions.resize(commands.size())!=godot::OK)return out;
+        EditHeightCache cache;world_.edit_height_cache=&cache;
+        bool ok=true;int processed=0,completed=0;
+        for(int i=0;i<commands.size();++i){
+            godot::PackedByteArray p=commands[i];auto response=execute_locked(p);
+            replies[i]=response;revisions.set(i,world_.revision);++processed;
+            if(response.size()<12||response.decode_u32(8)!=0){ok=false;break;}
+            ++completed;
+        }
+        world_.edit_height_cache=nullptr;
+        replies.resize(processed);revisions.resize(processed);
+        out["ok"]=ok;out["processed"]=processed;out["completed"]=completed;out["replies"]=replies;out["revisions"]=revisions;
+        out["height_requests"]=cache.requests;out["height_hits"]=cache.hits;
+        return out;
+    }
+    void configure_mesh_height_cache(bool enabled){std::lock_guard<std::mutex> lock(mutex_);world_.cache_mesh_heights=enabled;}
+private:
+    godot::PackedByteArray execute_locked(const godot::PackedByteArray &packet) {
+        const uint32_t command=packet.decode_u32(0);
         godot::PackedByteArray result;
         const int expected_reply=fixed_edit_reply_size(command);
         const bool edit_reply=expected_reply>0;
         if(edit_reply&&result.resize(expected_reply)!=godot::OK)return {};
-        std::lock_guard<std::mutex> lock(mutex_);
         // Load/reset may reuse revision values; invalidate even a failed attempt.
         if(command==5||command==6){snapshot_epoch_.fetch_add(1);++storage_epoch_;saved_keys_=godot::PackedInt32Array();saved_versions_=godot::PackedInt64Array();storage_reference_=godot::PackedByteArray();storage_load_pending_=false;}
         tr_oom=false;

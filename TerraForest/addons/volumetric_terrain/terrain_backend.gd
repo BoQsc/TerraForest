@@ -527,6 +527,19 @@ func _push(result: Dictionary) -> void:
 func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)
 
+func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
+	var reply:=PackedByteArray()
+	var changed:Array[bool]=[]
+	var removed_samples:=PackedInt64Array();removed_samples.resize(16)
+	for command:PackedByteArray in commands:
+		reply=_call(command)
+		var removed:=Codec.excavation_samples(reply)
+		for material in range(16):removed_samples[material]+=removed[material]
+		var revision_after:int=_call(Codec.command(0)).decode_u32(12)
+		changed.append(revision_after!=revision_before);revision_before=revision_after
+		if not Codec.reply_ok(reply):removed_samples.fill(0);break
+	return {"reply":reply,"changed":changed,"removed":removed_samples}
+
 func _recoverable_edit_rejection(commands:Array,reply:PackedByteArray,before:PackedByteArray,after:PackedByteArray)->bool:
 	if reply.size()<12 or reply.decode_u32(0)!=Codec.REPLY_MAGIC or reply.decode_u32(4) not in [2,3,28,38,41] or reply.decode_u32(8) not in [1,2,3]:return false
 	if not Codec.reply_ok(before) or not Codec.reply_ok(after) or before.size()<16 or after.size()<16 or before.decode_u32(12)!=after.decode_u32(12):return false
@@ -1471,22 +1484,11 @@ func _run() -> void:
 			var support_before:=_edit_support_samples(support_points,before_stats.decode_u32(12))
 			var support_ms:float=(Time.get_ticks_usec()-support_started)/1000.0
 			var begin: int = Time.get_ticks_usec()
-			var reply := PackedByteArray()
 			var commands: Array = job.get("commands", [job["command"]])
-			var member_changed: Array[bool] = []
-			var removed_samples:=PackedInt64Array();removed_samples.resize(16)
-			var revision_before: int = before_stats.decode_u32(12)
-			for command: PackedByteArray in commands:
-				reply = _call(command)
-				var removed:=Codec.excavation_samples(reply)
-				for material in range(16): removed_samples[material]+=removed[material]
-				var member_stats: PackedByteArray = _call(Codec.command(0))
-				var revision_after: int = member_stats.decode_u32(12)
-				member_changed.push_back(revision_after != revision_before)
-				revision_before = revision_after
-				if not Codec.reply_ok(reply):
-					removed_samples.fill(0)
-					break
+			var execution:=_execute_edit_commands(commands,before_stats.decode_u32(12))
+			var reply:PackedByteArray=execution.reply
+			var member_changed:Array[bool]=execution.changed
+			var removed_samples:PackedInt64Array=execution.removed
 			var edit_ms: float = float(Time.get_ticks_usec() - begin) / 1000.0
 			var after_stats: PackedByteArray = _call(Codec.command(0))
 			var recoverable:=false

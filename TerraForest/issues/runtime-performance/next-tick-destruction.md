@@ -273,7 +273,84 @@ bound. Field evaluation is the dominant measured prerequisite here; faster
 publication scheduling alone cannot meet the deadline. Full atomic geometry and
 physics publication is still unfinished, and no new deadline pass is claimed.
 
-### Remaining requirements
+### Native field and mesh preparation (2026-11-10, qualification only)
+
+`TerrainCore.execute_explosion_cohort` executes up to 256 ordered subtractive
+sphere/capsule commands under one native world lock. A stack-owned 1,024-entry
+cache reuses exact immutable generator heights for that call only. Spatial slot
+selection avoids collisions within a 32x32 lattice window; full coordinate keys
+still verify hits, and other layouts merely recompute. Point spheres use the
+exact point-distance specialization. Generator-changing commands are rejected
+before processing, ordinary command limits are unchanged, and cancellation
+retains its separate nonblocking path.
+
+This API is a **preparation primitive, not an atomic destruction transaction**.
+Per-command edits still commit in their original order. On failure it returns
+the attempted/successful prefix, original receipts and each resulting revision;
+it never reports whole-cohort success after a partial failure. Reply containers
+are reserved before processing. Full transaction reservation/rollback, authoritative
+damage/event persistence and cross-owner publication remain unfinished.
+
+`configure_mesh_height_cache(true)` separately enables an exact, patch-scoped
+height cache for material/shading inputs. The normal path defaults off. Neither
+optimization is enabled by ordinary gameplay or installed in the PCK. The
+test-only cohort backend invokes the native API with `--native-cohort`, and uses
+`--native-mesh-height-cache` for mesh preparation. No GPU shader, lighting formula,
+geometry, collision rule, resource limit or saved-data format changed.
+
+Final core baseline/candidate/baseline evidence:
+`reports/checks/20261110T131658932368Z_terrain_edit_core_parity.json`. All 14 field,
+receipt and complete mesh-packet hashes match, including positions, normals,
+material/lighting attributes and collision faces. Generator 31 field medians are
+26.982/8.477/24.332 ms; four-region mesh medians are 6.223/5.040/6.838 ms. These
+are separate native CPU timings, excluding Jolt, publication and GPU work.
+The report retains the verified source/header/harness patch. Compilation uses
+the same compiler/options for all three versions; temporary products retire
+automatically. Older parity reports now retain timestamped paths instead of
+overwriting earlier evidence.
+
+`reports/checks/20261110T131841906515Z` passes native API checks on generators 1/31:
+all 256 receipts and revisions, exact field and mesh bytes, limit/preflight
+rejection, explicit partial failure, subsequent reset, non-point capsules,
+cache-key collisions and world-edge/exterior samples. Debug and release native
+libraries build successfully. Foreground and installed qualification are deferred
+at the user's request; source libraries therefore intentionally differ from dist.
+Ordinary terrain worker/publication regressions pass in
+`reports/checks/20261110T132346859827Z`, including contact, priority/cancellation,
+locality/seams and clean worker shutdown. Editor import/UID generation passes in
+`20261110T132521649136Z_cohort_import`; startup-index and Python compilation checks
+also pass. Source debug/release DLL SHA-256 values are
+`ef5ca6b1fa587f9f11332a9bb81744d0ef69afb8221be459312834a424fb7c0b` /
+`e88cd01402d04c42812e86fd2a5e1705644906b35b8678b9e5bb29ad27cf1683`.
+The installed PCK retains its previously recorded hash; no export/install was run.
+
+The expanded mesh profile identified shading as 4.676 ms of an 8.726 ms baseline
+worker build; the final swap was only 0.079 ms. Baseline actual publication is
+46.426 ms in `reports/checks/20261110T130804221905Z`. The intermediate general-hash
+candidate (`20261110T131507501559Z`) improves it to 29.048 ms but still fails at
+tick 18 versus required tick 17. Its cache hit rate was 59,063/82,944, motivating
+the retained spatial slot mapping.
+
+Final actual-Jolt candidate `reports/checks/20261110T131939667642Z` publishes in
+27.738 ms: field 12.025 ms, worker mesh build 5.456 ms, final swap 0.073 ms,
+82,103/82,944 exact height-cache hits. It still **fails**, at tick 18 versus
+required tick 17. The matching baseline repeat `20261110T132043628077Z` takes
+60.874 ms (field 35.273 ms, mesh 14.129 ms). Baseline variation is substantial;
+neither this component comparison nor its four contact rays establishes normal
+gameplay stability, GPU improvement or the complete 256-barrel deadline.
+
+An additional already-air sample skipping experiment retained exact bytes but
+showed no clear further timing gain (`20261110T131352226262Z_terrain_edit_core_parity.json`)
+and was removed. GPU pass costs and renderer stalls remain open: identical mesh
+packets are an output-parity check, not proof of reduced GPU time or visual
+acceptance in normal gameplay.
+Conservative sphere-support row clipping also matched exact outputs but did not
+improve the retained 8.5 ms field median; it was removed. Its complete source
+patch and comparison remain in
+`reports/checks/20261110T132306525089Z_terrain_edit_core_parity.json`. The restored
+core hash matches the retained `131658932368` candidate exactly.
+
+### Unfinished full-contract work
 
 - Build the native destruction coordinator with deterministic overlap ordering,
   compact event records, bounded memory, indexed region queries, revision-checked

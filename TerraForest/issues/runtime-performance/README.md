@@ -12,6 +12,10 @@ the user deferred foreground qualification. The expanded coalesced publication
 test fails at 59.100 ms, dominated by field editing and mesh work. Bounded GPU
 stage gaps now extend the existing opt-in rolling trace; GPU and overall FPS
 acceptance remain open.
+Native cohort preparation and exact mesh-shading height reuse now preserve 14
+byte-level output hashes. Field-only median falls to 8.477 ms; actual Jolt
+publication improves to 27.738 ms but still fails the next-tick gate. These paths
+remain qualification-only; ordinary scheduling and installed gameplay are unchanged.
 
 [World/player headroom and terrain retirement](world-player-headroom-2026-11-10.md)
 records the valid installed baseline, renderer gap, rejected detached-preparation

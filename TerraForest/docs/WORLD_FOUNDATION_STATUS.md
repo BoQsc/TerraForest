@@ -1,5 +1,18 @@
 ## Next-tick destruction implementation - 2026-11-10
 
+Native field/mesh follow-up: the opt-in cohort preparation API and exact shading
+height cache preserve all 14 field/receipt/mesh hashes. Generator 31 native field
+median is 8.477 ms versus 26.982/24.332 ms in the baseline pair; four-region mesh
+median is 5.040 ms versus 6.223/6.838 ms. These exclude Jolt/publication/GPU costs.
+The native semantic gate passes including partial failure, reset, aliasing and
+world edges. Source debug/release DLLs are built; installed gameplay is unchanged.
+The optimizations remain qualification-only while foreground tests are deferred.
+Complete atomic publication, GPU/frame-tail and full next-tick acceptance remain
+open; see the linked contract for actual publication failures and prerequisites.
+The actual-Jolt candidate now publishes in 27.738 ms versus 46.426/60.874 ms
+baseline runs, but still misses tick 17 (publishes at tick 18). No deadline is
+relaxed and no foreground/GPU acceptance is inferred from these headless runs.
+
 Follow-up: the 96-body debris pool passes scoped reset/lifetime/contact checks
 and reduces isolated enqueue work, but remains opt-in (`--pooled-debris`) and is
 not installed. The baseline lost focus; the user deferred foreground comparisons.
