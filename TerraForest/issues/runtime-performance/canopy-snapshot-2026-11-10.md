@@ -187,3 +187,9 @@ silently removed, assigned to game code, or declared fixed. Profiling/logging
 perturbation and system scheduling must be isolated. Next evidence: quieter
 render markers or engine-level wait attribution, followed by normal-policy
 recorder-off confirmation before adopting any production change.
+
+## Foreground walking attribution — 2026-11-10
+
+The installed-package quiet-marker capture `reports/performance_changes/20261110T083559880386Z_canopy_quiet_render_markers` passed foreground, walking, destruction, save and shutdown checks with the approved cap and VSync. Outdoor walking reached 28.943 ms; its 28.917 ms recorded frame includes 14.390 ms before process, 5.729 ms in process and 8.694 ms draw. Physics callbacks occupy 6.295 ms of the first interval; terrain surface-result delivery takes 1.157 ms and mesh creation/upload 0.663 ms in that frame. These stages overlap their parent intervals and do not independently explain the full frame. Another walking frame reaches 25.862 ms with 12.818 ms drawing and 1.318 ms terrain scheduling. The earlier 14.670 ms occlusion-marker gap did not recur. The exact causes of the remaining unaccounted time are open; 60 FPS with headroom is not achieved.
+
+Two subsequent recorder-on controls lost OS focus and are rejected as foreground comparisons. The second correctly applied the existing 15 FPS background cap, so its incomplete walking/destruction checks are not a gameplay regression result. The uncommitted diagnostic changes acquire/check real focus and retain the background limit; they still need an uninterrupted foreground validation. Next isolate synchronous surface-result listeners and the unaccounted physics/process/draw intervals, then verify any change against matched foreground gameplay and recorder-off controls. Keep failed captures and approved limits intact.
