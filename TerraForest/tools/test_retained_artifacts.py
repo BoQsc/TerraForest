@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from retained_artifacts import Store, archive, digest, load_manifest, restore, retire, relative_name, verify
-from maintain_performance_artifacts import world_candidates, build_candidates, owned_lease
+from maintain_performance_artifacts import world_candidates, build_candidates, owned_lease, archive_regional_cache
 
 
 class RetainedArtifactsTests(unittest.TestCase):
@@ -210,6 +210,27 @@ class RetainedArtifactsTests(unittest.TestCase):
         self.assertEqual(len(build_candidates(self.root)), 1)
         (build / 'native.dll').unlink()
         self.assertEqual(build_candidates(self.root), [])
+
+    def test_readonly_regional_cache_archives_failed_evidence_and_protects_source(self):
+        stamp='20261110T100000123456Z'
+        report=self.root/'reports/checks'/stamp/'run.json'; report.parent.mkdir(parents=True)
+        userdata=self.root/'userdata'; userdata.mkdir()
+        name='zombie_regional_'+stamp
+        cache=userdata/name; cache.mkdir()
+        (cache/'diagnostic.bin').write_bytes(b'failed test evidence')
+        source=userdata/'player.trw'; source.write_bytes(b'player save')
+        record=dict(command=['res://tests/zombie_regional_world.gd','--snapshot-readonly',
+            '--derived-cache=user://'+name],result=dict(exit_code=1),source_data_unchanged=False)
+        report.write_text(json.dumps(record))
+        with patch('maintain_performance_artifacts.no_game_processes'):
+            with self.assertRaises(ValueError): archive_regional_cache(report,self.root,userdata)
+            record['source_data_unchanged']=True; report.write_text(json.dumps(record))
+            result=archive_regional_cache(report,self.root,userdata)
+        self.assertEqual(result['removed_bytes'],len(b'failed test evidence'))
+        store=Store(self.root/'reports/retained_artifacts/chunks')
+        restore(Path(result['manifest']),store,self.root/'restored_cache')
+        self.assertEqual((self.root/'restored_cache/diagnostic.bin').read_bytes(),b'failed test evidence')
+        self.assertEqual(source.read_bytes(),b'player save')
 
 
 if __name__ == '__main__':

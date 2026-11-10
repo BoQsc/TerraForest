@@ -94,3 +94,42 @@ The requested project-only GitHub backup is in progress. All archived evidence
 must retain both manifests and shared chunks. Private Codex conversations and
 credentials are excluded. Other test families and extra worktree retirement
 remain pending ownership/backup verification, not approved for blanket deletion.
+
+Regional read-only tests previously bypassed temporary-world cache cleanup.
+`check_zombie_regional_world.py` now reserves space before launching and archives
+its owned derived cache after exit and source-hash verification. The dedicated
+archive retains failed-run payloads too; source worlds are never retired by this
+adapter. It verifies the exact driver, timestamp, cache argument and unchanged
+source receipt, takes the normal cache lease, then uses the same full-byte archive
+verification. The additional failed-evidence/source-protection regression passes.
+
+## Project-only GitHub backup
+
+`tools/generated_backup.py` catalogs explicit project artifact roots and groups
+identical full files by SHA-256. It rejects linked paths and credential-looking
+content; it excludes private account/chat state and rebuildable tool caches.
+Each ZIP volume contains objects named by content hash. The catalog restores
+their original relative paths, including duplicates and empty directories.
+Existing licenses and provenance remain unchanged; the backup is not an assertion
+that inherited artifacts have default licenses or that builds are FPS-qualified.
+
+Publication uses the explicitly requested backup branch and a dedicated **draft**
+release. Volumes are bounded to 512 MiB of input in ordinary cases (individual
+objects must remain below 1,800 MiB); one in-memory volume is uploaded at a time,
+without another archive tree on disk. Credentials come from Git's credential
+helper and stay in memory. A durable receipt is written only after GitHub reports
+the exact uploaded size and SHA-256. Resume verifies prior uploads and refuses a
+changed catalog or mismatched asset; local source evidence is never deleted by
+the backup command. Missing remote checksums fail verification.
+
+Restore requires the catalog, required `objects-*.zip` files and a **new** output
+directory. `--prefix` can select one report/world instead of reconstructing all
+duplicates. Every restored file is checked against the catalog's complete hash:
+
+```text
+python tools/generated_backup.py restore catalog.json.gz downloaded_volumes restored --prefix project/reports/performance_changes/
+```
+
+The separate backup branch will carry its exact inventory, exclusions, upload
+checksums and instructions. Until that inventory reports complete remote
+verification, the GitHub backup must be described as incomplete.

@@ -191,6 +191,46 @@ def capacity(root):
                 archived_bytes=archived, archive_budget=ARCHIVE_BUDGET)
 
 
+def archive_regional_cache(report, root=ROOT, userdata=None):
+    """Retain exact completed read-only test cache bytes, outside gameplay."""
+    from maintain_terrain_cache import cache_lease
+    root, report = Path(root).absolute(), Path(report).absolute()
+    confined(report, root / 'reports/checks')
+    record = read(report)
+    command = record.get('command', [])
+    expected = 'user://zombie_regional_' + report.parent.name
+    if (not re.fullmatch(r'[0-9]{8}T[0-9]{12}Z', report.parent.name)
+            or '--snapshot-readonly' not in command
+            or [c for c in command if c.startswith('--derived-cache=')] != ['--derived-cache=' + expected]
+            or not any(Path(c).name == 'zombie_regional_world.gd' for c in command)
+            or record.get('result', {}).get('exit_code') is None
+            or record.get('source_data_unchanged') is not True):
+        raise ValueError('Read-only regional cache ownership/source verification is incomplete')
+    userdata = Path(userdata or Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest').absolute()
+    cache = userdata / expected[7:]
+    if not cache.exists():
+        return dict(archived=False, reason='No cache remains')
+    confined(cache, userdata)
+    no_game_processes()
+    guard = root / 'reports/retained_artifacts'; guard.mkdir(parents=True, exist_ok=True)
+    with owned_lease(guard / 'writer', root), cache_lease(cache):
+        members = [p.name for p in cache.iterdir() if p.name != '.terraforest-derived.lock']
+        if not members:
+            return dict(archived=False, reason='No payload remains')
+        for path in cache.rglob('*'):
+            info = ordinary(path)
+            if path.is_file() and path.name != '.terraforest-derived.lock' and info.st_mtime_ns > report.stat().st_mtime_ns + 2_000_000_000:
+                raise ValueError('Regional cache changed after its owning run')
+        store = Store(guard / 'chunks')
+        manifest = report.parent / 'cache.archive.json'
+        data = archive(cache, members, manifest, store, dict(owner='regional_readonly_retention',
+                       report=str(report), report_sha256=digest(report)))
+        removed = retire(data, store, cache)
+    result = dict(archived=True, manifest=str(manifest), removed_bytes=removed)
+    (report.parent / 'cache_retention.json').write_text(json.dumps(result, indent=2))
+    return result
+
+
 def maintain(root=ROOT, worlds=None, apply=False, builds=False, keep=2, build_keep=0):
     root = Path(root).absolute()
     if not apply:

@@ -12,6 +12,8 @@ from pathlib import Path
 from run import ROOT, parse_args
 from run_godot_check import execute
 from play_checkpoint import revision_metadata
+from maintain_performance_artifacts import archive_regional_cache, capacity
+from resource_limits import require_free_space
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -24,6 +26,9 @@ def main():
     if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,63}',args.slot):parser.error('Invalid slot identifier')
     source=Path(os.environ['APPDATA'])/'Godot/app_userdata/TerraForest/worlds'/(args.slot+'.trw')
     if not source.is_file():parser.error('Prepared world does not exist')
+    # Reserve before output creation; post-run archival is outside measured play.
+    require_free_space(ROOT, 512 * 2**20)
+    capacity(ROOT)
     digest=lambda:hashlib.sha256(source.read_bytes()).hexdigest()
     before=digest()
     def source_data():
@@ -69,6 +74,12 @@ def main():
     record['source_data_changed_paths']=sorted(k for k in before_data.keys()|after_data.keys() if before_data.get(k)!=after_data.get(k))
     (folder/'run.json').write_text(json.dumps(record,indent=2))
     ok=record['result']['passed'] and record['source_archive_unchanged'] and record['source_data_unchanged']
+    try:
+        archive_regional_cache(folder/'run.json')
+    except (ValueError, OSError) as error:
+        (folder/'cache_retention.json').write_text(json.dumps(dict(error=str(error), retained=True),indent=2))
+        print('RETENTION_FAILED: '+str(error),flush=True)
+        ok=False
     print(('PASS ' if ok else 'FAIL ')+str(folder))
     return 0 if ok else 1
 if __name__=='__main__':raise SystemExit(main())
