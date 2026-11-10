@@ -88,8 +88,9 @@ reduce pressure but do not close aggregate retention. Do not start another large
 test batch without accounting for its output.
 
 Storage pressure blocked verification; it does not establish the cause of the
-remaining 42–43 ms renderer stalls. Return to the pending completed-frame marker
-capture once the reserve plus planned work is available and maintenance is idle.
+remaining 42–43 ms renderer stalls. After maintenance, the pending marker capture
+completed; the [renderer follow-up](canopy-snapshot-2026-11-10.md#renderer-marker-follow-up-after-storage-audit)
+narrows one wait to early scene rendering but leaves the exact call unresolved.
 Keep the approved cap, VSync, quality and gameplay settings. Close performance
 only after repeated normal foreground gameplay establishes frame-time headroom,
 visual/gameplay parity and resource stability.

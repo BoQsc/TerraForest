@@ -7,8 +7,10 @@ are created; the approved limits remain intact. Hash-verified trace compression
 recovers space without losing evidence. Aggregate archival retention remains
 unfinished: preserve referenced evidence and source fixtures, establish explicit
 ownership for retirement, and account for output before further large batches.
-The blocked renderer-marker attempt supplied no gameplay evidence; resume it
-when maintenance is idle and the reserve plus planned work is available.
+The blocked renderer-marker attempt supplied no gameplay evidence. Its subsequent
+repeat passes gameplay/shutdown checks and isolates a 14.670 ms early-scene marker
+gap with unchanged occluder state; exact wait attribution remains open. The verbose
+GPU-profile run also has larger pre-process delays and is not FPS acceptance.
 
 [Canopy snapshot preparation](../issues/runtime-performance/canopy-snapshot-2026-11-10.md)
 is another confirmed source of stalls: up to 5.333 ms on the main thread in a

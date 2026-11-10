@@ -144,3 +144,46 @@ after these frame owners are bounded. Closure requires repeated foreground
 normal-policy gameplay with frame-time headroom, unchanged visuals/damage and
 collision checks, and stable resident resources across return/reopen cycles.
 No universal visual approval or stable-FPS result is claimed here.
+
+## Renderer marker follow-up after storage audit
+
+The blocked attempt was repeated after the [storage audit](storage-audit-2026-11-10.md)
+and maintenance, using the same installed package. Report:
+`reports/performance_changes/20261110T060109542024Z_canopy_remaining_render_markers`;
+host inventory/GPU clocks:
+`host_remaining_render_markers_20261110T060108244562Z` in the same parent folder.
+The host inventory observes only the owned gameplay PID 29980 plus the pre-existing
+idle project manager. Fullscreen 1080p, render scale 1, cap 60, VSync 1 and background
+cap 15 are preserved; all measured gameplay is focused. Walking covers 88.188 m,
+943/943 movement samples grounded. Destruction, normal save and shutdown checks
+pass without error/leak diagnostics. Private commit peaks at 4.01 GiB (warning).
+The start/end images `outdoor_0.png` and `outdoor_2.png` were inspected: terrain,
+grass, trees, boulders, buildings and held tool remain present, with the earlier
+HUD/held-tool issues unchanged. This is scoped observation, not visual approval.
+
+Completed CPU markers are matched by absolute timestamps to their draw intervals.
+Frame 4598 is 29.815 ms, including 19.341 ms drawing but only 11.61 million draw
+cycles (nearby normal draws use 9.9–10.3 million). Its **14.670 ms** gap runs from
+`Update Occlusion Buffer` to `Update Visibility Dependencies`; it is reported in
+frame 4599. Viewport CPU time reports 17.635 ms in frame 4600, confirming why a
+current-callback GPU/CPU timer cannot assign the stall. The nearby occluder state
+is unchanged: four active, 4,032 geometry bytes, no uploads or pending work.
+Canopy preparation is not current and its worker is idle. No PSO cache update is
+logged after the 31.7 MiB startup cache, so this capture supplies no support for
+pipeline-cache serialization as this stall's cause.
+
+The marker name does not isolate occlusion itself. The
+[pinned engine source](https://github.com/godotengine/godot/blob/ed1daf0bf/servers/rendering/renderer_scene_cull.cpp)
+places occlusion-buffer update, initial scene/light setup and the SDFGI update
+boundary between those markers. Worker waiting, preemption and the exact blocking
+call remain unresolved. Do not disable occlusion or alter its approved bounds
+based on the marker label alone.
+
+This run enables `--gpu-profile` and `--verbose`; it is diagnostic, not a normal
+FPS comparison. It also records 53–207 ms outdoor delays primarily before process,
+with catch-up physics, and larger screenshot intervals. Those observations are
+retained in `observation.json`, `summary.json` and `attribution.json`; they are not
+silently removed, assigned to game code, or declared fixed. Profiling/logging
+perturbation and system scheduling must be isolated. Next evidence: quieter
+render markers or engine-level wait attribution, followed by normal-policy
+recorder-off confirmation before adopting any production change.

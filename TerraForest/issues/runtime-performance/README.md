@@ -15,6 +15,9 @@ not achieved. Installed foreground gameplay and recorder-off checks pass, with
 0.061 ms median canopy preparation in the packaged trace. Remaining 42–43 ms
 frames include a 31.262 ms draw interval with little additional main-thread work;
 renderer wait attribution and terrain staging/LOD costs are the next targets.
+The subsequent diagnostic narrows one stall to a 14.670 ms early-scene marker gap
+with unchanged occluder state. It does not isolate the exact call or establish a
+fix; verbose profiling also introduces an unresolved larger-delay observation.
 
 [Shared animation cache correction](animation-cache-2026-11-10.md) removes
 same-value writes that invalidated all residents' animation caches. The old/new
