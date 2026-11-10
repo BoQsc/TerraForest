@@ -12,6 +12,7 @@ import uuid
 from resource_limits import require_free_space
 from run import ROOT, parse_args
 from run_godot_check import execute
+from maintain_performance_artifacts import capacity, maintain
 
 
 def main():
@@ -36,6 +37,10 @@ def main():
             parser.error('Freeze requires a new folder inside reports/startup_optimization')
         files = [ROOT / 'dist/TerraForest.pck', *(ROOT / 'dist/addons').rglob('*.dll')]
         require_free_space(ROOT, sum(p.stat().st_size for p in files))
+        capacity(ROOT)
+        retention = maintain(apply=True, builds=True, build_keep=2)
+        if retention['errors']:
+            raise OSError('Retained-build maintenance failed; inspect ' + retention['receipt'])
         build.mkdir(parents=True)
         for source in files:
             target = build / source.relative_to(ROOT / 'dist')
@@ -45,6 +50,8 @@ def main():
             shutil.copytree(ROOT / 'dist/assets', build / 'assets')
         (build / 'manifest.json').write_text(json.dumps({str(p.relative_to(build)): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in build.rglob('*') if p.is_file()}, indent=2))
+    if (build / 'build.archive.json').exists() and not (build / 'TerraForest.pck').exists():
+        parser.error('Build is archived. Restore build.archive.json with tools/maintain_performance_artifacts.py --restore MANIFEST --destination NEW_DIRECTORY, then use --build NEW_DIRECTORY')
     manifest = json.loads((build / 'manifest.json').read_text())
     for name, digest in manifest.items():
         if hashlib.sha256((build / name).read_bytes()).hexdigest() != digest:
@@ -123,6 +130,9 @@ def main():
         print(('PASS ' if result['passed'] else 'FAIL ') + str(folder), flush=True)
         if not result['passed']:
             raise SystemExit(1)
+    retention = maintain(apply=True, builds=True, build_keep=2)
+    if retention['errors']:
+        raise OSError('Retained-build maintenance failed; inspect ' + retention['receipt'])
 
 
 if __name__ == '__main__':

@@ -3,8 +3,10 @@
 [Storage audit](storage-audit-2026-11-10.md) confirms accumulated development
 outputs: 22.67 GiB reports and 5.41 GiB across 113 FPS fixture slots. The launcher
 now reserves clone/report space before writing anything and retains the approved
-2 GiB floor. Existing trace compression preserves every content hash; aggregate
-archival retention and the remaining renderer stalls are still open.
+2 GiB floor. [Verified retention](../../docs/DEVELOPMENT_RETENTION.md) archives
+receipt-owned captures/builds and bounds new output: 99 worlds and 11 builds
+reclaimed 8.372 GiB net, with full world/build restore checks. Project-only GitHub
+backup, other historical families and remaining renderer stalls are still open.
 
 [Canopy snapshot stalls](canopy-snapshot-2026-11-10.md) are confirmed in normal
 fullscreen walking: main-thread snapshot preparation reaches 5.333 ms. A native

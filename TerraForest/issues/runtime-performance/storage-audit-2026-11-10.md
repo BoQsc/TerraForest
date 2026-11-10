@@ -80,12 +80,18 @@ space is not used to infer that amount because other activity changes it.
 
 ## Remaining requirements
 
-Establish a bounded archival lifecycle for diagnostic worlds and historical
-builds, preserving referenced regression evidence and the fresh-default source
-fixture. Older worlds without ownership markers must not become deletion
-candidates from their names alone. Lossless compression and earlier preflight
-reduce pressure but do not close aggregate retention. Do not start another large
-test batch without accounting for its output.
+The [retention lifecycle](../../docs/DEVELOPMENT_RETENTION.md) now archives
+receipt-owned completed FPS/startup worlds and verified frozen builds, preserving
+source fixtures, recent runs, changed saves and every evidence byte. The first
+batch archived 99 worlds and 11 builds with zero errors: 9.886 GiB loose bytes
+became 1.514 GiB archived bytes (8.372 GiB net reclaimed). Full-world and full-build
+restore inventories/hashes pass. Capture admission now bounds report/archive
+growth, and maintenance occurs outside gameplay. Other historical families need
+equivalent ownership before retirement; names alone remain insufficient.
+Project-only GitHub archival backup and extra-worktree review are in progress.
+Private chat/account state is excluded. Preserve unmatched saves and all unique
+data until backup verification. Two restore-check copies remain after automatic
+approval review blocked removal; they are not counted as reclaimed space.
 
 Storage pressure blocked verification; it does not establish the cause of the
 remaining 42–43 ms renderer stalls. After maintenance, the pending marker capture

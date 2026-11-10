@@ -4,9 +4,12 @@
 records the accumulated report/build/world copies and the failed late launch
 preflight. Reserve plus planned clone/capture space is now checked before files
 are created; the approved limits remain intact. Hash-verified trace compression
-recovers space without losing evidence. Aggregate archival retention remains
-unfinished: preserve referenced evidence and source fixtures, establish explicit
-ownership for retirement, and account for output before further large batches.
+recovers space without losing evidence. [Verified retention](DEVELOPMENT_RETENTION.md)
+now archives completed receipt-owned worlds/builds and bounds new capture output:
+99 worlds and 11 builds reclaimed 8.372 GiB net, with full world/build restore
+checks passed. Project-only GitHub backup and other test-family/worktree ownership
+remain open; preserve unique data until remote verification. Private conversations
+are excluded. This storage repair does not establish FPS acceptance.
 The blocked renderer-marker attempt supplied no gameplay evidence. Its subsequent
 repeat passes gameplay/shutdown checks and isolates a 14.670 ms early-scene marker
 gap with unchanged occluder state; exact wait attribution remains open. The verbose

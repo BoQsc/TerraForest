@@ -13,6 +13,7 @@ from play_checkpoint import revision_metadata
 from run import ROOT, parse_args
 from run_godot_check import execute, verify_pack_native
 from resource_limits import load_budgets, require_free_space
+from maintain_performance_artifacts import capacity, maintain
 
 
 def main():
@@ -82,6 +83,7 @@ def main():
     require_free_space(worlds, clone_bytes + report_bytes)
     require_free_space(ROOT, clone_bytes + report_bytes)
     native = verify_pack_native() if args.executable else None
+    retained_capacity = capacity(ROOT)
     limits = load_budgets()
     storage = dict(source_clone_bytes=clone_bytes, planned_capture_bytes=report_bytes,
                    minimum_free_bytes=limits['minimum_free_bytes'],
@@ -174,7 +176,8 @@ def main():
         command += ['--trace-uncapped']
     if not args.without_trace:
         command += ['--frame-trace', '--frame-trace-dir=' + str(folder / 'traces')]
-    record = dict(command=command, clone=copied, storage_preflight=storage, **revision_metadata())
+    record = dict(command=command, clone=copied, storage_preflight=storage,
+                  retention_capacity=retained_capacity, **revision_metadata())
     record['diagnostic_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                   for p in [ROOT/'tests/frame_trace_world.gd', ROOT/'tests/render_inventory.gd',
                                             ROOT/'tests/render_partition_probe.gd', ROOT/'tests/render_occlusion_probe.gd', ROOT/'tests/cover_outdoor_probe.gd', ROOT/'tests/destruction_load_probe.gd',
@@ -214,8 +217,18 @@ def main():
         record['result']['native_process_current_frames'] = counts
         record['result']['passed'] &= all(counts.values())
     manifest.write_text(json.dumps(record, indent=2), encoding='utf-8')
+    # Outside gameplay: keep two recent worlds ready to open; older owned states
+    # are reconstructed/hash-verified in the shared archive before retirement.
+    try:
+        retention = maintain(ROOT, worlds, apply=True)
+        record['retention'] = {key:retention[key] for key in ('receipt','completed','errors','new_archive_bytes') if key in retention}
+    except (OSError, ValueError) as error:
+        record['retention'] = {'errors': [str(error)]}
+    manifest.write_text(json.dumps(record, indent=2), encoding='utf-8')
     print(('PASS ' if record['result']['passed'] else 'FAIL ') + str(folder), flush=True)
-    return 0 if record['result']['passed'] else 1
+    if record['retention'].get('errors'):
+        print('RETENTION_FAILED: evidence/worlds preserved; inspect run.json', flush=True)
+    return 0 if record['result']['passed'] and not record['retention'].get('errors') else 1
 
 
 if __name__ == '__main__':
