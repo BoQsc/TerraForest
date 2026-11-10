@@ -4,9 +4,12 @@
 outputs: 22.67 GiB reports and 5.41 GiB across 113 FPS fixture slots. The launcher
 now reserves clone/report space before writing anything and retains the approved
 2 GiB floor. [Verified retention](../../docs/DEVELOPMENT_RETENTION.md) archives
-receipt-owned captures/builds and bounds new output: 99 worlds and 11 builds
-reclaimed 8.372 GiB net, with full world/build restore checks. Project-only GitHub
-backup, other historical families and remaining renderer stalls are still open.
+receipt-owned captures/builds and bounds new output. Completed cleanup covers
+161 worlds, 11 frozen builds, 12 regional caches and four worktrees: 49.749 GiB
+net logical file bytes reclaimed, 50.490 GiB volume free, all development budgets
+passing. The project-only GitHub backup has 55 remotely verified volumes and a
+complete-world download/reconstruction check. [Final receipts and safeguards](../../docs/DEVELOPMENT_RETENTION.md)
+preserve saves/evidence; the remaining renderer stalls are still open.
 
 [Canopy snapshot stalls](canopy-snapshot-2026-11-10.md) are confirmed in normal
 fullscreen walking: main-thread snapshot preparation reaches 5.333 ms. A native

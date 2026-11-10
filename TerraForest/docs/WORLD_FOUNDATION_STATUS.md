@@ -6,16 +6,19 @@ preflight. Reserve plus planned clone/capture space is now checked before files
 are created; the approved limits remain intact. Hash-verified trace compression
 recovers space without losing evidence. [Verified retention](DEVELOPMENT_RETENTION.md)
 now archives completed receipt-owned worlds/builds and bounds new capture output:
-99 worlds and 11 builds reclaimed 8.372 GiB net, with full world/build restore
-checks passed. Project-only GitHub backup and other test-family/worktree ownership
-remain open; preserve unique data until remote verification. Private conversations
-are excluded. This storage repair does not establish FPS acceptance.
-User priority now blocks further performance gameplay until repository/worktree
-bloat and recurring output growth are addressed. The shared test launcher and
-isolated build/capture tools enforce separate development-output admission limits;
-retirement still requires verified backup and ownership. Complete the GitHub
-backup, retire obsolete copies, verify storage headroom and restore checks, then
-resume the quiet renderer-marker comparison and normal gameplay acceptance.
+161 test worlds, 11 frozen builds and 12 regional caches are now archived;
+four obsolete worktrees are retired with their commits/evidence preserved.
+The completed project-only GitHub backup has 55 remotely size/hash-verified
+volumes, plus a real complete-world download/reconstruction check. Private
+conversations remain local. [Final storage evidence](../reports/artifact_backup_20261110/cleanup_summary.json)
+records 49.749 GiB net logical file bytes reclaimed and 50.490 GiB volume free;
+all developer-output budgets pass with next-capture allowances. Nine small media
+files refused by Windows remain recorded. No gameplay/native package changed.
+Storage no longer blocks gameplay verification. Shared launcher/build admission,
+receipt-owned archival, inactive-family cold retention and verified native-copy /
+import-cache release now cover the discovered accumulation paths. Continue the
+quiet renderer-marker comparison and normal gameplay acceptance; stable 60 FPS
+with headroom remains unachieved.
 The blocked renderer-marker attempt supplied no gameplay evidence. Its subsequent
 repeat passes gameplay/shutdown checks and isolates a 14.670 ms early-scene marker
 gap with unchanged occluder state; exact wait attribution remains open. The verbose

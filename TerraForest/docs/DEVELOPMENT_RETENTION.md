@@ -97,6 +97,31 @@ Other historical test families are not inferred safe from folder names. They nee
 equivalent ownership receipts before joining this lifecycle. Retained unknown or
 modified worlds remain explicit exceptions, not silently cleaned saves.
 
+The receipt adapter now covers the declared quest, survival, exploration,
+parking, mine, reinforcement, lights, sleepers, expedition and private trader-copy
+drivers. It requires their actual creation phase or verified clone receipt, the
+exact driver and evidence directory, and a completed process. Later receipts
+extend the last-use boundary. Creation receipts and runs are hashed again before
+retirement. Input/source fixtures, pins, unknown sidecars and later-modified saves
+remain protected. Active families keep at most two ready worlds; non-performance
+families inactive for three days can retain all their evidence cold, with no
+ordinary loose copy. FPS/startup families retain their two recent captures.
+Packaged drivers frozen beside a report also require exact equality with the
+recorded Git revision after undoing the helper-path rewrite. Their current full
+hash is retained in the ownership proof; a generic `driver.gd` name is insufficient.
+
+Completed isolated native checks release only matching copied DLL bytes and
+rebuildable `imported`/`shader_cache` directories. Bootstrap cfg, original assets,
+Godot identity files, logs and failure evidence survive. Linked paths abort cache
+cleanup. Navigation release checks now use this lifecycle as building checks do.
+
+`tools/retire_backed_outputs.py` moves obsolete local captures/build binaries to
+the already verified GitHub backup. It requires a complete matching catalog and
+receipt, rechecks remote asset hashes and every selected local file, preserves
+pins/current captures/referenced media/local archives, then removes exact files.
+Each affected folder gets a restore pointer. Windows access refusals are retained
+and recorded. No recursive deletion, cache scan or compression runs in gameplay.
+
 ## Verified first retirement, 2026-11-10
 
 Receipt `reports/artifact_retention/20261110T062528179507Z.json` records 99 FPS
@@ -110,13 +135,17 @@ checks and the unchanged fresh-default source fixture hash.
 Fifteen retention checks cover corruption, changed sources, ownership, paths,
 budgets, leases and interrupted retirement; fourteen pass and one symlink
 creation case is skipped by Windows permissions. The separate Windows junction
-test passes. Two temporary restore copies remain because automatic approval
-review blocked their removal; do not count that space as reclaimed.
+test passes. Automatic approval review initially blocked recursive removal of
+two temporary restore copies. A later, safer exact-file retirement revalidated
+the complete inventory and every hash against the original archives before
+removing the copies (0.516 GiB); no recursive deletion was used. Receipt:
+`reports/artifact_retention/verified_restore_retirement_20261110.json`.
 
-The requested project-only GitHub backup is in progress. All archived evidence
-must retain both manifests and shared chunks. Private Codex conversations and
-credentials are excluded. Other test families and extra worktree retirement
-remain pending ownership/backup verification, not approved for blanket deletion.
+The requested project-only GitHub backup is complete, including the later archive
+delta and frozen-driver fixtures. All archived evidence retains both manifests
+and shared chunks or its complete raw-file mapping. Private Codex conversations
+and credentials remain local. Ownership-verified retirement also covers the
+historical families and four obsolete worktrees; branches/history are preserved.
 
 Regional read-only tests previously bypassed temporary-world cache cleanup.
 `check_zombie_regional_world.py` now reserves space before launching and archives
@@ -153,6 +182,23 @@ duplicates. Every restored file is checked against the catalog's complete hash:
 python tools/generated_backup.py restore catalog.json.gz downloaded_volumes restored --prefix project/reports/performance_changes/
 ```
 
-The separate backup branch will carry its exact inventory, exclusions, upload
-checksums and instructions. Until that inventory reports complete remote
-verification, the GitHub backup must be described as incomplete.
+The [separate backup branch](https://github.com/BoQsc/TerraForest/tree/codex/generated-backup-2026-11-10/generated-backup)
+carries exact inventories, exclusions, upload checksums and restore instructions.
+Its four draft backup releases contain 55 volumes / 18.459 GiB uploaded; all remote
+sizes and SHA-256 digests match. A real GitHub download reconstructs one complete
+world (305 files / 62,205,099 bytes) with every file hash matching, without reading
+the local source world. Earlier full local world/build restoration checks pass.
+
+Final cleanup: 161 test worlds, 11 frozen builds, 12 regional derived caches and
+four worktrees; 49.749 GiB net logical file bytes reclaimed, excluding Git packing,
+transparent compression and verification copies created during cleanup. Volume
+free space was 50.490 GiB. These are distinct measurements, not an inferred NTFS
+allocation saving. Reports use 3.301 GiB, scratch 0.969 GiB, archive 2.102 GiB,
+compiler caches 1.751 GiB, imports 0.158 GiB and owned test worlds 2.581 GiB;
+admission passes including planned next-output growth. Nine backed-up media files
+refused by Windows remain explicitly retained. Final proof maps 63,820 retired
+world/cache files to raw remote objects or remotely preserved archive chains.
+Evidence: `reports/artifact_backup_20261110/cleanup_summary.json` and the branch's
+`generated-backup/cleanup-receipts.json.gz`. Source fixture/PCK hashes and all
+14 installed native pairs remain unchanged. Git object packing preserved refs,
+reflogs and history; private Codex session data was not uploaded or deleted.

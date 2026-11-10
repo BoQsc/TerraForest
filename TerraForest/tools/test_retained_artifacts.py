@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from retained_artifacts import Store, archive, digest, load_manifest, restore, retire, relative_name, verify
-from maintain_performance_artifacts import world_candidates, build_candidates, owned_lease, archive_regional_cache
+from maintain_performance_artifacts import world_candidates, build_candidates, owned_lease, archive_regional_cache, creator_driver
 
 
 class RetainedArtifactsTests(unittest.TestCase):
@@ -231,6 +231,59 @@ class RetainedArtifactsTests(unittest.TestCase):
         restore(Path(result['manifest']),store,self.root/'restored_cache')
         self.assertEqual((self.root/'restored_cache/diagnostic.bin').read_bytes(),b'failed test evidence')
         self.assertEqual(source.read_bytes(),b'player save')
+
+    def test_other_world_families_require_creation_proof_and_keep_recent_sources(self):
+        worlds=self.root/'worlds';worlds.mkdir()
+        slots=['Survival_1703_'+str(i)*8 for i in range(5)]
+        for i,slot in enumerate(slots):
+            (worlds/(slot+'.trw')).write_bytes(b'generated test save')
+            folder=self.root/'reports/survival'/str(i);folder.mkdir(parents=True)
+            (folder/'created_slot.json').write_text(json.dumps(dict(slot=slot)))
+            command=['player_survival_world.gd','--session-evidence-dir='+folder.as_posix()]
+            (folder/'run.json').write_text(json.dumps(dict(phases=[dict(phase='create',command=command,result=dict(exit_code=1))])))
+        # A copied fixture protects the original even when its owner is old.
+        folder=self.root/'reports/ride/0';folder.mkdir(parents=True)
+        clone=dict(created=True,slot='TraderRide_abcdef123456',source_slot=slots[0])
+        (folder/'world.json').write_text(json.dumps(clone))
+        (folder/'run.json').write_text(json.dumps(dict(clone=clone,
+            command=['trader_ride_world.gd','--session-evidence-dir='+folder.as_posix()],result=dict(exit_code=1))))
+        # A slot-shaped name alone, or a receipt without its evidence argument,
+        # cannot authorize retirement.
+        unknown='Survival_1703_abcdef12'
+        (worlds/(unknown+'.trw')).write_bytes(b'keep unknown')
+        folder=self.root/'reports/unknown';folder.mkdir(parents=True)
+        (folder/'created_slot.json').write_text(json.dumps(dict(slot=unknown)))
+        (folder/'run.json').write_text(json.dumps(dict(phases=[dict(phase='create',command=['player_survival_world.gd'],result=dict(exit_code=0))])))
+        # A played save must survive even when an old creation receipt exists.
+        import time
+        os.utime(worlds/(slots[1]+'.trw'),(time.time()+10,time.time()+10))
+        rows,retained=world_candidates(self.root,worlds,keep=2)
+        self.assertEqual([r['slot'] for r in rows],[slots[2]])
+        self.assertTrue(rows[0]['ownership'])
+        self.assertTrue(any(r['slot']==slots[1] and 'modified' in r['reason'] for r in retained))
+        # After a family has been inactive for three days its unmodified ready
+        # copies can become cold evidence. Source fixtures remain protected.
+        old=time.time()-4*86400
+        for slot in slots:
+            if slot!=slots[1]:os.utime(worlds/(slot+'.trw'),(old-60,old-60))
+        for report in (self.root/'reports/survival').glob('*/run.json'):
+            os.utime(report,(old,old))
+        rows,_=world_candidates(self.root,worlds,keep=2)
+        self.assertEqual({r['slot'] for r in rows},set(slots[2:]))
+
+    def test_frozen_driver_requires_exact_recorded_source_after_path_rewrite(self):
+        folder=self.root/'reports/pack';folder.mkdir(parents=True)
+        receipt=folder/'world.json';receipt.write_text('{}')
+        frozen=folder/'driver.gd'
+        source='extends "res://tests/window_session_flow.gd"\n# exact creation driver\n'
+        frozen.write_text(source.replace('res://tests/',folder.as_posix()+'/'),encoding='utf-8')
+        run=dict(revision='a'*40,test_sha256=digest(frozen))
+        with patch('maintain_performance_artifacts.committed_driver',return_value=source):
+            accepted,proof=creator_driver([str(frozen)],run,receipt,'Quests',self.root)
+            self.assertTrue(accepted);self.assertEqual(proof[0]['sha256'],digest(frozen))
+            frozen.write_text(frozen.read_text()+'# changed\n')
+            run['test_sha256']=digest(frozen)
+            self.assertFalse(creator_driver([str(frozen)],run,receipt,'Quests',self.root)[0])
 
 
 if __name__ == '__main__':

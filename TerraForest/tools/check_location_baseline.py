@@ -10,12 +10,14 @@ from run import ROOT, parse_args
 from run_godot_check import execute, verify_pack_native
 from play_checkpoint import revision_metadata
 from native_test_retention import release_copies
+from development_storage import admit
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pack', action='store_true')
     args = parser.parse_args()
+    admit(ROOT)
     config, _ = parse_args([])
     folder = ROOT / 'reports/location_baseline' / datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder.mkdir(parents=True)
@@ -92,6 +94,7 @@ def main():
                       'addons/world_runtime/generate_world_task.gd', 'addons/world_runtime/native/register_types.cpp',
                       'tests/location_baseline.gd', 'tests/location_baseline_publication.gd', 'tools/check_location_baseline.py')}, **revision_metadata())
     record['native_copy_retention'] = release_copies(copied_libraries, record['passed'])
+    record['passed'] = record['passed'] and not record['native_copy_retention']['errors']
     (folder / 'run.json').write_text(json.dumps(record, indent=2) + '\n')
     print(('PASS ' if record['passed'] else 'FAIL ') + str(folder), flush=True)
     return 0 if record['passed'] else 1

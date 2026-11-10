@@ -11,6 +11,7 @@ from run import ROOT, parse_args
 from run_godot_check import execute
 from play_checkpoint import revision_metadata
 from development_storage import admit
+from native_test_retention import release_copies
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -29,6 +30,7 @@ def main():
     (project/'project.godot').write_text('config_version=5\n[application]\nconfig/name="TerraForest Navigation Release Check"\n')
     descriptors = []
     libraries = {}
+    copied_libraries = {}
     baseline_commit = None
     baseline_library = None
     if args.baseline_native_ref:
@@ -46,6 +48,7 @@ def main():
         if addon == 'world_runtime' and baseline_library is not None:
             (destination/'bin'/library).write_bytes(baseline_library)
         libraries[str((source/'bin'/library).relative_to(ROOT))] = hashlib.sha256((destination/'bin'/library).read_bytes()).hexdigest()
+        copied_libraries[destination/'bin'/library] = libraries[str((source/'bin'/library).relative_to(ROOT))]
         descriptor = (source/(module+'.gdextension')).read_text().replace('template_debug', 'template_release')
         if module == 'terrain_core':
             descriptor = descriptor.replace('terrain_core.windows.x86_64.dll', library)
@@ -97,8 +100,11 @@ def main():
         print(('PASS ' if outcome['result']['passed'] else 'FAIL ')+test, flush=True)
         record['outcomes'] = outcomes
         (report/'run.json').write_text(json.dumps(record, indent=2))
+    passed = all(row['result']['passed'] for row in outcomes)
+    record['retention'] = release_copies({project:copied_libraries}, passed)
+    (report/'run.json').write_text(json.dumps(record, indent=2))
     print(report)
-    return 0 if all(row['result']['passed'] for row in outcomes) else 1
+    return 0 if passed and not record['retention']['errors'] else 1
 
 if __name__ == '__main__':
     raise SystemExit(main())

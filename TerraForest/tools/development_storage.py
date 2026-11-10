@@ -26,9 +26,12 @@ def register_worlds(command, folder, root=ROOT):
         for prefix in ('--trace-world-slot=','--benchmark-slot='):
             if value.startswith(prefix) and OWNED_SLOT.fullmatch(value[len(prefix):]):
                 slots.add(value[len(prefix):])
-    if '--session-evidence-dir=' + folder.as_posix() in command:
+    evidence_options = [c.split('=',1)[1] for c in command if c.startswith('--session-evidence-dir=')]
+    evidence = Path(evidence_options[0]).absolute() if len(evidence_options)==1 else folder
+    if (len(evidence_options)==1 and evidence.resolve().is_relative_to((root/'reports').resolve())
+            and folder.resolve().is_relative_to(evidence.resolve())):
         for name in ('created_slot.json','world.json'):
-            path = folder/name
+            path = evidence/name
             if path.is_file():
                 record = json.loads(path.read_text(encoding='utf-8'))
                 value = record.get('slot', '')

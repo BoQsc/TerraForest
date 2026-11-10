@@ -51,6 +51,17 @@ class BackupTests(unittest.TestCase):
         api.verify_asset({'id':1},dict(bytes=5,sha256='a'*64))
         with self.assertRaises(ValueError): api.verify_asset({'id':1},dict(bytes=5,sha256='b'*64))
 
+    def test_release_receipt_rejects_missing_renamed_or_changed_assets(self):
+        api=object.__new__(GitHub)
+        asset=dict(id=7,name='objects-001.zip',bytes=5,sha256='a'*64)
+        receipt=dict(complete=True,release_id=3,assets=[asset])
+        good=dict(id=7,name=asset['name'],state='uploaded',size=5,digest='sha256:'+'a'*64)
+        api.request=lambda path:[good]
+        self.assertTrue(api.verify_receipt(receipt)['all_hashes_match'])
+        for rows in ([],[dict(good,name='renamed.zip')],[dict(good,digest='sha256:'+'b'*64)]):
+            api.request=lambda path:rows
+            with self.assertRaises(ValueError):api.verify_receipt(receipt)
+
     def test_scoped_download_verifies_bytes_before_restore(self):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary); source=root/'source'; source.mkdir()

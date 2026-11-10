@@ -49,7 +49,8 @@ class DevelopmentStorageTests(unittest.TestCase):
             worlds=root/'Godot/app_userdata/TerraForest/worlds';worlds.mkdir(parents=True)
             (worlds/(slot+'.trw')).write_bytes(b'test')
             (worlds/'Player.trw').write_bytes(b'player save')
-            register_worlds(['engine','--session-evidence-dir='+folder.as_posix()],folder,root)
+            phase=folder/'create';phase.mkdir()
+            register_worlds(['engine','--session-evidence-dir='+folder.as_posix()],phase,root)
             with patch.dict(os.environ,APPDATA=str(root)),patch('development_storage.require_free_space'):
                 self.assertEqual(usage(root)['owned_worlds'],4)
                 with self.assertRaises(OSError):admit(root,0,limits=dict(LIMITS,owned_worlds=3),world_bytes=0)
