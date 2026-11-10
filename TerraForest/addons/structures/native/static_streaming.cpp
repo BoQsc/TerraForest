@@ -187,25 +187,42 @@ void NativeStaticBatch::select_render_batches() {
         return a.distance==b.distance?a.key<b.key:a.distance<b.distance;
     });
     render_candidates=render_blocked=0;
-    uint64_t bytes=0,logical_pages=0;std::vector<RenderKey> held_partial,ordered;
+    uint64_t bytes=0,logical_pages=0;std::vector<RenderKey> ordered;
     ordered.reserve(batches.size());
+    render_pending.clear();
+    const uint64_t capacity=render_page_capacity(),stride=render_stride_bytes();
     for(const auto &candidate:candidates) {
-        const auto keys=render_page_keys(candidate.key);
-        uint32_t pages=uint32_t(keys.size());
+        // Layouts already contain ordered page identities and exact counts.
+        // Traverse them directly instead of allocating keys then searching the
+        // same layout again for every page. Ordinary groups need only a count.
+        const std::vector<RenderSpan> *layout=nullptr;
+        uint64_t instances=0;
+        if(render_partitions>1){
+            const auto found=render_layout.find(candidate.key);
+            if(found==render_layout.end())continue;
+            layout=&found->second;
+        }else{
+            const auto found=render_ids.find(candidate.key);
+            if(found==render_ids.end())continue;
+            instances=found->second.size();
+        }
+        const uint32_t pages=layout?uint32_t(layout->size()):uint32_t((instances+capacity-1)/capacity);
         render_candidates+=pages;
         uint64_t selected_instances=0,group_charge=0;
         for(uint32_t page=0;page<pages;page++) {
-            RenderKey key{candidate.key,keys[page]};uint64_t count=render_page_size(key);
-            auto charge_for=[&](uint64_t value){return (selected_instances+value+render_page_capacity()-1)/render_page_capacity();};
-            auto fits=[&](uint64_t value){return logical_pages+charge_for(value)-group_charge<=uint64_t(render_batch_limit)&&bytes+value*render_stride_bytes()<=render_byte_limit;};
+            RenderKey key{candidate.key,layout?(*layout)[page].page:page};
+            uint64_t count=layout?(*layout)[page].count:std::min(capacity,instances-uint64_t(page)*capacity);
+            const auto resident=resident_ids.find(key);
+            bool held_partial=false;
+            auto charge_for=[&](uint64_t value){return (selected_instances+value+capacity-1)/capacity;};
+            auto fits=[&](uint64_t value){return logical_pages+charge_for(value)-group_charge<=uint64_t(render_batch_limit)&&bytes+value*stride<=render_byte_limit;};
             if(!fits(count)) {
                 ++render_blocked;
-                auto resident=resident_ids.find(key);
                 // A visible prefix must not disappear just because its pending
                 // growth cannot fit. Keep it until a later selection can admit
                 // the full page; it is not queued as an impossible upload.
                 if(appearance_fade&&resident!=resident_ids.end()&&!resident->second.empty()&&fits(resident->second.size())){
-                    count=resident->second.size();held_partial.push_back(key);
+                    count=resident->second.size();held_partial=true;
                 }else{
                     // Only the ordinary non-faded layout can skip intervening
                     // full pages: faded pages may hold a smaller visible prefix.
@@ -214,21 +231,20 @@ void NativeStaticBatch::select_render_batches() {
                 }
             }
             const uint64_t charge=charge_for(count);
-            ordered.push_back(key);bytes+=count*render_stride_bytes();
+            ordered.push_back(key);bytes+=count*stride;
             selected_instances+=count;logical_pages+=charge-group_charge;group_charge=charge;
+            if(!held_partial&&(resident==resident_ids.end()||resident->second.size()!=count))render_pending.push_back(key);
         }
     }
     // Preserve nearest-first admission order separately from membership lookup.
     // Bulk sorting avoids one tree-node allocation for every admitted draw page.
     auto wanted=ordered;std::sort(wanted.begin(),wanted.end());
-    std::sort(held_partial.begin(),held_partial.end());
     std::vector<RenderKey> evict;
     for(const auto &batch:batches)if(!std::binary_search(wanted.begin(),wanted.end(),batch.first))evict.push_back(batch.first);
     for(auto key:evict)release_batch(key,true);
     for(auto &entry:batches)update_batch_shadows(entry.second,page_casts_shadows(entry.first));
-    render_pending.clear();
-    for(auto it=ordered.rbegin();it!=ordered.rend();++it)
-        if(!std::binary_search(held_partial.begin(),held_partial.end(),*it)&&(!batches.count(*it)||resident_ids.at(*it).size()!=render_page_size(*it)))render_pending.push_back(*it);
+    // Upload consumes from the back; retain the original nearest-first order.
+    std::reverse(render_pending.begin(),render_pending.end());
 }
 void NativeStaticBatch::_process(double) {
     const uint64_t started=Time::get_singleton()->get_ticks_usec();

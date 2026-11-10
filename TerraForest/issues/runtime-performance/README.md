@@ -1,5 +1,13 @@
 # Runtime performance
 
+[Ground-cover render selection](render-selection-2026-11-10.md) accounts for
+3.287 ms in a valid slow walking frame. Direct native layout traversal reduces
+the isolated debug median 772 to 478 us with unchanged visible page counts,
+payloads and limits. Debug/release regressions pass and native DLLs are installed.
+The world attempt lost focus and is rejected; normal gameplay acceptance and
+remaining draw/physics stalls are still open. See the failed-check record before
+claiming whole-game FPS gains.
+
 [Storage audit](storage-audit-2026-11-10.md) confirms accumulated development
 outputs: 22.67 GiB reports and 5.41 GiB across 113 FPS fixture slots. The launcher
 now reserves clone/report space before writing anything and retains the approved

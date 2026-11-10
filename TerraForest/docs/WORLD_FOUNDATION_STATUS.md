@@ -1,3 +1,17 @@
+## Ground-cover render selection - 2026-11-10
+
+[Measured native selection work](../issues/runtime-performance/render-selection-2026-11-10.md)
+accounts for 3.287 ms in one slow foreground walking frame. Direct traversal of
+existing page layouts reduces the isolated debug median from 772 to 478 us while
+preserving all page/byte/upload limits and placement payloads. GPU partition
+checks and headless static-placement checks pass; the GPU static-placement run
+retains its failed exclusive-fullscreen assertion. Release static-placement and
+GPU partition checks also pass; both native DLLs are installed with all 14 pairs
+matching and the PCK unchanged. The normal-world run lost focus for 1,519 gameplay
+frames and is rejected; its walking/destruction checks did not complete. Saves
+passed. A valid foreground comparison, draw/physics stall fixes and stable 60 FPS
+with headroom remain open; the component result is not whole-world acceptance.
+
 ## Approved FPS pacing retained - 2026-11-10
 
 [Development storage audit](../issues/runtime-performance/storage-audit-2026-11-10.md)
