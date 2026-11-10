@@ -222,6 +222,10 @@ class NativeRegionalWater : public godot::RefCounted {
     std::deque<Key> settling;
     std::unordered_set<Key> settling_set;
     uint64_t settle_steps=0,settle_transfers=0,settle_us=0;
+    bool settle_profiling=false;
+    uint64_t settle_face_us=0,settle_profiled_faces=0,settle_max_face_us=0;
+    godot::Vector3i settle_slowest_cell;
+    int settle_slowest_direction=0;
     void wake_settling(Key k,int cell_index=-1);
     void settle_cell(const godot::Vector3i &p,int direction);
     using Placement=std::vector<std::pair<godot::Vector3i,uint64_t>>;
@@ -245,6 +249,7 @@ protected: static void _bind_methods();
 public:
     void settle_after_edit(const godot::AABB &bounds);
     int64_t advance_settling(int64_t budget=256);
+    void configure_settling_profile(bool enabled){settle_profiling=enabled;settle_face_us=settle_profiled_faces=settle_max_face_us=0;}
     void set_western_ocean(bool enabled){if(western_ocean!=enabled){western_ocean=enabled;invalidate_snapshot();}}
     void set_surrounding_ocean(bool enabled){if(surrounding_ocean!=enabled){surrounding_ocean=enabled;invalidate_snapshot();}}
     godot::Dictionary water_patch_state() const;

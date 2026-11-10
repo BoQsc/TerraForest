@@ -19,7 +19,8 @@ func run()->void:
 	check(not game.loading_active and game.terrain.backend.readonly_snapshot,"existing default world loads read-only")
 	if failures:await finish();return
 	game.set_process(false);game.set_physics_process(false);game.combat.set_physics_process(false)
-	game.combat.blast_water_settling=true
+	check(not game.combat.blast_water_settling,"experimental water settling stays disabled in normal gameplay")
+	if OS.get_cmdline_user_args().has("--verify-water-settling"):game.combat.blast_water_settling=true
 	game.player_view.entry.finish();game._clear_motion();game.player.set_physics_process(false)
 	game.zombies.population_enabled=false
 	var player_before:Vector3=game.player.global_position

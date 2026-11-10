@@ -11,12 +11,12 @@
 float field(V3 p,float bottom,float depth){
  return std::max({-p.x,p.x-2.f,-p.z,p.z-2.f,bottom-p.y,p.y-bottom-depth});
 }
-int surface_cells(float bottom,float depth,float spacing){
+int surface_cells(float bottom,float depth,float spacing,float phase=0){
  int count=0;
  for(int z=-1;z<5;z++)for(int y=-1;y<5;y++)for(int x=-1;x<5;x++){
   float d[8];unsigned mask=0;
   for(int k=0;k<8;k++){
-   V3 p={spacing*(x+(k&1)),spacing*(y+((k>>1)&1)),spacing*(z+((k>>2)&1))};
+   V3 p={spacing*(x+(k&1)+phase),spacing*(y+((k>>1)&1)+phase),spacing*(z+((k>>2)&1)+phase)};
    d[k]=field(p,bottom,depth);if(d[k]<0)mask|=1u<<k;
   }
   if(mask&&mask!=255){
@@ -40,6 +40,16 @@ int main(){
  std::printf("deep_pool_surface_cells=%d shallow_phases_visible=%d shallow_phases_missing=%d/1000\n",lake,seen,missed);
  if(lake<=0||missed==0)return 2;
  std::puts("DIRECT_UNIFORM_GRID_ADOPTION=REJECTED: finite stored water can have no surface samples");
+ // Current mesher uses 25 cm spacing with a half-step origin. Finer spacing
+ // still misses finite 4 mm films; do not enable settling on that assumption.
+ int runtime_missing=0;
+ for(int i=0;i<1000;++i){
+  int count=surface_cells(i*.00025f,.004f,.25f,.5f);
+  if(count<0)return 13;
+  if(!count)++runtime_missing;
+ }
+ if(surface_cells(0.f,1.f,.25f,.5f)<=0||!runtime_missing)return 14;
+ std::printf("RUNTIME_25CM_HALF_STEP shallow_phases_missing=%d/1000; visual qualification blocked\n",runtime_missing);
  // Shared runtime/render connection rejects solid separation and dry ledges,
  // but retains exact 1 ml connections where two wet intervals really meet.
  using terraforest::water_intervals_joined;

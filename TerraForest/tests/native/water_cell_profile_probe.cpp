@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "../../addons/volumetric_water/native/water_cell_profile.hpp"
+#include "../../addons/volumetric_water/native/water_volume_query.hpp"
 #include <cstdio>
 #include <cstdlib>
 using terraforest::WaterCellProfile;
@@ -49,5 +50,30 @@ int main(){
     auto upper=bottom_cut;
     require(WaterCellProfile::vertical_overlap(lower,504,upper,4),"static volumes connect through a narrow partial vertical opening");
     require(!WaterCellProfile::vertical_overlap(lower,504,upper,-10),"a dry vertical gap stays disconnected");
+    uint32_t random=1703;int queries=0;bool parity=true;
+    for(int trial=0;trial<256;++trial){
+        WaterCellProfile shape;
+        for(double &height:shape.floor){random=random*1664525u+1013904223u;height=(int(random%900001)-200000)*.001;}
+        shape.ceiling=100+(trial%401);
+        std::vector<WaterCellProfile::Triangle> contacts;
+        if(trial%2){
+            // Real terrain contacts may contain many floor fragments, not
+            // merely the four corner heights used by legacy cell fixtures.
+            for(int z=0;z<4;++z)for(int x=0;x<4;++x){
+                auto point=[&](int u,int v){return WaterCellProfile::Point{u*.25,v*.25,shape.floor[0]+u*17.25-v*11.125};};
+                contacts.push_back({point(x,z),point(x+1,z),point(x+1,z+1)});
+                contacts.push_back({point(x,z),point(x+1,z+1),point(x,z+1)});
+            }
+            shape.contact=&contacts;
+        }
+        terraforest::WaterVolumeQuery cached(shape);
+        parity&=cached.capacity()==shape.capacity();
+        for(int step=0;step<=32;++step){double h=-10+step*17.123;
+            parity&=cached.volume(h)==shape.volume(h);++queries;
+            uint64_t ml=shape.capacity()*step/32;
+            parity&=cached.head(ml)==shape.head(ml);++queries;}
+    }
+    require(parity,"cached floor moments preserve exact volumes and inverse heads across clipped slopes");
+    std::printf("WATER_VOLUME_QUERY exact_queries=%d\n",queries);
     std::puts("WATER_CELL_PROFILE failures=0");
 }

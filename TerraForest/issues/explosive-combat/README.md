@@ -1,10 +1,11 @@
 # First firearm and volumetric explosive destruction
 
 2026-11-10 follow-up: [distant explosion admission and crater-water settling](distance-water-2026-11-10.md).
-The source distance fix passes an actual-world stationary-player test. Water
-settling remains an opt-in native prototype; timing/visual qualification and
-package installation are still pending. Earlier installed results below do not
-qualify this follow-up.
+The distance fix is installed; packaged combat and the stationary-player distant
+chain pass. Installed native libraries are unchanged. Water settling remains an
+opt-in source prototype: exact volume evaluation reduces crater settling work
+about 37%, but timing bounds and shallow-water surface coverage still block
+enablement. Foreground performance and visual qualification remain pending.
 
 - Status: Installed package / scoped engineering checks passed; user visual review pending.
 - Updated: 2026-11-01. Source: `165a75b9`; stronger tests: `a48153ed`; combined native artifacts: `579a21c1`.

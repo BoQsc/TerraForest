@@ -2,6 +2,7 @@
 #include <map>
 #include <cstring>
 #include "regional_water.hpp"
+#include "water_volume_query.hpp"
 #include "../../volumetric_terrain/native/density_surface.hpp"
 #include "lake_catalog.hpp"
 #include <godot_cpp/core/class_db.hpp>
@@ -234,6 +235,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("advance","budget","seconds"),&NativeRegionalWater::advance,DEFVAL(1.0/60.0));
     ClassDB::bind_method(D_METHOD("settle_after_edit","bounds"),&NativeRegionalWater::settle_after_edit);
     ClassDB::bind_method(D_METHOD("advance_settling","budget"),&NativeRegionalWater::advance_settling,DEFVAL(256));
+    ClassDB::bind_method(D_METHOD("configure_settling_profile","enabled"),&NativeRegionalWater::configure_settling_profile);
     ClassDB::bind_method(D_METHOD("begin_fill","bounds","level","seed","amount"),&NativeRegionalWater::begin_fill);
     ClassDB::bind_method(D_METHOD("remove_bounds","bounds"),&NativeRegionalWater::remove_bounds);
     ClassDB::bind_method(D_METHOD("brush","point","radius","amount"),&NativeRegionalWater::brush);
@@ -588,7 +590,8 @@ void NativeRegionalWater::settle_cell(const Vector3i &p,int direction){
     const Vector3i steps[]={Vector3i(0,-1,0),Vector3i(-1,0,0),Vector3i(1,0,0),Vector3i(0,0,-1),Vector3i(0,0,1)};
     for(int d=direction;d==direction&&from->second.water[i];++d){
         const auto a=profile(from->second,i);const uint64_t av=from->second.water[i];
-        if(!a.capacity())continue;
+        const WaterVolumeQuery aq(a);
+        if(!aq.capacity())continue;
         if(d==0&&!a.open_bottom)continue;
         const Vector3i q=p+steps[d];if(!in_domain(q))continue;
         auto to=regions.find(region_key(q));
@@ -596,20 +599,21 @@ void NativeRegionalWater::settle_cell(const Vector3i &p,int direction){
             get(q,true);wake_settling(from->first,i);continue;
         }
         const int j=index(q);const auto b=profile(to->second,j);
-        const uint64_t bv=to->second.water[j],capacity=b.capacity();
+        const WaterVolumeQuery bq(b);
+        const uint64_t bv=to->second.water[j],capacity=bq.capacity();
         if(bv>=capacity)continue;
         uint64_t amount=std::min(av,capacity-bv);
         if(d==0){
-            if(b.ceiling<500||!WaterCellProfile::vertical_overlap(b,500,a,a.head(av)))continue;
+            if(b.ceiling<500||!WaterCellProfile::vertical_overlap(b,500,a,aq.head(av)))continue;
         }else{
             const int axis=d<3?0:2,side=(d==2||d==4)?1:0;
-            const double head=a.head(av);
-            if(head<=b.head(bv)||!WaterCellProfile::face_overlap(a,head,b,head,axis,side))continue;
+            const double head=aq.head(av);
+            if(head<=bq.head(bv)||!WaterCellProfile::face_overlap(a,head,b,head,axis,side))continue;
             // Solve in head space rather than nesting quantity bisection
             // around two expensive inverse-volume queries at every step.
             double low=0,high=head;
             for(int n=0;n<26;++n){const double mid=(low+high)*.5;
-                const double volume=a.volume(std::min(mid,a.ceiling))+b.volume(std::min(mid,b.ceiling));
+                const double volume=aq.volume(std::min(mid,a.ceiling))+bq.volume(std::min(mid,b.ceiling));
                 if(volume<double(av)+double(bv))low=mid;else high=mid;}
             // A dry receiver below a sill can accept falling water. Stop the
             // donor at the sill; don't require an already-wet receiving face.
@@ -619,11 +623,11 @@ void NativeRegionalWater::settle_cell(const Vector3i &p,int direction){
                     if(WaterCellProfile::face_overlap(a,mid,b,mid,axis,side))high=mid;else low=mid;}
             }
             const uint64_t maximum=amount;
-            amount=std::min(maximum,uint64_t(std::max(0.0,std::floor(double(av)-a.volume(high)))));
+            amount=std::min(maximum,uint64_t(std::max(0.0,std::floor(double(av)-aq.volume(high)))));
             // Bisection's upper endpoint can undershoot an exact integer by
             // a fraction of a millilitre. Certify that final unit directly.
-            if(amount<maximum){const double donor=a.head(av-amount-1);
-                if(donor>=b.head(bv+amount+1)&&WaterCellProfile::face_overlap(a,donor,b,donor,axis,side))++amount;}
+            if(amount<maximum){const double donor=aq.head(av-amount-1);
+                if(donor>=bq.head(bv+amount+1)&&WaterCellProfile::face_overlap(a,donor,b,donor,axis,side))++amount;}
         }
         if(!amount)continue;
         preserve_mesh_region(from->first);preserve_mesh_region(to->first);
@@ -658,7 +662,14 @@ int64_t NativeRegionalWater::advance_settling(int64_t budget){
             bit=word*64+__builtin_ctzll(bits);r.settle_mask[word]&=~(uint64_t(1)<<(bit%64));r.settle_cursor=(bit+1)%2560;break;}
         if(bit>=0){const int i=bit/5;
             // Empty donor faces need no profile or geometry queries.
-            if(r.water[i])settle_cell(position(k)*8+Vector3i(i%8,(i/8)%8,i/64),bit%5);
+            if(r.water[i]){
+                const Vector3i p=position(k)*8+Vector3i(i%8,(i/8)%8,i/64);
+                const uint64_t face_start=settle_profiling?Time::get_singleton()->get_ticks_usec():0;
+                settle_cell(p,bit%5);
+                if(settle_profiling){const uint64_t elapsed=Time::get_singleton()->get_ticks_usec()-face_start;
+                    settle_face_us+=elapsed;++settle_profiled_faces;
+                    if(elapsed>settle_max_face_us){settle_max_face_us=elapsed;settle_slowest_cell=p;settle_slowest_direction=bit%5;}}
+            }
             ++settle_steps;}
         bool pending=false;for(auto word:r.settle_mask)pending|=word!=0;
         if(!pending){r.settle_pending=false;invalidate_snapshot();}
@@ -1540,6 +1551,7 @@ Dictionary NativeRegionalWater::statistics() const {
     Dictionary d;d["deferred_regions"]=int64_t(deferred_regions.size());d["ocean_cache_regions"]=int64_t(ocean_cache.size());d["ocean_cache_bytes"]=int64_t(ocean_cache_bytes);d["ocean_cache_hits"]=int64_t(ocean_cache_hits);d["ocean_clean_regions"]=ocean_clean;d["ocean_edited_regions"]=ocean_edited;d["structure_contact_bytes"]=int64_t(solid_cache_bytes);d["terrain_contact_bytes"]=int64_t(contact_bytes);d["pending_vertical"]=int64_t(0);d["vertical_steps"]=int64_t(0);d["water_ml"]=int64_t(total);d["active_cells"]=int64_t(0);d["regions"]=int64_t(regions.size());d["pending_regions"]=int64_t(requests.size());d["dirty_meshes"]=int64_t(meshes.size()+batch_queue.size());d["mesh_batch_active"]=batch_active;d["mesh_publish_pending"]=publish_pending;d["published_mesh_batch"]=int64_t(published_batch);d["query_cache_bytes"]=int64_t(query_cache_bytes);d["query_builds"]=int64_t(query_builds);d["query_cache_hits"]=int64_t(query_cache_hits);d["mesh_snapshot_bytes"]=int64_t(mesh_snapshot.size()*(sizeof(Region)+Region::payload_bytes));d["fill_active"]=fill.running;d["fill_remaining_ml"]=fill.remaining;d["sampled_nodes"]=int64_t(sampled);d["cache_hits"]=int64_t(cache_hits);d["cached_region_rebuilds"]=int64_t(cache_rebuilds);d["cell_steps"]=int64_t(0);d["changes"]=int64_t(changes);d["step_us"]=int64_t(last_us);d["max_step_us"]=int64_t(max_us);d["mesh_us"]=int64_t(mesh_us);d["max_mesh_us"]=int64_t(max_mesh_us);d["capacity_reached"]=limit;uint64_t vacancy_bytes=0;for(const auto &[k,r]:regions)vacancy_bytes+=r.vacancies.capacity()*sizeof(uint32_t);
     d["map_identity_scene_hash_us"]=int64_t(survey_identity_scene_hash_us);d["map_identity_hash_us"]=int64_t(survey_identity_hash_us);d["snapshot_cache_bytes"]=saved_snapshot.size()+saved_catalog.size();d["snapshot_pending_bytes"]=int64_t(NativeWaterSnapshot::pending_bytes.load());d["snapshot_builds"]=int64_t(snapshot_builds);d["snapshot_hits"]=int64_t(snapshot_hits);
     d["settling_regions"]=int64_t(settling.size());d["settling_steps"]=int64_t(settle_steps);d["settling_transfers"]=int64_t(settle_transfers);d["settling_us"]=int64_t(settle_us);
+    d["settling_profiled_faces"]=int64_t(settle_profiled_faces);d["settling_face_us"]=int64_t(settle_face_us);d["settling_max_face_us"]=int64_t(settle_max_face_us);d["settling_slowest_cell"]=settle_slowest_cell;d["settling_slowest_direction"]=settle_slowest_direction;
     d["vacancy_bytes"]=int64_t(vacancy_bytes);d["resident_cell_bytes"]=int64_t(regions.size()*(sizeof(Region)+Region::payload_bytes)+contact_bytes+solid_cache_bytes+vacancy_bytes);return d;
 }
 // Self-contained compound snapshot: authoritative amounts + derived occupancy.

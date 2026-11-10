@@ -30,6 +30,7 @@ func _initialize()->void:
 	var block:=Vector3(46,40,46);core.execute(Codec.brush(block,block,5,1,true,0))
 	var basin:=Vector3(46,45,46);core.execute(Codec.brush(basin,basin,2,0,false,0))
 	var water:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+	if OS.get_cmdline_user_args().has("--profile-settling"):water.configure_settling_profile(true)
 	check(water.begin_fill(AABB(Vector3(43,42,43),Vector3(6,4,6)),44.5,Vector3(46,44,46),-1),"native carved basin fill begins")
 	for n in 1000:
 		water.advance(2048)
@@ -44,10 +45,10 @@ func _initialize()->void:
 	var blast:=Vector3(46,43.5,46);core.execute(Codec.brush(blast,blast,1.5,0,false,0))
 	var bounds:=AABB(blast-Vector3.ONE*2,Vector3.ONE*4)
 	water.invalidate(bounds);water.settle_after_edit(bounds)
-	var max_us:=0;var done:=false
+	var max_us:=0;var total_us:=0;var done:=false
 	for n in 10000:
 		if not prepare_requests(water):check(false,"blast occupancy prepares");break
-		water.advance_settling(256);max_us=maxi(max_us,water.statistics().settling_us)
+		var elapsed:int=water.advance_settling(256);total_us+=elapsed;max_us=maxi(max_us,elapsed)
 		if water.statistics().settling_regions==0:done=true;break
 	check(done,"actual carved-crater settling finishes")
 	check(water.statistics().water_ml==total,"actual crater conserves finite water")
@@ -56,5 +57,6 @@ func _initialize()->void:
 	check(publish(water),"settled native water mesh and query revision publish together")
 	var new_hit:Dictionary=water.raycast_surface(from,to)
 	check(new_hit.get("hit",false) and old_hit.get("hit",false) and new_hit.point.y<old_hit.point.y,"published water surface follows the lowered water")
-	print("WATER_BLAST_TERRAIN max_settling_step_us=",max_us," statistics=",water.statistics()," failures=",failures)
+	var digest:=HashingContext.new();digest.start(HashingContext.HASH_SHA256);digest.update(snapshot(water))
+	print("WATER_BLAST_TERRAIN total_settling_us=",total_us," max_settling_step_us=",max_us," snapshot_sha256=",digest.finish().hex_encode()," statistics=",water.statistics()," failures=",failures)
 	quit(1 if failures else 0)

@@ -1,6 +1,7 @@
 # Distant explosions and suspended crater water
 
-- Status: Improved-partial. Source change verified; installed package unchanged.
+- Status: Improved-partial. Distant-explosion package installed and verified;
+  water settling remains source-only and disabled by default.
 - User review: Not reviewed. Foreground comparisons remain deferred.
 - Request: A player must not need to follow ignited barrels; water should settle
   into blast craters instead of remaining suspended.
@@ -35,7 +36,8 @@ time is attributed to `water blast settling` in the existing rolling trace.
 
 **Water settling is qualification-only, disabled by default.** The source runtime
 flag is `--blast-water-settling`; it requires the matching new native water DLL.
-Do not enable it in the unchanged installed package. This is not a completed
+Installed native water still lacks the prototype: do not enable the flag there.
+This is not a completed
 fluid simulation or an accepted FPS improvement.
 
 ## Evidence
@@ -70,21 +72,56 @@ The corrected checks pass; no runtime reach limit was changed to fix a test.
 
 ## Remaining / resume here
 
-- Install only after packaged validation. This turn did not export or overwrite
-  the PCK or installed DLLs, avoiding accidental delivery of other unqualified
-  source performance work.
+- Distant-explosion installation is complete. Evidence is under
+  `reports/checks/20261110T142239894838Z_remote_package`: 82 packaged combat-state
+  checks pass; `combat_remote_world` passes all three explosions with a stationary
+  player 160 m away, using installed native libraries and an unchanged fixture
+  save. The actual installed executable passes startup smoke only. The dense
+  lighting scan assertion fails identically in baseline and candidate (1/36);
+  retain that failure rather than counting it as a passing regression gate.
+  Installed PCK SHA-256:
+  `d98909526e3840637e0996151724574dab0bf89643671b548f649e38c4f19c40`.
+  The predecessor is hash-verified in `previous_package.archive.json`; staging
+  is removed and all installed native hashes are unchanged (`installed.json`).
 - Qualify water cost separately from intentional waits and scheduling stalls.
   The first whole-cell scheduler took up to 3.077 ms. The face scheduler reduced
   fixture work from 128,000 to 58,952 operations, with the final observed maximum
   1.273 ms. Another run reached 0.586 ms, while earlier runs reached 2.224–3.664 ms. A cooperative deadline
   is not proof of a hard bound. Resume with per-face CPU/scheduling attribution,
   then resumable or worker preparation if an indivisible operation exceeds budget.
+- Source follow-up caches immutable floor moments within each face solve,
+  retaining exact clipping, iteration order, rounding and quantities. The native
+  profile probe passes 16,896 exact volume/head comparisons, including fragmented
+  terrain contacts. Unprofiled crater totals improve from 61,866/68,280 us
+  (`20261110T142952460141Z`, `20261110T143009316158Z`) to 39,960/41,755 us
+  (`20261110T143331301492Z`, `20261110T143347578481Z`), about 37% less total work.
+  Candidate maximum calls are 956/1,120 us: the cooperative 1 ms gate is still
+  not a hard bound. All final snapshots hash to
+  `850ec06403d77f966fe534cd67074dadf4bb47e7e9cc584d120787a042bcb46e`, conserving
+  7,619,860 ml with identical 4,376 transfers and 58,952 scheduled face steps.
+  The 21 semantic checks pass again in `20261110T143429664322Z`.
+- Optional face profiling is off by default. Profiled candidate total is
+  47,867 us (`20261110T143408600594Z`), approximately 17% above the two-run
+  unprofiled mean; this small, noisy sample does not isolate observer overhead.
+  Worst measured face is 772 us. These are wall-clock timings, not thread CPU
+  attribution, frame headroom or proof of normal-gameplay stability.
+- Shallow-water rendering is a concrete enablement blocker: the current surface
+  lattice samples at 25 cm spacing with a 12.5 cm offset. A 4 mm water film can
+  have no interior sample, leaving conserved water without a rendered/query
+  surface. The existing native sampling diagnostic now covers that exact lattice:
+  `reports/water_surface_sampling.log` records 984/1,000 missing 4 mm film phases
+  and 36,504 passing isolated exposed-sheet height cases. The latter are not
+  integrated topology or visual acceptance.
+  Qualify connected exposed sheets, shores, stacked water and building contacts
+  before replacing that representation; do not delete small quantities, add fake
+  thickness or globally increase sampling density to conceal it. Matching
+  mesh/query revisions alone do not prove all finite water is represented.
 - Exercise water against dense buildings, slopes, caves, ocean streaming edges,
   concurrent bucket edits, pauses and interrupted compound saves. Full native
   region limits are retained; unavailable/deferred neighbors retain quantities
   and pending work, not pretend completion.
-- Verify actual world water visuals/contact behavior and the installed distant
-  chain. No new screenshots were captured; native mesh/query checks do not claim
+- Verify actual world water visuals/contact behavior and foreground installed
+  gameplay when comparisons resume. No new screenshots were captured; native mesh/query checks do not claim
   user visual approval. Existing images in the main issue remain historical.
 - The distance test covers resident authoritative barrel records outside actor
   readiness. Chains entering completely paged-out model regions still need a

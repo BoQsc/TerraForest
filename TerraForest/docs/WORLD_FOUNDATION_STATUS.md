@@ -3,18 +3,25 @@
 Removed blast admission's player-relative actor-collision dependency, retaining
 terrain/block/water transaction admission. The existing default-world fixture
 passes three actual explosions with the player stationary 160 m away; source
-save unchanged. Installation remains pending packaged validation.
+save unchanged. Packaged combat and the remote-chain check pass; the distant
+blast PCK is installed with unchanged native libraries, verified predecessor
+archive and removed staging. Actual executable startup smoke passes. The dense
+lighting scan has the same one failing assertion on baseline and candidate.
 
 Native blast-woken water settling passes finite-volume, interrupted-save, region
 paging and actual-terrain mesh/query checks. It is **opt-in only**: cooperative
-1 ms scheduling does not yet prove the performance budget, and normal-world
-visual qualification is outstanding. The old water surface suite fails the same
+1 ms scheduling does not yet prove the performance budget (candidate maximum
+1.120 ms). Transaction-local floor moments cut crater settling work about 37%
+with an identical final snapshot and 16,896 exact native query comparisons.
+Normal-world visual qualification is outstanding. The old water surface suite fails the same
 14 assertions on the installed baseline and candidate; this remains visible,
-not dismissed as visual acceptance. Return to per-face cost attribution, region
+not dismissed as visual acceptance. The 25 cm surface lattice can miss shallow
+finite water entirely; connected-sheet surface coverage is an enablement gate.
+Return to surface topology, per-face cost attribution, region
 edge/compound-save qualification and installed gameplay checks before enabling
 the water change. Details and retained failures:
 [explosion/water follow-up](../issues/explosive-combat/distance-water-2026-11-10.md).
-No new world, worktree, export, increased radius or raised resource cap was used.
+No new world, worktree, increased radius or raised resource cap was used.
 
 ## Roof material flicker - 2026-11-10
 
@@ -44,7 +51,8 @@ relaxed and no foreground/GPU acceptance is inferred from these headless runs.
 
 Follow-up: the 96-body debris pool passes scoped reset/lifetime/contact checks
 and reduces isolated enqueue work, but remains opt-in (`--pooled-debris`) and is
-not installed. The baseline lost focus; the user deferred foreground comparisons.
+not enabled. Its gated script is included in the distant-blast PCK; no default
+gameplay adoption is implied. The baseline lost focus; the user deferred foreground comparisons.
 Revisit adoption after valid gameplay ABAs and matched visuals/contact checks.
 GPU gaps are now available in the existing opt-in trace with separate units and
 completed-frame identity; on-device/observer-overhead checks remain pending.
