@@ -70,6 +70,29 @@ resource or pacing limit. Reaching a budget requests evidence review/storage
 management; it never evicts regression evidence to make a test pass. The existing
 2 GiB free-space floor plus planned working space is also preserved.
 
+The shared Godot test runner additionally enforces project-wide developer-output
+admission through `tools/development_storage.py`: 4 GiB loose reports, 2 GiB
+isolated scratch builds, 10 GiB verified local archives, 4 GiB native compiler
+caches and 2 GiB source import caches. Planned report/scratch growth counts before
+launch. Source assets, Git history, the installed distribution and player saves
+are outside these development-output categories. A limit failure preserves all
+files and prevents launching another test; it never triggers blanket deletion.
+Building/regional isolated-copy launchers and frozen/FPS captures also preflight
+before materializing large copies. Admission time is recorded separately from
+engine startup timing. These controls operate only in development tools.
+
+Receipt-identified test worlds have a separate 3 GiB admission budget, including
+128 MiB of planned next-world growth. The shared runner registers explicit FPS /
+startup slots and known test-world creation receipts after exit. Registry entries
+are accounting evidence only, never permission to delete a save. Unknown/player
+saves remain outside this test budget and the existing runtime save policy is
+unchanged. Failure to record an owned test world fails the check visibly.
+
+Do not loosen a limit to conceal accumulated output. Archive/verify and retire
+obsolete owned artifacts, reuse the main checkout and current compiler/import
+caches, then rerun admission. Full export/build duplication must have a specific
+comparison purpose and a lifecycle, not merely a new report label.
+
 Other historical test families are not inferred safe from folder names. They need
 equivalent ownership receipts before joining this lifecycle. Retained unknown or
 modified worlds remain explicit exceptions, not silently cleaned saves.

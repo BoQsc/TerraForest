@@ -81,7 +81,7 @@ class ResourceLimitTests(unittest.TestCase):
     def test_runner_fails_over_budget_and_required_unknown_telemetry(self):
         for exceeded, complete, required, expected in [(True, True, False, False), (False, False, True, False), (False, True, True, True)]:
             with self.subTest(exceeded=exceeded, complete=complete), tempfile.TemporaryDirectory() as folder:
-                with patch('run_godot_check.subprocess.Popen') as launch, patch('run_godot_check.ResourceMonitor') as monitor, patch('run_godot_check.require_free_space'):
+                with patch('run_godot_check.subprocess.Popen') as launch, patch('run_godot_check.ResourceMonitor') as monitor, patch('run_godot_check.require_free_space'), patch('run_godot_check.admit', return_value={}):
                     child = launch.return_value
                     child.pid = 123
                     child.poll.side_effect = [None, 0, 0]

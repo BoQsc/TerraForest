@@ -10,6 +10,7 @@ from pathlib import Path
 from run import ROOT, parse_args
 from run_godot_check import execute
 from play_checkpoint import revision_metadata
+from development_storage import admit
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -18,6 +19,7 @@ def main():
     parser.add_argument('--tests', nargs='+', choices=['navigation_treads', 'regional_navigation', 'navigation_residency', 'zombie_step_guard', 'player_cottage_stairs', 'actor_route_sampling', 'actor_route_contract', 'navigation_support_cache', 'navigation_invalidation', 'navigation_model_changes', 'navigation_water_footprint'])
     parser.add_argument('--baseline-native-ref', help='Use a committed world_runtime release DLL only in the isolated project for comparison')
     args = parser.parse_args()
+    admit(ROOT, scratch_bytes=256*2**20)
     config, _ = parse_args([])
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     report = ROOT/'reports/regional_release'/stamp

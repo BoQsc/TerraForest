@@ -13,6 +13,7 @@ from resource_limits import require_free_space
 from run import ROOT, parse_args
 from run_godot_check import execute
 from maintain_performance_artifacts import capacity, maintain
+from development_storage import admit
 
 
 def main():
@@ -38,6 +39,7 @@ def main():
         files = [ROOT / 'dist/TerraForest.pck', *(ROOT / 'dist/addons').rglob('*.dll')]
         require_free_space(ROOT, sum(p.stat().st_size for p in files))
         capacity(ROOT)
+        admit(ROOT, report_bytes=sum(p.stat().st_size for p in files) + 256*2**20)
         retention = maintain(apply=True, builds=True, build_keep=2)
         if retention['errors']:
             raise OSError('Retained-build maintenance failed; inspect ' + retention['receipt'])

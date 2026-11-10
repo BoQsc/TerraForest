@@ -10,12 +10,14 @@ from pathlib import Path
 from run import ROOT, parse_args
 from run_godot_check import command_for, execute, revision_metadata
 from native_test_retention import release_copies
+from development_storage import admit
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--godot")
     options = parser.parse_args()
+    admit(ROOT, scratch_bytes=128*2**20)
     engine = options.godot or parse_args([])[0].godot
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     report = ROOT / "reports/building_standards" / stamp

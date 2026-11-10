@@ -17,6 +17,7 @@ from play_checkpoint import revision_metadata
 from run import ROOT, parse_args
 from cache_retention import finalize_cache
 from resource_limits import ResourceMonitor, require_free_space
+from development_storage import admit, register_worlds
 
 
 def verify_pack_native(root=ROOT):
@@ -59,6 +60,9 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
+                result['development_storage'] = admit(ROOT)
+            result['preflight_seconds'] = time.monotonic() - started
+            started = time.monotonic()  # Storage admission is not engine startup timing.
             process = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
                                        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             result["pid"] = process.pid
@@ -110,6 +114,12 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
     if require_resource_budget and not result.get("resources", {}).get("within_sampled_limits", False):
         result["passed"] = False
         result["resource_gate"] = "Complete process RAM/VRAM telemetry within limits was required"
+    try:
+        if game_process:
+            register_worlds(command, folder, ROOT)
+    except (OSError, ValueError) as error:
+        result['world_budget_registry_error'] = str(error)
+        result['passed'] = False
     try:
         result["cache_retention"] = finalize_cache(command, result["passed"])
     except (OSError, ValueError) as error:

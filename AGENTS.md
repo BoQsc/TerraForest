@@ -35,3 +35,20 @@ its focused-commit, identity-file and verification rules.
 - Tag approved playtest/release milestones. Keep known limitations explicit.
 - Audit unique commits and worktree ownership before retiring old branches; do not
   rewrite published history or force-push as part of routine integration.
+
+## Generated storage
+
+- Use the existing main checkout for routine work. A test label is not a reason
+  to create a worktree, source copy, full export or new saved world.
+- Follow `TerraForest/docs/DEVELOPMENT_RETENTION.md`. Developer captures and
+  isolated builds must pass `tools/development_storage.py` admission before
+  allocating output, and use receipt-owned retention after the process exits.
+- New launchers must declare planned output and an archival lifecycle. Reuse a
+  fixture/build by hash when it is unchanged; keep at most two ordinary ready
+  copies per test family unless a documented `.retain`/`RETAIN_READY` pin applies.
+- Never silently raise a storage budget or evict saves/regression evidence to
+  run another test. Restore archived evidence into a new inspection directory
+  when needed; a cold archived artifact is not a missing or discarded result.
+- Keep tool responses compact: report summaries and artifact paths instead of
+  dumping whole traces, inventories, embedded image data or long logs into chat.
+  Preserve full evidence in the bounded artifact lifecycle.

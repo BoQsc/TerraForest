@@ -1,0 +1,9 @@
+{
+  "asset": "objects-002.zip",
+  "asset_id": 730476458,
+  "download_sha256": "fbbafdd8714cda11e35d4d909a2e03427c09c474a100f4b9ddaa2cd1a6c37ff2",
+  "object_count": 16,
+  "reconstructed_bytes": 18155804,
+  "all_hashes_match": true,
+  "scope": "Downloaded from GitHub; verified full volume hash, exact object inventory and every reconstructed file hash; no local source used for reconstruction"
+}
