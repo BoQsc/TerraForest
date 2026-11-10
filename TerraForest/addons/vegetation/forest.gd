@@ -94,6 +94,7 @@ func upsert_chunk(chunk: String,ids: PackedInt64Array,transforms: Array[Transfor
 		if audit_enabled:_audit_pending[ids[i]]=true
 		canopy_revision+=1
 		roots[ids[i]]=row;_ensure(key)["rows"][ids[i]]=row;_invalidate_cell(key);max_scale=maxf(max_scale,sc)
+		if native_selection!=null:native_selection.upsert_shadow_root(ids[i],t)
 		_invalid_decisions[ids[i]]=true
 	stats["trees"]=roots.size();membership_changed=true
 	return true
@@ -102,6 +103,7 @@ func remove_root(id: int)->void:
 	if native_selection!=null: native_selection.erase(id)
 	if audit_enabled:_audit_pending[id]=true
 	if not roots.has(id):return
+	if native_selection!=null:native_selection.remove_shadow_root(id)
 	canopy_revision+=1
 	var row: Dictionary=roots[id];var key: Vector2i=row["key"]
 	cells[key]["rows"].erase(id);roots.erase(id);moving.erase(id);_invalidate_cell(key);membership_changed=true;stats["trees"]=roots.size()

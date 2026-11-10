@@ -99,8 +99,10 @@ p99/max remains **20.689/24.462 ms**, arrival max 29.651 ms, destruction recover
 p99/max **19.335/26.749 ms**. Peak sampled private commit is 3.90 GiB. These
 separate runs do not isolate recorder overhead, but confirm that recording does
 not explain all long frames. Synchronous screenshots are excluded from gameplay
-timing. Both captures use an off-screen test window; visible-window presentation,
-longer movement and endurance remain unqualified.
+timing. Both launches request an off-screen initial position, but did not record
+actual window mode/focus, so visible presentation cannot be qualified from those
+reports. The later [canopy comparison](canopy-snapshot-2026-11-10.md) adds verified
+foreground fullscreen and an 88 m walk. Endurance remains unqualified.
 
 ## Remaining gate
 

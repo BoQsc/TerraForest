@@ -14,6 +14,11 @@ class NativeVegetationSelection : public godot::RefCounted {
  std::priority_queue<Event> events;
  std::unordered_map<int64_t,Event> live;
  std::vector<godot::Transform3D> shadow_roots;
+ // Main-thread forest membership, separate from LOD decision certificates and
+ // from the immutable per-job rasterization snapshot.
+ std::vector<godot::Transform3D> canopy_roots;
+ std::vector<int64_t> canopy_ids;
+ std::unordered_map<int64_t,size_t> canopy_slots;
  godot::Vector3 shadow_origin,shadow_sun;
  double shadow_span=0;int shadow_resolution=0;
  double travel=0;
@@ -23,6 +28,9 @@ protected: static void _bind_methods();
 public:
  godot::PackedByteArray shadow_mask(godot::Object *renderer,godot::Vector3 origin,double span,int resolution,godot::Vector3 sun);
  bool prepare_shadow_mask(godot::Object *renderer,godot::Vector3 origin,double span,int resolution,godot::Vector3 sun);
+ bool upsert_shadow_root(int64_t id,const godot::Transform3D &transform);
+ void remove_shadow_root(int64_t id);
+ bool prepare_shadow_snapshot(godot::Object *source,godot::Vector3 origin,double span,int resolution,godot::Vector3 sun);
  godot::PackedByteArray build_shadow_mask() const;
  void clear();
  void erase(int64_t id);

@@ -5,6 +5,9 @@ extends RefCounted
 # fly mode holds the sample height. This does not qualify walking collision.
 func run(driver:SceneTree,game:Node,output:String)->Dictionary:
 	var grounded:bool="--trace-grounded-walk" in OS.get_cmdline_user_args()
+	var walk_seconds:=1.5
+	for arg:String in OS.get_cmdline_user_args():
+		if arg.begins_with("--trace-walk-seconds="):walk_seconds=clampf(float(arg.get_slice("=",1)),1.0,20.0)
 	var desired:Vector3=game.player.position+Vector3(24,0,24)
 	var target:=Vector3.INF
 	var best:=INF
@@ -36,7 +39,7 @@ func run(driver:SceneTree,game:Node,output:String)->Dictionary:
 			driver.label="outdoor_sweep"
 			var began:=Time.get_ticks_msec()
 			if grounded:game.controls.set_key(KEY_D,true,Time.get_ticks_usec())
-			while Time.get_ticks_msec()-began<(1500 if grounded else 4000):
+			while Time.get_ticks_msec()-began<(int(walk_seconds*1000) if grounded else 4000):
 				game.app_focused=true
 				if grounded:
 					movement_frames+=1
@@ -62,4 +65,4 @@ func run(driver:SceneTree,game:Node,output:String)->Dictionary:
 		await RenderingServer.frame_post_draw
 	game.session_menu.developer_hud.mouse_access=prior_mouse_access
 	var travelled:float=Vector2(game.player.position.x-origin.x,game.player.position.z-origin.z).length()
-	return {"ok":not grounded or (travelled>4.0 and grounded_frames>movement_frames*.8 and not game.player_life.dead),"target":target,"poses":poses,"grounded":grounded,"travelled":travelled,"grounded_frames":grounded_frames,"movement_frames":movement_frames,"scope":"Production motor walking with gravity and collisions through the existing tool-cursor input gate; no density or quality overrides" if grounded else "16 m camera sweep through production cover; fly mode holds height, no density or quality overrides; not a walking/collision qualification"}
+	return {"ok":not grounded or (travelled>4.0 and grounded_frames>movement_frames*.8 and not game.player_life.dead),"target":target,"poses":poses,"grounded":grounded,"walk_seconds_per_leg":walk_seconds if grounded else 0.0,"travelled":travelled,"grounded_frames":grounded_frames,"movement_frames":movement_frames,"scope":"Production motor walking with gravity and collisions through the existing tool-cursor input gate; no density or quality overrides" if grounded else "16 m camera sweep through production cover; fly mode holds height, no density or quality overrides; not a walking/collision qualification"}

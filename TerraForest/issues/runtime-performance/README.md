@@ -1,5 +1,15 @@
 # Runtime performance
 
+[Canopy snapshot stalls](canopy-snapshot-2026-11-10.md) are confirmed in normal
+fullscreen walking: main-thread snapshot preparation reaches 5.333 ms. A native
+buffer removes repeated dictionary traversal while preserving exact shadow-mask
+bytes. Debug/release checks and foreground 88 m walking/destruction pass; snapshot
+median falls 4.872→0.074 ms. Whole walking max remains 22.989 ms, so stable FPS is
+not achieved. Installed foreground gameplay and recorder-off checks pass, with
+0.061 ms median canopy preparation in the packaged trace. Remaining 42–43 ms
+frames include a 31.262 ms draw interval with little additional main-thread work;
+renderer wait attribution and terrain staging/LOD costs are the next targets.
+
 [Shared animation cache correction](animation-cache-2026-11-10.md) removes
 same-value writes that invalidated all residents' animation caches. The old/new
 capped world pair reduces settled physics median 2.612→1.929 ms; behavior,
@@ -7,7 +17,7 @@ pose, grounded walking and destruction checks pass in source and the installed
 package. A separate 49.358 ms source rendering-heavy frame remains unresolved;
 the installed walking capture reaches 25.243 ms. A recorder-off control still
 reaches 24.462 ms walking and 26.749 ms after destruction. This is not stable-FPS
-acceptance; visible-window presentation and longer movement remain open.
+acceptance; the later canopy checks add verified fullscreen and 88 m movement.
 
 [Rendering API diagnostic](render-api-diagnostic-2026-11-10.md) adds explicit
 driver selection to the test launcher with runtime verification. Its first D3D12

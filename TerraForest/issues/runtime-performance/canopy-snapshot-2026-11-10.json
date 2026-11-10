@@ -1,0 +1,3483 @@
+{
+  "scope": "Two sequential foreground fullscreen normal-policy runs; same native library and source. Old control retains the new membership index but uses dictionary snapshot traversal. Partial rolling-window attribution; continuous frame distributions. Functional success is not stable FPS.",
+  "runs": [
+    {
+      "report": "reports\\performance_changes\\20261109T224505451708Z_canopy_dictionary_control",
+      "runtime_source_sha256": {
+        "controller": "3efefb89d32e9b13385c7d9ca2c7ff3f07692eef34d316d8940cbd6b28851171",
+        "res://addons/vegetation/canopy_shadows.gd": "2b83662822aaf20697580569e8378032ef059cbfc5b06280dd0c57cad9101fc3",
+        "res://addons/vegetation/forest.gd": "8b2862d51a72aad1e8c84317e901d7e0d0e075d36e4502573d376e6f9228c6c0",
+        "zombie": "a887545d5d4959b43ddb003b9e072b866c362c2f863b484c0015fd823c26a08a"
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d163a137ff301ad3913ae1d1b193fdadc6c6fb3484e8dad3f2ba3fb1aa4cee9f",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d2ebaa98770fa7195113cb94ad14aae5a789c9a595b7d7d192be21851c87bb76",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "88572f9c05fe930d029a0f64e487bcd9784160309be4e235f5efbfc4ed8711e3",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "ea33eeb994d30b2b2118b213179d0d6c6a6af826e8aaba012e38ff63b6a3e9c5",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "presentation": {
+        "background_cap": 15,
+        "effective_cap": 60,
+        "foreground_required": true,
+        "hidden_hud_control": false,
+        "refresh_hz": 144.022994995117,
+        "requested_cap": 60,
+        "unfocused_gameplay_frames": 0,
+        "vsync": 1,
+        "window": {
+          "fair_graphical_sample": true,
+          "fullscreen": true,
+          "headless": false,
+          "render_scale": 1.0,
+          "viewport": [
+            1920,
+            1080
+          ],
+          "window_mode": 3,
+          "window_size": [
+            1920,
+            1080
+          ]
+        },
+        "window_position": "(0, 0)"
+      },
+      "outdoor": {
+        "grounded": true,
+        "grounded_frames": 964,
+        "movement_frames": 964,
+        "ok": true,
+        "poses": [
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 59.84698, 353.6957)]",
+            "player": "(1085.203, 58.16698, 353.6957)",
+            "screenshot_us": 460353
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1129.388, 62.62035, 353.6963)]",
+            "player": "(1129.388, 60.94035, 353.6963)",
+            "screenshot_us": 436286
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1173.483, 83.18966, 353.6963)]",
+            "player": "(1173.483, 81.50966, 353.6963)",
+            "screenshot_us": 392083
+          }
+        ],
+        "scope": "Production motor walking with gravity and collisions through the existing tool-cursor input gate; no density or quality overrides",
+        "target": "(1085.203, 58.42123, 349.6957)",
+        "travelled": 88.2799072265625,
+        "walk_seconds_per_leg": 8.0
+      },
+      "functional_result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 10468,
+        "exit_code": 0,
+        "resources": {
+          "samples": 180,
+          "gpu_samples": 179,
+          "peak_private_commit_bytes": 4310978560,
+          "peak_working_set_bytes": 2685108224,
+          "peak_dedicated_gpu_bytes": 1761067008,
+          "checks": {
+            "ram": {
+              "bytes": 4310978560,
+              "status": "warning"
+            },
+            "vram": {
+              "bytes": 1761067008,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 109.36843060003594,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        },
+        "native_process_current_frames": {
+          "blocks": 3635,
+          "model_horizon": 3635,
+          "resident_lights": 3635
+        }
+      },
+      "destruction": {
+        "base": "(1173.0, 80.0, 339.0)",
+        "chain_ms": 419.358,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ignition_us": 40,
+        "observer_setup_us": 16491,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; observer setup drains before gameplay; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 721,
+            "median": 16.635,
+            "p99": 21.397,
+            "max": 30.208
+          },
+          "process_ms_retained": {
+            "count": 10,
+            "median": 1.206,
+            "p99": 1.733,
+            "max": 1.733
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 962,
+            "median": 16.685,
+            "p99": 20.846,
+            "max": 25.377
+          },
+          "process_ms_retained": {
+            "count": 962,
+            "median": 1.314,
+            "p99": 5.625,
+            "max": 10.955
+          },
+          "canopy_snapshot_us_retained": {
+            "count": 6,
+            "median": 4872,
+            "p99": 5081,
+            "max": 5081
+          },
+          "canopy_samples": [
+            {
+              "frame_ms": 24.526,
+              "process_ms": 8.98,
+              "available": true,
+              "current": true,
+              "frame": 2954,
+              "legacy_snapshot": true,
+              "rebuilds": 12,
+              "roots": 8586,
+              "snapshot_us": 4872,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 21.649,
+              "process_ms": 6.332,
+              "available": true,
+              "current": true,
+              "frame": 3129,
+              "legacy_snapshot": true,
+              "rebuilds": 13,
+              "roots": 8586,
+              "snapshot_us": 4714,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 24.455,
+              "process_ms": 8.942,
+              "available": true,
+              "current": true,
+              "frame": 3303,
+              "legacy_snapshot": true,
+              "rebuilds": 14,
+              "roots": 8586,
+              "snapshot_us": 4901,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 25.387,
+              "process_ms": 10.955,
+              "available": true,
+              "current": true,
+              "frame": 3721,
+              "legacy_snapshot": true,
+              "rebuilds": 15,
+              "roots": 8586,
+              "snapshot_us": 4647,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 24.413,
+              "process_ms": 8.264,
+              "available": true,
+              "current": true,
+              "frame": 3895,
+              "legacy_snapshot": true,
+              "rebuilds": 16,
+              "roots": 8586,
+              "snapshot_us": 4609,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 21.873,
+              "process_ms": 6.484,
+              "available": true,
+              "current": true,
+              "frame": 4070,
+              "legacy_snapshot": true,
+              "rebuilds": 17,
+              "roots": 8586,
+              "snapshot_us": 5081,
+              "worker_active": true
+            }
+          ]
+        },
+        "destruction_chain": {
+          "frame_ms": {
+            "count": 25,
+            "median": 16.355,
+            "p99": 21.865,
+            "max": 21.865
+          },
+          "process_ms_retained": {
+            "count": 25,
+            "median": 1.784,
+            "p99": 8.319,
+            "max": 8.319
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        },
+        "destruction_recovery": {
+          "frame_ms": {
+            "count": 644,
+            "median": 16.669,
+            "p99": 18.604,
+            "max": 46.343
+          },
+          "process_ms_retained": {
+            "count": 644,
+            "median": 1.233,
+            "p99": 3.861,
+            "max": 6.795
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 300,
+            "median": 16.615,
+            "p99": 18.812,
+            "max": 21.145
+          },
+          "process_ms_retained": {
+            "count": 300,
+            "median": 1.128,
+            "p99": 2.565,
+            "max": 3.185
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 481,
+            "median": 16.659,
+            "p99": 19.061,
+            "max": 20.747
+          },
+          "process_ms_retained": {
+            "count": 481,
+            "median": 1.139,
+            "p99": 2.685,
+            "max": 3.507
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        }
+      },
+      "worst_gameplay": [
+        {
+          "after_process_cycles": 264447,
+          "after_process_ms": 0.109,
+          "after_process_thread_cpu_ms": 0.0,
+          "at_us": 83595216,
+          "before_process_cycles": 11403189,
+          "before_process_ms": 9.19,
+          "before_process_thread_cpu_ms": 0.0,
+          "block_occlusion": {
+            "active": 2,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 3960,
+            "invalidations": 96,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 98,
+            "radius": 96.0,
+            "resident": 2,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 220,
+            "step_last_us": 0.5,
+            "step_max_uploads": 1,
+            "step_max_us": 765.9,
+            "step_uploads": 0
+          },
+          "cadence_ms": 28.5099333333333,
+          "canopy_shadow": {
+            "available": true,
+            "current": false,
+            "frame": 4421,
+            "legacy_snapshot": true,
+            "rebuilds": 19,
+            "roots": 8586,
+            "snapshot_us": 4468,
+            "worker_active": false
+          },
+          "cover_cells": 96,
+          "cover_us": 55,
+          "cover_wanted": 96,
+          "draw_calls": 2427.0,
+          "draw_cycles": 12359096,
+          "draw_ms": 30.235,
+          "draw_thread_cpu_ms": 15.625,
+          "drawn_frame": 4583,
+          "driving": false,
+          "ecosystem_us": 5,
+          "entry": false,
+          "first_person": {
+            "active": true,
+            "detailed_shadows": false,
+            "enabled": true,
+            "overlay": false
+          },
+          "focus_admitted": true,
+          "focused": true,
+          "forest_us": 6,
+          "fps_cap": 60,
+          "frame": 4583,
+          "frame_ms": 46.329,
+          "gpu_ms": 6.11999988555908,
+          "inventory": false,
+          "loading": false,
+          "menu": false,
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 1,
+              "current": true,
+              "ended_us": 83563765,
+              "horizon_us": 3,
+              "occlusion_us": 0,
+              "process_us": 4,
+              "residency_us": 0,
+              "started_us": 83563761,
+              "upload_us": 0
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 83563795,
+              "process_us": 28,
+              "started_us": 83563767
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 83563766,
+              "process_us": 0,
+              "started_us": 83563766
+            }
+          },
+          "phase": "gameplay",
+          "physics_cycles": 6640568,
+          "physics_ms": 2.798,
+          "physics_steps": 1,
+          "physics_tail_complete": true,
+          "physics_tail_cycles": 1509958,
+          "physics_tail_ms": 0.685,
+          "physics_tail_segments": 1,
+          "physics_tail_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "pipeline_draw": 0.0,
+          "pipeline_specialization": 76.0,
+          "position": "(1184.0, 84.0, 351.0)",
+          "primitives": 1514198.0,
+          "process_cycles": 16322604,
+          "process_ms": 6.795,
+          "process_thread_cpu_ms": 15.625,
+          "recorder_previous_us": 275,
+          "render_cpu_ms": 3.39299988746643,
+          "render_setup_cpu_ms": 0.423,
+          "stages_ms": {
+            "actor update": 0.028,
+            "base controller": 0.012,
+            "collision exact match": 0.003,
+            "collision node attach": 1.442,
+            "collision physics cook": 0.081,
+            "collision piece": 1.571,
+            "controller loading": 0.001,
+            "controller process": 0.065,
+            "cover picker": 0.165,
+            "cover prepare": 0.103,
+            "cover publish": 0.863,
+            "lighting schedule": 0.058,
+            "mesh upload/create": 0.269,
+            "player physics": 0.081,
+            "prepared subtree attach": 0.064,
+            "receive": 3.259,
+            "receive mesh": 0.044,
+            "receive poll": 0.011,
+            "receive surface_batch": 3.175,
+            "retire collision/mesh": 0.001,
+            "staging frame": 2.031,
+            "world authoring": 0.01,
+            "world interaction": 0.016,
+            "world pickups": 0.003,
+            "world presentation": 0.011,
+            "world process": 0.173,
+            "world vehicle": 0.005,
+            "zombie update": 1.183
+          },
+          "surface_backlog": 0,
+          "terrain_pending_edit": false,
+          "terrain_queued": 0,
+          "thread_cpu_ms": 31.25,
+          "thread_cycles": 40349336,
+          "trace_writer_active": false,
+          "velocity": "(0.0, 0.0, 0.0)",
+          "vsync": 1,
+          "zombie_navigation": {
+            "agents": 6,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 70,
+            "invalidation": {
+              "allocated_slots": 112,
+              "count": 388,
+              "edges_reset": 0,
+              "elapsed_us": 10,
+              "free_slots": 42,
+              "global": false,
+              "global_count": 32,
+              "live_vertices": 70,
+              "max_us": 32,
+              "queries_reset": 0,
+              "revision": 388,
+              "total_us": 386,
+              "vertex_capacity_bytes": 49152,
+              "vertices_retired": 0,
+              "vertices_scanned": 35
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 2,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 1863791,
+            "planning_us": 824,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 93.7,
+              "edges": 10,
+              "hazard_us": 48.8,
+              "readiness_us": 10.7,
+              "shape_queries": 26,
+              "support_cache_hits": 0,
+              "support_raycasts": 260,
+              "support_rays": 260,
+              "support_us": 635.2,
+              "sweeps": 18,
+              "water_batches": 10,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 1,
+            "readiness_cache_hits": 9,
+            "readiness_probes": 1,
+            "route_work": 11,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 260
+          },
+          "zombie_phases_us": {
+            "intent": 174,
+            "interest_spacing": 27,
+            "planning": 837,
+            "population": 7,
+            "residency": 114,
+            "steering": 7
+          },
+          "zombies": 6
+        },
+        {
+          "after_process_cycles": 527337,
+          "after_process_ms": 0.213,
+          "after_process_thread_cpu_ms": 0.0,
+          "at_us": 68198472,
+          "before_process_cycles": 8767684,
+          "before_process_ms": 9.41,
+          "before_process_thread_cpu_ms": 0.0,
+          "block_occlusion": {
+            "active": 40,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 430944,
+            "invalidations": 50,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 90,
+            "radius": 96.0,
+            "resident": 40,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 198,
+            "step_last_us": 4.4,
+            "step_max_uploads": 1,
+            "step_max_us": 765.9,
+            "step_uploads": 0
+          },
+          "cadence_ms": 16.8525333333333,
+          "canopy_shadow": {
+            "available": true,
+            "current": true,
+            "frame": 3721,
+            "legacy_snapshot": true,
+            "rebuilds": 15,
+            "roots": 8586,
+            "snapshot_us": 4647,
+            "worker_active": true
+          },
+          "cover_cells": 100,
+          "cover_us": 370,
+          "cover_wanted": 101,
+          "draw_calls": 2656.0,
+          "draw_cycles": 11194249,
+          "draw_ms": 4.809,
+          "draw_thread_cpu_ms": 0.0,
+          "drawn_frame": 3721,
+          "driving": false,
+          "ecosystem_us": 6,
+          "entry": false,
+          "first_person": {
+            "active": true,
+            "detailed_shadows": false,
+            "enabled": true,
+            "overlay": false
+          },
+          "focus_admitted": true,
+          "focused": true,
+          "forest_us": 15,
+          "fps_cap": 60,
+          "frame": 3721,
+          "frame_ms": 25.387,
+          "gpu_ms": 5.98899984359741,
+          "inventory": false,
+          "loading": false,
+          "menu": false,
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 21,
+              "current": true,
+              "ended_us": 68186341,
+              "horizon_us": 2,
+              "occlusion_us": 5,
+              "process_us": 29,
+              "residency_us": 0,
+              "started_us": 68186312,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 68186411,
+              "process_us": 65,
+              "started_us": 68186346
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 68186345,
+              "process_us": 4,
+              "started_us": 68186341
+            }
+          },
+          "phase": "gameplay",
+          "physics_cycles": 4789661,
+          "physics_ms": 1.933,
+          "physics_steps": 1,
+          "physics_tail_complete": true,
+          "physics_tail_cycles": 1096649,
+          "physics_tail_ms": 0.491,
+          "physics_tail_segments": 1,
+          "physics_tail_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "pipeline_draw": 0.0,
+          "pipeline_specialization": 72.0,
+          "position": "(1136.08, 63.36198, 353.6963)",
+          "primitives": 1303233.0,
+          "process_cycles": 27244347,
+          "process_ms": 10.955,
+          "process_thread_cpu_ms": 15.625,
+          "recorder_previous_us": 291,
+          "render_cpu_ms": 3.04800009727478,
+          "render_setup_cpu_ms": 0.329,
+          "stages_ms": {
+            "LOD coverage": 0.006,
+            "LOD eviction": 0.002,
+            "LOD requests": 0.758,
+            "LOD schedule/cut/evict": 0.773,
+            "actor update": 0.025,
+            "base controller": 0.013,
+            "controller loading": 0.001,
+            "controller process": 0.396,
+            "cover picker": 0.162,
+            "cover prepare": 0.07,
+            "cover publish": 0.827,
+            "lighting schedule": 0.002,
+            "player physics": 0.183,
+            "receive": 2.37,
+            "receive poll": 0.004,
+            "receive surface_batch": 2.343,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.005,
+            "world authoring": 0.011,
+            "world interaction": 0.021,
+            "world pickups": 0.325,
+            "world presentation": 0.012,
+            "world process": 0.518,
+            "world vehicle": 0.005,
+            "zombie update": 0.35
+          },
+          "surface_backlog": 0,
+          "terrain_pending_edit": false,
+          "terrain_queued": 0,
+          "thread_cpu_ms": 15.625,
+          "thread_cycles": 47733617,
+          "trace_writer_active": false,
+          "velocity": "(5.5, 0.0, 0.0)",
+          "vsync": 1,
+          "zombie_navigation": {
+            "agents": 6,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 0,
+            "invalidation": {
+              "allocated_slots": 0,
+              "count": 370,
+              "edges_reset": 0,
+              "elapsed_us": 0,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 32,
+              "live_vertices": 0,
+              "max_us": 4,
+              "queries_reset": 0,
+              "revision": 370,
+              "total_us": 255,
+              "vertex_capacity_bytes": 0,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 2,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 36165,
+            "planning_us": 16,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "zombie_phases_us": {
+            "intent": 151,
+            "interest_spacing": 24,
+            "planning": 30,
+            "population": 7,
+            "residency": 120,
+            "steering": 6
+          },
+          "zombies": 6
+        },
+        {
+          "after_process_cycles": 229948,
+          "after_process_ms": 0.096,
+          "after_process_thread_cpu_ms": 0.0,
+          "at_us": 54992467,
+          "before_process_cycles": 10888871,
+          "before_process_ms": 10.723,
+          "before_process_thread_cpu_ms": 0.0,
+          "block_occlusion": {
+            "active": 86,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 747636,
+            "invalidations": 4,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 90,
+            "radius": 96.0,
+            "resident": 86,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 192,
+            "step_last_us": 9.4,
+            "step_max_uploads": 1,
+            "step_max_us": 684.6,
+            "step_uploads": 0
+          },
+          "cadence_ms": 16.5958,
+          "canopy_shadow": {
+            "available": true,
+            "current": true,
+            "frame": 2954,
+            "legacy_snapshot": true,
+            "rebuilds": 12,
+            "roots": 8586,
+            "snapshot_us": 4872,
+            "worker_active": true
+          },
+          "cover_cells": 94,
+          "cover_us": 1352,
+          "cover_wanted": 96,
+          "draw_calls": 2343.0,
+          "draw_cycles": 10371093,
+          "draw_ms": 4.727,
+          "draw_thread_cpu_ms": 0.0,
+          "drawn_frame": 2954,
+          "driving": false,
+          "ecosystem_us": 7,
+          "entry": false,
+          "first_person": {
+            "active": true,
+            "detailed_shadows": false,
+            "enabled": true,
+            "overlay": false
+          },
+          "focus_admitted": true,
+          "focused": true,
+          "forest_us": 10,
+          "fps_cap": 60,
+          "frame": 2954,
+          "frame_ms": 24.526,
+          "gpu_ms": 6.12200021743774,
+          "inventory": false,
+          "loading": false,
+          "menu": false,
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 22,
+              "current": true,
+              "ended_us": 54979045,
+              "horizon_us": 2,
+              "occlusion_us": 10,
+              "process_us": 35,
+              "residency_us": 1,
+              "started_us": 54979010,
+              "upload_us": 0
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 54979220,
+              "process_us": 168,
+              "started_us": 54979052
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 54979051,
+              "process_us": 5,
+              "started_us": 54979046
+            }
+          },
+          "phase": "gameplay",
+          "physics_cycles": 5241758,
+          "physics_ms": 2.142,
+          "physics_steps": 1,
+          "physics_tail_complete": true,
+          "physics_tail_cycles": 1143151,
+          "physics_tail_ms": 0.543,
+          "physics_tail_segments": 1,
+          "physics_tail_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "pipeline_draw": 0.0,
+          "pipeline_specialization": 70.0,
+          "position": "(1088.045, 58.18289, 353.696)",
+          "primitives": 1227368.0,
+          "process_cycles": 21221921,
+          "process_ms": 8.98,
+          "process_thread_cpu_ms": 15.625,
+          "recorder_previous_us": 301,
+          "render_cpu_ms": 2.92700004577637,
+          "render_setup_cpu_ms": 0.38,
+          "stages_ms": {
+            "actor update": 0.041,
+            "base controller": 0.012,
+            "controller loading": 0.001,
+            "controller process": 0.065,
+            "lighting schedule": 0.003,
+            "player physics": 0.174,
+            "receive": 0.011,
+            "receive poll": 0.004,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.005,
+            "world authoring": 0.01,
+            "world interaction": 0.016,
+            "world pickups": 0.002,
+            "world presentation": 0.012,
+            "world process": 0.171,
+            "world vehicle": 0.005,
+            "zombie update": 0.425
+          },
+          "surface_backlog": 0,
+          "terrain_pending_edit": false,
+          "terrain_queued": 0,
+          "thread_cpu_ms": 15.625,
+          "thread_cycles": 42711833,
+          "trace_writer_active": false,
+          "velocity": "(5.5, 0.0, 0.0)",
+          "vsync": 1,
+          "zombie_navigation": {
+            "agents": 6,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 0,
+            "invalidation": {
+              "allocated_slots": 0,
+              "count": 363,
+              "edges_reset": 0,
+              "elapsed_us": 1,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 32,
+              "live_vertices": 0,
+              "max_us": 4,
+              "queries_reset": 0,
+              "revision": 363,
+              "total_us": 250,
+              "vertex_capacity_bytes": 0,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 1,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 106098,
+            "planning_us": 44,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 10,
+              "hazard_us": 0.0,
+              "readiness_us": 9.7,
+              "shape_queries": 0,
+              "support_cache_hits": 9,
+              "support_raycasts": 1,
+              "support_rays": 10,
+              "support_us": 9.5,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 1,
+            "readiness_cache_hits": 9,
+            "readiness_probes": 1,
+            "route_work": 12,
+            "route_work_limit": 48,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 9,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 1
+          },
+          "zombie_phases_us": {
+            "intent": 190,
+            "interest_spacing": 24,
+            "planning": 55,
+            "population": 7,
+            "residency": 128,
+            "steering": 6
+          },
+          "zombies": 6
+        }
+      ]
+    },
+    {
+      "report": "reports\\performance_changes\\20261109T224656084274Z_canopy_native_snapshot",
+      "runtime_source_sha256": {
+        "controller": "3efefb89d32e9b13385c7d9ca2c7ff3f07692eef34d316d8940cbd6b28851171",
+        "res://addons/vegetation/canopy_shadows.gd": "2b83662822aaf20697580569e8378032ef059cbfc5b06280dd0c57cad9101fc3",
+        "res://addons/vegetation/forest.gd": "8b2862d51a72aad1e8c84317e901d7e0d0e075d36e4502573d376e6f9228c6c0",
+        "zombie": "a887545d5d4959b43ddb003b9e072b866c362c2f863b484c0015fd823c26a08a"
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d163a137ff301ad3913ae1d1b193fdadc6c6fb3484e8dad3f2ba3fb1aa4cee9f",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d2ebaa98770fa7195113cb94ad14aae5a789c9a595b7d7d192be21851c87bb76",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "88572f9c05fe930d029a0f64e487bcd9784160309be4e235f5efbfc4ed8711e3",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "ea33eeb994d30b2b2118b213179d0d6c6a6af826e8aaba012e38ff63b6a3e9c5",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "presentation": {
+        "background_cap": 15,
+        "effective_cap": 60,
+        "foreground_required": true,
+        "hidden_hud_control": false,
+        "refresh_hz": 144.022994995117,
+        "requested_cap": 60,
+        "unfocused_gameplay_frames": 0,
+        "vsync": 1,
+        "window": {
+          "fair_graphical_sample": true,
+          "fullscreen": true,
+          "headless": false,
+          "render_scale": 1.0,
+          "viewport": [
+            1920,
+            1080
+          ],
+          "window_mode": 3,
+          "window_size": [
+            1920,
+            1080
+          ]
+        },
+        "window_position": "(0, 0)"
+      },
+      "outdoor": {
+        "grounded": true,
+        "grounded_frames": 964,
+        "movement_frames": 964,
+        "ok": true,
+        "poses": [
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 59.84698, 353.6957)]",
+            "player": "(1085.203, 58.16698, 353.6957)",
+            "screenshot_us": 522632
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1129.388, 62.62035, 353.6963)]",
+            "player": "(1129.388, 60.94035, 353.6963)",
+            "screenshot_us": 402073
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1173.575, 83.2299, 353.6963)]",
+            "player": "(1173.575, 81.5499, 353.6963)",
+            "screenshot_us": 387588
+          }
+        ],
+        "scope": "Production motor walking with gravity and collisions through the existing tool-cursor input gate; no density or quality overrides",
+        "target": "(1085.203, 58.42123, 349.6957)",
+        "travelled": 88.37158203125,
+        "walk_seconds_per_leg": 8.0
+      },
+      "functional_result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 51300,
+        "exit_code": 0,
+        "resources": {
+          "samples": 179,
+          "gpu_samples": 178,
+          "peak_private_commit_bytes": 4301221888,
+          "peak_working_set_bytes": 2453680128,
+          "peak_dedicated_gpu_bytes": 1761067008,
+          "checks": {
+            "ram": {
+              "bytes": 4301221888,
+              "status": "warning"
+            },
+            "vram": {
+              "bytes": 1761067008,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 108.82140090002213,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        },
+        "native_process_current_frames": {
+          "blocks": 3633,
+          "model_horizon": 3633,
+          "resident_lights": 3633
+        }
+      },
+      "destruction": {
+        "base": "(1173.0, 80.0, 339.0)",
+        "chain_ms": 436.109,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ignition_us": 39,
+        "observer_setup_us": 13817,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; observer setup drains before gameplay; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 721,
+            "median": 16.707,
+            "p99": 19.583,
+            "max": 20.653
+          },
+          "process_ms_retained": {
+            "count": 5,
+            "median": 1.149,
+            "p99": 1.596,
+            "max": 1.596
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 962,
+            "median": 16.65,
+            "p99": 20.717,
+            "max": 22.989
+          },
+          "process_ms_retained": {
+            "count": 962,
+            "median": 1.233,
+            "p99": 5.327,
+            "max": 8.006
+          },
+          "canopy_snapshot_us_retained": {
+            "count": 6,
+            "median": 74,
+            "p99": 147,
+            "max": 147
+          },
+          "canopy_samples": [
+            {
+              "frame_ms": 19.79,
+              "process_ms": 3.917,
+              "available": true,
+              "current": true,
+              "frame": 2932,
+              "legacy_snapshot": false,
+              "rebuilds": 18,
+              "roots": 8586,
+              "snapshot_us": 147,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 16.918,
+              "process_ms": 1.844,
+              "available": true,
+              "current": true,
+              "frame": 3107,
+              "legacy_snapshot": false,
+              "rebuilds": 19,
+              "roots": 8586,
+              "snapshot_us": 65,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 19.865,
+              "process_ms": 4.072,
+              "available": true,
+              "current": true,
+              "frame": 3281,
+              "legacy_snapshot": false,
+              "rebuilds": 20,
+              "roots": 8586,
+              "snapshot_us": 66,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 20.487,
+              "process_ms": 5.77,
+              "available": true,
+              "current": true,
+              "frame": 3698,
+              "legacy_snapshot": false,
+              "rebuilds": 21,
+              "roots": 8586,
+              "snapshot_us": 144,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 19.102,
+              "process_ms": 3.709,
+              "available": true,
+              "current": true,
+              "frame": 3872,
+              "legacy_snapshot": false,
+              "rebuilds": 22,
+              "roots": 8586,
+              "snapshot_us": 74,
+              "worker_active": true
+            },
+            {
+              "frame_ms": 16.212,
+              "process_ms": 1.679,
+              "available": true,
+              "current": true,
+              "frame": 4047,
+              "legacy_snapshot": false,
+              "rebuilds": 23,
+              "roots": 8586,
+              "snapshot_us": 67,
+              "worker_active": true
+            }
+          ]
+        },
+        "destruction_chain": {
+          "frame_ms": {
+            "count": 26,
+            "median": 16.522,
+            "p99": 22.327,
+            "max": 22.327
+          },
+          "process_ms_retained": {
+            "count": 26,
+            "median": 1.963,
+            "p99": 7.877,
+            "max": 7.877
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        },
+        "destruction_recovery": {
+          "frame_ms": {
+            "count": 645,
+            "median": 16.72,
+            "p99": 19.207,
+            "max": 20.533
+          },
+          "process_ms_retained": {
+            "count": 645,
+            "median": 1.228,
+            "p99": 4.233,
+            "max": 6.793
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 301,
+            "median": 16.685,
+            "p99": 18.919,
+            "max": 22.244
+          },
+          "process_ms_retained": {
+            "count": 301,
+            "median": 1.125,
+            "p99": 2.782,
+            "max": 3.344
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 480,
+            "median": 16.651,
+            "p99": 18.605,
+            "max": 19.744
+          },
+          "process_ms_retained": {
+            "count": 480,
+            "median": 1.128,
+            "p99": 2.621,
+            "max": 3.921
+          },
+          "canopy_snapshot_us_retained": null,
+          "canopy_samples": []
+        }
+      },
+      "worst_gameplay": [
+        {
+          "after_process_cycles": 211296,
+          "after_process_ms": 0.089,
+          "after_process_thread_cpu_ms": 0.0,
+          "at_us": 72065318,
+          "before_process_cycles": 19315744,
+          "before_process_ms": 13.784,
+          "before_process_thread_cpu_ms": 15.625,
+          "block_occlusion": {
+            "active": 19,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 270948,
+            "invalidations": 71,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 90,
+            "radius": 96.0,
+            "resident": 19,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 201,
+            "step_last_us": 2.4,
+            "step_max_uploads": 1,
+            "step_max_us": 576.3,
+            "step_uploads": 0
+          },
+          "cadence_ms": 16.8179,
+          "canopy_shadow": {
+            "available": true,
+            "current": false,
+            "frame": 3872,
+            "legacy_snapshot": false,
+            "rebuilds": 23,
+            "roots": 8586,
+            "snapshot_us": 74,
+            "worker_active": false
+          },
+          "cover_cells": 97,
+          "cover_us": 343,
+          "cover_wanted": 98,
+          "draw_calls": 2393.0,
+          "draw_cycles": 10814804,
+          "draw_ms": 4.612,
+          "draw_thread_cpu_ms": 15.625,
+          "drawn_frame": 3963,
+          "driving": false,
+          "ecosystem_us": 4,
+          "entry": false,
+          "first_person": {
+            "active": true,
+            "detailed_shadows": false,
+            "enabled": true,
+            "overlay": false
+          },
+          "focus_admitted": true,
+          "focused": true,
+          "forest_us": 15,
+          "fps_cap": 60,
+          "frame": 3963,
+          "frame_ms": 22.957,
+          "gpu_ms": 6.0019998550415,
+          "inventory": false,
+          "loading": false,
+          "menu": false,
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 22,
+              "current": true,
+              "ended_us": 72058354,
+              "horizon_us": 3,
+              "occlusion_us": 2,
+              "process_us": 28,
+              "residency_us": 0,
+              "started_us": 72058326,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 72058384,
+              "process_us": 28,
+              "started_us": 72058356
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 72058356,
+              "process_us": 1,
+              "started_us": 72058355
+            }
+          },
+          "phase": "gameplay",
+          "physics_cycles": 13311624,
+          "physics_ms": 5.343,
+          "physics_steps": 1,
+          "physics_tail_complete": true,
+          "physics_tail_cycles": 1071686,
+          "physics_tail_ms": 0.435,
+          "physics_tail_segments": 1,
+          "physics_tail_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "pipeline_draw": 0.0,
+          "pipeline_specialization": 72.0,
+          "position": "(1160.374, 75.45222, 353.6963)",
+          "primitives": 1223317.0,
+          "process_cycles": 10647530,
+          "process_ms": 4.472,
+          "process_thread_cpu_ms": 0.0,
+          "recorder_previous_us": 251,
+          "render_cpu_ms": 2.71000003814697,
+          "render_setup_cpu_ms": 0.392,
+          "stages_ms": {
+            "actor update": 0.028,
+            "base controller": 0.012,
+            "controller loading": 0.001,
+            "controller process": 0.146,
+            "cover picker": 0.143,
+            "cover prepare": 0.096,
+            "cover publish": 0.763,
+            "lighting schedule": 0.005,
+            "player physics": 0.212,
+            "receive": 1.751,
+            "receive poll": 0.004,
+            "receive surface_batch": 1.735,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.005,
+            "world authoring": 0.01,
+            "world interaction": 0.018,
+            "world pickups": 0.002,
+            "world presentation": 0.011,
+            "world process": 0.252,
+            "world vehicle": 0.084,
+            "zombie update": 3.941
+          },
+          "surface_backlog": 0,
+          "terrain_pending_edit": false,
+          "terrain_queued": 0,
+          "thread_cpu_ms": 31.25,
+          "thread_cycles": 40989374,
+          "trace_writer_active": false,
+          "velocity": "(5.5, 0.0, 0.0)",
+          "vsync": 1,
+          "zombie_initializations": [
+            {
+              "id": 5073363034312,
+              "initialization_us": {
+                "anatomy": 157,
+                "anatomy readback": 0,
+                "animation": 708,
+                "hit areas": 458,
+                "parts": 141,
+                "ragdoll": 710,
+                "scene": 1137,
+                "scene attach": 531,
+                "scene instantiate": 556,
+                "scene resource": 2,
+                "shape fit": 21
+              }
+            }
+          ],
+          "zombie_navigation": {
+            "agents": 5,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 0,
+            "invalidation": {
+              "allocated_slots": 0,
+              "count": 370,
+              "edges_reset": 0,
+              "elapsed_us": 1,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 32,
+              "live_vertices": 0,
+              "max_us": 2,
+              "queries_reset": 0,
+              "revision": 370,
+              "total_us": 237,
+              "vertex_capacity_bytes": 0,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 35620,
+            "planning_us": 15,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "zombie_phases_us": {
+            "admission attach": 3386,
+            "admission instance": 30,
+            "admission support": 56,
+            "intent": 124,
+            "interest_spacing": 16,
+            "planning": 27,
+            "population": 3642,
+            "residency": 112,
+            "steering": 5
+          },
+          "zombies": 6
+        },
+        {
+          "after_process_cycles": 182647,
+          "after_process_ms": 0.078,
+          "after_process_thread_cpu_ms": 0.0,
+          "at_us": 82291935,
+          "before_process_cycles": 7101773,
+          "before_process_ms": 9.052,
+          "before_process_thread_cpu_ms": 0.0,
+          "block_occlusion": {
+            "active": 2,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 4824,
+            "invalidations": 92,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 94,
+            "radius": 96.0,
+            "resident": 2,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 212,
+            "step_last_us": 0.4,
+            "step_max_uploads": 1,
+            "step_max_us": 576.3,
+            "step_uploads": 0
+          },
+          "cadence_ms": 27.1530000000001,
+          "canopy_shadow": {
+            "available": true,
+            "current": false,
+            "frame": 4399,
+            "legacy_snapshot": false,
+            "rebuilds": 25,
+            "roots": 8586,
+            "snapshot_us": 146,
+            "worker_active": false
+          },
+          "cover_cells": 96,
+          "cover_us": 264,
+          "cover_wanted": 96,
+          "draw_calls": 2623.0,
+          "draw_cycles": 11247376,
+          "draw_ms": 5.314,
+          "draw_thread_cpu_ms": 0.0,
+          "drawn_frame": 4536,
+          "driving": false,
+          "ecosystem_us": 4,
+          "entry": false,
+          "first_person": {
+            "active": true,
+            "detailed_shadows": false,
+            "enabled": true,
+            "overlay": false
+          },
+          "focus_admitted": true,
+          "focused": true,
+          "forest_us": 5,
+          "fps_cap": 60,
+          "frame": 4536,
+          "frame_ms": 22.321,
+          "gpu_ms": 6.51000022888184,
+          "inventory": false,
+          "loading": false,
+          "menu": false,
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 82285321,
+              "horizon_us": 3,
+              "occlusion_us": 1,
+              "process_us": 5,
+              "residency_us": 0,
+              "started_us": 82285316,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 82285376,
+              "process_us": 53,
+              "started_us": 82285323
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 82285322,
+              "process_us": 1,
+              "started_us": 82285321
+            }
+          },
+          "phase": "gameplay",
+          "physics_cycles": 1763173,
+          "physics_ms": 0.713,
+          "physics_steps": 1,
+          "physics_tail_complete": true,
+          "physics_tail_cycles": 623657,
+          "physics_tail_ms": 0.299,
+          "physics_tail_segments": 1,
+          "physics_tail_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "pipeline_draw": 0.0,
+          "pipeline_specialization": 76.0,
+          "position": "(1184.0, 84.0, 351.0)",
+          "primitives": 1531364.0,
+          "process_cycles": 19242583,
+          "process_ms": 7.877,
+          "process_thread_cpu_ms": 15.625,
+          "recorder_previous_us": 286,
+          "render_cpu_ms": 4.14499998092651,
+          "render_setup_cpu_ms": 0.098,
+          "stages_ms": {
+            "LOD coverage": 0.998,
+            "LOD eviction": 1.303,
+            "LOD requests": 0.601,
+            "LOD schedule/cut/evict": 2.912,
+            "actor update": 0.005,
+            "atomic publish": 2.096,
+            "base controller": 0.012,
+            "collision exact match": 0.01,
+            "collision node attach": 0.019,
+            "collision physics cook": 0.003,
+            "collision piece": 0.048,
+            "controller loading": 0.002,
+            "controller process": 0.143,
+            "lighting schedule": 0.001,
+            "mesh upload/create": 0.134,
+            "player physics": 0.064,
+            "prepared subtree attach": 0.031,
+            "receive": 0.05,
+            "receive batch": 0.022,
+            "receive edit_done": 0.008,
+            "receive poll": 0.01,
+            "retire collision/mesh": 0.259,
+            "staging frame": 2.979,
+            "vegetation edit publish": 0.641,
+            "world authoring": 0.01,
+            "world interaction": 0.017,
+            "world pickups": 0.003,
+            "world presentation": 0.015,
+            "world process": 0.256,
+            "world vehicle": 0.079,
+            "zombie update": 0.312
+          },
+          "surface_backlog": 0,
+          "terrain_pending_edit": false,
+          "terrain_queued": 0,
+          "thread_cpu_ms": 15.625,
+          "thread_cycles": 37774379,
+          "trace_writer_active": false,
+          "velocity": "(0.0, 0.0, 0.0)",
+          "vsync": 1,
+          "zombie_navigation": {
+            "agents": 6,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 28,
+            "invalidation": {
+              "allocated_slots": 28,
+              "count": 379,
+              "edges_reset": 0,
+              "elapsed_us": 1,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 32,
+              "live_vertices": 28,
+              "max_us": 2,
+              "queries_reset": 0,
+              "revision": 379,
+              "total_us": 246,
+              "vertex_capacity_bytes": 12288,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 34655,
+            "planning_us": 15,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "zombie_phases_us": {
+            "intent": 117,
+            "interest_spacing": 24,
+            "planning": 27,
+            "residency": 124,
+            "steering": 4
+          },
+          "zombies": 6
+        },
+        {
+          "after_process_cycles": 300786,
+          "after_process_ms": 0.122,
+          "after_process_thread_cpu_ms": 0.0,
+          "at_us": 94302365,
+          "before_process_cycles": 11873849,
+          "before_process_ms": 11.554,
+          "before_process_thread_cpu_ms": 0.0,
+          "block_occlusion": {
+            "active": 2,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 3960,
+            "invalidations": 96,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 98,
+            "radius": 96.0,
+            "resident": 2,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 220,
+            "step_last_us": 0.4,
+            "step_max_uploads": 1,
+            "step_max_us": 576.3,
+            "step_uploads": 0
+          },
+          "cadence_ms": 16.8611000000001,
+          "canopy_shadow": {
+            "available": true,
+            "current": false,
+            "frame": 4399,
+            "legacy_snapshot": false,
+            "rebuilds": 25,
+            "roots": 8586,
+            "snapshot_us": 146,
+            "worker_active": false
+          },
+          "cover_cells": 96,
+          "cover_us": 72,
+          "cover_wanted": 96,
+          "draw_calls": 2679.0,
+          "draw_cycles": 16301049,
+          "draw_ms": 7.72,
+          "draw_thread_cpu_ms": 15.625,
+          "drawn_frame": 5237,
+          "driving": false,
+          "ecosystem_us": 6,
+          "entry": false,
+          "first_person": {
+            "active": true,
+            "detailed_shadows": false,
+            "enabled": true,
+            "overlay": false
+          },
+          "focus_admitted": true,
+          "focused": true,
+          "forest_us": 8,
+          "fps_cap": 60,
+          "frame": 5237,
+          "frame_ms": 22.178,
+          "gpu_ms": 5.93200016021729,
+          "inventory": false,
+          "loading": false,
+          "menu": false,
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 94293574,
+              "horizon_us": 4,
+              "occlusion_us": 1,
+              "process_us": 6,
+              "residency_us": 0,
+              "started_us": 94293568,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 94293651,
+              "process_us": 69,
+              "started_us": 94293582
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 94293580,
+              "process_us": 5,
+              "started_us": 94293575
+            }
+          },
+          "phase": "gameplay",
+          "physics_cycles": 7009703,
+          "physics_ms": 2.987,
+          "physics_steps": 1,
+          "physics_tail_complete": true,
+          "physics_tail_cycles": 1634112,
+          "physics_tail_ms": 0.822,
+          "physics_tail_segments": 1,
+          "physics_tail_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "pipeline_draw": 0.0,
+          "pipeline_specialization": 76.0,
+          "position": "(1184.0, 84.0, 351.0)",
+          "primitives": 1494812.0,
+          "process_cycles": 6782225,
+          "process_ms": 2.782,
+          "process_thread_cpu_ms": 0.0,
+          "recorder_previous_us": 286,
+          "render_cpu_ms": 3.43899989128113,
+          "render_setup_cpu_ms": 0.445,
+          "stages_ms": {
+            "LOD coverage": 0.008,
+            "LOD eviction": 0.002,
+            "LOD requests": 0.922,
+            "LOD schedule/cut/evict": 0.941,
+            "actor update": 0.032,
+            "base controller": 0.016,
+            "controller loading": 0.001,
+            "controller process": 0.405,
+            "lighting schedule": 0.169,
+            "player physics": 0.083,
+            "receive": 0.017,
+            "receive poll": 0.007,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.007,
+            "world authoring": 0.013,
+            "world interaction": 0.022,
+            "world pickups": 0.322,
+            "world presentation": 0.015,
+            "world process": 0.563,
+            "world vehicle": 0.006,
+            "zombie update": 0.462
+          },
+          "surface_backlog": 0,
+          "terrain_pending_edit": false,
+          "terrain_queued": 0,
+          "thread_cpu_ms": 15.625,
+          "thread_cycles": 35257909,
+          "trace_writer_active": true,
+          "velocity": "(0.0, 0.0, 0.0)",
+          "vsync": 1,
+          "zombie_navigation": {
+            "agents": 6,
+            "goal_probes": 0,
+            "graph_cache_hits": 40,
+            "graph_node_limit": 32768,
+            "graph_nodes": 31,
+            "invalidation": {
+              "allocated_slots": 31,
+              "count": 388,
+              "edges_reset": 0,
+              "elapsed_us": 1,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 32,
+              "live_vertices": 31,
+              "max_us": 2,
+              "queries_reset": 0,
+              "revision": 388,
+              "total_us": 252,
+              "vertex_capacity_bytes": 12288,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 1,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 55477,
+            "planning_us": 25,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "zombie_phases_us": {
+            "intent": 191,
+            "interest_spacing": 34,
+            "planning": 39,
+            "population": 9,
+            "residency": 162,
+            "steering": 7
+          },
+          "zombies": 6
+        }
+      ]
+    },
+    {
+      "report": "reports\\performance_changes\\20261109T225524992678Z_canopy_installed_normal_off",
+      "pack_sha256": "5f4b51c2b142830a32820fbc091d5b2c696714b3f10e56030317e16f969066ed",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d163a137ff301ad3913ae1d1b193fdadc6c6fb3484e8dad3f2ba3fb1aa4cee9f",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d2ebaa98770fa7195113cb94ad14aae5a789c9a595b7d7d192be21851c87bb76",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "88572f9c05fe930d029a0f64e487bcd9784160309be4e235f5efbfc4ed8711e3",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "ea33eeb994d30b2b2118b213179d0d6c6a6af826e8aaba012e38ff63b6a3e9c5",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "presentation": {
+        "background_cap": 15,
+        "effective_cap": 60,
+        "foreground_required": true,
+        "hidden_hud_control": false,
+        "refresh_hz": 144.022994995117,
+        "requested_cap": 60,
+        "unfocused_gameplay_frames": 0,
+        "vsync": 1,
+        "window": {
+          "fair_graphical_sample": true,
+          "fullscreen": true,
+          "headless": false,
+          "render_scale": 1.0,
+          "viewport": [
+            1920,
+            1080
+          ],
+          "window_mode": 3,
+          "window_size": [
+            1920,
+            1080
+          ]
+        },
+        "window_position": "(0, 0)"
+      },
+      "outdoor": {
+        "grounded": true,
+        "grounded_frames": 964,
+        "movement_frames": 964,
+        "ok": true,
+        "poses": [
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 59.84698, 353.6957)]",
+            "player": "(1085.203, 58.16698, 353.6957)",
+            "screenshot_us": 463028
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1129.388, 62.62035, 353.6963)]",
+            "player": "(1129.388, 60.94035, 353.6963)",
+            "screenshot_us": 389241
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1173.575, 83.2299, 353.6963)]",
+            "player": "(1173.575, 81.5499, 353.6963)",
+            "screenshot_us": 393706
+          }
+        ],
+        "scope": "Production motor walking with gravity and collisions through the existing tool-cursor input gate; no density or quality overrides",
+        "target": "(1085.203, 58.42123, 349.6957)",
+        "travelled": 88.37158203125,
+        "walk_seconds_per_leg": 8.0
+      },
+      "functional_result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 43392,
+        "exit_code": 0,
+        "resources": {
+          "samples": 174,
+          "gpu_samples": 173,
+          "peak_private_commit_bytes": 4206944256,
+          "peak_working_set_bytes": 2346074112,
+          "peak_dedicated_gpu_bytes": 1761062912,
+          "checks": {
+            "ram": {
+              "bytes": 4206944256,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1761062912,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 105.50016209995374,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "destruction": {
+        "base": "(1173.0, 80.0, 339.0)",
+        "chain_ms": 428.618,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ignition_us": 59,
+        "observer_setup_us": 6,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; observer setup drains before gameplay; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "trace_enabled": false,
+      "gpu_timers": false,
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 721,
+            "median": 16.696,
+            "p99": 19.804,
+            "max": 23.109
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 962,
+            "median": 16.66,
+            "p99": 20.246,
+            "max": 21.96
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        },
+        "destruction_chain": {
+          "frame_ms": {
+            "count": 25,
+            "median": 16.429,
+            "p99": 24.689,
+            "max": 24.689
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        },
+        "destruction_recovery": {
+          "frame_ms": {
+            "count": 644,
+            "median": 16.658,
+            "p99": 19.251,
+            "max": 43.452
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 300,
+            "median": 16.661,
+            "p99": 20.031,
+            "max": 22.149
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 300,
+            "median": 16.675,
+            "p99": 18.687,
+            "max": 20.098
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        }
+      },
+      "source_identity_scope": "Compiled export has no exposed source; PCK and native hashes identify this build. Earlier empty-text hashes must not be treated as script identity.",
+      "worst_gameplay": []
+    },
+    {
+      "report": "reports\\performance_changes\\20261109T225837786630Z_canopy_installed_normal_trace",
+      "pack_sha256": "5f4b51c2b142830a32820fbc091d5b2c696714b3f10e56030317e16f969066ed",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b5e7dce9b6406f7d3d4acc65bed87ea5038fa4708bc5f7662e4264d1d3060049",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "59412e7d58067fe4064ed27cf2033f58f85307ec4f01e98be37981c0fd8e04eb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d163a137ff301ad3913ae1d1b193fdadc6c6fb3484e8dad3f2ba3fb1aa4cee9f",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d2ebaa98770fa7195113cb94ad14aae5a789c9a595b7d7d192be21851c87bb76",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "88572f9c05fe930d029a0f64e487bcd9784160309be4e235f5efbfc4ed8711e3",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "ea33eeb994d30b2b2118b213179d0d6c6a6af826e8aaba012e38ff63b6a3e9c5",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "138473ac1a50305b560716b63cec3df3988fd3573ddb9c81dc9ed3598b2b21fa",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "d83ac835482e410120eff3307fb063390708de844b5ead337c577aa6d429fe49",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "b48f9b738ab2fb2d5ce8ea0a894ce528abc17639dda00feb3f78c470bdba15b9",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7228749f8ec1ae09e96e4296a2fa965f33407f40908debf2b6a327bc3c378409",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "4d11d921f56cd642c1085b5ed6a3a7b97cce99c30ecff48cff71b66965be2c5c",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "380f11d8dee410d8d317402c4895449d409105a2078a4f024d1b3c5a9b9bc31a",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0a12230fd61c3135efde76239bbe7a512f19b154e6a597b57e809529c66855ad",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fe584c1d6e0ce7903841dccbfb1d094b61b0a5fd42b53a77f2c251b4272c91ab"
+      },
+      "presentation": {
+        "background_cap": 15,
+        "effective_cap": 60,
+        "foreground_required": true,
+        "hidden_hud_control": false,
+        "refresh_hz": 144.022994995117,
+        "requested_cap": 60,
+        "unfocused_gameplay_frames": 0,
+        "vsync": 1,
+        "window": {
+          "fair_graphical_sample": true,
+          "fullscreen": true,
+          "headless": false,
+          "render_scale": 1.0,
+          "viewport": [
+            1920,
+            1080
+          ],
+          "window_mode": 3,
+          "window_size": [
+            1920,
+            1080
+          ]
+        },
+        "window_position": "(0, 0)"
+      },
+      "outdoor": {
+        "grounded": true,
+        "grounded_frames": 964,
+        "movement_frames": 964,
+        "ok": true,
+        "poses": [
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1085.203, 59.84698, 353.6957)]",
+            "player": "(1085.203, 58.16698, 353.6957)",
+            "screenshot_us": 460755
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1129.388, 62.62035, 353.6963)]",
+            "player": "(1129.388, 60.94035, 353.6963)",
+            "screenshot_us": 432562
+          },
+          {
+            "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.971338, -0.237703), Z: (0.0, 0.237703, 0.971338), O: (1173.575, 83.2299, 353.6963)]",
+            "player": "(1173.575, 81.5499, 353.6963)",
+            "screenshot_us": 391415
+          }
+        ],
+        "scope": "Production motor walking with gravity and collisions through the existing tool-cursor input gate; no density or quality overrides",
+        "target": "(1085.203, 58.42123, 349.6957)",
+        "travelled": 88.37158203125,
+        "walk_seconds_per_leg": 8.0
+      },
+      "functional_result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 46280,
+        "exit_code": 0,
+        "resources": {
+          "samples": 178,
+          "gpu_samples": 177,
+          "peak_private_commit_bytes": 4296138752,
+          "peak_working_set_bytes": 2439823360,
+          "peak_dedicated_gpu_bytes": 1761132544,
+          "checks": {
+            "ram": {
+              "bytes": 4296138752,
+              "status": "warning"
+            },
+            "vram": {
+              "bytes": 1761132544,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 108.25075280002784,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        },
+        "native_process_current_frames": {
+          "blocks": 3747,
+          "model_horizon": 3747,
+          "resident_lights": 3747
+        }
+      },
+      "destruction": {
+        "base": "(1173.0, 80.0, 339.0)",
+        "chain_ms": 419.986,
+        "damage_mismatches": 0,
+        "expected_destroyed": 102,
+        "failures": [],
+        "fixture_cells": 153,
+        "ignition_us": 41,
+        "observer_setup_us": 14958,
+        "ok": true,
+        "peak_bodies": 96,
+        "peak_jobs": 1,
+        "scope": "Real three-barrel chain, terrain edits, exact shell damage, full unchanged debris population and normal retirement in an owned default-world clone; observer setup drains before gameplay; nested synchronous publication timings overlap, not additive; not collapse, boundary, interrupted-recovery or endurance acceptance"
+      },
+      "trace_enabled": true,
+      "gpu_timers": true,
+      "phases": {
+        "arrival_idle": {
+          "frame_ms": {
+            "count": 721,
+            "median": 16.715,
+            "p99": 18.868,
+            "max": 21.003
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        },
+        "outdoor_sweep": {
+          "frame_ms": {
+            "count": 962,
+            "median": 16.66,
+            "p99": 20.719,
+            "max": 21.88
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": {
+            "count": 6,
+            "median": 61,
+            "p99": 146,
+            "max": 146
+          }
+        },
+        "destruction_chain": {
+          "frame_ms": {
+            "count": 25,
+            "median": 16.117,
+            "p99": 23.394,
+            "max": 23.394
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        },
+        "destruction_recovery": {
+          "frame_ms": {
+            "count": 643,
+            "median": 16.662,
+            "p99": 19.123,
+            "max": 23.089
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        },
+        "turning": {
+          "frame_ms": {
+            "count": 301,
+            "median": 16.695,
+            "p99": 18.966,
+            "max": 19.443
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        },
+        "settled_idle": {
+          "frame_ms": {
+            "count": 480,
+            "median": 16.706,
+            "p99": 18.982,
+            "max": 42.608
+          },
+          "pacing_values": [
+            [
+              60,
+              1
+            ]
+          ],
+          "canopy_snapshot_us_retained": null
+        }
+      },
+      "source_identity_scope": "Compiled export has no exposed source; PCK and native hashes identify this build. Earlier empty-text hashes must not be treated as script identity.",
+      "worst_gameplay": [
+        {
+          "after_process_cycles": 208934,
+          "after_process_ms": 0.086,
+          "after_process_thread_cpu_ms": 0.0,
+          "at_us": 98273007,
+          "before_process_cycles": 8082449,
+          "before_process_ms": 10.018,
+          "before_process_thread_cpu_ms": 0.0,
+          "block_occlusion": {
+            "active": 2,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 3960,
+            "invalidations": 96,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 98,
+            "radius": 96.0,
+            "resident": 2,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 220,
+            "step_last_us": 0.5,
+            "step_max_uploads": 1,
+            "step_max_us": 724.9,
+            "step_uploads": 0
+          },
+          "cadence_ms": 17.5438333333334,
+          "canopy_shadow": {
+            "available": true,
+            "current": false,
+            "frame": 4429,
+            "legacy_snapshot": false,
+            "rebuilds": 20,
+            "roots": 8586,
+            "snapshot_us": 117,
+            "worker_active": false
+          },
+          "cover_cells": 96,
+          "cover_render_phases_us": [
+            {
+              "cleanup_us": 0,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 1,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            }
+          ],
+          "cover_us": 62,
+          "cover_wanted": 96,
+          "draw_calls": 2284.0,
+          "draw_cycles": 11420335,
+          "draw_ms": 31.262,
+          "draw_thread_cpu_ms": 0.0,
+          "drawn_frame": 5539,
+          "driving": false,
+          "ecosystem_us": 6,
+          "entry": false,
+          "first_person": {
+            "active": true,
+            "detailed_shadows": false,
+            "enabled": true,
+            "overlay": false
+          },
+          "focus_admitted": true,
+          "focused": true,
+          "forest_us": 6,
+          "fps_cap": 60,
+          "frame": 5539,
+          "frame_ms": 42.608,
+          "gpu_ms": 5.94299983978271,
+          "inventory": false,
+          "loading": false,
+          "menu": false,
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 98240806,
+              "horizon_us": 3,
+              "occlusion_us": 1,
+              "process_us": 5,
+              "residency_us": 0,
+              "started_us": 98240801,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 98240870,
+              "process_us": 62,
+              "started_us": 98240808
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 98240807,
+              "process_us": 1,
+              "started_us": 98240806
+            }
+          },
+          "phase": "gameplay",
+          "physics_cycles": 4191673,
+          "physics_ms": 1.687,
+          "physics_steps": 1,
+          "physics_tail_complete": true,
+          "physics_tail_cycles": 1065366,
+          "physics_tail_ms": 0.425,
+          "physics_tail_segments": 1,
+          "physics_tail_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "pipeline_draw": 0.0,
+          "pipeline_specialization": 76.0,
+          "position": "(1184.0, 84.0, 351.0)",
+          "primitives": 1461841.0,
+          "process_cycles": 3086617,
+          "process_ms": 1.242,
+          "process_thread_cpu_ms": 0.0,
+          "recorder_previous_us": 274,
+          "render_cpu_ms": 2.81500005722046,
+          "render_setup_cpu_ms": 0.403,
+          "stages_ms": {
+            "actor update": 0.024,
+            "base controller": 0.011,
+            "controller loading": 0.001,
+            "controller process": 0.057,
+            "lighting schedule": 0.081,
+            "player physics": 0.058,
+            "receive": 0.01,
+            "receive poll": 0.004,
+            "retire collision/mesh": 0.001,
+            "staging frame": 0.004,
+            "world authoring": 0.01,
+            "world interaction": 0.014,
+            "world pickups": 0.002,
+            "world presentation": 0.01,
+            "world process": 0.158,
+            "world vehicle": 0.004,
+            "zombie update": 0.314
+          },
+          "surface_backlog": 0,
+          "terrain_pending_edit": false,
+          "terrain_queued": 0,
+          "thread_cpu_ms": 0.0,
+          "thread_cycles": 22798335,
+          "trace_writer_active": false,
+          "velocity": "(0.0, 0.0, 0.0)",
+          "vsync": 1,
+          "zombie_navigation": {
+            "agents": 6,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 60,
+            "invalidation": {
+              "allocated_slots": 60,
+              "count": 384,
+              "edges_reset": 0,
+              "elapsed_us": 1,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 32,
+              "live_vertices": 60,
+              "max_us": 4,
+              "queries_reset": 0,
+              "revision": 384,
+              "total_us": 260,
+              "vertex_capacity_bytes": 24576,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 37022,
+            "planning_us": 17,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "zombie_navigation_ticks": {
+            "dropped": 0,
+            "samples": [
+              {
+                "navigation": {
+                  "agents": 6,
+                  "goal_probes": 0,
+                  "graph_cache_hits": 0,
+                  "graph_node_limit": 32768,
+                  "graph_nodes": 60,
+                  "invalidation": {
+                    "allocated_slots": 60,
+                    "count": 384,
+                    "edges_reset": 0,
+                    "elapsed_us": 1,
+                    "free_slots": 0,
+                    "global": false,
+                    "global_count": 32,
+                    "live_vertices": 60,
+                    "max_us": 4,
+                    "queries_reset": 0,
+                    "revision": 384,
+                    "total_us": 260,
+                    "vertex_capacity_bytes": 24576,
+                    "vertices_retired": 0,
+                    "vertices_scanned": 0
+                  },
+                  "ok": true,
+                  "perception_probe_limit": 2,
+                  "perception_probes": 0,
+                  "planning_thread_cpu_us": 0,
+                  "planning_thread_cycles": 37022,
+                  "planning_us": 17,
+                  "query_profile": {
+                    "admission_queries": 0,
+                    "clearance_us": 0.0,
+                    "edges": 0,
+                    "hazard_us": 0.0,
+                    "readiness_us": 0.0,
+                    "shape_queries": 0,
+                    "support_cache_hits": 0,
+                    "support_raycasts": 0,
+                    "support_rays": 0,
+                    "support_us": 0.0,
+                    "sweeps": 0,
+                    "water_batches": 0,
+                    "water_queries": 0
+                  },
+                  "readiness_cache_entries": 0,
+                  "readiness_cache_hits": 0,
+                  "readiness_probes": 0,
+                  "route_work": 0,
+                  "route_work_limit": 12,
+                  "streaming_requests": 0,
+                  "support_cache_bytes": 3145728,
+                  "support_cache_hits": 0,
+                  "support_cache_limit": 65536,
+                  "support_cache_misses": 0
+                },
+                "phases_us": {
+                  "intent": 128,
+                  "interest_spacing": 22,
+                  "planning": 27,
+                  "population": 6,
+                  "residency": 112,
+                  "steering": 5
+                },
+                "physics_frame": 5701
+              }
+            ]
+          },
+          "zombie_phases_us": {
+            "intent": 128,
+            "interest_spacing": 22,
+            "planning": 27,
+            "population": 6,
+            "residency": 112,
+            "steering": 5
+          },
+          "zombies": 6
+        },
+        {
+          "after_process_cycles": 199891,
+          "after_process_ms": 0.084,
+          "after_process_thread_cpu_ms": 0.0,
+          "at_us": 81707357,
+          "before_process_cycles": 5126858,
+          "before_process_ms": 9.473,
+          "before_process_thread_cpu_ms": 0.0,
+          "block_occlusion": {
+            "active": 2,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 4824,
+            "invalidations": 92,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 94,
+            "radius": 96.0,
+            "resident": 2,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 212,
+            "step_last_us": 0.5,
+            "step_max_uploads": 1,
+            "step_max_us": 724.9,
+            "step_uploads": 0
+          },
+          "cadence_ms": 27.1571666666668,
+          "canopy_shadow": {
+            "available": true,
+            "current": false,
+            "frame": 4429,
+            "legacy_snapshot": false,
+            "rebuilds": 20,
+            "roots": 8586,
+            "snapshot_us": 117,
+            "worker_active": false
+          },
+          "cover_cells": 96,
+          "cover_render_phases_us": [
+            {
+              "cleanup_us": 0,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 1,
+              "process_us": 307,
+              "selection_us": 306,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 1,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            }
+          ],
+          "cover_us": 257,
+          "cover_wanted": 96,
+          "draw_calls": 2399.0,
+          "draw_cycles": 10401250,
+          "draw_ms": 4.62,
+          "draw_thread_cpu_ms": 0.0,
+          "drawn_frame": 4565,
+          "driving": false,
+          "ecosystem_us": 4,
+          "entry": false,
+          "first_person": {
+            "active": true,
+            "detailed_shadows": false,
+            "enabled": true,
+            "overlay": false
+          },
+          "focus_admitted": true,
+          "focused": true,
+          "forest_us": 7,
+          "fps_cap": 60,
+          "frame": 4565,
+          "frame_ms": 23.398,
+          "gpu_ms": 6.57999992370605,
+          "inventory": false,
+          "loading": false,
+          "menu": false,
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 81701413,
+              "horizon_us": 3,
+              "occlusion_us": 1,
+              "process_us": 5,
+              "residency_us": 1,
+              "started_us": 81701408,
+              "upload_us": 0
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 81701443,
+              "process_us": 28,
+              "started_us": 81701415
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 81701414,
+              "process_us": 0,
+              "started_us": 81701414
+            }
+          },
+          "phase": "gameplay",
+          "physics_cycles": 1656607,
+          "physics_ms": 0.667,
+          "physics_steps": 1,
+          "physics_tail_complete": true,
+          "physics_tail_cycles": 710667,
+          "physics_tail_ms": 0.349,
+          "physics_tail_segments": 1,
+          "physics_tail_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "pipeline_draw": 0.0,
+          "pipeline_specialization": 76.0,
+          "position": "(1184.0, 84.0, 351.0)",
+          "primitives": 1509039.0,
+          "process_cycles": 22285792,
+          "process_ms": 9.221,
+          "process_thread_cpu_ms": 15.625,
+          "recorder_previous_us": 291,
+          "render_cpu_ms": 3.1949999332428,
+          "render_setup_cpu_ms": 0.091,
+          "stages_ms": {
+            "LOD coverage": 0.935,
+            "LOD eviction": 0.985,
+            "LOD requests": 0.609,
+            "LOD schedule/cut/evict": 2.538,
+            "actor update": 0.004,
+            "atomic publish": 2.199,
+            "base controller": 0.011,
+            "collision exact match": 0.015,
+            "collision node attach": 0.931,
+            "collision physics cook": 0.054,
+            "collision piece": 1.042,
+            "controller loading": 0.001,
+            "controller process": 0.065,
+            "lighting schedule": 0.002,
+            "mesh upload/create": 0.333,
+            "player physics": 0.059,
+            "prepared subtree attach": 0.055,
+            "receive": 0.361,
+            "receive batch": 0.024,
+            "receive edit_begin": 0.306,
+            "receive edit_done": 0.004,
+            "receive poll": 0.01,
+            "retire collision/mesh": 0.278,
+            "staging frame": 4.444,
+            "vegetation edit publish": 0.574,
+            "world authoring": 0.009,
+            "world interaction": 0.016,
+            "world pickups": 0.003,
+            "world presentation": 0.014,
+            "world process": 0.17,
+            "world vehicle": 0.006,
+            "zombie update": 0.288
+          },
+          "surface_backlog": 0,
+          "terrain_pending_edit": false,
+          "terrain_queued": 0,
+          "thread_cpu_ms": 15.625,
+          "thread_cycles": 38013791,
+          "trace_writer_active": false,
+          "velocity": "(0.0, 0.0, 0.0)",
+          "vsync": 1,
+          "zombie_navigation": {
+            "agents": 6,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 0,
+            "invalidation": {
+              "allocated_slots": 0,
+              "count": 375,
+              "edges_reset": 0,
+              "elapsed_us": 0,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 32,
+              "live_vertices": 0,
+              "max_us": 4,
+              "queries_reset": 0,
+              "revision": 375,
+              "total_us": 253,
+              "vertex_capacity_bytes": 0,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 0,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 35301,
+            "planning_us": 16,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "zombie_navigation_ticks": {
+            "dropped": 0,
+            "samples": [
+              {
+                "navigation": {
+                  "agents": 6,
+                  "goal_probes": 0,
+                  "graph_cache_hits": 0,
+                  "graph_node_limit": 32768,
+                  "graph_nodes": 0,
+                  "invalidation": {
+                    "allocated_slots": 0,
+                    "count": 375,
+                    "edges_reset": 0,
+                    "elapsed_us": 0,
+                    "free_slots": 0,
+                    "global": false,
+                    "global_count": 32,
+                    "live_vertices": 0,
+                    "max_us": 4,
+                    "queries_reset": 0,
+                    "revision": 375,
+                    "total_us": 253,
+                    "vertex_capacity_bytes": 0,
+                    "vertices_retired": 0,
+                    "vertices_scanned": 0
+                  },
+                  "ok": true,
+                  "perception_probe_limit": 2,
+                  "perception_probes": 0,
+                  "planning_thread_cpu_us": 0,
+                  "planning_thread_cycles": 35301,
+                  "planning_us": 16,
+                  "query_profile": {
+                    "admission_queries": 0,
+                    "clearance_us": 0.0,
+                    "edges": 0,
+                    "hazard_us": 0.0,
+                    "readiness_us": 0.0,
+                    "shape_queries": 0,
+                    "support_cache_hits": 0,
+                    "support_raycasts": 0,
+                    "support_rays": 0,
+                    "support_us": 0.0,
+                    "sweeps": 0,
+                    "water_batches": 0,
+                    "water_queries": 0
+                  },
+                  "readiness_cache_entries": 0,
+                  "readiness_cache_hits": 0,
+                  "readiness_probes": 0,
+                  "route_work": 0,
+                  "route_work_limit": 12,
+                  "streaming_requests": 0,
+                  "support_cache_bytes": 3145728,
+                  "support_cache_hits": 0,
+                  "support_cache_limit": 65536,
+                  "support_cache_misses": 0
+                },
+                "phases_us": {
+                  "intent": 104,
+                  "interest_spacing": 21,
+                  "planning": 28,
+                  "residency": 117,
+                  "steering": 5
+                },
+                "physics_frame": 4719
+              }
+            ]
+          },
+          "zombie_phases_us": {
+            "intent": 104,
+            "interest_spacing": 21,
+            "planning": 28,
+            "residency": 117,
+            "steering": 5
+          },
+          "zombies": 6
+        },
+        {
+          "after_process_cycles": 336208,
+          "after_process_ms": 0.138,
+          "after_process_thread_cpu_ms": 0.0,
+          "at_us": 85903184,
+          "before_process_cycles": 12293510,
+          "before_process_ms": 12.699,
+          "before_process_thread_cpu_ms": 0.0,
+          "block_occlusion": {
+            "active": 2,
+            "chunk_byte_limit": 262144,
+            "chunk_limit": 128,
+            "enabled": true,
+            "geometry_byte_limit": 2097152,
+            "geometry_bytes": 3960,
+            "invalidations": 96,
+            "oversized_chunks_skipped": 0,
+            "pending": 0,
+            "published": 98,
+            "radius": 96.0,
+            "resident": 2,
+            "retiring": 0,
+            "selection_dirty": false,
+            "selection_scans": 220,
+            "step_last_us": 0.8,
+            "step_max_uploads": 1,
+            "step_max_us": 724.9,
+            "step_uploads": 0
+          },
+          "cadence_ms": 16.8750666666667,
+          "canopy_shadow": {
+            "available": true,
+            "current": false,
+            "frame": 4429,
+            "legacy_snapshot": false,
+            "rebuilds": 20,
+            "roots": 8586,
+            "snapshot_us": 117,
+            "worker_active": false
+          },
+          "cover_cells": 96,
+          "cover_render_phases_us": [
+            {
+              "cleanup_us": 0,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 0,
+              "process_us": 0,
+              "selection_us": 0,
+              "upload_us": 0
+            },
+            {
+              "cleanup_us": 1,
+              "process_us": 1,
+              "selection_us": 0,
+              "upload_us": 0
+            }
+          ],
+          "cover_us": 79,
+          "cover_wanted": 96,
+          "draw_calls": 2335.0,
+          "draw_cycles": 14479856,
+          "draw_ms": 7.023,
+          "draw_thread_cpu_ms": 15.625,
+          "drawn_frame": 4798,
+          "driving": false,
+          "ecosystem_us": 6,
+          "entry": false,
+          "first_person": {
+            "active": true,
+            "detailed_shadows": false,
+            "enabled": true,
+            "overlay": false
+          },
+          "focus_admitted": true,
+          "focused": true,
+          "forest_us": 8,
+          "fps_cap": 60,
+          "frame": 4798,
+          "frame_ms": 23.031,
+          "gpu_ms": 5.85799980163574,
+          "inventory": false,
+          "loading": false,
+          "menu": false,
+          "native_world_process": {
+            "blocks": {
+              "available": true,
+              "collision_us": 0,
+              "current": true,
+              "ended_us": 85894894,
+              "horizon_us": 5,
+              "occlusion_us": 1,
+              "process_us": 7,
+              "residency_us": 0,
+              "started_us": 85894887,
+              "upload_us": 1
+            },
+            "model_horizon": {
+              "available": true,
+              "current": true,
+              "ended_us": 85894973,
+              "process_us": 71,
+              "started_us": 85894902
+            },
+            "resident_lights": {
+              "available": true,
+              "current": true,
+              "ended_us": 85894901,
+              "process_us": 6,
+              "started_us": 85894895
+            }
+          },
+          "phase": "gameplay",
+          "physics_cycles": 7027812,
+          "physics_ms": 2.995,
+          "physics_steps": 1,
+          "physics_tail_complete": true,
+          "physics_tail_cycles": 1942525,
+          "physics_tail_ms": 0.974,
+          "physics_tail_segments": 1,
+          "physics_tail_thread_cpu_ms": 0.0,
+          "physics_thread_cpu_ms": 0.0,
+          "pipeline_draw": 0.0,
+          "pipeline_specialization": 76.0,
+          "position": "(1184.0, 84.0, 351.0)",
+          "primitives": 1470882.0,
+          "process_cycles": 7727599,
+          "process_ms": 3.171,
+          "process_thread_cpu_ms": 0.0,
+          "recorder_previous_us": 302,
+          "render_cpu_ms": 2.85400009155273,
+          "render_setup_cpu_ms": 0.493,
+          "stages_ms": {
+            "LOD coverage": 0.01,
+            "LOD eviction": 0.003,
+            "LOD requests": 1.095,
+            "LOD schedule/cut/evict": 1.118,
+            "actor update": 0.038,
+            "base controller": 0.017,
+            "controller loading": 0.002,
+            "controller process": 0.465,
+            "lighting schedule": 0.003,
+            "player physics": 0.087,
+            "receive": 0.019,
+            "receive poll": 0.007,
+            "retire collision/mesh": 0.0,
+            "staging frame": 0.007,
+            "world authoring": 0.015,
+            "world interaction": 0.025,
+            "world pickups": 0.368,
+            "world presentation": 0.017,
+            "world process": 0.65,
+            "world vehicle": 0.007,
+            "zombie update": 0.516
+          },
+          "surface_backlog": 0,
+          "terrain_pending_edit": false,
+          "terrain_queued": 0,
+          "thread_cpu_ms": 15.625,
+          "thread_cycles": 34837173,
+          "trace_writer_active": false,
+          "velocity": "(0.0, 0.0, 0.0)",
+          "vsync": 1,
+          "zombie_navigation": {
+            "agents": 6,
+            "goal_probes": 0,
+            "graph_cache_hits": 0,
+            "graph_node_limit": 32768,
+            "graph_nodes": 0,
+            "invalidation": {
+              "allocated_slots": 0,
+              "count": 384,
+              "edges_reset": 0,
+              "elapsed_us": 1,
+              "free_slots": 0,
+              "global": false,
+              "global_count": 32,
+              "live_vertices": 0,
+              "max_us": 4,
+              "queries_reset": 0,
+              "revision": 384,
+              "total_us": 260,
+              "vertex_capacity_bytes": 0,
+              "vertices_retired": 0,
+              "vertices_scanned": 0
+            },
+            "ok": true,
+            "perception_probe_limit": 2,
+            "perception_probes": 2,
+            "planning_thread_cpu_us": 0,
+            "planning_thread_cycles": 67489,
+            "planning_us": 30,
+            "query_profile": {
+              "admission_queries": 0,
+              "clearance_us": 0.0,
+              "edges": 0,
+              "hazard_us": 0.0,
+              "readiness_us": 0.0,
+              "shape_queries": 0,
+              "support_cache_hits": 0,
+              "support_raycasts": 0,
+              "support_rays": 0,
+              "support_us": 0.0,
+              "sweeps": 0,
+              "water_batches": 0,
+              "water_queries": 0
+            },
+            "readiness_cache_entries": 0,
+            "readiness_cache_hits": 0,
+            "readiness_probes": 0,
+            "route_work": 0,
+            "route_work_limit": 12,
+            "streaming_requests": 0,
+            "support_cache_bytes": 3145728,
+            "support_cache_hits": 0,
+            "support_cache_limit": 65536,
+            "support_cache_misses": 0
+          },
+          "zombie_navigation_ticks": {
+            "dropped": 0,
+            "samples": [
+              {
+                "navigation": {
+                  "agents": 6,
+                  "goal_probes": 0,
+                  "graph_cache_hits": 0,
+                  "graph_node_limit": 32768,
+                  "graph_nodes": 0,
+                  "invalidation": {
+                    "allocated_slots": 0,
+                    "count": 384,
+                    "edges_reset": 0,
+                    "elapsed_us": 1,
+                    "free_slots": 0,
+                    "global": false,
+                    "global_count": 32,
+                    "live_vertices": 0,
+                    "max_us": 4,
+                    "queries_reset": 0,
+                    "revision": 384,
+                    "total_us": 260,
+                    "vertex_capacity_bytes": 0,
+                    "vertices_retired": 0,
+                    "vertices_scanned": 0
+                  },
+                  "ok": true,
+                  "perception_probe_limit": 2,
+                  "perception_probes": 2,
+                  "planning_thread_cpu_us": 0,
+                  "planning_thread_cycles": 67489,
+                  "planning_us": 30,
+                  "query_profile": {
+                    "admission_queries": 0,
+                    "clearance_us": 0.0,
+                    "edges": 0,
+                    "hazard_us": 0.0,
+                    "readiness_us": 0.0,
+                    "shape_queries": 0,
+                    "support_cache_hits": 0,
+                    "support_raycasts": 0,
+                    "support_rays": 0,
+                    "support_us": 0.0,
+                    "sweeps": 0,
+                    "water_batches": 0,
+                    "water_queries": 0
+                  },
+                  "readiness_cache_entries": 0,
+                  "readiness_cache_hits": 0,
+                  "readiness_probes": 0,
+                  "route_work": 0,
+                  "route_work_limit": 12,
+                  "streaming_requests": 0,
+                  "support_cache_bytes": 3145728,
+                  "support_cache_hits": 0,
+                  "support_cache_limit": 65536,
+                  "support_cache_misses": 0
+                },
+                "phases_us": {
+                  "intent": 229,
+                  "interest_spacing": 36,
+                  "planning": 46,
+                  "population": 10,
+                  "residency": 167,
+                  "steering": 8
+                },
+                "physics_frame": 4960
+              }
+            ]
+          },
+          "zombie_phases_us": {
+            "intent": 229,
+            "interest_spacing": 36,
+            "planning": 46,
+            "population": 10,
+            "residency": 167,
+            "steering": 8
+          },
+          "zombies": 6
+        }
+      ]
+    }
+  ],
+  "host_report": "reports\\performance_changes\\host_canopy_snapshot_20261109T224505277433Z",
+  "host_max_active_game_or_compiler": {
+    "canopy_dictionary_control": 1,
+    "canopy_native_snapshot": 1
+  }
+}

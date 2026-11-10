@@ -119,6 +119,10 @@ statistics. Do not interpret the triggered-window mean as ordinary average FPS.
   performed by other engine threads.
 - Terrain/controller/loading/vehicle stages, publication queues, forest/cover
   work, zombie phases and newly admitted zombie initialization breakdowns.
+- `canopy_shadow` identifies native snapshot preparation by process frame, with
+  root count, duration, worker state and rebuild count. Only `current=true`
+  attributes that duration to the reporting frame; older values are retained
+  explicitly as stale. This measures preparation, not worker rasterization.
 - Native block occluder counts, pending/retiring work, accounted geometry bytes
   and publication timing. The geometry limit excludes the engine's acceleration
   structures; use process memory telemetry to assess total memory.

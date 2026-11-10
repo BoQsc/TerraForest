@@ -246,6 +246,8 @@ func _end_draw()->void:
 		resident_ids=current_ids
 		if stages.has("save capture"):row.save_components=game.persistence.last_capture.duplicate(true)
 		row.forest_us=game.vegetation.renderer.stats.get("update_us",0);row.ecosystem_us=game.ecosystem.last_process_us
+		var canopy:=game.get_node_or_null("CanopyShadows")
+		row.canopy_shadow=canopy.snapshot_profile() if canopy!=null and canopy.has_method("snapshot_profile") else {"available":false}
 		row.cover_us=game.ground_cover.last_process_us;row.cover_cells=game.ground_cover.resident.size();row.cover_wanted=game.ground_cover._wanted.size()
 		row.block_occlusion=game.structures.blocks.occlusion_stats()
 		row.native_world_process={"blocks":native_process_sample(game.structures.blocks),"model_horizon":native_process_sample(game.structures._model_horizon),"resident_lights":native_process_sample(game.structures.resident_lights)}

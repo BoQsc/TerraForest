@@ -11,6 +11,9 @@
 using namespace godot;
 namespace terraforest {
 void NativeVegetationSelection::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("upsert_shadow_root","id","transform"),&NativeVegetationSelection::upsert_shadow_root);
+ ClassDB::bind_method(D_METHOD("remove_shadow_root","id"),&NativeVegetationSelection::remove_shadow_root);
+ ClassDB::bind_method(D_METHOD("prepare_shadow_snapshot","source","origin","span","resolution","sun"),&NativeVegetationSelection::prepare_shadow_snapshot);
  ClassDB::bind_method(D_METHOD("prepare_shadow_mask","renderer","origin","span","resolution","sun"),&NativeVegetationSelection::prepare_shadow_mask);
  ClassDB::bind_method(D_METHOD("build_shadow_mask"),&NativeVegetationSelection::build_shadow_mask);
  ClassDB::bind_method(D_METHOD("shadow_mask","renderer","origin","span","resolution","sun"),&NativeVegetationSelection::shadow_mask);
@@ -24,6 +27,26 @@ void NativeVegetationSelection::_bind_methods(){
 // additional shadow-map pass. Max-composition is stable under owner ordering.
 PackedByteArray NativeVegetationSelection::shadow_mask(Object *f,Vector3 origin,double span,int resolution,Vector3 sun){
  return prepare_shadow_mask(f,origin,span,resolution,sun)?build_shadow_mask():PackedByteArray();
+}
+bool NativeVegetationSelection::upsert_shadow_root(int64_t id,const Transform3D &transform){
+ if(!transform.is_finite())return false;
+ auto found=canopy_slots.find(id);
+ if(found!=canopy_slots.end()){canopy_roots[found->second]=transform;return true;}
+ canopy_slots.emplace(id,canopy_roots.size());canopy_ids.push_back(id);canopy_roots.push_back(transform);return true;
+}
+void NativeVegetationSelection::remove_shadow_root(int64_t id){
+ auto found=canopy_slots.find(id);if(found==canopy_slots.end())return;
+ const size_t slot=found->second,last=canopy_roots.size()-1;
+ if(slot!=last){canopy_roots[slot]=canopy_roots[last];canopy_ids[slot]=canopy_ids[last];canopy_slots[canopy_ids[slot]]=slot;}
+ canopy_roots.pop_back();canopy_ids.pop_back();canopy_slots.erase(found);
+}
+bool NativeVegetationSelection::prepare_shadow_snapshot(Object *source,Vector3 origin,double span,int resolution,Vector3 sun){
+ shadow_roots.clear();shadow_resolution=0;
+ auto *index=Object::cast_to<NativeVegetationSelection>(source);
+ if(!index||!origin.is_finite()||!sun.is_finite()||sun.y<.15||!std::isfinite(span)||span<64||span>2048||resolution<16||resolution>256||index->canopy_roots.size()>65536)return false;
+ // Copy on the owner thread. Later edits cannot change a running worker's input.
+ shadow_roots=index->canopy_roots;
+ shadow_origin=origin;shadow_sun=sun;shadow_span=span;shadow_resolution=resolution;return true;
 }
 bool NativeVegetationSelection::prepare_shadow_mask(Object *f,Vector3 origin,double span,int resolution,Vector3 sun){
  shadow_roots.clear();shadow_resolution=0;
@@ -56,6 +79,7 @@ PackedByteArray NativeVegetationSelection::build_shadow_mask()const{
  }
  return pixels;
 }
+// Resetting LOD decisions must retain distant canopy membership.
 void NativeVegetationSelection::clear(){events={};live.clear();travel=0;}
 void NativeVegetationSelection::erase(int64_t id){live.erase(id);}
 void NativeVegetationSelection::schedule(int64_t id,double slack){Event e{travel+std::max(0.0,slack-0.02),id,++serial};live[id]=e;events.push(e);}

@@ -1,12 +1,23 @@
 ## Approved FPS pacing retained - 2026-11-10
 
+[Canopy snapshot preparation](../issues/runtime-performance/canopy-snapshot-2026-11-10.md)
+is another confirmed source of stalls: up to 5.333 ms on the main thread in a
+foreground fullscreen 88 m walk. Native snapshot/index correctness and debug/
+release parity pass; controlled walking snapshot median falls 4.872→0.074 ms,
+with matching start views and the endpoint inspected. Whole walking max remains
+22.989 ms. Installed foreground walking/destruction, exact-mask regression and
+recorder-off checks pass, but 42–43 ms outliers remain. The next targets are the
+31.262 ms renderer interval and combined terrain staging/LOD work; the linked
+report retains exact evidence and closure requirements. Existing shadow limits,
+assets, cadence and approved pacing remain intact.
+
 [Shared animation cache invalidation](../issues/runtime-performance/animation-cache-2026-11-10.md)
 is corrected and verified with the approved limiters. Normal-world physics work
 decreases; grounded walking, damage, save/shutdown, pose and behavior checks pass.
 Rendering waits still reach 49.358 ms total frame time in the corrected capture.
 The installed bounded walking/destruction check passes but still reaches 25.243 ms.
 The recorder-off control retains 24.462 ms walking / 26.749 ms recovery tails;
-visible-window presentation and longer movement are still required.
+the later canopy comparison verifies foreground fullscreen and an 88 m walk.
 Broader installed validation, traversal and endurance remain open; follow the
 linked evidence and do not treat this local CPU gain as stable-60-FPS completion.
 

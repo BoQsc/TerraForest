@@ -37,12 +37,15 @@ def main():
     parser.add_argument('--legacy-cover', action='store_true', help='Diagnostic only: use the prior 32 m cover layout before first admission')
     parser.add_argument('--outdoor-cover', action='store_true', help='Repeatable 16 m outdoor camera sweep with normal world services and quality')
     parser.add_argument('--grounded-walk', action='store_true', help='Use real grounded player movement during the outdoor route instead of fly-camera motion')
+    parser.add_argument('--walk-seconds', type=float, default=1.5, help='Seconds per grounded walking leg, from 1 to 20 (two legs)')
+    parser.add_argument('--normal-window', action='store_true', help='Use normal fullscreen/window preference and require foreground gameplay; no background-cap override')
     parser.add_argument('--destruction-load', action='store_true', help='Real three-barrel chain and full debris population in the owned default-world clone')
     parser.add_argument('--legacy-owner-bounds', action='store_true', help='Diagnostic control: use original forest/boulder invalidation scans')
     parser.add_argument('--collision-piece-triangles', type=int, choices=[256, 512, 1024], help='Diagnostic only: configure exact terrain collision partitions before worker startup')
     parser.add_argument('--light-abba', action='store_true', help='Compare unchanged versus redundantly submitted pooled lights in one stationary view')
     parser.add_argument('--player-abba', action='store_true', help='Grounded stationary and turning comparisons of player feel on/off; restores the preference')
     parser.add_argument('--legacy-hidden-hud', action='store_true', help='Diagnostic control: rebuild the hidden developer HUD as before')
+    parser.add_argument('--legacy-canopy-snapshot', action='store_true', help='Diagnostic control: traverse all forest dictionaries for each canopy snapshot')
     parser.add_argument('--render-thread', choices=['safe', 'separate'], help='Diagnostic engine rendering thread comparison')
     parser.add_argument('--rendering-driver', choices=['vulkan', 'd3d12'], help='Diagnostic graphics API comparison; keeps Forward+ quality and normal pacing')
     parser.add_argument('--without-gpu-timers', action='store_true', help='Avoid synchronous renderer timer queries; requires --without-trace')
@@ -50,6 +53,8 @@ def main():
     args = parser.parse_args()
     if args.grounded_walk and not args.outdoor_cover:
         parser.error('--grounded-walk requires --outdoor-cover')
+    if not 1 <= args.walk_seconds <= 20 or (args.walk_seconds != 1.5 and not args.grounded_walk):
+        parser.error('--walk-seconds requires grounded walking and a duration from 1 to 20')
     if args.without_gpu_timers and not args.without_trace:
         parser.error('--without-gpu-timers requires --without-trace')
     if args.require_native_process_profiles and args.without_trace:
@@ -84,6 +89,10 @@ def main():
                '--resolution', '1920x1080', '--max-fps', '60', '--log-file', str(folder / 'engine.log'),
                '--script', str(ROOT / 'tests/frame_trace_world.gd'), '--', '--trace-world-slot=' + slot,
                '--trace-world-output=' + folder.as_posix()]
+    if args.normal_window:
+        offset = command.index('--windowed')
+        del command[offset:offset + 3]
+        command += ['--trace-normal-window']
     if args.short:
         command += ['--trace-short']
     if args.save:
@@ -96,6 +105,8 @@ def main():
         command += ['--trace-player-abba']
     if args.legacy_hidden_hud:
         command += ['--trace-legacy-hidden-hud']
+    if args.legacy_canopy_snapshot:
+        command += ['--trace-legacy-canopy-snapshot']
     if args.render_thread:
         command[1:1] = ['--render-thread', args.render_thread]
     if args.rendering_driver:
@@ -128,7 +139,7 @@ def main():
     if args.outdoor_cover:
         command += ['--trace-outdoor-cover']
     if args.grounded_walk:
-        command += ['--trace-grounded-walk']
+        command += ['--trace-grounded-walk', '--trace-walk-seconds=' + str(args.walk_seconds)]
     if args.destruction_load:
         command += ['--trace-destruction-load']
     if args.legacy_owner_bounds:

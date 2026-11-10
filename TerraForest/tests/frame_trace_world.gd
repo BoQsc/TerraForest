@@ -70,6 +70,7 @@ func _initialize()->void:
 			if collision_piece_triangles>0:
 				collision_configured=node.terrain.backend.configure_collision_piece_size(collision_piece_triangles)
 				node.terrain.stage_measured.connect(collision_stage)
+		if node.name=="CanopyShadows" and "--trace-legacy-canopy-snapshot" in OS.get_cmdline_user_args():node.legacy_snapshot=true
 		if legacy_cover and node.get_script()!=null and node.get_script().resource_path=="res://addons/world_ecosystem/ground_cover.gd":node.render_partition_subdivisions=1)
 	for arg:String in OS.get_cmdline_user_args():
 		if arg.begins_with("--trace-world-slot="):slot=arg.trim_prefix("--trace-world-slot=")
@@ -90,10 +91,16 @@ func frame()->void:
 		sample.render_setup_cpu_ms=RenderingServer.get_frame_setup_time_cpu() if gpu_timers else -1.0
 		sample.draw_calls=Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
 		sample.fps_cap=Engine.max_fps;sample.vsync=DisplayServer.window_get_vsync_mode()
+		sample.window_focused=DisplayServer.window_is_focused()
+		sample.window_mode=DisplayServer.window_get_mode()
 		if collision_piece_triangles>0:
 			sample.physics_monitor_ms=Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000.0
 		samples.append(sample)
 	previous=now
+func source_sha256(path:String)->String:
+	var code:String=load(path).source_code
+	# Compiled exports may not expose source; an empty-text hash is not identity.
+	return code.sha256_text() if not code.is_empty() else ""
 func run()->void:
 	if not slot.begins_with("StartupBench_FPS_") or not slot.is_valid_identifier() or output.is_empty():quit(2);return
 	var original_occlusion:bool=root.use_occlusion_culling
@@ -108,7 +115,8 @@ func run()->void:
 	world_opened_us=Time.get_ticks_usec()
 	browser._open_game(command.args)
 	if not await wait_for(func():return is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn",90):quit(1);return
-	game=current_scene;game.background_fps=60;game.app_focused=true
+	game=current_scene;game.app_focused=true
+	if not "--trace-normal-window" in OS.get_cmdline_user_args():game.background_fps=60
 	game.background_hud_updates="--trace-legacy-hidden-hud" in OS.get_cmdline_user_args()
 	if not await wait_for(func():return game.startup_complete,90):quit(1);return
 	if "--trace-no-first-person-depth" in OS.get_cmdline_user_args():game.first_person_view.set_enabled(false,false)
@@ -229,16 +237,29 @@ func run()->void:
 	var record:Dictionary={"slot":slot,"samples":samples,"trace_enabled":trace!=null,"position":game.player.position,"temporary":game.temporary_world,"snapshot_readonly":game.terrain.backend.readonly_snapshot,"mouse_captures":preload("res://addons/world_runtime/mouse_ownership.gd").captures}
 	record.debug_hud={"hidden_stable":hidden_hud_stable,"visible_updated":visible_hud_updated}
 	record.initializations=initializations
-	record.runtime_source_sha256={"zombie":load("res://addons/characters/runtime/zombie.gd").source_code.sha256_text(),"controller":load("res://demo/controller.gd").source_code.sha256_text()}
+	record.runtime_source_sha256={"zombie":source_sha256("res://addons/characters/runtime/zombie.gd"),"controller":source_sha256("res://demo/controller.gd")}
+	for script:String in ["res://addons/vegetation/forest.gd","res://addons/vegetation/canopy_shadows.gd"]:record.runtime_source_sha256[script]=source_sha256(script)
+	record.runtime_source_unavailable=[]
+	for script:String in record.runtime_source_sha256:
+		if record.runtime_source_sha256[script].is_empty():record.runtime_source_unavailable.append(script)
 	record.gpu_timers=gpu_timers
 	record.rendering_driver=RenderingServer.get_current_rendering_driver_name()
 	record.rendering_method=RenderingServer.get_current_rendering_method()
 	record.presentation={"requested_cap":game.max_fps,"effective_cap":Engine.max_fps,"vsync":DisplayServer.window_get_vsync_mode(),"refresh_hz":DisplayServer.screen_get_refresh_rate(),"hidden_hud_control":game.background_hud_updates}
+	record.presentation.window=preload("res://addons/presentation/fullscreen_policy.gd").measurement(root)
+	record.presentation.window_position=DisplayServer.window_get_position()
+	record.presentation.background_cap=game.background_fps
+	record.presentation.foreground_required="--trace-normal-window" in OS.get_cmdline_user_args()
+	var unfocused_gameplay_frames:=0
+	for sample:Dictionary in samples:
+		if sample.phase not in ["loading","test_screenshot"] and not sample.window_focused:unfocused_gameplay_frames+=1
+	record.presentation.unfocused_gameplay_frames=unfocused_gameplay_frames
 	var pacing_mismatches:=0
-	if "--trace-uncapped" in OS.get_cmdline_user_args():
-		for sample:Dictionary in samples:
-			if sample.phase not in ["loading","test_screenshot"] and (sample.fps_cap!=0 or sample.vsync!=DisplayServer.VSYNC_DISABLED):pacing_mismatches+=1
-	record.uncapped_pacing_mismatches=pacing_mismatches
+	var uncapped:bool="--trace-uncapped" in OS.get_cmdline_user_args()
+	for sample:Dictionary in samples:
+		if sample.phase not in ["loading","test_screenshot"] and (sample.fps_cap!=(0 if uncapped else 60) or sample.vsync!=(DisplayServer.VSYNC_DISABLED if uncapped else DisplayServer.VSYNC_ENABLED)):pacing_mismatches+=1
+	record.pacing_mismatches=pacing_mismatches
+	record.uncapped_pacing_mismatches=pacing_mismatches if uncapped else 0
 	if collision_piece_triangles>0:
 		record.collision={"configured":collision_configured,"requested_triangles":collision_piece_triangles,"ready_ms":world_ready_ms,"stages":collision_stages,"stages_dropped":collision_stages_dropped,"census":collision_census(game.terrain.tiles),"resident_tiles":game.terrain.tiles.size(),"engine_static_bytes":Performance.get_monitor(Performance.MEMORY_STATIC)}
 	record.last_capture=game.persistence.last_capture.duplicate(true)
@@ -265,6 +286,7 @@ func run()->void:
 	record.viewport_occlusion_restored=root.use_occlusion_culling==original_occlusion
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
+	if "--trace-normal-window" in OS.get_cmdline_user_args():okay=okay and unfocused_gameplay_frames==0 and record.presentation.background_cap==15
 	for arg:String in OS.get_cmdline_user_args():
 		if arg.begins_with("--trace-expected-driver="):okay=okay and record.rendering_driver==arg.get_slice("=",1) and record.rendering_method=="forward_plus"
 	okay=okay and hidden_hud_stable and visible_hud_updated

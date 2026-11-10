@@ -12,9 +12,12 @@ var cooldown:=0.0
 var rebuilds:=0
 var last_native_us:=0
 var max_native_us:=0
+var last_native_frame:=-1
+var last_snapshot_roots:=0
 var worker:Thread
 var job:RefCounted
 var requested:Dictionary={}
+var legacy_snapshot:=false # Diagnostic control; production uses native membership.
 const SPAN:=1024.0
 const SIZE:=256
 func _process(delta:float):
@@ -41,12 +44,15 @@ func _process(delta:float):
  cooldown=.25
  job=ClassDB.instantiate("NativeVegetationSelection")
  var started=Time.get_ticks_usec()
- var prepared:bool=job.prepare_shadow_mask(renderer,next_origin,SPAN,SIZE,forest.sun_direction)
+ var prepared:bool=job.prepare_shadow_mask(renderer,next_origin,SPAN,SIZE,forest.sun_direction) if legacy_snapshot else job.prepare_shadow_snapshot(renderer.native_selection,next_origin,SPAN,SIZE,forest.sun_direction)
  last_native_us=Time.get_ticks_usec()-started;max_native_us=maxi(max_native_us,last_native_us)
+ last_native_frame=Engine.get_process_frames();last_snapshot_roots=renderer.roots.size()
  if not prepared:job=null;return
  requested={"origin":next_origin,"revision":renderer.canopy_revision,"sun":forest.sun_direction}
  worker=Thread.new()
  if worker.start(job.build_shadow_mask)!=OK:worker=null;job=null
+func snapshot_profile()->Dictionary:
+ return {"available":true,"current":last_native_frame==Engine.get_process_frames(),"frame":last_native_frame,"snapshot_us":last_native_us,"roots":last_snapshot_roots,"rebuilds":rebuilds,"worker_active":worker!=null,"legacy_snapshot":legacy_snapshot}
 func _exit_tree():
  if worker!=null:worker.wait_to_finish();worker=null;job=null
  if material!=null:material.set_shader_parameter("canopy_enabled",false)
