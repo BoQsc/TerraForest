@@ -14,6 +14,7 @@ from run import ROOT, parse_args
 from run_godot_check import execute, verify_pack_native
 from resource_limits import load_budgets, require_free_space
 from maintain_performance_artifacts import capacity, maintain
+from development_storage import admit
 
 
 def main():
@@ -84,6 +85,7 @@ def main():
     require_free_space(ROOT, clone_bytes + report_bytes)
     native = verify_pack_native() if args.executable else None
     retained_capacity = capacity(ROOT)
+    admit(ROOT, report_bytes=report_bytes)
     limits = load_budgets()
     storage = dict(source_clone_bytes=clone_bytes, planned_capture_bytes=report_bytes,
                    minimum_free_bytes=limits['minimum_free_bytes'],

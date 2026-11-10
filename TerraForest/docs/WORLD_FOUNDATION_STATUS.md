@@ -10,6 +10,12 @@ now archives completed receipt-owned worlds/builds and bounds new capture output
 checks passed. Project-only GitHub backup and other test-family/worktree ownership
 remain open; preserve unique data until remote verification. Private conversations
 are excluded. This storage repair does not establish FPS acceptance.
+User priority now blocks further performance gameplay until repository/worktree
+bloat and recurring output growth are addressed. The shared test launcher and
+isolated build/capture tools enforce separate development-output admission limits;
+retirement still requires verified backup and ownership. Complete the GitHub
+backup, retire obsolete copies, verify storage headroom and restore checks, then
+resume the quiet renderer-marker comparison and normal gameplay acceptance.
 The blocked renderer-marker attempt supplied no gameplay evidence. Its subsequent
 repeat passes gameplay/shutdown checks and isolates a 14.670 ms early-scene marker
 gap with unchanged occluder state; exact wait attribution remains open. The verbose

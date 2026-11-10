@@ -17,6 +17,7 @@ from play_checkpoint import revision_metadata
 from run import ROOT, parse_args
 from cache_retention import finalize_cache
 from resource_limits import ResourceMonitor, require_free_space
+from development_storage import admit
 
 
 def verify_pack_native(root=ROOT):
@@ -59,6 +60,9 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
+                result['development_storage'] = admit(ROOT)
+            result['preflight_seconds'] = time.monotonic() - started
+            started = time.monotonic()  # Storage admission is not engine startup timing.
             process = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
                                        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             result["pid"] = process.pid
