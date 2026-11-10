@@ -100,9 +100,13 @@ def source_path(record, row):
 
 
 def groups(record, maximum=512*2**20):
-    objects = {r['sha256']: r for r in record['files']}
+    # Keep related paths near one another so a single report restore does not
+    # require every volume. Shared objects retain their first catalog owner.
+    objects = {}
+    for row in record['files']:
+        objects.setdefault(row['sha256'], row)
     batch, size = [], 0
-    for key, row in sorted(objects.items()):
+    for row in sorted(objects.values(), key=lambda r:r['path']):
         if row['bytes'] > 1800 * 2**20:
             raise ValueError('Object requires chunking before publication: ' + row['path'])
         if batch and size + row['bytes'] > maximum:

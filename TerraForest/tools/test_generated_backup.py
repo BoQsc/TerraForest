@@ -28,7 +28,7 @@ class BackupTests(unittest.TestCase):
             self.assertEqual((output/'project/a').read_bytes(), b'terrain'*500)
             self.assertTrue((output/'project/empty').is_dir())
             with self.assertRaises(FileExistsError): restore(manifest, root, output)
-            (source/'b').write_bytes(b'new content')
+            (source/'a').write_bytes(b'new content')
             with self.assertRaises(ValueError): make_volume(record, rows, io.BytesIO())
 
     def test_credentials_block_publication_and_caches_are_excluded(self):
