@@ -79,6 +79,7 @@ def main():
     print(("PASS " if result["passed"] else "FAIL ") + "expansion release", flush=True)
     passed = all(row["passed"] for row in results)
     retention = release_copies({project: copied_libraries}, passed)
+    passed = passed and not retention['errors']
     (report / "run.json").write_text(json.dumps({**revision_metadata(), "passed": passed, "results": results, "native_copy_retention": retention}, indent=2) + "\n", encoding="utf-8")
     print(("PASS " if passed else "FAIL ") + str(report))
     return 0 if passed else 1
