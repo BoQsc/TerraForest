@@ -95,12 +95,15 @@ def catalog(spec, output):
 
 
 def source_path(record, row):
-    choices = sorted(record['roots'], key=len, reverse=True)
-    for label in choices:
-        if row['path'] == label:
-            return Path(record['roots'][label])
-        if row['path'].startswith(label + '/'):
-            return Path(record['roots'][label]) / relative_name(row['path'][len(label)+1:])
+    # Walk only the row's ancestors. Large catalogs have hundreds of explicit
+    # world roots; sorting and testing them for every file made verification
+    # needlessly quadratic in the number of roots.
+    label = row['path']
+    while label:
+        if label in record['roots']:
+            root = Path(record['roots'][label])
+            return root if label == row['path'] else root / relative_name(row['path'][len(label)+1:])
+        label = label.rpartition('/')[0]
     raise ValueError('No explicit root for ' + row['path'])
 
 
