@@ -162,6 +162,9 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 	check(not background.is_empty() and not background.has("error"),"unrelated background container reaches preparation")
 	if background.is_empty() or background.has("error"): return
 	world.preparation={"data":background,"entry":world._begin_entry(background),"piece_at":0}
+	# Mirror _drain_staging's ownership before injecting suspended work. An
+	# unattached fixture container otherwise survives world.free() with its meshes.
+	world.add_child(world.preparation.entry.node)
 	world._prepare_piece()
 	var background_node: int=world.preparation.entry.node.get_instance_id()
 	check(world.edit(Codec.brush(point,point,2.5,0,false,1),point-Vector3.ONE*7.5,point+Vector3.ONE*7.5),"coarse corner excavation admitted")
@@ -169,6 +172,7 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 	check(preemption_observed,"edit preempts an unfinished background container")
 	check(await pump_until(func(): return world.tiles.has(background_key)),"background preparation resumes after edit publication")
 	check(world.tiles.has(background_key) and world.tiles[background_key].node.get_instance_id()==background_node,"resumption preserves already prepared background resources")
+	check(world.tiles[background_key].node.get_parent()==world,"resumed background resources remain owned by the terrain scene")
 	var current: Dictionary=world.tiles[key]
 	var retained:=0
 	var replaced:=0
