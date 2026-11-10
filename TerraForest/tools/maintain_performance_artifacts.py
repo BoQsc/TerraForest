@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 import re
 import time
+import subprocess
+from functools import lru_cache
 from contextlib import contextmanager
 
 from cleanup_generation_copies import lease
@@ -38,6 +40,34 @@ def command_results(value):
             yield from command_results(child)
 
 
+@lru_cache(maxsize=128)
+def committed_driver(root, revision, driver):
+    git_root = Path(subprocess.check_output(['git','rev-parse','--show-toplevel'],cwd=root,text=True,stderr=subprocess.PIPE).strip())
+    path = (root/'tests'/driver).relative_to(git_root).as_posix()
+    return subprocess.check_output(['git','show',revision+':'+path],cwd=root,stderr=subprocess.PIPE).decode('utf-8').replace('\r\n','\n')
+
+
+def creator_driver(command, run, receipt, family, root):
+    expected = CREATORS[family]
+    if any(Path(c).name == expected for c in command):return True, []
+    # Packaged checks freeze the same driver beside their receipt, replacing
+    # only helper resource paths. Require exact equality with its recorded Git
+    # revision after undoing that substitution; an arbitrary driver.gd is unsafe.
+    frozen = receipt.parent/'driver.gd'
+    if str(frozen) not in command and frozen.as_posix() not in command:return False, []
+    revision = run.get('revision','')
+    if not isinstance(revision,str) or not re.fullmatch('[0-9a-f]{40}',revision):return False, []
+    try:
+        confined(frozen,root/'reports')
+        checksum = digest(frozen)
+        attested = run.get('external_driver_sha256',{}).get('driver.gd',run.get('test_sha256'))
+        if attested and attested != checksum:return False, []
+        normalized = frozen.read_text(encoding='utf-8').replace(receipt.parent.as_posix()+'/', 'res://tests/')
+        if normalized != committed_driver(root,revision,expected):return False, []
+    except (OSError,ValueError,subprocess.SubprocessError):return False, []
+    return True, [dict(path=str(frozen),sha256=checksum)]
+
+
 def additional_world_records(root):
     """Exact creation receipts and completed drivers, never a name-only match."""
     from development_storage import OWNED_SLOT
@@ -61,17 +91,17 @@ def additional_world_records(root):
                 if result.get('exit_code') is None:continue
                 if slot not in latest or report.stat().st_mtime_ns > latest[slot].stat().st_mtime_ns:
                     latest[slot] = report
-                creator = any(Path(c).name == CREATORS[family] for c in command)
+                creator, driver_proof = creator_driver(command,run,receipt,family,root)
                 generated = (entry.get('phase') in ('create', 'create_originals')
                              or (family == 'Expedition' and run.get('stage') == 'create' and not run.get('reused')))
                 cloned = (family in ('TraderRide','TraderClothes','ClothingLoot')
                           and world.get('created') is True and source and run.get('clone') == world
                           and not run.get('resume_report'))
                 if creator and (generated or cloned):
-                    created.setdefault(slot, (receipt, report, source, family))
+                    created.setdefault(slot, (receipt, report, source, family, driver_proof))
     records = []
-    for slot, (receipt, creation, source, family) in created.items():
-        proof = [dict(path=str(p), sha256=digest(p)) for p in (receipt, creation)]
+    for slot, (receipt, creation, source, family, driver_proof) in created.items():
+        proof = [dict(path=str(p), sha256=digest(p)) for p in (receipt, creation)] + driver_proof
         records.append((latest[slot], slot, dict(source_slot=source, ownership=proof,
                         created_ns=creation.stat().st_mtime_ns), family))
     return records, protected

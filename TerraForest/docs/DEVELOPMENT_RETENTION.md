@@ -106,6 +106,9 @@ retirement. Input/source fixtures, pins, unknown sidecars and later-modified sav
 remain protected. Active families keep at most two ready worlds; non-performance
 families inactive for three days can retain all their evidence cold, with no
 ordinary loose copy. FPS/startup families retain their two recent captures.
+Packaged drivers frozen beside a report also require exact equality with the
+recorded Git revision after undoing the helper-path rewrite. Their current full
+hash is retained in the ownership proof; a generic `driver.gd` name is insufficient.
 
 Completed isolated native checks release only matching copied DLL bytes and
 rebuildable `imported`/`shader_cache` directories. Bootstrap cfg, original assets,

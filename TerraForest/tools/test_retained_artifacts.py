@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from retained_artifacts import Store, archive, digest, load_manifest, restore, retire, relative_name, verify
-from maintain_performance_artifacts import world_candidates, build_candidates, owned_lease, archive_regional_cache
+from maintain_performance_artifacts import world_candidates, build_candidates, owned_lease, archive_regional_cache, creator_driver
 
 
 class RetainedArtifactsTests(unittest.TestCase):
@@ -270,6 +270,20 @@ class RetainedArtifactsTests(unittest.TestCase):
             os.utime(report,(old,old))
         rows,_=world_candidates(self.root,worlds,keep=2)
         self.assertEqual({r['slot'] for r in rows},set(slots[2:]))
+
+    def test_frozen_driver_requires_exact_recorded_source_after_path_rewrite(self):
+        folder=self.root/'reports/pack';folder.mkdir(parents=True)
+        receipt=folder/'world.json';receipt.write_text('{}')
+        frozen=folder/'driver.gd'
+        source='extends "res://tests/window_session_flow.gd"\n# exact creation driver\n'
+        frozen.write_text(source.replace('res://tests/',folder.as_posix()+'/'),encoding='utf-8')
+        run=dict(revision='a'*40,test_sha256=digest(frozen))
+        with patch('maintain_performance_artifacts.committed_driver',return_value=source):
+            accepted,proof=creator_driver([str(frozen)],run,receipt,'Quests',self.root)
+            self.assertTrue(accepted);self.assertEqual(proof[0]['sha256'],digest(frozen))
+            frozen.write_text(frozen.read_text()+'# changed\n')
+            run['test_sha256']=digest(frozen)
+            self.assertFalse(creator_driver([str(frozen)],run,receipt,'Quests',self.root)[0])
 
 
 if __name__ == '__main__':
