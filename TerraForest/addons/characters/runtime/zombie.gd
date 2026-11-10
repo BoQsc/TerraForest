@@ -1557,7 +1557,7 @@ func _play_animation(clip_name: String, restart: bool = false) -> void:
 	_current_clip = key
 
 
-func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZERO, impulse: Vector3 = Vector3.ZERO, force_sever: bool = false, impact: String = "melee") -> void:
+func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZERO, impulse: Vector3 = Vector3.ZERO, force_sever: bool = false, impact: String = "melee", spring_reaction: bool = true, hit_animation: bool = true) -> void:
 	if not initialized or not PARTS.has(part) or missing.get(part, false):
 		return
 	if not is_finite(damage) or not impulse.is_finite() or not world_point.is_finite():
@@ -1566,7 +1566,9 @@ func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZER
 	if not result.ok:return
 	health=float(result.health);limb_health=anatomy.snapshot().limbs
 	damaged.emit(part, health)
-	if alive and not result.dead and impact=="firearm":hit_reaction.hit(part,world_point,impulse,damage)
+	if alive and not result.dead and impact=="firearm":
+		if spring_reaction:hit_reaction.hit(part,world_point,impulse,damage)
+		else:hit_reaction.clear()
 	if sleeper_active() and not result.dead:sleeper.wake()
 	if result.sever:
 		sever_limb(part, impulse)
@@ -1577,6 +1579,8 @@ func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZER
 		return
 	if result.dead:
 		die(impulse)
+	elif not hit_animation:
+		return
 	else:
 		if _r4_enabled:
 			if sleeper_active():sleeper.wake();return

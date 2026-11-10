@@ -18,7 +18,7 @@ func shot(aiming:bool)->void:
     kick=minf(.018,kick+.008*strength)
     pitch=minf(deg_to_rad(.7),pitch+deg_to_rad(.35)*strength)
     fov_pulse=minf(.30,fov_pulse+.15*strength)
-func step(delta:float,velocity:Vector3,grounded:bool,turn_rate:float,aiming:bool)->Transform3D:
+func step(delta:float,velocity:Vector3,grounded:bool,turn_rate:float,aiming:bool,allow_sway:bool=true)->Transform3D:
     var dt:=clampf(delta,0,.05)
     if not grounded:fall_speed=maxf(fall_speed,-velocity.y)
     if grounded and not was_grounded and fall_speed>1.5:
@@ -32,5 +32,6 @@ func step(delta:float,velocity:Vector3,grounded:bool,turn_rate:float,aiming:bool
     lag=Vector3(clampf(lag.x,-.008,.008),0,clampf(lag.z,-.006,.006))
     offset=offset.lerp(lag,1-exp(-14*dt))
     bank=lerpf(bank,clampf(-turn_rate*.008,-.012,.012)*strength,1-exp(-14*dt))
+    if not allow_sway:offset=Vector3.ZERO;bank=0
     kick*=exp(-16*dt);pitch*=exp(-16*dt);landing*=exp(-13*dt);fov_pulse*=exp(-16*dt)
     return Transform3D(Basis.from_euler(Vector3(pitch,0,bank)),offset+Vector3(0,-landing,kick))

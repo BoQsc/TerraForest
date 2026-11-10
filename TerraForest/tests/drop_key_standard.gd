@@ -23,6 +23,7 @@ func run()->void:
 	if game.loading_active:
 		game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();quit(1);return
 	game.set_physics_process(false);game._clear_motion();game.fly=false;game.app_focused=true
+	game.player_view.entry.finish() # Test gameplay input after the authored arrival.
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	game.needs_floor_spawn=false;game.player.position.y+=10
 	var floor_body:=StaticBody3D.new();floor_body.collision_layer=1
@@ -30,6 +31,12 @@ func run()->void:
 	floor_body.add_child(collider);game.add_child(floor_body);floor_body.global_position=game.player.global_position-Vector3.UP*.2
 	await physics_frame;await physics_frame
 	var hud=game.player_hud
+	check(game.session_menu.pages.has("Pistol trial") and game.session_menu.navigation.has("Pistol trial"),"Esc menu exposes the temporary pistol page")
+	var pistol_page:Node=game.session_menu.pages["Pistol trial"]
+	var blood_toggle:CheckButton=pistol_page.get_node("Pistol_blood")
+	blood_toggle.button_pressed=false
+	check(not game.combat.pistol_trial.values.blood,"actual menu controls the live pistol effect adapter")
+	blood_toggle.button_pressed=true
 	check(game.pickups.physics_enabled and game.session_menu.drop_physics_toggle.button_pressed,"Player physical-drop option defaults enabled")
 	check(game.pickups.full_size_enabled and game.session_menu.drop_size_toggle.button_pressed,"Player original-size drop option defaults enabled")
 	# Keep the existing belt, place a newly supported firearm in an empty slot.
@@ -52,6 +59,10 @@ func run()->void:
 	game.pickups.update_view(0,game.player.global_position,true)
 	check(game.pickups.render_status[0].rendered==1 and game.pickups.renderers[0].multimesh.mesh.get_surface_count()==1,"universal drop renders in one native batched mesh")
 	var handles:PackedInt64Array=game.pickups.stores[0].query_sphere(game.pickups.to_local(game.player.global_position),4,4,64).ids
+	if handles.is_empty():
+		game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free()
+		await process_frame;await process_frame
+		print("DROP_KEY_STANDARD checks=",checks," failures=",failures);quit(1);return
 	var launched:Vector3=game.pickups.stores[0].get_position(handles[0])
 	for i in 12:
 		game.pickups.step_physics(1.0/60,true,game._actor_collision_ready);await physics_frame
@@ -112,4 +123,6 @@ func run()->void:
 	game.free();await process_frame;await process_frame
 	print("DROP_KEY_STANDARD checks=",checks," failures=",failures)
 	quit(1 if failures else 0)
-func _initialize()->void:run.call_deferred()
+func _initialize()->void:
+	ProjectSettings.set_setting("terraforest/pistol_trial_settings_path","")
+	run.call_deferred()

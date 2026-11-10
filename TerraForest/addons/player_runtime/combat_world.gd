@@ -2,6 +2,9 @@
 extends Node3D
 signal firearm_impact(target:Dictionary)
 var impact_audio:Node3D
+var pistol_trial=preload("res://addons/player_runtime/pistol_trial.gd").new()
+var pistol_reticle:Control
+var sever_random:=RandomNumberGenerator.new()
 const Barrel=preload("res://addons/player_runtime/combat_barrel.gd")
 const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
 const RIFLE:=7
@@ -48,6 +51,10 @@ var reload_audio:AudioStreamWAV
 var restored_support_pending:=true
 func prepare(host:Node)->bool:
 	game=host;state=ClassDB.instantiate("NativeCombatState")
+	pistol_trial.load_settings();sever_random.randomize()
+	pistol_reticle=preload("res://addons/player_runtime/pistol_crosshair.gd").new()
+	game.player_hud.add_child(pistol_reticle)
+	# HUD construction follows combat preparation; bind the baseline on first tick.
 	destruction_coordinator=ClassDB.instantiate("NativeDestructionCoordinator")
 	action_input_owned=func()->bool:return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 	if state==null or destruction_coordinator==null or barrels==null:return false
@@ -80,12 +87,14 @@ func restore(bytes:PackedByteArray)->bool:
 	blast_jobs.assign(state.get_blast_jobs());epoch=game.terrain.epoch;restored_support_pending=true
 	if integrity_toggle!=null:integrity_toggle.set_pressed_no_signal(state.integrity_enabled())
 	return true
-func add_controls(menu:CanvasLayer,parent:Node)->void:
+func add_pistol_controls(menu:CanvasLayer,parent:Node)->void:
+	pistol_trial.add_controls(menu,parent)
 	var original_sounds:=CheckButton.new();original_sounds.text="PX9 sounds: use original recordings"
 	original_sounds.tooltip_text="Off: new shot 2 and reload 7. On: previous pistol and reload recordings."
 	original_sounds.button_pressed=pistol_sounds.use_original
 	original_sounds.toggled.connect(pistol_sounds.set_original);parent.add_child(original_sounds)
 	pistol_sounds.mode_changed.connect(func(value:bool):original_sounds.set_pressed_no_signal(value))
+func add_controls(menu:CanvasLayer,parent:Node)->void:
 	integrity_toggle=CheckButton.new();integrity_toggle.text="Structural integrity and collapse (optional)"
 	integrity_toggle.tooltip_text="Check nearby blocks after building, mining and explosions. Unsupported blocks fall. Off by default; saved with this world."
 	integrity_toggle.button_pressed=state.integrity_enabled();integrity_toggle.toggled.connect(set_integrity);parent.add_child(integrity_toggle)
@@ -136,7 +145,9 @@ func fire()->bool:
 	if not state.take_round(weapon):return false
 	if weapon==9:human.handgun_empty=state.get_rounds(weapon)==0
 	human.rifle_action("Fire" if human.rifle_aiming else "HipFire")
-	if weapon==9:human.flash_handgun() # Only confirmed shots produce light/gas.
+	if weapon==9:
+		human.flash_handgun() # Only confirmed shots produce light/gas.
+		if pistol_reticle!=null:pistol_reticle.shot()
 	game.player_view.shot_feedback()
 	shots+=1;next_shot=timer+float(WEAPONS[weapon].interval);game.terrain.changed_since_save=true
 	game.zombies.hear_noise(origin,64);play_sound(origin,pistol_sounds.shot(pistol_audio) if weapon==9 else (assault_audio if weapon==8 else shot_audio),pistol_sounds.TRIAL_GAIN_DB if weapon==9 and not pistol_sounds.use_original else 0.0)
@@ -170,7 +181,7 @@ func launch(origin:Vector3,direction:Vector3,weapon:int=RIFLE)->bool:
 	var material:=StandardMaterial3D.new();material.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;material.albedo_color=Color(1,.83,.3);tracer.material_override=material;tracer.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(tracer);tracer.global_position=origin
 	# Capture the shot's payload: equipping another weapon cannot change a bullet in flight.
-	projectiles.append({"position":origin,"velocity":direction.normalized()*float(WEAPONS[weapon].speed),"damage":int(WEAPONS[weapon].damage),"block_damage":int(WEAPONS[weapon].block_damage),"age":0.0,"view":tracer,"epoch":game.terrain.epoch})
+	projectiles.append({"weapon":weapon,"position":origin,"velocity":direction.normalized()*float(WEAPONS[weapon].speed),"damage":int(WEAPONS[weapon].damage),"block_damage":int(WEAPONS[weapon].block_damage),"age":0.0,"view":tracer,"epoch":game.terrain.epoch})
 	return true
 func step_projectiles(delta:float)->void:
 	for index in range(projectiles.size()-1,-1,-1):
@@ -184,9 +195,13 @@ func step_projectiles(delta:float)->void:
 			var zombie:Dictionary=game.zombies.pick(start,end,omit)
 			if not zombie.is_empty() and (solid.is_empty() or start.distance_squared_to(zombie.position)<=start.distance_squared_to(solid.position)+.001):
 				var before:float=zombie.zombie.health
-				if game.zombies.apply_hit(zombie,bullet.damage,bullet.velocity.normalized(),"firearm"):
+				var pistol:bool=bullet.get("weapon",0)==9
+				var response:Dictionary={}
+				if pistol:response={"reaction":pistol_trial.values.reaction,"animation":pistol_trial.values.animation,"force_sever":pistol_trial.extra_sever(zombie.part,sever_random.randf())}
+				if game.zombies.apply_hit(zombie,bullet.damage,bullet.velocity.normalized(),"firearm",response):
+					if pistol and pistol_reticle!=null:pistol_reticle.confirmed_hit()
 					var lost:float=before-maxf(0,zombie.zombie.health)
-					resolve_impact_feedback({"kind":"zombie","position":zombie.position,"normal":zombie.get("normal",-bullet.velocity.normalized())})
+					resolve_impact_feedback({"kind":"zombie","pistol_splash":pistol,"blood":not pistol or pistol_trial.values.blood,"position":zombie.position,"normal":zombie.get("normal",-bullet.velocity.normalized())})
 					if lost>0:game.player_hud.award_experience(mini(15,ceili(lost))+(25 if not zombie.zombie.alive else 0))
 					game.player_hud.show_target_damage("Zombie · "+str(zombie.part).replace("_"," "),maxi(0,ceili(zombie.zombie.health)),int(zombie.zombie.PARTS.torso.health))
 				hits+=1;remove=true
@@ -394,7 +409,10 @@ func _physics_process(delta:float)->void:
 	if epoch!=game.terrain.epoch:
 		epoch=game.terrain.epoch;clear_transients();cancel_reload();integrity.reset()
 		restored_support_pending=true
+	if pistol_reticle!=null and pistol_reticle.baseline==null and game.help.get_parent()!=null:
+		pistol_reticle.baseline=game.help.get_parent().get_node_or_null("Crosshair")
 	var running:=active();effects.step(delta,running)
+	if pistol_reticle!=null:pistol_reticle.update_state(delta,game.equipped_tool==9 and pistol_trial.values.crosshair and not game.player_view.active and can_use(),game.tool_view.human.rifle_aiming,Vector2(game.player.velocity.x,game.player.velocity.z).length(),not game.world_vehicle.driving)
 	if ammo_label!=null:ammo_label.visible=running and game.equipped_tool in WEAPONS
 	game.tool_view.human.rifle_aiming=can_use() and game.equipped_tool in WEAPONS and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	if reload_slot>=0 and (not can_use() or game.equipped_tool!=reload_weapon or game.player_hud.active_slot!=reload_slot):cancel_reload()

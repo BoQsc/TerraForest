@@ -110,9 +110,9 @@ func contact(target:Dictionary)->void:
 	burst(target.position,target.normal,material,target.get("destroyed",false) and breakup_enabled)
 
 func firearm_contact(target:Dictionary)->void:
-	if not enabled:return
+	if not enabled or (target.get("kind")=="zombie" and not target.get("blood",true)):return
 	var material:=material_for(target)
-	burst(target.position,target.normal,material,false,true)
+	burst(target.position,target.normal,material,false,true,target.get("pistol_splash",false))
 
 func mesh_for(shape:String)->Mesh:
 	if not meshes.has(shape):
@@ -143,7 +143,7 @@ func prepare_resources()->void:
 		var blood:=ShaderMaterial.new();blood.shader=preload("res://addons/impact_effects/blood_motion.gdshader")
 		motions={"fragments":fragments,"blood":blood}
 
-func burst(point:Vector3,normal:Vector3,material:String,broken:=false,firearm:=false)->bool:
+func burst(point:Vector3,normal:Vector3,material:String,broken:=false,firearm:=false,pistol_splash:=false)->bool:
 	if not enabled or not PALETTE.has(material) or not point.is_finite() or not normal.is_finite() or normal.length_squared()<.25:return false
 	if motions.is_empty():prepare_resources()
 	var emitter:GPUParticles3D
@@ -189,7 +189,9 @@ func burst(point:Vector3,normal:Vector3,material:String,broken:=false,firearm:=f
 		if not flesh:
 			process.set_shader_parameter("piece_scale",Vector3(.0015,.0015,.025) if spark else (Vector3(.004,.005,.024) if material=="wood" else Vector3(.015,.012,.014)))
 			if style==0:process.set_shader_parameter("dust_count",0 if spark else 2)
-	if flesh:process.set_shader_parameter("compact",firearm)
+	if flesh and firearm and pistol_splash:
+		emitter.lifetime=.4;emitter.amount_ratio=12.0/PARTICLES
+	if flesh:process.set_shader_parameter("compact",firearm and not pistol_splash)
 	process.set_shader_parameter("burst_count",int(ceil(PARTICLES*emitter.amount_ratio)))
 	var plane:=Vector4(0,1,0,-point.y);var floor_found:=normal.y>.65
 	if floor_found:plane=Vector4(normal.x,normal.y,normal.z,-normal.dot(point))

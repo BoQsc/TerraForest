@@ -84,6 +84,7 @@ func _ready() -> void:
 	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=220;columns.add_child(sidebar)
 	navigation["Session"]=button(sidebar,"Session",show_page.bind("Session"))
 	navigation["Player"]=button(sidebar,"Player",show_page.bind("Player"))
+	navigation["Pistol trial"]=button(sidebar,"Pistol trial",show_page.bind("Pistol trial"))
 	navigation["Graphics"]=button(sidebar,"Graphics",show_page.bind("Graphics"))
 	navigation["Usage"]=button(sidebar,"Usage",show_page.bind("Usage"))
 	navigation["Developer"]=button(sidebar,"Developer",show_page.bind("Developer"))
@@ -97,6 +98,7 @@ func _ready() -> void:
 	var player:=page("Player")
 	label(player,"Player").add_theme_font_size_override("font_size",22)
 	game.combat.add_controls(self,player)
+	game.combat.add_pistol_controls(self,page("Pistol trial"))
 	drop_physics_toggle=CheckButton.new();drop_physics_toggle.text="Physical item drops"
 	drop_physics_toggle.tooltip_text="Dropped items fall, bounce and settle. Applies to new drops; existing physical drops keep simulating. Off places new drops directly on clear ground."
 	drop_physics_toggle.button_pressed=game.pickups.physics_enabled

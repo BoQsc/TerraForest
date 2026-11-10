@@ -1,3 +1,17 @@
+## Temporary pistol feel trial - 2026-11-10
+
+Default-on independent Esc controls cover pistol bob/sway, reticle feedback,
+native spring/animation hit responses, bounded GPU blood and extra limb severing.
+Installed package passes 32 trial, 72 handgun and 36 actual-world projectile
+checks; the actual executable passes startup smoke. Native DLLs are unchanged.
+The predecessor is hash-verified in the archive and staging is removed. No
+approved resource, firing or presentation caps changed. Native hit springs and
+particle pools are reused; no additional actor integrator is introduced.
+Foreground FPS and user feel review remain deferred. The synthetic G-key drop
+check fails identically on unchanged installed baseline and candidate; preserve
+that failure. Evidence, rollback and remaining qualification:
+[pistol trial](../issues/px9-handgun/feel-trial-2026-11-10.md).
+
 ## Distant blasts and crater water - 2026-11-10
 
 Removed blast admission's player-relative actor-collision dependency, retaining

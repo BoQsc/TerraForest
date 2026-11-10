@@ -22,7 +22,10 @@ func run()->void:
     game.session_menu.set_open(false);game.zombies.clear();game.zombies.population_enabled=false;game.zombies.enabled=true
     var fx:Node=game.impact_effects;fx.set_enabled(true,false);fx.set_style(0,false)
     var combat:Node=game.combat
-    var folder:="res://reports/firearm_impacts";DirAccess.make_dir_recursive_absolute(folder)
+    var folder:="res://reports/firearm_impacts"
+    for argument:String in OS.get_cmdline_user_args():
+        if argument.begins_with("--review-output="):folder=argument.trim_prefix("--review-output=")
+    if DisplayServer.get_name()!="headless":DirAccess.make_dir_recursive_absolute(folder)
     var base:=Vector3i(game.player.global_position.floor())+Vector3i(0,6,0)
     var materials:=["brick","wood","concrete","metal"]
     var shots_before:int=combat.shots
@@ -67,10 +70,17 @@ func run()->void:
         var emitted:int=fx.emitted_events
         var previous_audio:int=combat.impact_audio.played
         check(combat.launch(point+Vector3.BACK*.6,Vector3.FORWARD,9),"native projectile launches at the visible torso")
+        check(combat.projectiles.back().weapon==9,"in-flight projectile keeps its pistol feedback identity")
         combat.step_projectiles(.01)
         check(zombie.health<health and fx.emitted_events==emitted+1 and fx.last_event.material=="flesh","projectile damages actual zombie and emits one entrance burst")
         print("FLESH_AUDIO before=",previous_audio," after=",combat.impact_audio.played," material=",combat.impact_audio.last_material," voices=",combat.impact_audio.pool.size()," holes=",combat.holes.holes.size()," expected=",count)
         check(combat.impact_audio.played==previous_audio+1 and combat.impact_audio.last_material=="flesh" and combat.holes.holes.size()==count,"flesh impact sounds once and never leaves a floating bullet mark")
+        for option:String in ["blood","reaction","animation"]:combat.pistol_trial.set_option(option,false,false)
+        zombie.hit_reaction.clear();zombie._hit_timer=0
+        health=zombie.health;emitted=fx.emitted_events
+        check(combat.launch(point+Vector3.BACK*.6,Vector3.FORWARD,9),"second actual pistol hit launches with feedback disabled")
+        combat.step_projectiles(.01)
+        check(zombie.health<health and fx.emitted_events==emitted and not zombie.hit_reaction.is_active() and zombie._hit_timer==0,"live switches suppress blood and reactions without suppressing projectile damage")
         if DisplayServer.get_name()!="headless":
             game.camera.global_position=point+Vector3.BACK*2;game.camera.look_at(point)
             await create_timer(.05).timeout;await RenderingServer.frame_post_draw

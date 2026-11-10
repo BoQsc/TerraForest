@@ -79,7 +79,8 @@ The corrected checks pass; no runtime reach limit was changed to fix a test.
   save. The actual installed executable passes startup smoke only. The dense
   lighting scan assertion fails identically in baseline and candidate (1/36);
   retain that failure rather than counting it as a passing regression gate.
-  Installed PCK SHA-256:
+  Distant-fix rollout PCK SHA-256 (subsequently superseded by the
+  [pistol trial](../px9-handgun/feel-trial-2026-11-10.md), retaining this fix):
   `d98909526e3840637e0996151724574dab0bf89643671b548f649e38c4f19c40`.
   The predecessor is hash-verified in `previous_package.archive.json`; staging
   is removed and all installed native hashes are unchanged (`installed.json`).

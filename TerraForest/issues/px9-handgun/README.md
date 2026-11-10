@@ -1,5 +1,9 @@
 # PX9 Eclipse handgun integration
 
+2026-11-10: [temporary pistol feel controls](feel-trial-2026-11-10.md) add independent
+bob/sway, crosshair, zombie response, blood and limb-sever switches in Esc. Scoped
+checks pass; this new trial has not received user visual/feel approval.
+
 - Status: First-person playtest accepted; integrated into master.
 - Updated: 2026-11-09. Branch: `codex/px9-handgun`.
 - User review: User accepted first-person pistol/player feel at 2fb599e1 on 2026-11-09 ("Seems good enough") and authorized master integration.

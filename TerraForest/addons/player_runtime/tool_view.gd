@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
 # R11 animated character tools, with the existing assembly-tool preview.
+signal equipped(item:int)
 signal attack_contact(identity:int)
 signal attack_finished(identity:int,cancelled:bool)
 var attack_allowed:Callable
@@ -42,6 +43,7 @@ func equip(id: int, water_ml:int=-1) -> void:
 	for key in tools:
 		tools[key].visible=key==id
 		tools[key].rotation.x=-0.2
+	equipped.emit(item)
 func attack_profile()->Dictionary:
 	if current in human.AUTHORED_TOOLS:return human.swing_profile()
 	if current==4:return {"clip":"tool_swing","contact":0.1,"duration":0.28}
