@@ -11,6 +11,7 @@
 namespace terraforest {
 class NativePlayerInventory;
 class NativeWorldDurability : public godot::RefCounted {
+    friend class NativeDestructionCoordinator;
     GDCLASS(NativeWorldDurability,godot::RefCounted)
     struct Entry {int health,damage;};
     std::map<std::string,Entry> damaged;

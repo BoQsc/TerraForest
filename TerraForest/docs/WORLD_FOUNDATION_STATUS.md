@@ -1,13 +1,27 @@
 ## Next-tick destruction implementation - 2026-11-10
 
+The native block-store/durability coordinator now stages bounded hit records and
+commits both stores before observer notification, rejecting stale/reentrant
+admission and unsafe mid-commit saves. Exact damage/impulse parity and normal
+gameplay checks pass. Building collision retirement also removes obsolete bodies
+from physics before incremental shape deletion: the 480-piece baseline/candidate/
+baseline retirement medians are 0.309/0.072/0.314 ms, with unchanged geometry and
+per-tick limits. Export and installed semantic checks pass, with all 14 native
+library pairs matching. Installed frame acceptance fails: the legacy-retirement
+control has better tails than the candidate, despite the isolated CPU saving.
+Candidate GPU chain p99 is 25.048 ms and settled idle p99 is 18.670 ms; opaque
+rendering and shadows need further investigation with visuals intact. This does not
+complete atomic terrain/building visual and physical publication or 60 FPS:
+normal gameplay still has draw-interval stalls and the 256-barrel deadline fails.
+
 [Accepted contract, measured failure and remaining work](../issues/runtime-performance/next-tick-destruction.md)
 tracks the 25% CPU/GPU reserve and full 256-barrel next-physics-tick requirement.
 The first exact-deadline source capture accepted all 256 triggers but started only
 one explosion by the deadline; 255 remained queued and terrain was unpublished.
 Opt-in bounded event timelines, the deadline probe and verified automatic trace
 retention are implemented. Native transactions, pooled effects, full publication,
-renderer synchronization and endurance remain open. Existing approved limits and
-the installed package are unchanged; this is not a performance-completion claim.
+renderer synchronization and endurance remain open. Existing approved limits are
+unchanged; the installed scoped fixes are not a performance-completion claim.
 The coalesced 256-edit native/Jolt prototype also misses its deadline. A lazy
 height-evaluation experiment preserved exact fields and receipts and reduced
 field-only time, but its normal-gameplay frame-tail comparison did not improve;

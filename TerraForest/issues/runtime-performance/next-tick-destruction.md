@@ -115,6 +115,106 @@ using that older fixture as a current release gate.
 
 ## Remaining implementation and acceptance
 
+### Native block-store/durability boundary (scoped checks passed)
+
+`NativeDestructionCoordinator` now prepares a bounded native batch and commits
+surviving-block damage and block erasures before block observers run. Admission
+and durability revision failures discard preparation without consuming damage or
+the job cursor. Reentrant combat capture is rejected until the cursor advances,
+so a save cannot pair new damage with the old cursor. Existing combat snapshots,
+24-cell gameplay scheduling, native 64-cell erasure ceiling and 96 debris limit
+are unchanged. Packed removal/impulse outputs replace per-cell script quote,
+hit and debris dictionaries; durability remains owned by `NativeWorldDurability`.
+
+This is a **store boundary**, not atomic rendered/physical publication. The
+coordinator explicitly returns `geometry_ready=false`. It does not yet own all
+barrel events, spatial actor queries, terrain transactions or persistent event
+IDs. Preparation still allocates bounded temporary records; pre-reserved full
+transaction storage remains part of the larger redesign.
+
+Focused checks passed: `reports/checks/20261110T115123347311Z` (ordered overlapping
+damage, exact impulses, byte-identical stores, rejection/reentrancy and observer
+consistency), `20261110T115231260964Z` (block regions) and
+`20261110T115345802669Z` (82 combat checks).
+
+Normal-gameplay baseline/candidate/baseline captures:
+
+- `reports/performance_changes/20261110T115421424716Z_coordinator_baseline_before`
+- `reports/performance_changes/20261110T115659370386Z_coordinator_candidate`
+- `reports/performance_changes/20261110T115951742471Z_coordinator_baseline_after`
+
+All preserve exact expected destruction, 96 debris bodies, pacing and foreground
+focus. Baseline/candidate captured blast-batch median work is 1.352/1.124 ms
+(eight retained frames each, including effects). Chain maxima are
+26.792/26.570/32.142 ms; recovery p99 is 22.559/21.247/22.182 ms. Recovery maxima
+remain variable (28.974/28.538/24.433 ms). These are scoped work and semantic
+results; presentation stability and 25% headroom still fail.
+
+### Building collision retirement (scoped checks passed)
+
+Building retirement had the same registered-compound shape-deletion pattern
+previously corrected for terrain. Retiring `StaticBody3D` nodes now enter disabled
+process mode before their shapes are freed, removing them from physics. Cached,
+live and preparing bodies retain their existing registration. The 1,024-triangle
+piece size, one preparation piece per tick and four retirement operations per
+tick are unchanged. `--legacy-structure-retirement` is a process-local diagnostic
+control, not a saved preference or a reduced-quality setting.
+
+The dense 480-piece actual-Jolt baseline/candidate/baseline test passed contact,
+partial preparation, interrupted edits, resource rejection and final cleanup:
+
+- `reports/checks/20261110T120217325273Z`: release median/max 0.309/2.335 ms.
+- `reports/checks/20261110T120350209963Z`: release median/max 0.072/1.178 ms;
+  directly verified retired bodies have no physics space before shape deletion.
+- `reports/checks/20261110T120424780753Z`: legacy release median/max
+  0.314/1.984 ms, with retired bodies still registered as expected.
+
+These are native retirement slice timings, not total frame or headroom results.
+Admission work is unchanged and still has variable multi-millisecond tails.
+Final coordinator checks, including old repeated survivor records and capture
+guard, passed in `reports/checks/20261110T120831215253Z`. The final native commit
+gate also rejects premature admission-callback commits:
+`reports/checks/20261110T121243287271Z`. Godot import/identity
+generation passed in `reports/checks/20261110T120534436516Z_coordinator_import`.
+
+### Installed gameplay: semantic pass, frame acceptance failed
+
+The exported package contains both scoped changes; all 14 source/installed native
+library pairs match. PCK SHA-256:
+`d42de8b13a1b205955968fc4763860cf07dcf78cc9814fdeff506928dfae97c8`.
+Export smoke, packaged house-light checks and building standards passed
+(`reports/building_standards/20261110T121845461115Z`).
+
+- `reports/performance_changes/20261110T122254453453Z_destruction_native_installed`:
+  chain mean/max 24.002/36.126 ms; recovery p99/max 20.895/22.066 ms.
+- `reports/performance_changes/20261110T122537797625Z_destruction_retirement_control_installed`:
+  same package with legacy retirement; chain mean/max 19.616/25.704 ms;
+  recovery p99/max 20.489/21.544 ms.
+
+Both pass exact expected destruction, 96 debris, settled building collision,
+foreground focus and clean shutdown. **The installed legacy control has better
+frame tails.** The isolated retirement reduction is retained as a scoped CPU
+improvement; these captures do not establish overall frame improvement or exclude
+contention elsewhere. They remain failed performance evidence, not acceptance.
+
+The candidate records GPU chain median/p99 21.726/25.048 ms and settled idle
+14.272/18.670 ms. GPU work already exceeds the 12.5 ms target independently of
+CPU retirement. Additional diagnostic capture
+`reports/performance_changes/20261110T123024519612Z_destruction_gpu_passes_installed`
+has a completed 15.075 ms GPU profile including opaque rendering 6.048 ms,
+omnidirectional shadows 3.715 ms and directional/spot shadows 1.594 ms. Extra
+profiling is enabled in this capture, so its frame tails are not an equivalent
+baseline comparison. These pass timings prioritize investigation; they do not
+identify an engine defect or prove a complete GPU attribution.
+
+Matched settled screenshots in the last two capture directories were reviewed:
+no obvious new visual discrepancy, with the existing floating vegetation and
+exposed terrain defects still visible and unaccepted. Live geometry, shadows,
+draw distances, density, pacing and resource limits are unchanged. Baked debris
+and icon outputs are unchanged; their native-source receipts were refreshed.
+
+### Outstanding redesign and acceptance
+
 - Build the native destruction coordinator with deterministic overlap ordering,
   compact event records, bounded memory, indexed region queries, revision-checked
   snapshots and atomic durability/block/terrain publication. Current store calls
@@ -134,9 +234,11 @@ using that older fixture as a current release gate.
   terrain/cave/water boundaries, integrity on/off, movement, pursuit, driving,
   interrupted saves, visual/contact parity, resource stability and endurance.
 
-The installed package is unchanged by this measurement milestone. Native
-transactions, pooled effects, next-tick publication and stable headroom are not
-claimed complete.
+The installed package now contains the scoped native store and retirement fixes.
+Complete native transactions, pooled effects, next-tick publication and stable
+headroom are not claimed complete. Renderer/GPU work and atomic geometry/physics
+publication remain the next prerequisites; endurance cannot close the milestone
+while these gates fail.
 
 ## Scoped verification
 

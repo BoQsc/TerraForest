@@ -24,12 +24,17 @@
 #include <cstring>
 
 namespace terraforest {
+// The cross-extension commit hook is callable only inside the validated native
+// block gate. An admission callback cannot consume staged damage prematurely.
+static thread_local Object *active_destruction_commit=nullptr;
+static bool destruction_commit_active(Object *transaction){return transaction&&active_destruction_commit==transaction;}
 static constexpr int MAX_CHUNKS=2048, LIMIT=1048575;
 static bool valid_word(int w) { return valid_block_word(w); }
 static PackedByteArray sha(const PackedByteArray &data) {
     Ref<HashingContext> h; h.instantiate(); h->start(HashingContext::HASH_SHA256); h->update(data); return h->finish();
 }
 void NativeBlockWorld::_bind_methods() {
+    ClassDB::bind_static_method("NativeBlockWorld",D_METHOD("destruction_commit_active","transaction"),&destruction_commit_active);
     ClassDB::bind_method(D_METHOD("set_texture_set","name"),&NativeBlockWorld::set_texture_set);
     ClassDB::bind_method(D_METHOD("get_texture_set"),&NativeBlockWorld::get_texture_set);
     ClassDB::bind_method(D_METHOD("preview_mesh","shape","rotation"),&NativeBlockWorld::preview_mesh);
@@ -58,6 +63,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_edit_admission","callback"),&NativeBlockWorld::set_edit_admission);
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
     ClassDB::bind_method(D_METHOD("erase_cells","expected","expected_revision"),&NativeBlockWorld::erase_cells);
+    ClassDB::bind_method(D_METHOD("erase_cells_transaction","expected","expected_revision","damage_transaction"),&NativeBlockWorld::erase_cells_transaction);
     ClassDB::bind_method(D_METHOD("configure_history","byte_limit","step_limit"),&NativeBlockWorld::configure_history);
     ClassDB::bind_method(D_METHOD("clear_history"),&NativeBlockWorld::clear_history);
     ClassDB::bind_method(D_METHOD("history_stats"),&NativeBlockWorld::history_stats);
@@ -149,6 +155,12 @@ bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
     return true;
 }
 bool NativeBlockWorld::erase_cells(const PackedInt32Array &expected,int64_t expected_revision) {
+    return erase_cells_transaction(expected,expected_revision,nullptr);
+}
+bool NativeBlockWorld::erase_cells_transaction(const PackedInt32Array &expected,int64_t expected_revision,Object *damage_transaction) {
+    // Only the native, callback-free damage commit participates in this boundary.
+    // An arbitrary script callback could mutate stores between validation/swap.
+    if(damage_transaction&&(damage_transaction->get_class()!=StringName("NativeDestructionCoordinator")||damage_transaction->get_script().get_type()!=Variant::NIL))return false;
     if(expected_revision<0||uint64_t(expected_revision)!=mutation_revision||expected.size()%4||expected.size()>4*64)return false;
     PackedInt32Array records;records.resize(expected.size());
     std::set<BlockKey> unique;
@@ -161,7 +173,7 @@ bool NativeBlockWorld::erase_cells(const PackedInt32Array &expected,int64_t expe
     bool changed=false;AABB bounds;
     // Admission still covers the entire transaction and rejects reentrant edits.
     // Do not publish until history is a barrier, so callbacks cannot resurrect it.
-    if(!apply_cells(records,false,changed,&bounds))return false;
+    if(!apply_cells(records,false,changed,&bounds,damage_transaction))return false;
     if(changed){clear_history();emit_signal("cells_changed",bounds);emit_signal("changed");}
     return true;
 }
@@ -171,7 +183,7 @@ bool NativeBlockWorld::admits_edit(const AABB &bounds) const {
     Variant result=edit_admission.call(bounds);
     return result.get_type()==Variant::BOOL&&bool(result);
 }
-bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_history,bool &changed,AABB *deferred_bounds) {
+bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_history,bool &changed,AABB *deferred_bounds,Object *damage_transaction) {
     changed=false;
     if(records.size()%4 || records.size()>4*262144) return false;
     const bool capture=record_history&&history_budget&&history_steps;
@@ -204,6 +216,14 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
     int final_count=int(chunks.size());
     for(auto &entry:staged) final_count+=(entry.second.count>0)-(chunks.count(entry.first)>0);
     if(final_count>MAX_CHUNKS) return false;
+    // Erasure cannot add chunks. All admission/revision failures precede damage
+    // consumption, and observers run only after both authoritative stores change.
+    if(damage_transaction){
+        Object *previous=active_destruction_commit;active_destruction_commit=damage_transaction;
+        const bool accepted=damage_transaction->call("commit_damage");
+        active_destruction_commit=previous;
+        if(!accepted)return false;
+    }
     for(auto &entry:staged) {
         auto old=chunks.find(entry.first);
         if(old!=chunks.end()&&old->second.cells==entry.second.cells) continue;

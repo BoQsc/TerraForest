@@ -45,6 +45,8 @@ def main():
     parser.add_argument('--walk-seconds', type=float, default=1.5, help='Seconds per grounded walking leg, from 1 to 20 (two legs)')
     parser.add_argument('--normal-window', action='store_true', help='Use normal fullscreen/window preference and require foreground gameplay; no background-cap override')
     parser.add_argument('--destruction-load', action='store_true', help='Real three-barrel chain and full debris population in the owned default-world clone')
+    parser.add_argument('--legacy-blast-batches', action='store_true', help='Diagnostic control: prior script block/damage batches, unchanged limits')
+    parser.add_argument('--legacy-structure-retirement', action='store_true', help='Diagnostic control: retain obsolete building bodies in physics during shape retirement')
     parser.add_argument('--destruction-deadline', type=int, choices=[1,3,32,256], help='Strict next-physics-tick feasibility gate; incomplete publication intentionally fails')
     parser.add_argument('--legacy-owner-bounds', action='store_true', help='Diagnostic control: use original forest/boulder invalidation scans')
     parser.add_argument('--collision-piece-triangles', type=int, choices=[256, 512, 1024], help='Diagnostic only: configure exact terrain collision partitions before worker startup')
@@ -180,6 +182,10 @@ def main():
         command += ['--trace-grounded-walk', '--trace-walk-seconds=' + str(args.walk_seconds)]
     if args.destruction_load:
         command += ['--trace-destruction-load']
+    if args.legacy_blast_batches:
+        command += ['--legacy-blast-batches']
+    if args.legacy_structure_retirement:
+        command += ['--legacy-structure-retirement']
     if args.destruction_deadline:
         command += ['--trace-destruction-deadline=' + str(args.destruction_deadline)]
     if args.legacy_owner_bounds:
@@ -205,6 +211,8 @@ def main():
         record['destruction_source_sha256'] = {
             name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in (
                 'addons/player_runtime/combat_world.gd', 'addons/player_runtime/destruction_effects.gd',
+                'addons/player_runtime/native/destruction_coordinator.cpp',
+                'addons/player_runtime/native/destruction_coordinator.hpp',
                 'addons/player_runtime/destruction_trace.gd', 'tests/destruction_deadline_probe.gd',
                 'addons/player_runtime/structural_integrity.gd', 'addons/structures/structures_world.gd',
                 'addons/world_ecosystem/ground_cover.gd', 'addons/world_ecosystem/world_ecosystem.gd',

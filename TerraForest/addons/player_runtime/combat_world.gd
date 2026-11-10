@@ -20,6 +20,9 @@ var projectiles:Array[Dictionary]=[]
 var detonations:Array[int]=[]
 var blast_jobs:Array[Dictionary]=[]
 var destruction_trace=preload("res://addons/player_runtime/destruction_trace.gd").new()
+var destruction_coordinator:RefCounted
+var native_blast_batches:=not OS.get_cmdline_user_args().has("--legacy-blast-batches")
+var destruction_commit_active:=false
 var reload_slot:=-1
 var reload_epoch:=-1
 var reload_weapon:=-1
@@ -44,8 +47,9 @@ var reload_audio:AudioStreamWAV
 var restored_support_pending:=true
 func prepare(host:Node)->bool:
 	game=host;state=ClassDB.instantiate("NativeCombatState")
+	destruction_coordinator=ClassDB.instantiate("NativeDestructionCoordinator")
 	action_input_owned=func()->bool:return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
-	if state==null or barrels==null:return false
+	if state==null or destruction_coordinator==null or barrels==null:return false
 	game.terrain.edit_measured.connect(_trace_terrain_publication)
 	impact_audio=preload("res://addons/player_runtime/firearm_impact_audio.gd").new()
 	add_child(impact_audio);add_child(effects);effects.blocks=game.structures.blocks;integrity.attach(game,self)
@@ -63,6 +67,9 @@ func prepare(host:Node)->bool:
 	shot_audio=sound(.18,72);blast_audio=sound(.65,38);assault_audio=sound(.13,110);shot_random.randomize()
 	return game.persistence.register_component("combat",capture,restore,state,state.capture_storage_snapshot())
 func capture()->PackedByteArray:
+	# A reentrant save must not pair committed damage with the old job cursor.
+	# The persistence coordinator rejects this capture and preserves its checkpoint.
+	if destruction_commit_active:return PackedByteArray()
 	if not state.set_blast_jobs(blast_jobs):push_error("Combat destruction queue could not be captured");return PackedByteArray()
 	return state.capture_storage_snapshot()
 func restore(bytes:PackedByteArray)->bool:
@@ -310,6 +317,30 @@ func detonate(id:int)->bool:
 	effects.explosion(center);play_sound(center,blast_audio);game.zombies.hear_noise(center,96)
 	explosions+=1;game.terrain.changed_since_save=true;return true
 func step_blasts()->void:
+	if destruction_commit_active:return
+	if not native_blast_batches:
+		_step_blasts_legacy();return
+	if blast_jobs.is_empty():return
+	var started:=Time.get_ticks_usec()
+	var job:Dictionary=blast_jobs[0]
+	destruction_commit_active=true
+	var result:Dictionary=destruction_coordinator.execute(game.structures.blocks,game.world_attack.durability,job.records,job.offset,job.center,24)
+	if not result.ok:
+		destruction_commit_active=false;return
+	if result.damage_changed:game.terrain.changed_since_save=true
+	var removed:PackedInt32Array=result.removed
+	var forces:PackedFloat64Array=result.forces
+	for at in range(0,removed.size(),4):
+		_demolished(Vector3i(removed[at],removed[at+1],removed[at+2]),removed[at+3],job.center,forces[at/4])
+	job.offset=result.offset
+	if job.offset>=job.records.size():
+		if destruction_trace.enabled:destruction_trace.blocks_complete(job.get("trace_identity",""),Engine.get_physics_frames(),Time.get_ticks_usec())
+		blast_jobs.pop_front()
+	destruction_commit_active=false
+	game.terrain._record_stage("combat native store transaction",float(result.store_us)/1000.0)
+	game.terrain._record_stage("combat blast batch",(Time.get_ticks_usec()-started)/1000.0)
+
+func _step_blasts_legacy()->void:
 	if blast_jobs.is_empty():return
 	var started:=Time.get_ticks_usec()
 	var job:Dictionary=blast_jobs[0];var records:PackedInt32Array=job.records

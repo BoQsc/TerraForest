@@ -23,12 +23,20 @@ func dense() -> PackedInt32Array:
 func drive(world: Node3D, predicate: Callable, limit: int = 2000) -> Dictionary:
 	var bounded := true
 	var inactive := true
+	var retired_detached:=true
+	var retirement_observed:=false
 	var samples: Array[float] = []
 	var before: Dictionary = world.collision_stats()
 	world.set_process(true)
 	for frame in range(limit):
 		await process_frame
 		var state: Dictionary = world.collision_stats()
+		if state.retired_bodies>0:
+			retirement_observed=true
+			var detached:=0
+			for child in world.get_children():
+				if child is StaticBody3D and child.process_mode==Node.PROCESS_MODE_DISABLED and not PhysicsServer3D.body_get_space(child.get_rid()).is_valid():detached+=1
+			retired_detached=retired_detached and detached==int(state.retired_bodies)
 		var ticks: int = state.ticks-before.ticks
 		bounded=bounded and state.pieces_built-before.pieces_built<=ticks and state.pieces_retired-before.pieces_retired<=ticks*4
 		if state.pending_chunks>0:
@@ -39,7 +47,7 @@ func drive(world: Node3D, predicate: Callable, limit: int = 2000) -> Dictionary:
 		if predicate.call(): break
 	world.set_process(false)
 	samples.sort()
-	return {"done":predicate.call(),"bounded":bounded,"partial_inactive":inactive,"samples":samples.size(),"median_ms":samples[samples.size()/2] if samples.size() else 0,"max_ms":samples.back() if samples.size() else 0}
+	return {"done":predicate.call(),"bounded":bounded,"partial_inactive":inactive,"retired_detached":retired_detached,"retirement_observed":retirement_observed,"samples":samples.size(),"median_ms":samples[samples.size()/2] if samples.size() else 0,"max_ms":samples.back() if samples.size() else 0}
 
 func run() -> void:
 	var world: Node3D = ClassDB.instantiate("NativeBlockWorld")
@@ -70,6 +78,8 @@ func run() -> void:
 	world.set_collision_radius(0)
 	var release: Dictionary = await drive(world,func(): return world.collision_stats().live_pieces==0 and world.collision_stats().retired_bodies==0)
 	check(release.done and release.bounded and world.stats().collision_chunks==0,"dense collision retirement drains incrementally")
+	if not OS.get_cmdline_user_args().has("--legacy-structure-retirement"):
+		check(release.retirement_observed and release.retired_detached,"retiring compounds leave physics before incremental shape deletion")
 	check(world.capture_snapshot()==saved,"collision streaming leaves authored data unchanged")
 	world.set_collision_radius(48)
 	var partial: Dictionary = await drive(world,func(): return world.collision_stats().live_pieces>=10)

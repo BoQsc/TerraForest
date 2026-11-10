@@ -53,7 +53,7 @@ func check(ok:bool,message:String)->void:
 func sample()->void:
 	peak_bodies=maxi(peak_bodies,game.combat.effects.fragments.size())
 	peak_jobs=maxi(peak_jobs,game.combat.blast_jobs.size())
-	samples.append({"frame":Engine.get_process_frames(),"phase":driver.label,"bodies":game.combat.effects.fragments.size(),"jobs":game.combat.blast_jobs.size(),"explosions":game.combat.explosions,"destroyed":game.combat.destroyed_blocks,"pending_edit":game.terrain.pending_edit})
+	samples.append({"frame":Engine.get_process_frames(),"phase":driver.label,"bodies":game.combat.effects.fragments.size(),"flashes":game.combat.effects.flashes.size(),"jobs":game.combat.blast_jobs.size(),"explosions":game.combat.explosions,"destroyed":game.combat.destroyed_blocks,"pending_edit":game.terrain.pending_edit})
 func debris_profile(profile:Dictionary)->void:
 	debris_profiles.append(profile.merged({"frame":Engine.get_process_frames(),"phase":driver.label}))
 func picture(output:String,name:String)->void:
@@ -133,7 +133,7 @@ func run(owner:SceneTree,host:Node,output:String)->Dictionary:
 	var chain_ms:float=(Time.get_ticks_usec()-started)/1000.0
 	driver.label="test_validation"
 	check(ignited,"normal durability ignites the first barrel")
-	check(finished and game.combat.explosions==initial_explosions+3,"each chained barrel detonates exactly once and publication finishes")
+	check(finished and game.combat.explosions==initial_explosions+3,"each chained barrel detonates exactly once and store/terrain jobs finish")
 	var absent:=true
 	for identity:int in barrel_ids:absent=absent and game.combat.barrels.get_instance(identity).is_empty()
 	check(absent and game.terrain.density_revision>initial_density_revision,"chain removes persistent barrels and edits volumetric terrain")
@@ -157,6 +157,8 @@ func run(owner:SceneTree,host:Node,output:String)->Dictionary:
 	driver.label="destruction_recovery"
 	check(await driver.wait_for(func():return game.combat.effects.fragments.is_empty() and game.combat.effects.flashes.is_empty(),12),"temporary bodies and flashes retire through their normal lifetime")
 	await driver.wait_for(func():return false,3)
+	check(game.structures.blocks.is_collision_region_ready(AABB(Vector3(base)-Vector3.ONE,Vector3.ONE*14)),"settled destruction fixture has completed building collision")
+	await picture(output,"destruction_settled")
 	RenderingServer.frame_post_draw.disconnect(sample)
 	if game.combat.effects.block_profiled.is_connected(debris_profile):game.combat.effects.block_profiled.disconnect(debris_profile)
 	restore_publication()

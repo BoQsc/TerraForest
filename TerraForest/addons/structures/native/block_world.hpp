@@ -160,7 +160,7 @@ class NativeBlockWorld : public Node3D {
     int history_steps=0;
     Callable edit_admission;
     bool admits_edit(const AABB &bounds) const;
-    bool apply_cells(const PackedInt32Array &records,bool record_history,bool &changed,AABB *deferred_bounds=nullptr);
+    bool apply_cells(const PackedInt32Array &records,bool record_history,bool &changed,AABB *deferred_bounds=nullptr,Object *damage_transaction=nullptr);
     void remember_edit(std::vector<BlockChange> &&changes);
     void trim_history();
     bool replay_edit(bool backwards,const AABB &protected_bounds);
@@ -210,6 +210,7 @@ public:
     bool set_cells(const PackedInt32Array &records);
     // Bounded destructive compare-and-remove. No undo allocation; one publication.
     bool erase_cells(const PackedInt32Array &expected,int64_t expected_revision);
+    bool erase_cells_transaction(const PackedInt32Array &expected,int64_t expected_revision,Object *damage_transaction);
     bool configure_history(int64_t byte_limit,int step_limit);
     void clear_history();
     Dictionary history_stats() const;

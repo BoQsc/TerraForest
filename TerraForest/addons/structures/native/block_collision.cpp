@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/collision_shape3d.hpp>
 #include <godot_cpp/classes/concave_polygon_shape3d.hpp>
 #include <godot_cpp/classes/time.hpp>
+#include <godot_cpp/classes/os.hpp>
 #include <algorithm>
 #include <cmath>
 
@@ -72,6 +73,11 @@ void NativeBlockWorld::retire_collision(BlockVisual &visual) {
     if(!visual.body)return;
     visual.body->set_collision_layer(0);
     visual.body->set_collision_mask(0);
+    // Layer zero still leaves Jolt rebuilding the registered compound for each
+    // deleted shape. Only retiring bodies leave physics; live/cached preparation
+    // retains its existing registration and activation behavior.
+    static const bool legacy_retirement=OS::get_singleton()->get_cmdline_user_args().has("--legacy-structure-retirement");
+    if(!legacy_retirement)visual.body->set_process_mode(Node::PROCESS_MODE_DISABLED);
     retired_collision.push_back(visual.body);
     visual.body=nullptr;visual.collision_at=0;visual.collision_ready=false;
 }
