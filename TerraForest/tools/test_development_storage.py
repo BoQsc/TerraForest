@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: 0BSD
 from pathlib import Path
 import tempfile
+import os
+import json
 import unittest
 from unittest.mock import patch
-from development_storage import admit, usage, LIMITS
+from development_storage import admit, usage, LIMITS, register_worlds
 
 
 class DevelopmentStorageTests(unittest.TestCase):
@@ -14,7 +16,7 @@ class DevelopmentStorageTests(unittest.TestCase):
                               ('.build/native/current',30),('.build/old/pack',40),('.godot/cache',50),
                               ('dist/TerraForest.pck',100),('assets/source',100)]:
                 path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'x'*size)
-            self.assertEqual(usage(root),dict(reports=10,archive=20,compiler_cache=30,scratch=40,import_cache=50))
+            self.assertEqual(usage(root),dict(reports=10,archive=20,compiler_cache=30,scratch=40,import_cache=50,owned_worlds=0))
             limits=dict(LIMITS,reports=12,scratch=42)
             with patch('development_storage.require_free_space'):
                 admit(root,report_bytes=2,scratch_bytes=2,limits=limits)
@@ -38,6 +40,20 @@ class DevelopmentStorageTests(unittest.TestCase):
             launch.assert_not_called()
             self.assertFalse(result['passed'])
             self.assertIn('Development output budget',result['launch_error'])
+
+    def test_world_budget_requires_receipt_and_never_counts_player_save(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary); folder=root/'reports/quests/run';folder.mkdir(parents=True)
+            slot='Quests_1703_12345678'
+            (folder/'created_slot.json').write_text(json.dumps(dict(slot=slot)))
+            worlds=root/'Godot/app_userdata/TerraForest/worlds';worlds.mkdir(parents=True)
+            (worlds/(slot+'.trw')).write_bytes(b'test')
+            (worlds/'Player.trw').write_bytes(b'player save')
+            register_worlds(['engine','--session-evidence-dir='+folder.as_posix()],folder,root)
+            with patch.dict(os.environ,APPDATA=str(root)),patch('development_storage.require_free_space'):
+                self.assertEqual(usage(root)['owned_worlds'],4)
+                with self.assertRaises(OSError):admit(root,0,limits=dict(LIMITS,owned_worlds=3),world_bytes=0)
+            self.assertEqual((worlds/'Player.trw').read_bytes(),b'player save')
 
 
 if __name__=='__main__':unittest.main()

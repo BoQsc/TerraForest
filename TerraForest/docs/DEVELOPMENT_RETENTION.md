@@ -81,6 +81,13 @@ Building/regional isolated-copy launchers and frozen/FPS captures also preflight
 before materializing large copies. Admission time is recorded separately from
 engine startup timing. These controls operate only in development tools.
 
+Receipt-identified test worlds have a separate 3 GiB admission budget, including
+128 MiB of planned next-world growth. The shared runner registers explicit FPS /
+startup slots and known test-world creation receipts after exit. Registry entries
+are accounting evidence only, never permission to delete a save. Unknown/player
+saves remain outside this test budget and the existing runtime save policy is
+unchanged. Failure to record an owned test world fails the check visibly.
+
 Do not loosen a limit to conceal accumulated output. Archive/verify and retire
 obsolete owned artifacts, reuse the main checkout and current compiler/import
 caches, then rerun admission. Full export/build duplication must have a specific
