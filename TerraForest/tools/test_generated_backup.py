@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from generated_backup import catalog, groups, make_volume, restore, GitHub
+from unittest.mock import patch
+from generated_backup import catalog, groups, make_volume, restore, download, GitHub
 
 
 class BackupTests(unittest.TestCase):
@@ -49,6 +50,36 @@ class BackupTests(unittest.TestCase):
         api.request=lambda path: dict(state='uploaded',size=5,digest='sha256:'+'a'*64)
         api.verify_asset({'id':1},dict(bytes=5,sha256='a'*64))
         with self.assertRaises(ValueError): api.verify_asset({'id':1},dict(bytes=5,sha256='b'*64))
+
+    def test_scoped_download_verifies_bytes_before_restore(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary); source=root/'source'; source.mkdir()
+            (source/'world').write_bytes(b'world bytes')
+            manifest=root/'catalog.json'
+            record=catalog(dict(roots={'project':str(source)}),manifest)
+            with io.BytesIO() as buffer:
+                expected=make_volume(record,list(groups(record))[0],buffer)
+                payload=buffer.getvalue()
+            receipt=root/'upload.json'
+            receipt.write_text(json.dumps(dict(complete=True,repository='owner/project',assets=[
+                dict(name='objects-001.zip',id=1,objects=[record['files'][0]['sha256']],**expected)])))
+            with patch('generated_backup.GitHub') as api:
+                api.return_value.download.side_effect=lambda asset:io.BytesIO(payload)
+                download(manifest,receipt,root/'volumes','project/world')
+                self.assertEqual(api.return_value.verify_asset.call_count,1)
+            restore(manifest,root/'volumes',root/'restored')
+            self.assertEqual((root/'restored/project/world').read_bytes(),b'world bytes')
+            (root/'volumes/objects-001.zip').write_bytes(b'corrupt')
+            with patch('generated_backup.GitHub'), self.assertRaisesRegex(ValueError,'Existing download differs'):
+                download(manifest,receipt,root/'volumes')
+
+    def test_restore_rejects_escaped_path_before_creating_destination(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary); manifest=root/'catalog.json'
+            manifest.write_text(json.dumps(dict(files=[dict(path='../save',sha256='a'*64,bytes=1)],directories=[])))
+            with self.assertRaisesRegex(ValueError,'Unsafe archive member'):
+                restore(manifest,root,root/'output')
+            self.assertFalse((root/'output').exists())
 
 
 if __name__=='__main__': unittest.main()
