@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import re
+import time
 from contextlib import contextmanager
 
 from cleanup_generation_copies import lease
@@ -17,6 +18,63 @@ SLOT = re.compile(r'StartupBench_FPS_[0-9T]{15,30}\Z')
 STARTUP_SLOT = re.compile(r'StartupBench_[0-9a-f]{16,32}\Z')
 SUFFIXES = ('.trw', '.trw.regions', '.trw.models', '.trw.water', '.trw.terrain',
             '.trw.baselines', '.trw.bak', '.preview', '.generation.json', '.presentation.json')
+CREATORS = dict(Quests='quests_world.gd', Survival='player_survival_world.gd',
+                Exploration='exploration_world.gd', Parking='building_parking_world.gd',
+                CoalMine='coal_mine_world.gd', Reinforced='door_reinforcement_world.gd',
+                HouseLights='house_lights_world.gd', SleeperHomes='house_sleepers_world.gd',
+                Expedition='frontier_expedition_world.gd', TraderRide='trader_ride_world.gd',
+                TraderClothes='trader_clothes.gd', ClothingLoot='clothing_loot_world.gd')
+
+
+def command_results(value):
+    if isinstance(value, dict):
+        if isinstance(value.get('command'), list):
+            yield value
+        for key, child in value.items():
+            if key != 'command':
+                yield from command_results(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from command_results(child)
+
+
+def additional_world_records(root):
+    """Exact creation receipts and completed drivers, never a name-only match."""
+    from development_storage import OWNED_SLOT
+    created, latest, protected = {}, {}, set()
+    for filename in ('created_slot.json', 'world.json'):
+        for receipt in (root/'reports').rglob(filename):
+            report = receipt.parent/'run.json'
+            if not report.is_file():continue
+            try:
+                world, run = read(receipt), read(report)
+            except (ValueError, OSError):continue
+            slot = world.get('slot', '') if isinstance(world, dict) else ''
+            if not OWNED_SLOT.fullmatch(slot):continue
+            family = slot.split('_')[0]
+            if family not in CREATORS:continue
+            source = world.get('source_slot')
+            if source:protected.add(source)
+            for entry in command_results(run):
+                command, result = entry['command'], entry.get('result', {})
+                if '--session-evidence-dir='+receipt.parent.as_posix() not in command:continue
+                if result.get('exit_code') is None:continue
+                if slot not in latest or report.stat().st_mtime_ns > latest[slot].stat().st_mtime_ns:
+                    latest[slot] = report
+                creator = any(Path(c).name == CREATORS[family] for c in command)
+                generated = (entry.get('phase') in ('create', 'create_originals')
+                             or (family == 'Expedition' and run.get('stage') == 'create' and not run.get('reused')))
+                cloned = (family in ('TraderRide','TraderClothes','ClothingLoot')
+                          and world.get('created') is True and source and run.get('clone') == world
+                          and not run.get('resume_report'))
+                if creator and (generated or cloned):
+                    created.setdefault(slot, (receipt, report, source, family))
+    records = []
+    for slot, (receipt, creation, source, family) in created.items():
+        proof = [dict(path=str(p), sha256=digest(p)) for p in (receipt, creation)]
+        records.append((latest[slot], slot, dict(source_slot=source, ownership=proof,
+                        created_ns=creation.stat().st_mtime_ns), family))
+    return records, protected
 
 
 def read(path):
@@ -106,10 +164,20 @@ def world_candidates(root, worlds, keep=2):
             continue
         if world_members_remain(worlds, slot, path):
             records.append((path, slot, dict(source_slot=source, generated=generated), 'startup'))
+    extra, inputs = additional_world_records(root)
+    records.extend(r for r in extra if world_members_remain(worlds, r[1], r[0]))
+    protected.update(inputs)
     recent = set()
     if keep:
-        for family in ('fps', 'startup'):
-            recent.update(slot for _, slot, _, owner in [r for r in records if r[3] == family][-keep:])
+        for family in {r[3] for r in records}:
+            ordered = sorted((r for r in records if r[3] == family),
+                             key=lambda r:r[2].get('created_ns',r[0].stat().st_mtime_ns))
+            # Inactive non-performance test families need no loose ready copy.
+            # All evidence remains in the verified archive; sources/pins below
+            # remain protected regardless of age.
+            if family in CREATORS and max(r[0].stat().st_mtime_ns for r in ordered) < time.time_ns()-3*86400*10**9:
+                continue
+            recent.update(r[1] for r in ordered[-keep:])
     candidates = []
     for path, slot, clone, family in records:
         if slot in protected or slot in recent or (worlds / (slot + '.retain')).exists():
@@ -136,7 +204,8 @@ def world_candidates(root, worlds, keep=2):
             rejected.append(dict(slot=slot, reason='modified after captured run; may be a played save'))
             continue
         candidates.append(dict(slot=slot, root=str(worlds), members=members, report=str(path),
-                               report_sha256=digest(path), source_slot=clone['source_slot'], family=family))
+                               report_sha256=digest(path), source_slot=clone['source_slot'], family=family,
+                               ownership=clone.get('ownership', [])))
     return candidates, rejected
 
 
@@ -270,6 +339,9 @@ def _maintain(root=ROOT, worlds=None, apply=False, builds=False, keep=2, build_k
                 source = Path(row['root'])
                 if digest(Path(row['report'])) != row['report_sha256']:
                     raise ValueError('Ownership receipt changed')
+                for proof in row.get('ownership', []):
+                    if digest(Path(proof['path'])) != proof['sha256']:
+                        raise ValueError('World creation proof changed')
                 destination = Path(row['report']).parent / (kind + '.archive.json')
                 provenance = dict(owner='performance_retention', kind=kind, report=row['report'], report_sha256=row['report_sha256'])
                 if kind == 'world':

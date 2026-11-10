@@ -19,6 +19,7 @@ import urllib.parse
 import urllib.error
 import urllib.request
 import zipfile
+import uuid
 
 from retained_artifacts import ordinary, ordinary_ancestors, relative_name, digest, identity
 from resource_limits import require_free_space
@@ -31,8 +32,11 @@ PRIVATE = {'auth.json', 'credentials.json', 'credentials', 'id_rsa', 'id_ed25519
 
 def write_json(path, value):
     path = Path(path)
-    temporary = path.with_suffix(path.suffix + '.pending')
-    temporary.write_text(json.dumps(value, separators=(',', ':')), encoding='utf-8')
+    ordinary_ancestors(path)
+    temporary = path.with_name(path.name + '.' + uuid.uuid4().hex + '.pending')
+    with temporary.open('x', encoding='utf-8') as target:
+        json.dump(value, target, separators=(',', ':'))
+        target.flush(); os.fsync(target.fileno())
     temporary.replace(path)
 
 
@@ -189,10 +193,31 @@ class GitHub:
 
     def verify_asset(self, asset, expected):
         remote = self.request('/releases/assets/' + str(asset['id']))
+        self.check_asset(remote, expected)
+
+    @staticmethod
+    def check_asset(remote, expected):
         if remote.get('state') != 'uploaded' or remote.get('size') != expected['bytes']:
             raise ValueError('Remote asset is incomplete')
         if remote.get('digest') != 'sha256:' + expected['sha256']:
             raise ValueError('Remote SHA-256 differs or is unavailable; local volume retained')
+
+    def verify_receipt(self, receipt):
+        """Recheck a whole release without one network request per volume."""
+        if receipt.get('complete') is not True:
+            raise ValueError('Incomplete backup receipt')
+        remote, page = {}, 1
+        while True:
+            rows = self.request('/releases/'+str(receipt['release_id'])+'/assets?per_page=100&page='+str(page))
+            remote.update((r['id'],r) for r in rows)
+            if len(rows)<100:break
+            page += 1
+        for asset in receipt['assets']:
+            current = remote.get(asset['id'])
+            if current is None or current.get('name') != asset['name']:
+                raise ValueError('Recorded backup asset is missing or renamed')
+            self.check_asset(current, asset)
+        return dict(assets=len(receipt['assets']),bytes=sum(a['bytes'] for a in receipt['assets']),all_hashes_match=True)
 
     def download(self, asset_id):
         class NoRedirect(urllib.request.HTTPRedirectHandler):

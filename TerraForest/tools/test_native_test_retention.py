@@ -3,7 +3,7 @@ import hashlib
 from pathlib import Path
 import tempfile
 import unittest
-from native_test_retention import release_copies
+from native_test_retention import release_copies, release_import_cache
 
 
 class NativeTestRetention(unittest.TestCase):
@@ -31,6 +31,39 @@ class NativeTestRetention(unittest.TestCase):
         receipt = release_copies(self.projects, False, self.root)
         self.assertTrue(self.library.exists())
         self.assertTrue(receipt['retained_failed_run'])
+
+    def test_import_cleanup_preserves_bootstrap_and_evidence(self):
+        (self.project/'project.godot').write_text('config_version=5')
+        cache = self.project/'.godot/imported'
+        cache.mkdir(parents=True)
+        (cache/'mesh.res').write_bytes(b'rebuildable')
+        bootstrap = cache.parent/'extension_list.cfg'
+        bootstrap.write_text('native bootstrap')
+        result = release_copies(self.projects, True, self.root)
+        self.assertFalse(result['errors'])
+        self.assertFalse(cache.exists())
+        self.assertEqual(bootstrap.read_text(), 'native bootstrap')
+        self.assertEqual(result['import_caches'][0]['bytes'], 11)
+
+    def test_main_project_imports_rejected(self):
+        with self.assertRaises(ValueError):
+            release_import_cache(self.root, self.root)
+
+    def test_linked_import_directory_preserved(self):
+        import os, subprocess
+        if os.name != 'nt':self.skipTest('Windows junction test')
+        (self.project/'project.godot').write_text('config_version=5')
+        cache = self.project/'.godot/imported'
+        cache.mkdir(parents=True)
+        target = self.root/'outside';target.mkdir()
+        (target/'original.res').write_bytes(b'keep')
+        link = cache/'linked'
+        subprocess.run(['cmd','/c','mklink','/J',str(link),str(target)],check=True,capture_output=True)
+        try:
+            with self.assertRaises(ValueError):release_import_cache(self.project,self.root)
+            self.assertEqual((target/'original.res').read_bytes(),b'keep')
+        finally:
+            link.rmdir()
 
     def test_nonboolean_success_is_not_authorization(self):
         for value in [1, 'true', 'false', None]:

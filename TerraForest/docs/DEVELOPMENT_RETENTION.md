@@ -97,6 +97,28 @@ Other historical test families are not inferred safe from folder names. They nee
 equivalent ownership receipts before joining this lifecycle. Retained unknown or
 modified worlds remain explicit exceptions, not silently cleaned saves.
 
+The receipt adapter now covers the declared quest, survival, exploration,
+parking, mine, reinforcement, lights, sleepers, expedition and private trader-copy
+drivers. It requires their actual creation phase or verified clone receipt, the
+exact driver and evidence directory, and a completed process. Later receipts
+extend the last-use boundary. Creation receipts and runs are hashed again before
+retirement. Input/source fixtures, pins, unknown sidecars and later-modified saves
+remain protected. Active families keep at most two ready worlds; non-performance
+families inactive for three days can retain all their evidence cold, with no
+ordinary loose copy. FPS/startup families retain their two recent captures.
+
+Completed isolated native checks release only matching copied DLL bytes and
+rebuildable `imported`/`shader_cache` directories. Bootstrap cfg, original assets,
+Godot identity files, logs and failure evidence survive. Linked paths abort cache
+cleanup. Navigation release checks now use this lifecycle as building checks do.
+
+`tools/retire_backed_outputs.py` moves obsolete local captures/build binaries to
+the already verified GitHub backup. It requires a complete matching catalog and
+receipt, rechecks remote asset hashes and every selected local file, preserves
+pins/current captures/referenced media/local archives, then removes exact files.
+Each affected folder gets a restore pointer. Windows access refusals are retained
+and recorded. No recursive deletion, cache scan or compression runs in gameplay.
+
 ## Verified first retirement, 2026-11-10
 
 Receipt `reports/artifact_retention/20261110T062528179507Z.json` records 99 FPS

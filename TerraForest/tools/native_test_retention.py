@@ -3,9 +3,49 @@
 import hashlib
 import re
 import stat
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def release_import_cache(project, root=ROOT):
+    """Remove only rebuildable imports/shaders of an explicitly owned test copy.
+
+    Callers establish ownership and process completion. Bootstrap cfg files,
+    resource identities, evidence and original assets are never candidates.
+    """
+    root = Path(root).resolve()
+    project = checked_path(project, root)
+    relative = project.relative_to(root)
+    if not relative.parts or relative.parts[0] not in ('.build', 'reports'):
+        raise ValueError('Cache cleanup requires an isolated test project')
+    checked_path(project/'project.godot', root)
+    files, directories = [], []
+    for name in ('imported', 'shader_cache'):
+        cache = project/'.godot'/name
+        if not cache.exists():
+            continue
+        checked_path(cache, root)
+        for folder, dirs, names in os.walk(cache, followlinks=False):
+            directories.append(Path(folder))
+            for item in dirs + names:
+                path = Path(folder)/item
+                before = ordinary(path)
+                if path.is_file():
+                    files.append((path, before))
+    # Validate every path before touching any file. Junctions abort the batch.
+    removed = 0
+    for path, before in files:
+        checked_path(path, root)
+        current = ordinary(path)
+        if (current.st_ino,current.st_size,current.st_mtime_ns) != (before.st_ino,before.st_size,before.st_mtime_ns):
+            raise ValueError('Test cache changed during cleanup')
+        path.unlink()
+        removed += before.st_size
+    for directory in sorted(directories, key=lambda p:len(p.parts), reverse=True):
+        directory.rmdir()
+    return dict(files=len(files),bytes=removed,scope='Isolated rebuildable imports and shaders only')
 
 
 def ordinary(path):
@@ -36,7 +76,7 @@ def release_copies(projects, passed, root=ROOT):
         for project, libraries in projects.items():
             project = checked_path(project, root)
             relative = project.relative_to(root)
-            if not relative.parts or relative.parts[0] not in ('reports', '.build') or not any(re.fullmatch(r'(?:building_contract_release_)?[0-9]{8}T[0-9]{12}Z', part) for part in relative.parts):
+            if not relative.parts or relative.parts[0] not in ('reports', '.build') or not any(re.fullmatch(r'(?:(?:building_contract|regional)_release_)?[0-9]{8}T[0-9]{12}Z', part) for part in relative.parts):
                 raise ValueError('Expected a unique test project, not a reusable checkout')
             for path, expected in libraries.items():
                 path = checked_path(path, root)
@@ -66,4 +106,13 @@ def release_copies(projects, passed, root=ROOT):
             receipt['bytes'] += before.st_size
         except (OSError, ValueError) as error:
             receipt['errors'].append(str(error))
+    if not receipt['errors']:
+        receipt['import_caches'] = []
+        for project in projects:
+            # Minimal native-only fixtures need not contain project.godot.
+            if (Path(project)/'project.godot').is_file():
+                try:
+                    receipt['import_caches'].append(release_import_cache(project, root))
+                except (OSError, ValueError) as error:
+                    receipt['errors'].append(str(error))
     return receipt

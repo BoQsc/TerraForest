@@ -232,6 +232,45 @@ class RetainedArtifactsTests(unittest.TestCase):
         self.assertEqual((self.root/'restored_cache/diagnostic.bin').read_bytes(),b'failed test evidence')
         self.assertEqual(source.read_bytes(),b'player save')
 
+    def test_other_world_families_require_creation_proof_and_keep_recent_sources(self):
+        worlds=self.root/'worlds';worlds.mkdir()
+        slots=['Survival_1703_'+str(i)*8 for i in range(5)]
+        for i,slot in enumerate(slots):
+            (worlds/(slot+'.trw')).write_bytes(b'generated test save')
+            folder=self.root/'reports/survival'/str(i);folder.mkdir(parents=True)
+            (folder/'created_slot.json').write_text(json.dumps(dict(slot=slot)))
+            command=['player_survival_world.gd','--session-evidence-dir='+folder.as_posix()]
+            (folder/'run.json').write_text(json.dumps(dict(phases=[dict(phase='create',command=command,result=dict(exit_code=1))])))
+        # A copied fixture protects the original even when its owner is old.
+        folder=self.root/'reports/ride/0';folder.mkdir(parents=True)
+        clone=dict(created=True,slot='TraderRide_abcdef123456',source_slot=slots[0])
+        (folder/'world.json').write_text(json.dumps(clone))
+        (folder/'run.json').write_text(json.dumps(dict(clone=clone,
+            command=['trader_ride_world.gd','--session-evidence-dir='+folder.as_posix()],result=dict(exit_code=1))))
+        # A slot-shaped name alone, or a receipt without its evidence argument,
+        # cannot authorize retirement.
+        unknown='Survival_1703_abcdef12'
+        (worlds/(unknown+'.trw')).write_bytes(b'keep unknown')
+        folder=self.root/'reports/unknown';folder.mkdir(parents=True)
+        (folder/'created_slot.json').write_text(json.dumps(dict(slot=unknown)))
+        (folder/'run.json').write_text(json.dumps(dict(phases=[dict(phase='create',command=['player_survival_world.gd'],result=dict(exit_code=0))])))
+        # A played save must survive even when an old creation receipt exists.
+        import time
+        os.utime(worlds/(slots[1]+'.trw'),(time.time()+10,time.time()+10))
+        rows,retained=world_candidates(self.root,worlds,keep=2)
+        self.assertEqual([r['slot'] for r in rows],[slots[2]])
+        self.assertTrue(rows[0]['ownership'])
+        self.assertTrue(any(r['slot']==slots[1] and 'modified' in r['reason'] for r in retained))
+        # After a family has been inactive for three days its unmodified ready
+        # copies can become cold evidence. Source fixtures remain protected.
+        old=time.time()-4*86400
+        for slot in slots:
+            if slot!=slots[1]:os.utime(worlds/(slot+'.trw'),(old-60,old-60))
+        for report in (self.root/'reports/survival').glob('*/run.json'):
+            os.utime(report,(old,old))
+        rows,_=world_candidates(self.root,worlds,keep=2)
+        self.assertEqual({r['slot'] for r in rows},set(slots[2:]))
+
 
 if __name__ == '__main__':
     unittest.main()
