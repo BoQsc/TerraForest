@@ -32,8 +32,14 @@ Every selected file is divided into 1 MiB chunks, compressed using Python's
 standard zlib, and stored by SHA-256 under `reports/retained_artifacts/chunks`.
 The owning report retains `world.archive.json` or `build.archive.json`, including
 the original names, complete file hashes, chunk order and ownership receipt hash.
-Empty files/directories survive. Logs, traces, screenshots, source provenance and
-original build manifests stay at their existing paths.
+Empty files/directories survive. Logs, screenshots, source provenance and original
+build manifests stay at their existing paths. Completed rolling traces additionally
+use `tools/maintain_performance_traces.py`: two ordinary captures remain ready,
+older traces are reconstructed/hash-verified before their exact loose files retire.
+Each report keeps `traces.archive.json`; `.retain`/`RETAIN_READY` pins are respected.
+The FPS launcher performs this maintenance before admission and after gameplay.
+Use the existing archive restore command with a new inspection directory to read
+cold traces. No regression evidence is discarded and no budget is raised.
 
 Before any loose source is removed, all archived files are reconstructed as a
 stream and checked against their complete hashes; all sources are rechecked too.

@@ -1,3 +1,19 @@
+## Next-tick destruction implementation - 2026-11-10
+
+[Accepted contract, measured failure and remaining work](../issues/runtime-performance/next-tick-destruction.md)
+tracks the 25% CPU/GPU reserve and full 256-barrel next-physics-tick requirement.
+The first exact-deadline source capture accepted all 256 triggers but started only
+one explosion by the deadline; 255 remained queued and terrain was unpublished.
+Opt-in bounded event timelines, the deadline probe and verified automatic trace
+retention are implemented. Native transactions, pooled effects, full publication,
+renderer synchronization and endurance remain open. Existing approved limits and
+the installed package are unchanged; this is not a performance-completion claim.
+The coalesced 256-edit native/Jolt prototype also misses its deadline. A lazy
+height-evaluation experiment preserved exact fields and receipts and reduced
+field-only time, but its normal-gameplay frame-tail comparison did not improve;
+the source and DLLs were restored and the patch/captures retained in the linked
+issue. Further work must resolve complete publication cost before adoption.
+
 ## World/player headroom and terrain retirement - 2026-11-10
 
 [Measurements, rejected experiments and retained fix](../issues/runtime-performance/world-player-headroom-2026-11-10.md)

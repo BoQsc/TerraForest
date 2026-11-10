@@ -19,6 +19,7 @@ var integrity=preload("res://addons/player_runtime/structural_integrity.gd").new
 var projectiles:Array[Dictionary]=[]
 var detonations:Array[int]=[]
 var blast_jobs:Array[Dictionary]=[]
+var destruction_trace=preload("res://addons/player_runtime/destruction_trace.gd").new()
 var reload_slot:=-1
 var reload_epoch:=-1
 var reload_weapon:=-1
@@ -45,6 +46,7 @@ func prepare(host:Node)->bool:
 	game=host;state=ClassDB.instantiate("NativeCombatState")
 	action_input_owned=func()->bool:return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 	if state==null or barrels==null:return false
+	game.terrain.edit_measured.connect(_trace_terrain_publication)
 	impact_audio=preload("res://addons/player_runtime/firearm_impact_audio.gd").new()
 	add_child(impact_audio);add_child(effects);effects.blocks=game.structures.blocks;integrity.attach(game,self)
 	holes=preload("res://addons/player_runtime/bullet_holes.gd").new();add_child(holes)
@@ -236,6 +238,8 @@ func damage_barrel(id:int,damage:int)->bool:
 	var result:Dictionary=game.world_attack.durability.hit("model:%s:%d"%[Barrel.KEY,id],50,damage)
 	if not result.ok:return false
 	game.terrain.changed_since_save=true
+	if result.destroyed and destruction_trace.enabled:
+		destruction_trace.trigger(game.terrain.epoch,id,Engine.get_physics_frames(),Time.get_ticks_usec())
 	if result.destroyed and id not in detonations and detonations.size()<256:detonations.append(id)
 	return true
 func place_barrel()->bool:
@@ -278,11 +282,19 @@ func detonate(id:int)->bool:
 	# The same native density edit, publication, water, vegetation and save path
 	# as mining. The environmental admission does not pay mining rewards.
 	if not game.mining_rewards.excavate_blast(base+Vector3.UP*.2,3.5):return false
+	var trace_identity:=""
+	if destruction_trace.enabled:
+		trace_identity=destruction_trace.trigger(game.terrain.epoch,id,Engine.get_physics_frames(),Time.get_ticks_usec())
+		destruction_trace.admitted(trace_identity,game.terrain.edit_ticket,Engine.get_physics_frames(),Time.get_ticks_usec())
 	if not barrels.remove_instances(PackedInt64Array([id])):return false
 	game.model_tool.history.clear_history();game.world_attack.durability.forget("model:%s:%d"%[Barrel.KEY,id])
 	var origin:=Vector3i((center-Vector3.ONE*5).floor())
 	var prefab:Resource=game.structures.blocks.capture_prefab(origin,Vector3i(12,12,12))
-	if prefab!=null:blast_jobs.append({"records":state.blast_cells(prefab.get_records(),origin,center,5.0),"offset":0,"center":center})
+	if prefab!=null:
+		var job:Dictionary={"records":state.blast_cells(prefab.get_records(),origin,center,5.0),"offset":0,"center":center}
+		if destruction_trace.enabled:job.trace_identity=trace_identity
+		blast_jobs.append(job)
+	elif destruction_trace.enabled:destruction_trace.blocks_complete(trace_identity,Engine.get_physics_frames(),Time.get_ticks_usec())
 	for other:int in barrels.get_ids():
 		var point:=barrel_position(other)+Vector3.UP*.5
 		if point.is_finite() and point.distance_squared_to(center)<36:damage_barrel(other,50)
@@ -324,9 +336,16 @@ func step_blasts()->void:
 		if game.world_attack.durability.hit(hit.key,hit.maximum,hit.damage).ok:game.terrain.changed_since_save=true
 	for item:Dictionary in debris:_demolished(item.cell,item.word,job.center,item.force)
 	job.offset=end
-	if job.offset>=records.size():blast_jobs.pop_front()
+	if job.offset>=records.size():
+		if destruction_trace.enabled:destruction_trace.blocks_complete(job.get("trace_identity",""),Engine.get_physics_frames(),Time.get_ticks_usec())
+		blast_jobs.pop_front()
 	game.terrain._record_stage("combat blast batch",(Time.get_ticks_usec()-started)/1000.0)
+func _trace_terrain_publication(measurement:Dictionary)->void:
+	if destruction_trace.enabled:
+		destruction_trace.terrain_complete(int(measurement.ticket),Engine.get_physics_frames(),Time.get_ticks_usec(),measurement)
+
 func clear_transients()->void:
+	destruction_trace.reset()
 	for bullet in projectiles:bullet.view.queue_free()
 	projectiles.clear();detonations.clear();blast_jobs.clear();effects.clear()
 	if is_instance_valid(impact_audio):impact_audio.clear()

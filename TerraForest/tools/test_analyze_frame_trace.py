@@ -37,6 +37,15 @@ class TraceAnalysisTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             summarize([{"schema": 1, "frames": [self.row(1), self.row(1, 80)]}])
 
+    def test_destruction_deadlines_keep_trigger_identity_across_windows(self):
+        transition = {'event': '7:41', 'phase': 'deadline_missed', 'trigger_tick': 2, 'deadline_tick': 3, 'tick': 4}
+        row = self.row(1) | {'destruction': {'transitions': [transition], 'pending': 256, 'dropped': 2}}
+        result = summarize([{'schema': 1, 'frames': [row]}, {'schema': 1, 'frames': [row]}])['destruction']
+        self.assertEqual(result['observed_deadline_misses'], 1)
+        self.assertEqual(result['maximum_pending'], 256)
+        self.assertEqual(result['maximum_dropped'], 2)
+        self.assertNotIn('terrain_published', result['events']['7:41']['phases'])
+
     def test_delayed_device_markers_use_cpu_timestamps(self):
         first = self.row(1) | {'draw_ms': 4}
         reported = self.row(3) | {'draw_ms': 2, 'render_markers': {

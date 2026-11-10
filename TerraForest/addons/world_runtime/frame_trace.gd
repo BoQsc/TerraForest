@@ -97,6 +97,9 @@ func detach()->void:
 		for key:String in ["zombies","ground_cover"]:
 			if previous_profiling.has(key):game.get(key).profiling_enabled=previous_profiling[key]
 		if previous_profiling.has("forest"):game.vegetation.renderer.profiling_enabled=previous_profiling.forest
+		if previous_profiling.has("destruction"):
+			game.combat.destruction_trace.enabled=previous_profiling.destruction
+			if not previous_profiling.destruction:game.combat.destruction_trace.reset()
 		if previous_profiling.has("blocks") and is_instance_valid(game.structures.blocks):game.structures.blocks.set_process_profiling_enabled(previous_profiling.blocks)
 	game=null;previous_profiling.clear();resident_ids.clear()
 
@@ -228,6 +231,10 @@ func _end_draw()->void:
 		row.render_markers=render_trace.capture(RenderingServer.get_rendering_device()) if RenderingServer.is_on_render_thread() else {"available":false,"reason":"callback is not on render thread"}
 	var active:bool=is_instance_valid(game) and game.startup_complete
 	if active:
+		if not previous_profiling.has("destruction"):
+			previous_profiling.destruction=game.combat.destruction_trace.enabled
+			game.combat.destruction_trace.enabled=true
+		row.destruction=game.combat.destruction_trace.sample(Engine.get_physics_frames(),began)
 		row.position=game.player.position;row.velocity=game.player.velocity
 		row.loading=game.loading_active;row.menu=game.session_menu.visible_ui();row.inventory=game.player_hud.inventory_open
 		row.entry=game.player_view.entry.blocks_actions();row.driving=game.world_vehicle.driving

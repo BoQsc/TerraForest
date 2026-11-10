@@ -14,7 +14,22 @@ def distribution(values):
         return None
     return {"samples": n, "mean": sum(values) / n, "p50": values[n // 2],
             "p95": values[min(n - 1, int(n * .95))],
-            "p99": values[min(n - 1, int(n * .99))], "maximum": values[-1]}
+            "p99": values[min(n - 1, int(n * .99))],
+            "p999": values[min(n - 1, int(n * .999))], "maximum": values[-1]}
+
+
+def destruction_events(rows):
+    events = {}
+    for row in rows:
+        for transition in row.get('destruction', {}).get('transitions', []):
+            event = events.setdefault(transition['event'], {'phases': {}, 'trigger_tick': transition['trigger_tick'],
+                                                           'deadline_tick': transition['deadline_tick']})
+            event['phases'][transition['phase']] = transition
+    return {'events': events,
+            'observed_deadline_misses': sum('deadline_missed' in event['phases'] for event in events.values()),
+            'maximum_pending': max((row.get('destruction', {}).get('pending', 0) for row in rows), default=0),
+            'maximum_dropped': max((row.get('destruction', {}).get('dropped', 0) for row in rows), default=0),
+            'scope': 'Observed event transitions only; missing phases are unknown. Store/terrain completion does not certify building-render/physics publication.'}
 
 
 def render_marker_gaps(rows):
@@ -99,6 +114,7 @@ def summarize(captures):
         record["stages_ms"] = dict(sorted(row.get("stages_ms", {}).items(), key=lambda x: -x[1]))
         worst.append(record)
     return {"unique_frames": len(rows), "phases": phases, "slowest_frames": worst,
+            "destruction": destruction_events(rows),
             "render_markers": render_marker_gaps(rows),
             "scope": "Triggered windows only, not an unbiased whole-session distribution. Overlapping frames deduplicated. Stages/physics overlap wall intervals. GPU timers may lag. Missing adjacent frames give unknown compilation deltas."}
 

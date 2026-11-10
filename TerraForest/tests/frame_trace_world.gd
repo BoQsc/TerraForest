@@ -229,6 +229,9 @@ func run()->void:
 		if structure_payload!=null:manual_save.structure_capture_stats=structure_payload.stats()
 	if "--trace-destruction-load" in OS.get_cmdline_user_args():
 		destruction_result=await load(get_script().resource_path.get_base_dir().path_join("destruction_load_probe.gd")).new().run(self,game,output)
+	for arg:String in OS.get_cmdline_user_args():
+		if arg.begins_with("--trace-destruction-deadline="):
+			destruction_result=await load(get_script().resource_path.get_base_dir().path_join("destruction_deadline_probe.gd")).new().run(self,game,int(arg.get_slice("=",1)))
 	label="turning"
 	var turn_started:=Time.get_ticks_msec()
 	var deadline:=turn_started+(5000 if short else 30000)

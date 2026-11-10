@@ -15,6 +15,7 @@ from run_godot_check import execute, verify_pack_native
 from resource_limits import load_budgets, require_free_space
 from maintain_performance_artifacts import capacity, maintain
 from development_storage import admit
+from maintain_performance_traces import maintain_traces
 
 
 def main():
@@ -44,6 +45,7 @@ def main():
     parser.add_argument('--walk-seconds', type=float, default=1.5, help='Seconds per grounded walking leg, from 1 to 20 (two legs)')
     parser.add_argument('--normal-window', action='store_true', help='Use normal fullscreen/window preference and require foreground gameplay; no background-cap override')
     parser.add_argument('--destruction-load', action='store_true', help='Real three-barrel chain and full debris population in the owned default-world clone')
+    parser.add_argument('--destruction-deadline', type=int, choices=[1,3,32,256], help='Strict next-physics-tick feasibility gate; incomplete publication intentionally fails')
     parser.add_argument('--legacy-owner-bounds', action='store_true', help='Diagnostic control: use original forest/boulder invalidation scans')
     parser.add_argument('--collision-piece-triangles', type=int, choices=[256, 512, 1024], help='Diagnostic only: configure exact terrain collision partitions before worker startup')
     parser.add_argument('--light-abba', action='store_true', help='Compare unchanged versus redundantly submitted pooled lights in one stationary view')
@@ -55,6 +57,8 @@ def main():
     parser.add_argument('--without-gpu-timers', action='store_true', help='Avoid synchronous renderer timer queries; requires --without-trace')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
+    if args.destruction_deadline and (args.destruction_load or args.without_trace):
+        parser.error('--destruction-deadline requires tracing and excludes --destruction-load')
     if args.grounded_walk and not args.outdoor_cover:
         parser.error('--grounded-walk requires --outdoor-cover')
     if not 1 <= args.walk_seconds <= 20 or (args.walk_seconds != 1.5 and not args.grounded_walk):
@@ -88,6 +92,7 @@ def main():
     require_free_space(ROOT, clone_bytes + report_bytes)
     native = verify_pack_native() if args.executable else None
     retained_capacity = capacity(ROOT)
+    maintain_traces(ROOT, apply=True)
     admit(ROOT, report_bytes=report_bytes)
     limits = load_budgets()
     storage = dict(source_clone_bytes=clone_bytes, planned_capture_bytes=report_bytes,
@@ -175,6 +180,8 @@ def main():
         command += ['--trace-grounded-walk', '--trace-walk-seconds=' + str(args.walk_seconds)]
     if args.destruction_load:
         command += ['--trace-destruction-load']
+    if args.destruction_deadline:
+        command += ['--trace-destruction-deadline=' + str(args.destruction_deadline)]
     if args.legacy_owner_bounds:
         command += ['--trace-legacy-owner-bounds']
     if args.collision_piece_triangles:
@@ -194,10 +201,11 @@ def main():
         record['pack_native_sha256'] = native
     record['native_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                for p in sorted((ROOT / 'addons').glob('*/bin/*.dll'))}
-    if args.destruction_load:
+    if args.destruction_load or args.destruction_deadline:
         record['destruction_source_sha256'] = {
             name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in (
                 'addons/player_runtime/combat_world.gd', 'addons/player_runtime/destruction_effects.gd',
+                'addons/player_runtime/destruction_trace.gd', 'tests/destruction_deadline_probe.gd',
                 'addons/player_runtime/structural_integrity.gd', 'addons/structures/structures_world.gd',
                 'addons/world_ecosystem/ground_cover.gd', 'addons/world_ecosystem/world_ecosystem.gd',
                 'addons/world_ecosystem/boulder_horizon.gd', 'addons/volumetric_water/lake_world.gd')}
@@ -239,6 +247,7 @@ def main():
     try:
         retention = maintain(ROOT, worlds, apply=True)
         record['retention'] = {key:retention[key] for key in ('receipt','completed','errors','new_archive_bytes') if key in retention}
+        record['trace_retention'] = maintain_traces(ROOT, apply=True)
     except (OSError, ValueError) as error:
         record['retention'] = {'errors': [str(error)]}
     manifest.write_text(json.dumps(record, indent=2), encoding='utf-8')

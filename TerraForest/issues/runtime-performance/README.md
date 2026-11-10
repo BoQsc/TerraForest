@@ -1,5 +1,11 @@
 # Runtime performance
 
+[Next-tick destruction implementation](next-tick-destruction.md) records the
+accepted 25% headroom / 256-barrel deadline and the first measured failure:
+all triggers accepted, only one explosion started by the next tick, terrain still
+pending. Bounded event tracing and automatic verified trace archival are added;
+the native transaction and full publication redesign remains in progress.
+
 [World/player headroom and terrain retirement](world-player-headroom-2026-11-10.md)
 records the valid installed baseline, renderer gap, rejected detached-preparation
 experiments and the retained retirement-only fix. Component/publication checks
