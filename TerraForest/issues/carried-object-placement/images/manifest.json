@@ -1,0 +1,16 @@
+[
+  {
+    "path": "reports\\checks\\20261110T154648732447Z_objects\\barrel_grid.png",
+    "sha256": "c51a8a031ddc82d407b42b098f082ecbb8415500f676178fb7d86be6f2af1b7e",
+    "source": "Original Godot runtime test capture, 2026-11-10",
+    "scope": "Read-only default fixture; temporary white 40-degree support plane; no foreground performance claim",
+    "status": "Reviewed for model/cell preview only; not natural shore visual acceptance"
+  },
+  {
+    "path": "reports\\checks\\20261110T154648732447Z_objects\\chair_free.png",
+    "sha256": "430754cd33907d4987fe4b7e3a19176b904308ea8a606efa6c625220a636162e",
+    "source": "Original Godot runtime test capture, 2026-11-10",
+    "scope": "Read-only default fixture; temporary white 40-degree support plane; no foreground performance claim",
+    "status": "Reviewed for model/cell preview only; not natural shore visual acceptance"
+  }
+]

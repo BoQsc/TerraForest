@@ -26,6 +26,9 @@ static func texture(key: Variant) -> Texture2D:
 			bucket_icon=ImageTexture.create_from_image(image)
 		return bucket_icon
 	var name:=str(key)
+	var objects=preload("res://addons/player_runtime/carried_object_catalog.gd")
+	if name.is_valid_int() and objects.ITEMS.has(int(name)):
+		name="Wooden ladder" if int(name)==705 else objects.TITLES[int(name)]
 	var index:=KEYS.find(name)
 	if index<0:return null
 	if regions.has(name):return regions[name]

@@ -18,7 +18,7 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	var row:=HBoxContainer.new();parent.add_child(row)
 	search=LineEdit.new();TextInputFocus.configure(search);search.placeholder_text="Search items by name or ID…";search.clear_button_enabled=true;search.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(search)
 	category=OptionButton.new()
-	for title:String in ["All items","Tools","Building materials","Resources & plants","Clothing","Water containers","Vehicles"]:category.add_item(title)
+	for title:String in ["All items","Tools","Building materials","Resources & plants","Clothing","Water containers","Vehicles","Objects & furniture"]:category.add_item(title)
 	row.add_child(category)
 	count=SpinBox.new();count.custom_minimum_size.x=120;count.min_value=1;count.max_value=999;count.value=1;count.prefix="Qty ";row.add_child(count)
 	summary=menu.label(parent,"")
@@ -33,6 +33,7 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	empty=menu.label(parent,"No matching items. Clear the search or choose another category.")
 	search.text_changed.connect(func(_value:String):filter_items());category.item_selected.connect(func(_index:int):filter_items());filter_items()
 func item_category(item:int)->int:
+	if ItemCatalog.Objects.ITEMS.has(item) or item==222:return 7
 	if game.player_hud.CATALOG.has(item):return 1
 	if game.player_hud.MATERIALS.has(item):return 2
 	if item<301:return 3

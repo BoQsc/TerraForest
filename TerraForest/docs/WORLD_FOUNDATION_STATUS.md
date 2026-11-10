@@ -1,3 +1,15 @@
+## Carried objects and shoreline reports - 2026-11-10
+
+Shared grid/free object placement and Dev Bag furniture are installed, with
+native support fitting, model/cell previews and paid placement. Source and
+packaged inventory/drop/world checks pass; rendered previews reviewed. Natural
+shoreline user review remains. Native DLLs stayed unchanged; predecessor archive
+is hash-verified and staging removed.
+The reported distant tree loss is not reproduced in the 8,742-tree actual-barrel
+audit. Mining now shares the opt-in committed-edit water wake; automatic flow
+is still blocked by shallow surface coverage and timing qualification.
+[Evidence and open gates](../issues/carried-object-placement/README.md).
+
 ## Temporary pistol feel trial - 2026-11-10
 
 Default-on independent Esc controls cover pistol bob/sway, reticle feedback,

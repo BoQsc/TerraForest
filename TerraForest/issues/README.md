@@ -97,3 +97,5 @@ This initial index is not the entire backlog. Other work remains in
 - [Ranger automatic assault rifle](ranger-assault-rifle/README.md) — Installed original model, automatic fire and independent ammunition state. November 3 follow-up auto-equips the trader gift and reloads on an empty trigger; targeted source 27 and actual executable 28 checks pass, with broad results and retained harness failures linked in the issue. Source and actual executable each pass 51 combat + 12 reopen checks; native/presentation 79. Final aim/reload images reviewed; user visual review separate.
 
 - [Dev Bag full-stack shortcut](dev-bag-full-stack/README.md) — Installed: Shift-click grants the registered stack, including 999 ammo. All 12 source and actual-executable checks pass; normal quantity and atomic capacity behavior preserved.
+
+- [Carried objects and shoreline placement](carried-object-placement/README.md) - Installed / scoped source and packaged checks: grid/free previews, furniture Dev Bag entries, slope support and obstruction. Water remains qualification-only; distant tree loss not reproduced. Natural-shoreline user review pending.

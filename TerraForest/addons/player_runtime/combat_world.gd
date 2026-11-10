@@ -268,18 +268,7 @@ func damage_barrel(id:int,damage:int)->bool:
 	if result.destroyed and id not in detonations and detonations.size()<256:detonations.append(id)
 	return true
 func place_barrel()->bool:
-	if not can_use() or game.equipped_tool!=Barrel.ITEM or barrels.get_ids().size()>=256:return false
-	var start:Vector3=game.camera.global_position
-	var hit:Dictionary=game.structures.blocks.raycast_scene(start,start-game.camera.global_basis.z*4,15,[game.player.get_rid()])
-	if hit.is_empty() or hit.normal.y<.8:return false
-	var point:Vector3=hit.position+Vector3.UP*.02;var bounds:=AABB(point+Barrel.BOUNDS.position,Barrel.BOUNDS.size)
-	if not game._placement_collision_ready(bounds) or not game._prefab_player_clear(bounds):return false
-	var query:=PhysicsShapeQueryParameters3D.new();var shape:=BoxShape3D.new();shape.size=Barrel.BOUNDS.size*.96;query.shape=shape;query.transform=Transform3D(Basis.IDENTITY,bounds.get_center()+Vector3.UP*.02);query.collision_mask=15
-	if not get_world_3d().direct_space_state.intersect_shape(query,1).is_empty():return false
-	var records:PackedFloat32Array=game.model_tool.records(Transform3D(Basis.IDENTITY,point),barrels)
-	var id:int=game.construction_inventory.place_model(game.model_tool.history,barrels,game.player_hud.inventory,records,AABB(game.player.global_position-Vector3(.4,0,.4),Vector3(.8,1.8,.8)),PackedInt64Array([Barrel.ITEM,1]))
-	if id<=0:return false
-	game.terrain.changed_since_save=true;game.player_hud.refresh();return true
+	return game.equipped_tool==Barrel.ITEM and game.object_placement.place()
 func damage_block(cell:Vector3i,word:int,damage:int,origin:Vector3,force:float)->bool:
 	if word==0 or damage<=0 or game.structures.blocks.get_cell(cell)!=word:return false
 	var material:int=game.structures.blocks.decode_block(word).material

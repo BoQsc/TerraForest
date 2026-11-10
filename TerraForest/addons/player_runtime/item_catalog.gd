@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 ## One inventory schema for carried items, containers and world drops.
+const Objects=preload("res://addons/player_runtime/carried_object_catalog.gd")
 const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",6:"Wooden torch",7:"Carbine",8:"Ranger assault rifle",9:"PX9 Eclipse handgun"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",212:"Woody bush",213:"Lockpick",214:"Field manual",215:"Unsent letter",216:"Survey journal",217:"Tinned beans",218:"Trail bread",219:"Dried berries",220:"Coal",221:"Carbine cartridges",222:"Explosive barrel",223:"Ranger cartridges",224:"Metal offcuts",225:"Cloth scraps",226:"Copper wire",227:"Loose fasteners",228:"PX9 cartridges",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",304:"Trail hat",305:"Trail jerkin",306:"Trail boots",401:"Water bucket",402:"Water bucket",403:"Water bucket",404:"Water bucket",405:"Water bucket",406:"Water bucket",407:"Water bucket",408:"Water bucket",409:"Water bucket",410:"Water bucket",411:"Water bucket",501:"Vehicle",601:"Coins"}
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",212:"Woody bush",213:"Lockpick",214:"Field manual",215:"Unsent letter",216:"Survey journal",217:"Tinned beans",218:"Trail bread",219:"Dried berries",220:"Coal",221:"Carbine cartridges",222:"Explosive barrel",223:"Ranger cartridges",224:"Metal offcuts",225:"Cloth scraps",226:"Copper wire",227:"Loose fasteners",228:"PX9 cartridges",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",304:"Trail hat",305:"Trail jerkin",306:"Trail boots",401:"Water bucket",402:"Water bucket",403:"Water bucket",404:"Water bucket",405:"Water bucket",406:"Water bucket",407:"Water bucket",408:"Water bucket",409:"Water bucket",410:"Water bucket",411:"Water bucket",501:"Vehicle",601:"Coins",701:"Wooden table",702:"Wooden chair",703:"Wooden shelf",704:"Wooden storage chest",705:"Wooden ladder",706:"Wooden fence",707:"Wood framed window"}
 const KEYWORDS: Dictionary={
 	1:["tool","tools","mining","mine","pick","stone","rock"],
 	2:["tool","tools","axe","hatchet","wood","woodcutting","logging","chop"],
@@ -72,6 +73,7 @@ static func item_name(item:int)->String:
 
 static func search_text(item:int)->String:
 	var text:=item_name(item).to_lower()+" "+str(item)
+	if Objects.ITEMS.has(item):text+=" object furniture place placement"
 	for keyword in KEYWORDS.get(item,[]):
 		text+=" "+str(keyword).to_lower()
 	return text

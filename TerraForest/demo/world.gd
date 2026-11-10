@@ -39,6 +39,7 @@ var ground_species:=0
 var lakes = Lakes.new()
 var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
+var object_placement=preload("res://addons/player_runtime/object_placement.gd").new()
 var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var world_map=preload("res://addons/world_runtime/world_map.gd").new()
 var map_markers=preload("res://addons/player_runtime/map_markers.gd").new()
@@ -361,6 +362,7 @@ func _ready() -> void:
 	object_entries.append_array(light_entries)
 	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks,structures._models.values())
 	model_tool.notice.connect(_show_lake_notice)
+	add_child(object_placement);object_placement.prepare(self)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):
 		model_paging=preload("res://addons/structures/model_paging_coordinator.gd").new()
 		add_child(model_paging)
@@ -1071,6 +1073,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.physical_keycode==KEY_ESCAPE:
 				Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
 		return
+	if object_placement.handle_input(event):return
 	if not session_menu.developer and combat.handle_input(event):return
 	if not session_menu.developer and equipped_tool>=401 and equipped_tool<=411 and event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if event.pressed and _model_edit_available():
