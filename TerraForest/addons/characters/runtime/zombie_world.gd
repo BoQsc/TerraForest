@@ -318,6 +318,17 @@ func _groan_first() -> float:
 	_groan_serial += 1
 	return GROAN_FIRST + _groan_serial % 3 * 1.0
 
+## A hit interrupts the idle groan: stop the one already playing and hold this
+## zombie back so it does not immediately pick up again mid-fight.
+const GROAN_AFTER_HIT := 14.0
+
+func _hush_groan(id: int) -> void:
+	_groan_clock[id] = GROAN_AFTER_HIT
+	var host: Node = get_parent()
+	var adapter: Node = host.get_node_or_null("WorldAudio") if host != null else null
+	if adapter == null or not adapter.has_method("stop_sound"): return
+	adapter.stop_sound("zombie.vocal.idle")
+
 func _update_spacing() -> void:
 	# Six ordinary actors or sixteen authored encounter actors; no world scan.
 	for index in residents.size():
@@ -547,4 +558,5 @@ func apply_hit(hit: Dictionary, damage: float, direction: Vector3, impact: Strin
 	if not zombie.PARTS.has(part) or zombie.missing.get(part,true) or not hit.get("position",Vector3.INF).is_finite():return false
 	zombie.receive_hit(hit.get("part", "torso"), damage, hit.position, direction * 2.0, impact=="firearm" and response.get("force_sever",false), impact, response.get("reaction",true), response.get("animation",true))
 	if zombie.alive:awareness.provoke(zombie.get_instance_id(),target.global_position)
+	_hush_groan(zombie.get_instance_id())
 	return true

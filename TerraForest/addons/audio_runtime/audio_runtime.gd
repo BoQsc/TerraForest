@@ -115,6 +115,14 @@ func stop(handle: int) -> bool:
 			slot.node.stop(); slot.node.stream = null; slot.handle = 0; slot.pending = false; return true
 	return false
 
+## Stop every playing instance of one sound, e.g. an idle vocal cut short by a hit.
+func stop_sound(id: String) -> int:
+	var stopped := 0
+	for slot in voices:
+		if slot.handle > 0 and slot.id == id:
+			slot.node.stop(); slot.node.stream = null; slot.handle = 0; slot.pending = false; stopped += 1
+	return stopped
+
 func clear() -> void:
 	for slot in voices + beds:
 		slot.node.stop(); slot.node.stream = null; slot.handle = 0; slot.pending = false
