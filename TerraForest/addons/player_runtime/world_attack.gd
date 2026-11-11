@@ -249,6 +249,7 @@ func break_event(t: Dictionary) -> String:
 	if str(t.get("surface", "")) == "dirt": return "world.break.dirt"
 	match str(t.kind):
 		"tree": return "world.break.wood"
+		"actor": return "zombie.hit.flesh"
 		"terrain":
 			var surface := str(_sampled_material(t.get("position", Vector3.ZERO)))
 			match surface:
