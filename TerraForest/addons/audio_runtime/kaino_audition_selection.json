@@ -107,6 +107,7 @@
 		"world.break.metal": "res://addons/audio_runtime/packs/Kaino/1/Sword Hits Armor 1 - Kaino.wav",
 		"world.break.stone": "res://addons/audio_runtime/packs/Kaino/1/split/Pickaxe on Stone 3 - Kaino_hit1.wav",
 		"world.break.vegetation": "res://addons/audio_runtime/packs/Kaino/1/split/Wood Snap 2 - Kaino_hit2.wav",
-		"world.break.wood": "res://addons/audio_runtime/packs/Kaino/1/split/Chopping Wood 2 - Kaino_hit3.wav"
+		"world.break.wood": "res://addons/audio_runtime/packs/Kaino/1/split/Chopping Wood 2 - Kaino_hit3.wav",
+		"flesh.hit": "res://addons/audio_runtime/packs/Kaino/fxm_flesh_02.wav"
 	}
 }
