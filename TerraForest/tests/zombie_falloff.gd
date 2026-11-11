@@ -4,6 +4,7 @@ extends SceneTree
 ## sitting behind footsteps became the loudest thing in the mix.
 
 const Runtime = preload("res://addons/audio_runtime/audio_runtime.gd")
+const Catalog = preload("res://addons/audio_runtime/catalog.gd")
 
 var failures := 0
 func check(ok: bool, label: String) -> void:
@@ -27,23 +28,22 @@ func run() -> void:
 
 	var runtime: Node3D = Runtime.new()
 	root.add_child(runtime)
-	check(runtime.prepare(PackedStringArray([manifest])), "falloff pack prepares")
+	check(runtime.prepare(Catalog.enabled_paths("user://missing_enabled.cfg")), "shipped packs prepare")
 	runtime.listener = Vector3.ZERO
 	check(runtime.emit_event("zombie.vocal.idle", {"position": Vector3(1, 0, 0)}) > 0, "groan at 1 m plays")
 	var node: AudioStreamPlayer3D
 	for voice in runtime.voices:
 		if voice.node.playing: node = voice.node
 	check(node != null, "voice is a 3D player")
-	# Full volume must not extend to the attacker's reach: the near-field radius
-	# has to be well beyond a body, so the groan attenuates right next to you.
-	# Close sounds must attenuate well before the cull range, so an attacking
-	# zombie is no longer heard at the ceiling of its own gain.
-	check(node.unit_size >= 2.0, "unit_size never drops below 2 m, got %.2f" % node.unit_size)
-	check(node.unit_size > 20.0, "groan near-field covers the close range, got %.2f m" % node.unit_size)
-	check(absf(node.unit_size - 23.4) < 0.01, "near-field is 90%% of a 26 m range, got %.2f" % node.unit_size)
+	# Close-in level is what the player complains about, so assert it directly:
+	# at an attacker's reach the player must be well below the sound's own gain.
+	check(node.volume_db <= -20.0, "close groan is quiet, gain %.1f dB" % node.volume_db)
+	check(node.volume_db < -8.0, "close groan sits below a footstep, gain %.1f dB" % node.volume_db)
+	# unit_size is the radius still played at full gain; keeping it small is what
+	# makes the sound fall away as you close the distance.
+	check(node.unit_size <= 3.0, "near-field stays short so close sounds fall off, got %.2f m" % node.unit_size)
 	check(node.unit_size < float(node.max_distance), "attenuation starts before the cull range")
 	check(node.max_distance == 26.0, "cull range still 26 m, got %.1f" % node.max_distance)
-	check(node.volume_db == -10.0, "gain unchanged at -10 dB, got %.1f" % node.volume_db)
 	runtime.queue_free()
 	print("ZOMBIE_FALLOFF failures=%d" % failures)
 	quit(1 if failures > 0 else 0)

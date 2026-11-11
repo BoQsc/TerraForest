@@ -80,7 +80,7 @@ func _play(row: Dictionary, point: Vector3, background: bool) -> int:
 	node.stop(); node.stream = catalog.streams[row.files[index]]
 	node.bus = "TerraForest" + row.bus; node.volume_db = row.gain_db
 	node.pitch_scale = random.randf_range(1.0 / row.pitch, row.pitch)
-	if not background: node.global_position = point; node.max_distance = row.range; node.unit_size = maxf(2.0, row.range * .9)
+	if not background: node.global_position = point; node.max_distance = row.range; node.unit_size = maxf(1.0, row.range * .1)
 	serial += 1; slot.handle = serial; slot.id = row.id; slot.priority = row.priority; slot.loop = row.loop
 	# A cancellable deferred start avoids starting/stopping a background playback
 	# inside the same admission burst. Pending beds still occupy their fixed slot.

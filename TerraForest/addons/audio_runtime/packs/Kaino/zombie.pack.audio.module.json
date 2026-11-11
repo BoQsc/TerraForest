@@ -10,7 +10,7 @@
         "zombie_groan_1.wav"
       ],
       "bus": "Voices",
-      "gain_db": -10,
+      "gain_db": -22,
       "pitch": 1,
       "range": 26,
       "priority": 25,
