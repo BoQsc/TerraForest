@@ -20,7 +20,7 @@
       "id": "flesh.hit",
       "event": "flesh.hit",
       "files": [
-        "flesh_hit_wet8.wav"
+        "fxm_flesh_02.wav"
       ],
       "bus": "Effects",
       "gain_db": -16,

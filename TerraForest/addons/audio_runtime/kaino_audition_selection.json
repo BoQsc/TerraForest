@@ -95,7 +95,11 @@
 		"res://addons/audio_runtime/packs/Kaino/1/Punch 3 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Eating Crunch 1 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Sword Stab 2 - Kaino.wav",
-		"res://addons/audio_runtime/packs/Kaino/1/Stone Thud 1 - Kaino.wav"
+		"res://addons/audio_runtime/packs/Kaino/1/Stone Thud 1 - Kaino.wav",
+		"flesh_more/impact_1.wav",
+		"flesh_more/impact_5.wav",
+		"flesh_more/impact_9.wav",
+		"flesh_more/impact_13.wav"
 	],
 	"schema": 1.0,
 	"selection": {

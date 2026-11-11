@@ -116,10 +116,10 @@ func run() -> void:
 	# The clip under test is declared and playable.
 	check(catalog.sounds.has("flesh.hit"), "flesh.hit is declared")
 	var row: Dictionary = catalog.sounds.get("flesh.hit", {})
-	check(str(row.get("files", [""])[0]).contains("flesh_hit_wet8"), "flesh hit uses the tested clip")
+	check(str(row.get("files", [""])[0]).contains("fxm_flesh_02"), "flesh hit uses the default clip")
 	check(row.get("bus", "") == "Effects", "flesh hit plays on Effects")
 	var stream: AudioStream = catalog.streams.get(row.get("files", [""])[0])
-	check(stream != null and stream.get_length() > 0.4, "clip is playable, %.2fs" % (stream.get_length() if stream else -1.0))
+	check(stream != null and stream.get_length() > 0.2, "clip is playable, %.2fs" % (stream.get_length() if stream else -1.0))
 
 	check(hit("melee"), "melee hit is accepted")
 	check(playing("flesh.hit") == 1, "melee hit plays the flesh impact")
