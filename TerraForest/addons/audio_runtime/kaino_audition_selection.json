@@ -41,7 +41,7 @@
 	],
 	"notes": {
 		"res://addons/audio_runtime/packs/Kaino/1/Burning 2 - Kaino.wav": "Great for dirt digging accompying sound",
-		"res://addons/audio_runtime/packs/Kaino/1/Critical Hit 3 - Kaino.wav": "Good for flesh hit on zombies or other live things",
+		"res://addons/audio_runtime/packs/Kaino/1/Critical Hit 3 - Kaino.wav": "REJECTED for flesh hits: the sound is very bad and off topic for flesh. Never choose it again for flesh or zombie impact. (Earlier note: looked like a candidate for flesh.)",
 		"res://addons/audio_runtime/packs/Kaino/1/Cup on Saucer 1 - Kaino.wav": "Good for crafting completion",
 		"res://addons/audio_runtime/packs/Kaino/1/Eating Crunch 1 - Kaino.wav": "Good for eating item food",
 		"res://addons/audio_runtime/packs/Kaino/1/Fridge Door 1 - Kaino.wav": "Good for closing container objects you interact with",
@@ -88,7 +88,14 @@
 		"res://addons/audio_runtime/packs/Kaino/1/Rifle Shot 2 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 1 - Kaino.wav",
 		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 2 - Kaino.wav",
-		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 3 - Kaino.wav"
+		"res://addons/audio_runtime/packs/Kaino/1/Hand Saw 3 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Slime Squelch 1 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Slime Squelch 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Punch 1 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Punch 3 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Eating Crunch 1 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Sword Stab 2 - Kaino.wav",
+		"res://addons/audio_runtime/packs/Kaino/1/Stone Thud 1 - Kaino.wav"
 	],
 	"schema": 1.0,
 	"selection": {
