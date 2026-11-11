@@ -15,6 +15,19 @@
       "range": 26,
       "priority": 25,
       "limit": 2
+    },
+    {
+      "id": "zombie.hit.flesh",
+      "event": "zombie.hit.flesh",
+      "files": [
+        "critical_hit_3_220ms.wav"
+      ],
+      "bus": "Effects",
+      "gain_db": -14,
+      "pitch": 1.08,
+      "range": 26,
+      "priority": 70,
+      "limit": 3
     }
   ]
 }

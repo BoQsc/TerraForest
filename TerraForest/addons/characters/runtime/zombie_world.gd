@@ -329,6 +329,22 @@ func _hush_groan(id: int) -> void:
 	if adapter == null or not adapter.has_method("stop_sound"): return
 	adapter.stop_sound("zombie.vocal.idle")
 
+## Flesh impact for melee, cutting and heavy hits. Gunfire already plays its own
+## flesh impact, so only non-firearm hits come here. Played at the listener:
+## the attacker is the one swinging, so the level must not depend on reach.
+const FLESH_REPEAT_MS := 70
+var _flesh_ms := -1000000
+
+func _flesh_hit(point: Vector3, impact: String) -> void:
+	if impact == "firearm" or not point.is_finite(): return
+	var now := Time.get_ticks_msec()
+	if now - _flesh_ms < FLESH_REPEAT_MS: return
+	_flesh_ms = now
+	var host: Node = get_parent()
+	var adapter: Node = host.get_node_or_null("WorldAudio") if host != null else null
+	if adapter == null or not adapter.has_method("play_event"): return
+	adapter.play_event("zombie.hit.flesh", point, true)
+
 func _update_spacing() -> void:
 	# Six ordinary actors or sixteen authored encounter actors; no world scan.
 	for index in residents.size():
@@ -559,4 +575,5 @@ func apply_hit(hit: Dictionary, damage: float, direction: Vector3, impact: Strin
 	zombie.receive_hit(hit.get("part", "torso"), damage, hit.position, direction * 2.0, impact=="firearm" and response.get("force_sever",false), impact, response.get("reaction",true), response.get("animation",true))
 	if zombie.alive:awareness.provoke(zombie.get_instance_id(),target.global_position)
 	_hush_groan(zombie.get_instance_id())
+	_flesh_hit(hit.get("position", zombie.global_position), impact)
 	return true
