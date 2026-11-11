@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "kaino.zombie.v1",
+  "requires": [],
+  "sounds": [
+    {
+      "id": "zombie.vocal.idle",
+      "event": "zombie.vocal.idle",
+      "files": [
+        "zombie_groan_1.wav"
+      ],
+      "bus": "Voices",
+      "gain_db": -10,
+      "pitch": 1,
+      "range": 26,
+      "priority": 25,
+      "limit": 2
+    }
+  ]
+}

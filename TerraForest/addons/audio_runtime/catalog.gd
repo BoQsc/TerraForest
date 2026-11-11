@@ -103,6 +103,8 @@ static func enabled_paths(config_path: String = "user://mods/enabled.cfg") -> Pa
 	var paths := PackedStringArray()
 	var builtin := "res://addons/audio_runtime/packs/nox/pack.audio.module.json"
 	if FileAccess.file_exists(builtin): paths.append(builtin)
+	var zombie := "res://addons/audio_runtime/packs/Kaino/zombie.pack.audio.module.json"
+	if FileAccess.file_exists(zombie): paths.append(zombie)
 	var config := ConfigFile.new()
 	if config.load(config_path) == OK:
 		var external: Variant = config.get_value("audio", "manifests", PackedStringArray())

@@ -101,6 +101,7 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 		if not residents.is_empty():
 			clear()
 		return
+	_groan_wait = maxf(0.0, _groan_wait - delta)
 	for index in range(residents.size() - 1, -1, -1):
 		var zombie = residents[index]
 		if not is_instance_valid(zombie):
@@ -125,6 +126,7 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 			if is_instance_valid(detached):
 				_freeze_detached(detached, not available or not ready)
 		zombie.set_behavior(available and ready and pursue)
+		if ready and available and zombie.alive:_groan(id,zombie,delta,focus)
 		if not ready and not zombie.alive:
 			_retire(index)
 	if profiling_enabled:update_phase_us["residency"]=Time.get_ticks_usec()-measured_begin
@@ -281,6 +283,41 @@ func _update_navigation(delta: float, available: bool) -> void:
 				zombie.navigation_target=zombie.target.global_position
 	if profiling_enabled:update_phase_us["steering"]=Time.get_ticks_usec()-measured_begin
 
+## Idle groan for nearby living actors. Each zombie re-rolls every few seconds,
+## and a shared clock keeps the group from groaning over each other.
+const GROAN_RANGE := 22.0
+const GROAN_FIRST := 1.5
+const GROAN_MIN := 5.0
+const GROAN_MAX := 11.0
+## Minimum gap between any two groans across the whole group.
+const GROAN_GROUP_GAP := 3.0
+var _groan_clock: Dictionary = {}
+var _groan_serial := 0
+var _groan_wait := 0.0
+
+func _groan(id: int, zombie: Node3D, delta: float, focus: Vector3) -> void:
+	# Only eligible actors count down, so a far zombie never burns its turn.
+	var at: Vector3 = zombie.global_position
+	if not at.is_finite() or at.distance_to(focus) > GROAN_RANGE: return
+	var left := float(_groan_clock.get(id, _groan_first())) - delta
+	if left > 0.0:
+		_groan_clock[id] = left
+		return
+	# A pending group gap holds this zombie ready instead of spending its turn.
+	if _groan_wait > 0.0:
+		_groan_clock[id] = 0.0
+		return
+	_groan_clock[id] = randf_range(GROAN_MIN, GROAN_MAX)
+	var host: Node = get_parent()
+	var adapter: Node = host.get_node_or_null("WorldAudio") if host != null else null
+	if adapter == null or not adapter.has_method("play_event"): return
+	adapter.play_event("zombie.vocal.idle", at + Vector3.UP * 1.5, false)
+	_groan_wait = GROAN_GROUP_GAP
+
+func _groan_first() -> float:
+	_groan_serial += 1
+	return GROAN_FIRST + _groan_serial % 3 * 1.0
+
 func _update_spacing() -> void:
 	# Six ordinary actors or sixteen authored encounter actors; no world scan.
 	for index in residents.size():
@@ -326,7 +363,7 @@ func _retire(index: int,keep_corpse:bool=false) -> void:
 	if population != null:population.sync(zombie)
 	_corpse_age.erase(zombie.get_instance_id())
 	var id:int=zombie.get_instance_id()
-	awareness.remove_agent(id);awareness_status.erase(id);_sense_clock.erase(id);_roam_revision.erase(id);_alarm_clock.erase(id)
+	awareness.remove_agent(id);awareness_status.erase(id);_sense_clock.erase(id);_roam_revision.erase(id);_alarm_clock.erase(id);_groan_clock.erase(id)
 	navigator.remove_agent(id);_obstacle_clock.erase(id)
 	if _obstacles.has(id):
 		if is_instance_valid(_obstacles[id]):_obstacles[id].queue_free()

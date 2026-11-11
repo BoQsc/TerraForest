@@ -60,7 +60,7 @@
 		"res://addons/audio_runtime/packs/Kaino/1/Stone Crumble 3 - Kaino.wav": "Great for digging ground mostly dirt end sound destruction.",
 		"res://addons/audio_runtime/packs/Kaino/1/Sword Hits Armor 1 - Kaino.wav": "if made less loud and more dull then might be good for metal material sounds hitting",
 		"res://addons/audio_runtime/packs/Kaino/1/Sword Hits Armor 2 - Kaino.wav": "if made less loud and more dull then might be good for metal material sounds hitting",
-		"res://addons/audio_runtime/packs/Kaino/1/Zombie Groan 1 - Kaino.wav": "both zombie groan 1 and 2 should be only used mixed and probably might be good enough for zombies."
+		"res://addons/audio_runtime/packs/Kaino/1/Zombie Groan 1 - Kaino.wav": "both zombie groan 1 and 2 should be only used mixed and probably might be good enough for zombies. APPROVED for zombie.vocal.idle; shipped as 16-bit PCM packs/Kaino/zombie_groan_1.wav, gain -26 dB, limit 1, range 18."
 	},
 	"pack": "Kaino",
 	"rejected_sounds": [
