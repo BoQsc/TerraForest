@@ -36,8 +36,11 @@ func run() -> void:
 	check(node != null, "voice is a 3D player")
 	# Full volume must not extend to the attacker's reach: the near-field radius
 	# has to be well beyond a body, so the groan attenuates right next to you.
+	# Close sounds must attenuate well before the cull range, so an attacking
+	# zombie is no longer heard at the ceiling of its own gain.
 	check(node.unit_size >= 2.0, "unit_size never drops below 2 m, got %.2f" % node.unit_size)
-	check(node.unit_size > 3.0, "groan near-field radius exceeds arm's length, got %.2f m" % node.unit_size)
+	check(node.unit_size > 20.0, "groan near-field covers the close range, got %.2f m" % node.unit_size)
+	check(absf(node.unit_size - 23.4) < 0.01, "near-field is 90%% of a 26 m range, got %.2f" % node.unit_size)
 	check(node.unit_size < float(node.max_distance), "attenuation starts before the cull range")
 	check(node.max_distance == 26.0, "cull range still 26 m, got %.1f" % node.max_distance)
 	check(node.volume_db == -10.0, "gain unchanged at -10 dB, got %.1f" % node.volume_db)
