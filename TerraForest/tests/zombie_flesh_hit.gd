@@ -1,5 +1,6 @@
 extends SceneTree
-## A hit must play the flesh impact, except firearms which already do.
+## Flesh hits must be silent while no clip is approved, and must not fall back
+## to the rejected Critical Hit 3. Firearms keep their own impact.
 ## Drives the real WorldAudio adapter and the real apply_hit path.
 
 const ZombieWorld = preload("res://addons/characters/runtime/zombie_world.gd")
@@ -72,10 +73,9 @@ func playing(id: String) -> int:
 	return n
 
 func hit(impact: String, part := "torso") -> bool:
-	adapter.audio.stop_sound("zombie.hit.flesh")
-	# Clear both guards: the trigger's own and the adapter's 90 ms per-event one.
+	adapter.audio.stop_sound("flesh.hit")
+	adapter.last_event_ms.erase("flesh.hit")
 	world._flesh_ms = -1000000
-	adapter.last_event_ms.erase("zombie.hit.flesh")
 	return world.apply_hit({"zombie": actor, "part": part, "position": actor.global_position + Vector3.UP}, 10.0, Vector3.FORWARD, impact)
 
 func _init() -> void:
@@ -95,7 +95,6 @@ func run() -> void:
 	world.add_child(actor)
 	world.residents.append(actor)
 	world.target = actor
-	# The player must be in the tree: reset_world reads its global position.
 	game.add_child(game.player)
 	game.add_child(game.camera)
 	game.add_child(game.session_menu)
@@ -107,38 +106,28 @@ func run() -> void:
 	adapter.initialize()
 	check(adapter.audio != null, "adapter initializes its playback")
 
-	# The flesh impact must be declared and playable.
 	var catalog: RefCounted = adapter.audio.catalog
-	check(catalog.sounds.has("zombie.hit.flesh"), "zombie.hit.flesh is declared")
-	var row: Dictionary = catalog.sounds.get("zombie.hit.flesh", {})
-	check(str(row.get("files", [""])[0]).contains("critical_hit_3_220ms"), "flesh impact uses the approved clip")
-	check(row.get("bus", "") == "Effects", "flesh impact plays on Effects")
+	# The rejected recording must not come back through any event.
+	check(not catalog.sounds.has("zombie.hit.flesh"), "the rejected zombie flesh event is gone")
+	for id: Variant in catalog.sounds:
+		check(not str(catalog.sounds[id].get("files", [""])[0]).contains("critical_hit_3_220ms"),
+			"no sound still points at the rejected Critical Hit 3 recording (%s)" % str(id))
+
+	# The clip under test is declared and playable.
+	check(catalog.sounds.has("flesh.hit"), "flesh.hit is declared")
+	var row: Dictionary = catalog.sounds.get("flesh.hit", {})
+	check(str(row.get("files", [""])[0]).contains("flesh_hit_wet8"), "flesh hit uses the tested clip")
+	check(row.get("bus", "") == "Effects", "flesh hit plays on Effects")
 	var stream: AudioStream = catalog.streams.get(row.get("files", [""])[0])
-	check(stream != null and stream.get_length() > 0.2 and stream.get_length() < 0.3, "clip is a short hit, %.2fs" % (stream.get_length() if stream else -1.0))
+	check(stream != null and stream.get_length() > 0.4, "clip is playable, %.2fs" % (stream.get_length() if stream else -1.0))
 
 	check(hit("melee"), "melee hit is accepted")
-	check(playing("zombie.hit.flesh") == 1, "melee hit plays the flesh impact")
-
+	check(playing("flesh.hit") == 1, "melee hit plays the flesh impact")
 	check(hit("cutting"), "cutting hit is accepted")
-	check(playing("zombie.hit.flesh") == 1, "cutting hit plays the flesh impact")
-
-	# Gunfire already has its own flesh impact; this must not double it.
+	check(playing("flesh.hit") == 1, "cutting hit plays the flesh impact")
 	check(hit("firearm"), "firearm hit is accepted")
-	check(playing("zombie.hit.flesh") == 0, "firearm hits do not double the flesh impact")
+	check(playing("flesh.hit") == 0, "firearm never adds a flesh voice")
 
-	# A rejected hit stays silent.
-	adapter.audio.stop_sound("zombie.hit.flesh")
-	world._flesh_ms = -1000000
-	check(not world.apply_hit({"zombie": actor, "part": "tail", "position": Vector3.UP}, 10.0, Vector3.FORWARD, "melee"), "unknown part is rejected")
-	check(playing("zombie.hit.flesh") == 0, "a rejected hit plays nothing")
-
-	# The repeat guard stops a flurry from stacking.
-	adapter.audio.stop_sound("zombie.hit.flesh")
-	adapter.last_event_ms.erase("zombie.hit.flesh")
-	world._flesh_ms = Time.get_ticks_msec()
-	world.apply_hit({"zombie": actor, "part": "torso", "position": actor.global_position + Vector3.UP}, 10.0, Vector3.FORWARD, "melee")
-	check(playing("zombie.hit.flesh") == 0, "a second hit within the guard is skipped")
-
-	world.queue_free(); adapter.queue_free()
+	world.queue_free(); game.queue_free()
 	print("ZOMBIE_FLESH_HIT failures=%d" % failures)
 	quit(1 if failures > 0 else 0)

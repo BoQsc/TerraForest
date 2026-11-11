@@ -17,14 +17,14 @@
       "limit": 2
     },
     {
-      "id": "zombie.hit.flesh",
-      "event": "zombie.hit.flesh",
+      "id": "flesh.hit",
+      "event": "flesh.hit",
       "files": [
-        "critical_hit_3_220ms.wav"
+        "flesh_hit_wet8.wav"
       ],
       "bus": "Effects",
-      "gain_db": -14,
-      "pitch": 1.08,
+      "gain_db": -16,
+      "pitch": 1.06,
       "range": 26,
       "priority": 70,
       "limit": 3

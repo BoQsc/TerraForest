@@ -12,7 +12,7 @@ func check(ok: bool, label: String) -> void:
 
 func _init() -> void:
 	var attack = Attack.new()
-	check(attack.break_event({"kind": "actor", "material": "other"}) == "zombie.hit.flesh", "a struck actor plays the flesh impact")
+	check(attack.break_event({"kind": "actor", "material": "other"}) == "flesh.hit", "a struck actor routes to the flesh event")
 	check(attack.break_event({"kind": "tree"}) == "world.break.wood", "trees still break as wood")
 	check(attack.break_event({"kind": "cover", "material": "stone"}) == "world.break.stone", "stone cover still breaks as stone")
 	check(attack.break_event({"kind": "block", "material": "wood"}) == "world.break.wood", "wood blocks still break as wood")

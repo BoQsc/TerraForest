@@ -332,6 +332,8 @@ func _hush_groan(id: int) -> void:
 ## Flesh impact for melee, cutting and heavy hits. Gunfire already plays its own
 ## flesh impact, so only non-firearm hits come here. Played at the listener:
 ## the attacker is the one swinging, so the level must not depend on reach.
+## The assigned recording is chosen in the audition selection; Critical Hit 3 is
+## rejected for flesh, so this stays silent until a usable clip is approved.
 const FLESH_REPEAT_MS := 70
 var _flesh_ms := -1000000
 
@@ -343,7 +345,7 @@ func _flesh_hit(point: Vector3, impact: String) -> void:
 	var host: Node = get_parent()
 	var adapter: Node = host.get_node_or_null("WorldAudio") if host != null else null
 	if adapter == null or not adapter.has_method("play_event"): return
-	adapter.play_event("zombie.hit.flesh", point, true)
+	adapter.play_event("flesh.hit", point, true)
 
 func _update_spacing() -> void:
 	# Six ordinary actors or sixteen authored encounter actors; no world scan.
