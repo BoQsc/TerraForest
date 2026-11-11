@@ -6,3 +6,5 @@ dist/
 *.tmp.*
 __pycache__/
 steam/logs/
+# Local flesh-hit audition candidates; the shipped clip lives in packs/Kaino.
+addons/audio_runtime/packs/Kaino/1/flesh_more/
