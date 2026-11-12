@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: 0BSD
-extends CanvasLayer
+extends Node
 ## The hub's permanent taskbar-notification-area presence.
 ##
 ## Added by the hub scene (`worlds.gd`) and kept by `WorldSession`, so the tray
@@ -24,7 +24,6 @@ var _menu:PopupMenu
 ## The single process-wide tray owner (see `ensure`).
 static var _instance:Node
 func _ready()->void:
-	layer=100
 	supported=DisplayServer.has_feature(DisplayServer.FEATURE_STATUS_INDICATOR) and not Engine.is_embedded_in_editor()
 	if not supported:return
 	# One frame later: StatusIndicator registers with Windows on entering the
@@ -36,6 +35,7 @@ func _create_tray()->void:
 	tray.name="Tray"
 	tray.tooltip="TerraForest hub"
 	tray.icon=tray_texture()
+	tray.visible=true
 	add_child(tray)
 	_menu=PopupMenu.new()
 	_menu.name="TrayMenu"
@@ -43,12 +43,22 @@ func _create_tray()->void:
 	_menu.add_item("Quit TerraForest",1)
 	_menu.id_pressed.connect(_menu_action)
 	add_child(_menu)
+	# Set right after entering the tree: the setter resolves this path at once,
+	# so it cannot be assigned before the indicator is inside the tree.
 	tray.menu=_menu.get_path()
-	tray.pressed.connect(func(_button:int, _position:Vector2i):show_hub())
+	tray.pressed.connect(_on_tray_pressed)
 	# Arm only once the hub window has been shown; a later close then means
 	# "to the tray". Worlds re-arm on their own notifications, so their close
 	# requests never reach this handler.
 	hub_shown.call_deferred()
+## Left click raises the hub; right click belongs to the native menu.
+func _on_tray_pressed(button:int, position:Vector2i)->void:
+	if button==MOUSE_BUTTON_RIGHT:
+		# Do nothing at all. Godot/Windows opens `tray.menu` for the right
+		# button; popping it ourselves made it an embedded subwindow, which
+		# forced the minimized game window back up over the menu.
+		return
+	show_hub()
 func supported_here()->bool:
 	return supported
 ## True when a close request should go to the tray instead of quitting.
@@ -80,14 +90,13 @@ static func ensure(tree:SceneTree)->Node:
 	if existing!=null:
 		_instance=existing
 		return existing
-	var layer:=CanvasLayer.new()
-	layer.name="HubWindow"
-	layer.set_script(load("res://addons/hub/hub_window.gd"))
-	_instance=layer
+	var owner:Node=load("res://addons/hub/hub_window.gd").new()
+	owner.name="HubWindow"
+	_instance=owner
 	# Deferred: adding mid-setup hides the icon (see _ready); the guard above
 	# also keeps two callers from queueing two owners.
-	tree.root.add_child.call_deferred(layer)
-	return layer
+	tree.root.add_child.call_deferred(owner)
+	return owner
 func _tray_visible(value:bool)->void:
 	if supported and tray!=null:tray.visible=value
 func _notification(what:int)->void:

@@ -30,12 +30,27 @@ func _initialize()->void:
 	check(tray!=null and tray.visible, "tray icon visible while the hub is up")
 	var menu_path:NodePath=tray.menu if tray!=null else NodePath()
 	check(tray!=null and not menu_path.is_empty() and window.get_node_or_null(menu_path) is PopupMenu, "tray uses the native popup menu")
+
 	# Closing the window must minimize, not quit.
 	root.propagate_notification(Node.NOTIFICATION_WM_CLOSE_REQUEST)
 	for _frame:int in 5:await process_frame
 	check(bool(window.get("minimized")), "close request minimized the hub")
 	check(root.get_window().mode==Window.MODE_MINIMIZED, "window is minimized")
 	check(tray!=null and tray.visible, "tray icon stays while minimized")
+	# Right click must offer the menu, never raise the hub window.
+	check(tray!=null and not tray.menu.is_empty() and tray.get_node_or_null(tray.menu) is PopupMenu, "tray menu path resolves from the indicator")
+	# Emit the node's own signal so a wrong connection (the original bug:
+	# every button restored the window) would be caught, not just the handler.
+	tray.pressed.emit(MOUSE_BUTTON_RIGHT,Vector2i(100,100))
+	for _frame:int in 3:await process_frame
+	check(bool(window.get("minimized")), "right click does not raise the hub window")
+	var tray_menu:PopupMenu=window.get("_menu")
+	check(tray_menu!=null and not tray_menu.visible, "right click leaves the menu to Windows, not an embedded popup")
+	tray.pressed.emit(MOUSE_BUTTON_LEFT,Vector2i(100,100))
+	for _frame:int in 3:await process_frame
+	check(not bool(window.get("minimized")), "left click raises the hub window")
+	window.call("minimize")
+	for _frame:int in 3:await process_frame
 	window.call("show_hub")
 	for _frame:int in 5:await process_frame
 	check(not bool(window.get("minimized")), "tray restores the hub window")

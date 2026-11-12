@@ -79,7 +79,7 @@ var generation_screen:CanvasLayer
 var credits_button:Button
 var credits_dialog:CreditsDialog
 var community:Control
-var hub_window:CanvasLayer
+var hub_window:Node
 func heading(parent: Node,text: String,size: int=24) -> Label:
 	var label:=Label.new();label.text=text;label.add_theme_font_size_override("font_size",size);parent.add_child(label);return label
 func button(parent: Node,text: String,action: Callable) -> Button:
