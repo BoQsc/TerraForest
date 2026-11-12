@@ -57,6 +57,7 @@ static func build(host:Control,planet_layout:bool)->void:
 	host.gameplay=CheckBox.new();host.gameplay.text="Gameplay material costs (uncheck for free editor)";host.gameplay.button_pressed=true;place(host.gameplay,canvas,Rect2(64,1004,770,36))
 	var bottom:=HBoxContainer.new();place(bottom,canvas,Rect2(870,998,986,48))
 	host.notice=host.heading(bottom,"",14);host.notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;host.notice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	host.button(bottom,"Community",host.open_community)
 	host.credits_button=host.button(bottom,"Credits & licenses",host.show_credits)
 	host.button(bottom,"UI sets",host.open_ui_studio)
 	host.button(bottom,"Quit",host.request_quit)

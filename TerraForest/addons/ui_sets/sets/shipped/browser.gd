@@ -44,6 +44,7 @@ static func build(host:Control)->void:
 	host.gameplay=CheckBox.new();host.gameplay.text="Gameplay material costs (uncheck for free editor)";host.gameplay.button_pressed=true;panel.add_child(host.gameplay)
 	var bottom:=HBoxContainer.new();bottom.alignment=BoxContainer.ALIGNMENT_END;panel.add_child(bottom)
 	host.notice=host.heading(bottom,"",16);host.notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;host.notice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	host.button(bottom,"Community",host.open_community)
 	host.credits_button=host.button(bottom,"Credits & licenses",host.show_credits)
 	host.button(bottom,"UI sets",host.open_ui_studio)
 	host.button(bottom,"Quit",host.request_quit)

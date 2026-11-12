@@ -5,6 +5,7 @@ signal presentation_changed(fullscreen:bool)
 const Options=preload("res://addons/world_runtime/session_options.gd")
 const MeshHandoff=preload("res://addons/world_runtime/generation_mesh_handoff.gd")
 const Presentation=preload("res://addons/presentation/fullscreen_policy.gd")
+const HubWindow=preload("res://addons/hub/hub_window.gd")
 var transitioning:=false
 var cover:CanvasLayer
 var last_error:=""
@@ -23,6 +24,14 @@ func _ready()->void:
 	get_window().focus_entered.connect(_restore_presentation.call_deferred)
 	get_tree().scene_changed.connect(_attach_optional_audio)
 	_attach_optional_audio.call_deferred()
+	_attach_hub_tray()
+	get_tree().scene_changed.connect(_attach_hub_tray)
+## Keeps the notification-area owner alive for the whole process: worlds must
+## not lose the way back to the hub when the browser scene is replaced.
+func _attach_hub_tray()->void:
+	if get_tree().current_scene==null:return
+	var tray:Node=HubWindow.ensure(get_tree())
+	if tray!=null and get_tree().current_scene.scene_file_path!="res://demo/worlds.tscn":tray.world_active()
 func _restore_presentation()->void:
 	Presentation.apply(get_window())
 func _input(event:InputEvent)->void:

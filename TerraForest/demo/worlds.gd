@@ -5,6 +5,7 @@ const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
 const Launch=preload("res://demo/world_launch.gd")
 const CreditsDialog=preload("res://demo/credits_dialog.gd")
 const WorldLibrary=preload("res://demo/world_library.gd")
+const CommunityPanel=preload("res://addons/hub/community_panel.gd")
 var preview_mode:=false
 var ui_set:Resource
 var library:WorldLibrary
@@ -77,11 +78,19 @@ var cancel_button:Button
 var generation_screen:CanvasLayer
 var credits_button:Button
 var credits_dialog:CreditsDialog
+var community:Control
+var hub_window:CanvasLayer
 func heading(parent: Node,text: String,size: int=24) -> Label:
 	var label:=Label.new();label.text=text;label.add_theme_font_size_override("font_size",size);parent.add_child(label);return label
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=48;out.pressed.connect(action);parent.add_child(out);return out
 func _ready() -> void:
+	# The tray owner exists even for preview instances: closing the hub window
+	# must never quit or trap the process because of which scene loaded it.
+	# One owner for the whole process. `ensure` is idempotent, so the hub scene
+	# and WorldSession can both ask for it without adding a second icon.
+	hub_window=preload("res://addons/hub/hub_window.gd").ensure(get_tree())
+	hub_window.hub_shown.call_deferred()
 	if not preview_mode:
 		preload("res://addons/world_runtime/session_options.gd").reset()
 		session=preload("res://addons/world_runtime/world_session.gd").obtain(get_tree())
@@ -99,6 +108,15 @@ func _ready() -> void:
 	library.details_ready.connect(_saved_details_ready)
 	refresh()
 	if not session.last_error.is_empty():notice.text=session.last_error;session.last_error=""
+## Community overlay (chat, news, issues, update placeholder). Created lazily
+## and kept alive so the Forge room stays connected while the hub is used.
+func open_community()->void:
+	if community==null:
+		community=CommunityPanel.new()
+		add_child(community)
+	# Above the browser so the overlay receives clicks and covers the window.
+	move_child(community,get_child_count()-1)
+	community.open()
 func open_ui_studio()->void:
 	if preparation_pid>=0 or photograph_pid>=0:
 		notice.text="Finish or cancel the current world job before changing UI sets.";return
@@ -380,7 +398,13 @@ func request_quit()->void:
 	quit_pending=cancel_pending
 func _notification(what:int)->void:
 	if preview_mode:return
-	if what==NOTIFICATION_WM_CLOSE_REQUEST:request_quit()
+	if what!=NOTIFICATION_WM_CLOSE_REQUEST:return
+	# Closing the hub leaves the process in the notification area; the tray
+	# icon is the way back and the only way out (besides the Quit button).
+	if hub_window!=null and hub_window.handles_close():
+		hub_window.minimize()
+		return
+	request_quit()
 
 func selected_preview_key()->String:
 	return "%d/%d/%s"%[int(seed_field.value),Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed),preload("res://addons/world_runtime/world_recipe.gd").encode(selected_options()).hex_encode()] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
