@@ -13,6 +13,7 @@ placeholder on purpose. No Steam dependency; players are anonymous.
 | `community_panel.gd` | Overlay UI: Chat / News / Issues / Updates. |
 | `hub_window.gd` | The taskbar notification-area icon, close-to-tray and the tray menu (kept alive by `WorldSession`). |
 | `tray_icon.png` | 256 px square tray icon (Godot has no `.ico` loader). |
+| `settings.gd` | `user://hub/settings.json`; the tray is **experimental and off by default**. |
 | `feeds.gd` | Fetches `news.json` / `issues.json` from `https://forge.boqsc.eu/~/<project>/`, caches to `user://hub/`. |
 | `forge_client.gd` | Small REST helper (public reads; upload/delete for tooling). |
 | `publish/publish_feeds.py` | Publisher-side only: merges and uploads the two JSON feeds. |

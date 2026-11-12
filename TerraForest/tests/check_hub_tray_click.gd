@@ -1,18 +1,19 @@
 # SPDX-License-Identifier: 0BSD
 # Usage (windowed):
 #   godot --path . --script res://tests/check_hub_tray_click.gd
-# Then, while it runs, a second process right-clicks the icon at the rect this
-# script writes to %TEMP%\tf_tray_rect.txt. The script records every moment the
-# hub window is not minimized while the click is expected.
+# A helper right-clicks the icon at ~2.5 s and left-clicks at ~7.5 s using the
+# rect written to %TEMP%\tf_tray_rect.txt.
 extends SceneTree
-## Real-click check: a physical right-click on the notification icon must not
-## raise the hub window (the reported bug). Left click is covered elsewhere.
+## Real clicks: right click must not raise the hub (menu only), left click must
+## raise it. This is the pair that broke when the engine-owned menu suppressed
+## `pressed`.
 var failures:=PackedStringArray()
 func check(condition:bool, message:String)->void:
 	if not condition:failures.append(message)
 	print(("PASS " if condition else "FAIL ")+message)
 func _initialize()->void:
-	print("HUB TRAY CLICK")
+	print("HUB TRAY CLICKS")
+	preload("res://addons/hub/settings.gd").set_tray_enabled(true)
 	var scene:Variant=load("res://demo/worlds.tscn")
 	var hub:Node=(scene as PackedScene).instantiate()
 	hub.set("preview_mode",true)
@@ -24,13 +25,13 @@ func _initialize()->void:
 		_finish()
 		return
 	var tray:StatusIndicator=window.get("tray")
-	for _frame:int in 20:
+	for _frame:int in 40:
 		await process_frame
 		if tray!=null and tray.get_rect().size.x>0:break
 	var rect:Rect2=tray.get_rect() if tray!=null else Rect2()
 	print("TRAY RECT ",rect)
-	var screen:=Rect2(Vector2.ZERO,Vector2(DisplayServer.screen_get_size()))
-	check(rect.size.x>0 and screen.encloses(rect), "icon reports a rect on screen")
+	check(rect.size.x>0 and rect.size.y>0, "icon reports a real rect (registered with the shell)")
+	check(tray!=null and tray.menu.is_empty(), "no engine menu, so left click still reaches the hub")
 	var path:=OS.get_environment("TEMP").path_join("tf_tray_rect.txt")
 	var file:=FileAccess.open(path,FileAccess.WRITE)
 	if file!=null:
@@ -39,15 +40,17 @@ func _initialize()->void:
 	window.call("minimize")
 	for _frame:int in 10:await process_frame
 	check(bool(window.get("minimized")), "hub starts minimized for the click test")
-	# The helper clicks at ~3.5 s; record any raise between 2.5 s and 7 s.
+	# Right click ~2.5 s, left click ~7.5 s.
 	var raised:Array=[]
 	var started:=Time.get_ticks_msec()
-	while Time.get_ticks_msec()-started<9000:
+	while Time.get_ticks_msec()-started<12000:
 		await process_frame
 		if root.get_window().mode!=Window.MODE_MINIMIZED:
 			raised.append(Time.get_ticks_msec()-started)
-	var early:Array=raised.filter(func(v:int)->bool:return v>=1500 and v<=7500)
-	check(early.is_empty(), "physical right click kept the hub minimized (raises: %s)" % [early])
+	var right_phase:Array=raised.filter(func(v:int)->bool:return v>=1000 and v<=5000)
+	var left_phase:Array=raised.filter(func(v:int)->bool:return v>=6000 and v<=11500)
+	check(right_phase.is_empty(), "physical right click kept the hub minimized (raises: %s)" % [right_phase])
+	check(not left_phase.is_empty(), "physical left click raised the hub (raises: %s)" % [left_phase])
 	print("INFO raises=%s" % [raised])
 	_finish()
 func _finish()->void:

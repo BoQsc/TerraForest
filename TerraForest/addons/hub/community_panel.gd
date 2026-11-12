@@ -7,6 +7,7 @@ extends Control
 const Chat=preload("res://addons/hub/chat.gd")
 const Feeds=preload("res://addons/hub/feeds.gd")
 const Config=preload("res://addons/hub/config.gd")
+const Settings=preload("res://addons/hub/settings.gd")
 var chat
 var feeds:=Feeds.new()
 ## `local_identity` lets a test or a second copy join as a distinct name.
@@ -153,7 +154,17 @@ func _build_updates_tab(parent:TabContainer)->void:
 	updates_label=Label.new()
 	updates_label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	page.add_child(updates_label)
+	var tray_toggle:=CheckBox.new()
+	tray_toggle.text="Experimental: notification-area (tray) icon"
+	tray_toggle.button_pressed=Settings.tray_enabled()
+	tray_toggle.toggled.connect(_set_tray_enabled)
+	page.add_child(tray_toggle)
 	_refresh_updates_text()
+## Opt-in switch for the experimental tray icon; applies immediately and is
+## remembered in user://hub/settings.json. Off means nothing is created.
+func _set_tray_enabled(on:bool)->void:
+	Settings.set_tray_enabled(on)
+	preload("res://addons/hub/hub_window.gd").set_enabled(get_tree(),on)
 func _label(text:String)->Label:
 	var label:=Label.new()
 	label.text=text

@@ -87,10 +87,11 @@ func button(parent: Node,text: String,action: Callable) -> Button:
 func _ready() -> void:
 	# The tray owner exists even for preview instances: closing the hub window
 	# must never quit or trap the process because of which scene loaded it.
-	# One owner for the whole process. `ensure` is idempotent, so the hub scene
-	# and WorldSession can both ask for it without adding a second icon.
-	hub_window=preload("res://addons/hub/hub_window.gd").ensure(get_tree())
-	hub_window.hub_shown.call_deferred()
+	# Experimental and opt-in: nothing is created unless the player enabled it
+	# in the hub, so a default install never touches the notification area.
+	if preload("res://addons/hub/settings.gd").tray_enabled():
+		hub_window=preload("res://addons/hub/hub_window.gd").ensure(get_tree())
+		hub_window.hub_shown.call_deferred()
 	if not preview_mode:
 		preload("res://addons/world_runtime/session_options.gd").reset()
 		session=preload("res://addons/world_runtime/world_session.gd").obtain(get_tree())
@@ -401,8 +402,9 @@ func _notification(what:int)->void:
 	if what!=NOTIFICATION_WM_CLOSE_REQUEST:return
 	# Closing the hub leaves the process in the notification area; the tray
 	# icon is the way back and the only way out (besides the Quit button).
-	if hub_window!=null and hub_window.handles_close():
-		hub_window.minimize()
+	var tray:Node=hub_window if hub_window!=null else get_tree().root.get_node_or_null("HubWindow")
+	if tray!=null and tray.handles_close():
+		tray.minimize()
 		return
 	request_quit()
 

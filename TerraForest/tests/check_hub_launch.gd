@@ -13,14 +13,22 @@ func _initialize()->void:
 	var main_scene:=str(ProjectSettings.get_setting("application/run/main_scene",""))
 	print("HUB LAUNCH main_scene=%s driver=%s" % [main_scene,DisplayServer.get_name()])
 	check(main_scene=="res://demo/worlds.tscn", "launch scene is the hub browser")
+	var settings:=preload("res://addons/hub/settings.gd")
+	var was_enabled:=settings.tray_enabled()
+	settings.set_tray_enabled(false)
 	var error:=change_scene_to_file(main_scene)
 	check(error==OK, "engine launches the hub scene")
 	for _frame:int in 30:await process_frame
 	var current:=current_scene
 	check(current!=null and current.scene_file_path==main_scene, "hub scene is running after launch")
+	check(root.get_node_or_null("HubWindow")==null, "tray stays off until the player opts in")
+	settings.set_tray_enabled(true)
+	preload("res://addons/hub/hub_window.gd").set_enabled(self,true)
+	for _frame:int in 15:await process_frame
 	var window:Node=root.get_node_or_null("HubWindow")
-	check(window!=null, "hub registered its notification-area owner on launch")
+	check(window!=null, "turning the experimental tray on creates its owner")
 	if window==null:
+		settings.set_tray_enabled(was_enabled)
 		_finish()
 		return
 	check(bool(window.call("supported_here")), "tray is supported on this display server")
@@ -28,8 +36,8 @@ func _initialize()->void:
 	check(tray!=null, "StatusIndicator exists on launch")
 	check(tray!=null and tray.visible, "tray icon is visible right after launch")
 	check(tray!=null and tray.icon!=null, "tray icon has a texture")
-	var menu:Node=tray.get_node_or_null(tray.menu) if tray!=null else null
-	check(menu is PopupMenu and (menu as PopupMenu).item_count==2, "tray menu offers the hub actions")
+	var menu:PopupMenu=window.get("_menu")
+	check(menu!=null and menu.item_count==2, "tray menu offers the hub actions")
 	# The hub's own UI must be there, not just the icon.
 	var labels:Array=[]
 	if current!=null:
@@ -44,7 +52,7 @@ func _initialize()->void:
 	for _frame:int in 5:await process_frame
 	check(current_scene==current, "tray restores the same hub instead of reloading it")
 	check(not bool(window.get("minimized")), "hub window is back")
-	window.call("quit_hub")
+	settings.set_tray_enabled(was_enabled)
 	await process_frame
 	_finish()
 func _finish()->void:

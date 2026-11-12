@@ -30,6 +30,9 @@ func _ready()->void:
 ## not lose the way back to the hub when the browser scene is replaced.
 func _attach_hub_tray()->void:
 	if get_tree().current_scene==null:return
+	# Experimental and opt-in: do not create anything unless the player
+	# enabled it (the hub scene honours the same setting).
+	if not preload("res://addons/hub/settings.gd").tray_enabled():return
 	var tray:Node=HubWindow.ensure(get_tree())
 	if tray!=null and get_tree().current_scene.scene_file_path!="res://demo/worlds.tscn":tray.world_active()
 func _restore_presentation()->void:

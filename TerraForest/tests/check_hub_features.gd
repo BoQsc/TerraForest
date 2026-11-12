@@ -11,6 +11,13 @@ var _nets:Array=[]
 func check(condition:bool, message:String)->void:
 	if not condition:failures.append(message)
 	print(("PASS " if condition else "FAIL ")+message)
+## Waits for a condition that depends on deferred node work.
+func _until(condition:Callable, seconds:float)->bool:
+	var deadline:=Time.get_ticks_msec()+int(seconds*1000.0)
+	while Time.get_ticks_msec()<deadline:
+		if condition.call():return true
+		await process_frame
+	return condition.call()
 func _initialize()->void:
 	print("HUB FEATURES")
 	# The HTTPRequest must live under the root before the first request starts.
@@ -49,6 +56,23 @@ func test_panel()->void:
 	panel.open()
 	await process_frame
 	check(panel.is_open(), "panel opens")
+	var toggle:CheckBox=null
+	for node:Node in panel.find_children("*","CheckBox",true,false):
+		if str(node.get("text")).contains("notification-area"):toggle=node
+	check(toggle!=null, "updates tab exposes the experimental tray toggle")
+	check(toggle!=null and toggle.button_pressed==preload("res://addons/hub/settings.gd").tray_enabled(), "toggle reflects the stored preference")
+	if toggle!=null:
+		var settings:=preload("res://addons/hub/settings.gd")
+		toggle.button_pressed=true
+		await process_frame
+		await process_frame
+		check(settings.tray_enabled(), "toggling on persists the opt-in")
+		check(await _until(func()->bool:return root.get_node_or_null("HubWindow")!=null, 2.0), "toggling on creates the tray owner")
+		toggle.button_pressed=false
+		await process_frame
+		await process_frame
+		check(not settings.tray_enabled(), "toggling off persists the opt-out")
+		check(await _until(func()->bool:return root.get_node_or_null("HubWindow")==null, 2.0), "toggling off removes the tray owner")
 	panel.send_current()
 	await process_frame
 	var lines:Array=panel.chat.lines()

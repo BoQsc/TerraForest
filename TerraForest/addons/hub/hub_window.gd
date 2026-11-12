@@ -43,9 +43,12 @@ func _create_tray()->void:
 	_menu.add_item("Quit TerraForest",1)
 	_menu.id_pressed.connect(_menu_action)
 	add_child(_menu)
-	# Set right after entering the tree: the setter resolves this path at once,
-	# so it cannot be assigned before the indicator is inside the tree.
-	tray.menu=_menu.get_path()
+	# No `tray.menu`: with it set the engine suppresses `pressed`, which kills
+	# left-click. We show the menu ourselves as a real OS popup (see
+	# `_show_menu`), anchored at the icon above the taskbar.
+	_menu.transient=false
+	_menu.exclusive=false
+	_menu.visibility_changed.connect(_restore_embedding)
 	tray.pressed.connect(_on_tray_pressed)
 	# Arm only once the hub window has been shown; a later close then means
 	# "to the tray". Worlds re-arm on their own notifications, so their close
@@ -54,11 +57,21 @@ func _create_tray()->void:
 ## Left click raises the hub; right click belongs to the native menu.
 func _on_tray_pressed(button:int, position:Vector2i)->void:
 	if button==MOUSE_BUTTON_RIGHT:
-		# Do nothing at all. Godot/Windows opens `tray.menu` for the right
-		# button; popping it ourselves made it an embedded subwindow, which
-		# forced the minimized game window back up over the menu.
+		_show_menu(position)
 		return
 	show_hub()
+## Screen-anchored menu: the hub runs with embedded subwindows, which would
+## place a popup in window coordinates inside the game instead of above the
+## taskbar, so embedding is suspended while the menu is visible.
+func _show_menu(at:Vector2i)->void:
+	if _menu==null:return
+	var root_window:=get_tree().root
+	root_window.gui_embed_subwindows=false
+	_menu.popup(Rect2i(at,Vector2i.ZERO))
+func _restore_embedding()->void:
+	if _menu!=null and _menu.visible:return
+	var root_window:=get_tree().root
+	root_window.gui_embed_subwindows=true
 func supported_here()->bool:
 	return supported
 ## True when a close request should go to the tray instead of quitting.
@@ -84,6 +97,17 @@ func world_active()->void:
 	_close_armed=false
 ## Worlds are created by WorldSession, after the hub scene is gone; they call
 ## this so the icon is not destroyed together with the hub browser.
+## Turns the experimental tray on or off for this session and on disk.
+static func set_enabled(tree:SceneTree,on:bool)->void:
+	if on:
+		ensure(tree).call_deferred("hub_shown")
+		return
+	if is_instance_valid(_instance):
+		var old:Node=_instance
+		_instance=null
+		old.queue_free()
+	var stray:=tree.root.get_node_or_null("HubWindow")
+	if stray!=null:stray.queue_free()
 static func ensure(tree:SceneTree)->Node:
 	if is_instance_valid(_instance):return _instance
 	var existing:=tree.root.get_node_or_null("HubWindow")

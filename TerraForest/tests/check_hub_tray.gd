@@ -5,12 +5,15 @@ extends SceneTree
 ## and on display servers without status indicators the close request quits
 ## instead of trapping the player in a minimized window.
 const HubWindow=preload("res://addons/hub/hub_window.gd")
+const Settings=preload("res://addons/hub/settings.gd")
 var failures:=PackedStringArray()
 func check(condition:bool, message:String)->void:
 	if not condition:failures.append(message)
 	print(("PASS " if condition else "FAIL ")+message)
 func _initialize()->void:
 	print("HUB TRAY")
+	var was_enabled:=Settings.tray_enabled()
+	Settings.set_tray_enabled(true)
 	var scene:Variant=load("res://demo/worlds.tscn")
 	check(scene is PackedScene, "hub scene loads")
 	if not scene is PackedScene:
@@ -33,5 +36,6 @@ func _initialize()->void:
 	check(window!=null, "close requests are routed through the tray owner")
 	hub.queue_free()
 	await process_frame
+	Settings.set_tray_enabled(was_enabled)
 	print("RESULT %s (%d failures)" % ["PASS" if failures.is_empty() else "FAIL", failures.size()])
 	quit(0 if failures.is_empty() else 1)
