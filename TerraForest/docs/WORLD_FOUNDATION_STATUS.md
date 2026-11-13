@@ -1,5 +1,8 @@
 ## Terrain-reactive volumetric water assessment — 2026-11-13
 
+Implementation is now authorized and active under the
+[recorded milestone plan](../issues/explosive-combat/water-plan.md).
+
 The renewed water request reopens terrain-response work. The
 [assessment and implementation gates](../issues/explosive-combat/water-assessment-2026-11-13.md)
 confirm real regional 3D quantities, default-disabled settling, lossy thin-water
