@@ -1,3 +1,12 @@
+## Steam launch path correction — 2026-11-13
+
+Both original Steam desktop shortcuts are restored byte-for-byte after the user
+rejected direct launcher targets. Preserve Steam routing. Prior direct-launcher
+verification below is historical and does not certify the Steam route. Loading
+still has a newly reported connected-water transaction failure; water performance
+is also rejected. Both remain open. See the last-world-startup issue for restoration
+receipts and exact Steam IDs. No Steam library entry or player save was changed.
+
 ## Last World launcher / new-world generation repair - 2026-11-13
 
 [Plan, failures and verification](../issues/last-world-startup/README.md#native-launcher-and-generation-repair-plan-2026-11-13):

@@ -164,3 +164,19 @@ release water libraries match the current source-build hashes. The read-only
 normal Continue report resolves to the original player slot
 `StartupBench_FPS_20261109T215117560533`; it was not loaded or modified
 (`reports/launcher_generation/player_continue_target.log`).
+
+
+## Steam shortcut restoration — 2026-11-13
+
+The user rejected replacing the Steam desktop shortcuts with direct Godot launcher
+targets. Both original `.lnk` files were restored byte-for-byte from
+`reports/launcher_generation/shortcuts/*.original.lnk` and their hashes verified.
+TerraForest routes through Steam game ID `16329458564139581440`; Last World routes
+through `17039750085069504512`. Steam library entries were not edited. No game was
+launched and no desktop input was sent during restoration.
+
+Preserve the user's Steam launch route. The earlier direct-launcher installation
+is superseded, not accepted. Any freshness repair must work through that route;
+existing launcher preparation checks do not establish Steam-path correctness.
+The newly reported connected-water transaction failure and performance rejection
+remain unresolved; shortcut restoration does not claim to fix either.
