@@ -348,6 +348,14 @@ both save/shutdown runs pass cleanly, but triggered gameplay p99 remains about
 32.3 ms and maximum reaches 40.257 ms, mostly draw. No overall pacing/headroom
 improvement is claimed for this admission-only correction.
 
+[Combat CPU follow-up](../issues/runtime-performance/combat-cpu-2026-11-13.md)
+removes redundant animated hit areas while preserving all native damage regions,
+uses exact offline render packets for native skin baking, and restores corpses
+without constructing discarded debris. Controlled arm severing falls from 8.605
+to 3.852 ms median; combat p99 is still 19.434 ms. Original human process stalls,
+remaining frame spikes and sustained 60 FPS headroom remain open; the dedicated
+report records reproduction, failed receipts and required follow-up evidence.
+
 [Native query profiling and exact support reuse](../issues/runtime-performance/navigation-query-cache-2026-11-09.md)
 identify dense support rays as about 69% of saved-world planning query time.
 A bounded 3 MiB cache per navigator preserves every sample and all live movement

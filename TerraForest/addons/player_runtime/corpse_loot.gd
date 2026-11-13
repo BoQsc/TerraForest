@@ -146,7 +146,7 @@ func finish_restore(zombie:Node3D,missing:int)->void:
 	if not is_instance_valid(zombie):return
 	var index:=0
 	for part:String in zombie.PARTS:
-		if missing&(1<<index) and part!="torso" and not zombie.missing.get(part,false):zombie.sever_limb(part)
+		if missing&(1<<index) and part!="torso" and not zombie.missing.get(part,false):zombie.sever_limb(part,Vector3.ZERO,false)
 		index+=1
 	for detached:RigidBody3D in zombie.detached_parts:
 		if is_instance_valid(detached):detached.queue_free()

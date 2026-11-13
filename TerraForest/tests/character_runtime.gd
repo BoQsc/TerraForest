@@ -9,6 +9,7 @@ var encounters: Node3D
 var target: Node3D
 var view: Node3D
 var camera: Camera3D
+var evidence_directory:="res://reports/character_runtime"
 
 func check(ok: bool, label: String) -> void:
 	checks += 1
@@ -16,6 +17,8 @@ func check(ok: bool, label: String) -> void:
 	print(("PASS " if ok else "FAIL ") + label)
 
 func _initialize() -> void:
+	for argument:String in OS.get_cmdline_user_args():
+		if argument.begins_with("--evidence="):evidence_directory=argument.trim_prefix("--evidence=")
 	run.call_deferred()
 
 func run() -> void:
@@ -47,7 +50,7 @@ func run() -> void:
 	wet_gate=false;check(not encounters.supported_point(Vector3(200,0,0)).is_finite(),"missing ground rejects spawn")
 	var zombie=encounters.spawn_at(Vector3(0,0,-3))
 	check(zombie!=null and zombie.initialized and zombie._r4_enabled,"R4 rig and behavior contract initialize")
-	check(zombie.hit_areas.size()==14 and zombie.physical_bones.size()==15,"R4 installs fitted limb regions and ragdoll")
+	check(zombie.anatomy.snapshot().limbs.size()==14 and zombie.find_children("*","Area3D",true,false).is_empty() and zombie.physical_bones.size()==15,"R4 installs native damage regions and ragdoll without redundant physics areas")
 	check(zombie.collision_layer==1<<16,"zombie bodies use dedicated collision layer")
 	for tick in 90:
 		encounters.update(1.0/Engine.physics_ticks_per_second,Vector3.ZERO,true)
@@ -101,19 +104,19 @@ func run() -> void:
 	var subject=encounters.spawn_at(Vector3(0,0,-3.5));subject.set_behavior(false);subject.rotation.y=0
 	view.equip(1)
 	for tick in 8:await process_frame
-	DirAccess.make_dir_recursive_absolute("res://reports/character_runtime")
+	DirAccess.make_dir_recursive_absolute(evidence_directory)
 	if DisplayServer.get_name()!="headless":
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://reports/character_runtime/pickaxe.png")
+		root.get_texture().get_image().save_png(evidence_directory.path_join("pickaxe.png"))
 		view.swing()
 		for tick in 30:await process_frame
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://reports/character_runtime/pickaxe_swing.png")
+		root.get_texture().get_image().save_png(evidence_directory.path_join("pickaxe_swing.png"))
 		view.equip(2)
 		for tick in 8:await process_frame
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://reports/character_runtime/axe.png")
-	var report:=FileAccess.open("res://reports/character_runtime/result.json",FileAccess.WRITE);report.store_string(JSON.stringify({"checks":checks,"failures":failures},"  "));report.close()
+		root.get_texture().get_image().save_png(evidence_directory.path_join("axe.png"))
+	var report:=FileAccess.open(evidence_directory.path_join("result.json"),FileAccess.WRITE);report.store_string(JSON.stringify({"checks":checks,"failures":failures},"  "));report.close()
 	encounters.clear();await process_frame
 	stage.free();await process_frame
 	print("CHARACTER_RUNTIME_OK" if failures==0 else "CHARACTER_RUNTIME_FAIL")

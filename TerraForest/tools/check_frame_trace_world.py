@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--source', default='StartupBench_FPS_20261109T073252')
     parser.add_argument('--label', default='arrival')
     parser.add_argument('--human', action='store_true', help='Five minutes of normal human play; Ctrl+Shift+F11 finishes early')
+    parser.add_argument('--combat-probe', action='store_true', help='Diagnostic close-combat hits and corpse creation in the owned world')
     parser.add_argument('--short', action='store_true')
     parser.add_argument('--uncapped', action='store_true')
     parser.add_argument('--without-trace', action='store_true')
@@ -145,6 +146,8 @@ def main():
         command += ['--trace-normal-window']
     if args.human:
         command += ['--trace-human']
+    if args.combat_probe:
+        command += ['--trace-combat-probe']
     if args.short:
         command += ['--trace-short']
     if args.save:
@@ -219,10 +222,10 @@ def main():
     record = dict(command=command, clone=copied, storage_preflight=storage,
                   retention_capacity=retained_capacity, **revision_metadata())
     record['diagnostic_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
-                                  for p in [ROOT/'tests/frame_trace_world.gd', ROOT/'tests/render_inventory.gd',
+                                  for p in [ROOT/'tests/frame_trace_world.gd', ROOT/'tests/combat_cadence_probe.gd', ROOT/'tests/render_inventory.gd',
                                             ROOT/'tests/render_partition_probe.gd', ROOT/'tests/render_occlusion_probe.gd', ROOT/'tests/cover_outdoor_probe.gd', ROOT/'tests/destruction_load_probe.gd',
                                             ROOT/'addons/world_runtime/frame_trace.gd', ROOT/'addons/world_runtime/render_trace.gd', Path(__file__)]}
-    if args.human:
+    if args.human or args.combat_probe:
         record['source_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                    for base in ('addons', 'demo') for p in sorted((ROOT / base).rglob('*'))
                                    if p.is_file() and p.suffix in ('.gd', '.tscn', '.gdshader')}

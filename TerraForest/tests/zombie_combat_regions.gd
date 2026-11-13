@@ -57,6 +57,7 @@ func surface_shot(zombie:Node3D,part:String,visible_to_world:bool=false)->Dictio
 func run()->void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--zombie-combat-dir="):folder=arg.trim_prefix("--zombie-combat-dir=")
+		if arg.begins_with("--evidence="):folder=arg.trim_prefix("--evidence=")
 	DirAccess.make_dir_recursive_absolute(folder)
 	stage=Node3D.new();root.add_child(stage)
 	var floor:=StaticBody3D.new();floor.collision_layer=2;stage.add_child(floor)
@@ -98,7 +99,7 @@ func run()->void:
 		if part=="torso":continue
 		zombie=await fresh();zombie.sever_limb(part)
 		var native:Dictionary=zombie.anatomy.snapshot()
-		var correct:bool=zombie.missing[part] and native.missing[part] and not zombie.part_meshes[part].visible and zombie.hit_areas[part].collision_layer==0 and zombie.detached_parts.size()==1 and zombie.caps[part].body.visible
+		var correct:bool=zombie.missing[part] and native.missing[part] and not zombie.part_meshes[part].visible and zombie.anatomy.snapshot().missing[part] and not zombie.physical_bones.has(zombie.PARTS[part].bone) and zombie.detached_parts.size()==1 and zombie.caps[part].body.visible
 		if part=="head":correct=correct and not zombie.alive and zombie.health==0
 		elif part.begins_with("thigh") or part.begins_with("shin") or part.begins_with("foot"):correct=correct and zombie.alive and (zombie._crawl_transition or zombie._crawling)
 		check(correct,"complete sever behavior for "+part)

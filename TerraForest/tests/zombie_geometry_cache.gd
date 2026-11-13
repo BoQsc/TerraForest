@@ -1,10 +1,14 @@
 extends SceneTree
+const BakeReference=preload("res://tests/zombie_bake_reference.gd")
 const Zombie=preload("res://addons/characters/runtime/zombie.gd")
 var stage:Node3D
 var checks:=0
 var failures:=0
 var timings:Array[Dictionary]=[]
+var evidence_directory:=""
 func _initialize()->void:
+ for argument:String in OS.get_cmdline_user_args():
+  if argument.begins_with("--evidence="):evidence_directory=argument.trim_prefix("--evidence=")
  if not ClassDB.class_exists("NativeZombieAnatomy"):GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
  run.call_deferred()
 func check(condition:bool,label:String)->void:
@@ -19,7 +23,7 @@ func compare_pose(zombie:Node3D,label:String)->void:
  var local:=Transform3D(Basis(Vector3.UP,0.35),Vector3(2,0.6,-3))
  for part:String in Zombie.PARTS:
   var expected:=PackedVector3Array()
-  var baked:ArrayMesh=zombie._bake_cpu(zombie.part_meshes[part],local)
+  var baked:ArrayMesh=BakeReference.bake(zombie,zombie.part_meshes[part],local)
   for surface in baked.get_surface_count():expected.append_array(baked.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX])
   var actual:PackedVector3Array=zombie.anatomy.sample_vertices(part,local)
   if actual.size()!=expected.size():matched=false;continue
@@ -27,7 +31,7 @@ func compare_pose(zombie:Node3D,label:String)->void:
  check(matched and worst<0.0005,"native points match independent skin/morph reference: "+label+" error="+str(worst))
 func compare_contact(zombie:Node3D,part:String,shapes:Array,use_point:bool)->void:
  var target:=Vector3(0.25,1.5,0.8);var mouth:=AABB(Vector3(-0.027,1.597,0.098),Vector3(0.054,0.027,0.024))
- var source:MeshInstance3D=zombie.part_meshes[part];var baked:ArrayMesh=zombie._bake_cpu(source,Transform3D.IDENTITY)
+ var source:MeshInstance3D=zombie.part_meshes[part];var baked:ArrayMesh=BakeReference.bake(zombie,source,Transform3D.IDENTITY)
  var distance:=INF;var expected:=Vector3.ZERO
  for surface in baked.get_surface_count():
   var vertices:PackedVector3Array=baked.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]
@@ -46,7 +50,7 @@ func compare_contact(zombie:Node3D,part:String,shapes:Array,use_point:bool)->voi
  var actual:Dictionary=zombie.anatomy.closest_contact(part,target,use_point,shapes,mouth)
  check((actual.is_empty() and not is_finite(distance)) or (not actual.is_empty() and absf(actual.distance-distance)<0.0005 and actual.point.distance_to(expected)<0.0005),"native contact preserves nearest visible surface and mouth mask: "+part+" shapes="+str(shapes.size())+" point="+str(use_point))
 func compare_hand(zombie:Node3D,part:String)->void:
- var source:MeshInstance3D=zombie.part_meshes[part];var baked:ArrayMesh=zombie._bake_cpu(source,Transform3D.IDENTITY)
+ var source:MeshInstance3D=zombie.part_meshes[part];var baked:ArrayMesh=BakeReference.bake(zombie,source,Transform3D.IDENTITY)
  var groups:Dictionary={};var prefix:="LeftHand" if part=="hand_l" else "RightHand"
  for surface in baked.get_surface_count():
   var raw:Array=source.mesh.surface_get_arrays(surface);var points:PackedVector3Array=baked.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]
@@ -116,7 +120,7 @@ func run()->void:
  var retry:RefCounted=ClassDB.instantiate("NativeZombieAnatomy");retry.configure(Zombie.PARTS)
  var incomplete:Dictionary=fourth.part_meshes.duplicate();incomplete.hand_r=null
  check(not retry.set_hit_meshes(fourth.skeleton,incomplete,fourth.anatomy) and retry.set_hit_meshes(fourth.skeleton,fourth.part_meshes,fourth.anatomy) and retry.geometry_stats().mesh_reused,"a rejected partial mesh set can be retried without poisoning the cache signature")
- var folder:="res://reports/zombie_geometry_cache";DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
+ var folder:String=evidence_directory if not evidence_directory.is_empty() else "res://reports/zombie_geometry_cache";DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
  FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"initialization_us":timings},"  "))
  geometry=null;different=null;altered=null;retry=null;stage.free();await process_frame;await process_frame
  print("ZOMBIE_GEOMETRY_CACHE checks=",checks," failures=",failures);quit(1 if failures else 0)

@@ -3,7 +3,6 @@ extends Node3D
 ## Bounded scene residency for persistent, seeded world inhabitants.
 const Zombie = preload("res://addons/characters/runtime/zombie.gd")
 const CHARACTER_LAYER := 1 << 16
-const HIT_LAYER := 1 << 17
 const RAGDOLL_LAYER := 1 << 18
 const LIMIT := 6
 const ENCOUNTER_LIMIT := 16

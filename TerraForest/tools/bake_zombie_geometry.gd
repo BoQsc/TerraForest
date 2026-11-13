@@ -24,13 +24,21 @@ func run()->void:
 	var bundle:=GeometryData.new()
 	bundle.source_model=Zombie.DEFAULT_MODEL
 	bundle.data=zombie.anatomy.capture_geometry_data()
+	var meshes:Array=zombie.part_meshes.values()
+	for pair:Dictionary in zombie.caps.values():meshes.append_array(pair.values())
+	for source:MeshInstance3D in meshes:
+		if bundle.render_packets.has(source.mesh.resource_path):continue
+		if source.mesh.resource_path.is_empty():push_error("Baked render mesh lacks stable source path");quit(1);return
+		var packet:Dictionary=zombie._bake_source(source.mesh).duplicate()
+		packet.erase("mesh_id") # Runtime identities are deliberately not serialized.
+		bundle.render_packets[source.mesh.resource_path]=packet
 	var stats:Dictionary=zombie.anatomy.geometry_stats()
 	zombie.free()
 	if bundle.data.is_empty():push_error("Zombie geometry data unavailable");quit(1);return
 	var pending:=OUTPUT.trim_suffix(".res")+".pending.res"
 	if ResourceSaver.save(bundle,pending,ResourceSaver.FLAG_COMPRESS)!=OK:quit(1);return
 	if DirAccess.rename_absolute(pending,OUTPUT)!=OK:quit(1);return
-	var receipt:Dictionary={"schema":1,"engine":engine,"sources":sources,"output_sha256":FileAccess.get_sha256(OUTPUT),"vertices":stats.vertices,"parts":14,"recipe":"Exact existing R4 raw vertices, triangle indices, skin weights and morph arrays from native anatomy; no simplification or collision change. Derived data retains inherited character provenance GAP-002; original preparation code is 0BSD."}
+	var receipt:Dictionary={"schema":2,"engine":engine,"sources":sources,"output_sha256":FileAccess.get_sha256(OUTPUT),"vertices":stats.vertices,"parts":14,"render_meshes":bundle.render_packets.size(),"recipe":"Exact existing R4 anatomy plus complete render vertex attributes and morph arrays for body/cap CPU skinning; no simplification. Derived data retains inherited character provenance GAP-002; original preparation code is 0BSD."}
 	var file:=FileAccess.open(RECEIPT+".pending",FileAccess.WRITE);file.store_string(JSON.stringify(receipt,"  ")+"\n");file.close()
 	if DirAccess.rename_absolute(RECEIPT+".pending",RECEIPT)!=OK:quit(1);return
 	print("ZOMBIE_GEOMETRY_BAKE complete vertices=",stats.vertices);quit()

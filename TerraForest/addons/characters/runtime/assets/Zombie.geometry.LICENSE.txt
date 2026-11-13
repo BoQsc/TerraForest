@@ -1,8 +1,9 @@
 Zombie CPU anatomy geometry cache
 
 Zombie.geometry.res contains the existing Zombie.r4.glb vertex positions,
-triangle indices, skin weights and morph positions without simplification or
-new geometry. Zombie.geometry.bake.json records its exact source hashes, engine
+triangle indices, skin weights, complete render vertex attributes and morph
+arrays for the body and cut caps, without simplification or new geometry.
+Zombie.geometry.bake.json records its exact source hashes, engine
 and preparation code. This is a runtime representation of the same character,
 within the existing use recorded in license_inventory.json as GAP-002.
 

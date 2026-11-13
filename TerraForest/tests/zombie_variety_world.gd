@@ -57,7 +57,7 @@ func run()->void:
 			check(zombie.detached_parts.is_empty(),"pre-existing amputation creates no detached ragdoll debris "+str(identity))
 			for part:String in zombie.missing:
 				if not zombie.missing[part]:continue
-				check(not zombie.part_meshes[part].visible and zombie.hit_areas[part].collision_layer==0,"absent limb has no mesh or damage region "+str(identity)+" "+part)
+				check(not zombie.part_meshes[part].visible and zombie.anatomy.snapshot().missing[part] and not zombie.physical_bones.has(zombie.PARTS[part].bone),"absent limb has no mesh or damage region "+str(identity)+" "+part)
 			if zombie._crawling:
 				zombie.skeleton.force_update_all_bone_transforms()
 				var head:Vector3=zombie.skeleton.global_transform*zombie.skeleton.get_bone_global_pose(zombie.skeleton.find_bone("Head")).origin

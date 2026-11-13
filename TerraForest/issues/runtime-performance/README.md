@@ -1,5 +1,11 @@
 # Runtime performance
 
+[Combat CPU work after the human playtest](combat-cpu-2026-11-13.md) records native
+skin baking from exact offline packets, removal of redundant animated hit areas,
+and debris-free corpse restoration. Median controlled arm severing falls from
+8.605 to 3.852 ms; combat p99 remains 19.434 ms. The original large process stalls
+and sustained 60 FPS headroom remain open.
+
 [Next-tick destruction implementation](next-tick-destruction.md) records the
 accepted 25% headroom / 256-barrel deadline and the first measured failure:
 all triggers accepted, only one explosion started by the next tick, terrain still

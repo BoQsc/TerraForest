@@ -5,8 +5,8 @@ func run()->void:
 	stage=Node3D.new();root.add_child(stage)
 	var reference:=fresh()
 	var baked:=Zombie.new();baked.process_mode=Node.PROCESS_MODE_DISABLED;stage.add_child(baked)
-	check(baked.initialized and baked.geometry_source.statistics().baked and baked.initialization_us["anatomy readback"]==0,"first baked actor avoids all render-mesh readback")
-	check(baked.hit_areas.size()==14 and baked.physical_bones.size()==15,"baked anatomy retains every hit region and physical bone")
+	check(baked.initialized and baked.geometry_source.statistics().baked and baked.initialization_us["anatomy readback"]==0,"baked collision anatomy avoids render-mesh readback")
+	check(baked.anatomy.snapshot().limbs.size()==14 and baked.find_children("*","Area3D",true,false).is_empty() and baked.physical_bones.size()==15,"baked anatomy retains every hit region and physical bone")
 	var same:=true
 	for part:String in reference._shape_cache:
 		var a:Dictionary=reference._shape_cache[part];var b:Dictionary=baked._shape_cache[part]
@@ -39,7 +39,7 @@ func run()->void:
 	var again:RefCounted=early.prepare(reference.skeleton,reference.part_meshes,Zombie.PARTS)
 	check(again==edited and early.last_readback_us==0,"newly validated edited geometry remains reusable")
 	var report:Dictionary={"checks":checks,"failures":failures,"reference_us":reference.initialization_us,"baked_us":baked.initialization_us,"baked_parts":payload.parts.size(),"baked_vertices":reference.anatomy.geometry_stats().vertices}
-	var folder:="res://reports/zombie_geometry_bake";DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
+	var folder:String=evidence_directory if not evidence_directory.is_empty() else "res://reports/zombie_geometry_bake";DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
 	FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify(report,"  "))
 	retry=null;fallback=null;malformed=null;edited=null;again=null;early=null;stage.free();await process_frame;await process_frame
 	print("ZOMBIE_GEOMETRY_BAKE_TEST checks=",checks," failures=",failures);quit(1 if failures else 0)

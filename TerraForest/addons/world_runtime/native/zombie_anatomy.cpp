@@ -13,12 +13,14 @@
 #include <godot_cpp/classes/physics_direct_space_state3d.hpp>
 #include <godot_cpp/classes/physics_ray_query_parameters3d.hpp>
 #include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/variant/packed_float64_array.hpp>
 #include <algorithm>
 #include <cmath>
 #include <unordered_map>
 #include <chrono>
 using namespace godot;
 namespace terraforest {
+Array bake_zombie_surface(const Array &,const Array &,const PackedFloat64Array &,bool,const TypedArray<Transform3D> &,const Transform3D &);
 std::vector<uint64_t> NativeZombieAnatomy::ragdoll_owners_;
 uint64_t NativeZombieAnatomy::ragdoll_frame_=uint64_t(-1);
 double NativeZombieAnatomy::ragdoll_clock_=0;
@@ -39,6 +41,7 @@ bool triangle(Vector3 from,Vector3 direction,Vector3 a,Vector3 b,Vector3 c,doubl
 }
 }
 void NativeZombieAnatomy::_bind_methods(){
+    ClassDB::bind_static_method("NativeZombieAnatomy",D_METHOD("bake_surface","source","morphs","amounts","relative","transforms","unskinned"),&bake_zombie_surface);
     ClassDB::bind_method(D_METHOD("configure","definitions"),&NativeZombieAnatomy::configure);
     ClassDB::bind_method(D_METHOD("set_hit_meshes","skeleton","meshes","geometry","baked"),&NativeZombieAnatomy::set_hit_meshes,DEFVAL(Ref<NativeZombieAnatomy>()),DEFVAL(Dictionary()));
     ClassDB::bind_method(D_METHOD("capture_geometry_data"),&NativeZombieAnatomy::capture_geometry_data);

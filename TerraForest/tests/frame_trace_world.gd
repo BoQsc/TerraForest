@@ -128,6 +128,7 @@ func run()->void:
 	browser._open_game(command.args)
 	if not await wait_for(func():return is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn",90):quit(1);return
 	game=current_scene;update_test_focus()
+	if "--trace-combat-probe" in OS.get_cmdline_user_args():game.world_vehicle.profile_install=true
 	if normal_window:
 		root.grab_focus()
 		if not await wait_for(func():return DisplayServer.window_is_focused(),8):
@@ -166,6 +167,8 @@ func run()->void:
 	var hud_was_hidden:bool=not game.hud.is_visible_in_tree()
 	await wait_for(func():return false,12 if short else 20)
 	var hidden_hud_stable:bool=not hud_was_hidden or game.background_hud_updates or game.hud.text==hidden_hud_text
+	if "--trace-combat-probe" in OS.get_cmdline_user_args():
+		await load("res://tests/combat_cadence_probe.gd").new().run(self,game,output)
 	if "--trace-player-abba" in OS.get_cmdline_user_args():
 		var original_feel:bool=game.player_view.feel_enabled
 		for motion:String in ["idle","turn"]:
@@ -311,7 +314,7 @@ func run()->void:
 	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
 	var okay:bool=saved and record.mouse_captures==0 and (not manual_save.requested or manual_save.completed and manual_save.success)
 	if normal_window:
-		okay=okay and unfocused_gameplay_frames==0 and record.presentation.background_cap==15
+		okay=okay and unfocused_gameplay_frames==0 and record.presentation.background_cap==(0 if uncapped else 15)
 		if unfocused_gameplay_frames>0:push_error("Foreground frame capture lost OS focus for %d gameplay frames"%unfocused_gameplay_frames)
 	for arg:String in OS.get_cmdline_user_args():
 		if arg.begins_with("--trace-expected-driver="):okay=okay and record.rendering_driver==arg.get_slice("=",1) and record.rendering_method=="forward_plus"

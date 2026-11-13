@@ -23,7 +23,6 @@ const DRAG_WALK_REFERENCE_SPEED := 0.45
 const WORLD_LAYER := 1
 const PLAYER_LAYER := 2
 const CHARACTER_LAYER := 1 << 16
-const HIT_LAYER := 1 << 17
 const RAGDOLL_LAYER := 1 << 18
 const BODY_COLLISION_MASK := WORLD_LAYER | PLAYER_LAYER | 4 | RAGDOLL_LAYER
 const DETACHED_COLLISION_MASK := WORLD_LAYER | PLAYER_LAYER | 4 | CHARACTER_LAYER | RAGDOLL_LAYER
@@ -93,7 +92,6 @@ var geometry_source:Resource=DEFAULT_GEOMETRY
 var missing: Dictionary = {}
 var part_meshes: Dictionary = {}
 var caps: Dictionary = {}
-var hit_areas: Dictionary = {}
 var physical_bones: Dictionary = {}
 var detached_parts: Array[RigidBody3D] = []
 var collision_exemptions: Array[Dictionary] = []
@@ -143,6 +141,7 @@ var _contact_standoff := INF
 var _tracked_target_id := 0
 var _animation_cursor_valid := false
 var initialization_us:Dictionary={}
+var render_bake_surface_reads:=0
 var sleeper:RefCounted
 
 func sleeper_active()->bool:
@@ -233,8 +232,12 @@ func configure(scene: PackedScene = null) -> void:
 	if _shape_cache.size()!=15:
 		push_error("Zombie collision geometry initialization failed");return
 	initialization_us["shape fit"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
-	_build_hit_areas()
-	initialization_us["hit areas"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
+	var bake_reads_before:=_bake_surface_reads
+	for source:MeshInstance3D in part_meshes.values():_bake_source(source.mesh)
+	for pair:Dictionary in caps.values():
+		for source:MeshInstance3D in pair.values():_bake_source(source.mesh)
+	render_bake_surface_reads=_bake_surface_reads-bake_reads_before
+	initialization_us["render bake cache"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	_build_ragdoll()
 	hit_reaction=ClassDB.instantiate("NativeZombieHitReaction");skeleton.add_child(hit_reaction)
 	if not hit_reaction.configure(PARTS):push_error("Zombie impact modifier initialization failed");return
@@ -246,7 +249,7 @@ func configure(scene: PackedScene = null) -> void:
 	if animation_player != null:
 		animation_player.advance(0.0)
 	initialization_us["animation"]=Time.get_ticks_usec()-measured_begin
-	if OS.is_stdout_verbose():print("Zombie ready: ", part_meshes.size(), " parts, ", hit_areas.size(), " hit regions, ", physical_bones.size(), " physical bones.")
+	if OS.is_stdout_verbose():print("Zombie ready: ", part_meshes.size(), " native damage regions, ", physical_bones.size(), " physical bones.")
 
 
 func _find_type(node: Node, type_name: String) -> Node:
@@ -340,19 +343,15 @@ func _refresh_pose_collision_shapes() -> void:
 		var body: PhysicalBone3D = physical_bones[bone_name]
 		var pelvis := bone_name == "Hips"
 		var part := String(body.get_meta("limb_key"))
-		var info := _pose_shape_spec(part, pelvis)
 		if _r4_enabled and part.begins_with("hand"):
 			var body_world := skeleton.global_transform * _current_bone_pose(body.get_bone_id()) * body.body_offset
 			_install_hand_compound(body, part, body_world.affine_inverse())
 		else:
+			var info := _pose_shape_spec(part, pelvis)
 			for child in body.get_children():
 				if child is CollisionShape3D:
 					child.shape = info.shape
-		var area: Area3D = skeleton.find_child("Hit_pelvis", true, false) as Area3D if pelvis else hit_areas.get(part)
-		if area != null:
-			for child in area.get_children():
-				if child is CollisionShape3D:
-					child.shape = info.shape
+
 
 
 func _install_hand_compound(body: PhysicsBody3D, part: String, to_local: Transform3D) -> void:
@@ -379,54 +378,6 @@ func _install_hand_compound(body: PhysicsBody3D, part: String, to_local: Transfo
 		body.add_child(collision)
 		installed.append(group)
 	body.set_meta("hand_proxy_groups", installed)
-
-
-func _build_hit_areas() -> void:
-	for part: String in PARTS:
-		var bone := skeleton.find_bone(String(PARTS[part].bone))
-		if bone < 0:
-			continue
-		var attachment := BoneAttachment3D.new()
-		attachment.name = "HitAnchor_" + part
-		skeleton.add_child(attachment)
-		attachment.bone_name = String(PARTS[part].bone)
-		var area := Area3D.new()
-		area.name = "Hit_" + part
-		area.collision_layer = HIT_LAYER
-		area.collision_mask = 0
-		area.monitoring = false
-		area.monitorable = true
-		area.set_meta("limb_key", part)
-		area.set_meta("zombie", self)
-		attachment.add_child(area)
-		var shape_info := _shape_spec(part)
-		var shape_node := CollisionShape3D.new()
-		shape_node.shape = shape_info.shape
-		shape_node.transform = shape_info.offset
-		area.add_child(shape_node)
-		hit_areas[part] = area
-	# A separate pelvis hit area maps to torso health and closes the abdomen gap.
-	var pelvis := BoneAttachment3D.new()
-	pelvis.name = "HitAnchor_pelvis"
-	skeleton.add_child(pelvis)
-	pelvis.bone_name = "Hips"
-	var area := Area3D.new()
-	area.name = "Hit_pelvis"
-	area.collision_layer = HIT_LAYER
-	area.collision_mask = 0
-	area.monitoring = false
-	area.set_meta("limb_key", "torso")
-	area.set_meta("zombie", self)
-	pelvis.add_child(area)
-	var shape_node := CollisionShape3D.new()
-	if _shape_cache.has("pelvis"):
-		shape_node.shape = _shape_cache.pelvis.shape
-		shape_node.transform = _shape_cache.pelvis.offset
-	else:
-		var box := BoxShape3D.new()
-		box.size = Vector3(0.32, 0.28, 0.24)
-		shape_node.shape = box
-	area.add_child(shape_node)
 
 
 func _build_ragdoll() -> void:
@@ -1638,8 +1589,6 @@ func sever_limb(part: String, impulse: Vector3 = Vector3.ZERO, emit_debris: bool
 		limb_health[removed] = 0.0
 		if part_meshes.has(removed):
 			part_meshes[removed].hide()
-		if hit_areas.has(removed):
-			hit_areas[removed].collision_layer = 0
 		var bone_name := String(PARTS[removed].bone)
 		if physical_bones.has(bone_name):
 			var physical: PhysicalBone3D = physical_bones[bone_name]
@@ -1939,94 +1888,53 @@ func _attach_baked_mesh(body: RigidBody3D, source: MeshInstance3D, to_local: Tra
 	body.add_child(instance)
 
 
-func _bake_cpu(source: MeshInstance3D, to_local: Transform3D) -> ArrayMesh:
-	# Standard CPU linear-blend skinning avoids a GPU readback and works headless.
-	# Meshes in the supplied GLB are identity children of the imported skeleton.
-	var result := ArrayMesh.new()
-	var binds: Array[Transform3D] = []
-	var skin := source.skin
-	if skin != null:
-		for bind in skin.get_bind_count():
-			var name := skin.get_bind_name(bind)
-			var index := skeleton.find_bone(name) if name != &"" else skin.get_bind_bone(bind)
-			var transform := _current_bone_pose(index) * skin.get_bind_pose(bind) if index >= 0 else Transform3D.IDENTITY
-			binds.append(to_local * skeleton.global_transform * transform)
-	var unskinned := to_local * source.global_transform
-	for surface in source.mesh.get_surface_count():
-		var arrays := source.mesh.surface_get_arrays(surface)
-		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-		var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL] if arrays[Mesh.ARRAY_NORMAL] != null else PackedVector3Array()
-		var tangents: PackedFloat32Array = arrays[Mesh.ARRAY_TANGENT] if arrays[Mesh.ARRAY_TANGENT] != null else PackedFloat32Array()
-		var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES] if arrays[Mesh.ARRAY_BONES] != null else PackedInt32Array()
-		var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS] if arrays[Mesh.ARRAY_WEIGHTS] != null else PackedFloat32Array()
-		var count := vertices.size()
-		# Head BiteOpen is a native glTF morph, evaluated before skinning. Keep
-		# that mouth pose when a head is severed or sampled for a real bite.
-		if source.mesh is ArrayMesh and source.mesh.get_blend_shape_count() > 0:
-			var morphs: Array = (source.mesh as ArrayMesh).surface_get_blend_shape_arrays(surface)
-			var base_vertices := vertices.duplicate()
-			var base_normals := normals.duplicate()
-			var relative := (source.mesh as ArrayMesh).blend_shape_mode == Mesh.BLEND_SHAPE_MODE_RELATIVE
-			for morph in mini(morphs.size(), source.mesh.get_blend_shape_count()):
-				var amount := source.get_blend_shape_value(morph)
-				if not is_finite(amount) or absf(amount) < 0.000001:
-					continue
-				var shape_arrays: Array = morphs[morph]
-				if shape_arrays.size() < Mesh.ARRAY_MAX:
-					continue
-				var morph_vertices: PackedVector3Array = shape_arrays[Mesh.ARRAY_VERTEX] if shape_arrays[Mesh.ARRAY_VERTEX] != null else PackedVector3Array()
-				var morph_normals: PackedVector3Array = shape_arrays[Mesh.ARRAY_NORMAL] if shape_arrays[Mesh.ARRAY_NORMAL] != null else PackedVector3Array()
-				for vertex in count:
-					if morph_vertices.size() == count:
-						vertices[vertex] += (morph_vertices[vertex] if relative else morph_vertices[vertex] - base_vertices[vertex]) * amount
-					if morph_normals.size() == count and normals.size() == count:
-						normals[vertex] += (morph_normals[vertex] if relative else morph_normals[vertex] - base_normals[vertex]) * amount
-		var influences := bones.size() / count if count > 0 else 0
-		for vertex in count:
-			var position := Vector3.ZERO
-			var normal := Vector3.ZERO
-			var tangent := Vector3.ZERO
-			var total := 0.0
-			var initial_normal := normals[vertex] if normals.size() == count else Vector3.UP
-			var initial_tangent := Vector3(tangents[vertex * 4], tangents[vertex * 4 + 1], tangents[vertex * 4 + 2]) if tangents.size() == count * 4 else Vector3.RIGHT
-			for influence in influences:
-				var weight := weights[vertex * influences + influence]
-				var bind := bones[vertex * influences + influence]
-				if weight <= 0.0 or bind < 0 or bind >= binds.size():
-					continue
-				var transform: Transform3D = binds[bind]
-				position += (transform * vertices[vertex]) * weight
-				normal += (transform.basis * initial_normal) * weight
-				tangent += (transform.basis * initial_tangent) * weight
-				total += weight
-			if total <= 0.00001:
-				position = unskinned * vertices[vertex]
-				normal = unskinned.basis * initial_normal
-				tangent = unskinned.basis * initial_tangent
-			else:
-				position /= total
-			vertices[vertex] = position
-			if normals.size() == count:
-				normals[vertex] = normal.normalized()
-			if tangents.size() == count * 4:
-				tangent = tangent.normalized()
-				tangents[vertex * 4] = tangent.x
-				tangents[vertex * 4 + 1] = tangent.y
-				tangents[vertex * 4 + 2] = tangent.z
-		arrays[Mesh.ARRAY_VERTEX] = vertices
-		arrays[Mesh.ARRAY_NORMAL] = normals if not normals.is_empty() else null
-		arrays[Mesh.ARRAY_TANGENT] = tangents if not tangents.is_empty() else null
-		arrays[Mesh.ARRAY_BONES] = null
-		arrays[Mesh.ARRAY_WEIGHTS] = null
-		# Imported extra UV sets can occupy FLOAT custom channels. Their format
-		# bits must survive the copy; omitting them makes Godot expect byte data.
-		var custom_formats := 0
-		if source.mesh is ArrayMesh:
-			custom_formats = (source.mesh as ArrayMesh).surface_get_format(surface) & (4095 << Mesh.ARRAY_FORMAT_CUSTOM0_SHIFT)
-		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays, [], {}, custom_formats)
-		result.surface_set_material(result.get_surface_count() - 1, source.get_active_material(surface))
-	return result
+const BAKE_PACKET_META:=&"_terraforest_bake_packet_v1"
+static var _bake_surface_reads:=0
+static func _forget_bake_packet(reference:WeakRef)->void:
+	var mesh:Mesh=reference.get_ref()
+	if mesh!=null:mesh.remove_meta(BAKE_PACKET_META)
 
+static func _prepare_bake_packet(mesh:Mesh,prepared:Dictionary={})->Dictionary:
+	if mesh.has_meta(BAKE_PACKET_META):
+		var cached:Dictionary=mesh.get_meta(BAKE_PACKET_META)
+		if cached.mesh_id==mesh.get_instance_id():return cached
+	# The default model supplies exact CPU packets from its offline geometry bake.
+	# Live readback is only the fallback for replacement/edited/unbaked meshes.
+	var packet:Dictionary=prepared.duplicate() if not prepared.is_empty() else {"surfaces":[],"morphs":[],"formats":[]}
+	packet.mesh_id=mesh.get_instance_id()
+	if prepared.is_empty():
+		for surface in mesh.get_surface_count():
+			packet.surfaces.append(mesh.surface_get_arrays(surface));_bake_surface_reads+=1
+			packet.morphs.append(mesh.surface_get_blend_shape_arrays(surface) if mesh is ArrayMesh and mesh.get_blend_shape_count()>0 else [])
+			packet.formats.append(mesh.surface_get_format(surface)&(4095<<Mesh.ARRAY_FORMAT_CUSTOM0_SHIFT) if mesh is ArrayMesh else 0)
+	mesh.set_meta(BAKE_PACKET_META,packet)
+	# Resource edits invalidate the packet; replacements carry their own packet.
+	mesh.changed.connect(_forget_bake_packet.bind(weakref(mesh)),CONNECT_ONE_SHOT)
+	return packet
+
+func _bake_source(mesh:Mesh)->Dictionary:
+	return _prepare_bake_packet(mesh,geometry_source.render_packet(mesh) if geometry_source!=null and geometry_source.source_model==model_scene else {})
+
+func _bake_cpu(source:MeshInstance3D,to_local:Transform3D)->ArrayMesh:
+	var result:=ArrayMesh.new()
+	var binds:Array[Transform3D]=[]
+	var skin:=source.skin
+	if skin!=null:
+		for bind in skin.get_bind_count():
+			var name:=skin.get_bind_name(bind)
+			var index:=skeleton.find_bone(name) if name!=&"" else skin.get_bind_bone(bind)
+			var transform:=_current_bone_pose(index)*skin.get_bind_pose(bind) if index>=0 else Transform3D.IDENTITY
+			binds.append(to_local*skeleton.global_transform*transform)
+	var packet:=_bake_source(source.mesh)
+	var amounts:=PackedFloat64Array()
+	for morph in source.mesh.get_blend_shape_count():amounts.append(source.get_blend_shape_value(morph))
+	var relative:bool=source.mesh is ArrayMesh and source.mesh.blend_shape_mode==Mesh.BLEND_SHAPE_MODE_RELATIVE
+	for surface in source.mesh.get_surface_count():
+		var arrays:Array=anatomy.bake_surface(packet.surfaces[surface],packet.morphs[surface],amounts,relative,binds,to_local*source.global_transform)
+		if arrays.is_empty():push_error("Zombie CPU bake rejected invalid surface");return result
+		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],{},packet.formats[surface])
+		result.surface_set_material(result.get_surface_count()-1,source.get_active_material(surface))
+	return result
 
 func _exit_tree() -> void:
 	for body in detached_parts:

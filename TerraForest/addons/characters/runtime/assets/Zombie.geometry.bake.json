@@ -1,18 +1,19 @@
 {
   "engine": "4.7.2-stable (steam)",
-  "output_sha256": "47920c3fbbeccfa38df2cb8725a44824f712433b5d2bbcc470602e0b6d4e0c34",
+  "output_sha256": "c146aa5ea67517ad10fe4c74b78fb6f0c2efdd019c5860944a61c75c2641c872",
   "parts": 14,
-  "recipe": "Exact existing R4 raw vertices, triangle indices, skin weights and morph arrays from native anatomy; no simplification or collision change. Derived data retains inherited character provenance GAP-002; original preparation code is 0BSD.",
-  "schema": 1,
+  "recipe": "Exact existing R4 anatomy plus complete render vertex attributes and morph arrays for body/cap CPU skinning; no simplification. Derived data retains inherited character provenance GAP-002; original preparation code is 0BSD.",
+  "render_meshes": 40,
+  "schema": 2,
   "sources": {
     "res://addons/characters/runtime/assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
     "res://addons/characters/runtime/assets/Zombie.r4.glb.import": "a7defd3dd42620045bd2e2a39e9d3afae20de2eee998a49fe3a1f1ea7b3dac9c",
-    "res://addons/characters/runtime/zombie.gd": "a887545d5d4959b43ddb003b9e072b866c362c2f863b484c0015fd823c26a08a",
-    "res://addons/characters/runtime/zombie_geometry_data.gd": "eca79f040e03c21108852b4a6255990f21a31b8cc987fefe8ede14a80a0b3000",
-    "res://addons/world_runtime/native/zombie_anatomy.cpp": "dff0d041948ece7649f5295e7ce1cd71e9807b8e702d314347f9b6f11c45ac52",
+    "res://addons/characters/runtime/zombie.gd": "f8ce345217f2420d9cf51a60bc4fa8f54a8396fb1d430beb258aa6877bfe9db9",
+    "res://addons/characters/runtime/zombie_geometry_data.gd": "fc08a92449a748afecdad8b3778892773e0f56764add1a36d7f541e4bf98b842",
+    "res://addons/world_runtime/native/zombie_anatomy.cpp": "20c13c0a566b3237e6e861732efd4314cb40fd279ace96b36028075949552ce0",
     "res://addons/world_runtime/native/zombie_anatomy.hpp": "bed8344d459e0ca7989f2ad0478c74b1a7f94ee387168bc6fa62e834e5185ee7",
     "res://addons/world_runtime/native/zombie_geometry.cpp": "66e0b41ce5fcfa49eec620cd87748f85fb41c78896057806bed48db049a1b5f6",
-    "res://tools/bake_zombie_geometry.gd": "0767e8e68e8c78e02c9dac5550d0e6a11d24d47057b0381babc10b6e3b7be16b"
+    "res://tools/bake_zombie_geometry.gd": "a0690434caffde047e52654dc4807ab97876bfe80eb9f602721c663529b15a86"
   },
   "vertices": 12082
 }
