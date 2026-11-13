@@ -76,6 +76,8 @@ static func display_image(slot:String,directory:String="user://worlds",maximum:V
  return picture if picture!=null else general_image(maximum)
 
 static func display_texture(slot:String,directory:String="user://worlds")->Texture2D:
+ # A headless server has no presentation surface; keep image data available for checks.
+ if DisplayServer.get_name()=="headless":return null
  var picture:=display_image(slot,directory)
  return ImageTexture.create_from_image(picture) if picture!=null else null
 

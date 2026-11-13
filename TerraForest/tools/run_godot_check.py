@@ -26,7 +26,7 @@ BOUNDED_WATER_REPORTS = {
     "water_region_store", "water_region_transfer", "water_storage_snapshot", "water_streaming_save",
     "water_equilibrium_replay", "water_equilibrium", "water_mesh_worker", "water_material_surface", "water_surface_topology",
     "water_surface_continuity", "water_contact_volume", "water_contact_visual",
-    "block_pager", "combat_remote_world", "water_blast_terrain", "water_blast_settling", "water_barrel_world", "water_implicit_proof", "block_solid_samples",
+    "launcher_world_flow", "block_pager", "combat_remote_world", "water_blast_terrain", "water_blast_settling", "water_barrel_world", "water_implicit_proof", "block_solid_samples",
 }
 
 # Export's audited contract suite emits small logs, except eight 1536x1536

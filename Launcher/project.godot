@@ -1,0 +1,15 @@
+; SPDX-License-Identifier: 0BSD
+config_version=5
+[application]
+config/name="TerraForest Launcher"
+run/main_scene="res://launcher.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+[display]
+window/size/viewport_width=680
+window/size/viewport_height=320
+window/size/window_width_override=680
+window/size/window_height_override=320
+[rendering]
+renderer/rendering_method="gl_compatibility"
+[debug]
+file_logging/max_log_files=2

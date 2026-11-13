@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 GIB = 1024**3
 LIMITS = {'reports': 4*GIB, 'scratch': 2*GIB, 'archive': 10*GIB,
           'compiler_cache': 4*GIB, 'import_cache': 2*GIB, 'owned_worlds': 3*GIB}
-OWNED_SLOT = re.compile(r'(?:StartupBench_(?:FPS_[0-9T]+|[0-9a-f]{16,32})|(?:Quests|Expedition|Parking|CoalMine|Reinforced|Exploration|HouseLights|SleeperHomes|Survival)_1703_[0-9a-f]{8}|(?:TraderRide|ClothingLoot|TraderClothes)_[0-9a-f]{12})\Z')
+OWNED_SLOT = re.compile(r'(?:StartupBench_(?:FPS_[0-9T]+|[0-9a-f]{16,32})|(?:Quests|Expedition|Parking|CoalMine|Reinforced|Exploration|HouseLights|SleeperHomes|Survival)_1703_[0-9a-f]{8}|(?:TraderRide|ClothingLoot|TraderClothes)_[0-9a-f]{12}|LauncherUI_1703_(?:Fixed|Final))\Z')
 
 
 def register_worlds(command, folder, root=ROOT):

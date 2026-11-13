@@ -216,3 +216,21 @@ evidence directory. Two unpinned runs remain ready;
 older images are hash-verified in the shared chunk archive before retirement.
 Logs and JSON remain loose. Restore `captures.archive.json` with the existing
 `maintain_performance_artifacts.py --restore ... --destination ...` command.
+
+
+## Native launcher regression family
+
+`tools/check_launcher_world_flow.py` admits 16 MiB of reports and 128 MiB for
+creation before launching. It uses only the receipt-owned `LauncherUI_1703_Fixed`
+and `LauncherUI_1703_Final` slots; creation refuses to overwrite an existing slot.
+Reuse these two fixtures for load checks. No third ordinary ready copy is admitted.
+Keep ownership/run receipts and failed-run logs under `reports/launcher_generation`.
+After continuation verification, mark these test slots diagnostic so ordinary
+Continue returns to the player's worlds. This does not delete or alter save data.
+The generic owned-world registry accounts for bytes; it never authorizes deletion.
+Retiring this family requires receipt/hash verification and the existing archive
+format before any loose files are removed. Until that adapter is provided, retain
+these two fixtures in place; do not silently evict them or increase the budget.
+The Godot launcher itself creates no saves or exports during preparation. It uses
+fixed report filenames and bounded Godot log rotation; shortcut backups are kept
+once, with installed-target receipts, rather than duplicated per installation.

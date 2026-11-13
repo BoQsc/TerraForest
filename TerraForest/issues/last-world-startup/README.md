@@ -87,3 +87,80 @@ changes still require builds and process restart; imports cannot rebuild DLLs.
 Closure requires fresh-resource launch and successful ordinary world generation,
 not only saved-world reload or an isolated presentation test. No new screenshots
 were taken for this read-only investigation.
+
+
+## Native launcher and generation repair plan (2026-11-13)
+
+1. Implement a separate Godot/GDScript bootstrap project with import preparation,
+   Continue Last, a visible error/retry UI and one launch lease per checkout.
+2. Retain native water mesh jobs until cancelled workers are joined.
+3. Repair coastal rounding, independent body heads and bounded multi-body work;
+   fit dense mesh batches and indexed query surfaces within existing allowances.
+4. Wait for stable water before quest baselines, saving and map certification.
+   Verify normal Generate & play and fresh Continue programmatically.
+5. Install/verify desktop links, update the installed distribution, retain failures
+   and regression evidence, and commit the completed repair.
+
+The baseline ordinary seed-1703 UI run crashed at building 26/50 with Windows
+heap corruption. Native worker Callables did not retain the RefCounted mesh job;
+terrain invalidation could release it during execution. Dispatcher ownership now
+lasts through join, including cancellation and shutdown (24 lifecycle regressions).
+The first repaired run saved 52 buildings but stalled at 99%; it was not accepted.
+Subsequent real runs exposed rounding surplus, shared heads between disconnected
+bodies, aggregate transaction limits, and dense snapshot/query-cache exhaustion.
+All failed runs remain under `reports/launcher_generation`, including
+`failed_create_map_identity` and `failed_continue_dummy_texture`.
+
+The final ordinary Frontier expedition, seed 1703, uses actual world-browser
+controls and Generate & play handling, not an isolated generation scene. It
+publishes 52 buildings and 8,183 edits, reaches playable state and shuts down
+with a verified save. The generation barrier also prevents changing water state
+from invalidating the map's saved-state certification. Indexed query geometry
+retains the same triangles and uses 43,475,880 bytes of the existing 64 MiB cap;
+no cache or transaction budget was raised. Final water has no pending regions,
+settlement, dirty meshes or water preparation errors.
+
+Verification and installation status is recorded below. Scope: this repairs
+source launching and this normal creation/continuation path. It is not new visual
+approval, an FPS qualification, or proof that every seed fits existing limits.
+Single connected bodies exceeding the bounded transaction still fail visibly.
+Cross-platform APIs are used, but only Windows has been exercised. Native C++
+edits still need the native build step; imports cannot compile a DLL.
+
+Both desktop shortcuts now target the separate `Launcher` Godot project directly;
+Steam library entries are unchanged. Preparation refreshes source imports with
+no editor window. Original links and verified targets are retained under
+`reports/launcher_generation/shortcuts`. The PowerShell runtime launcher was
+removed. Python is used only for development checks and one-time link installation.
+
+### Verification receipts
+
+- Runtime repair commit: `d587ec54` (debug and release libraries rebuilt).
+- Normal UI creation: `reports/launcher_generation/create/run.json`, PASS,
+  96.85 seconds; `WORLD_GENERATED failures=0`, then playable and verified shutdown.
+- Fresh normal Continue: `reports/launcher_generation/continue/run.json`, PASS,
+  28.21 seconds; zero diagnostic errors and the expected owned world restored.
+- Native launcher: `reports/launcher_generation/launcher_contract.log`, 8 checks;
+  `launcher_prepare_final.log`, real import/icons preparation exit 0, current
+  script fingerprints and Continue flag in `reports/worlds_launch.json`.
+- Water equilibrium: `reports/checks/20261113T180948280343Z`, 39 checks, zero failures.
+- Worker lifecycle/meshing: `reports/checks/20261113T181907215111Z`, zero failures,
+  including 24 real coordinator invalidation/shutdown cycles.
+- Storage tooling: four unit checks pass; new Python tools compile.
+- Compact runtime quantities and hashes: `reports/launcher_generation/verification.json`.
+
+The receipt-owned Fixed and Final worlds are retained as diagnostic fixtures and
+excluded from the player browser/Continue catalog. Repeated checks restore that
+marker even on failure; the Continue driver refuses to launch a non-fixture world.
+No player world was used for generation or modified by these tests. After the
+user requested no nonprogrammatic interruption, checks used headless Godot control
+signals and owned subprocesses only, with no desktop focus or input manipulation.
+
+All five repair-plan steps are complete for this reproduced path. Installed pack
+export and startup pass (`reports/launcher_generation/export_final.log`), including
+all nine required source/release building contracts
+(`reports/building_standards/20261113T183338020445Z/run.json`). Installed debug and
+release water libraries match the current source-build hashes. The read-only
+normal Continue report resolves to the original player slot
+`StartupBench_FPS_20261109T215117560533`; it was not loaded or modified
+(`reports/launcher_generation/player_continue_target.log`).

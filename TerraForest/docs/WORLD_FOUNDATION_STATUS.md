@@ -1,12 +1,20 @@
-## Last World launcher / new-world generation report — 2026-11-13
+## Last World launcher / new-world generation repair - 2026-11-13
 
-[Investigation and remaining work](../issues/last-world-startup/README.md#launcher-freshness-and-interrupted-generation--2026-11-13):
-Steam launches the source checkout without import preflight. Recent user creation
-runs reach new water preparation but stop during building placement; one logs a
-native Dictionary error. Generation failure and reported stale appearance remain
-unresolved. Reproduce the actual shortcut path and capture exit/failure evidence;
-a unified importing launcher alone is not proof of a generation fix. Earlier
-saved-world/water qualification does not close this new-world creation report.
+[Plan, failures and verification](../issues/last-world-startup/README.md#native-launcher-and-generation-repair-plan-2026-11-13):
+the separate Godot/GDScript launcher refreshes imports without an editor window.
+Both desktop links target it, with Continue propagated and original links retained.
+Native mesh-job lifetime, coastal rounding, disconnected-body discovery and bounded
+batch/cache handling are repaired. Generation now waits for stable water before
+baselines, final save and map certification. The normal Frontier expedition UI
+(seed 1703) creates 52 buildings / 8,183 edits and reaches playable state in 96.85 s;
+fresh Continue reaches playable state in 28.21 s with no check diagnostics.
+Checks are headless and programmatic, without desktop input or focus changes.
+This closes the reproduced creation/loading failure, not visual acceptance or a
+new rendered FPS qualification. Single connected bodies above the transaction
+limit remain bounded failures; other seeds and platforms require their own checks.
+Installed pack export/startup and all nine required building contracts pass.
+Native changes still require compilation. Steam library entries are unchanged;
+the verified desktop links launch the source checkout through the new bootstrap.
 
 ## Continuous volumetric water replacement — 2026-11-13
 
