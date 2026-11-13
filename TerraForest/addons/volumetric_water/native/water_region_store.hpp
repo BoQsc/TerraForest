@@ -155,6 +155,7 @@ public:
   }
   water->invalidate_snapshot(false);
   auto result=water->capture_snapshot(catalog);
+  if(!count&&!result.is_empty())result.encode_u32(4,base.decode_u32(4));
   return !result.is_empty()&&hash(result)==snapshot.slice(48,80)&&water->validate_snapshot(result)?result:Bytes();
  }
  ~NativeWaterRegionStore(){close();}
@@ -278,7 +279,15 @@ public:
   for(;;){auto page=checkpoint_page(id,cursor,256);if(!bool(page["ok"]))return {};
    godot::PackedInt32Array keys=page["coordinates"];
    for(int64_t i=0;i<keys.size();i+=3){godot::Vector3i p(keys[i],keys[i+1],keys[i+2]);auto region=read_region(id,p);
-    if(!bool(region["ok"])||!water->restore_region_snapshot(p,region["packet"],water->survey_revision_id(),true))return {};
+    // Archive expansion is byte-preserving, not runtime occupancy admission.
+    // The game coordinator migrates old geometry after the canonical bytes
+    // have been verified. Runtime hydration intentionally invalidates it.
+    if(!bool(region["ok"]))return {};
+    godot::Ref<NativeRegionalWater> decoded;decoded.instantiate();
+    if(!decoded->decode(region["packet"],true,false)||decoded->regions.size()!=1)return {};
+    auto found=decoded->regions.find(key(p));
+    if(found==decoded->regions.end()||found->second.ocean_state!=2||water->regions.count(key(p))||water->regions.size()>=NativeRegionalWater::MAX_REGIONS||decoded->total>NativeRegionalWater::MAX_TOTAL-water->total||decoded->solid_cache_bytes>64*1024*1024-water->solid_cache_bytes)return {};
+    water->regions.emplace(key(p),found->second);water->total+=decoded->total;water->solid_cache_bytes+=decoded->solid_cache_bytes;water->invalidate_snapshot(false);
    }
    if(bool(page["complete"]))break;cursor=page["cursor"];
   }

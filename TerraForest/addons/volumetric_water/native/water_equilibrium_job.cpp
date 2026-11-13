@@ -23,20 +23,58 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(){
     // Reserve a conservative envelope for the bounded cell graph, merge tree,
     // cached contacts and COW region payloads, including a cancelled predecessor.
     constexpr uint64_t charge=256*1024*1024,limit=2*charge;
-    uint64_t retained=128*1024*1024; // Fixed bounded graph / hierarchy workspace.
-    std::unordered_set<const void*> contacts;
-    auto account=[&](const auto &map){for(const auto &[k,r]:map){
-        retained+=sizeof(Region)+Region::payload_bytes;
-        if(r.contacts&&contacts.insert(r.contacts.get()).second)retained+=r.contacts->bytes;
-        if(r.structures&&contacts.insert(r.structures.get()).second)retained+=r.structures->bytes;
-    }};
-    account(regions);account(published_occupancy);
-    if(retained>charge){job->reason="Water equilibrium snapshot exceeds memory budget";job->ready.store(true);return job;}
+    // Freeze pending connected region groups, not unrelated resident lakes.
+    // Wet regions propagate the selection; one dry halo admits spill frontiers.
+    // Further dry dependencies are requested by the existing transactional solver.
+    std::unordered_set<Key> selected;
+    const Vector3i adjacent[6]={{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+    auto wet=[](const Region &r){for(auto ml:r.water)if(ml)return true;return false;};
+    auto retained_bytes=[&](const std::unordered_set<Key> &keys){
+        uint64_t bytes=128*1024*1024;
+        std::unordered_set<const void*> contacts;
+        auto account=[&](const Region &r){
+            bytes+=sizeof(Region)+Region::payload_bytes+r.vacancies.capacity()*sizeof(uint32_t);
+            if(r.contacts&&contacts.insert(r.contacts.get()).second)bytes+=r.contacts->bytes;
+            if(r.structures&&contacts.insert(r.structures.get()).second)bytes+=r.structures->bytes;
+        };
+        for(Key k:keys){
+            const auto &r=regions.at(k);account(r);
+            // Prior occupancy is used only for displacement through replaced solids.
+            if(r.settle_pending){auto old=published_occupancy.find(k);if(old!=published_occupancy.end())account(old->second);}
+        }
+        return bytes;
+    };
+    for(const auto &[seed,region]:regions){
+        if(!region.settle_pending||selected.count(seed))continue;
+        auto candidate=selected;
+        std::vector<Key> frontier{seed};std::unordered_set<Key> expanded;
+        for(size_t at=0;at<frontier.size();++at){
+            Key k=frontier[at];if(!expanded.insert(k).second)continue;
+            candidate.insert(k);Vector3i p=position(k);
+            for(auto offset:adjacent){
+                auto q=p+offset;if(q.x<0||q.y<0||q.z<0||q.x>=500||q.y>=64||q.z>=500)continue;
+                Key neighbor=key(q);auto found=regions.find(neighbor);if(found==regions.end())continue;
+                candidate.insert(neighbor);
+                if(!(surrounding_ocean&&region.ocean_state)&&found->second.valid&&wet(found->second)&&!expanded.count(neighbor))frontier.push_back(neighbor);
+            }
+        }
+        if(retained_bytes(candidate)>charge){
+            if(!selected.empty())break;
+            job->reason="Connected water snapshot exceeds memory budget";job->ready.store(true);return job;
+        }
+        selected.swap(candidate);
+    }
     uint64_t prior=NativeWaterEquilibriumJob::pending_bytes.load();
     do{if(prior>limit-charge){job->reason="Water equilibrium memory reservation unavailable";job->ready.store(true);return job;}}
     while(!NativeWaterEquilibriumJob::pending_bytes.compare_exchange_weak(prior,prior+charge));
     job->reserved_bytes=charge;
-    job->frozen.instantiate();job->frozen->regions=regions;job->frozen->published_occupancy=published_occupancy;job->frozen->total=total;
+    job->frozen.instantiate();
+    job->frozen->surrounding_ocean=surrounding_ocean;
+    for(Key k:selected){
+        const auto &r=regions.at(k);job->frozen->regions.emplace(k,r);
+        for(auto ml:r.water)job->frozen->total+=ml;
+        if(r.settle_pending){auto old=published_occupancy.find(k);if(old!=published_occupancy.end())job->frozen->published_occupancy.emplace(k,old->second);}
+    }
     return job;
 }
 Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibriumJob> &job){
@@ -52,15 +90,22 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     PackedInt64Array phases;for(auto t:job->phase_us)phases.push_back(t);out["phase_us"]=phases;
     out["worker_us"]=int64_t(job->elapsed_us);out["cells"]=int64_t(job->visited_cells);
     out["blocked_ml"]=int64_t(job->blocked_ml);out["reserved_bytes"]=int64_t(job->reserved_bytes);
+    out["snapshot_regions"]=job->frozen.is_valid()?int64_t(job->frozen->regions.size()):0;
+    out["ocean_exchange_ml"]=job->ocean_exchange_ml;
     if(job->revision!=map_revision||job->cancelled.load()){out["stale"]=true;return out;}
     if(!job->required.empty()){
         // Dry frontier regions are dependencies too: do not repeatedly solve
         // the same body while their terrain samples are still in flight.
-        for(auto k:job->required){get(position(k)*8,true);regions.at(k).settle_pending=true;}
+        for(auto k:job->required){
+            get(position(k)*8,true);auto found=regions.find(k);
+            if(found==regions.end()){out["reason"]="Water receiving region capacity exhausted";return out;}
+            found->second.settle_pending=true;
+        }
         invalidate_snapshot();
         out["pending"]=true;out["required_regions"]=int64_t(job->required.size());return out;
     }
     if(!job->success){out["reason"]=job->reason;return out;}
+    total=uint64_t(int64_t(total)+job->ocean_exchange_ml);
     // All quantities install together. Render/query/immersion remain on their
     // previous publication until the matching complete mesh batch is committed.
     cancel_mesh_batch();
@@ -70,14 +115,17 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
         auto &r=live->second;const auto &source=prepared->second;
         const auto &before=static_cast<const Region &>(r).water;
         if(std::equal(before.begin(),before.end(),source.water.begin()))continue;
-        r.water=source.water;r.vacancies.clear();if(r.ocean_state==1)r.ocean_state=2;
+        r.water=source.water;
+        if(job->frozen->surrounding_ocean&&r.ocean_state)r.vacancies=source.vacancies;
+        else r.vacancies.clear();
+        if(r.ocean_state==1)r.ocean_state=2;
         const auto base=position(k)*8;
         for(int corner=0;corner<8;++corner)changed(base+Vector3i((corner&1)*7,((corner>>1)&1)*7,((corner>>2)&1)*7));
     }
     settling.clear();settling_set.clear();
     for(auto &[k,r]:regions){
         const auto prepared=job->frozen->regions.find(k);
-        r.settle_pending=prepared!=job->frozen->regions.end()&&prepared->second.settle_pending;
+        if(prepared!=job->frozen->regions.end())r.settle_pending=prepared->second.settle_pending;
         r.settle_mask.fill(0);
         if(r.settle_pending)wake_settling(k);
     }
@@ -184,6 +232,43 @@ void NativeWaterEquilibriumJob::prepare(){
             if(direction==5)return a.shape.ceiling==500&&b.shape.open_bottom&&WaterCellProfile::vertical_overlap(a.shape,ah,b.shape,bh);
             return WaterCellProfile::face_overlap(a.shape,ah,b.shape,bh,direction<=2?0:2,direction==1||direction==3?1:0);
         };
+        // The surrounding procedural sea has an open level-40 boundary, unlike
+        // finite authored lakes. Freeze a local halo and flood only connected
+        // 3D air. Pristine halo water supplies the boundary; sealed cavities have
+        // no source. Record every ml crossing it, never call that finite conservation.
+        if(store.surrounding_ocean){
+            std::vector<Vector3i> frontier;
+            for(const auto &[k,r]:store.regions)if(r.ocean_state==1&&r.valid&&!r.settle_pending){
+                auto base=W::position(k)*8;
+                for(int i=0;i<512;++i)if(r.water[i]){
+                    auto p=base+Vector3i(i%8,(i/8)%8,i/64);
+                    if(done.insert(W::key(p)).second)frontier.push_back(p);
+                }
+            }
+            for(size_t at=0;at<frontier.size();++at){
+                if(frontier.size()>MAX_CELLS||cancelled.load()){reason="Ocean boundary work budget exceeded";return false;}
+                const auto p=frontier[at];const auto &r=store.regions.at(W::region_key(p));
+                Cell a{p,W::profile(r,W::index(p)),r.water[W::index(p)]};
+                for(int direction=0;direction<6;++direction){
+                    auto q=p+steps[direction];if(!W::in_domain(q)||done.count(W::key(q)))continue;
+                    auto found=store.regions.find(W::region_key(q));
+                    if(found==store.regions.end()||!found->second.valid||!found->second.ocean_state)continue;
+                    const auto &bregion=found->second;
+                    Cell b{q,W::profile(bregion,W::index(q)),bregion.water[W::index(q)]};
+                    if(!b.shape.capacity()||b.shape.volume((40-q.y*.5)*1000.)<=0||!connected(a,b,direction,40))continue;
+                    done.insert(W::key(q));frontier.push_back(q);
+                }
+            }
+            for(auto p:frontier){
+                auto k=W::region_key(p);auto &r=store.regions.at(k);if(!r.settle_pending)continue;
+                int i=W::index(p);auto shape=W::profile(r,i);
+                uint64_t amount=std::min(shape.capacity(),uint64_t(std::max(0.0,std::floor(shape.volume((40-p.y*.5)*1000.)))));
+                if(!r.vacancies.empty())amount-=std::min<uint64_t>(amount,r.vacancies[i]);
+                if(amount!=r.water[i]){ocean_exchange_ml+=int64_t(amount)-int64_t(r.water[i]);r.water[i]=amount;dirty.insert(k);}
+            }
+            store.total=uint64_t(int64_t(store.total)+ocean_exchange_ml);
+            visited_cells=frontier.size();
+        }
         mark(0);
         for(auto seed:seeds){
             if(done.count(W::key(seed)))continue;
@@ -207,6 +292,7 @@ void NativeWaterEquilibriumJob::prepare(){
                 const auto p=cells[cursor].p;
                 for(int direction=0;direction<6;++direction){
                     auto q=p+steps[direction];if(!W::in_domain(q))continue;
+                    if(done.count(W::key(q)))continue;
                     auto r=store.regions.find(W::region_key(q));
                     if(q.y*.5>=upper){
                         if(r==store.regions.end()||!r->second.valid||!r->second.water[W::index(q)])continue;

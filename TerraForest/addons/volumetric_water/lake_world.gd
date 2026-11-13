@@ -31,6 +31,7 @@ var _mesh_job:RefCounted
 var _equilibrium_task:int=-1
 var _equilibrium_job:RefCounted
 var _equilibrium_failure:=""
+var _ocean_exchange_ml:int=0
 var _equilibrium_failed_revision:int=-1
 var _equilibrium_phases:PackedInt64Array=PackedInt64Array()
 var _equilibrium_worker_us:int=0
@@ -55,6 +56,13 @@ var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
 var _staged_bounds:=AABB()
 var _have_staged_bounds:=false
+var _residency_focus:=Vector2i(-9999,-9999)
+var _residency_revision:=-1
+var _residency_due:=0
+var _mesh_commit_nodes_us:=0
+var _mesh_commit_native_us:=0
+var _mesh_commit_mask_us:=0
+var _mesh_commit_count:=0
 var _mesh_batch_id:int=0
 var _published_mesh_batch_id:int=0
 var _exclusion_notify_us:int=0
@@ -124,7 +132,7 @@ func restore_snapshot(bytes:PackedByteArray,prepared:RefCounted=null) -> bool:
   if not (water.restore_prepared(prepared) if prepared!=null else water.restore_snapshot(bytes)):return false
  last_restore_profile["native_install_us"]=Time.get_ticks_usec()-restore_begin
  # Old saves retain quantities but rebuild full 3D terrain air contacts.
- if cached and bytes.decode_u32(4)<12:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)),true)
+ if cached and bytes.decode_u32(4)<13:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)),true)
  for record:Dictionary in decoded.records:
   record.dirty=not cached;record.failure=""
   var state:PackedByteArray=record.get("water_state",PackedByteArray())
@@ -137,7 +145,7 @@ func _ready() -> void:
  _material.set_shader_parameter("ripple_normal",preload("res://addons/volumetric_water/textures/water_ripples_normal.png"))
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
  terrain.region_changed.connect(_settle_committed_edit)
- terrain.water_edit_admission=func(bounds:AABB,_selected:Array)->bool:return not water.has_deferred_overlap(bounds.grow(0.5))
+ terrain.water_edit_admission=func(bounds:AABB,_selected:Array)->bool:return not water.has_deferred_overlap(bounds.grow(0.5)) and water.prepare_ocean_edit(bounds)
  terrain.solid_deposited.connect(func(bounds:AABB):water.invalidate(terrain.water_occupancy_edit_bounds(bounds),true))
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.
@@ -177,6 +185,7 @@ func remove_lake(id:int) -> void:
 func clear(preserve_store:bool=false) -> void:
  if _equilibrium_job!=null:_equilibrium_job.cancel()
  _equilibrium_failure="";_equilibrium_failed_revision=-1
+ _ocean_exchange_ml=0
  _ocean_admitting=false
  _occupancy_failure=""
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
@@ -217,8 +226,16 @@ func _measured_step(delta:float)->void:
   _surrounding_ocean.queue_free();_surrounding_ocean=null;_material.set_shader_parameter("surrounding_ocean",false)
  if _surrounding_ocean==null or not _pending_bucket.is_empty() or not _pending_dev.is_empty():_ocean_admitting=false
  if _surrounding_ocean!=null and not _busy and _builder==null and not terrain.pending_edit and _pending_bucket.is_empty() and _pending_dev.is_empty():
-  var residency:Dictionary=water.update_ocean_residency(terrain.focus,16)
-  _ocean_admitting=int(residency.get("admitted",0))>0
+  var focus:=Vector2i(floori(terrain.focus.x/4),floori(terrain.focus.z/4))
+  var revision:int=water.survey_revision_id()
+  var now:=Time.get_ticks_usec()
+  if focus!=_residency_focus or revision!=_residency_revision or now>=_residency_due:
+   var residency:Dictionary=water.update_ocean_residency(terrain.focus,16)
+   _ocean_admitting=int(residency.get("admitted",0))>0
+   _residency_focus=focus;_residency_revision=water.survey_revision_id()
+   # Stable residency has no per-frame work. Movement/edits retry immediately;
+   # the bounded periodic pass expires temporary remote-blast interests.
+   _residency_due=0 if _ocean_admitting or int(residency.get("retired",0))>0 else now+250000
 
  if terrain.backend.world_generator==18 and _ocean_horizon==null:
   _material.set_shader_parameter("coastal_join",true)
@@ -310,6 +327,7 @@ func _advance_equilibrium()->void:
   _equilibrium_job=null
   _equilibrium_commit_us=Time.get_ticks_usec()-started
   if result.get("ok",false):_equilibrium_blocked_ml=int(result.get("blocked_ml",0))
+  if result.get("ok",false):_ocean_exchange_ml+=int(result.get("ocean_exchange_ml",0))
   _equilibrium_phases=result.get("phase_us",PackedInt64Array())
   _equilibrium_worker_us=int(result.get("worker_us",0));_equilibrium_cells=int(result.get("cells",0))
   if result.get("ok",false):_publish_meshes()
@@ -379,6 +397,7 @@ func _publish_meshes() -> void:
    # Commit on its own short slice if staging already consumed this frame.
    if Time.get_ticks_usec()-mesh_started>150:break
    var commit_started:=Time.get_ticks_usec()
+   _mesh_commit_count=_staged_meshes.size()
    for coordinate:Vector3i in _staged_meshes:
     var staged:Dictionary=_staged_meshes[coordinate]
     if staged.mesh==null:
@@ -391,9 +410,14 @@ func _publish_meshes() -> void:
      _meshes[coordinate].mesh=staged.mesh
    if _have_staged_bounds:
     _changed_bounds=_changed_bounds.merge(_staged_bounds) if _have_bounds else _staged_bounds;_have_bounds=true
+   _mesh_commit_nodes_us=Time.get_ticks_usec()-commit_started
+   var native_started:=Time.get_ticks_usec()
    if not water.commit_mesh_batch(update.batch):push_error("Water query publication did not match rendered batch")
+   _mesh_commit_native_us=Time.get_ticks_usec()-native_started
    _published_mesh_batch_id=update.batch
+   var mask_started:=Time.get_ticks_usec()
    if _surrounding_ocean!=null:_surrounding_ocean.publish(water.ocean_publication_mask())
+   _mesh_commit_mask_us=Time.get_ticks_usec()-mask_started
    # Every staged node now belongs to _meshes; no cancellation cleanup scan.
    _staged_meshes.clear();_have_staged_bounds=false
    _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
@@ -506,10 +530,12 @@ func preparation_ready()->bool:
 
 func statistics() -> Dictionary:
  var s:Dictionary=water.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
+ s.ocean_boundary_exchange_ml=_ocean_exchange_ml
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1
  s.occupancy_failure=_occupancy_failure
  s.equilibrium_blocked_ml=_equilibrium_blocked_ml
+ s.mesh_commit_nodes_us=_mesh_commit_nodes_us;s.mesh_commit_native_us=_mesh_commit_native_us;s.mesh_commit_mask_us=_mesh_commit_mask_us;s.mesh_commit_count=_mesh_commit_count
  s.equilibrium_failure=_equilibrium_failure
  s.equilibrium_phases=_equilibrium_phases
  s.equilibrium_worker_us=_equilibrium_worker_us

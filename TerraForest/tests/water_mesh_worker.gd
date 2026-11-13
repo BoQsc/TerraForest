@@ -95,16 +95,16 @@ func run_worker_checks() -> void:
  var current=publication_fixture()
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var saved:PackedByteArray=current.capture_snapshot(catalog)
- # A v12 cache includes a vacancy-count word even when there are no holes.
+ # A current cache includes a vacancy-count word even when there are no holes.
  if saved.decode_u32(4)<9:
   saved.resize(saved.size()+4);saved.encode_u32(saved.size()-4,0);saved.encode_u64(24,saved.decode_u64(24)+4)
- saved.encode_u32(4,12)
+ saved.encode_u32(4,13)
  # Upgrade the legacy test fixture with an explicit valid air density cache.
  var base:int=32+saved.decode_u32(8);saved.encode_u32(base+12,1)
  for i in 729:saved.encode_float(base+6160+i*4,1.0)
  var coordinator=load("res://addons/volumetric_water/lake_world.gd").new();coordinator.prepare()
  check(coordinator.restore_snapshot(saved) and coordinator.water.statistics().pending_regions==0,"Current 3D occupancy cache restores without resampling")
- saved.encode_u32(4,11)
+ saved.encode_u32(4,12)
  check(coordinator.restore_snapshot(saved) and coordinator.water.statistics().pending_regions>0 and coordinator.water.statistics().water_ml==current.statistics().water_ml,"Old occupancy cache migrates through terrain sampling without changing water quantity")
  coordinator.free()
  print("WATER_MESH_WORKER failures=",failures," jobs=",jobs)

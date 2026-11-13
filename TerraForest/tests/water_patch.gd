@@ -38,7 +38,7 @@ func fixture(rows:Array)->PackedByteArray:
 		for index in keys.size():encoded.encode_u32(4+index*8,keys[index]);encoded.encode_u32(8+index*8,missing[keys[index]])
 		vacancies.append_array(encoded)
 	var data:=PackedByteArray();data.resize(32);data.fill(0)
-	data.encode_u32(0,0x31575256);data.encode_u32(4,10);data.encode_u32(8,catalog.size());data.encode_u32(12,rows.size());data.encode_u64(16,total);data.encode_u64(24,rows.size()*8+vacancies.size())
+	data.encode_u32(0,0x31575256);data.encode_u32(4,13);data.encode_u32(8,catalog.size());data.encode_u32(12,rows.size());data.encode_u64(16,total);data.encode_u64(24,rows.size()*8+vacancies.size())
 	data.append_array(catalog);data.append_array(records)
 	var contacts:=PackedByteArray();contacts.resize(rows.size()*8);contacts.fill(0)
 	data.append_array(contacts);data.append_array(vacancies);return data

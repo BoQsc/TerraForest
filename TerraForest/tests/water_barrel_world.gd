@@ -73,6 +73,8 @@ func run():
  game.lakes.settling_active=func()->bool:return true
  check(await idle_water(),"Initial water publication reaches idle")
  var entry:Dictionary=game.lakes._lakes.values()[0]
+ if "--water-contact-only" in OS.get_cmdline_user_args():
+  await object_contact_case(entry);await finish();return
  var above:Vector3=entry.seed+Vector3(3,0,0);above.y=entry.level+4
  await physics_frame
  var ground:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(above,above-Vector3.UP*20,1))
@@ -121,8 +123,34 @@ func run():
  if not frames.is_empty():report.frame_p95_ms=frames[int((frames.size()-1)*.95)]/1000.0;report.frame_max_ms=frames.back()/1000.0
  var file:=FileAccess.open(evidence.path_join("water_barrel_world.json"),FileAccess.WRITE);file.store_string(JSON.stringify(report,"  "));file.close()
  if "--water-full-regression" in OS.get_cmdline_user_args():await terrain_cases(entry,total)
+ if "--water-object-contact" in OS.get_cmdline_user_args():await object_contact_case(entry)
  if "--water-performance" in OS.get_cmdline_user_args():await performance_cases(entry)
  await finish()
+func object_contact_case(entry:Dictionary)->void:
+ # Keep this independent of the paid terrain deposit at the lake seed.
+ var location:Vector3=entry.seed+Vector3(-3,0,-3)
+ var current_surface:Dictionary=game.lakes.water.raycast_surface(Vector3(location.x,entry.level+1,location.z),Vector3(location.x,entry.level-4,location.z))
+ check(current_surface.get("hit",false),"Current post-blast surface determines the contact fixture height")
+ if not current_surface.get("hit",false):return
+ var cell:=Vector3i(floori(location.x),floori(current_surface.point.y),floori(location.z))
+ game.construction_inventory.gameplay=false
+ check(game.construction_inventory.place_block(game.structures.blocks,game.player_hud.inventory,cell,1),"Actual cube construction intersects the lake surface")
+ check(await idle_water(),"Object contact publishes with conserved water")
+ var center:=Vector3(cell)+Vector3(.5,0,.5)
+ var reference:Dictionary=game.lakes.water.raycast_surface(center+Vector3(2,3,0),center+Vector3(2,-2,0))
+ check(reference.get("hit",false),"Reference free surface exists beside object")
+ if reference.get("hit",false):
+  var level:float=reference.point.y
+  check(level>cell.y and level<cell.y+1,"Cube crosses the current free surface, not an obsolete authored height")
+  check(game.lakes.depth_at(Vector3(cell)+Vector3(.5,.1,.5))==0,"Solid cube excludes water inside its occupied volume")
+  for offset in [Vector3(-.51,0,0),Vector3(.51,0,0),Vector3(0,0,-.51),Vector3(0,0,.51)]:
+   var probe:Vector3=center+offset
+   var hit:Dictionary=game.lakes.water.raycast_surface(Vector3(probe.x,level+1,probe.z),Vector3(probe.x,level-.5,probe.z))
+   check(hit.get("hit",false) and absf(hit.point.y-level)<.02,"Visible water reaches within 1 cm of the cube wall: "+str(hit))
+  await capture("object_contact_above",center,level)
+  await capture("object_contact_underwater",center,level,true)
+ check(game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,0])),"Contact fixture removes through actual block transaction")
+ check(await idle_water(),"Object removal restores the water boundary")
 func finish():
  if is_instance_valid(game):game.terrain.shutdown();game.queue_free()
  await process_frame;await process_frame
@@ -164,6 +192,22 @@ func terrain_cases(entry:Dictionary,total:int)->void:
  check(slot>=0 and game.mining_rewards.place(Vector3i(deposit.floor()),201,slot),"Carried terrain material is deposited through the actual inventory transaction")
  check(await idle_water(),"Deposited terrain displaces water and publishes")
  check(game.lakes.statistics().water_ml==total and amounts(game.lakes.capture_snapshot())!=before,"Deposition changes water distribution and conserves quantity")
+ var reference:Dictionary=game.lakes.water.raycast_surface(center+Vector3(-3,1,-3),center+Vector3(-3,-4,-3))
+ if reference.get("hit",false):
+  var level:float=reference.point.y
+  var tested:=0
+  for z in range(-4,5):
+   for x in range(-4,5):
+    var p:=Vector3(deposit.floor())+Vector3(.5+x*.15,0,.5+z*.15)
+    var ground:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(p.x,level+2,p.z),Vector3(p.x,level-3,p.z),1))
+    if ground.is_empty() or ground.position.y>=level-.04:continue
+    tested+=1
+    var surface:Dictionary=game.lakes.water.raycast_surface(Vector3(p.x,level+.5,p.z),Vector3(p.x,level-.5,p.z))
+    var covered:bool=surface.get("hit",false) and absf(surface.point.y-level)<.03
+    if not covered:print("TERRAIN_CONTACT_PROBE ",JSON.stringify({"point":p,"ground":ground.position,"level":level,"surface":surface,"geometry":game.lakes.water.cell_geometry(Vector3(p.x,level,p.z))}))
+    check(covered,"Submerged deposited terrain stays covered at "+str(p))
+  check(tested>0,"Terrain-contact coverage samples actual submerged ground")
+ else:check(false,"Terrain-contact reference surface exists")
  await capture("deposition_above",deposit,entry.level)
  await capture("deposition_underwater",deposit,entry.level,true)
  # Compare the optimized invalidation against a full authoritative resample.
@@ -255,6 +299,9 @@ func boundary_topology(origin:Vector3)->Dictionary:
     var key:=a+"|"+b if a<b else b+"|"+a
     var pair:Vector2i=edges.get(key,Vector2i.ZERO);pair.x+=1;pair.y+=1 if a<b else -1;edges[key]=pair
  var open_edges:=0
- for pair:Vector2i in edges.values():
-  if pair.x<2 or pair.x%2!=0 or pair.y!=0:open_edges+=1
+ for key:String in edges:
+  var pair:Vector2i=edges[key]
+  if pair.x<2 or pair.x%2!=0 or pair.y!=0:
+   open_edges+=1
+   if open_edges<=16:print("WATER_OPEN_EDGE ",key," ",pair)
  return {"triangles":triangles,"degenerate":degenerate,"open_edges":open_edges,"rendered_m3":absf(volume),"owned_m3":game.lakes.statistics().water_ml/1000000.0}

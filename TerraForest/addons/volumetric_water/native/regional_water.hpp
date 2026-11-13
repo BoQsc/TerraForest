@@ -125,7 +125,7 @@ class NativeRegionalWater : public godot::RefCounted {
         uint16_t settle_cursor=0;
         // 0 ordinary, 1 regenerable ocean, 2 ocean touched by gameplay/terrain.
         uint8_t ocean_state=0;
-        uint8_t occupancy_version=12;
+        uint8_t occupancy_version=13;
         bool limited_building_edit=false;
         godot::AABB building_edit_bounds;
         // Conservative charge per retained owner, even when payload is shared.
@@ -179,6 +179,7 @@ class NativeRegionalWater : public godot::RefCounted {
     struct OceanCached {Region region;uint64_t bytes=0,stamp=0;};
     std::map<Key,OceanCached> ocean_cache;
     uint64_t ocean_cache_bytes=0,ocean_cache_clock=0,ocean_cache_hits=0;
+    std::unordered_map<Key,uint64_t> ocean_edit_interests;
     void trim_ocean_cache(uint64_t incoming=0);
     bool restore_ocean_cache(Key k);
 
@@ -295,6 +296,7 @@ public:
     bool restore_region_snapshot(const godot::Vector3i &coordinate,const godot::PackedByteArray &packet,int64_t expected_revision,bool reuse_occupancy);
     godot::PackedByteArray ocean_publication_mask() const;
     godot::Dictionary update_ocean_residency(const godot::Vector3 &center,int64_t budget);
+    bool prepare_ocean_edit(const godot::AABB &bounds);
     // Conservative occupied-cell column envelope for cartography, not a mesh surface.
     godot::Dictionary survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::String survey_cache_identity() const{return survey_saved_identity;}
@@ -343,6 +345,7 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     friend class NativeRegionalWater;
     godot::Ref<NativeRegionalWater> frozen;
     uint64_t revision=0,elapsed_us=0,visited_cells=0,blocked_ml=0;
+    int64_t ocean_exchange_ml=0;
     std::array<uint64_t,8> phase_us{};
     uint64_t reserved_bytes=0;
     static std::atomic<uint64_t> pending_bytes;

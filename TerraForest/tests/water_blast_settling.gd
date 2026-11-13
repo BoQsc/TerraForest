@@ -111,7 +111,8 @@ func _initialize()->void:
 	water=fixture({left:[0,500,75000],sill:[300,500,1],right:[0,500,1000]})
 	water.settle_after_edit(AABB(Vector3(sill)*.5,Vector3.ONE*.5));settle(water)
 	check(amounts(water).get(left,0)==75000 and water.statistics().water_ml==76001,"Layer acceleration cannot drain a retained pocket across a dry sill")
-	var lake=preload("res://addons/volumetric_water/lake_world.gd").new()
+	# Native-only derived fixtures do not execute this coordinator check.
+	var lake=load("res://addons/volumetric_water/lake_world.gd").new()
 	lake.water=fixture({high:[0,500,125000],low:[0,500,0]})
 	lake.settling_enabled=func()->bool:return false
 	lake._settle_committed_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5),1)
