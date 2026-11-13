@@ -111,6 +111,7 @@
   "res://addons/player_runtime/bullet_holes.gd": [
     "res://addons/player_runtime/bullet_mark.gdshader"
   ],
+  "res://addons/player_runtime/carried_object_catalog.gd": [],
   "res://addons/player_runtime/character_panel.gd": [
     "res://addons/characters/wearables/clothing.gd",
     "res://addons/player_runtime/character_portrait.gd",
@@ -119,11 +120,13 @@
   "res://addons/player_runtime/character_portrait.gd": [],
   "res://addons/player_runtime/combat_barrel.gd": [],
   "res://addons/player_runtime/combat_world.gd": [
+    "res://addons/player_runtime/pistol_trial.gd",
     "res://addons/player_runtime/combat_barrel.gd",
     "res://addons/player_runtime/durability_catalog.gd",
     "res://addons/player_runtime/destruction_effects.gd",
     "res://addons/player_runtime/structural_integrity.gd",
     "res://addons/player_runtime/destruction_trace.gd",
+    "res://addons/player_runtime/pistol_crosshair.gd",
     "res://addons/player_runtime/firearm_impact_audio.gd",
     "res://addons/player_runtime/bullet_holes.gd",
     "res://addons/player_runtime/pistol_sound_trial.gd",
@@ -202,6 +205,7 @@
     "res://addons/player_runtime/consumables.gd"
   ],
   "res://addons/player_runtime/item_catalog.gd": [
+    "res://addons/player_runtime/carried_object_catalog.gd",
     "res://addons/player_runtime/durability_catalog.gd"
   ],
   "res://addons/player_runtime/item_icons.gd": [
@@ -219,14 +223,21 @@
     "res://addons/structures/mine_rail_catalog.gd",
     "res://addons/player_runtime/art/mine_rail.svg",
     "res://addons/player_runtime/art/lockpick.svg",
-    "res://addons/player_runtime/art/coins.svg"
+    "res://addons/player_runtime/art/coins.svg",
+    "res://addons/player_runtime/carried_object_catalog.gd"
   ],
   "res://addons/player_runtime/map_markers.gd": [],
   "res://addons/player_runtime/mining_rewards.gd": [],
+  "res://addons/player_runtime/object_placement.gd": [
+    "res://addons/player_runtime/carried_object_catalog.gd",
+    "res://addons/player_runtime/combat_barrel.gd"
+  ],
+  "res://addons/player_runtime/pistol_crosshair.gd": [],
   "res://addons/player_runtime/pistol_sound_trial.gd": [
     "res://addons/audio_runtime/packs/happysoul_px9_trial/shot.mp3",
     "res://addons/audio_runtime/packs/happysoul_px9_trial/reload.mp3"
   ],
+  "res://addons/player_runtime/pistol_trial.gd": [],
   "res://addons/player_runtime/player_actions.gd": [
     "res://addons/world_runtime/mouse_ownership.gd"
   ],
@@ -622,6 +633,7 @@
     "res://addons/structures/lake_crossings.gd",
     "res://addons/structures/expansion_catalog.gd",
     "res://addons/volumetric_terrain/generated_layout.gd",
+    "res://addons/world_runtime/introduction_spawn.gd",
     "res://addons/world_runtime/road_normalization.gd",
     "res://addons/world_runtime/generated_region.gd",
     "res://addons/world_runtime/town_sign_plan.gd"
@@ -886,6 +898,7 @@
     "res://addons/world_ecosystem/ground_interaction.gd",
     "res://addons/world_ecosystem/ground_preview.gd",
     "res://addons/volumetric_water/water_camera.gd",
+    "res://addons/player_runtime/object_placement.gd",
     "res://addons/player_runtime/player_hud.gd",
     "res://addons/world_runtime/world_map.gd",
     "res://addons/player_runtime/map_markers.gd",

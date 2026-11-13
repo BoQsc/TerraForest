@@ -24,6 +24,7 @@ void NativeRoadJourney::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","roads","stop_spacing"),&NativeRoadJourney::configure,DEFVAL(0.0));
     ClassDB::bind_method(D_METHOD("get_stops"),&NativeRoadJourney::get_stops);
     ClassDB::bind_method(D_METHOD("connected_stops","start","maximum_snap"),&NativeRoadJourney::connected_stops);
+    ClassDB::bind_method(D_METHOD("round_trip_stops","start","maximum_snap"),&NativeRoadJourney::round_trip_stops);
     ClassDB::bind_method(D_METHOD("route","start","destination","maximum_snap","heading"),&NativeRoadJourney::route,DEFVAL(Vector3()));
     ClassDB::bind_method(D_METHOD("follow","points"),&NativeRoadJourney::follow);
     ClassDB::bind_method(D_METHOD("resume","points","waypoint"),&NativeRoadJourney::resume);
@@ -44,6 +45,50 @@ PackedVector3Array NativeRoadJourney::connected_stops(Vector3 start,double maxim
     for(size_t cursor=0;cursor<pending.size();++cursor)for(const auto &edge:edges[pending[cursor]])if(!visited[edge.to]){visited[edge.to]=true;pending.push_back(edge.to);}
     for(int index=0;index<int(nodes.size());++index)if(visited[index])result.push_back(nodes[index]);
     return result;
+}
+Dictionary NativeRoadJourney::round_trip_stops(Vector3 start,double maximum_snap)const{
+    PackedVector3Array result;
+    if(!start.is_finite()||!std::isfinite(maximum_snap)||maximum_snap<0||maximum_snap>128)return fail("unavailable");
+    int first=-1;double best=maximum_snap*maximum_snap;
+    for(int index=0;index<int(nodes.size());++index){double distance=nodes[index].distance_squared_to(start);if(distance<=best){first=index;best=distance;}}
+    if(first<0)return fail("no_road_stop");
+    // Match route()'s shortest outward arrival exactly, then reverse-walk the
+    // legal incoming-edge states to reject stops that cannot drive home. An
+    // undirected component includes dead ends and illegal turning approaches.
+    struct Arrival{int previous,node;double distance;};
+    std::vector<Arrival> arrivals{{-1,first,0}};
+    std::vector<std::vector<int>> reverse(1);
+    std::vector<int> earliest(nodes.size(),-1);
+    std::map<std::pair<int,int>,int> identities{{{-1,first},0}};
+    using Entry=std::pair<double,int>;std::priority_queue<Entry,std::vector<Entry>,std::greater<Entry>> queue;
+    queue.push({0,0});int work=0,transitions=0;
+    while(!queue.empty()){
+        auto [cost,state_id]=queue.top();queue.pop();const Arrival current=arrivals[state_id];
+        if(cost>current.distance)continue;if(++work>32768)return fail("search_limit");
+        if(earliest[current.node]<0)earliest[current.node]=state_id;
+        Vector3 arrival=current.previous<0?Vector3():flat(nodes[current.node]-nodes[current.previous]);
+        for(auto edge:edges[current.node]){
+            if(arrival.length_squared()>.001&&arrival.normalized().dot(flat(nodes[edge.to]-nodes[current.node]).normalized())<-.1)continue;
+            if(++transitions>262144)return fail("search_limit");
+            auto key=std::make_pair(current.node,edge.to);auto found=identities.find(key);int next;
+            if(found==identities.end()){
+                if(arrivals.size()>=32768)return fail("search_limit");
+                next=int(arrivals.size());identities[key]=next;arrivals.push_back({current.node,edge.to,std::numeric_limits<double>::infinity()});reverse.emplace_back();
+            }else next=found->second;
+            reverse[next].push_back(state_id);
+            if(cost+edge.cost<arrivals[next].distance){arrivals[next].distance=cost+edge.cost;queue.push({arrivals[next].distance,next});}
+        }
+    }
+    std::vector<bool> returns(arrivals.size(),false);std::vector<int> pending;
+    for(int index=0;index<int(arrivals.size());++index)if(arrivals[index].node==first){returns[index]=true;pending.push_back(index);}
+    for(size_t cursor=0;cursor<pending.size();++cursor)for(int previous:reverse[pending[cursor]])if(!returns[previous]){returns[previous]=true;pending.push_back(previous);}
+    for(int node=0;node<int(nodes.size());++node){int arrival=earliest[node];if(arrival>=0&&arrivals[arrival].distance>=20&&returns[arrival])result.push_back(nodes[node]);}
+    Array frontiers;
+    for(int node=0;node<int(nodes.size())&&frontiers.size()<16;++node)if(earliest[node]>=0){
+        const auto &arrival=arrivals[earliest[node]];
+        for(auto edge:edges[node])if(earliest[edge.to]<0&&arrival.previous>=0){Dictionary item;item["from"]=nodes[arrival.previous];item["junction"]=nodes[node];item["to"]=nodes[edge.to];frontiers.push_back(item);if(frontiers.size()>=16)break;}
+    }
+    Dictionary survey;survey["ok"]=true;survey["stops"]=result;survey["states"]=int(arrivals.size());survey["transitions"]=transitions;survey["frontiers"]=frontiers;return survey;
 }
 Dictionary NativeRoadJourney::configure(const Array &source,double stop_spacing){
     roads.clear();nodes.clear();edges.clear();path.clear();state="unavailable";
@@ -108,22 +153,37 @@ Dictionary NativeRoadJourney::route(Vector3 start,Vector3 destination,double sna
     // entire driven route. No invisible shortcut from a building to a road.
     auto nearest=[&](Vector3 p){int found=-1;double best=snap*snap;for(int i=0;i<int(nodes.size());i++){double d=nodes[i].distance_squared_to(p);if(d<=best){best=d;found=i;}}return found;};
     int first=nearest(start),last=nearest(destination);if(first<0||last<0)return fail("no_road_stop");
-    std::vector<double> distance(nodes.size(),std::numeric_limits<double>::infinity());std::vector<int> parent(nodes.size(),-1);
+    // Turn legality depends on the incoming edge, not only the junction.
+    // A cheaper arrival from the wrong direction must not discard a legal
+    // approach or prevent a forward loop back through the departure junction.
+    struct Arrival {int previous,node,parent;double distance;};
+    std::vector<Arrival> arrivals{{-1,first,-1,0}};
+    std::map<std::pair<int,int>,int> identities{{{-1,first},0}};
     using Entry=std::pair<double,int>;std::priority_queue<Entry,std::vector<Entry>,std::greater<Entry>> queue;
-    distance[first]=0;queue.push({0,first});int work=0;
+    queue.push({0,0});int work=0,terminal=-1;
     while(!queue.empty()){
-        auto [cost,id]=queue.top();queue.pop();if(cost>distance[id])continue;if(++work>32768)return fail("search_limit");if(id==last)break;
-        for(auto edge:edges[id]){
-            Vector3 arrival=id==first?flat(heading):(parent[id]>=0?flat(nodes[id]-nodes[parent[id]]):Vector3());
-            if(arrival.length_squared()>.001&&arrival.normalized().dot(flat(nodes[edge.to]-nodes[id]).normalized())<-.1)continue;
-            if(cost+edge.cost<distance[edge.to]){distance[edge.to]=cost+edge.cost;parent[edge.to]=id;queue.push({distance[edge.to],edge.to});}
+        auto [cost,state_id]=queue.top();queue.pop();const Arrival current=arrivals[state_id];
+        if(cost>current.distance)continue;if(++work>32768)return fail("search_limit");
+        if(current.node==last){terminal=state_id;break;}
+        const Vector3 arrival=current.previous<0?flat(heading):flat(nodes[current.node]-nodes[current.previous]);
+        for(auto edge:edges[current.node]){
+            if(arrival.length_squared()>.001&&arrival.normalized().dot(flat(nodes[edge.to]-nodes[current.node]).normalized())<-.1)continue;
+            const auto key=std::make_pair(current.node,edge.to);auto found=identities.find(key);
+            int next;
+            if(found==identities.end()){
+                if(arrivals.size()>=32768)return fail("search_limit");
+                next=int(arrivals.size());identities[key]=next;
+                arrivals.push_back({current.node,edge.to,-1,std::numeric_limits<double>::infinity()});
+            }else next=found->second;
+            if(cost+edge.cost<arrivals[next].distance){arrivals[next].distance=cost+edge.cost;arrivals[next].parent=state_id;queue.push({arrivals[next].distance,next});}
         }
     }
-    if(!std::isfinite(distance[last]))return fail("disconnected");
-    if(distance[last]<20)return fail("same_stop");
-    std::vector<int> reverse;for(int id=last;id>=0;id=parent[id])reverse.push_back(id);
+    if(terminal<0)return fail("disconnected");
+    const double route_distance=arrivals[terminal].distance;
+    if(route_distance<20)return fail("same_stop");
+    std::vector<int> reverse;for(int id=terminal;id>=0;id=arrivals[id].parent)reverse.push_back(arrivals[id].node);
     PackedVector3Array points;for(auto it=reverse.rbegin();it!=reverse.rend();++it)points.push_back(nodes[*it]);
-    Dictionary result;result["ok"]=true;result["points"]=points;result["distance_m"]=distance[last];result["fare"]=10+int(std::ceil(distance[last]/100))*2;result["work"]=work;return result;
+    Dictionary result;result["ok"]=true;result["points"]=points;result["distance_m"]=route_distance;result["fare"]=10+int(std::ceil(route_distance/100))*2;result["work"]=work;return result;
 }
 bool NativeRoadJourney::follow(const PackedVector3Array &points){
     if(points.size()<2||points.size()>32768)return false;

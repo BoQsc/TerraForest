@@ -1,3 +1,23 @@
+## Shuffle planning correction — 2026-11-13
+
+Plan v52 is installed and verified for the reported Shuffle failures.
+[Evidence and scope](../issues/world-generator/README.md#shuffle-failures--2026-11-13).
+A 32-seed sweep passed terrain 31 (natural ground), but the packaged ordinary UI
+exposed the fixture's wrong hard-coded terrain mode. Tests now derive the mode
+from the UI launch helper. Default-mode mine placement now filters for legal
+forward-driveable round-trip stops before fitting. Direction-aware road shortcut
+search now checks crossings during routing. Seed 1729662740 passes default-mode
+preview/cache/spawn and ordinary asynchronous UI checks; captures inspected.
+All 32 distinct default seeds and graphical generation/save/reopen for 1729662740
+pass (52 buildings, 12 lakes, ten persistence assertions). The updated package
+passes export, UI/road/terrain and ten known-seed gates. Both reported seeds also
+pass with the installed release DLLs. Installed data generation and a separate
+process reopening pass ten assertions each with unchanged canonical hashes;
+the actual standalone executable passes startup. Photography/map-raster capture and
+ground-level quality are outside the data-generation fixture's evidence.
+The terrain-31 headless generation passed ten assertions but logged a renderer
+error; it remains non-clean evidence. World-quality/user approval remains open.
+
 ## Carried objects and shoreline reports - 2026-11-10
 
 Shared grid/free object placement and Dev Bag furniture are installed, with

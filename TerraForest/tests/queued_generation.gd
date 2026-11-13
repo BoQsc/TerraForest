@@ -27,6 +27,7 @@ var generation_code:=-1
 var slot:="queued_generation_"+Crypto.new().generate_random_bytes(6).hex_encode()
 var recipe:=Recipe.DEFAULTS.duplicate()
 var generator:=23
+var world_seed:=1703
 
 func _initialize()->void:run.call_deferred()
 func check(accepted:bool,label:String)->void:
@@ -39,30 +40,45 @@ func wait_for(predicate:Callable,seconds:int)->bool:
 	return predicate.call()
 
 func run()->void:
+	var restore_slot:=""
+	for argument:String in OS.get_cmdline_user_args():
+		if argument.begins_with("--plan-seed="):world_seed=int(argument.get_slice("=",1))
+		if argument.begins_with("--restore-generated="):restore_slot=argument.get_slice("=",1)
+	if not restore_slot.is_empty():
+		var pattern:=RegEx.new();pattern.compile("^queued_generation_[0-9a-f]{12}$")
+		if pattern.search(restore_slot)==null:push_error("Invalid generated fixture slot");quit(2);return
+		slot=restore_slot
+	if "--frontier" in OS.get_cmdline_user_args():generator=preload("res://demo/world_launch.gd").terrain_generator(true,not "--natural-ground" in OS.get_cmdline_user_args())
 	if "--city-generation" in OS.get_cmdline_user_args():
 		recipe.biome=2;recipe.settlements=3;recipe.districts=3;recipe.network=2;recipe.trails=2;generator=22
 	if "--distributed" in OS.get_cmdline_user_args():generator=25
-	var output:="res://reports/queued_generation/"+slot
-	Options.set_arguments(PackedStringArray(["--world-slot="+slot,"--world-seed=1703","--world-generator="+str(generator),"--save-terrain-lots","--preparation-output="+output,"--world-recipe="+Marshalls.raw_to_base64(Recipe.encode(recipe))]),true)
-	var task:=DataGeneration.new();task.root=root
-	task.finished.connect(func(code:int):generation_code=code;completed=true)
-	root.add_child(task)
-	var ready:bool=await wait_for(func():return completed,180)
-	check(ready and generation_code==0,"actual production planning, native baking, multi-door buildings and world save complete")
-	if not ready or generation_code!=0:task.request_cancel();await wait_for(func():return completed,20);await finish();return
-	task.free();await process_frame
+	var output:="res://reports/queued_generation/"+slot+("_reopen" if not restore_slot.is_empty() else "")
+	var ready:=false
+	if restore_slot.is_empty():
+		Options.set_arguments(PackedStringArray(["--world-slot="+slot,"--world-seed="+str(world_seed),"--world-generator="+str(generator),"--vehicle-fleet","--save-terrain-lots","--preparation-output="+output,"--world-recipe="+Marshalls.raw_to_base64(Recipe.encode(recipe))]),true)
+		var task:=DataGeneration.new();task.root=root
+		task.finished.connect(func(code:int):generation_code=code;completed=true)
+		root.add_child(task)
+		ready=await wait_for(func():return completed,180)
+		check(ready and generation_code==0,"actual production planning, native baking, multi-door buildings and world save complete")
+		if not ready or generation_code!=0:task.request_cancel();await wait_for(func():return completed,20);await finish();return
+		task.free();await process_frame
+	else:
+		var exists:=FileAccess.file_exists("user://worlds/"+slot+".trw")
+		check(exists,"fresh process receives the previously generated fixture")
+		if not exists:await finish();return
 	var path:="user://worlds/"+slot+".trw"
 	var before:=FileAccess.get_sha256(path)
 	check(not before.is_empty(),"new isolated world has a canonical saved root")
-	Options.set_arguments(PackedStringArray(["--world-slot="+slot,"--world-seed=1703","--world-generator="+str(generator),"--snapshot-readonly"]),true)
+	Options.set_arguments(PackedStringArray(["--world-slot="+slot,"--world-seed="+str(world_seed),"--world-generator="+str(generator),"--vehicle-fleet","--snapshot-readonly"]),true)
 	var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;root.add_child(game)
 	ready=await wait_for(func():return not game.loading_active or not game.terrain.latest_error.is_empty(),90)
 	check(ready and game.terrain.latest_error.is_empty() and not game.loading_active,"generated world reopens through the actual game loader")
 	if ready and game.terrain.latest_error.is_empty():
 		game.set_physics_process(false);game._clear_motion()
-		var deposits:Array=game.material_deposits.describe(1703,generator)
+		var deposits:Array=game.material_deposits.describe(world_seed,generator)
 		check(not deposits.is_empty(),"generated mineral metadata restores")
-		var planned:Dictionary=preload("res://addons/world_runtime/custom_world_plan.gd").build(1703,generator,recipe,output+"_plan")
+		var planned:Dictionary=preload("res://addons/world_runtime/custom_world_plan.gd").build(world_seed,generator,recipe,output+"_plan")
 		check(planned.get("ok",false) and planned.sites.size()==recipe.settlements*recipe.districts,"requested number of districts survives production generation and plan reconstruction")
 		var identities:Dictionary={}
 		for deposit:Dictionary in deposits:identities[deposit.id]=deposit.position
@@ -81,7 +97,7 @@ func run()->void:
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame
 	check(FileAccess.get_sha256(path)==before,"read-only verification leaves canonical world bytes unchanged")
 	DirAccess.make_dir_recursive_absolute(output)
-	FileAccess.open(output.path_join("verification.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"slot":slot,"recipe":recipe,"scope":"production data generation and game reopen; photographs/map raster baking skipped in this headless fixture"},"  "))
+	FileAccess.open(output.path_join("verification.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"slot":slot,"restored_existing":not restore_slot.is_empty(),"seed":world_seed,"generator":generator,"world_path":ProjectSettings.globalize_path(path),"world_sha256":before,"recipe":recipe,"scope":"production data generation and game reopen; photographs/map raster baking skipped in this fixture"},"  "))
 	await finish()
 
 func finish()->void:

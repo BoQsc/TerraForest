@@ -419,12 +419,32 @@ func update_recipe_summary()->void:
 	recipe_summary.tooltip_text=recipe_summary.text
 func invalidate_preview()->void:
 	preload("res://demo/world_creation_panel.gd").sync_style(self)
+	reset_preview_message()
 	preview_view.texture=null
 	preview_due_ms=Time.get_ticks_msec()+PREVIEW_DELAY_MS
 	preview_empty.show();preview_metrics.text="UPDATING PREVIEW…";update_recipe_summary()
 	preview_status.text="The preview updates automatically after you finish changing settings."
+func reset_preview_message()->void:
+	preview_status.tooltip_text=""
+	preview_metrics.add_theme_color_override("font_color",preload("res://demo/world_creation_panel.gd").ACCENT)
+	preview_empty.add_theme_color_override("font_color",preload("res://demo/world_creation_panel.gd").MUTED)
+	preview_empty.text="YOUR WORLD STARTS HERE\n\nChoose a seed and recipe. The preview updates automatically.\nTerrain, buildings, roads and water are planned together."
+func show_preview_failure(reason:String)->void:
+	if reason.strip_edges().is_empty():reason="The planner returned no error details."
+	var error_color:=Color("f0a28f")
+	preview_view.texture=null
+	preview_metrics.text="PLAN UNAVAILABLE"
+	preview_metrics.add_theme_color_override("font_color",error_color)
+	preview_empty.text="Could not plan seed %d\n\n%s\n\nAdjust the recipe or try another seed. No world was created."%[int(seed_field.value),reason]
+	preview_empty.add_theme_color_override("font_color",error_color)
+	preview_empty.show()
+	preview_status.text=reason
+	preview_status.tooltip_text=reason
+	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed) if preset.get_selected_id()==Launch.INTEGRATED_PRESET else preset.get_selected_id()
+	push_warning("World preview failed: seed=%d terrain=%d recipe=%s reason=%s"%[int(seed_field.value),generator,str(selected_options()),reason])
 func start_preview()->void:
 	if preview_worker!=null or preview_loading or preparation_pid>=0 or photograph_pid>=0 or session.transitioning:return
+	reset_preview_message()
 	preview_due_ms=-1
 	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed)
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:generator=preset.get_selected_id()
@@ -433,13 +453,16 @@ func start_preview()->void:
 	preview_loading=true;preview_resources=preload("res://addons/world_runtime/startup_resources.gd").new()
 	var prepared:bool=await preview_resources.prepare(self,"res://addons/world_runtime/world_generation_plan.gd")
 	preview_loading=false
-	if not prepared:preview_resources=null;preview_button.disabled=preparation_pid>=0;return
+	if not prepared:
+		preview_resources=null;preview_button.disabled=preparation_pid>=0
+		if preview_key==selected_preview_key():show_preview_failure("Could not load the world-planning resources.")
+		return
 	if preview_key!=selected_preview_key():preview_resources=null;preview_button.disabled=preparation_pid>=0;return
 	preview_worker=Thread.new()
 	plan_progress=preload("res://addons/world_runtime/world_plan_progress.gd").new()
 	# Load native helper initializers on the owner thread, only when requested.
 	var job:Callable=load("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET,true,true,"user://cartography/generation",selected_options(),plan_progress)
-	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;preview_status.text="Could not start terrain preview."
+	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;show_preview_failure("Could not start the terrain preview worker.")
 	preview_resources=null
 func poll_preview()->void:
 	if preview_worker==null:
@@ -452,10 +475,10 @@ func poll_preview()->void:
 			if not current.is_empty():preview_status.text=current.activity+"\n"+current.work
 		return
 	var completed=preview_worker.wait_to_finish();preview_worker=null;preview_button.disabled=preparation_pid>=0
-	if not completed is Dictionary:preview_status.text="Terrain preview failed. Try again after checking the generator log.";return
-	var result:Dictionary=completed
 	if preview_key!=selected_preview_key():return # A debounced preview of the latest recipe is pending.
-	if not result.get("ok",false):preview_status.text=str(result.get("reason","Terrain preview failed."))+" No world was created.";preview_metrics.text="PLAN UNAVAILABLE  ·  Adjust settings or try another seed";preview_empty.show();return
+	if not completed is Dictionary:show_preview_failure("The terrain preview worker did not return a plan. Check the generator log.");return
+	var result:Dictionary=completed
+	if not result.get("ok",false):show_preview_failure(str(result.get("reason","Terrain preview failed.")));return
 	preview_empty.hide()
 	preview_view.texture=ImageTexture.create_from_image(Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,result.pixels))
 	if result.has("building_count"):

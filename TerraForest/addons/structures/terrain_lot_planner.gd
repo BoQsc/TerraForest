@@ -8,7 +8,7 @@ const Quality=preload("res://addons/world_runtime/world_building_quality.gd")
 const Lots=preload("res://addons/structures/northern_lots.gd")
 const Contact=preload("res://addons/structures/terrain_contact.gd")
 
-static func streets(core,center:Vector3,source:Array=[])->Dictionary:
+static func streets(core,center:Vector3,source:Array=[],road_grid:int=0)->Dictionary:
  var roads:Array=Lots.street_segments(center) if source.is_empty() else source
  var junctions:=PackedVector3Array()
  if source.is_empty():
@@ -18,6 +18,8 @@ static func streets(core,center:Vector3,source:Array=[])->Dictionary:
   for road:Dictionary in source:
    for p:Vector3 in [road.start,road.finish]:
     if not junctions.has(p):junctions.append(p)
+ if road_grid>=2:
+  for road:Dictionary in roads:road["planning_support_extent"]=7.5 if road_grid==3 else 6.5
  return core.plan_streets(roads,junctions)
 
 static func heights(core,points:PackedVector3Array)->PackedFloat32Array:
@@ -152,32 +154,37 @@ static func footprint_clear(bounds:AABB,reserved:Array)->bool:
   if footprint.intersects(area):return false
  return true
 
-static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2(),recipe_provider:Callable=Callable(),street_provider:Callable=Callable(),envelope:Vector2=Vector2(150,200))->Dictionary:
+static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2(),recipe_provider:Callable=Callable(),street_provider:Callable=Callable(),envelope:Vector2=Vector2(150,200),road_grid:int=0,global_search:bool=false)->Dictionary:
  var protected:Dictionary=reservations(core,center)
  if not protected.ok:return {"ok":false,"reason":"Native region reservations unavailable","attempts":0}
  for bounds:AABB in occupied:
   protected.areas.append(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(12))
- var attempts:=0;var reasons:Dictionary={};var best_missing:=12
+ var attempts:=0;var reasons:Dictionary={};var best_missing:=12;var grid_rejections:=0
  var candidates:Array=[]
  var offsets:Array=[0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]
  if protected.distributed:
   for distance in range(312,433,24):offsets.append(-distance);offsets.append(distance)
- for dx in offsets:
-  for dz in offsets:
-   var candidate:=center+Vector3(dx,0,dz)
-   if candidate.x<120 or candidate.z<120 or candidate.x>1880 or candidate.z>1880:continue
-   if search_area.has_area() and not search_area.has_point(Vector2(candidate.x,candidate.z)):continue
-   attempts+=1
-   # Conservative recipe envelope includes shifted plots, paths and shoulders.
-   if not footprint_clear(AABB(candidate-Vector3(envelope.x*.5,0,envelope.y*.5),Vector3(envelope.x,256,envelope.y)),protected.areas):
-    reasons["Reserved lake, POI or neighboring site"]=int(reasons.get("Reserved lake, POI or neighboring site",0))+1;continue
-   var roads:Dictionary=streets(core,candidate,street_provider.call(candidate) if street_provider.is_valid() else [])
-   if not roads.ok:
-    reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
-   # A permitted excavation is not necessarily a desirable location. Rank all
-   # bounded candidates before trying buildings; prefer little ground disturbance.
-   var cost:float=roads.mean_earthwork+0.3*(roads.max_cut+roads.max_fill)+0.001*center.distance_to(candidate)
-   candidates.append({"center":candidate,"roads":roads,"cost":cost,"order":attempts})
+ var centers:Array=[]
+ if global_search:
+  for x in range(120,1881,24):
+   for z in range(120,1881,24):centers.append(Vector3(x,0,z))
+ else:
+  for dx in offsets:
+   for dz in offsets:centers.append(center+Vector3(dx,0,dz))
+ for candidate:Vector3 in centers:
+  if candidate.x<120 or candidate.z<120 or candidate.x>1880 or candidate.z>1880:continue
+  if search_area.has_area() and not search_area.has_point(Vector2(candidate.x,candidate.z)):continue
+  attempts+=1
+  # Conservative recipe envelope includes shifted plots, paths and shoulders.
+  if not footprint_clear(AABB(candidate-Vector3(envelope.x*.5,0,envelope.y*.5),Vector3(envelope.x,256,envelope.y)),protected.areas):
+   reasons["Reserved lake, POI or neighboring site"]=int(reasons.get("Reserved lake, POI or neighboring site",0))+1;continue
+  var roads:Dictionary=streets(core,candidate,street_provider.call(candidate) if street_provider.is_valid() else [],road_grid)
+  if not roads.ok:
+   reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
+  # A permitted excavation is not necessarily a desirable location. Rank all
+  # bounded candidates before trying buildings; prefer little ground disturbance.
+  var cost:float=roads.mean_earthwork+0.3*(roads.max_cut+roads.max_fill)+0.001*center.distance_to(candidate)
+  candidates.append({"center":candidate,"roads":roads,"cost":cost,"order":attempts})
  candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost if a.cost!=b.cost else a.order<b.order)
  for candidate:Dictionary in candidates:
   for variant in range(1 if recipe_provider.is_valid() else (12 if protected.distributed else 4)):
@@ -185,11 +192,26 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
    best_missing=mini(best_missing,lots.rejected.size())
    if lots.ok:
     var checked:Dictionary={"ok":true,"lots":lots.lots,"roads":candidate.roads.segments}
+    if not grid_roads_fit(core,checked,road_grid):grid_rejections+=1;continue
     var works:Dictionary=earthworks(checked)
     if not works.ok or not footprint_clear(works.bounds,protected.areas):continue
     return {"ok":true,"center":candidate.center,"lots":lots.lots,"roads":candidate.roads.segments,"attempts":attempts,"variant":variant,"reservation_owner":protected.owner,
     "site_cost":candidate.cost,"mean_earthwork":candidate.roads.mean_earthwork,"max_cut":candidate.roads.max_cut,"max_fill":candidate.roads.max_fill,"ranked_candidates":candidates.size()}
- return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"best_missing":best_missing}
+ return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"best_missing":best_missing,"grid_rejections":grid_rejections,"street_candidates":candidates.size()}
+
+# Validate the same support envelope used by final regional normalization while
+# alternative site candidates are still available. Never weaken cut/fill limits.
+static func grid_roads_fit(core:RefCounted,site:Dictionary,road_grid:int)->bool:
+ if road_grid<2:return true
+ var roads:Array=[]
+ for road:Dictionary in site.roads:
+  var record:=road.duplicate()
+  if road_grid==3:
+   var support:=road_support(road)
+   record["support_half_width"]=support.half_width;record["support_shoulder"]=support.shoulder
+  roads.append(record)
+ var protected:Array=load("res://addons/world_runtime/road_normalization.gd").protected_areas([site])
+ return core.fit_road_network(roads,protected,road_grid==3).get("ok",false)
 
 static func road_support(road:Dictionary)->Dictionary:
  var support:Dictionary=Lots._segment(road.start,road.finish,5.5,3,4,2,1)

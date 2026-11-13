@@ -426,9 +426,10 @@ public:
         int64_t total=0;
         std::vector<godot::PackedByteArray> commands;
         for(int64_t i=0;i<packets.size();++i){
-            if(packets[i].get_type()!=godot::Variant::PACKED_BYTE_ARRAY)return result;
+            if(packets[i].get_type()!=godot::Variant::PACKED_BYTE_ARRAY){result["reason"]="Generation command is not a byte packet";result["command"]=i;return result;}
             godot::PackedByteArray packet=packets[i];total+=packet.size();
-            if(packet.size()<44||packet.size()>1080||(packet.decode_u32(0)!=28&&packet.decode_u32(0)!=41)||total>4*1024*1024)return result;
+            if(packet.size()<44||packet.size()>1080||(packet.decode_u32(0)!=28&&packet.decode_u32(0)!=41)){result["reason"]="Invalid generation command format";result["command"]=i;return result;}
+            if(total>4*1024*1024){result["reason"]="Generation command data exceeds the 4 MiB budget";result["command_bytes"]=total;return result;}
             commands.push_back(packet);
         }
         std::lock_guard<std::mutex> lock(mutex_);
@@ -440,7 +441,7 @@ public:
         for(const auto &packet:commands){
             tr_oom=false;Bytes response;process_request(world_,packet.ptr(),int(packet.size()),response);
             good=!tr_oom&&response.n>=12&&response.p[8]==0;response.release();
-            if(!good)break;++completed;
+            if(!good){result["completed"]=completed;break;}++completed;
         }
         active_command_.store(-1,std::memory_order_relaxed);
         if(!good){
@@ -461,9 +462,10 @@ public:
         }
         std::vector<godot::PackedByteArray> commands;int64_t total=0;
         for(int64_t i=0;i<packets.size();++i){
-            if(packets[i].get_type()!=godot::Variant::PACKED_BYTE_ARRAY)return result;
+            if(packets[i].get_type()!=godot::Variant::PACKED_BYTE_ARRAY){result["reason"]="Generation command is not a byte packet";result["command"]=i;return result;}
             godot::PackedByteArray packet=packets[i];total+=packet.size();
-            if(packet.size()<44||packet.size()>1080||(packet.decode_u32(0)!=28&&packet.decode_u32(0)!=41)||total>4*1024*1024)return result;
+            if(packet.size()<44||packet.size()>1080||(packet.decode_u32(0)!=28&&packet.decode_u32(0)!=41)){result["reason"]="Invalid generation command format";result["command"]=i;return result;}
+            if(total>4*1024*1024){result["reason"]="Generation command data exceeds the 4 MiB budget";result["command_bytes"]=total;return result;}
             commands.push_back(packet);
         }
         std::lock_guard<std::mutex> lock(mutex_);

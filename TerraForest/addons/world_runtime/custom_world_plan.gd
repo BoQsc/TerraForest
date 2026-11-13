@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=46
+const VERSION:=52
 const Watchtowers=preload("res://addons/exploration/watchtower_sites.gd")
 const Exploration=preload("res://addons/exploration/cave_layouts.gd")
 const Civic=preload("res://addons/structures/civic_catalog.gd")
@@ -42,14 +42,14 @@ static func read_plan(path:String,key:String)->Dictionary:
  for site:Dictionary in value.sites:
   if site.recipe_kind not in ["market","neighborhood","city","civic"]:return {}
   var legacy:bool=value.get("legacy_civic_review",false)
-  var source:Array=Civic.recipe(site.center,legacy) if site.recipe_kind=="civic" else City.recipe(site.center) if site.recipe_kind=="city" else (Market.recipe(site.center,legacy) if site.recipe_kind=="market" else Lots.recipe(site.center,true,legacy))
+  var source:Array=Civic.recipe(site.center,legacy,site.get("introduction_home",false)) if site.recipe_kind=="civic" else City.recipe(site.center) if site.recipe_kind=="city" else (Market.recipe(site.center,legacy) if site.recipe_kind=="market" else Lots.recipe(site.center,true,legacy))
   if site.lots.size()!=source.size():return {}
   for index in site.lots.size():site.lots[index].asset=source[(index+int(site.get("variant",0)))%source.size()].asset
  value.plan=value.sites[0];value.market=value.sites[1] if value.options.settlements>1 else {}
  value["plan_digest"]=checksum.hex_encode();value["cache_hit"]=true
  value["mineral_plan_ms"]=0.0
  return value
-static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null,civic_review:bool=false)->Dictionary:
+static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null,civic_review:bool=false,rejected_intro_sites:Array=[])->Dictionary:
  var started:=Time.get_ticks_usec()
  var encoded:=Recipe.encode(options)
  if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31]:return {"ok":false,"reason":"Unsupported world recipe"}
@@ -75,6 +75,8 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var layout:=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
  var sites:Array=[];var occupied:Array=[];var works:Dictionary={"ok":true,"segments":[],"bounds":AABB()}
  var distributed:=generator>=24
+ var introduction_home:bool=int(options.get("introduction",0))==1 and not civic_review
+ var road_grid:int=int(options.get("road_grid",0))
  var primary_civic:bool=civic_review or int(options.districts)==1
  var hints:Array=[3,4,2 if seed_value%2 else 1] if distributed else [3,0,1]
  if distributed and layout_variant%2==1:hints[2]=3-hints[2]
@@ -85,11 +87,15 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   if distributed or town==2:hint+=[Vector3.ZERO,Vector3(shift,0,0),Vector3(-shift,0,0),Vector3(0,0,-shift)][layout_variant]
   var search_area:=Rect2()
   if distributed and town==2:search_area=Rect2(Vector2(120 if hints[town]==1 else 1450,600),Vector2(430,800))
-  var site:Dictionary=Planner.locate(core,hint,occupied,search_area,Civic.recipe.bind(civic_review),Civic.streets,Vector2(180,224)) if town==0 and primary_civic else (Market.locate(core,hint,occupied[0],civic_review) if town==1 else Planner.locate(core,hint,occupied,search_area))
+  var civic_occupied:=occupied+rejected_intro_sites
+  var site:Dictionary=Planner.locate(core,hint,civic_occupied,search_area,Civic.recipe.bind(civic_review,introduction_home),Civic.streets,Vector2(180,224),road_grid) if town==0 and primary_civic else (Market.locate(core,hint,occupied[0],civic_review,road_grid) if town==1 else Planner.locate(core,hint,occupied,search_area,Callable(),Callable(),Vector2(150,200),road_grid))
+  if distributed and not site.get("ok",false):
+   if progress!=null:progress.record("Finding a terrain-fitting settlement across the region",town,options.settlements,"Bounded whole-region survey / same buildings, streets and cut/fill limits")
+   site=Planner.locate(core,hint,civic_occupied,Rect2(),Civic.recipe.bind(civic_review,introduction_home),Civic.streets,Vector2(180,224),road_grid,true) if town==0 and primary_civic else (Market.locate(core,hint,occupied[0],civic_review,road_grid,true) if town==1 else Planner.locate(core,hint,occupied,Rect2(),Callable(),Callable(),Vector2(150,200),road_grid,true))
   if not site.get("ok",false):
    site["reason"]="Settlement %d: %s"%[town+1,site.get("reason","Site fitting failed")]
-   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review) if distributed or town==2 else site
-  site["recipe_kind"]="civic" if town==0 and primary_civic else ("market" if town==1 else "neighborhood");site["town"]=town;site["district"]=0
+   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review,rejected_intro_sites) if distributed or town==2 else site
+  site["recipe_kind"]="civic" if town==0 and primary_civic else ("market" if town==1 else "neighborhood");site["town"]=town;site["district"]=0;site["introduction_home"]=introduction_home and site.recipe_kind=="civic"
   var earthworks:=Planner.earthworks(site)
   if not earthworks.get("ok",false):return earthworks
   occupied.append(earthworks.bounds);sites.append(site)
@@ -107,26 +113,33 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   var search_area:=Rect2()
   if distributed and options.settlements>1 and town<2 and district==1:search_area=Rect2(Vector2(1250,120 if town==0 else 1000),Vector2(630,880))
   var civic_district:bool=not primary_civic and town==0 and district==1
-  var site:=locate_expansion(core,hint,occupied,search_area,district,civic_district)
+  var district_occupied:Array=occupied+rejected_intro_sites if civic_district else occupied
+  var site:=locate_expansion(core,hint,district_occupied,search_area,district,civic_district,road_grid,introduction_home)
   if (options.districts==3 or distributed) and not site.get("ok",false):
    for direction in 4:
     var reach:=600 if distributed else 384
     var alternate:Vector3=[Vector3(reach,0,0),Vector3(0,0,reach),Vector3(-reach,0,0),Vector3(0,0,-reach)][(direction+layout_variant)%4]
     if search_area.has_area():alternate=Vector3(1680,0,440+direction*192 if town==0 else 1560-direction*192)-sites[town].center
     if progress!=null:progress.record("Finding space for district %d"%[district+1],direction,4,"Bounded alternate site search / unchanged 2 m fill and 3 m cut limits")
-    site=locate_expansion(core,sites[town].center+alternate,occupied,search_area,district,civic_district)
+    site=locate_expansion(core,sites[town].center+alternate,district_occupied,search_area,district,civic_district,road_grid,introduction_home)
     if site.get("ok",false):break
   if distributed and search_area.has_area() and not site.get("ok",false):
    search_area=Rect2(Vector2(1000,120 if town==0 else 1000),Vector2(880,880))
-   site=locate_expansion(core,Vector3(1440,0,560 if town==0 else 1440),occupied,search_area,district,civic_district)
+   site=locate_expansion(core,Vector3(1440,0,560 if town==0 else 1440),district_occupied,search_area,district,civic_district,road_grid,introduction_home)
+  if distributed and not site.get("ok",false):
+   if progress!=null:progress.record("Relocating a district to suitable terrain",sites.size(),options.settlements*options.districts,"Bounded whole-region survey / preserve every requested district")
+   site=locate_expansion(core,hint,district_occupied,Rect2(),district,civic_district,road_grid,introduction_home,true)
   if not site.get("ok",false):
    site["reason"]="Settlement %d district %d: %s"%[town+1,district+1,site.get("reason","Site fitting failed")]
    site["hint"]=hint;site["search_area"]=search_area
-   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review)
-  site["recipe_kind"]="civic" if civic_district else ("city" if district==1 else "neighborhood");site["town"]=town;site["district"]=district
+   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review,rejected_intro_sites)
+  site["recipe_kind"]="civic" if civic_district else ("city" if district==1 else "neighborhood");site["town"]=town;site["district"]=district;site["introduction_home"]=introduction_home and civic_district
   var earthworks:=Planner.earthworks(site)
   if not earthworks.get("ok",false):return earthworks
   occupied.append(earthworks.bounds);sites.append(site);works.bounds=works.bounds.merge(earthworks.bounds);works.segments.append_array(earthworks.segments)
+ if introduction_home:
+  var spawn:=preload("res://addons/world_runtime/introduction_spawn.gd").select(sites)
+  if not spawn.ok:return retry(seed_value,generator,options,folder,layout_variant,started,spawn,progress,civic_review,rejected_intro_sites)
  var protected:=Planner.reservations(core,layout.sites[hints[0]].position)
  if not protected.get("ok",false):return {"ok":false,"reason":"Native route reservations unavailable"}
  var reserved:Array=protected.areas.duplicate()
@@ -151,7 +164,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   exits.append(points);streets.append_array(site.roads)
  if progress!=null:progress.record("Connecting %d districts and planning offroads"%sites.size(),0,0,"Native A* / shared crossing grades / up to %d wilderness trails"%[options.trails*sites.size()])
  var network:Dictionary=core.plan_region_network(exits,reserved,options.network,options.trails,seed_value,streets)
- if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review)
+ if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review,rejected_intro_sites)
  var normalization:Dictionary={"enabled":false}
  if int(options.get("road_grid",0))>0:
   if progress!=null:progress.record("Planning build-friendly road grades",0,0,("Native footprint rules" if int(options.road_grid)==3 else "Native connected grades" if int(options.road_grid)==2 else "Native road normalization")+" / protected entrances / full-width cut and fill survey")
@@ -163,7 +176,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    if normalization.get("ok",false):break
    if not connected:return normalization
    if not normalization.has("reroute_position") or attempt%3==2:
-    if network_mode==0:return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review)
+    if network_mode==0:return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review,rejected_intro_sites)
     network_mode-=1;exclusions=reserved.duplicate()
     if progress!=null:progress.record("Rejecting optional road loops that exceed terrain limits",options.network-network_mode,options.network,"All districts still required / no relaxation of earthworks or crossing rules")
    else:
@@ -171,8 +184,8 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
     exclusions.append(Rect2(Vector2(failed.x-4,failed.z-4),Vector2(8,8)))
     if progress!=null:progress.record("Replanning a road that failed its terrain limits",attempt+1,9,"Connected grades / alternate native corridor / no silent fallback")
    network=core.plan_region_network(exits,exclusions,network_mode,options.trails,seed_value,streets)
-   if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review)
-  if not normalization.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review)
+   if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review,rejected_intro_sites)
+  if not normalization.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review,rejected_intro_sites)
   network["accepted_network_mode"]=network_mode
   network["optional_loops_reduced"]=network_mode<int(options.network)
   normalization["reroute_exclusions"]=exclusions.size()-reserved.size()
@@ -210,19 +223,57 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    if not journey.configure(roads.roads,12).get("ok",false):return {"ok":false,"reason":"Expedition road graph unavailable"}
    for place:Dictionary in roads.places:
     if place.id==250:trader=place.position;break
-   road_stops=journey.connected_stops(trader,80)
-   if road_stops.is_empty():return {"ok":false,"reason":"The introduction needs a trader on a connected vehicle road"}
-  var exploration:Dictionary=core.plan_exploration_sites(layouts,reserved,works.segments,road_stops)
-  if not exploration.get("ok",false):return {"ok":false,"reason":"Exploration site survey failed"}
-  if journey!=null:
-   var connected:=false
+   var stop_survey:Dictionary=journey.round_trip_stops(trader,80)
+   if not stop_survey.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"Trader route survey failed: "+str(stop_survey.get("reason","unavailable"))},progress,civic_review,rejected_intro_sites)
+   road_stops=stop_survey.stops
+   if "--plan-diagnostics" in OS.get_cmdline_user_args():
+    var physical_component:PackedVector3Array=journey.connected_stops(trader,80)
+    var component_bounds:=AABB(physical_component[0],Vector3.ZERO) if not physical_component.is_empty() else AABB()
+    for stop:Vector3 in physical_component:component_bounds=component_bounds.expand(stop)
+    print("ROAD_COMPONENT_DIAGNOSTIC ",{"stops":physical_component.size(),"bounds":component_bounds,"frontiers":stop_survey.get("frontiers",[])})
+    var stop_bounds:=AABB(road_stops[0],Vector3.ZERO) if not road_stops.is_empty() else AABB()
+    for stop:Vector3 in road_stops:stop_bounds=stop_bounds.expand(stop)
+    print("MINE_STOP_DIAGNOSTIC ",{"seed":seed_value,"terrain":generator,"variant":layout_variant,"legal_stops":road_stops.size(),"physical_stops":journey.get_stops().size(),"bounds":stop_bounds,"trader":trader,"states":stop_survey.states})
+   if progress!=null:progress.record("Finding mine access with a return route",road_stops.size(),journey.get_stops().size(),"Surveying only stops the trader can drive to and return from")
+   if road_stops.is_empty():return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"The trader needs road stops with a legal forward route out and back"},progress,civic_review,rejected_intro_sites)
+  var exploration:Dictionary={}
+  var connected:bool=journey==null
+  var route_reason:="No terrain-fitted coal mine near a connected road"
+  # A connected road component can contain dead-end stops. Reject the stop,
+  # then resurvey other approaches before discarding the whole settlement plan.
+  for access_attempt in 8:
+   exploration=core.plan_exploration_sites(layouts,reserved,works.segments,road_stops)
+   if not exploration.get("ok",false):return {"ok":false,"reason":"Exploration site survey failed"}
+   if journey==null:break
+   var rejected_stop:=Vector3.INF
    for location:Dictionary in exploration.sites:
     if location.id!="coal_mine" or not location.has("road_access"):continue
-    var outward:Dictionary=journey.route(trader,location.road_access.start,80)
-    if not outward.get("ok",false):continue
+    rejected_stop=location.road_access.start
+    var outward:Dictionary=journey.route(trader,rejected_stop,80)
+    if not outward.get("ok",false):route_reason="Mine outward route: "+str(outward.get("reason","unavailable"));continue
     var back:Dictionary=journey.route(outward.points[-1],outward.points[0],1,outward.points[-1]-outward.points[-2])
     connected=back.get("ok",false) and outward.points.size()+back.points.size()<=8192
-   if not connected:return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"No terrain-fitted coal mine with a connected trader round trip"},progress,civic_review)
+    route_reason="Mine return route: "+str(back.get("reason","route point budget exceeded"))
+   if connected:break
+   if not rejected_stop.is_finite():
+    # Change the deterministic spatial sampling order, without changing seed,
+    # geometry limits or the requested mine. Avoid repeating the same survey.
+    var offset:int=maxi(1,road_stops.size()/8)
+    var shifted:=road_stops.slice(offset);shifted.append_array(road_stops.slice(0,offset));road_stops=shifted
+    continue
+   var alternatives:=PackedVector3Array()
+   for stop:Vector3 in road_stops:
+    if stop.distance_squared_to(rejected_stop)>32*32:alternatives.append(stop)
+   road_stops=alternatives
+   if road_stops.is_empty():break
+  if not connected:
+   if "--plan-diagnostics" in OS.get_cmdline_user_args():print("MINE_FIT_DIAGNOSTIC ",{"variant":layout_variant,"remaining_stops":road_stops.size(),"skipped":exploration.get("skipped"),"candidates":exploration.get("candidates"),"roof_rejections":exploration.get("roof_rejections"),"approach_rejections":exploration.get("approach_rejections"),"occupied_rejections":exploration.get("occupied_rejections")})
+   # A failed coupled mine/trader requirement must change the relevant district,
+   # not merely shift unrelated town hints and select the same global fallback.
+   rejected_intro_sites=rejected_intro_sites.duplicate()
+   for site:Dictionary in sites:
+    if site.recipe_kind=="civic":rejected_intro_sites.append(Planner.earthworks(site).bounds.grow(32))
+   return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"No terrain-fitted coal mine with a connected trader round trip. "+route_reason},progress,civic_review,rejected_intro_sites)
   result["exploration"]=exploration
   for location:Dictionary in exploration.sites:
    var layout_entry:Dictionary=layouts.filter(func(value:Dictionary):return value.id==location.id)[0]
@@ -279,16 +330,17 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  result["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0
  result["cache_path"]=path
  return result
-static func retry(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int,started:int,failure:Dictionary,progress:RefCounted,civic_review:bool=false)->Dictionary:
+static func retry(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int,started:int,failure:Dictionary,progress:RefCounted,civic_review:bool=false,rejected_intro_sites:Array=[])->Dictionary:
+ if "--plan-diagnostics" in OS.get_cmdline_user_args():print("LAYOUT_RETRY_DIAGNOSTIC ",{"variant":layout_variant,"reason":failure.get("reason"),"isolated_district":failure.get("isolated_district"),"route_attempts":failure.get("route_attempts"),"crossing_rejections":failure.get("crossing_rejections")})
  var elapsed:float=(Time.get_ticks_usec()-started)/1000.0
  if layout_variant>=3:failure["worker_ms"]=elapsed;return failure
- var result:=build(seed_value,generator,options,folder,layout_variant+1,progress,civic_review)
+ var result:=build(seed_value,generator,options,folder,layout_variant+1,progress,civic_review,rejected_intro_sites)
  result["worker_ms"]=float(result.get("worker_ms",0))+elapsed
  return result
-static func locate_expansion(core:RefCounted,hint:Vector3,occupied:Array,area:Rect2,district:int,civic:bool=false)->Dictionary:
- if civic:return Planner.locate(core,hint,occupied,area,Civic.recipe,Civic.streets,Vector2(180,224))
- if district==1:return Planner.locate(core,hint,occupied,area,City.recipe,City.streets,Vector2(180,224))
- return Planner.locate(core,hint,occupied,area)
+static func locate_expansion(core:RefCounted,hint:Vector3,occupied:Array,area:Rect2,district:int,civic:bool=false,road_grid:int=0,introduction_home:bool=false,global_search:bool=false)->Dictionary:
+ if civic:return Planner.locate(core,hint,occupied,area,Civic.recipe.bind(false,introduction_home),Civic.streets,Vector2(180,224),road_grid,global_search)
+ if district==1:return Planner.locate(core,hint,occupied,area,City.recipe,City.streets,Vector2(180,224),road_grid,global_search)
+ return Planner.locate(core,hint,occupied,area,Callable(),Callable(),Vector2(150,200),road_grid,global_search)
 static func navigation_metadata(sites:Array,network:Dictionary,seed_value:int=0)->Dictionary:
  var metadata:Dictionary={"places":[],"roads":[]}
  for index in sites.size():

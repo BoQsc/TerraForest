@@ -29,6 +29,7 @@ public:
     godot::Dictionary configure(const godot::Array &published_roads,double stop_spacing=0);
     godot::PackedVector3Array get_stops()const;
     godot::PackedVector3Array connected_stops(godot::Vector3 start,double maximum_snap)const;
+    godot::Dictionary round_trip_stops(godot::Vector3 start,double maximum_snap)const;
     godot::Dictionary route(godot::Vector3 start,godot::Vector3 destination,double maximum_snap,godot::Vector3 heading=godot::Vector3()) const;
     bool follow(const godot::PackedVector3Array &points);
     bool resume(const godot::PackedVector3Array &points,int waypoint);

@@ -27,7 +27,7 @@ static func packets(segments:Array,deposits:Array=[])->Array:
  for segment:Dictionary in ordered:
   var packet:PackedByteArray
   if segment.has("coefficients"):
-   packet=Codec.curved_road_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,segment.coefficients,segment.curve_index)
+   packet=Codec.curved_road_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,curve_prefix(segment),segment.curve_index)
    if packet.is_empty():return []
    packet.encode_u32(40,segment.material);packet.encode_float(44,segment.shoulder)
   else:
@@ -41,3 +41,18 @@ static func packets(segments:Array,deposits:Array=[])->Array:
   packet.encode_u32(0,41)
   result.append(packet)
  return result
+
+static func curve_prefix(segment:Dictionary)->PackedFloat64Array:
+ var coefficients:PackedFloat64Array=segment.coefficients
+ var index:int=segment.curve_index
+ if coefficients.size()%4!=0 or coefficients.size()>256 or index<0 or index>=coefficients.size()/4:return coefficients
+ var span:=Vector2(segment.finish.x-segment.start.x,segment.finish.z-segment.start.z).length()
+ if span<1:return coefficients
+ # Native edits sample a bounding box expanded by width + shoulder + SDF_BAND
+ # (4 m) + 1 m, with one further metre for floor rounding. Its projection onto
+ # any horizontal road axis is at most sqrt(2) times that expansion. Retain all
+ # curve sections reachable by those samples, including the rounded end cap.
+ # Keep the prefix/index unchanged: removing earlier sections changes floating
+ # point addition in the native field and would not preserve exact voxel bytes.
+ var following:=ceili(sqrt(2.0)*(float(segment.half_width)+float(segment.shoulder)+6.0)/span)+2
+ return coefficients.slice(0,mini(coefficients.size(),(index+following)*4))

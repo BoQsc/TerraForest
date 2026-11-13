@@ -41,6 +41,11 @@ func run()->void:
 				if Vector2(point.x,point.z).distance_to(Vector2(midpoint.x,midpoint.z))<.001:ends.append(point.y)
 		check(ends.size()==2 and absf(ends[0]-ends[1])<.00001,"shared source junction has one height")
 	var reserved:Dictionary=core.fit_road_network([source],[Rect2(1040,790,64,120)])
+	var first:=road(source.start,midpoint)
+	first["coefficients"]=PackedFloat64Array([0,0,float(midpoint.y)-float(source.start.y)+0.000001,float(source.start.y)])
+	first["curve_index"]=0
+	var rounded:Dictionary=core.fit_road_network([first,road(midpoint,source.finish)],[Rect2(1040,790,64,120)])
+	check(rounded.get("ok",false),"protected shared endpoints survive sub-float cubic evaluation roundoff")
 	check(reserved.get("ok",false) and reserved.get("segments",[])==[source],"protected road and entrances remain unchanged")
 	var level:=road(Vector3(1080,48,820),Vector3(1080,48,844))
 	var flat:Dictionary=core.fit_road_network([level],[])

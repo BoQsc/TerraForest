@@ -22,8 +22,10 @@ static func neighborhood_metadata(plan:Dictionary,id:int,title:String,detail:Str
  if not plan.get("ok",false):return {}
  var roads:Array=[];var arrival:=Vector3.ZERO;var closest:=INF
  for road:Dictionary in plan.roads:
-  # The one-metre junction patches are not separate navigable streets.
-  if road.start.distance_to(road.finish)<2:continue
+  # Legacy one-metre junction patches are not separate streets. Fitted road
+  # sections, however, can be shorter than two metres at a split junction;
+  # dropping them disconnects the published network from its actual road bed.
+  if road.start.distance_to(road.finish)<2 and not road.get("grid_normalized",false):continue
   var steps:int=ceili(Vector2(road.finish.x-road.start.x,road.finish.z-road.start.z).length()/2)
   for i in steps:
    var a:Vector3=road.start.lerp(road.finish,float(i)/steps)

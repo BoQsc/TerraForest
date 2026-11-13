@@ -19,7 +19,7 @@
     "res://addons/characters/runtime/assets/Torch.glb.import": "eb942c7e6d02667b523ed66e1c215b08596bed4e1ce6bba5671cc28a75c1e106",
     "res://addons/characters/runtime/human_view.gd": "bd4d48c7c6b0896eefcc1100b58469891603aadab32938f0517cf6a8acb3168c",
     "res://addons/player_runtime/art/drops/current_tool.gdshader": "0a0f4928e2803f493944c2acdbe3db1eb4da351270ee67034d886eaf2b556dad",
-    "res://addons/player_runtime/tool_view.gd": "b39c5c0ab9d16d1ac0f3846c9c473d6f4e99cca040cbe2b3c6ddd275a531c195",
+    "res://addons/player_runtime/tool_view.gd": "d52d1fb5c4361545faef6787148eb219eb73098c5ce81facf5e39dffbdb84074",
     "res://tools/bake_tool_drops.gd": "abd05f1ecfd8e076e2115f91f962fa1f2d298fe1d6202b6c9c7b89114b643a4a",
     "res://tools/tool_drop_bake.gd": "874df2a6df2617c053aeb74134b124ff31eb1c5245b09915d4027c30b3e11ae9"
   },

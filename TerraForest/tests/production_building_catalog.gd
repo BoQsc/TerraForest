@@ -49,7 +49,9 @@ func run()->void:
 		check(result.get("ok",false),"normal recipe fits: "+str(settings)+" / "+str(result.get("reason","ok")))
 		if not result.get("ok",false):continue
 		var civic_sites:Array=result.sites.filter(func(site:Dictionary):return site.recipe_kind=="civic")
-		check(civic_sites.size()==1 and civic_sites[0].lots.size()==5,"one civic district includes all five civic buildings")
+		check(civic_sites.size()==1 and civic_sites[0].lots.filter(func(lot:Dictionary):return lot.asset.has_meta("civic_id")).size()==5,"one civic district includes all five civic buildings")
+		if int(settings.get("introduction",0))==1:
+			check(civic_sites[0].lots.size()==6 and preload("res://addons/world_runtime/introduction_spawn.gd").select(result.sites).get("ok",false),"introduction adds the approved nearby house without replacing a civic building")
 		var merchants:Array=result.navigation.places.filter(func(place:Dictionary):return int(place.id)==Civic.MERCHANT_PLACE)
 		check(merchants.size()==1,"each normal recipe provides exactly one resident trader destination")
 		check(civic_sites[0].lots.all(func(lot:Dictionary):return lot.asset.get_meta("expansion_revision","")=="E2"),"generation selects E2 before fitting terrain and basements")

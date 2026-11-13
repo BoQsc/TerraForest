@@ -79,7 +79,7 @@ Dictionary fit_generated_road_network(const World &world,const Array &source,con
   double extent=edge.extent;
   bool level=std::abs(edge.original[0])+std::abs(edge.original[1])+std::abs(edge.original[2])<1e-6&&std::abs(edge.start.y-std::round(edge.start.y))<.001;
   for(int station=0;station<=divisions;++station){
-   double fraction=double(station)/divisions,original=value(edge.original,fraction);Vector3 position=edge.start.lerp(edge.finish,fraction);position.y=original;
+   double fraction=double(station)/divisions,original=station==0?double(edge.start.y):station==divisions?double(edge.finish.y):value(edge.original,fraction);Vector3 position=edge.start.lerp(edge.finish,fraction);position.y=original;
    bool fixed=level||edge.length<2;
    for(const auto &area:reserved){
     if(!footprint_policy){if(area.grow(extent+3).has_point(Vector2(position.x,position.z))){fixed=true;break;}continue;}
@@ -105,7 +105,7 @@ Dictionary fit_generated_road_network(const World &world,const Array &source,con
     if(station==0||station==divisions)junctions[key]=node;
    }else{
     auto &next=nodes[node];next.low=std::max(next.low,low);next.high=std::min(next.high,high);next.fixed|=fixed;
-    if(next.low>next.high)return rejected("Shared junction has incompatible grade limits",index);clamp_station(next);
+    if(next.low>next.high){auto failure=rejected("Shared junction has incompatible grade limits",index);failure["position"]=position;failure["low"]=next.low;failure["high"]=next.high;return failure;}clamp_station(next);
    }
    edge.nodes.push_back(node);
    edge.tangents.push_back(derivative(edge.original,fraction)/divisions);

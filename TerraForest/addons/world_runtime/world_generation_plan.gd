@@ -167,7 +167,14 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
  else:
   if not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {"ok":false,"reason":"Preview terrain initialization failed"}
   var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(plan.works.segments,plan.get("material_deposits",[]))
-  if not core.bake_generated_earthworks(packets).get("ok",false):return {"ok":false,"reason":"Preview earthworks unavailable"}
+  var baked:Dictionary=core.bake_generated_earthworks(packets)
+  if not baked.get("ok",false):
+   baked["reason"]="Preview earthworks unavailable: "+str(baked.get("reason","Native bake rejected the plan"))
+   baked["segments"]=plan.works.segments.size();baked["packets"]=packets.size()
+   var packet_bytes:=0
+   for packet:PackedByteArray in packets:packet_bytes+=packet.size()
+   baked["packet_bytes"]=packet_bytes
+   return baked
   var water:=water_preview(core,generator)
   if water.is_empty():return {"ok":false,"reason":"Water preview unavailable"}
   var surveyed:Dictionary=core.survey_surface_map()

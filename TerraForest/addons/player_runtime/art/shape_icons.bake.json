@@ -3,9 +3,9 @@
   "sources": {
     "engine": "4.7.2-stable (steam)",
     "res://addons/player_runtime/shape_icons.gd": "5526ab5c97a11de33319eb6764dd7382585b51e1498216d3a8adc63afdfcb5b3",
-    "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "a387e870fac49289c44cac382b1220d4e9759ca6808c354869c176f97af2350f",
+    "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "88e0edb20271bba2cfbe29ac3df2fa193f172706db0f5a5936576559a75ab006",
     "res://addons/structures/native/block_shapes.hpp": "1fd0507edee668d8040f7fea865bcf1edcf427f0092de2ab3ce3d6ac2bc039be",
-    "res://addons/structures/native/block_world.cpp": "ae366ab6acf32417e8a66c3f72b5b7080f8c0d95253ea7f8e003b4022fa71102",
+    "res://addons/structures/native/block_world.cpp": "ac486a44209704ac5fb7215632cfc1bdc335da9c7723c75380e2f27c2a217a91",
     "res://addons/structures/native/modular_shapes.hpp": "984ed381059d307089ea99804687d154324e764715feb40cc2a7a04834d5588d",
     "res://addons/structures/shape_catalog.gd": "f4bd4675ad7f3525bee1fe0d26d6e05213ccf764b4736ee22600a2ce14fd83b1",
     "res://tools/bake_shape_icons.gd": "8e0be29a6062c8effd033ef4f376ad2f35e852c9a5e21d8fd3d9a5cef18fe097",

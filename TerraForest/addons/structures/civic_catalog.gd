@@ -10,7 +10,7 @@ static func asset(index:int,legacy:bool=false)->Resource:
 	var source:Resource=load("res://addons/structures/prefabs/civic_review_"+IDS[index]+".tres")
 	return source.duplicate() if source!=null else null
 
-static func recipe(center:Vector3,legacy:bool=false)->Array:
+static func recipe(center:Vector3,legacy:bool=false,introduction_home:bool=false)->Array:
 	var result:=[]
 	for index in IDS.size():
 		var prefab:=asset(index,legacy)
@@ -19,6 +19,15 @@ static func recipe(center:Vector3,legacy:bool=false)->Array:
 		var target:=Vector3(center.x+(-30 if index%2==0 else 30),0,street-28)
 		var origin:=Vector3i(roundi(target.x-bounds.get_center().x),0,roundi(target.z-bounds.get_center().z))
 		result.append({"asset":prefab,"origin":origin,"rotation":0,"street_z":street,"label":TITLES[index]})
+	if introduction_home:
+		# The sixth civic lot supplies the already-approved upstairs starting house.
+		# Keep it beside the trader instead of relying on a distant district by chance.
+		var prefab:Resource=preload("res://addons/structures/expansion_catalog.gd").asset("house_c1")
+		var bounds:AABB=prefab.placement_bounds(Vector3i.ZERO,0)
+		var street:float=center.z+64
+		var target:=Vector3(center.x+30,0,street-28)
+		var origin:=Vector3i(roundi(target.x-bounds.get_center().x),0,roundi(target.z-bounds.get_center().z))
+		result.append({"asset":prefab,"origin":origin,"rotation":0,"street_z":street,"label":"Introduction house"})
 	return result
 
 static func streets(center:Vector3)->Array:
@@ -28,6 +37,7 @@ static func metadata(site:Dictionary)->Array:
 	var result:=[]
 	for index in site.lots.size():
 		var lot:Dictionary=site.lots[index]
+		if not lot.asset.has_meta("civic_id"):continue
 		result.append({"id":251+index,"title":lot.label,"detail":lot.asset.get_meta("description",""),"position":lot.entrance.segment.finish})
 		if lot.asset.has_meta("trader_anchor"):
 			var anchor:Transform3D=lot.asset.get_meta("trader_anchor")
