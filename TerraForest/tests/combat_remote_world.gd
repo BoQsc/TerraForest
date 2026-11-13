@@ -73,6 +73,22 @@ func run()->void:
 			var water:Dictionary=game.lakes.statistics()
 			print("EXISTING_LAKE_WATER ",JSON.stringify({"settled":settled,"cells":water.equilibrium_cells,"failure":water.equilibrium_failure,"owned_before":owned,"owned_after":water.water_ml,"surface_failure":water.surface_failure}))
 			check(settled and water.equilibrium_cells>0 and water.water_ml==owned,"existing multi-lake world settles the barrel edit without losing finite water")
+			if settled and OS.get_cmdline_user_args().has("--water-capture-existing"):
+				var evidence:=""
+				for argument:String in OS.get_cmdline_user_args():
+					if argument.begins_with("--check-evidence-dir="):evidence=argument.trim_prefix("--check-evidence-dir=")
+				check(not evidence.is_empty(),"existing-world capture has an admitted evidence directory")
+				if not evidence.is_empty():
+					game.tool_view.visible=false;game.combat.effects.step(.6,true)
+					for underwater in [false,true]:
+						game.camera.global_position=center+(Vector3(2,.5,2) if underwater else Vector3(8,5,8))
+						game.camera.look_at(center+Vector3(0,0 if underwater else 1,0),Vector3.UP)
+						game.water_camera.update()
+						for frame in 4:await process_frame
+						await RenderingServer.frame_post_draw
+						var label:="existing_lake_underwater" if underwater else "existing_lake_after"
+						check(root.get_texture().get_image().save_png(evidence.path_join(label+".png"))==OK,"saved-world water capture writes "+label)
+
 	check(FileAccess.get_sha256(save)==hash and game.terrain.backend.readonly_snapshot,"source fixture remains unchanged")
 	await finish()
 func finish()->void:

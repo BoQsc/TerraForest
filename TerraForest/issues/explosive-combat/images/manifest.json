@@ -102,5 +102,41 @@
     "creator": "TerraForest Godot runtime screenshot",
     "scope": "Existing project assets retain their provenance; screenshot is development evidence",
     "status": "Rejected: actual barrel crater conserves water and moves it down, but still has stacked uneven surfaces after 120 seconds; default rollout blocked"
+  },
+  {
+    "path": "water-existing-lake-after.png",
+    "sha256": "290141a0b49ad415732cc004ff2f0aff8c0fc0818034997169a187d2e7e8a87b",
+    "source": "reports/checks/20261113T171535917653Z/existing_lake_after.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "contribution_license": "CC0-1.0 for the original capture contribution only; depicted assets retain their existing terms",
+    "status": "Agent reviewed; final installed package; user visual review pending"
+  },
+  {
+    "path": "water-existing-lake-underwater.png",
+    "sha256": "1e330c95f13d3b54b0fcd16fcfcb4f726f7ffe2bc931420463324e76ef60af39",
+    "source": "reports/checks/20261113T171535917653Z/existing_lake_underwater.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "contribution_license": "CC0-1.0 for the original capture contribution only; depicted assets retain their existing terms",
+    "status": "Agent reviewed; final installed package; user visual review pending"
+  },
+  {
+    "path": "water-shore-before.png",
+    "sha256": "c9c2de5b8a85203e09fd7096a0bf6c1bdea4ae64baf1af2b1005133e574b2e54",
+    "source": "reports/checks/20261113T171254122100Z/shore_before.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "contribution_license": "CC0-1.0 for the original capture contribution only; depicted assets retain their existing terms",
+    "status": "Agent reviewed; final installed package; user visual review pending"
+  },
+  {
+    "path": "water-shore-after.png",
+    "sha256": "bb0547d0817557502bd661be4cb3e936f4c6c9fd0562ff24263855375fa5c37e",
+    "source": "reports/checks/20261113T171254122100Z/shore_after.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "contribution_license": "CC0-1.0 for the original capture contribution only; depicted assets retain their existing terms",
+    "status": "Agent reviewed; final installed package; user visual review pending"
   }
 ]

@@ -1,10 +1,30 @@
 # First firearm and volumetric explosive destruction
 
-2026-11-13 replacement: [continuous volumetric water plan](water-plan.md).
-Previous cell-boundary representation rejected. A closed-basin continuous-field
-reference now responds to native terrain edits while retaining quantity, but the
-actual gameplay replacement, spills, gaps/materials and performance are unfinished.
-The legacy convergence failure remains open; the package has not been updated.
+Current water replacement: [continuous volumetric water plan](water-plan.md).
+**Implemented and installed**, runtime `13d0f083`; tooling `4510a46c`.
+Actual barrels, shoreline excavation, mining, deposition, save/reload, old-cache
+migration and unfinished-save loading pass in the game. The existing 12-lake save
+also passes its remote barrel chain and an actual lake explosion, preserving all
+stored water and the original save. Debug/release and installed-package checks pass.
+[Verification and measured limits](water-verification-2026-11-13.json) retain timing
+overruns: final combat p99/max 12.139/17.068 ms; water main max 1.173 ms.
+
+Agent-inspected final installed-game captures (user review remains separate):
+
+- Existing saved world after its lake explosion: [above water](images/water-existing-lake-after.png)
+  and [underwater crater](images/water-existing-lake-underwater.png). This is the
+  ordinary saved world, not the controlled bucket-review scenario.
+- Controlled actual-game shoreline: [before](images/water-shore-before.png) and
+  [after](images/water-shore-after.png) the barrel breach. Continuous contact replaces
+  the rejected stacked sheets. The complete report also retains mining/deposition
+  captures; a small extraction-scale rim remains at a deposited block's waterline.
+
+Reproduction: launch `Worlds.cmd` or the installed game, load an existing lake,
+and detonate a barrel at its edge or underwater. Water updates automatically;
+mining and solid deposition use the same path. No water-settling opt-in is needed.
+See the plan for the exact packaged test commands, provenance and bounded limits.
+
+The dated assessments below describe earlier states, not the current default.
 
 2026-11-13: [volumetric water assessment and implementation gates](water-assessment-2026-11-13.md).
 The renewed terrain-reactive water request remains open: real 3D storage is

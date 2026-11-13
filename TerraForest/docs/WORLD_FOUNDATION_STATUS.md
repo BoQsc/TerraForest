@@ -1,21 +1,25 @@
 ## Continuous volumetric water replacement — 2026-11-13
 
-Active under the completely rewritten [water plan](../issues/explosive-combat/water-plan.md).
-The previous cell-boundary rendering and prolonged diffusion approach is rejected
-by the user. Its passing numerical checks do not qualify its visible behavior.
-The replacement requires a continuous implicit 3D boundary, authoritative terrain
-contact, finite-volume edit-triggered equilibrium, ordinary barrel/mining/deposition
-response, bounded measured cost and save/package qualification. Every gate remains
-open. First recover coherent source extraction and prove the continuous volume
-against actual terrain; do not expand another failed representation. Failed prior
-barrel images and timings remain in the linked issue evidence and Git history.
-Closed-basin replacement proof now passes with actual TerrainCore excavation and
-an overhang: the same 40 m3 lowers/raises its level appropriately, with continuous
-shaded/wireframe geometry inspected. This is an isolated native reference, not
-LakeWorld integration. The optional legacy solver still fails convergence.
-General spill/connectivity transactions, terrain-contact gaps, transparent
-presentation, actual barrels, persistence and runtime/package qualification are
-required next; see the plan's exact evidence and closure requirements.
+Implemented and installed: [water plan and evidence](../issues/explosive-combat/water-plan.md),
+runtime `13d0f083`. Actual barrels, shoreline breaches, mining, carried-material
+deposition, save/reload, old-cache migration and unfinished-save loading pass.
+The existing 12-lake saved world also loads and settles an actual lake explosion
+with all 27,351,242,997 ml preserved; the source save remains unchanged. Exact
+occupancy paging fixes the prior loading stall. Batched cached contacts reduce
+the same saved-world check from 57 to 27 seconds. Debug/release parity, final
+installed-pack tests and normal release startup pass. Captures inspected above
+and below water; user visual approval remains separate.
+
+Final installed primary response is 247 ms, with 0.897 ms primary water main work.
+Moving combat p99 is 12.139 ms, maximum 17.068 ms; water main maximum 1.173 ms.
+The original 250 ms / 1 ms / 16.7 ms targets are not universal hard guarantees:
+retained runs have overruns. Remaining performance work is elimination of those
+tails, tracked by the plan; repeated p99 frame-budget failure or persistent >1 ms
+water work triggers renewed profiling. Closure requires attributed traces and
+repeatable on/off measurements, not a stationary FPS counter. No functionality or
+package rollout is deferred. Thin films below extraction resolution remain stored
+but can be visually unresolved; small contact rims and bounded-body limits remain.
+Historical failures, including a pre-correction heap crash, remain in the plan.
 
 ## Shuffle planning correction — 2026-11-13
 

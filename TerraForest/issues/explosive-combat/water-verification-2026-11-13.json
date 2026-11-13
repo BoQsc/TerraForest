@@ -1,0 +1,176 @@
+{
+  "date": "2026-11-13",
+  "runtime_commit": "13d0f083",
+  "tooling_commit": "4510a46c",
+  "status": "Installed; functional and scoped runtime qualification passed; timing overruns retained",
+  "pack_sha256": "663ac04cade1d0029abc3155535158048916795fb1d242b4784d638d4891926f",
+  "pack_bytes": 628455668,
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "896dc37b2614a25df8106af9173b8072d6bc9e20d81c6341c5ed081529251a0a",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "ca32604e5cc50d0766a8fd928d4f4099d2485509a0ae9ace2913a008b05e94a3",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "d7c42b441dcdae8f35a67033dfe460e7f961bca28cd0d3c913c827e1023eb2a3",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "300d61e11bb0617fd4b87f178dd368ed0127f27f12f387cec720280d893175d7",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "88572f9c05fe930d029a0f64e487bcd9784160309be4e235f5efbfc4ed8711e3",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "ea33eeb994d30b2b2118b213179d0d6c6a6af826e8aaba012e38ff63b6a3e9c5",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "f0e3e9953689294f1080fe7856ec80ef97629b8684ce4c454da2459ed246bc72",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "79498abdedb70e4696cce5f9afdda5204f1625ab88431355bbaa3699080af702",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "ec27092e9230959b9599731a8b7413e0d2975ad7ae14576fefc897d7bf8b83ec",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "86fbc92b32c5c1572332054064daac885e358ee7a97feddb6d9c2397529070d9",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "54dca0fbda01e7298a9dc299dd00dc84fb6989f56e5c90814870e52e93d12185",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "570d0a3a5164e9472b4120ff0d8f00e9eb5f1a3a588c75175528c9af39ff2f97",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "72030967ad41511425c0367b08870b722e26286ad399ee465856e43977d64f9f",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "f8529b8449666a38795967cc495a19216b3c779f6d5b2aad8fc3f7dbf997a015"
+  },
+  "gameplay_report": "reports/checks/20261113T171254122100Z",
+  "existing_world_report": "reports/checks/20261113T171535917653Z",
+  "existing_world_owned_ml": 27351242997,
+  "existing_world_equilibrium_cells": 43079,
+  "original_save_unchanged": true,
+  "barrel_publication_after_terrain_ms": 247.278,
+  "barrel_water_main_max_us": 897,
+  "shore_total_ms": 225.085,
+  "boundary": {
+    "degenerate": 0,
+    "open_edges": 0,
+    "owned_m3": 559.128094,
+    "rendered_m3": 552.409710629454,
+    "triangles": 22848
+  },
+  "performance": {
+    "water_on_a": {
+      "frame_max_ms": 15.04,
+      "frame_p95_ms": 8.497,
+      "frame_p99_ms": 9.572,
+      "frames": 210,
+      "gpu_p95_ms": 5.88800001144409,
+      "render_cpu_p95_ms": 2.64599990844727,
+      "water_main_max_us": 214.0,
+      "water_main_p95_us": 125.0
+    },
+    "water_off": {
+      "frame_max_ms": 11.72,
+      "frame_p95_ms": 7.534,
+      "frame_p99_ms": 10.204,
+      "frames": 210,
+      "gpu_p95_ms": 4.40899991989136,
+      "render_cpu_p95_ms": 2.57999992370605,
+      "water_main_max_us": 225.0,
+      "water_main_p95_us": 133.0
+    },
+    "water_on_b": {
+      "frame_max_ms": 11.286,
+      "frame_p95_ms": 8.521,
+      "frame_p99_ms": 9.993,
+      "frames": 210,
+      "gpu_p95_ms": 6.15199995040894,
+      "render_cpu_p95_ms": 2.32399988174438,
+      "water_main_max_us": 366.0,
+      "water_main_p95_us": 115.0
+    },
+    "combat": {
+      "frame_max_ms": 17.068,
+      "frame_p95_ms": 9.334,
+      "frame_p99_ms": 12.139,
+      "frames": 210,
+      "gpu_p95_ms": 6.3899998664856,
+      "render_cpu_p95_ms": 2.87400007247925,
+      "water_main_max_us": 1173.0,
+      "water_main_p95_us": 776.0
+    }
+  },
+  "resources": {
+    "samples": 74,
+    "gpu_samples": 74,
+    "peak_private_commit_bytes": 3026255872,
+    "peak_working_set_bytes": 1491628032,
+    "peak_dedicated_gpu_bytes": 1482260480,
+    "checks": {
+      "ram": {
+        "bytes": 3026255872,
+        "status": "within_budget"
+      },
+      "vram": {
+        "bytes": 1482260480,
+        "status": "within_budget"
+      },
+      "redistributable": {
+        "bytes": null,
+        "status": "unavailable"
+      }
+    },
+    "limits": {
+      "schema": 1,
+      "vram_warning_bytes": 3758096384,
+      "vram_limit_bytes": 4294967296,
+      "ram_warning_bytes": 4294967296,
+      "ram_limit_bytes": 6442450944,
+      "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+      "redistributable_warning_bytes": 4000000000,
+      "redistributable_limit_bytes": 5000000000,
+      "derived_cache_total_bytes": 3221225472,
+      "failed_test_cache_bytes": 1073741824,
+      "saved_world_warning_bytes": 10737418240,
+      "free_space_warning_bytes": 10737418240,
+      "minimum_free_bytes": 2147483648,
+      "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+    },
+    "errors": [],
+    "exceeded": false,
+    "telemetry_complete": true,
+    "within_sampled_limits": true,
+    "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+  },
+  "existing_world_resources": {
+    "samples": 42,
+    "gpu_samples": 42,
+    "peak_private_commit_bytes": 3560693760,
+    "peak_working_set_bytes": 2012639232,
+    "peak_dedicated_gpu_bytes": 1491619840,
+    "checks": {
+      "ram": {
+        "bytes": 3560693760,
+        "status": "within_budget"
+      },
+      "vram": {
+        "bytes": 1491619840,
+        "status": "within_budget"
+      },
+      "redistributable": {
+        "bytes": null,
+        "status": "unavailable"
+      }
+    },
+    "limits": {
+      "schema": 1,
+      "vram_warning_bytes": 3758096384,
+      "vram_limit_bytes": 4294967296,
+      "ram_warning_bytes": 4294967296,
+      "ram_limit_bytes": 6442450944,
+      "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+      "redistributable_warning_bytes": 4000000000,
+      "redistributable_limit_bytes": 5000000000,
+      "derived_cache_total_bytes": 3221225472,
+      "failed_test_cache_bytes": 1073741824,
+      "saved_world_warning_bytes": 10737418240,
+      "free_space_warning_bytes": 10737418240,
+      "minimum_free_bytes": 2147483648,
+      "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+    },
+    "errors": [],
+    "exceeded": false,
+    "telemetry_complete": true,
+    "within_sampled_limits": true,
+    "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+  },
+  "release_parity": "reports/water_final_release_parity.json",
+  "release_startup": "reports/water_release_startup.json",
+  "export": "reports/water_export_20261113_delivery.log",
+  "visual_review": "Agent inspected installed saved-world above/below-water captures and controlled shoreline/deposition captures. User visual approval separate.",
+  "limits": [
+    "Fixed 0.25 m extraction from 0.5 m storage; very thin films can remain stored but unresolved visually.",
+    "Small extraction-scale contact rims and zero-width diagonal geometry merges remain; solver communication still requires open faces.",
+    "Initial 250 ms / 1 ms soft targets have occasional overruns; not every full-scene frame meets 16.7 ms.",
+    "Bounded 131072-cell equilibrium graph, memory reservations and unknown-region waits preserve prior valid state rather than silently dropping water.",
+    "Distant ocean rendering remains a proxy; this is not whole-ocean fluid dynamics."
+  ]
+}
