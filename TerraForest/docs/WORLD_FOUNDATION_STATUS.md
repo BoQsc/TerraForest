@@ -1,3 +1,13 @@
+## Last World launcher / new-world generation report — 2026-11-13
+
+[Investigation and remaining work](../issues/last-world-startup/README.md#launcher-freshness-and-interrupted-generation--2026-11-13):
+Steam launches the source checkout without import preflight. Recent user creation
+runs reach new water preparation but stop during building placement; one logs a
+native Dictionary error. Generation failure and reported stale appearance remain
+unresolved. Reproduce the actual shortcut path and capture exit/failure evidence;
+a unified importing launcher alone is not proof of a generation fix. Earlier
+saved-world/water qualification does not close this new-world creation report.
+
 ## Continuous volumetric water replacement — 2026-11-13
 
 Implemented and installed: [water plan and evidence](../issues/explosive-combat/water-plan.md),

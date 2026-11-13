@@ -59,3 +59,31 @@ Code/tests are original Codex-assisted 0BSD work; no new media was imported.
 Diagnostic screenshots preserve the existing game's asset terms. The existing
 unused Kaino source folder was temporarily excluded during export as in preceding
 builds; original recordings remain intact and the marker was removed afterward.
+
+## Launcher freshness and interrupted generation — 2026-11-13
+
+Status: investigating; read-only desktop/Steam/log inspection, no runtime fix.
+The desktop Last World link resolves through Steam to the root `TerraForest.exe`
+with `--path <source project> res://demo/worlds.tscn -- --continue-last`.
+It bypasses `Worlds.cmd` / `tools/start_worlds.ps1` and does not explicitly select
+`dist/TerraForest.pck`. No adjacent root PCK was present. The root executable is
+dated November 7; its date alone does not establish stale project content.
+The existing source launcher refreshes item icons but has no editor import pass.
+
+Recent user logs contain the current `OFFLINE_GENERATED_LAKES` output (12 lakes,
+27,351,242,997 ml) and successful prepared cartography. Latest generation report
+`user://generation_reports/7765abb05a2ea92ae02a5651aa440448/creating_progress.json`
+stops at building/interior placement, 7 of 50. The preceding
+`user://logs/godot2026-11-13T19.27.57.log` ends with a native Dictionary `_unref`
+null-parameter error. These observations do not establish crash causality or
+prove import staleness; opening the editor is not a demonstrated generation fix.
+
+Next: reproduce the ordinary seed-1703 generator-29 creation path through the
+actual shortcut, capture its exit status and the building-placement failure.
+Keep user saves intact. Separately unify launcher entry points with a headless
+editor resource-import preflight, propagated Continue flag, explicit source or
+installed-pack mode, and bounded logs plus executable/content identity. Native
+changes still require builds and process restart; imports cannot rebuild DLLs.
+Closure requires fresh-resource launch and successful ordinary world generation,
+not only saved-world reload or an isolated presentation test. No new screenshots
+were taken for this read-only investigation.
