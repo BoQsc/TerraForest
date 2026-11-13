@@ -1908,6 +1908,14 @@ func _additional_loading_diagnostics() -> Dictionary:
 
 # Cached water surfaces must be visible before entering the playable world.
 func _additional_loading_ready() -> bool:
+	# A failed water transaction is actionable even while other loading stages run.
+	# Read the coordinator's published errors without rescanning native regions.
+	for failure:String in [lakes._equilibrium_failure,lakes._surface_failure,lakes._occupancy_failure]:
+		if not failure.is_empty():
+			terrain.latest_error=failure
+			loading_stage_text="Water preparation failed"
+			loading_work_text=failure+" · Save and quit preserves this world."
+			return false
 	var measured:=Time.get_ticks_usec()
 	if quests.resetter.busy:
 		loading_stage_percent=50;loading_stage_text="Restoring quest location"

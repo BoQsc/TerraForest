@@ -17,6 +17,7 @@ const GENERATION_STAGES={
  "Validating starting area":Vector2(65,78),
  "Photographing the generated world":Vector2(65,78),
  "Capturing world photographs":Vector2(65,78),
+ "Finishing water preparation":Vector2(78,78),
  "Saving generated world":Vector2(78,82),
  "Caching the saved world map":Vector2(82,88),
  "Baking saved world map layers":Vector2(82,88),

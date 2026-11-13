@@ -154,8 +154,13 @@ class NativeRegionalWater : public godot::RefCounted {
     static constexpr size_t MAX_REGIONS=4096;
     static constexpr uint64_t MAX_TOTAL=uint64_t(1)<<52;
     struct QuerySurface {
+        // Reuse the rendered indexed positions: query triangles stay identical
+        // without retaining three duplicate positions for every triangle.
         godot::PackedVector3Array vertices;
+        godot::PackedInt32Array indices;
         std::vector<godot::Vector3i> owners;
+        uint64_t bytes() const {return uint64_t(vertices.size())*sizeof(godot::Vector3)+uint64_t(indices.size())*sizeof(int32_t)+owners.size()*sizeof(godot::Vector3i);}
+        godot::Vector3 vertex(int index) const {return vertices[indices[index]];}
     };
     std::map<Key,QuerySurface> published_surfaces,staged_surfaces;
     uint64_t staged_surface_bytes=0;

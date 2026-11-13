@@ -24,6 +24,10 @@ var _busy:=false
 var _occupancy_failure:String=""
 var _surface_failure:String=""
 var _mesh_task:int=-1
+# Native method Callables identify an Object; a task ID does not retain it.
+# Invalidation releases the store's reference, so the dispatcher owns the job
+# until the worker has been joined, including cancelled batches and shutdown.
+var _mesh_job:RefCounted
 var _equilibrium_task:int=-1
 var _equilibrium_job:RefCounted
 var _equilibrium_failure:=""
@@ -325,10 +329,17 @@ func _clear_staged_meshes()->void:
   if is_instance_valid(node) and _meshes.get(coordinate)!=node:node.queue_free()
  _staged_meshes.clear();_have_staged_bounds=false
 
+func _start_mesh_job(job:RefCounted)->void:
+ _mesh_job=job
+ _mesh_task=WorkerThreadPool.add_task(_mesh_job.prepare,false,"Water boundary mesh")
+ if _mesh_task<0:
+  # Preserve progress if dispatch is unavailable; the job stays owned throughout.
+  _mesh_job.prepare();_mesh_job=null
+
 func _publish_meshes() -> void:
  if _mesh_task>=0:
   if not WorkerThreadPool.is_task_completed(_mesh_task):return
-  WorkerThreadPool.wait_for_task_completion(_mesh_task);_mesh_task=-1
+  WorkerThreadPool.wait_for_task_completion(_mesh_task);_mesh_task=-1;_mesh_job=null
  # Build/upload within the existing soft budget; only a complete immutable
  # batch becomes visible. Flow may advance between calls without mixed edges.
  var mesh_started:=Time.get_ticks_usec()
@@ -345,7 +356,7 @@ func _publish_meshes() -> void:
    break
   _surface_failure=""
   if update.has("job"):
-   _mesh_task=WorkerThreadPool.add_task(update.job.prepare,false,"Water boundary mesh")
+   _start_mesh_job(update.job)
    break
   if update.get("pending",false):break
   if update.batch!=_mesh_batch_id:
@@ -433,7 +444,7 @@ func _exit_tree() -> void:
  if _equilibrium_task>=0:
   _equilibrium_job.cancel();WorkerThreadPool.wait_for_task_completion(_equilibrium_task);_equilibrium_task=-1
  if _mesh_task>=0:
-  WorkerThreadPool.wait_for_task_completion(_mesh_task);_mesh_task=-1
+  WorkerThreadPool.wait_for_task_completion(_mesh_task);_mesh_task=-1;_mesh_job=null
  for job:Dictionary in _retirement_jobs:WorkerThreadPool.wait_for_task_completion(job.task)
  _retirement_jobs.clear()
  if _cached_task>=0:
@@ -486,6 +497,13 @@ func dev_brush(point:Vector3,remove:bool,radius:float=2.0) -> Dictionary:
  return result
 func placement_mask(transforms:Array[Transform3D]) -> PackedByteArray:return water.placement_mask(transforms)
 func depth_at(point:Vector3) -> float:return water.depth_at(point)
+# Generation/persistence barrier: geometry may publish later, but authored
+# quantities and sampled terrain/building contacts must stop changing first.
+func preparation_ready()->bool:
+ if water==null or _busy or _builder!=null or _equilibrium_task>=0 or _ocean_admitting:return false
+ var state:Dictionary=water.statistics()
+ return not state.fill_active and state.pending_regions==0 and state.settling_regions==0
+
 func statistics() -> Dictionary:
  var s:Dictionary=water.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
  for item:Dictionary in _lakes.values():

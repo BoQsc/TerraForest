@@ -180,7 +180,8 @@ static func publish_generated(game:Node,progress:Callable,cancelled:Callable)->D
 	if not game.ground_cover.removed.bind_world(game.terrain.backend.world_seed,1):return {"ok":false,"reason":"ground_identity"}
 	progress.call("Finishing quest-location water contacts",0,0,{"activity":"Settling terrain and building changes before preserving originals"})
 	var deadline:=Time.get_ticks_msec()+120000
-	while game.lakes.statistics().pending_regions>0 or game.lakes._busy or game.lakes._builder!=null or game.lakes.water.water_patch_state().filling:
+	while not game.lakes.preparation_ready():
+		if not game.lakes._equilibrium_failure.is_empty() or not game.lakes._occupancy_failure.is_empty():return {"ok":false,"reason":"water_preparation_failed","water":game.lakes.statistics()}
 		if cancelled.call() or Time.get_ticks_msec()>deadline:return {"ok":false,"reason":"water_contacts_not_ready"}
 		await game.get_tree().process_frame
 	var store:RefCounted=game.persistence.location_baselines

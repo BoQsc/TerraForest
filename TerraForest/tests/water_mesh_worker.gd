@@ -57,6 +57,24 @@ func run_worker_checks() -> void:
  check(is_equal_approx(water.depth_at(Vector3(41.75,41.501,41.75)),reference_depth),"Immersion publishes the frozen occupied state alongside geometry")
  check(water.statistics().mesh_worker_reserved_bytes==0,"Consumed worker releases its memory reservation")
 
+ # Exercise the production dispatcher without the packet retaining the job.
+ # Native invalidation may drop the store's last reference before task entry.
+ for iteration in 24:
+  var owned_water=publication_fixture()
+  var host=load("res://addons/volumetric_water/lake_world.gd").new()
+  root.add_child(host);host.set_process(false);host.water=owned_water
+  var dispatched:Dictionary=owned_water.next_mesh_batch(true)
+  check(dispatched.has("job"),"Coordinator cancellation has an actual mesh job")
+  if not dispatched.has("job"):host.free();break
+  var weak:WeakRef=weakref(dispatched.job)
+  host._start_mesh_job(dispatched.job)
+  dispatched.clear()
+  owned_water.invalidate(AABB(Vector3(41.7,41.5,41.7),Vector3.ONE*.1))
+  check(weak.get_ref()!=null,"Dispatcher retains cancelled native job until join")
+  # Actual exit-tree path must join before releasing its reference.
+  host.free()
+  check(weak.get_ref()==null,"Joined cancelled job releases its final owner")
+
  # Cancel before dispatch: a later task must not publish the old terrain.
  var stale:Dictionary=water.next_mesh_batch(true)
  check(stale.has("job"),"Second mesh batch starts after the live edit")

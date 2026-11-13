@@ -10,6 +10,15 @@ func solve(water:RefCounted)->Dictionary:
  return water.finish_equilibrium(job)
 func run_equilibrium()->void:
  var high:=Vector3i(83,83,83);var low:=high+Vector3i.DOWN
+ # Old full coastal cells could round up by one ml without a pending flag.
+ var legacy_surplus:=fixture({high:[0,500,125001],low:[0,500,0]})
+ check(legacy_surplus.statistics().settling_regions>0,"Restored over-capacity quantity is scheduled without an edit")
+ var repaired:Dictionary=await solve(legacy_surplus)
+ check(repaired.get("ok",false) and legacy_surplus.statistics().water_ml==125001 and amounts(legacy_surplus)=={low:125000,high:1},"Legacy rounding surplus settles without deleting water: "+str(repaired))
+ var separate:=fixture({high:[0,500,12500],high+Vector3i.RIGHT:[250,500,0],high+Vector3i(8,8,0):[0,500,12500]})
+ separate.settle_after_edit(AABB(Vector3(high)*.5,Vector3(5,5,1)))
+ var separate_result:Dictionary=await solve(separate)
+ check(separate_result.get("ok",false) and separate_result.get("cells",0)==2,"Disconnected high body does not inflate a lower body's discovery head: "+str(separate_result))
  var water:=fixture({high:[0,500,125000],low:[0,500,0]})
  check(water.begin_equilibrium()==null,"Idle water submits no equilibrium worker")
  water.settle_after_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5))

@@ -74,8 +74,14 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
         const auto base=position(k)*8;
         for(int corner=0;corner<8;++corner)changed(base+Vector3i((corner&1)*7,((corner>>1)&1)*7,((corner>>2)&1)*7));
     }
-    for(auto &[k,r]:regions){r.settle_pending=false;r.settle_mask.fill(0);}
-    settling.clear();settling_set.clear();invalidate_snapshot();
+    settling.clear();settling_set.clear();
+    for(auto &[k,r]:regions){
+        const auto prepared=job->frozen->regions.find(k);
+        r.settle_pending=prepared!=job->frozen->regions.end()&&prepared->second.settle_pending;
+        r.settle_mask.fill(0);
+        if(r.settle_pending)wake_settling(k);
+    }
+    invalidate_snapshot();
     out["ok"]=true;out["changed_regions"]=int64_t(job->changed_regions.size());return out;
 }
 void NativeWaterEquilibriumJob::prepare(){
@@ -155,12 +161,12 @@ void NativeWaterEquilibriumJob::prepare(){
         }
         for(const auto &[k,amount]:held){auto p=W::position(k);store.regions.at(W::region_key(p)).water[W::index(p)]-=amount;}
         std::vector<Vector3i> seeds;
-        double upper=0;
+
         for(const auto &[k,r]:store.regions)if(r.settle_pending){
             const auto base=W::position(k)*8;
             for(int i=0;i<512;++i)if(r.water[i]){
                 auto p=base+Vector3i(i%8,(i/8)%8,i/64);const auto shape=W::profile(r,i);
-                seeds.push_back(p);upper=std::max(upper,p.y*.5+shape.head(r.water[i])*.001);
+                seeds.push_back(p);
             }
         }
         std::unordered_set<uint64_t> done,missing,dirty;
@@ -187,11 +193,17 @@ void NativeWaterEquilibriumJob::prepare(){
                 cells.push_back({p,W::profile(r,i),r.water[i]});ids.emplace(W::key(p),id);return id;
             };
             add(seed,store.regions.at(W::region_key(seed)));
-            double scanned_head=upper;uint64_t scans=0;
+            // Disconnected bodies have independent heads. A high inland lake
+            // must not flood the coastal discovery frontier up to its elevation.
+            double upper=seed.y*.5+cells.front().shape.head(cells.front().before)*.001;
+            double scanned_head=upper;uint64_t scans=0;bool deferred_body=false;
             for(size_t cursor=0;cursor<cells.size();++cursor){
                 if(cancelled.load()){reason="Cancelled";return false;}
                 if(++scans>4000000){reason="Connected head discovery work budget exceeded";return false;}
-                if(cells.size()>=MAX_CELLS){reason="Connected water body exceeds bounded transaction";return false;}
+                if(cells.size()+visited_cells>=MAX_CELLS){
+                    if(visited_cells){deferred_body=true;break;}
+                    reason="Connected water body exceeds bounded transaction";return false;
+                }
                 const auto p=cells[cursor].p;
                 for(int direction=0;direction<6;++direction){
                     auto q=p+steps[direction];if(!W::in_domain(q))continue;
@@ -219,6 +231,9 @@ void NativeWaterEquilibriumJob::prepare(){
                 }
                 if(cursor+1==cells.size()&&upper>scanned_head){scanned_head=upper;cursor=size_t(-1);}
             }
+            // Commit completed, disconnected bodies and resume the untouched
+            // body in a later bounded job. Never partially level one body.
+            if(deferred_body)break;
             if(!missing.empty()){required.assign(missing.begin(),missing.end());return false;}
             visited_cells+=cells.size();if(visited_cells>MAX_CELLS){reason="Water transaction work budget exceeded";return false;}
             mark(1);
@@ -390,6 +405,10 @@ void NativeWaterEquilibriumJob::prepare(){
                 done.insert(W::key(c.p));if(c.before==c.after)continue;
                 auto k=W::region_key(c.p);store.regions.at(k).water[W::index(c.p)]=c.after;dirty.insert(k);
             }
+        }
+        for(auto &[k,r]:store.regions)if(r.settle_pending){
+            r.settle_pending=false;const auto base=W::position(k)*8;
+            for(int i=0;i<512;++i)if(r.water[i]&&!done.count(W::key(base+Vector3i(i%8,(i/8)%8,i/64)))){r.settle_pending=true;break;}
         }
         for(const auto &[k,amount]:held){auto p=W::position(k);store.regions.at(W::region_key(p)).water[W::index(p)]+=amount;}
         uint64_t conserved=0;for(const auto &[k,r]:store.regions)for(auto amount:r.water)conserved+=amount;

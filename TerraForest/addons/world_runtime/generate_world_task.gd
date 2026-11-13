@@ -482,6 +482,13 @@ func run()->void:
    game.player_view.entry.wake_pending=true
    if not game.player_life.set_spawn(introduction_spawn,game.yaw):game.free();quit(1);return
   if not qualification and not game.capture_generation_pose():print("GENERATION_POSE_REJECTED");game.free();quit(1);return
+  progress("Finishing water preparation")
+  var water_deadline:=Time.get_ticks_msec()+120000
+  while not game.lakes.preparation_ready():
+   var water_state:Dictionary=game.lakes.statistics()
+   if cancelled() or Time.get_ticks_msec()>water_deadline or not str(water_state.equilibrium_failure).is_empty() or not str(water_state.occupancy_failure).is_empty():
+    print("GENERATION_WATER_NOT_READY ",JSON.stringify(water_state));game.free();quit(1);return
+   await process_frame
   progress("Saving generated world")
   if qualification:
    var file=FileAccess.open(output_dir.path_join("terrain_lot_region_expected.bin"),FileAccess.WRITE)
