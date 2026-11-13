@@ -1,3 +1,16 @@
+## Terrain-reactive volumetric water assessment — 2026-11-13
+
+The renewed water request reopens terrain-response work. The
+[assessment and implementation gates](../issues/explosive-combat/water-assessment-2026-11-13.md)
+confirm real regional 3D quantities, default-disabled settling, lossy thin-water
+surface extraction, and deletion on solid displacement. Retain the native store;
+qualify explicit occupied-volume boundaries before enabling terrain-driven
+settling, then add conservative displacement and bounded publication. Runtime
+implementation, actual barrel/lake visual acceptance and frame-time qualification
+remain open. This turn assessed source and reproduced the lattice failure with
+a numeric diagnostic; it did not rebuild or install water. The linked assessment
+records prerequisites, return trigger and closure evidence.
+
 ## Shuffle planning correction — 2026-11-13
 
 Plan v52 is installed and verified for the reported Shuffle failures.

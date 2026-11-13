@@ -1,5 +1,10 @@
 # First firearm and volumetric explosive destruction
 
+2026-11-13: [volumetric water assessment and implementation gates](water-assessment-2026-11-13.md).
+The renewed terrain-reactive water request remains open: real 3D storage is
+present, but default settling is off, thin-volume surface coverage fails, and
+solid deposition deletes displaced water. Assessment only; no runtime rollout.
+
 2026-11-10 follow-up: [distant explosion admission and crater-water settling](distance-water-2026-11-10.md).
 The distance fix is installed; packaged combat and the stationary-player distant
 chain pass. Installed native libraries are unchanged. Water settling remains an
