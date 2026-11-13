@@ -5,10 +5,10 @@
   "schema": 1,
   "shapes": 704,
   "sources": {
-    "res://addons/structures/native/block_shapes.hpp": "1fd0507edee668d8040f7fea865bcf1edcf427f0092de2ab3ce3d6ac2bc039be",
+    "res://addons/structures/native/block_shapes.hpp": "81337ee231f4478ff80452e7461de4c505fa8df3cf114f63b0e887a98052536c",
     "res://addons/structures/native/block_word.hpp": "e3ea27327b76b24f1df51b774a79c1af7e3d2a338ee550735af27c88075e1fa4",
-    "res://addons/structures/native/block_world.cpp": "ac486a44209704ac5fb7215632cfc1bdc335da9c7723c75380e2f27c2a217a91",
-    "res://addons/structures/native/block_world.hpp": "842c7d9815910f65b246dd4f68be7280ffbe5c4ee05f1df79db29669237106b0",
+    "res://addons/structures/native/block_world.cpp": "e1837c1b8a4351d19ea79aba492c529c0356a25a90ee59127837b08e79b236d2",
+    "res://addons/structures/native/block_world.hpp": "eb37f56fe47bcb0a656ddba7256f6b46afd5ed6348404464114ed970be1f738e",
     "res://addons/structures/native/modular_mesher.hpp": "f203a9ced357377686c7d79ef79f6532a9f9410d43503924e9fdccb335a8ce6e",
     "res://addons/structures/native/modular_shapes.hpp": "984ed381059d307089ea99804687d154324e764715feb40cc2a7a04834d5588d",
     "res://tools/bake_debris_geometry.gd": "5771456d5a9b6d88ba2d6f2b821928db167deca8eda7a5922bb93d376e633eb8"

@@ -4,6 +4,13 @@ extends "res://addons/volumetric_terrain/terrain_stream.gd"
 ## Windows TerrainCore instances now have independent native cancellation.
 signal surface_batch_ready(token: int, points: PackedVector3Array, normals: PackedVector3Array, epoch_id: int, revision: int)
 signal region_changed(bounds: AABB, revision: int)
+# Water occupancy follows zero-surface changes, not the wider truncated-distance
+# repaint band. Two terrain lattice cells cover interpolation and meshing support.
+var _water_edit_ticket:=-1
+var _water_edit_bounds:=AABB()
+func water_occupancy_edit_bounds(fallback:AABB)->AABB:
+	return _water_edit_bounds if _water_edit_ticket==edit_ticket else fallback
+
 signal region_invalidated(bounds: AABB)
 signal solid_deposited(bounds: AABB)
 signal edit_resolved(outcome: Dictionary)
@@ -316,6 +323,15 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	if edit_admission.is_valid() and not edit_admission.call(selected): return false
 	var accepted: bool = super.edit(data, safe_lo, safe_hi, captured_us, selected, member_captures)
 	if accepted:
+		var water_lo:=Vector3.INF;var water_hi:=-Vector3.INF;var brushes_only:=true
+		for packet:PackedByteArray in selected:
+			if packet.decode_u32(0)!=2 or packet.decode_u32(32) not in [0,1]:brushes_only=false;break
+			var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
+			var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
+			var halo:=Vector3.ONE*(packet.decode_float(28)+2.0)
+			water_lo=water_lo.min(a.min(b)-halo);water_hi=water_hi.max(a.max(b)+halo)
+		_water_edit_ticket=edit_ticket
+		_water_edit_bounds=AABB(water_lo,water_hi-water_lo) if brushes_only else AABB(safe_lo,safe_hi-safe_lo)
 		for packet:PackedByteArray in selected:
 			var kind:int=packet.decode_u32(0)
 			if (kind==2 and packet.decode_u32(36)!=0) or (kind==3 and packet.decode_u32(16)!=0) or kind in [28,38]:

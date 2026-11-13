@@ -46,9 +46,13 @@ func _initialize()->void:
 	var bounds:=AABB(blast-Vector3.ONE*2,Vector3.ONE*4)
 	water.invalidate(bounds);water.settle_after_edit(bounds)
 	var max_us:=0;var total_us:=0;var done:=false
-	for n in 10000:
+	for n in 128:
 		if not prepare_requests(water):check(false,"blast occupancy prepares");break
-		var elapsed:int=water.advance_settling(256);total_us+=elapsed;max_us=maxi(max_us,elapsed)
+		var job:RefCounted=water.begin_equilibrium()
+		if job==null:break
+		job.prepare();var result:Dictionary=water.finish_equilibrium(job)
+		var elapsed:int=result.get("worker_us",0);total_us+=elapsed;max_us=maxi(max_us,elapsed)
+		if not result.get("ok",false) and not result.get("pending",false):check(false,"equilibrium failure: "+str(result));break
 		if water.statistics().settling_regions==0:done=true;break
 	check(done,"actual carved-crater settling finishes")
 	check(water.statistics().water_ml==total,"actual crater conserves finite water")
@@ -57,6 +61,21 @@ func _initialize()->void:
 	check(publish(water),"settled native water mesh and query revision publish together")
 	var new_hit:Dictionary=water.raycast_surface(from,to)
 	check(new_hit.get("hit",false) and old_hit.get("hit",false) and new_hit.point.y<old_hit.point.y,"published water surface follows the lowered water")
+	var obstacle:=Vector3(46,44,46)
+	core.execute(Codec.brush(obstacle,obstacle,.75,0,true,0))
+	var changed:=AABB(obstacle-Vector3.ONE*3,Vector3.ONE*6)
+	water.invalidate(changed,true);water.settle_after_edit(changed)
+	var displaced:=false
+	for n in 128:
+		if not prepare_requests(water):break
+		var job:RefCounted=water.begin_equilibrium()
+		if job==null:break
+		job.prepare();var result:Dictionary=water.finish_equilibrium(job)
+		if result.get("ok",false):displaced=true;break
+		if not result.get("pending",false):break
+	check(displaced and water.statistics().water_ml==total,"Actual density overhang displaces water without loss")
+	check(publish(water),"Overhang geometry and immersion publish together")
+	check(water.depth_at(obstacle)==0 and water.depth_at(Vector3(46,42.75,46))>0,"Actual 3D terrain excludes water in the overhang while retaining water below it")
 	var digest:=HashingContext.new();digest.start(HashingContext.HASH_SHA256);digest.update(snapshot(water))
 	print("WATER_BLAST_TERRAIN total_settling_us=",total_us," max_settling_step_us=",max_us," snapshot_sha256=",digest.finish().hex_encode()," statistics=",water.statistics()," failures=",failures)
 	quit(1 if failures else 0)

@@ -61,6 +61,7 @@ bool NativeBlockPager::evict_one(NativeBlockWorld *blocks,Vector3 focus) {
     for(auto key:regions) {
         bool protected_interest=false;
         for(const auto &point:blocks->navigation_interest)if(distance_squared(key,point)<=96*96){protected_interest=true;break;}
+        for(const auto &point:blocks->occupancy_interest)if(distance_squared(key,point)==0){protected_interest=true;break;}
         if(protected_interest)continue;
         auto skipped=blocked_.find(key);if(skipped!=blocked_.end()&&skipped->second==revision)continue;
         const double distance=distance_squared(key,focus);
@@ -110,6 +111,7 @@ bool NativeBlockPager::step(Vector3 world_focus,const PackedByteArray &restore_c
         auto missing=blocks->unloaded_regions.find(captured.key);
         bool needed=distance_squared(captured.key,focus)<=load_radius_*load_radius_;
         for(const auto &point:blocks->navigation_interest)needed=needed||distance_squared(captured.key,point)<=64*64;
+        for(const auto &point:blocks->occupancy_interest)needed=needed||distance_squared(captured.key,point)==0;
         if(missing==blocks->unloaded_regions.end()||missing->second!=captured.checksum||!needed){++stale_;continue;}
         if(!bool(result["ok"])){++failed_;retry_after_[captured.key]=ticks_+RETRY_TICKS;continue;}
         PackedByteArray packet=result["bytes"];
@@ -132,7 +134,12 @@ bool NativeBlockPager::step(Vector3 world_focus,const PackedByteArray &restore_c
     int submitted=0;
     while(scanned_<SCAN_BUDGET&&submitted<2&&pending_.size()<REQUESTS) {
         BlockKey key;Vector3 selecting_focus=focus;double radius=load_radius_;
-        if(!blocks->navigation_interest.empty()&&(scanned_%2)==0){
+        if(size_t(scanned_)<blocks->occupancy_interest.size()){
+            // Consume the existing scan/read budget, admitting only the exact
+            // requested data region; no extra render/collision neighborhood.
+            selecting_focus=blocks->occupancy_interest[scanned_];radius=0;
+            key={int(std::floor(selecting_focus.x/64)),int(std::floor(selecting_focus.y/64)),int(std::floor(selecting_focus.z/64))};
+        }else if(!blocks->navigation_interest.empty()&&(scanned_%2)==0){
             // Share the existing 128-scan/four-request budgets. A bounded 5^3
             // neighborhood per interest can page a distant service vehicle.
             size_t slot=interest_cursor_++%(blocks->navigation_interest.size()*125);

@@ -23,10 +23,11 @@ struct WaterFaceClip {
         return clip(p,component(plane.normal,u),component(plane.normal,v),plane.offset-component(plane.normal,axis)*side*.5);
     }
     static bool wet(Polygon &p,int axis,int side,double head){return project(p,{{0,1,0},head},axis,side);}
-    static bool overlaps(Polygon a,const Polygon &b){
+    static bool intersect(Polygon &a,const Polygon &b){
         for(size_t i=0;i<b.count&&a.count>=3;++i){auto p=b.points[i],q=b.points[(i+1)%b.count];double nx=q.y-p.y,ny=p.x-q.x;
             if(!clip(a,nx,ny,nx*p.x+ny*p.y))return false;}
         return a.count>=3&&area(a)>1e-12;
     }
+    static bool overlaps(Polygon a,const Polygon &b){return intersect(a,b);}
 };
 }

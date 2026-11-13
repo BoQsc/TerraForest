@@ -969,11 +969,12 @@ func _execute_lake_slice(job: Dictionary) -> void:
 		"queue_ms":queue_ms,"worker_ms":worker_ms})
 
 func _service_lake_slice(soft_budget_us:int=0) -> void:
-	# At most four native slices per service point. The normal worker loop
+	# At most sixteen short native slices per service point. The normal worker loop
 	# permits a short interaction quantum before another large background mesh;
-	# nested region servicing keeps its existing single-slice default.
+	# region servicing uses the same bounded quantum to avoid multiplying
+	# water queue latency by each background terrain-region build.
 	var began:=Time.get_ticks_usec()
-	for attempt in 4:
+	for attempt in 16:
 		var selected: Dictionary={}
 		mutex.lock()
 		if not stopping:
@@ -1131,7 +1132,9 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 					_service_density_query()
 					_service_interaction_mesh()
 					_service_surface_batches()
-					_service_lake_slice()
+				# Water reads the same stable density between native region calls,
+				# including foreground meshes; it never services another mesh here.
+				_service_lake_slice(8000)
 				if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
 				if dependency.is_empty() and disk_cache.enabled:
 					var mark:=Time.get_ticks_usec()
@@ -1390,10 +1393,11 @@ func _run() -> void:
 		_service_density_query()
 		_service_interaction_mesh()
 		_service_surface_batches()
-		# Whole-column meshing also admits one bounded water slice here.
+		# A bounded 8 ms worker quantum completes local water contacts promptly;
+		# mutations/save barriers still take precedence between native slices.
 		# Selection preserves mutation/save barriers; region builds retain
 		# their finer cooperative points inside _build_regions.
-		_service_lake_slice(4000)
+		_service_lake_slice(8000)
 		mutex.lock()
 		var should_stop: bool = stopping
 		var job: Dictionary = {}

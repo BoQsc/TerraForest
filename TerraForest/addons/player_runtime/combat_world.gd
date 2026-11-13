@@ -25,7 +25,7 @@ var blast_jobs:Array[Dictionary]=[]
 var destruction_trace=preload("res://addons/player_runtime/destruction_trace.gd").new()
 var destruction_coordinator:RefCounted
 var native_blast_batches:=not OS.get_cmdline_user_args().has("--legacy-blast-batches")
-var blast_water_settling:=OS.get_cmdline_user_args().has("--blast-water-settling") or OS.get_cmdline_user_args().has("--terrain-water-settling")
+var blast_water_settling:=true
 var destruction_commit_active:=false
 var reload_slot:=-1
 var reload_epoch:=-1

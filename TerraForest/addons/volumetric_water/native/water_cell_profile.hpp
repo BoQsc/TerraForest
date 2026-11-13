@@ -164,6 +164,17 @@ struct WaterCellProfile {
         return a.visit_face(axis,side,ah,[&](const WaterFaceClip::Polygon &ap){
             return b.visit_face(axis,1-side,bh,[&](const WaterFaceClip::Polygon &bp){return WaterFaceClip::overlaps(ap,bp);});});
     }
+    static double clipped_spill_height(const WaterCellProfile &a,const WaterCellProfile &b,int axis,int side){
+        double height=1e30;
+        a.visit_face(axis,side,500,[&](const WaterFaceClip::Polygon &ap){
+            b.visit_face(axis,1-side,500,[&](const WaterFaceClip::Polygon &bp){
+                auto common=ap;
+                if(WaterFaceClip::intersect(common,bp))for(size_t i=0;i<common.count;++i)
+                    height=std::min(height,(axis==0?common.points[i].x:common.points[i].y)*1000.);
+                return false; // Visit every disconnected opening, not only the first.
+            });return false;
+        });return height;
+    }
     // Exact overlap of two wet intervals along a shared horizontal face.
     // All inequalities are linear before floor/ceiling clipping.
     static bool face_overlap(const WaterCellProfile &a,double ah,const WaterCellProfile &b,double bh,int axis,int side){
@@ -187,6 +198,30 @@ struct WaterCellProfile {
             if(possible&&lo<hi)return true;
         }
         return false;
+    }
+    // Minimum common opening for the piecewise-linear floor shortcut. General
+    // 3D profiles use clipped faces instead. The max of two lines has its
+    // minimum at a segment endpoint or their intersection.
+    static double floor_spill_height(const WaterCellProfile &a,const WaterCellProfile &b,int axis,int side){
+        std::array<double,770> breaks;size_t count=2;breaks[0]=0;breaks[1]=1;
+        auto split=[&](const WaterCellProfile &shape,int face){if(shape.contact)
+            for(const auto &t:*shape.contact)for(auto p:t)if(std::abs((axis==0?p.x:p.z)-face)<1e-7)breaks[count++]=std::clamp(axis==0?p.z:p.x,0.0,1.0);};
+        split(a,side);split(b,1-side);std::sort(breaks.begin(),breaks.begin()+count);
+        double height=1e30;
+        for(size_t segment=1;segment<count;++segment){
+            if(breaks[segment]-breaks[segment-1]<1e-9)continue;
+            double av[2],bv[2];
+            for(int t=0;t<2;++t){double u=breaks[segment-1+t];
+                av[t]=a.raw_bottom(axis==0?side:u,axis==0?u:side);
+                bv[t]=b.raw_bottom(axis==0?1-side:u,axis==0?u:1-side);
+                height=std::min(height,std::max({0.0,av[t],bv[t]}));
+            }
+            double difference=(av[1]-av[0])-(bv[1]-bv[0]);
+            if(std::abs(difference)>1e-12){double t=(bv[0]-av[0])/difference;
+                if(t>0&&t<1)height=std::min(height,std::max(0.0,av[0]+t*(av[1]-av[0])));
+            }
+        }
+        return height;
     }
     static bool vertical_overlap(const WaterCellProfile &low,double lh,const WaterCellProfile &high,double hh){
         if(low.solid||high.solid)return clipped_face_overlap(low,lh,high,hh,1,1);

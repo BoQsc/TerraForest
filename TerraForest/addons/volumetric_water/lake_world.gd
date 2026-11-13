@@ -24,6 +24,15 @@ var _busy:=false
 var _occupancy_failure:String=""
 var _surface_failure:String=""
 var _mesh_task:int=-1
+var _equilibrium_task:int=-1
+var _equilibrium_job:RefCounted
+var _equilibrium_failure:=""
+var _equilibrium_failed_revision:int=-1
+var _equilibrium_phases:PackedInt64Array=PackedInt64Array()
+var _equilibrium_worker_us:int=0
+var _equilibrium_cells:int=0
+var _equilibrium_commit_us:int=0
+var _equilibrium_blocked_ml:int=0
 var last_restore_profile:Dictionary={}
 var _retirement_jobs:Array[Dictionary]=[]
 var _cached_task:int=-1
@@ -40,6 +49,8 @@ var settling_enabled:Callable
 var _filling_id:=0
 var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
+var _staged_bounds:=AABB()
+var _have_staged_bounds:=false
 var _mesh_batch_id:int=0
 var _published_mesh_batch_id:int=0
 var _exclusion_notify_us:int=0
@@ -108,8 +119,8 @@ func restore_snapshot(bytes:PackedByteArray,prepared:RefCounted=null) -> bool:
  if cached:
   if not (water.restore_prepared(prepared) if prepared!=null else water.restore_snapshot(bytes)):return false
  last_restore_profile["native_install_us"]=Time.get_ticks_usec()-restore_begin
- # Old saves retain quantities but rebuild contacts to include explicit terrain cubes.
- if cached and bytes.decode_u32(4)<8:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)),true)
+ # Old saves retain quantities but rebuild full 3D terrain air contacts.
+ if cached and bytes.decode_u32(4)<12:water.invalidate(AABB(Vector3.ZERO,Vector3(2000,256,2000)),true)
  for record:Dictionary in decoded.records:
   record.dirty=not cached;record.failure=""
   var state:PackedByteArray=record.get("water_state",PackedByteArray())
@@ -123,14 +134,15 @@ func _ready() -> void:
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
  terrain.region_changed.connect(_settle_committed_edit)
  terrain.water_edit_admission=func(bounds:AABB,_selected:Array)->bool:return not water.has_deferred_overlap(bounds.grow(0.5))
- terrain.solid_deposited.connect(func(bounds:AABB):water.invalidate(bounds,true))
+ terrain.solid_deposited.connect(func(bounds:AABB):water.invalidate(terrain.water_occupancy_edit_bounds(bounds),true))
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.
  # Occupancy patches retain displaced quantity until redistribution can place it.
  if blocks!=null:
   blocks.set_edit_admission(func(bounds:AABB)->bool:return not water.has_deferred_overlap(blocks.global_transform*bounds))
   blocks.cells_changed.connect(_building_changed)
-  blocks.changed.connect(func():_structure_revision+=1)
+  _structure_revision=blocks.survey_content_revision_id()
+  blocks.changed.connect(func():_structure_revision=blocks.survey_content_revision_id())
  _epoch=terrain.epoch
 var location_reset_hold:=false
 var _held_buildings:=AABB()
@@ -159,11 +171,13 @@ func remove_lake(id:int) -> void:
  water.remove_bounds(AABB(item.origin,Vector3(item.cells)*item.spacing))
  _lakes.erase(id);terrain.changed_since_save=true;catalog_changed.emit()
 func clear(preserve_store:bool=false) -> void:
+ if _equilibrium_job!=null:_equilibrium_job.cancel()
+ _equilibrium_failure="";_equilibrium_failed_revision=-1
  _ocean_admitting=false
  _occupancy_failure=""
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
- _meshes.clear();_mesh_faces.clear();_staged_meshes.clear();_mesh_batch_id=0;_published_mesh_batch_id=0
+ _clear_staged_meshes();_meshes.clear();_mesh_faces.clear();_mesh_batch_id=0;_published_mesh_batch_id=0
  if not preserve_store:water=ClassDB.instantiate("NativeRegionalWater")
  if _surrounding_ocean!=null:
   var empty:=PackedByteArray();empty.resize(500*500);empty.fill(0);_surrounding_ocean.publish(empty)
@@ -172,10 +186,10 @@ func clear(preserve_store:bool=false) -> void:
 func _settle_committed_edit(bounds:AABB,_revision:int)->void:
  # Mining, blasts and other terrain edits share the committed revision. Queue
  # even while paused; advancement remains separately gated by gameplay state.
- if settling_enabled.is_valid() and settling_enabled.call():water.settle_after_edit(bounds)
+ water.settle_after_edit(bounds)
 func _invalidate(bounds:AABB) -> void:
  _occupancy_failure=""
- water.invalidate(bounds)
+ water.invalidate(terrain.water_occupancy_edit_bounds(bounds))
  _discard_builder()
 var last_process_us:int=0
 func _process(delta:float) -> void:
@@ -189,6 +203,7 @@ func _measured_step(delta:float)->void:
    WorkerThreadPool.wait_for_task_completion(_retirement_jobs[i].task);_retirement_jobs.remove_at(i)
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
+ if blocks!=null:blocks.set_occupancy_interest(PackedVector3Array())
  water.set_western_ocean(terrain.backend.world_generator==18)
  water.set_surrounding_ocean(terrain.backend.world_generator in [19,21,23,25,27,29,31])
  if terrain.backend.world_generator in [19,21,23,25,27,29,31] and _surrounding_ocean==null:
@@ -220,23 +235,25 @@ func _measured_step(delta:float)->void:
    break
  # Show edits before advancing their flow. Native immutable batches retain
  # that state if publication spans more than one frame.
- if (not offline_preparation or _filling_id==0) and not _ocean_admitting:_publish_meshes()
+ if (not offline_preparation or _filling_id==0) and not _ocean_admitting and before.settling_regions==0:_publish_meshes()
  # Authored filling and blast-woken settling have separate native budgets.
  if _filling_id!=0:water.advance(2048,delta)
- elif not terrain.pending_edit and (not loading_active.is_valid() or not loading_active.call()) and settling_active.is_valid() and settling_active.call():
-  var settle_us:int=water.advance_settling(256)
-  terrain._record_stage("water blast settling",settle_us/1000.0)
+ # A restored unfinished transaction must settle during loading: the loading
+ # gate itself waits for its matching water geometry. Paused gameplay still waits.
+ elif not terrain.pending_edit and ((loading_active.is_valid() and loading_active.call()) or (settling_active.is_valid() and settling_active.call())):
+  _advance_equilibrium()
  if not _busy and not terrain.pending_edit and _occupancy_failure.is_empty():
   var request:Dictionary=water.next_request()
   if not request.is_empty():
-   if (_builder==null or _revision!=terrain.published_revision) and _surrounding_ocean!=null and _pending_bucket.is_empty() and _pending_dev.is_empty():
-    _prepare_ocean_batch()
+   var preparing_load:bool=loading_active.is_valid() and loading_active.call()
+   if (_builder==null or _revision!=terrain.published_revision) and (preparing_load or _surrounding_ocean!=null or before.settling_regions>0) and _pending_bucket.is_empty() and _pending_dev.is_empty():
+    _prepare_terrain_batch(before.settling_regions==0 and not preparing_load)
    if _builder==null or _revision!=terrain.published_revision:
     _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_builder_reused=false;_revision=terrain.published_revision
     _builder_structure_revision=_structure_revision
     if blocks!=null:
      var hull_started:=Time.get_ticks_usec()
-     var solids:Dictionary=blocks.solid_hulls(AABB(Vector3(request.coordinate)*4,Vector3(4,4,4)))
+     var solids:Dictionary=_structure_hulls(AABB(Vector3(request.coordinate)*4,Vector3(4,4,4)))
      if not solids.ok or not _builder.set_structure_hulls(solids.hulls):_discard_builder()
      if _builder!=null:_builder_reused=water.reuse_building_occupancy(_builder)
      _hull_snapshot_us=Time.get_ticks_usec()-hull_started
@@ -275,11 +292,39 @@ func _measured_step(delta:float)->void:
   _capacity_reported=true;terrain.message_changed.emit("Water resident-region limit reached; quantities retained, expansion paused")
  if after.changes!=_last_changes:terrain.changed_since_save=true;_last_changes=after.changes
  _notify_seconds+=delta
- if _have_bounds and _notify_seconds>=0.25:
+ if _have_bounds and _notify_seconds>=0.25 and not after.mesh_batch_active and not after.mesh_publish_pending and _mesh_publish_us<100:
   _notify_seconds=0;_have_bounds=false
   var notify_started:=Time.get_ticks_usec()
   exclusion_changed.emit(_changed_bounds)
   _exclusion_notify_us=Time.get_ticks_usec()-notify_started
+func _advance_equilibrium()->void:
+ if _equilibrium_task>=0:
+  if not WorkerThreadPool.is_task_completed(_equilibrium_task):return
+  WorkerThreadPool.wait_for_task_completion(_equilibrium_task);_equilibrium_task=-1
+  var started:=Time.get_ticks_usec()
+  var result:Dictionary=water.finish_equilibrium(_equilibrium_job)
+  _equilibrium_job=null
+  _equilibrium_commit_us=Time.get_ticks_usec()-started
+  if result.get("ok",false):_equilibrium_blocked_ml=int(result.get("blocked_ml",0))
+  _equilibrium_phases=result.get("phase_us",PackedInt64Array())
+  _equilibrium_worker_us=int(result.get("worker_us",0));_equilibrium_cells=int(result.get("cells",0))
+  if result.get("ok",false):_publish_meshes()
+  if result.get("ok",false) or result.get("pending",false) or result.get("stale",false):
+   _equilibrium_failure="";_equilibrium_failed_revision=-1
+  else:
+   _equilibrium_failure=str(result.get("reason","Water equilibrium failed"))
+   _equilibrium_failed_revision=water.survey_revision_id()
+   terrain.message_changed.emit(_equilibrium_failure)
+  return
+ if _equilibrium_failed_revision==water.survey_revision_id():return
+ _equilibrium_job=water.begin_equilibrium()
+ if _equilibrium_job!=null:_equilibrium_task=WorkerThreadPool.add_task(_equilibrium_job.prepare,false,"Water connected-body equilibrium")
+func _clear_staged_meshes()->void:
+ for coordinate:Vector3i in _staged_meshes:
+  var node:MeshInstance3D=_staged_meshes[coordinate].get("node")
+  if is_instance_valid(node) and _meshes.get(coordinate)!=node:node.queue_free()
+ _staged_meshes.clear();_have_staged_bounds=false
+
 func _publish_meshes() -> void:
  if _mesh_task>=0:
   if not WorkerThreadPool.is_task_completed(_mesh_task):return
@@ -294,7 +339,7 @@ func _publish_meshes() -> void:
   var update:Dictionary=water.next_mesh_batch(true)
   if update.is_empty():break
   if update.has("failure"):
-   _staged_meshes.clear()
+   _clear_staged_meshes()
    if _surface_failure!=str(update.failure):
     _surface_failure=str(update.failure);terrain.message_changed.emit(_surface_failure)
    break
@@ -304,13 +349,24 @@ func _publish_meshes() -> void:
    break
   if update.get("pending",false):break
   if update.batch!=_mesh_batch_id:
-   _staged_meshes.clear();_mesh_batch_id=update.batch
+   _clear_staged_meshes();_mesh_batch_id=update.batch
   if update.has("coordinate"):
    var geometry:ArrayMesh=null
    if update.vertices>0:
-    geometry=ArrayMesh.new();geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.arrays)
-   _staged_meshes[update.coordinate]={"mesh":geometry,"faces":update.faces}
+    geometry=ArrayMesh.new();geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.get("render_arrays",update.arrays))
+   if geometry!=null or _meshes.has(update.coordinate):
+    var staged:Dictionary={"mesh":geometry,"faces":update.faces}
+    if geometry!=null and not _meshes.has(update.coordinate):
+     # Prepare the empty scene node under the upload budget; install its mesh
+     # only when all regions and matching queries can publish together.
+     var node:=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material
+     node.position=Vector3(update.coordinate)*4;add_child(node);staged.node=node
+    _staged_meshes[update.coordinate]=staged
+    var bounds:=AABB(Vector3(update.coordinate)*4,Vector3(4,4,4))
+    _staged_bounds=_staged_bounds.merge(bounds) if _have_staged_bounds else bounds;_have_staged_bounds=true
   if update.complete:
+   # Commit on its own short slice if staging already consumed this frame.
+   if Time.get_ticks_usec()-mesh_started>150:break
    var commit_started:=Time.get_ticks_usec()
    for coordinate:Vector3i in _staged_meshes:
     var staged:Dictionary=_staged_meshes[coordinate]
@@ -319,31 +375,44 @@ func _publish_meshes() -> void:
      _mesh_faces.erase(coordinate)
     else:
      if not _meshes.has(coordinate):
-      var node:=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material;add_child(node);_meshes[coordinate]=node
+      _meshes[coordinate]=staged.node
      _mesh_faces[coordinate]=staged.faces
-     _meshes[coordinate].position=Vector3(coordinate)*4
      _meshes[coordinate].mesh=staged.mesh
-    var bounds:=AABB(Vector3(coordinate)*4,Vector3(4,4,4))
-    _changed_bounds=_changed_bounds.merge(bounds) if _have_bounds else bounds;_have_bounds=true
+   if _have_staged_bounds:
+    _changed_bounds=_changed_bounds.merge(_staged_bounds) if _have_bounds else _staged_bounds;_have_bounds=true
    if not water.commit_mesh_batch(update.batch):push_error("Water query publication did not match rendered batch")
    _published_mesh_batch_id=update.batch
    if _surrounding_ocean!=null:_surrounding_ocean.publish(water.ocean_publication_mask())
-   _staged_meshes.clear()
+   # Every staged node now belongs to _meshes; no cancellation cleanup scan.
+   _staged_meshes.clear();_have_staged_bounds=false
    _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
   if Time.get_ticks_usec()-mesh_started>=budget_us:break
  _mesh_publish_us=Time.get_ticks_usec()-mesh_started;_mesh_max_publish_us=maxi(_mesh_max_publish_us,_mesh_publish_us)
-func _prepare_ocean_batch() -> void:
+func _structure_hulls(bounds:AABB)->Dictionary:
+ var result:Dictionary=blocks.solid_hulls(bounds)
+ if result.get("unavailable",false):
+  # The pager reads this exact saved region asynchronously within its existing
+  # budgets. Unknown solids never become empty space or block loading forever.
+  blocks.set_occupancy_interest(PackedVector3Array([bounds.get_center()]))
+ return result
+
+func _prepare_terrain_batch(ocean_only:bool) -> void:
  _discard_builder()
  _builder_reused=false
  _revision=terrain.published_revision
  _builder_structure_revision=_structure_revision
  var hull_started:=Time.get_ticks_usec()
- for coordinate:Vector3i in water.next_requests(8):
+ for coordinate:Vector3i in water.next_requests(8 if ocean_only else 32,ocean_only):
   var patch:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
   if not patch.configure(coordinate):_discard_builder();return
   if blocks!=null:
-   var solids:Dictionary=blocks.solid_hulls(AABB(Vector3(coordinate)*4,Vector3(4,4,4)))
-   if not solids.ok or not patch.set_structure_hulls(solids.hulls):_discard_builder();return
+   var solids:Dictionary=_structure_hulls(AABB(Vector3(coordinate)*4,Vector3(4,4,4)))
+   if not solids.ok or not patch.set_structure_hulls(solids.hulls):
+    if _builder_patches.is_empty():_discard_builder();return
+    break
+   # Cached building-only patches share the same bounded batch worker; loading
+   # thousands of unchanged regions must not require one rendered frame each.
+   water.reuse_building_occupancy(patch)
   _builder_patches.append(patch)
  _hull_snapshot_us=Time.get_ticks_usec()-hull_started
  var batch:RefCounted=ClassDB.instantiate("NativeWaterTerrainBatch")
@@ -361,6 +430,8 @@ func _poll_cached_task() -> void:
  cached_preparation_profiled.emit(info.cached_worker_us/1000.0,maxi(0,info.cached_started_us-job.submitted_us)/1000.0,info.status)
  _slice_ready(job.token,info.status,job.epoch,job.revision)
 func _exit_tree() -> void:
+ if _equilibrium_task>=0:
+  _equilibrium_job.cancel();WorkerThreadPool.wait_for_task_completion(_equilibrium_task);_equilibrium_task=-1
  if _mesh_task>=0:
   WorkerThreadPool.wait_for_task_completion(_mesh_task);_mesh_task=-1
  for job:Dictionary in _retirement_jobs:WorkerThreadPool.wait_for_task_completion(job.task)
@@ -420,6 +491,13 @@ func statistics() -> Dictionary:
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1
  s.occupancy_failure=_occupancy_failure
+ s.equilibrium_blocked_ml=_equilibrium_blocked_ml
+ s.equilibrium_failure=_equilibrium_failure
+ s.equilibrium_phases=_equilibrium_phases
+ s.equilibrium_worker_us=_equilibrium_worker_us
+ s.equilibrium_cells=_equilibrium_cells
+ s.equilibrium_commit_us=_equilibrium_commit_us
+ s.equilibrium_pending=_equilibrium_task>=0
  s.surface_failure=_surface_failure
  s.published_over_capacity_ml=0
  for faces:Dictionary in _mesh_faces.values():s.published_over_capacity_ml+=faces.get("over_capacity_ml",0)
@@ -427,7 +505,7 @@ func statistics() -> Dictionary:
  s.exclusion_notify_us=_exclusion_notify_us;s.accept_patch_us=_accept_patch_us;s.hull_snapshot_us=_hull_snapshot_us
  s.mesh_publish_us=_mesh_publish_us;s.max_mesh_publish_us=_mesh_max_publish_us
  s.mesh_commit_us=_mesh_commit_us;s.max_mesh_commit_us=_mesh_max_commit_us;s.staged_meshes=_staged_meshes.size()
- s.render_ready=_staged_meshes.is_empty() and s.dirty_meshes==0 and s.pending_regions==0 and not s.fill_active
+ s.render_ready=_staged_meshes.is_empty() and s.dirty_meshes==0 and s.pending_regions==0 and not s.fill_active and _mesh_task<0 and not s.mesh_batch_active and not s.mesh_publish_pending
  return s
 func descriptions() -> Array[Dictionary]:
  var rows:Array[Dictionary]=[]

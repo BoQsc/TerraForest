@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "../../addons/volumetric_water/native/water_solid_clip.hpp"
 #include "../../addons/volumetric_water/native/water_cell_profile.hpp"
+#include "../../addons/volumetric_water/native/water_density_air.hpp"
 #include <cstdio>
 #include <limits>
 using C=terraforest::WaterSolidClip;
@@ -9,6 +10,16 @@ void check(bool ok,const char*name){std::printf("%s %s\n",ok?"PASS":"FAIL",name)
 bool near(double a,double b){return std::abs(a-b)<1e-9;}
 std::vector<C::Plane> box(C::Point a,C::Point b){return {{{-1,0,0},-a.x},{{1,0,0},b.x},{{0,-1,0},-a.y},{{0,1,0},b.y},{{0,0,-1},-a.z},{{0,0,1},b.z}};}
 int main(){
+ {
+ float wall[8],ceiling[8];for(int i=0;i<8;++i){wall[i]=(i&1)?.25f:-.25f;ceiling[i]=(i&2)?-.25f:.25f;}
+ C::Pieces density_air;terraforest::WaterSolidProfile density_cache;
+ check(terraforest::water_density_air(wall,density_air)&&near(C::volume(density_air),.0625),"General density wall preserves its half-cell air volume");
+ check(density_cache.prepare(density_air),"General density wall prepares cached 3D occupancy");
+ double bottom=0,top=0;
+ check(density_cache.interval({.4,.25,.25},.5,bottom,top)&&!density_cache.interval({.1,.25,.25},.5,bottom,top),"Vertical terrain wall excludes solid without a floor approximation");
+ check(terraforest::water_density_air(ceiling,density_air)&&near(C::volume(density_air),.0625)&&density_cache.prepare(density_air),"Ceiling density retains the lower cavity volume");
+ check(density_cache.interval({.25,.1,.25},.5,bottom,top)&&near(top,.25)&&!density_cache.visit_face(1,1,.5,[](const auto&){return true;}),"Cached terrain ceiling seals its upper face and retains water below");
+ }
  C::Pieces cell{C::box({0,0,0},{1,1,1})},air,next;
  check(near(C::volume(cell),1),"Unit volume");
  check(C::subtract(cell,box({0,0,0},{1,.5,1}),air)&&near(C::volume(air),.5),"Slab removes only lower half");
@@ -86,5 +97,30 @@ int main(){
   if(!cache.occupied_pieces(h,mesh)||!near(C::volume(mesh),cache.volume(h))){
    std::printf("RECONSTRUCTION height=%.3f geometry=%.12f curve=%.12f\n",h,C::volume(mesh),cache.volume(h));reconstructed=false;}}
  check(reconstructed,"Curved occupied geometry matches the prepared quantity curve");
+ terraforest::WaterCellProfile rising,falling;rising.floor={0,400,0,400};falling.floor={400,0,400,0};
+ check(near(terraforest::WaterCellProfile::floor_spill_height(rising,falling,2,1),200),"Shared sloping-face spill uses the crossing of both floors");
+ plain.solid=nullptr;
+ check(plain.solid_remainder(500,{box({0,0,0},{.5,.2,.5})},actual)&&cache.prepare(actual),"Prepare clipped spill fixture");plain.solid=&cache;
+ bool spill_exact=true;
+ for(int axis:{0,2})for(int side:{0,1}){
+  double spill=terraforest::WaterCellProfile::clipped_spill_height(plain,neighbour,axis,side);
+  spill_exact&=near(spill,200)&&!terraforest::WaterCellProfile::face_overlap(plain,spill-.001,neighbour,spill-.001,axis,side)&&terraforest::WaterCellProfile::face_overlap(plain,spill+.001,neighbour,spill+.001,axis,side);
+ }
+ check(spill_exact,"Direct clipped spill agrees with wet connectivity on all horizontal faces");
+ bool oblique_spills=true;
+ for(int trial=0;trial<12;++trial){
+  float density[8];
+  for(int corner=0;corner<8;++corner)density[corner]=float(((corner&1)-.5)*std::sin(trial+.2)+(((corner>>1)&1)-.5)*.7+(((corner>>2)&1)-.5)*std::cos(trial+.4)+.1);
+  C::Pieces air;terraforest::water_density_air(density,air);cache.prepare(air);plain.solid=&cache;
+  neighbour.floor={double(trial*11),double(trial*7),double(trial*5),double(trial*13)};
+  for(int axis:{0,2})for(int side:{0,1}){
+   double exact=terraforest::WaterCellProfile::clipped_spill_height(plain,neighbour,axis,side);
+   if(!terraforest::WaterCellProfile::clipped_face_overlap(plain,500,neighbour,500,axis,side)){oblique_spills&=exact>500;continue;}
+   double lo=0,hi=500;
+   for(int step=0;step<28;++step){double mid=(lo+hi)*.5;if(terraforest::WaterCellProfile::clipped_face_overlap(plain,mid,neighbour,mid,axis,side))hi=mid;else lo=mid;}
+   oblique_spills&=std::abs(exact-hi)<.01;
+  }
+ }
+ check(oblique_spills,"Direct oblique 3D spill heights match independent connectivity bisection");
  std::printf("WATER_SOLID_CLIP failures=%d\n",failures);return failures?1:0;
 }

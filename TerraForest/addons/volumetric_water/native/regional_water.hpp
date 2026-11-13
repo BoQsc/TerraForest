@@ -2,6 +2,7 @@
 #pragma once
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/variant/packed_color_array.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/aabb.hpp>
@@ -48,6 +49,7 @@ public:
 };
 class NativeWaterSnapshot;
 class NativeWaterMeshJob;
+class NativeWaterEquilibriumJob;
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
 struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const WaterSolidProfile>)*512;std::array<std::shared_ptr<const WaterSolidProfile>,512> cells;};
 // Immutable hand-off: only the terrain worker writes this object. No scene,
@@ -64,7 +66,7 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     std::shared_ptr<StructureWaterContacts> structures;
     std::atomic<bool> cached_cancelled{false};
     uint64_t cached_started_us=0,cached_worker_us=0;
-    bool terrain_prepared=false,structure_only=false;
+    bool terrain_prepared=false,structure_only=false,general_terrain=false;
     godot::AABB structure_edit_bounds;
     int structure_cursor=0;
     int64_t prepare_structures();
@@ -100,6 +102,7 @@ class NativeRegionalWater : public godot::RefCounted {
     GDCLASS(NativeRegionalWater,godot::RefCounted)
     friend class NativeWaterSnapshot;
     friend class NativeWaterMeshJob;
+    friend class NativeWaterEquilibriumJob;
     friend class NativeWaterMapIdentity;
     friend class NativeWaterRegionStore;
     friend class NativeGeneratedLakeBake;
@@ -122,6 +125,7 @@ class NativeRegionalWater : public godot::RefCounted {
         uint16_t settle_cursor=0;
         // 0 ordinary, 1 regenerable ocean, 2 ocean touched by gameplay/terrain.
         uint8_t ocean_state=0;
+        uint8_t occupancy_version=12;
         bool limited_building_edit=false;
         godot::AABB building_edit_bounds;
         // Conservative charge per retained owner, even when payload is shared.
@@ -247,6 +251,11 @@ class NativeRegionalWater : public godot::RefCounted {
         bool valid=true;
         godot::PackedVector3Array vertices,normals;
         godot::PackedVector2Array uv;
+        godot::PackedColorArray colors;
+        godot::PackedVector3Array render_vertices,render_normals;
+        godot::PackedVector2Array render_uv;
+        godot::PackedColorArray render_colors;
+        godot::PackedInt32Array render_indices;
         std::vector<godot::Vector3i> owners;
         godot::Dictionary faces;
     };
@@ -259,6 +268,8 @@ class NativeRegionalWater : public godot::RefCounted {
 protected: static void _bind_methods();
 public:
     void settle_after_edit(const godot::AABB &bounds);
+    godot::Ref<NativeWaterEquilibriumJob> begin_equilibrium();
+    godot::Dictionary finish_equilibrium(const godot::Ref<NativeWaterEquilibriumJob> &job);
     int64_t advance_settling(int64_t budget=256);
     void configure_settling_profile(bool enabled){settle_profiling=enabled;settle_face_us=settle_profiled_faces=settle_max_face_us=0;}
     void set_western_ocean(bool enabled){if(western_ocean!=enabled){western_ocean=enabled;invalidate_snapshot();}}
@@ -285,7 +296,7 @@ public:
     int64_t survey_revision_id() const {return int64_t(map_revision);}
     godot::Dictionary survey_surfaces(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::Dictionary next_request();
-    godot::Array next_requests(int64_t limit);
+    godot::Array next_requests(int64_t limit,bool ocean_only=true);
     bool accept_patch(const godot::Ref<NativeWaterTerrainPatch> &patch);
     void invalidate(const godot::AABB &bounds,bool replace_water=false);
     void invalidate_buildings(const godot::AABB &bounds);
@@ -322,12 +333,35 @@ public:
 };
 
 // Worker owns an immutable local halo, never the live water store or scene.
+class NativeWaterEquilibriumJob : public godot::RefCounted {
+    GDCLASS(NativeWaterEquilibriumJob,godot::RefCounted)
+    friend class NativeRegionalWater;
+    godot::Ref<NativeRegionalWater> frozen;
+    uint64_t revision=0,elapsed_us=0,visited_cells=0,blocked_ml=0;
+    std::array<uint64_t,8> phase_us{};
+    uint64_t reserved_bytes=0;
+    static std::atomic<uint64_t> pending_bytes;
+    std::vector<uint64_t> required,changed_regions;
+    godot::String reason;
+    bool success=false,consumed=false;
+    std::atomic<bool> started{false},ready{false},cancelled{false};
+protected: static void _bind_methods();
+public:
+    ~NativeWaterEquilibriumJob();
+    void prepare();
+    void cancel(){cancelled.store(true);}
+    bool is_ready()const{return ready.load(std::memory_order_acquire);}
+};
+
+// Worker owns an immutable local halo, never the live water store or scene.
 class NativeWaterMeshJob : public godot::RefCounted {
     GDCLASS(NativeWaterMeshJob,godot::RefCounted)
     friend class NativeRegionalWater;
     godot::Ref<NativeRegionalWater> frozen;
-    NativeRegionalWater::SurfaceMesh result;
-    uint64_t owner=0,batch=0,elapsed_us=0,reserved_bytes=0;
+    std::vector<NativeRegionalWater::SurfaceMesh> results;
+    std::vector<uint64_t> owners;
+    size_t consumed=0;
+    uint64_t batch=0,elapsed_us=0,reserved_bytes=0;
     static std::atomic<uint64_t> pending_bytes;
     std::atomic<bool> started{false},ready{false},cancelled{false};
     void release_reservation();

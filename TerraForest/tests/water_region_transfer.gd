@@ -52,4 +52,13 @@ func _initialize()->void:
  check(not dry.is_empty() and dry_copy.restore_region_snapshot(coordinate,dry,0,true),"empty edited override is transferable")
  check(dry_copy.statistics().water_ml==0 and dry_copy.statistics().ocean_edited_regions==1 and dry_copy.capture_region_snapshot(coordinate)==dry,"empty override retains ownership and exact record")
  check(water.capture_region_snapshot(Vector3i(-1,0,0)).is_empty(),"invalid coordinate rejected")
+ # An unloaded ocean neighbor is unavailable, not an empty receiving basin.
+ var ocean_total:int=copy.statistics().water_ml
+ copy.settle_after_edit(AABB(Vector3(coordinate)*4,Vector3.ONE*4))
+ var job:RefCounted=copy.begin_equilibrium()
+ check(job!=null,"Edited ocean occupancy schedules a bounded transaction")
+ if job!=null:
+  job.prepare();var result:Dictionary=copy.finish_equilibrium(job)
+  check(result.get("pending",false) and copy.statistics().water_ml==ocean_total,"Ocean frontier requests missing terrain without draining or inventing water")
+  check(copy.begin_equilibrium()==null,"Unavailable ocean frontier does not spin solver jobs")
  print("WATER_REGION_TRANSFER failures=",failures);quit(1 if failures else 0)

@@ -20,6 +20,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeImplicitWaterSurface);
         GDREGISTER_CLASS(terraforest::NativeWaterBasinEquilibrium);
         GDREGISTER_CLASS(terraforest::NativeWaterMeshJob);
+        GDREGISTER_CLASS(terraforest::NativeWaterEquilibriumJob);
         GDREGISTER_CLASS(terraforest::NativeWaterSnapshot);
         GDREGISTER_CLASS(terraforest::NativeWaterRegionStore);
         GDREGISTER_CLASS(terraforest::NativeWaterRegionIO);

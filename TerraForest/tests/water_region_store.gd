@@ -7,7 +7,7 @@ func check(ok:bool,label:String)->void:
 func packet(amount:int)->PackedByteArray:
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var b:=PackedByteArray();b.resize(32+catalog.size()+9076+12);b.fill(0)
- b.encode_u32(0,0x31575256);b.encode_u32(4,10);b.encode_u32(8,catalog.size());b.encode_u32(12,1);b.encode_u64(16,amount);b.encode_u64(24,12)
+ b.encode_u32(0,0x31575256);b.encode_u32(4,12);b.encode_u32(8,catalog.size());b.encode_u32(12,1);b.encode_u64(16,amount);b.encode_u64(24,12)
  for i in catalog.size():b[32+i]=catalog[i]
  var at:=32+catalog.size();b.encode_u64(at,(1<<24)|(9<<12)|250);b.encode_u32(at+8,1);b.encode_u32(at+12,9)
  for i in 512:b.encode_u16(at+16+i*12+2,500)

@@ -64,12 +64,17 @@ void fragment() {
     // At solid contact, the boundary converges to the already rendered terrain.
     // Fade surface lighting as well as tint; otherwise closed contact faces
     // create reflective bands across the lake bed.
-    float contact_visibility = smoothstep(0.0, 0.25, thickness);
+    // Material classification comes from authoritative 3D air occupancy.
+    // Undersides of submerged ceilings must not acquire free-surface ripples.
+    float free_surface = COLOR.r;
+    if (free_surface < 0.5) thickness = 0.0;
+    transmission = exp(-absorption * thickness);
+    float contact_visibility = free_surface * smoothstep(0.0, 0.25, thickness);
     vec3 n = normalize(surface_world_normal);
     vec2 ripple = texture(ripple_normal, UV * ripple_scale + TIME * vec2(0.007, -0.004)).rg * 2.0 - 1.0;
     // Ripples belong to the upper water surface. Viewing it from below still
     // preserves ripples, but excavated underside/contact faces stay unperturbed.
-    n = normalize(n + vec3(ripple.x, 0.0, ripple.y) * ripple_strength * max(n.y, 0.0));
+    n = normalize(n + vec3(ripple.x, 0.0, ripple.y) * ripple_strength * max(n.y, 0.0) * free_surface);
     NORMAL = normalize((VIEW_MATRIX * vec4(n, 0.0)).xyz);
     if (!FRONT_FACING) NORMAL = -NORMAL;
     float facing = clamp(abs(dot(NORMAL, VIEW)), 0.0, 1.0);
