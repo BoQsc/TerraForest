@@ -8,7 +8,7 @@ struct ShapePlane {Vector3 normal;double offset;};
 struct SphereTemplate {
     std::array<BlockVertex,91> vertices;
     std::array<int32_t,360> indices;
-    std::array<ShapePlane,120> planes;
+    std::array<ShapePlane,72> planes;
 };
 // Shared source for visual/collision triangles and authoritative convex queries.
 inline const SphereTemplate &sphere_template() {
@@ -27,11 +27,19 @@ inline const SphereTemplate &sphere_template() {
             if(y<5)for(int v:{a,b,c})result.indices[index++]=v;
             if(y>0)for(int v:{a,c,d})result.indices[index++]=v;
         }
-        auto point=[&](int i){auto &v=result.vertices[result.indices[i]];return Vector3(v.x,v.y,v.z);};
-        for(int i=0;i<120;i++) {
-            auto a=point(i*3),b=point(i*3+1),c=point(i*3+2);
-            Vector3 normal=(c-a).cross(b-a).normalized();
-            result.planes[i]={normal,double(normal.dot(a))};
+        // Each latitude-band quad is one planar facet. Deriving two planes
+        // from its rounded render triangles creates nearly coincident cuts.
+        // Use the authored ring geometry once per facet, including pole fans.
+        for(int y=0;y<6;++y)for(int x=0;x<12;++x){
+            const double t0=pi*y/6,t1=pi*(y+1)/6,phi=2*pi*(x+.5)/12;
+            const double r0=y==0?0:std::sin(t0),r1=y==5?0:std::sin(t1);
+            const double radial=std::cos(t0)-std::cos(t1);
+            const double vertical=(r1-r0)*std::cos(pi/12);
+            Vector3 normal(radial*std::cos(phi),vertical,radial*std::sin(phi));
+            normal=normal.normalized();
+            const double px=.5+.5*r0*std::cos(2*pi*x/12);
+            const double py=.5+.5*std::cos(t0),pz=.5+.5*r0*std::sin(2*pi*x/12);
+            result.planes[y*12+x]={normal,double(normal.x)*px+double(normal.y)*py+double(normal.z)*pz};
         }
         return result;
     }();

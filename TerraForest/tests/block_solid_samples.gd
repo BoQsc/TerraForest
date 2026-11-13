@@ -40,6 +40,23 @@ func _initialize():
    check(not hit.is_empty() and blocks.sample_solid(PackedVector3Array([hit.position-Vector3.UP*0.001]))==PackedByteArray([1]),"Picking remains consistent with occupied shape")
    var exported:Dictionary=blocks.solid_hulls(AABB(Vector3.ZERO,Vector3.ONE))
    check(exported.ok and hull_contains(exported.hulls,points[0]) and not hull_contains(exported.hulls,points[1]),"Exported hull matches authored shape")
+ blocks.set_cells(PackedInt32Array([0,0,0,6]))
+ var sphere_hull:PackedFloat64Array=blocks.solid_hulls(AABB(Vector3.ZERO,Vector3.ONE)).hulls[0]
+ var sphere_arrays:Array=blocks.preview_mesh(6,0).surface_get_arrays(0)
+ var sphere_points:PackedVector3Array=sphere_arrays[Mesh.ARRAY_VERTEX]
+ var sphere_indices:PackedInt32Array=sphere_arrays[Mesh.ARRAY_INDEX]
+ var facet_error:=0.0;var outside_error:=0.0
+ for point:Vector3 in sphere_points:
+  for plane in range(0,sphere_hull.size(),4):
+   outside_error=maxf(outside_error,sphere_hull[plane]*point.x+sphere_hull[plane+1]*point.y+sphere_hull[plane+2]*point.z-sphere_hull[plane+3])
+ for triangle in range(0,sphere_indices.size(),3):
+  var center:Vector3=(sphere_points[sphere_indices[triangle]]+sphere_points[sphere_indices[triangle+1]]+sphere_points[sphere_indices[triangle+2]])/3.0
+  var closest:=INF
+  for plane in range(0,sphere_hull.size(),4):
+   closest=minf(closest,absf(sphere_hull[plane]*center.x+sphere_hull[plane+1]*center.y+sphere_hull[plane+2]*center.z-sphere_hull[plane+3]))
+  facet_error=maxf(facet_error,closest)
+ check(sphere_hull.size()/4==78,"Sphere uses one plane per authored facet plus its bounds")
+ check(outside_error<0.0000002 and facet_error<0.0000002,"Sphere query hull agrees with every rendered vertex and triangle within float precision")
  blocks.set_cells(PackedInt32Array([0,0,0,1]))
  blocks.transform=Transform3D(Basis(Vector3.UP,.4).scaled(Vector3(2,3,4)),Vector3(10,20,30))
  check(blocks.sample_solid(PackedVector3Array([blocks.transform*Vector3(.5,.5,.5),blocks.transform*Vector3(1.5,.5,.5)]))==PackedByteArray([1,0]),"Transformed block samples use world coordinates")

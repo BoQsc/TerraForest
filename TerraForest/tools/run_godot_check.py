@@ -25,7 +25,7 @@ from development_storage import admit, register_worlds
 BOUNDED_WATER_REPORTS = {
     "water_mesh_worker", "water_material_surface", "water_surface_topology",
     "water_surface_continuity", "water_contact_volume", "water_contact_visual",
-    "water_blast_terrain", "water_blast_settling",
+    "water_blast_terrain", "water_blast_settling", "block_solid_samples",
 }
 
 def planned_report_bytes(command):
