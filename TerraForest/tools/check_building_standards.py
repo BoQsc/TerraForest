@@ -17,7 +17,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--godot")
     options = parser.parse_args()
-    admit(ROOT, scratch_bytes=128*2**20)
+    # Eight 1536-square RGB material sheets plus small contract logs/JSON.
+    admit(ROOT, report_bytes=64*2**20, scratch_bytes=128*2**20)
     engine = options.godot or parse_args([])[0].godot
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     report = ROOT / "reports/building_standards" / stamp

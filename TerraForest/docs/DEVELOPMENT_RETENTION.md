@@ -208,3 +208,11 @@ Evidence: `reports/artifact_backup_20261110/cleanup_summary.json` and the branch
 `generated-backup/cleanup-receipts.json.gz`. Source fixture/PCK hashes and all
 14 installed native pairs remain unchanged. Git object packing preserved refs,
 reflogs and history; private Codex session data was not uploaded or deleted.
+
+Water barrel captures use `tools/maintain_water_captures.py --apply` before and
+after checks. It admits only named PNGs and optional native replay snapshots
+from completed `water_barrel_world` runs whose command declares that exact
+evidence directory. Two unpinned runs remain ready;
+older images are hash-verified in the shared chunk archive before retirement.
+Logs and JSON remain loose. Restore `captures.archive.json` with the existing
+`maintain_performance_artifacts.py --restore ... --destination ...` command.

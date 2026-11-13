@@ -23,14 +23,26 @@ from development_storage import admit, register_worlds
 # evidence remains in the owning run directory; they do not allocate exports.
 # This declares planned growth, not a change to any storage category limit.
 BOUNDED_WATER_REPORTS = {
-    "water_mesh_worker", "water_material_surface", "water_surface_topology",
+    "water_region_store", "water_region_transfer", "water_storage_snapshot", "water_streaming_save",
+    "water_equilibrium_replay", "water_equilibrium", "water_mesh_worker", "water_material_surface", "water_surface_topology",
     "water_surface_continuity", "water_contact_volume", "water_contact_visual",
-    "water_blast_terrain", "water_blast_settling", "water_barrel_world", "water_implicit_proof", "block_solid_samples",
+    "block_pager", "combat_remote_world", "water_blast_terrain", "water_blast_settling", "water_barrel_world", "water_implicit_proof", "block_solid_samples",
+}
+
+# Export's audited contract suite emits small logs, except eight 1536x1536
+# RGB material sheets (under 64 MiB even before PNG compression).
+BOUNDED_CONTRACT_REPORTS = {
+    "terrain_block_contract", "terrain_block_catalog", "building_expansion",
+    "building_expansion_pack", "production_building_catalog", "door_dimensions",
 }
 
 def planned_report_bytes(command):
-    scripts = [str(value) for value in command if str(value).startswith("res://tests/")]
-    if len(scripts) == 1 and Path(scripts[0]).stem in BOUNDED_WATER_REPORTS:
+    if any(Path(str(value)).name == "water_barrel_world.gd" for value in command):
+        return 32 * 2**20
+    scripts = [str(value) for value in command if str(value).endswith(".gd")]
+    if len(scripts) == 1 and Path(scripts[0]).stem == "building_materials":
+        return 64 * 2**20
+    if len(scripts) == 1 and Path(scripts[0]).stem in BOUNDED_WATER_REPORTS | BOUNDED_CONTRACT_REPORTS:
         return 16 * 2**20
     return 256 * 2**20
 
@@ -147,6 +159,8 @@ def main(argv=None):
     parser.add_argument("test", help="tests/<name>.gd")
     parser.add_argument("--godot")
     parser.add_argument("--headless", action="store_true")
+    parser.add_argument("--pack", action="store_true", help="Installed resource pack with matching native libraries")
+    parser.add_argument("--executable", action="store_true", help="Installed game executable and pack")
     parser.add_argument("--persistent", action="store_true", help="Unique disposable save slot; water_static_compound only")
     parser.add_argument("--timeout", type=float, default=90)
     parser.add_argument("--require", required=True, help="Successful completion text in console output")
@@ -159,7 +173,9 @@ def main(argv=None):
     if not 0 < args.timeout <= 600 or not args.require.strip():
         parser.error("Use a positive timeout up to 600 seconds and nonempty completion text")
     config, _ = parse_args(["--godot", args.godot] if args.godot else [])
-    engine = Path(config.godot).resolve()
+    packaged = args.pack or args.executable
+    engine = (ROOT / "TerraForest.exe") if args.executable else Path(config.godot).resolve()
+    native_hashes = verify_pack_native() if packaged else None
     if not engine.is_file():
         parser.error("Godot executable does not exist")
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
@@ -168,10 +184,17 @@ def main(argv=None):
         command, cache = command_for(engine, args.test, folder, values[split+1:], args.headless, args.persistent)
     except ValueError as error:
         parser.error(str(error))
-    details = dict(command=command, cache=cache, utc=stamp, timeout=args.timeout,
+    if packaged:
+        command[command.index("--path")+1] = str(ROOT / "dist")
+        command[command.index("--script")+1] = str(ROOT / "tests" / (args.test+".gd"))
+        command[1:1] = ["--main-pack", str(ROOT / "dist/TerraForest.pck")]
+    details = dict(packaged=packaged, executable=args.executable, command=command, cache=cache, utc=stamp, timeout=args.timeout,
                    required_text=args.require, headless=args.headless, persistent=args.persistent,
                    scope="Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
                    cache_retained=None, **revision_metadata())
+    if packaged:
+        details["pack_sha256"] = hashlib.sha256((ROOT / "dist/TerraForest.pck").read_bytes()).hexdigest()
+        details["matched_pack_native_sha256"] = native_hashes
     details["engine_sha256"] = hashlib.sha256(engine.read_bytes()).hexdigest()
     details["test_sha256"] = hashlib.sha256((ROOT / "tests" / (args.test+".gd")).read_bytes()).hexdigest()
     details["native_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -179,6 +202,9 @@ def main(argv=None):
     if args.dry_run:
         print(json.dumps(details, indent=2))
         return 0
+    if args.test == "water_barrel_world":
+        from maintain_water_captures import maintain
+        maintain(apply=True)
     folder.mkdir(parents=True)
     manifest = folder / "run.json"
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
@@ -186,6 +212,8 @@ def main(argv=None):
     retention = details["result"].get("cache_retention", {})
     details["cache_retained"] = retention.get("retained", retention.get("retained_bytes", 0) > 0) if retention.get("managed") or retention.get("error") else None
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
+    if args.test == "water_barrel_world":
+        maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1
 

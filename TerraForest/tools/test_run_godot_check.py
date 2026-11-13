@@ -11,6 +11,8 @@ class CheckLauncherTests(unittest.TestCase):
     def test_report_growth_is_declared_only_for_audited_checks(self):
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/water_mesh_worker.gd"]), 16 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/unknown.gd"]), 256 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/building_materials.gd"]), 64 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--script", str(Path("tests/water_barrel_world.gd").resolve())]), 32 * 2**20)
 
     def test_pack_rejects_missing_or_mismatched_external_libraries(self):
         with tempfile.TemporaryDirectory() as directory:
