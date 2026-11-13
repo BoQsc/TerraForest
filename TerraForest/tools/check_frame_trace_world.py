@@ -22,6 +22,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', default='StartupBench_FPS_20261109T073252')
     parser.add_argument('--label', default='arrival')
+    parser.add_argument('--human', action='store_true', help='Five minutes of normal human play; Ctrl+Shift+F11 finishes early')
     parser.add_argument('--short', action='store_true')
     parser.add_argument('--uncapped', action='store_true')
     parser.add_argument('--without-trace', action='store_true')
@@ -62,6 +63,10 @@ def main():
     parser.add_argument('--without-gpu-timers', action='store_true', help='Avoid synchronous renderer timer queries; requires --without-trace')
     parser.add_argument('--executable', action='store_true')
     args = parser.parse_args()
+    if args.human:
+        args.normal_window = True
+        if args.uncapped or args.without_trace:
+            parser.error('Human baseline requires normal pacing and tracing')
     if args.pooled_debris and args.legacy_debris_nodes:
         parser.error('--pooled-debris and --legacy-debris-nodes are mutually exclusive')
     if args.destruction_deadline and (args.destruction_load or args.without_trace):
@@ -138,6 +143,8 @@ def main():
         offset = command.index('--windowed')
         del command[offset:offset + 3]
         command += ['--trace-normal-window']
+    if args.human:
+        command += ['--trace-human']
     if args.short:
         command += ['--trace-short']
     if args.save:
@@ -215,6 +222,10 @@ def main():
                                   for p in [ROOT/'tests/frame_trace_world.gd', ROOT/'tests/render_inventory.gd',
                                             ROOT/'tests/render_partition_probe.gd', ROOT/'tests/render_occlusion_probe.gd', ROOT/'tests/cover_outdoor_probe.gd', ROOT/'tests/destruction_load_probe.gd',
                                             ROOT/'addons/world_runtime/frame_trace.gd', ROOT/'addons/world_runtime/render_trace.gd', Path(__file__)]}
+    if args.human:
+        record['source_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+                                   for base in ('addons', 'demo') for p in sorted((ROOT / base).rglob('*'))
+                                   if p.is_file() and p.suffix in ('.gd', '.tscn', '.gdshader')}
     if args.executable:
         record['pack_sha256'] = hashlib.sha256((ROOT / 'dist/TerraForest.pck').read_bytes()).hexdigest()
         record['pack_native_sha256'] = native
@@ -232,7 +243,8 @@ def main():
                 'addons/world_ecosystem/boulder_horizon.gd', 'addons/volumetric_water/lake_world.gd')}
     manifest = folder / 'run.json'
     manifest.write_text(json.dumps(record, indent=2), encoding='utf-8')
-    record['result'] = execute(command, folder, 300, '' if args.quiet_render_stages else 'FRAME_TRACE_WORLD ok=true')
+    print('CAPTURE ' + str(folder), flush=True)
+    record['result'] = execute(command, folder, 600 if args.human else 300, '' if args.quiet_render_stages else 'FRAME_TRACE_WORLD ok=true')
     if args.quiet_render_stages:
         completion_path = folder / 'completion.json'
         try:

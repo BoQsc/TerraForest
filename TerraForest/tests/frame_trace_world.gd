@@ -23,6 +23,8 @@ var world_opened_us:=0
 var world_ready_ms:=0.0
 var gpu_timers:=true
 var normal_window:=false
+var human_active:=false
+var human_saved:=false
 
 func collision_stage(stage_name:String,milliseconds:float)->void:
 	if stage_name not in ["collision node attach","collision piece","staging frame","atomic publish","retire collision/mesh"]:return
@@ -61,14 +63,14 @@ func repeat_lights()->void:
 			light.light_energy=light.light_energy
 func _initialize()->void:
 	normal_window="--trace-normal-window" in OS.get_cmdline_user_args()
-	ProjectSettings.set_setting("terraforest/offscreen_session",true)
+	ProjectSettings.set_setting("terraforest/offscreen_session",not "--trace-human" in OS.get_cmdline_user_args())
 	gpu_timers=not "--trace-without-gpu-timers" in OS.get_cmdline_user_args()
 	for arg:String in OS.get_cmdline_user_args():
 		if arg.begins_with("--trace-collision-piece-triangles="):collision_piece_triangles=int(arg.get_slice("=",1))
 	var legacy_cover:bool="--trace-legacy-cover" in OS.get_cmdline_user_args()
 	node_added.connect(func(node:Node):
 		if node.scene_file_path=="res://demo/world.tscn":
-			ProjectSettings.set_setting("terraforest/offscreen_session",true)
+			ProjectSettings.set_setting("terraforest/offscreen_session",not "--trace-human" in OS.get_cmdline_user_args())
 			if collision_piece_triangles>0:
 				collision_configured=node.terrain.backend.configure_collision_piece_size(collision_piece_triangles)
 				node.terrain.stage_measured.connect(collision_stage)
@@ -152,6 +154,9 @@ func run()->void:
 	var legacy_structure_capture:bool="--trace-legacy-structure-capture" in OS.get_cmdline_user_args()
 	if legacy_structure_capture:game.persistence._providers["structures"].capture=game.structures.capture_storage_snapshot
 	var trace=root.get_node_or_null("WorldSession/FrameTrace")
+	if "--trace-human" in OS.get_cmdline_user_args():
+		await human_capture(trace)
+		return
 	var initializations:Array=[]
 	for zombie:Node in game.zombies.residents:initializations.append(zombie.initialization_us.duplicate())
 	var initial_yaw:float=game.yaw
@@ -323,3 +328,31 @@ func run()->void:
 	completion.store_string(JSON.stringify({"schema":1,"slot":slot,"ok":okay,"shutdown_saved":saved}))
 	completion.close()
 	print("FRAME_TRACE_WORLD ok=",okay," slot=",slot);quit(0 if okay else 1)
+
+# Human capture never	drives the camera or player. Full cadence samples are
+# retained separately from the bounded rotating diagnostic spike windows.
+func human_capture(trace:Node)->void:
+	human_active=true;label="human_gameplay"
+	print("HUMAN_CAPTURE ready: five minutes; Ctrl+Shift+F12 marker; Ctrl+Shift+F11 finish")
+	if trace!=null:trace.mark("human play begins")
+	var began:=Time.get_ticks_msec()
+	while is_instance_valid(game) and Time.get_ticks_msec()-began<300000:
+		if Input.is_physical_key_pressed(KEY_CTRL) and Input.is_physical_key_pressed(KEY_SHIFT) and Input.is_physical_key_pressed(KEY_F11):break
+		await process_frame
+	if is_instance_valid(game):
+		label="human_shutdown"
+		if trace!=null:trace.mark("human play ends")
+		await create_timer(2.1).timeout
+		RenderingServer.frame_post_draw.disconnect(frame)
+		game.shutdown_requested=true
+		human_saved=await game.terrain.shutdown_after_edits()
+		game.free()
+	print("FRAME_TRACE_WORLD ok=",human_saved," slot=",slot)
+	quit(0 if human_saved else 1)
+
+func _finalize()->void:
+	if not human_active:return
+	var record:Dictionary={"slot":slot,"samples":samples,"human":true,"shutdown_saved":human_saved,
+		"scope":"Full frame cadence; exclude loading, shutdown and unfocused frames. Rolling traces are selective spike evidence, not session percentiles. Capped play does not prove headroom."}
+	FileAccess.open(output.path_join("observation.json"),FileAccess.WRITE).store_string(JSON.stringify(record))
+	FileAccess.open(output.path_join("completion.json"),FileAccess.WRITE).store_string(JSON.stringify({"schema":1,"slot":slot,"ok":human_saved,"shutdown_saved":human_saved}))
