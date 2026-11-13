@@ -1,18 +1,14 @@
-## Terrain-reactive volumetric water assessment — 2026-11-13
+## Continuous volumetric water replacement — 2026-11-13
 
-Implementation is now authorized and active under the
-[recorded milestone plan](../issues/explosive-combat/water-plan.md).
-
-The renewed water request reopens terrain-response work. The
-[assessment and implementation gates](../issues/explosive-combat/water-assessment-2026-11-13.md)
-confirm real regional 3D quantities, default-disabled settling, lossy thin-water
-surface extraction, and deletion on solid displacement. Retain the native store;
-qualify explicit occupied-volume boundaries before enabling terrain-driven
-settling, then add conservative displacement and bounded publication. Runtime
-implementation, actual barrel/lake visual acceptance and frame-time qualification
-remain open. This turn assessed source and reproduced the lattice failure with
-a numeric diagnostic; it did not rebuild or install water. The linked assessment
-records prerequisites, return trigger and closure evidence.
+Active under the completely rewritten [water plan](../issues/explosive-combat/water-plan.md).
+The previous cell-boundary rendering and prolonged diffusion approach is rejected
+by the user. Its passing numerical checks do not qualify its visible behavior.
+The replacement requires a continuous implicit 3D boundary, authoritative terrain
+contact, finite-volume edit-triggered equilibrium, ordinary barrel/mining/deposition
+response, bounded measured cost and save/package qualification. Every gate remains
+open. First recover coherent source extraction and prove the continuous volume
+against actual terrain; do not expand another failed representation. Failed prior
+barrel images and timings remain in the linked issue evidence and Git history.
 
 ## Shuffle planning correction — 2026-11-13
 
