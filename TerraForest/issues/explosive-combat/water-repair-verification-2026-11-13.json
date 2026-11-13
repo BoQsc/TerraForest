@@ -1,0 +1,53 @@
+{
+  "status": "functional_repair_verified_performance_tails_open",
+  "player_run": "20261113T202313670116Z",
+  "controlled_run": "20261113T202109755027Z",
+  "original_save_unchanged": true,
+  "desktop_input_or_switching": false,
+  "sha256": {
+    "addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll": "4776865e6233a41f63e2afbad07f2628341ca7c2ea3d58635e97fac58c0a5f07",
+    "addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll": "e9b0fbdc1c0de1da0e83b9a4e0b09081ebcc1056606f3512b21d725e1ddabd1a",
+    "addons/volumetric_water/lake_world.gd": "0ed72d644fde643ae87ece13a98c2fb5e16294e57ad2a203a8272f9019ce6ac2",
+    "dist/TerraForest.pck": "025e718f8df16749ae331f797e8ea8cd8210afad0dc97b3619bccce76204d155"
+  },
+  "player_performance": {
+    "combat": {
+      "frame_max_ms": 21.393,
+      "frame_p95_ms": 16.318,
+      "frame_p99_ms": 18.691,
+      "frames": 210,
+      "gpu_p95_ms": 10.0530004501343,
+      "water_main_max_us": 2141.0,
+      "water_main_p95_us": 767.0
+    },
+    "scope": "Actual read-only player world; 1920x1080 isolated desktop; identical moving camera paths; uncapped render timing",
+    "water_off": {
+      "frame_max_ms": 16.037,
+      "frame_p95_ms": 12.723,
+      "frame_p99_ms": 14.39,
+      "frames": 210,
+      "gpu_p95_ms": 5.29400014877319,
+      "water_main_max_us": 914.0,
+      "water_main_p95_us": 673.0
+    },
+    "water_on_a": {
+      "frame_max_ms": 17.202,
+      "frame_p95_ms": 15.029,
+      "frame_p99_ms": 16.759,
+      "frames": 210,
+      "gpu_p95_ms": 8.22000026702881,
+      "water_main_max_us": 1310.0,
+      "water_main_p95_us": 709.0
+    },
+    "water_on_b": {
+      "frame_max_ms": 17.551,
+      "frame_p95_ms": 13.06,
+      "frame_p99_ms": 14.908,
+      "frames": 210,
+      "gpu_p95_ms": 8.79599952697754,
+      "water_main_max_us": 779.0,
+      "water_main_p95_us": 666.0
+    }
+  },
+  "remaining": "Publication batching and connected worker latency; soft targets not universally met; user visual approval separate."
+}

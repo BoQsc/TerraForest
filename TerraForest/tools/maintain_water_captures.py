@@ -11,12 +11,13 @@ from retained_artifacts import Store, archive, confined, digest, retire
 NAMES = {name + '.png' for name in (
     'barrel_before', 'barrel_after', 'barrel_after_underwater', 'shore_before',
     'shore_after', 'shore_underwater', 'mining_underwater', 'deposition_above',
-    'deposition_underwater')}
+    'deposition_underwater', 'object_contact_above', 'object_contact_underwater')}
 NAMES.add('post_blast.water')
+NAMES.update(name + '.png' for name in ('player_shore_before', 'player_shore_after', 'player_shore_underwater', 'player_lake_before', 'player_lake_after', 'player_lake_underwater'))
 
 
 def candidates(root=ROOT):
-    ready = []
+    ready = {'water_barrel_world': [], 'water_player_world': []}
     for manifest in sorted((root / 'reports/checks').glob('*/run.json')):
         run = json.loads(manifest.read_text(encoding='utf-8'))
         if run.get('result', {}).get('exit_code') is None:
@@ -25,7 +26,8 @@ def candidates(root=ROOT):
         if '--script' not in command:
             continue
         script = command[command.index('--script') + 1]
-        if script not in ('res://tests/water_barrel_world.gd', str(root / 'tests/water_barrel_world.gd')):
+        family = Path(script).stem
+        if family not in ready or script not in ('res://tests/' + family + '.gd', str(root / 'tests' / (family + '.gd'))):
             continue
         folder = confined(manifest.parent, root / 'reports/checks')
         if '--check-evidence-dir=' + str(folder) not in command:
@@ -35,8 +37,8 @@ def candidates(root=ROOT):
         if any((folder / pin).exists() for pin in ('.retain', 'RETAIN_READY')):
             continue
         if any((folder / name).is_file() for name in NAMES):
-            ready.append(folder)
-    return ready[:-2]
+            ready[family].append(folder)
+    return [folder for family in ready.values() for folder in family[:-2]]
 
 
 def maintain(apply=False, root=ROOT):

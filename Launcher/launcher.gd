@@ -79,6 +79,12 @@ func _process(_delta: float) -> void:
    worker = null;fail("Cannot prepare item previews.")
   return
  var identity := {"mode": "source", "project": project_root, "engine": engine, "engine_sha256": FileAccess.get_sha256(engine), "continue_last": continue_last, "prepared_at": Time.get_datetime_string_from_system(true), "water_script_sha256": FileAccess.get_sha256(project_root.path_join("addons/volumetric_water/lake_world.gd")), "generation_script_sha256": FileAccess.get_sha256(project_root.path_join("addons/world_runtime/generate_world_task.gd"))}
+ var water_libraries := {}
+ var water_bin := project_root.path_join("addons/volumetric_water/bin")
+ for filename in DirAccess.get_files_at(water_bin):
+  if filename.ends_with(".dll") or filename.ends_with(".so") or filename.ends_with(".dylib"):
+   water_libraries[filename] = FileAccess.get_sha256(water_bin.path_join(filename))
+ identity["water_native_sha256"] = water_libraries
  FileAccess.open(project_root.path_join("reports/worlds_launch.json"), FileAccess.WRITE).store_string(JSON.stringify(identity, "  "))
  if prepare_only:get_tree().quit();return
  var args := PackedStringArray(["--path", project_root, "--log-file", project_root.path_join("reports/worlds_game.log"), "--max-fps", "60", "res://demo/worlds.tscn", "--"])

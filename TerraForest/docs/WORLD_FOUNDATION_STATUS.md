@@ -18,26 +18,27 @@ the verified desktop links launch the source checkout through the new bootstrap.
 
 ## Continuous volumetric water replacement — 2026-11-13
 
-Implemented and installed: [water plan and evidence](../issues/explosive-combat/water-plan.md),
-runtime `13d0f083`. Actual barrels, shoreline breaches, mining, carried-material
-deposition, save/reload, old-cache migration and unfinished-save loading pass.
-The existing 12-lake saved world also loads and settles an actual lake explosion
-with all 27,351,242,997 ml preserved; the source save remains unchanged. Exact
-occupancy paging fixes the prior loading stall. Batched cached contacts reduce
-the same saved-world check from 57 to 27 seconds. Debug/release parity, final
-installed-pack tests and normal release startup pass. Captures inspected above
-and below water; user visual approval remains separate.
+[Current repair and evidence](../issues/explosive-combat/water-repair-2026-11-13.md):
+functional repair installed and verified. Bounded pre-edit ocean admission restores
+shoreline response; local snapshots remove the reproduced teleport memory failure.
+Exact terrain occupancy and fitted construction contacts close the tested dry gap.
+Memory limits were not raised. Finite inland quantities and ocean vacancy records
+survive edits and old/new snapshot roundtrips. Final installed actual-game barrels,
+mining, deposition, closed boundaries, migration and persistence checks pass.
+Read-only Amber_Pines passes the coast-to-lake sequence and moving combat, leaving
+its original save unchanged. Source/native parity and launcher preparation pass;
+no editor window, desktop switching or input injection is required.
 
-Final installed primary response is 247 ms, with 0.897 ms primary water main work.
-Moving combat p99 is 12.139 ms, maximum 17.068 ms; water main maximum 1.173 ms.
-The original 250 ms / 1 ms / 16.7 ms targets are not universal hard guarantees:
-retained runs have overruns. Remaining performance work is elimination of those
-tails, tracked by the plan; repeated p99 frame-budget failure or persistent >1 ms
-water work triggers renewed profiling. Closure requires attributed traces and
-repeatable on/off measurements, not a stationary FPS counter. No functionality or
-package rollout is deferred. Thin films below extraction resolution remain stored
-but can be visually unresolved; small contact rims and bounded-body limits remain.
-Historical failures, including a pre-correction heap crash, remain in the plan.
+Performance remains unfinished: final controlled primary response is 275.010 ms;
+saved-world combat frame p99/max is 18.691/21.393 ms and water main peaks at 2.141 ms.
+Whole-sequence mesh publication reaches 13.226 ms, dominated by scene-node work;
+a connected asynchronous worker transaction takes 3.622 seconds. The original
+250 ms / 1 ms / 16.7 ms targets remain explicit and are not universally satisfied.
+The measured tails trigger follow-up on publication batching and connected-body
+latency; closure requires attributed moving-camera coast/lake traces and repeated
+GPU on/off comparisons meeting the targets. Functional rollout is complete, but
+performance qualification and user visual approval are not. Sub-cell films and
+bounded-body capacity remain representation limits. Failed evidence is retained.
 
 ## Shuffle planning correction — 2026-11-13
 

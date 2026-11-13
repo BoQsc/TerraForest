@@ -1,6 +1,13 @@
 # First firearm and volumetric explosive destruction
 
 Current water replacement: [continuous volumetric water plan](water-plan.md).
+**November 13 player-report repair installed and verified.** Shoreline admission,
+local snapshot scope and terrain/object contact are repaired. The actual saved
+world passes coast explosion, lake teleport and lake explosion with its original
+save unchanged. [Final evidence, captures and performance limits](water-repair-2026-11-13.md)
+record combat p99 18.691 ms and water-main peak 2.141 ms; performance tails remain
+open. User visual approval remains separate. Earlier results below are historical.
+
 **Implemented and installed**, runtime `13d0f083`; tooling `4510a46c`.
 Actual barrels, shoreline excavation, mining, deposition, save/reload, old-cache
 migration and unfinished-save loading pass in the game. The existing 12-lake save

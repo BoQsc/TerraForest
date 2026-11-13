@@ -15,10 +15,15 @@ from development_storage import admit
 
 
 def main():
+    checks = ['water_patch', 'water_patch_contacts', 'water_static_editing', 'water_region_store', 'water_storage_snapshot', 'water_region_io', 'water_region_retirement', 'water_map_identity', 'water_region_transfer', 'ocean_residency', 'water_snapshot_cost']
+    counted = {'water_patch', 'water_patch_contacts', 'water_ocean_equilibrium', 'water_equilibrium_scope'}
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pack', action='store_true')
+    parser.add_argument('--tests', nargs='+', choices=checks + ['water_ocean_equilibrium', 'water_equilibrium_scope'], help='Focused checks in both native variants; omitted runs the storage suite')
     args = parser.parse_args()
-    admit(ROOT)
+    # Two small native-only projects (DLLs released by verified receipts below),
+    # bounded fixtures and logs; this suite does not export a game or save a world.
+    admit(ROOT, report_bytes=32*2**20, world_bytes=16*2**20)
     config, _ = parse_args([])
     folder = ROOT / 'reports/water_patch' / datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder.mkdir(parents=True)
@@ -27,7 +32,7 @@ def main():
     pack_hash = hashlib.sha256(pack.read_bytes()).hexdigest() if args.pack else None
     runs = []
     copied_libraries = {}
-    tests = ['water_patch', 'water_patch_contacts', 'water_static_editing', 'water_region_store', 'water_storage_snapshot', 'water_region_io', 'water_region_retirement', 'water_map_identity', 'water_region_transfer', 'ocean_residency', 'water_snapshot_cost']
+    tests = checks + ['water_ocean_equilibrium', 'water_equilibrium_scope', 'water_equilibrium', 'water_blast_settling']
     for variant in (('pack',) if args.pack else ('debug', 'release')):
         project = folder / variant
         project.mkdir()
@@ -60,7 +65,8 @@ def main():
             for name in ['mesh_codec.gd', 'mesh_codec.gd.uid']:
                 shutil.copy2(ROOT / 'addons/volumetric_terrain' / name, terrain / name)
         runtime = ['--path', str(ROOT / 'dist'), '--main-pack', str(pack)] if args.pack else ['--path', str(project)]
-        phases = [('create', 'water_patch'), ('reopen', 'water_patch'), *[(name, name) for name in tests[1:]]]
+        selected = args.tests or checks
+        phases = ([('create', 'water_patch'), ('reopen', 'water_patch')] if 'water_patch' in selected else []) + [(name, name) for name in selected if name != 'water_patch']
         for phase, test in phases:
             output = project / phase
             output.mkdir()
@@ -73,7 +79,7 @@ def main():
                 script = script.replace('res://reports', fixture_path + '/reports')
                 script = script.replace('user://', fixture_path + '/user/')
                 (output / (name + '.gd')).write_text(script)
-            marker = test.upper() + (' checks=' if test in ('water_patch', 'water_patch_contacts') else ' failures=0')
+            marker = test.upper() + (' checks=' if test in counted else ' failures=0')
             command = [config.godot, '--headless', *runtime, '--script', str(driver), '--log-file', str(output / 'engine.log'), '--', '--water-patch-dir=' + str(project)]
             if phase == 'reopen':
                 command.append('--reopen')
@@ -81,7 +87,7 @@ def main():
             log = (output / 'console.log').read_text(encoding='utf-8', errors='replace')
             match = re.search(test.upper() + r' checks=(\d+) failures=(\d+)', log)
             counts = list(map(int, match.groups())) if match else None
-            if test in ('water_patch', 'water_patch_contacts'):
+            if test in counted:
                 result['passed'] = result['passed'] and counts is not None and counts[0] > 0 and counts[1] == 0
             timing = re.search(r'WATER_PATCH_MAX bytes=(\d+) capture_us=(\d+) restore_us=(\d+)', log)
             dry_timing = re.search(r'WATER_PATCH_DRY bytes=(\d+) capture_us=(\d+) restore_us=(\d+)', log)

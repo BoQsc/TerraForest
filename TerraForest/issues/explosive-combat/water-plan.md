@@ -1,6 +1,36 @@
 # Continuous volumetric water replacement
 
-Status: implemented and installed, 2026-11-13; scoped qualification completed.
+Status: functional repair installed and verified, 2026-11-13. The final installed
+game passes the actual-player shoreline-to-lake sequence and contact regressions.
+[Current evidence and measured limitations](water-repair-2026-11-13.md) supersede
+earlier scoped qualification. Performance soft targets remain unmet in tails;
+user visual approval is separate from agent inspection.
+
+## Current repair and acceptance plan
+
+- [x] Reproduce the player's surrounding-ocean explosion and teleport-to-lake
+  sequence against the current source and native binaries, using a read-only
+  player-world input. Record snapshot admission and region growth.
+- [x] Remove whole-world coupling from local equilibrium preparation without
+  raising memory limits or dropping water. Test growing ocean residency, local
+  edits, interrupted work and fresh saved-world loading.
+- [x] Reproduce and close the visible water/object gap. Geometric watertightness
+  alone does not pass if water visibly retracts from the solid contact.
+- [x] Run actual game barrels, shoreline breaches, mining and deposition with
+  rendered before/after/underwater captures on an isolated desktop. Never switch
+  the user's desktop or send desktop input. Inspect the resulting images.
+- [x] Attribute response latency, main-thread work, frame tails and repeated
+  water-on/off GPU cost; fix measured regressions and retain failed evidence.
+- [x] Verify installed native/source parity, preserve player saves, update the
+  issue/index/foundation records and commit the completed, verified work.
+
+Player screenshot on November 13 explicitly reports "Water equilibrium snapshot
+exceeds memory budget" after teleporting. Latest gameplay logs also report a
+blocked shutdown save with the prior canonical snapshot retained. The former
+equilibrium admission retained every resident region plus published occupancy;
+prior small-lake checks do not prove growing ocean residency remains supported.
+The previously permitted "small contact rims" are not acceptance of the player's
+circled object gap.
 Timing overruns and representation limits remain explicit below.
 This document completely replaces the previous implementation plan. Historical
 plans and failed experiments remain in Git history (through baff9588) and the
@@ -15,6 +45,22 @@ A level lake surface is expected; unsupported sheets after excavation are not.
 Ordinary barrels, mining and deposition must update water without opt-in flags.
 Water must fit the authoritative terrain, including caves and overhangs, conserve
 finite quantities, remain stable across save/reload, and have measured bounded cost.
+
+## Surrounding-sea boundary contract (current repair)
+
+Authored inland lakes remain finite and exactly conservative. The surrounding
+procedural sea already admits/retires pristine water at fixed sea level; it is
+an open reservoir, not a finite lake whose mass ends at the streaming radius.
+Terrain edits must prepare native ocean occupancy before changing density, even
+outside the player-centered residency square. The worker follows actual clipped
+3D connections from pristine sea water through the edited region and records
+net reservoir exchange explicitly. Sealed pockets have no sea source and retain
+finite quantities. Scooped vacancies are retained. Whole-sea graph traversal is
+not an acceptable substitute for this boundary condition.
+
+Local equilibrium snapshots include affected connected groups and their frontier,
+not unrelated resident lakes. Existing memory and work limits remain unchanged.
+A 4,096-pool regression verifies the scope and untouched distant quantities.
 
 ## Architecture and exclusions
 

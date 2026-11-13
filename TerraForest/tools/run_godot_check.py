@@ -19,10 +19,13 @@ from cache_retention import finalize_cache
 from resource_limits import ResourceMonitor, require_free_space
 from development_storage import admit, register_worlds
 
-# These audited checks write small logs/JSON and at most ten diagnostic PNGs. Their
+# These audited checks write small logs/JSON and at most eleven diagnostic PNGs. Their
 # evidence remains in the owning run directory; they do not allocate exports.
 # This declares planned growth, not a change to any storage category limit.
 BOUNDED_WATER_REPORTS = {
+    "water_patch", "water_patch_contacts", "water_static_editing", "water_region_io",
+    "water_region_retirement", "water_map_identity", "ocean_residency", "water_snapshot_cost",
+    "water_player_world", "water_equilibrium_scope", "water_ocean_equilibrium",
     "water_region_store", "water_region_transfer", "water_storage_snapshot", "water_streaming_save",
     "water_equilibrium_replay", "water_equilibrium", "water_mesh_worker", "water_material_surface", "water_surface_topology",
     "water_surface_continuity", "water_contact_volume", "water_contact_visual",
@@ -37,7 +40,7 @@ BOUNDED_CONTRACT_REPORTS = {
 }
 
 def planned_report_bytes(command):
-    if any(Path(str(value)).name == "water_barrel_world.gd" for value in command):
+    if any(Path(str(value)).name in {"water_barrel_world.gd", "water_player_world.gd"} for value in command):
         return 32 * 2**20
     scripts = [str(value) for value in command if str(value).endswith(".gd")]
     if len(scripts) == 1 and Path(scripts[0]).stem == "building_materials":
@@ -77,7 +80,7 @@ def command_for(engine, test, folder, extra, headless=False, persistent=False):
     return command, cache
 
 
-def execute(command, folder, timeout, required_text, cancel_requested=None, require_resource_budget=False):
+def execute(command, folder, timeout, required_text, cancel_requested=None, require_resource_budget=False, isolated_render=False):
     started = time.monotonic()
     result = {"timed_out": False, "launch_error": None, "cancelled": False}
     log_path = folder / "console.log"
@@ -90,7 +93,11 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
                 result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command))
             result['preflight_seconds'] = time.monotonic() - started
             started = time.monotonic()  # Storage admission is not engine startup timing.
-            process = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
+            process_type = subprocess.Popen
+            if isolated_render:
+                from isolated_render_process import IsolatedRenderProcess
+                process_type = IsolatedRenderProcess
+            process = process_type(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
                                        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             result["pid"] = process.pid
             try:
@@ -121,6 +128,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
                 if monitor:
                     result["resources"] = monitor.report()
                     monitor.close()
+                if isolated_render:process.close()
         except OSError as error:
             result.update(exit_code=None, launch_error=str(error))
     log = log_path.read_text(encoding="utf-8", errors="replace")
@@ -159,6 +167,7 @@ def main(argv=None):
     parser.add_argument("test", help="tests/<name>.gd")
     parser.add_argument("--godot")
     parser.add_argument("--headless", action="store_true")
+    parser.add_argument("--isolated-render", action="store_true", help="Render on a separate Windows desktop without switching or sending input")
     parser.add_argument("--pack", action="store_true", help="Installed resource pack with matching native libraries")
     parser.add_argument("--executable", action="store_true", help="Installed game executable and pack")
     parser.add_argument("--persistent", action="store_true", help="Unique disposable save slot; water_static_compound only")
@@ -174,6 +183,7 @@ def main(argv=None):
         parser.error("Use a positive timeout up to 600 seconds and nonempty completion text")
     config, _ = parse_args(["--godot", args.godot] if args.godot else [])
     packaged = args.pack or args.executable
+    if args.isolated_render and args.headless:parser.error("Choose rendered isolation or headless mode")
     engine = (ROOT / "TerraForest.exe") if args.executable else Path(config.godot).resolve()
     native_hashes = verify_pack_native() if packaged else None
     if not engine.is_file():
@@ -188,6 +198,9 @@ def main(argv=None):
         command[command.index("--path")+1] = str(ROOT / "dist")
         command[command.index("--script")+1] = str(ROOT / "tests" / (args.test+".gd"))
         command[1:1] = ["--main-pack", str(ROOT / "dist/TerraForest.pck")]
+    if args.isolated_render:
+        command[command.index("--fullscreen")] = "--windowed"
+        command.append("--isolated-render")
     details = dict(packaged=packaged, executable=args.executable, command=command, cache=cache, utc=stamp, timeout=args.timeout,
                    required_text=args.require, headless=args.headless, persistent=args.persistent,
                    scope="Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
@@ -202,17 +215,18 @@ def main(argv=None):
     if args.dry_run:
         print(json.dumps(details, indent=2))
         return 0
-    if args.test == "water_barrel_world":
+    if args.test in {"water_barrel_world", "water_player_world"}:
         from maintain_water_captures import maintain
         maintain(apply=True)
     folder.mkdir(parents=True)
     manifest = folder / "run.json"
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
-    details["result"] = execute(command, folder, args.timeout, args.require)
+    details["isolated_render"] = args.isolated_render
+    details["result"] = execute(command, folder, args.timeout, args.require, isolated_render=args.isolated_render)
     retention = details["result"].get("cache_retention", {})
     details["cache_retained"] = retention.get("retained", retention.get("retained_bytes", 0) > 0) if retention.get("managed") or retention.get("error") else None
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
-    if args.test == "water_barrel_world":
+    if args.test in {"water_barrel_world", "water_player_world"}:
         maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1
