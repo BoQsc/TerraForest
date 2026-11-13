@@ -27,6 +27,15 @@ the verified desktop links launch the source checkout through the new bootstrap.
 
 ## Continuous volumetric water replacement — 2026-11-13
 
+**Reopened / rejected, November 14.** The prior scoped result below does not
+establish completion. Cedar_Vale failed boundary preparation in
+`reports/checks/20261113T220245622499Z`; Hidden_Creek still fails connected-body
+admission in `20261113T220325524875Z`. The jagged shoreline is visibly rejected.
+The [active water plan](../issues/explosive-combat/water-plan.md) requires both
+actual saves to load, normal sea/lake barrel tests, two-angle contact inspection,
+and measured response/render performance before closure. This remains active
+work, with no deferred prerequisite or accepted ordinary-world size restriction.
+
 [Current repair and evidence](../issues/explosive-combat/water-repair-2026-11-13.md):
 functional repair installed and verified. Bounded pre-edit ocean admission restores
 shoreline response; local snapshots remove the reproduced teleport memory failure.

@@ -1,5 +1,7 @@
 # Visual issue tracker
 
+**Water status, November 14: OPEN / REJECTED.** Actual-save loading failures, jagged shoreline contact and performance remain unresolved. The [active water plan](explosive-combat/water-plan.md) supersedes earlier completion claims below.
+
 One folder per problem: relevant images, current status, changes, remaining work
 and a practical place to resume. Detailed evidence stays at its existing location.
 

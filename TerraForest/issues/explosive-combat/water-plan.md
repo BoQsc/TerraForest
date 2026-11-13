@@ -1,27 +1,27 @@
 # Continuous volumetric water replacement
 
-Status: functional repair installed and verified, 2026-11-13. The final installed
-game passes the actual-player shoreline-to-lake sequence and contact regressions.
-[Current evidence and measured limitations](water-repair-2026-11-13.md) supersede
-earlier scoped qualification. Performance soft targets remain unmet in tails;
-user visual approval is separate from agent inspection.
+Status: OPEN / REJECTED, 2026-11-14. The prior completion claim was too broad.
+Actual-save loading still fails, the user rejected the jagged natural shoreline,
+and response/frame targets remain unmet. Historical scoped passes in
+[earlier evidence](water-repair-2026-11-13.md) do not close these requirements.
+The latest failed reproductions and remaining work are recorded below.
 
 ## Current repair and acceptance plan
 
 - [x] Reproduce the player's surrounding-ocean explosion and teleport-to-lake
   sequence against the current source and native binaries, using a read-only
   player-world input. Record snapshot admission and region growth.
-- [x] Remove whole-world coupling from local equilibrium preparation without
+- [ ] Remove whole-world coupling from local equilibrium preparation without
   raising memory limits or dropping water. Test growing ocean residency, local
   edits, interrupted work and fresh saved-world loading.
-- [x] Reproduce and close the visible water/object gap. Geometric watertightness
+- [ ] Reproduce and close the visible water/object gap. Geometric watertightness
   alone does not pass if water visibly retracts from the solid contact.
-- [x] Run actual game barrels, shoreline breaches, mining and deposition with
+- [ ] Run actual game barrels, shoreline breaches, mining and deposition with
   rendered before/after/underwater captures on an isolated desktop. Never switch
   the user's desktop or send desktop input. Inspect the resulting images.
-- [x] Attribute response latency, main-thread work, frame tails and repeated
+- [ ] Attribute response latency, main-thread work, frame tails and repeated
   water-on/off GPU cost; fix measured regressions and retain failed evidence.
-- [x] Verify installed native/source parity, preserve player saves, update the
+- [ ] Verify installed native/source parity, preserve player saves, update the
   issue/index/foundation records and commit the completed, verified work.
 
 Player screenshot on November 13 explicitly reports "Water equilibrium snapshot
@@ -404,3 +404,135 @@ it does not overwrite or regenerate that save. Screenshot provenance is in
 repository's established root executable. Normal `dist/TerraForest.exe` startup
 is separately verified in `reports/water_release_startup.json`; native release
 parity is verified in `reports/water_final_release_parity.json`.
+
+
+## Performance follow-up after player rejection
+
+The player rejects the current performance. The previous functional verification
+is not performance acceptance. Work in progress:
+
+- [ ] Move expensive scene-mesh registration out of atomic publication, preserving
+  synchronized render/query updates and bounded staging/retirement.
+- [ ] Repeat the identical actual saved-world coast/lake/barrel moving-camera run;
+  compare full-sequence publication spikes as well as sampled frame/GPU tails.
+- [ ] Inspect rendered contacts and run controlled barrel/terrain/persistence checks.
+- [ ] Install the verified change, record measured improvement and remaining limits,
+  and commit. Never claim stable 60 FPS from a stationary counter.
+
+
+## Reopened production failures, November 13
+
+User reports both sea and inland shoreline explosions fail and ordinary loading
+reports a connected-body transaction limit. Prior tests forced settling and used
+manual detonation; inland checks targeted the lake floor rather than its shoreline.
+Those checks are insufficient acceptance. Preserve Steam shortcuts unchanged.
+
+- [ ] Reproduce on the current Cedar_Vale save using normal combat physics/queue,
+  no water callback override, and a real shoreline for both water types.
+- [ ] Reproduce loading failure from actual saved state and remove its cause without
+  discarding finite quantities or silently increasing work/memory limits.
+- [ ] Fix the demonstrated interaction and performance failures; repeat rendered
+  production-path checks and inspect above/below-water captures.
+- [ ] Record final measurements, install matching native/package files and commit.
+
+
+### Current reproduction evidence
+
+- `reports/checks/20261113T204052189336Z`: Cedar_Vale fails ordinary initial
+  loading with the connected-body transaction error. Original save unchanged.
+- `20261113T204301763791Z`: diagnostic identifies edited ocean seed
+  `(3640,79,3872)`, sea head 40 m, 506 retained regions.
+- `20261113T204521509018Z` and `20261113T204914549209Z`: initial boundary
+  preparation avoids the immediate error but times out; not accepted.
+- `20261113T205224707993Z`: repeated identical 17-region dependency requests
+  prove that loaded dependencies were excluded from subsequent local snapshots.
+  A retained dependency set now joins the next snapshot and pins required
+  streamed ocean regions until commit. Both the failed evidence and original
+  memory limits remain. Awaiting actual-game acceptance.
+- `20261113T205041509744Z`: mesh-worker ownership, closed query geometry and
+  filtering of solid-contact draw faces pass. This is not gameplay acceptance.
+
+### Actual-save investigation, continued
+
+- `20261113T210325155048Z` locates an endless terrain-sample retry at world-edge
+  patch `(457,10,499)`. Sampling exactly 2000 m violated TerrainCore's half-open
+  domain. The water sampler now requests the interior floating-point limit;
+  authoritative contact geometry retains the actual boundary. Four real terrain
+  corner regressions pass in `20261113T210547834599Z`.
+- Sea restoration must recreate missing reservoir neighbors and retain requested
+  dependencies in the next immutable job. Unchanged sea is an interface condition,
+  not part of a finite-cell graph. Above-sea quantities now use explicitly
+  accounted outlets, preserving sealed/perched finite pockets.
+- Rejected attempts remain in `reports/checks`: `211859211943Z`,
+  `212102825378Z`, `212251509709Z` still exhausted regional capacity;
+  `212443581082Z` exposed a conservation error in the outlet hierarchy, corrected
+  before proceeding. Limits were not raised.
+- `212557909560Z`: Cedar_Vale initial load, coastal teleport, ordinary paid barrel
+  placement/handgun ignition at both sea and inland shorelines, crater occupation,
+  and exact inland quantity conservation pass. Initial failing transaction now
+  completes in 52 ms on its worker with 75 snapshot regions. Reviewed both
+  above-water crater images. This whole run is still FAIL: its obsolete extra
+  benchmark combat attempted unsupported placement. The benchmark now measures
+  the actual shoreline combat instead of manually advancing detonation.
+- Remaining: improve the 5.8 s inland worker discovery; rerun the corrected
+  integrated driver, measure frame/GPU tails and inspect captures from cameras
+  proven inside water, run final regressions, install matching package and commit.
+
+### Two-angle visual rejection
+
+User requested two angles. `20261113T212942169996Z/player_shore_after_reverse.png`
+reveals a vertical water wall and a dry part of the excavation hidden by the
+original viewing angle. Reject the earlier visual conclusion. The reservoir
+flood discovered dry edited regions but installed quantities only in pending
+wet-donor regions. Dry receivers now participate in coastal edit scheduling and
+receive water through certified connectivity. Added dry-neighbor coverage
+regression and a grid of real crater air samples. Every before/after capture now
+has a reverse angle; underwater camera position must pass a volume query.
+The failed run also exposed capture-camera state affecting subsequent handgun
+aim; captures now restore the prior camera transform before gameplay resumes.
+No approval or completion is implied until the corrected integrated run passes.
+
+### Rejected contact quality and remaining finite-load failure
+
+User rejected the saw-tooth lake/terrain contact in the reverse-angle image.
+The GPU contact-face filter is removed: classifying one outside endpoint cannot
+prove a whole triangle is buried. Restore the identical closed indexed boundary
+for rendering and queries. Earlier filtered-GPU timings are historical only.
+Do not accept crater interior coverage as proof of a correct shoreline edge.
+
+Hidden_Creek remains a failing actual-save load (`20261113T214945687900Z`).
+Sizing the graph from the unchanged 256 MiB reservation passes a 144,000-cell
+finite-lake regression (`215315936378Z`), but Hidden_Creek still exceeds its
+209,564-cell computed capacity (`215334657689Z`). This is NOT a loading fix.
+The remaining solution must reduce finite-body discovery/storage rather than
+pretend the failed guard is an acceptable ordinary-world outcome.
+
+Cedar_Vale normal gameplay currently passes crater coverage/conservation in
+`214221600776Z`; lake worker reduced to about 1.9 s by revisiting only the
+head-dependent frontier. Response and frame-tail targets remain unmet.
+
+### November 14: guards are not accepted gameplay restrictions
+
+- `220245622499Z`: fitting every natural terrain contact caused Cedar_Vale
+  boundary preparation to fail. Reject this candidate. The error is a mesh
+  worker preparation failure, not evidence that the user's world is invalid.
+- `220325524875Z`: phase-specific graph accounting still rejects Hidden_Creek
+  at a computed 386,443-cell allowance. The unchanged 256 MiB job reservation
+  does not make the all-cells connected-body approach scalable.
+- `220704568566Z`: restricting fitting to the natural free-surface intersection
+  lets Cedar_Vale load and its ordinary paid barrel/handgun sea explosion finish.
+  All 81 interior crater samples pass, but 9 of 23 terrain-edge samples miss
+  water within the required 2 cm. Both camera angles were captured; the reverse
+  view still shows shoreline notches. Original save unchanged. This entire run
+  is FAIL; lake stage was not reached after the sea contact failure.
+- Removed the unsuccessful natural-contact fitting experiment. Preserve the
+  stronger shoreline test and failed evidence; do not loosen its tolerance.
+
+Next implementation gates: the 0.25 m sampled union can lose thin wet wedges
+between terrain and the free surface before vertex fitting runs. Investigate
+exact clipped contact-boundary extraction, including shared owner seams and
+thin wedges, instead of treating another vertex adjustment as a proven fix.
+Connected finite-body work needs compact connected volume/region representation
+and incremental invalidation, with exact quantity and spill connectivity tests;
+larger cell allowances alone have already failed. Neither direction is complete.
+Keep the 250 ms response / 1 ms main-thread / 16.7 ms frame targets unchanged.

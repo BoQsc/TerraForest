@@ -1,6 +1,11 @@
 # First firearm and volumetric explosive destruction
 
 Current water replacement: [continuous volumetric water plan](water-plan.md).
+**Current status, November 14: OPEN / REJECTED.** Ordinary saved worlds still
+hit water preparation limits. The user rejected the saw-tooth natural shoreline;
+performance targets remain unmet. The earlier completion statements below are
+historical scoped results, superseded by the active plan and its failed evidence.
+
 **November 13 player-report repair installed and verified.** Shoreline admission,
 local snapshot scope and terrain/object contact are repaired. The actual saved
 world passes coast explosion, lake teleport and lake explosion with its original
