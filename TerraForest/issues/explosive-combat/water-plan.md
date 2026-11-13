@@ -3,6 +3,46 @@
 Started 2026-11-13. Status: active. User authorized completion, including major
 changes where required. [Diagnosis and acceptance contract](water-assessment-2026-11-13.md).
 
+## Architectural reassessment requested by the user
+
+The user rejected the apparent direction after seeing cubical/terraced water and
+questioned whether the complexity and performance were justified. Implementation
+of further repairs to the current candidate is stopped while the architecture is
+reassessed. The goal remains open; this is not completion or accepted visual quality.
+
+Assessment: explicit storage-cell boundary rendering is a poor visual target for
+unequal water amounts. Exact integer storage and closed cell boundaries do not
+establish a convincing continuous liquid surface. The investigation over-prioritized
+microscopic films and exact buried-contact topology before proving the visible
+result. The real barrel failures outweigh the isolated engineering passes below.
+No comparison has demonstrated that this candidate is better than a smooth
+implicit-surface/marching-cubes approach in either total cost or visual quality.
+
+Recommended replacement direction, pending a small measured visual proof:
+
+1. Keep authoritative finite water amounts and 3D terrain/solid connectivity, but
+   decouple their storage cells from the visible surface.
+2. Reconstruct a smooth implicit liquid boundary and evaluate a chunked marching-
+   cubes surface using the existing terrain meshing infrastructure where suitable.
+   A radial blob is one test field, not a restriction on the mesher's shapes.
+3. For the requested non-flowing/simple water behavior, prefer edit-triggered basin
+   equilibrium and explicit connectivity changes over long-running pair diffusion.
+   Basin splits, spill thresholds and finite-volume displacement remain real work;
+   marching cubes itself does not solve them.
+4. First prove the look in a lake, an exposed cut/breach, partially filled sloping
+   terrain and a cave/overhang. Compare identical camera/resolution scenes and
+   isolate water CPU, GPU, triangle, memory and edit-latency costs. Reject visible
+   storage-cell terraces before expanding implementation.
+5. Only after that proof, complete conservation, persistence, bounded update jobs,
+   actual barrels/mining/deposition and package/default qualification. Reuse verified
+   immutable publication and conservation work only where it fits the new design.
+
+Latest unverified candidate status: the connected-patch leveling experiment and
+3.815-micrometre mesh-output grid compiled successfully, but have not been tested.
+They are not accepted fixes. Source debug remains experimental; settling remains
+opt-in and the installed package is unchanged. Do not resume polishing this route
+merely because the latest build succeeded. Preserve the failed evidence below.
+
 ## Milestones
 
 - [ ] M1: Replace lossy density sampling with occupied-volume boundaries;
@@ -258,3 +298,41 @@ passes on the current primitive, including independent curve comparisons at
 explicitly expected deletion must be updated to test conservation and occupied
 capacity separately, then rerun; those previous contracts are not evidence for
 the new behavior. Actual barrel/mining/deposition acceptance remains pending.
+
+### Integrated barrel failure and scheduler return gate
+
+Actual combat-to-terrain testing is now in `tests/water_barrel_world.gd`.
+The run 20261113T121519182354Z conserved water and moved it down into the actual
+barrel crater, but failed to reach idle after 120 seconds. The above-water camera
+was obstructed by foliage and is rejected. The underwater image was inspected
+and is also rejected: it shows stacked uneven surfaces while settling continues.
+
+![Rejected post-barrel unsettled water](images/water-barrel-unsettled-2026-11-13.png)
+
+A clearer-camera diagnostic run, 20261113T122134864331Z, retained all 559,128,094 ml
+and reported no occupancy/publication failure, but still had 51 settling regions
+after 60 seconds (904,282 face steps, 113,660 transfers). Reload resumed unfinished
+work, so equality to the still-moving pre-reload state was not a valid settled
+roundtrip pass. This remains failed. Its stationary-player frame p95 was 18.141 ms,
+maximum 50.094 ms; these are not moving-combat performance acceptance.
+
+The current scheduler candidate queues wet donors only and raises the face cap
+from 256 to 2048 while retaining the native 1 ms time cutoff. Baseline calls used
+only 242 us at the face cap, leaving much of that allowance unused. Measure the
+actual improvement before selecting a larger equilibrium solver; do not enable
+default settling while latency and the rejected visual state remain unresolved.
+
+The terrain-only envelope now passes exact directed closure in
+20261113T122028996418Z with 18,494 triangles, zero unpaired/odd/winding edges and
+zero degenerate triangles. Output coordinates use a shared binary step below
+one micrometre; source quantities and clipping stay unchanged. Sub-grid residual
+triangles are removed only when all three directed residuals exactly cancel.
+Fresh structure closure remains open (20261113T122111099760Z: ten unpaired,
+nine odd-multiplicity, four winding defects). A triangulation change to preserve
+the final off-edge vertex is pending verification. Thin-film/material tests must
+be rerun on this precision/triangulation candidate.
+
+The separately verified sphere-plane improvement is committed as 5d5537e8.
+Block sampling, picking, transformed hulls, and agreement with every rendered
+sphere vertex/triangle pass in 20261113T121146051145Z. Only source debug binaries
+were rebuilt; release and installed package parity remain M5 work.
