@@ -21,6 +21,7 @@ func _initialize():
  check(water.restore_snapshot(bytes),"terrain samples and quantities restore from version 2 cache")
  var before:PackedByteArray=water.capture_snapshot(catalog)
  var mesh:Dictionary=water.next_mesh();var v:PackedVector3Array=mesh.arrays[Mesh.ARRAY_VERTEX]
+ for vertex_index in v.size():v[vertex_index]+=mesh.origin
  var area:=0.0;var edge:=false;var valid:=true
  for i in range(0,v.size(),3):
   var center:Vector3=(v[i]+v[i+1]+v[i+2])/3.0

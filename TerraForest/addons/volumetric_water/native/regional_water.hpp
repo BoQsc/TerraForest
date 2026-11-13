@@ -47,6 +47,7 @@ public:
  void retire();
 };
 class NativeWaterSnapshot;
+class NativeWaterMeshJob;
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
 struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const WaterSolidProfile>)*512;std::array<std::shared_ptr<const WaterSolidProfile>,512> cells;};
 // Immutable hand-off: only the terrain worker writes this object. No scene,
@@ -98,6 +99,7 @@ public:
 class NativeRegionalWater : public godot::RefCounted {
     GDCLASS(NativeRegionalWater,godot::RefCounted)
     friend class NativeWaterSnapshot;
+    friend class NativeWaterMeshJob;
     friend class NativeWaterMapIdentity;
     friend class NativeWaterRegionStore;
     friend class NativeGeneratedLakeBake;
@@ -152,6 +154,9 @@ class NativeRegionalWater : public godot::RefCounted {
         std::vector<godot::Vector3i> owners;
     };
     std::map<Key,QuerySurface> published_surfaces,staged_surfaces;
+    uint64_t staged_surface_bytes=0;
+    int64_t staged_surface_delta=0;
+    static constexpr uint64_t MAX_SURFACE_CACHE_BYTES=64*1024*1024;
     bool publication_enabled=false,publish_pending=false;
     bool western_ocean=false,surrounding_ocean=false;
     std::unordered_set<Key> published_regions,staged_ready;
@@ -182,6 +187,8 @@ class NativeRegionalWater : public godot::RefCounted {
     uint64_t survey_identity_hash_us=0,survey_identity_scene_hash_us=0;
 
     std::map<Key,Region> mesh_snapshot;
+    // Immersion uses the same occupied state as the displayed/query batch.
+    std::map<Key,Region> published_occupancy,staged_occupancy;
     std::unordered_set<Key> mesh_snapshot_absent,mesh_snapshot_dependencies;
     std::deque<Key> batch_queue;
     std::vector<Key> batch_owners;
@@ -237,13 +244,17 @@ class NativeRegionalWater : public godot::RefCounted {
     void apply_placement(const Placement &take);
     void process_fill();
     struct SurfaceMesh {
+        bool valid=true;
         godot::PackedVector3Array vertices,normals;
         godot::PackedVector2Array uv;
         std::vector<godot::Vector3i> owners;
         godot::Dictionary faces;
     };
+    bool surface_budget_failed=false;
+    godot::Ref<NativeWaterMeshJob> pending_mesh_job;
+    uint64_t mesh_worker_us=0,max_mesh_worker_us=0;
     bool surface_ready(Key owner,bool snapshot=false) const;
-    SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false) const;
+    SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false,const std::atomic<bool> *cancel=nullptr) const;
     bool decode(const godot::PackedByteArray &data,bool install,bool prepare_render=true);
 protected: static void _bind_methods();
 public:
@@ -295,7 +306,7 @@ public:
     godot::Dictionary raycast_vacancy(const godot::Vector3 &from,const godot::Vector3 &to) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
     bool commit_mesh_batch(int64_t id);
-    godot::Dictionary next_mesh_batch();
+    godot::Dictionary next_mesh_batch(bool background=false);
     // Diagnostic contact flag audits the closed volume with the same builder.
     // Runtime publication and picking use the same closed material boundary.
     godot::Dictionary next_mesh(bool include_contacts=false);
@@ -308,6 +319,24 @@ public:
     bool restore_snapshot(const godot::PackedByteArray &data);
     bool validate_snapshot(const godot::PackedByteArray &data) const;
     godot::PackedByteArray snapshot_catalog(const godot::PackedByteArray &data) const;
+};
+
+// Worker owns an immutable local halo, never the live water store or scene.
+class NativeWaterMeshJob : public godot::RefCounted {
+    GDCLASS(NativeWaterMeshJob,godot::RefCounted)
+    friend class NativeRegionalWater;
+    godot::Ref<NativeRegionalWater> frozen;
+    NativeRegionalWater::SurfaceMesh result;
+    uint64_t owner=0,batch=0,elapsed_us=0,reserved_bytes=0;
+    static std::atomic<uint64_t> pending_bytes;
+    std::atomic<bool> started{false},ready{false},cancelled{false};
+    void release_reservation();
+protected: static void _bind_methods();
+public:
+    void prepare();
+    void cancel(){cancelled.store(true);}
+    bool is_ready()const{return ready.load(std::memory_order_acquire);}
+    ~NativeWaterMeshJob();
 };
 
 // Single worker owns serialization; no live scene/runtime references escape.

@@ -42,6 +42,12 @@ func mesh_volume(shape:int)->float:
  for i in range(0,indices.size(),3):
   volume+=vertices[indices[i]].dot(vertices[indices[i+1]].cross(vertices[indices[i+2]]))/6.0
  return absf(volume)*1000000.0
+func occupied_capacity(target:Vector3i)->int:
+ var result:=0
+ for z in 2:
+  for y in 2:
+   for x in 2:result+=int(game.lakes.water.cell_geometry(Vector3(target)+Vector3(x,y,z)*.5+Vector3.ONE*.25).capacity_ml)
+ return result
 func run():
  process_frame.connect(sample_costs)
  game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game)
@@ -63,7 +69,7 @@ func run():
  check(await ready_water(),"Building occupancy and water publish")
  results={"target":cell,"placed":placed,"block":game.structures.blocks.get_cell(cell),"water_overlap":game.lakes.water.overlaps_occupied(bounds),"water_unchanged":before==amounts(game.lakes.capture_snapshot())}
  check(placed and not results.water_overlap,"Solid construction must not coexist with occupied water")
- check(before!=amounts(game.lakes.capture_snapshot()),"Constructed solid actually deletes replaced quantity")
+ check(before==amounts(game.lakes.capture_snapshot()),"Construction preserves displaced quantities while settling is disabled")
  var saved:PackedByteArray=game.lakes.capture_snapshot()
  var after:Dictionary=amounts(saved)
  check(game.lakes.restore_snapshot(saved),"Building occupancy cache reloads")
@@ -71,7 +77,7 @@ func run():
  check(amounts(game.lakes.capture_snapshot())==after and game.lakes.water.depth_at(Vector3(cell)+Vector3.ONE*.5)==0,"Reload preserves replaced volume and excludes solid")
  check(game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,0])),"Remove constructed cube")
  check(await ready_water(),"Removed construction publishes")
- check(amounts(game.lakes.capture_snapshot())==after,"Removing construction does not resurrect deleted water")
+ check(amounts(game.lakes.capture_snapshot())==after,"Removing construction preserves the same owned quantities")
  results.shapes=[]
  var fixtures:Array=[
   [2,Vector3(.5,.25,.5),Vector3(.5,.75,.5)],
@@ -88,6 +94,7 @@ func run():
   check(game.lakes.depth_at(inside)>0 and game.lakes.depth_at(outside)>0,"Shape %d starts with water inside and beside solid"%shape)
   var unchanged:Dictionary=amounts(game.lakes.capture_snapshot())
   var initial:int=game.lakes.statistics().water_ml
+  var initial_capacity:=occupied_capacity(target)
   var changes_before:int=game.lakes.statistics().changes
   begin_costs()
   var started:=Time.get_ticks_usec()
@@ -107,8 +114,8 @@ func run():
    var position:=Vector3i((region>>24)&4095,(region>>12)&4095,region&4095)*8+Vector3i(index%8,(index/8)%8,index/64)
    if not AABB(Vector3(target),Vector3.ONE).has_point(Vector3(position)*.5+Vector3.ONE*.25):local_only=local_only and unchanged[key]==updated.get(key,0)
   check(local_only,"Shape %d leaves every other water cell unchanged"%shape)
-  check(absf(removed-mesh_volume(shape))<=8,"Shape %d deleted volume agrees with its rendered mesh"%shape)
-  check(removed>0 and game.lakes.depth_at(inside)==0,"Shape %d deletes its occupied water"%shape)
+  check(absf(initial_capacity-occupied_capacity(target)-mesh_volume(shape))<=8,"Shape %d excluded capacity agrees with its rendered mesh"%shape)
+  check(removed==0 and game.lakes.depth_at(inside)==0,"Shape %d excludes solid without deleting owned water"%shape)
   check(game.lakes.depth_at(outside)>0,"Shape %d preserves water in its empty space"%shape)
   var snapshot:PackedByteArray=game.lakes.capture_snapshot()
   var quantities:Dictionary=amounts(snapshot)

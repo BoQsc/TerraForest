@@ -81,5 +81,10 @@ int main(){
  for(int i=0;exact&&i<=100;++i){C::Pieces cut;double height=i*.005;
   exact=C::below(remainder,height,cut)&&near(cache.volume(height),C::volume(cut));}
  check(exact,"Curved occupancy curve matches independent clipping at 101 heights");
+ bool reconstructed=true;
+ for(int i=1;i<=10;++i){C::Pieces mesh;double h=i*.05;
+  if(!cache.occupied_pieces(h,mesh)||!near(C::volume(mesh),cache.volume(h))){
+   std::printf("RECONSTRUCTION height=%.3f geometry=%.12f curve=%.12f\n",h,C::volume(mesh),cache.volume(h));reconstructed=false;}}
+ check(reconstructed,"Curved occupied geometry matches the prepared quantity curve");
  std::printf("WATER_SOLID_CLIP failures=%d\n",failures);return failures?1:0;
 }

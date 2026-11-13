@@ -1,4 +1,6 @@
 #include "regional_water.hpp"
+#include "implicit_water_surface.hpp"
+#include "water_basin_equilibrium.hpp"
 #include "lake_catalog.hpp"
 #include "generated_lake_bake.hpp"
 #include "water_region_store.hpp"
@@ -15,6 +17,9 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeWaterMapIdentity);
         GDREGISTER_CLASS(terraforest::NativeWaterRegionReceipt);
         GDREGISTER_CLASS(terraforest::NativeRegionalWater);
+        GDREGISTER_CLASS(terraforest::NativeImplicitWaterSurface);
+        GDREGISTER_CLASS(terraforest::NativeWaterBasinEquilibrium);
+        GDREGISTER_CLASS(terraforest::NativeWaterMeshJob);
         GDREGISTER_CLASS(terraforest::NativeWaterSnapshot);
         GDREGISTER_CLASS(terraforest::NativeWaterRegionStore);
         GDREGISTER_CLASS(terraforest::NativeWaterRegionIO);

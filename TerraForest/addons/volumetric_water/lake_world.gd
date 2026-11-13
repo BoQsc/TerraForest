@@ -22,6 +22,8 @@ var _builder_patches:Array=[]
 var _builder:RefCounted
 var _busy:=false
 var _occupancy_failure:String=""
+var _surface_failure:String=""
+var _mesh_task:int=-1
 var last_restore_profile:Dictionary={}
 var _retirement_jobs:Array[Dictionary]=[]
 var _cached_task:int=-1
@@ -124,7 +126,7 @@ func _ready() -> void:
  terrain.solid_deposited.connect(func(bounds:AABB):water.invalidate(bounds,true))
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.
- # Accepted terrain occupancy patches remove water replaced by solid terrain.
+ # Occupancy patches retain displaced quantity until redistribution can place it.
  if blocks!=null:
   blocks.set_edit_admission(func(bounds:AABB)->bool:return not water.has_deferred_overlap(blocks.global_transform*bounds))
   blocks.cells_changed.connect(_building_changed)
@@ -138,10 +140,12 @@ func _building_changed(bounds:AABB)->void:
   _held_buildings=bounds if not _held_buildings.has_volume() else _held_buildings.merge(bounds)
   return
  water.invalidate_buildings(bounds);_occupancy_failure="";_discard_builder()
+ _settle_committed_edit(bounds,0)
 func release_location_reset()->void:
  location_reset_hold=false
  if _held_buildings.has_volume():
   water.invalidate_buildings(_held_buildings);_occupancy_failure="";_discard_builder()
+  _settle_committed_edit(_held_buildings,0)
  _held_buildings=AABB()
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:
  if _lakes.size()>=max_lakes:return 0
@@ -277,6 +281,9 @@ func _measured_step(delta:float)->void:
   exclusion_changed.emit(_changed_bounds)
   _exclusion_notify_us=Time.get_ticks_usec()-notify_started
 func _publish_meshes() -> void:
+ if _mesh_task>=0:
+  if not WorkerThreadPool.is_task_completed(_mesh_task):return
+  WorkerThreadPool.wait_for_task_completion(_mesh_task);_mesh_task=-1
  # Build/upload within the existing soft budget; only a complete immutable
  # batch becomes visible. Flow may advance between calls without mixed edges.
  var mesh_started:=Time.get_ticks_usec()
@@ -284,8 +291,18 @@ func _publish_meshes() -> void:
  var packets:int=PublicationBudget.LOADING_MAX_PACKETS if loading else PublicationBudget.MAX_PACKETS
  var budget_us:int=PublicationBudget.LOADING_SOFT_TIME_US if loading else PublicationBudget.SOFT_TIME_US
  for publication in packets:
-  var update:Dictionary=water.next_mesh_batch()
+  var update:Dictionary=water.next_mesh_batch(true)
   if update.is_empty():break
+  if update.has("failure"):
+   _staged_meshes.clear()
+   if _surface_failure!=str(update.failure):
+    _surface_failure=str(update.failure);terrain.message_changed.emit(_surface_failure)
+   break
+  _surface_failure=""
+  if update.has("job"):
+   _mesh_task=WorkerThreadPool.add_task(update.job.prepare,false,"Water boundary mesh")
+   break
+  if update.get("pending",false):break
   if update.batch!=_mesh_batch_id:
    _staged_meshes.clear();_mesh_batch_id=update.batch
   if update.has("coordinate"):
@@ -304,6 +321,7 @@ func _publish_meshes() -> void:
      if not _meshes.has(coordinate):
       var node:=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material;add_child(node);_meshes[coordinate]=node
      _mesh_faces[coordinate]=staged.faces
+     _meshes[coordinate].position=Vector3(coordinate)*4
      _meshes[coordinate].mesh=staged.mesh
     var bounds:=AABB(Vector3(coordinate)*4,Vector3(4,4,4))
     _changed_bounds=_changed_bounds.merge(bounds) if _have_bounds else bounds;_have_bounds=true
@@ -343,6 +361,8 @@ func _poll_cached_task() -> void:
  cached_preparation_profiled.emit(info.cached_worker_us/1000.0,maxi(0,info.cached_started_us-job.submitted_us)/1000.0,info.status)
  _slice_ready(job.token,info.status,job.epoch,job.revision)
 func _exit_tree() -> void:
+ if _mesh_task>=0:
+  WorkerThreadPool.wait_for_task_completion(_mesh_task);_mesh_task=-1
  for job:Dictionary in _retirement_jobs:WorkerThreadPool.wait_for_task_completion(job.task)
  _retirement_jobs.clear()
  if _cached_task>=0:
@@ -400,6 +420,9 @@ func statistics() -> Dictionary:
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1
  s.occupancy_failure=_occupancy_failure
+ s.surface_failure=_surface_failure
+ s.published_over_capacity_ml=0
+ for faces:Dictionary in _mesh_faces.values():s.published_over_capacity_ml+=faces.get("over_capacity_ml",0)
  s.bucket_native_us=_bucket_native_us;s.max_bucket_native_us=_max_bucket_native_us
  s.exclusion_notify_us=_exclusion_notify_us;s.accept_patch_us=_accept_patch_us;s.hull_snapshot_us=_hull_snapshot_us
  s.mesh_publish_us=_mesh_publish_us;s.max_mesh_publish_us=_mesh_max_publish_us

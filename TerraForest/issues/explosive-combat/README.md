@@ -1,5 +1,11 @@
 # First firearm and volumetric explosive destruction
 
+2026-11-13 replacement: [continuous volumetric water plan](water-plan.md).
+Previous cell-boundary representation rejected. A closed-basin continuous-field
+reference now responds to native terrain edits while retaining quantity, but the
+actual gameplay replacement, spills, gaps/materials and performance are unfinished.
+The legacy convergence failure remains open; the package has not been updated.
+
 2026-11-13: [volumetric water assessment and implementation gates](water-assessment-2026-11-13.md).
 The renewed terrain-reactive water request remains open: real 3D storage is
 present, but default settling is off, thin-volume surface coverage fails, and

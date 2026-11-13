@@ -19,7 +19,7 @@ struct WaterSolidClip {
     };
     struct Plane {Point normal;double offset=0;}; // normal.dot(point) <= offset
     using Face=std::vector<Point>;
-    struct Polyhedron {std::vector<Face> faces;};
+    struct Polyhedron {std::vector<Face> faces;std::vector<Plane> planes,face_planes;};
     using Pieces=std::vector<Polyhedron>;
     static constexpr size_t MAX_FACES=256,MAX_PIECES=512,MAX_PLANES=128;
     static constexpr double EPS=1e-10;
@@ -27,36 +27,59 @@ struct WaterSolidClip {
     static Polyhedron box(Point lo,Point hi){
         Point a{lo.x,lo.y,lo.z},b{hi.x,lo.y,lo.z},c{hi.x,lo.y,hi.z},d{lo.x,lo.y,hi.z};
         Point e{lo.x,hi.y,lo.z},f{hi.x,hi.y,lo.z},g{hi.x,hi.y,hi.z},h{lo.x,hi.y,hi.z};
-        return {{{a,b,c,d},{e,h,g,f},{a,e,f,b},{d,c,g,h},{a,d,h,e},{b,f,g,c}}};
+        Polyhedron result{{{a,b,c,d},{e,h,g,f},{a,e,f,b},{d,c,g,h},{a,d,h,e},{b,f,g,c}},
+            {{{0,-1,0},-lo.y},{{0,1,0},hi.y},{{0,0,-1},-lo.z},{{0,0,1},hi.z},{{-1,0,0},-lo.x},{{1,0,0},hi.x}}};
+        result.face_planes=result.planes;return result;
     }
     static void append_unique(Face &points,Point p){for(auto q:points)if((p-q).dot(p-q)<EPS*EPS)return;points.push_back(p);}
+    static Point intersection(Point a,Point b,double da,double db){
+        // A shared edge is visited in opposite directions by its two faces.
+        // Use one arithmetic order so they produce the same intersection.
+        if(a.x>b.x||(a.x==b.x&&(a.y>b.y||(a.y==b.y&&a.z>b.z)))){std::swap(a,b);std::swap(da,db);}
+        return a+(b-a)*std::clamp(da/(da-db),0.0,1.0);
+    }
     // Outputs are replaced only on success, including an empty intersection.
     static bool clip(const Polyhedron &source,Plane plane,Polyhedron &out){
         if(!valid(plane)||source.faces.size()>MAX_FACES)return false;
-        Polyhedron result;Face cap;
-        for(const auto &face:source.faces){
+        double length=std::sqrt(plane.normal.dot(plane.normal));plane.normal=plane.normal*(1/length);plane.offset/=length;
+        for(auto existing:source.planes){
+            double scale=std::sqrt(existing.normal.dot(existing.normal));if(scale<=0)continue;
+            auto difference=existing.normal*(1/scale)-plane.normal;
+            if(difference.dot(difference)<1e-24&&std::abs(existing.offset/scale-plane.offset)<1e-12){out=source;return true;}
+        }
+        Polyhedron result;result.planes=source.planes;Face cap;
+        for(size_t face_index=0;face_index<source.faces.size();++face_index){
+            const auto &face=source.faces[face_index];
             if(face.size()>MAX_FACES)return false;
             Face polygon;
             for(size_t i=0;i<face.size();++i){
                 Point a=face[i],b=face[(i+1)%face.size()];
                 double da=plane.normal.dot(a)-plane.offset,db=plane.normal.dot(b)-plane.offset;
-                bool ia=da<=EPS,ib=db<=EPS;
+                // Complementary half-spaces must use the actual plane. An
+                // epsilon-expanded inside test can classify two positive
+                // distances differently, then clamp their intersection onto
+                // an endpoint off the plane and manufacture a nonplanar cap.
+                bool ia=da<=0,ib=db<=0;
                 if(ia)append_unique(polygon,a);
                 if(ia!=ib){
                     // Intersect the true plane, not an epsilon-shifted boundary.
-                    double t=std::clamp(da/(da-db),0.0,1.0);Point p=a+(b-a)*t;
+                    Point p=intersection(a,b,da,db);
                     append_unique(polygon,p);append_unique(cap,p);
                 }
             }
-            if(polygon.size()>=3)result.faces.push_back(std::move(polygon));
+            if(polygon.size()>=3){result.faces.push_back(std::move(polygon));if(source.face_planes.size()==source.faces.size())result.face_planes.push_back(source.face_planes[face_index]);}
         }
         if(cap.size()>=3){
+            bool known=false;for(auto p:result.planes)known|=p.normal.x==plane.normal.x&&p.normal.y==plane.normal.y&&p.normal.z==plane.normal.z&&p.offset==plane.offset;
+            if(!known)result.planes.push_back(plane);
+            if(result.planes.size()>MAX_FACES)return false;
             Point center;for(auto p:cap)center=center+p;center=center*(1.0/cap.size());
             Point n=plane.normal,axis=std::abs(n.x)<std::abs(n.y)?Point{1,0,0}:Point{0,1,0};
             Point u=n.cross(axis),v=n.cross(u);
             u=u*(1/std::sqrt(u.dot(u)));v=v*(1/std::sqrt(v.dot(v)));
             std::sort(cap.begin(),cap.end(),[&](Point a,Point b){a=a-center;b=b-center;return std::atan2(a.dot(v),a.dot(u))<std::atan2(b.dot(v),b.dot(u));});
             result.faces.push_back(std::move(cap));
+            if(source.face_planes.size()==source.faces.size())result.face_planes.push_back(plane);
         }
         if(result.faces.size()>MAX_FACES)return false;
         out=std::move(result);return true;

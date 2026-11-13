@@ -88,6 +88,7 @@ func pool_topology(target:Vector3,radius:float=4.0)->Dictionary:
  for instance:MeshInstance3D in game.lakes._meshes.values():
   if instance.mesh==null:continue
   var vertices:PackedVector3Array=instance.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+  for vertex_index in vertices.size():vertices[vertex_index]=instance.to_global(vertices[vertex_index])
   for i in range(0,vertices.size(),3):
    if ((vertices[i]+vertices[i+1]+vertices[i+2])/3.0).distance_to(target)>radius:continue
    parents.append(triangles);triangles+=1

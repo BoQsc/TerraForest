@@ -82,6 +82,14 @@ struct WaterCellProfile {
             C::Point a{t[0].x*.5,0,t[0].z*.5},b{t[1].x*.5,0,t[1].z*.5},c{t[2].x*.5,0,t[2].z*.5};
             C::Point u{0,top,0};
             C::Polyhedron prism{{{a,b,c},{a+u,c+u,b+u},{a,a+u,b+u,b},{b,b+u,c+u,c},{c,c+u,a+u,a}}};
+            prism.planes={{{0,-1,0},0},{{0,1,0},top}};
+            C::Point center=(a+b+c)*(1.0/3);
+            for(auto edge:{std::make_pair(a,b),std::make_pair(b,c),std::make_pair(c,a)}){
+                auto d=edge.second-edge.first;C::Point normal{d.z,0,-d.x};double offset=normal.dot(edge.first);
+                if(normal.dot(center)>offset){normal=normal*(-1);offset=-offset;}
+                prism.planes.push_back({normal,offset});
+            }
+            prism.face_planes=prism.planes;
             C::Point fa=a,fb=b,fc=c;fa.y=t[0].y*.001;fb.y=t[1].y*.001;fc.y=t[2].y*.001;
             C::Point n=(fb-fa).cross(fc-fa);if(std::abs(n.y)<1e-15)return;
             if(n.y>0)n=n*(-1); // Keep air above the floor.

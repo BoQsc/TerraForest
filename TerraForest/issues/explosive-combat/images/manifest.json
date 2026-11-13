@@ -78,5 +78,29 @@
     "creator": "TerraForest runtime screenshot using existing root executable and exported PCK",
     "scope": "Existing project assets retain their provenance; screenshot is development evidence",
     "status": "Agent reviewed; installed package verification; user visual review pending"
+  },
+  {
+    "path": "water-boundaries-above-2026-11-13.png",
+    "sha256": "81512a35ed346c73b6f2673e925a540a40522380f827ef51551bb89da804a28b",
+    "source": "reports/checks/20261113T102102194965Z/water_contact_above.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Rejected representation retained for comparison; fixed-camera contact inspection did not qualify crater behavior or performance"
+  },
+  {
+    "path": "water-boundaries-underwater-2026-11-13.png",
+    "sha256": "af95bbe5841f51e5b85f82c89971a486dd1826930c3e1b903f797cf00782412a",
+    "source": "reports/checks/20261113T102102194965Z/water_contact_underwater.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Rejected representation retained for comparison; fixed-camera contact inspection did not qualify crater behavior or performance"
+  },
+  {
+    "path": "water-barrel-unsettled-2026-11-13.png",
+    "sha256": "3135f7ca4f00d852fd9cdfabedf5860b3f64218cb8f33899312bf26737b0c01a",
+    "source": "reports/checks/20261113T121519182354Z/barrel_after_underwater.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Rejected: actual barrel crater conserves water and moves it down, but still has stacked uneven surfaces after 120 seconds; default rollout blocked"
   }
 ]

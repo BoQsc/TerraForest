@@ -88,6 +88,29 @@ func _initialize()->void:
 	water=fixture({high:[0,500,125000],low:[0,500,0]})
 	water.settle_after_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5));settle(water)
 	check(amounts(water)=={low:125000},"settling crosses a resident region seam")
+	water=fixture({low:[500,500,125000],high:[0,500,0]})
+	water.settle_after_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5));settle(water)
+	check(amounts(water)=={high:125000},"fully displaced water reaches adjacent open space without deletion")
+	water=fixture({low:[500,500,125000],high:[100,500,0]})
+	water.settle_after_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5));settle(water)
+	check(amounts(water)=={low:125000},"blocked displaced water is retained rather than crossing a solid receiver floor")
+	var blocked:=snapshot(water)
+	var blocked_restore:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+	check(blocked_restore.restore_snapshot(blocked) and amounts(blocked_restore)=={low:125000},"blocked displacement survives save and reload exactly")
+	water=fixture({low:[0,500,150000],high:[0,500,0]})
+	water.settle_after_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5));settle(water)
+	check(amounts(water)=={low:125000,high:25000},"capacity excess rises into adjacent space while preserving the filled donor")
+	var row:Dictionary={}
+	for x in range(80,88):row[Vector3i(x,83,83)]=[0,500,125000 if x==83 else 1]
+	water=fixture(row)
+	water.settle_after_edit(AABB(Vector3(40,41.5,41.5),Vector3(4,.5,.5)));settle(water)
+	var row_amounts:=amounts(water);var minimum:=125000;var maximum:=0;var row_total:=0
+	for value:int in row_amounts.values():minimum=mini(minimum,value);maximum=maxi(maximum,value);row_total+=value
+	check(row_amounts.size()==8 and maximum-minimum<=3 and row_total==125007,"Connected layer equilibrates within declared head precision without losing integer remainders")
+	var left:=Vector3i(82,83,83);var sill:=left+Vector3i.RIGHT;var right:=sill+Vector3i.RIGHT
+	water=fixture({left:[0,500,75000],sill:[300,500,1],right:[0,500,1000]})
+	water.settle_after_edit(AABB(Vector3(sill)*.5,Vector3.ONE*.5));settle(water)
+	check(amounts(water).get(left,0)==75000 and water.statistics().water_ml==76001,"Layer acceleration cannot drain a retained pocket across a dry sill")
 	var lake=preload("res://addons/volumetric_water/lake_world.gd").new()
 	lake.water=fixture({high:[0,500,125000],low:[0,500,0]})
 	lake.settling_enabled=func()->bool:return false

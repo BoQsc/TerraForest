@@ -19,13 +19,13 @@ from cache_retention import finalize_cache
 from resource_limits import ResourceMonitor, require_free_space
 from development_storage import admit, register_worlds
 
-# These audited checks write only small logs/JSON, or two 1080p PNGs. Their
+# These audited checks write small logs/JSON and at most ten diagnostic PNGs. Their
 # evidence remains in the owning run directory; they do not allocate exports.
 # This declares planned growth, not a change to any storage category limit.
 BOUNDED_WATER_REPORTS = {
     "water_mesh_worker", "water_material_surface", "water_surface_topology",
     "water_surface_continuity", "water_contact_volume", "water_contact_visual",
-    "water_blast_terrain", "water_blast_settling", "block_solid_samples",
+    "water_blast_terrain", "water_blast_settling", "water_barrel_world", "water_implicit_proof", "block_solid_samples",
 }
 
 def planned_report_bytes(command):

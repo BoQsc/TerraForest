@@ -38,6 +38,7 @@ func run():
   var mesh:Mesh=instance.mesh
   if mesh==null or mesh.get_surface_count()==0:continue
   var vertices:PackedVector3Array=mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+  for vertex_index in vertices.size():vertices[vertex_index]=instance.to_global(vertices[vertex_index])
   for index in range(0,vertices.size(),9):
    var p:Vector3=vertices[index]
    if p.y>entry.level-.05 or p.y<entry.level-1 or absf(p.z-bank.z)>1 or absf(p.x-bank.x)>2:continue

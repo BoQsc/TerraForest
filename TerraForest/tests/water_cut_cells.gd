@@ -60,6 +60,7 @@ func run():
   var packet:Dictionary=water.next_mesh(true)
   if packet.is_empty():break
   var points:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX];vertices+=points.size()
+  for vertex_index in points.size():points[vertex_index]+=packet.origin
   for i in range(0,points.size(),3):
    for e in 3:
     var a:Vector3i=Vector3i((points[i+e]*100000).round());var b:Vector3i=Vector3i((points[i+(e+1)%3]*100000).round())

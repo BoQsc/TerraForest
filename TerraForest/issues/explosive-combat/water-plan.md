@@ -64,11 +64,49 @@ finite quantities, remain stable across save/reload, and have measured bounded c
 
 ## Current state and next action
 
-No replacement gate is complete. The checkout still contains rejected experiments;
-source debug is experimental and the installed package has not been updated.
-First audit the runtime diff, restore the previous coherent extraction adapter,
-and build a small continuous-field proof before integrating a new equilibrium
-service. Stop and reassess if the proof exposes cell-shaped water or fails contact.
+No replacement gate is complete; the installed package has not been updated.
+The rejected cell-boundary mesher and horizontal diffusion accelerator have been
+removed from the working source. The prior continuous extraction adapter is
+restored, retaining immutable worker/publication infrastructure. The optional
+legacy settling path still fails convergence and is not the replacement solver.
+
+A new bounded native extractor uses the existing terrain surface infrastructure.
+The closed-basin reference consumes actual TerrainCore density samples, preserves
+an authoritative 40,000,000 ml quantity and recomputes its level after excavation
+and deposition. It is not connected to LakeWorld gameplay. Open boundaries and
+separate basins return unresolved status with quantity preserved; they are not
+silently represented by artificial walls or a shared water level.
+
+Next required implementation is the general basin connectivity/spill transaction
+and its terrain-worker/LakeWorld integration. Keep the reference as a correctness
+comparison, not a whole-world runtime design: repeatedly remeshing during a level
+solve is not the final large-lake capacity evaluator. Then qualify the actual
+barrel case, consistent immersion/query publication, saves and runtime costs.
+There is no evidence yet that the user's ordinary gameplay problem is fixed.
+
+### Replacement evidence, 2026-11-13
+
+- `reports/checks/20261113T130056209004Z`: `water_implicit_proof` passes.
+  Sphere, native basin, excavation and overhang use continuous triangulated
+  boundaries. Agent inspected shaded cutaway and overhang wireframe captures.
+  Cutaways hide half the terrain only for inspection; water occupancy uses the
+  complete terrain. This is opaque geometry inspection, not water-material approval.
+- Closed basin at 40 m3: level 4.228893 m; excavation 4.190556 m; added overhang
+  4.301048 m. Integer quantity stays 40,000,000 ml. Rendered boundary volume is
+  within 0.00014 m3 of 40 m3 in these cases. Reference solve was about 22-25 ms;
+  field extraction about 1 ms. These exclude terrain sampling and GPU cost.
+- Initial transparent proof `20261113T124818815446Z` exposed contact/shading
+  artifacts. Opaque captures do not resolve that presentation requirement.
+- Cutaway capture attempt `20261113T130004883781Z` failed due to a freed scene
+  node retained in the fixture list; corrected in the later passing run.
+- Worker publication `20261113T131116560844Z` passes with the rebuilt source and resolved water geometry;
+  the earlier 1-litre fixture produced empty geometry and failed picking. Small
+  unresolved films remain explicit rather than silently claiming full coverage.
+- Legacy settling `20261113T130640190896Z` fails convergence and connected-layer
+  distribution. Preserve that failure; no default rollout or performance claim.
+- Remaining gate-2 work: integrated region seams, quantitative solid exclusion/
+  contact-gap checks and the ordinary transparent water material. Gates 3-5
+  remain open, including actual barrel response and measured gameplay performance.
 
 ## Evidence rules
 
@@ -78,3 +116,9 @@ from rendering timings. Record actual command, revision, scene and acceptance
 scope. Test passes never override visibly broken water. Existing failed evidence:
 20261113T121519182354Z (120-second unsettled barrel water),
 20261113T122134864331Z and 20261113T122628097255Z (60-second settling failures).
+
+Native convex occupancy probe also passes after recovery. Godot editor import
+`20261113T130408650844Z` generated the new script UIDs. Debug DLL SHA-256:
+`3fc9087fc90b06e6f779e655f03455ab789f141b3cdef59d5a4d13be534f1daa`.
+New native reference code and proof fixture are original 0BSD work; existing
+terrain code and development screenshot provenance are preserved.

@@ -46,26 +46,34 @@ func collect_surface(water) -> PackedVector3Array:
  for step in 200:
   var packet:Dictionary=water.next_mesh(true)
   if packet.is_empty():break
-  vertices.append_array(packet.arrays[Mesh.ARRAY_VERTEX])
+  for point:Vector3 in packet.arrays[Mesh.ARRAY_VERTEX]:vertices.append(point+packet.origin)
  return vertices
 func topology(vertices:PackedVector3Array) -> Dictionary:
+ # Occupied-volume boundaries may touch along a line without a wet face
+ # connection. Vertex-position welding would merge those separate bodies.
+ # Pair directed edges for closure; connect triangles only across an ordinary
+ # two-face edge, not a coincident four-face edge between separate volumes.
  var edges:Dictionary={};var graph:Dictionary={};var valid:=not vertices.is_empty()
  for i in range(0,vertices.size(),3):
+  graph[i]={}
   valid=valid and (vertices[i+1]-vertices[i]).cross(vertices[i+2]-vertices[i]).length_squared()>1e-16
   for edge in 3:
    var a:String=str(vertices[i+edge].snapped(Vector3.ONE*0.00001));var b:String=str(vertices[i+(edge+1)%3].snapped(Vector3.ONE*0.00001))
    var key:=a+"|"+b if a<b else b+"|"+a
-   edges[key]=edges.get(key,0)+1
-   if not graph.has(a):graph[a]={}
-   if not graph.has(b):graph[b]={}
-   graph[a][b]=true;graph[b][a]=true
- for count in edges.values():valid=valid and count==2
+   if not edges.has(key):edges[key]=[]
+   edges[key].append([i,1 if a<b else -1])
+ for entries:Array in edges.values():
+  var winding:=0
+  for entry:Array in entries:winding+=entry[1]
+  valid=valid and entries.size()>=2 and entries.size()%2==0 and winding==0
+  if entries.size()==2:
+   graph[entries[0][0]][entries[1][0]]=true;graph[entries[1][0]][entries[0][0]]=true
  var seen:Dictionary={};var components:=0
- for vertex in graph:
-  if seen.has(vertex):continue
-  components+=1;var pending:Array=[vertex];seen[vertex]=true
+ for triangle in graph:
+  if seen.has(triangle):continue
+  components+=1;var pending:Array=[triangle];seen[triangle]=true
   while not pending.is_empty():
-   var current:String=pending.pop_back()
+   var current:int=pending.pop_back()
    for adjacent in graph[current]:
     if not seen.has(adjacent):seen[adjacent]=true;pending.append(adjacent)
  return {"closed":valid,"components":components}
@@ -94,13 +102,15 @@ func check_vertical_repair():
  check(water.restore_snapshot(bytes),"Vertical repair fixture restores one-millilitre lower gap")
  check(not water.next_mesh(true).is_empty(),"Saved water can publish without advancing pending vertical repair")
  var conserved:=true
- water.advance(1)
- check(water.statistics().vertical_steps==1 and water.statistics().pending_vertical>0,"One operation repairs only one vertical face and queues the next")
+ water.settle_after_edit(AABB(Vector3(41.5,41.5,41.5),Vector3(0.5,2,0.5)))
+ var steps:int=water.statistics().settling_steps
+ water.advance_settling(1)
+ check(water.statistics().settling_steps==steps+1 and water.statistics().settling_regions>0,"One operation processes one face and retains unfinished settling")
  var saved:PackedByteArray=water.capture_snapshot(catalog)
  var restored=ClassDB.instantiate("NativeRegionalWater")
- check(restored.restore_snapshot(saved) and restored.statistics().pending_vertical>0,"Save and restore retain unfinished vertical work")
- for tick in 16:
-  water.advance(1);restored.advance(1)
+ check(restored.restore_snapshot(saved) and restored.statistics().settling_regions>0,"Save and restore retain unfinished vertical work")
+ for tick in 256:
+  water.advance_settling(256);restored.advance_settling(256)
   conserved=conserved and water.statistics().water_ml==424999 and restored.statistics().water_ml==424999
  var result:PackedByteArray=water.capture_snapshot(catalog)
  var result_base:int=32+catalog.size()+16
@@ -108,7 +118,7 @@ func check_vertical_repair():
  for y in range(3,7):
   var amount:int=result.decode_u64(result_base+(3+8*y+64*3)*12+4)&0x7fffffffffffffff
   correct=correct and amount==[125000,125000,125000,49999][y-3]
- check(correct and conserved and water.statistics().pending_vertical==0,"Vertical chain packs exactly without creating or losing a millilitre")
+ check(correct and conserved and water.statistics().settling_regions==0,"Vertical chain packs exactly without creating or losing a millilitre")
  check(not water.next_mesh(true).is_empty(),"Repaired column becomes eligible for mesh publication")
 func pattern_fixture(mask:int,full:bool):
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])

@@ -9,6 +9,7 @@ func _initialize():
   var packet:Dictionary=water.next_mesh()
   if packet.is_empty():break
   var v:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for vertex_index in v.size():v[vertex_index]+=packet.origin
   for i in range(0,v.size(),3):
    if ((v[i]+v[i+1]+v[i+2])/3.0).distance_to(Vector3(800,49.68257,1308.438))>4:continue
    for j in 3:

@@ -45,7 +45,7 @@ func run():
  var replaced:Dictionary=amounts(game.lakes.capture_snapshot())
  check(game.structures.blocks.undo(),"Undo constructed post")
  check(await ready_water(),"Undo occupancy publishes")
- check(game.structures.blocks.get_cell(target)==0 and amounts(game.lakes.capture_snapshot())==replaced,"Undo removes post without restoring deleted water")
+ check(game.structures.blocks.get_cell(target)==0 and amounts(game.lakes.capture_snapshot())==replaced,"Undo removes post while preserving owned water")
  check(game.structures.blocks.redo(),"Redo constructed post")
  check(await ready_water(),"Redo occupancy publishes")
  check(game.structures.blocks.get_cell(target)==5 and game.lakes.depth_at(Vector3(target)+Vector3.ONE*.5)==0,"Redo keeps solid interior dry")

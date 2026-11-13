@@ -13,6 +13,7 @@ func run():
   var packet:Dictionary=water.next_mesh()
   if packet.is_empty():break
   var points:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for vertex_index in points.size():points[vertex_index]+=packet.origin
   for i in range(0,points.size(),3):
    var a:Vector3=points[i];var b:Vector3=points[i+1];var c:Vector3=points[i+2]
    if (c-a).cross(b-a).y<=0:continue

@@ -38,6 +38,7 @@ func _initialize():
    var packet:Dictionary=water.next_mesh()
    if packet.is_empty():break
    var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+   for vertex_index in vertices.size():vertices[vertex_index]+=packet.origin
    for i in range(0,vertices.size(),3):
     var a:Vector3=vertices[i]-Vector3.ONE*41
     var b:Vector3=vertices[i+1]-Vector3.ONE*41

@@ -49,13 +49,29 @@ private:
         for(auto &face:faces){face.shrink_to_fit();for(auto &p:face)p.shrink_to_fit();}
     }
 public:
+    bool occupied_pieces(double head,C::Pieces &out)const{
+        C::Pieces result;size_t vertices=0;
+        for(const auto &h:hulls){
+            auto piece=C::box({0,0,0},{.5,std::clamp(head,0.0,.5),.5});
+            for(auto index:h.planes){C::Polyhedron next;if(!C::clip(piece,plane_table[index],next))return false;piece=std::move(next);}
+            if(C::volume(piece)>1e-12){for(const auto &face:piece.faces){vertices+=face.size();if(vertices>MAX_VERTICES)return false;}result.push_back(std::move(piece));}
+        }
+        out=std::move(result);return true;
+    }
     bool prepare(const C::Pieces &pieces){
         if(pieces.size()>C::MAX_PIECES)return false;
         WaterSolidProfile staged;PlaneMap known_planes;std::vector<double> knots;size_t vertices=0;
         // Roundoff can leave almost-flat fragments with fewer than four
         // independent faces. Their total possible volume is below .001 ml per
         // cell; do not cache unbounded pseudo-hulls from these fragments.
-        C::Pieces stable;for(const auto &piece:pieces)if(C::volume(piece)>1e-12)stable.push_back(piece);
+        C::Pieces stable;size_t canonical_vertices=0;for(const auto &source:pieces){
+            C::Polyhedron piece=source;
+            if(!source.planes.empty()){
+                piece=C::box({0,0,0},{.5,.5,.5});
+                for(auto plane:source.planes){C::Polyhedron next;if(!C::clip(piece,plane,next))return false;piece=std::move(next);}
+            }
+            if(C::volume(piece)>1e-12){for(const auto &face:piece.faces){canonical_vertices+=face.size();if(canonical_vertices>MAX_VERTICES)return false;}stable.push_back(std::move(piece));}
+        }
         for(const auto &piece:stable){
             if(piece.faces.size()>C::MAX_FACES)return false;
             C::Point center;size_t count=0;
@@ -65,9 +81,15 @@ public:
                 knots.push_back(std::clamp(p.y,0.0,.5));center=center+p;++count;
             }
             if(!count)continue;center=center*(1.0/count);Hull hull;
+            if(!piece.planes.empty()){
+                for(auto plane:piece.planes){double length=std::sqrt(plane.normal.dot(plane.normal));if(length<1e-15)return false;
+                    plane.normal=plane.normal*(1/length);plane.offset/=length;
+                    if(!staged.append_plane(hull,plane,known_planes))return false;
+                }
+            }else
             for(const auto &face:piece.faces){
                 if(face.size()<3)continue;C::Point n;
-                for(size_t i=1;i+1<face.size();++i){n=(face[i]-face[0]).cross(face[i+1]-face[0]);if(n.dot(n)>1e-24)break;}
+                for(size_t i=1;i+1<face.size();++i)n=n+(face[i]-face[0]).cross(face[i+1]-face[0]);
                 double length=std::sqrt(n.dot(n));if(length<1e-12)continue;n=n*(1/length);
                 double offset=n.dot(face[0]);if(n.dot(center)>offset){n=n*(-1);offset=-offset;}
                 if(!staged.append_plane(hull,{n,offset},known_planes))return false;

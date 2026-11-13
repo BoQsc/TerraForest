@@ -108,6 +108,7 @@ func surface_contact(target:Vector3) -> Dictionary:
  for instance:MeshInstance3D in game.lakes._meshes.values():
   if instance.mesh==null:continue
   var vertices:PackedVector3Array=instance.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+  for vertex_index in vertices.size():vertices[vertex_index]=instance.to_global(vertices[vertex_index])
   for i in range(0,vertices.size(),3):
    var a:Vector3=vertices[i];var b:Vector3=vertices[i+1];var c:Vector3=vertices[i+2]
    if (c-a).cross(b-a).y<=0:continue

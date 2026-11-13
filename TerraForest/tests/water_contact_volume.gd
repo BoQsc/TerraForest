@@ -34,7 +34,9 @@ func run():
  # Air below height 0.25 m: 62.5 - 20.8333 = 41.6667 L.
  check(shape.capacity_ml==104166 and absf(shape.head-41.7500013333)<0.00001,"Analytic pyramid volume sets the correct water height rather than interpolating four flat corners")
  check(absf(shape.bottom-41.75)<0.000001 and absf(water.cell_geometry(Vector3(41.5,41.75,41.5)).bottom-41.5)<0.000001,"Contact retains the interior terrain peak and corner heights")
- check(water.capture_snapshot(catalog)==data,"Contact triangles and exact quantity roundtrip byte-for-byte")
+ var canonical:PackedByteArray=water.capture_snapshot(catalog)
+ var reopened=ClassDB.instantiate("NativeRegionalWater")
+ check(reopened.restore_snapshot(canonical) and reopened.capture_snapshot(catalog)==canonical and reopened.cell_geometry(Vector3(41.75,41.75,41.75))==shape,"Migrated contact triangles and exact quantity roundtrip canonically")
  var malformed:=data.duplicate();malformed.encode_u32(count_at,129)
  check(not water.restore_snapshot(malformed) and water.statistics().water_ml==41667,"Oversized contact list is rejected atomically")
  malformed=data.duplicate();malformed.encode_float(count_at+4,NAN)
@@ -46,6 +48,7 @@ func run():
   var packet:Dictionary=water.next_mesh()
   if packet.is_empty():break
   var positions:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for vertex_index in positions.size():positions[vertex_index]+=packet.origin
   for i in range(0,positions.size(),3):
    var a:Vector3=positions[i];var b:Vector3=positions[i+1];var c:Vector3=positions[i+2]
    if (c-a).cross(b-a).y<=0:continue

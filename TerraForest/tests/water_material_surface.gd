@@ -4,23 +4,58 @@ var failures:=0
 func check(ok:bool,label:String):
  print("PASS " if ok else "FAIL ",label)
  if not ok:failures+=1
-func fixture(x:int,floor_mm:int):
+func fixture(x:int,floor_mm:int,open_surroundings:bool=false,coordinate:Vector3i=Vector3i(10,10,10)):
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+6160);bytes.fill(0)
  bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,1);bytes.encode_u64(16,1000)
  for i in catalog.size():bytes[32+i]=catalog[i]
- var base:int=32+catalog.size();bytes.encode_u64(base,(10<<24)|(10<<12)|10);bytes.encode_u32(base+8,1);base+=16
- for i in 512:bytes.encode_u16(base+i*12,500);bytes.encode_u16(base+i*12+2,500)
+ var base:int=32+catalog.size();bytes.encode_u64(base,(coordinate.x<<24)|(coordinate.y<<12)|coordinate.z);bytes.encode_u32(base+8,1);base+=16
+ for i in 512:bytes.encode_u16(base+i*12,0 if open_surroundings else 500);bytes.encode_u16(base+i*12+2,500)
  var i:=x+8*3+64*3;bytes.encode_u16(base+i*12,floor_mm);bytes.encode_u64(base+i*12+4,1000)
  var water=ClassDB.instantiate("NativeRegionalWater")
  if not water.restore_snapshot(bytes):return null
  return water
+func check_ocean_boundary():
+ var water=fixture(0,0,true,Vector3i(0,9,10))
+ water.set_western_ocean(true)
+ var wall:=false;var geometry:=false
+ for n in 100:
+  var packet:Dictionary=water.next_mesh(true)
+  if packet.is_empty():break
+  var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for vertex_index in vertices.size():vertices[vertex_index]+=packet.origin
+  geometry=geometry or not vertices.is_empty()
+  for i in range(0,vertices.size(),3):
+   wall=wall or (vertices[i].x==0 and vertices[i+1].x==0 and vertices[i+2].x==0)
+ check(geometry and not wall,"Absent western ocean halo suppresses artificial edge walls")
+ var dry=fixture(7,0,true,Vector3i(10,9,10));dry.set_surrounding_ocean(true)
+ # The wet cell borders an absent ocean region: the sea hides that face.
+ var absent_wall:=false
+ for n in 100:
+  var packet:Dictionary=dry.next_mesh(true)
+  if packet.is_empty():break
+  var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for vertex_index in vertices.size():vertices[vertex_index]+=packet.origin
+  for i in range(0,vertices.size(),3):
+   absent_wall=absent_wall or (vertices[i].x==44 and vertices[i+1].x==44 and vertices[i+2].x==44)
+ check(not absent_wall,"Absent streamed ocean continues beyond the resident boundary")
+ var resident=fixture(3,0,true,Vector3i(10,9,10));resident.set_surrounding_ocean(true)
+ var dry_wall:=false
+ for n in 100:
+  var packet:Dictionary=resident.next_mesh(true)
+  if packet.is_empty():break
+  var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for vertex_index in vertices.size():vertices[vertex_index]+=packet.origin
+  for i in range(0,vertices.size(),3):
+   dry_wall=dry_wall or (vertices[i].x==42 and vertices[i+1].x==42 and vertices[i+2].x==42)
+ check(dry_wall,"Resident dry ocean cell remains authoritative")
+
 func check_batch():
  var reference=fixture(0,0);var expected:Dictionary={}
  for step in 100:
   var packet:Dictionary=reference.next_mesh()
   if packet.is_empty():break
-  expected[packet.coordinate]=packet.arrays
+  if packet.vertices>0:expected[packet.coordinate]=packet.arrays
  var water=fixture(0,0);var collected:Dictionary={};var changed:=false;var complete:=false;var stable:=true;var completed_id:=0
  var origin:=Vector3(40.25,41.501,41.75)
  for step in 100:
@@ -86,6 +121,7 @@ func check_contacts():
   var packet:Dictionary=water.next_mesh()
   if packet.is_empty():break
   var points:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for vertex_index in points.size():points[vertex_index]+=packet.origin
   for i in range(0,points.size(),3):
    var normal:Vector3=(points[i+2]-points[i]).cross(points[i+1]-points[i]).normalized()
    exposed_only=exposed_only and normal.y>0.99;count+=1
@@ -93,25 +129,28 @@ func check_contacts():
  check(water.capture_snapshot(catalog)==before,"Contact-face omission never deletes water or changes saved volume")
  check(not water.raycast_surface(Vector3(41.75,41.69,41.75),Vector3(41.75,41.7001,41.75)).hit,"Buried contact shell cannot intercept a bucket ray")
 func check_pour_batch():
- var reference=fixture(0,0);var expected:Dictionary={}
+ var reference=fixture(3,0,true);var expected:Dictionary={}
  for step in 100:
   var packet:Dictionary=reference.next_mesh()
   if packet.is_empty():break
-  expected[packet.coordinate]=packet.arrays
- var water=fixture(0,0);var inventory=ClassDB.instantiate("NativePlayerInventory")
+  if packet.vertices>0:expected[packet.coordinate]=packet.arrays
+ var water=fixture(3,0,true);var inventory=ClassDB.instantiate("NativePlayerInventory")
  for item in range(401,412):inventory.register_item(item,1)
- inventory.grant(411,1,0)
+ inventory.grant(401,1,0)
+ check(inventory.exchange_water(0,false,inventory.snapshot().revision,1000000),"Prepare current full cubic-metre bucket")
  var actual:Dictionary={};var transferred:=false;var completed:=false
  for step in 100:
   var packet:Dictionary=water.next_mesh_batch()
   if packet.is_empty():break
   if packet.has("coordinate"):actual[packet.coordinate]=packet.arrays
   if step==0:
-   var result:Dictionary=water.transfer_bucket(Vector3(40.25,42.5,41.75),Vector3(40.25,41.5,41.75),true,inventory,0,inventory.snapshot().revision)
+   var result:Dictionary=water.transfer_bucket(Vector3(41.75,42.5,41.75),Vector3(41.75,41.5,41.75),true,inventory,0,inventory.snapshot().revision)
    transferred=result.ok
+   if not transferred:print("POUR_BATCH_REJECTED ",result)
   if packet.complete:completed=true;break
  var stable:bool=actual==expected
- check(transferred and completed and stable and water.statistics().water_ml==11000,"Actual bucket pour preserves the entire in-flight mesh snapshot and adds exactly ten litres")
+ if not stable:print("POUR_BATCH_KEYS actual=",actual.keys()," expected=",expected.keys())
+ check(transferred and completed and stable and water.statistics().water_ml==1001000,"Actual bucket pour preserves the entire in-flight mesh snapshot and adds exactly one cubic metre")
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
  GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
@@ -131,6 +170,7 @@ func _initialize():
     if packet.is_empty():break
     shared=shared and packet.faces.get("shared_surface_nets",false)
     var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+    for vertex_index in vertices.size():vertices[vertex_index]+=packet.origin
     for v in vertices:
      low=minf(low,v.y);high=maxf(high,v.y)
      bounded=bounded and v.y>=41.5+floor_mm*0.001-0.00002 and v.y<=41.5+floor_mm*0.001+0.00402
@@ -155,7 +195,8 @@ func _initialize():
    water.invalidate(AABB(center-Vector3.ONE*0.01,Vector3.ONE*0.02))
    invalid_misses=invalid_misses and not water.raycast_surface(center+Vector3.UP,center-Vector3.UP).hit
    cases+=1
- check(shared,"Water packets use shared surface-nets reconstruction")
+ check_ocean_boundary()
+ check(shared,"Water packets use the restored continuous surface extractor")
  check(visible,"One-litre puddles retain nonzero geometry across vertical offsets")
  check(bounded,"Thin-water vertices stay between actual bottom and top")
  check(closed,"Stored-volume envelopes retain two triangles per welded edge across regions")

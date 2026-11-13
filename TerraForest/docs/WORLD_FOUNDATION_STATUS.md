@@ -9,6 +9,13 @@ response, bounded measured cost and save/package qualification. Every gate remai
 open. First recover coherent source extraction and prove the continuous volume
 against actual terrain; do not expand another failed representation. Failed prior
 barrel images and timings remain in the linked issue evidence and Git history.
+Closed-basin replacement proof now passes with actual TerrainCore excavation and
+an overhang: the same 40 m3 lowers/raises its level appropriately, with continuous
+shaded/wireframe geometry inspected. This is an isolated native reference, not
+LakeWorld integration. The optional legacy solver still fails convergence.
+General spill/connectivity transactions, terrain-contact gaps, transparent
+presentation, actual barrels, persistence and runtime/package qualification are
+required next; see the plan's exact evidence and closure requirements.
 
 ## Shuffle planning correction — 2026-11-13
 

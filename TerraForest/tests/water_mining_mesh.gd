@@ -9,6 +9,7 @@ func _initialize():
   var packet:Dictionary=water.next_mesh()
   if packet.is_empty():break
   var v:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for vertex_index in v.size():v[vertex_index]+=packet.origin
   for i in range(0,v.size(),3):
    for j in 3:
     var a:Vector3=v[i+j];var b:Vector3=v[i+(j+1)%3]
