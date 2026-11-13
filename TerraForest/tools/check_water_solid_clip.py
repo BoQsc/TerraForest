@@ -2,6 +2,9 @@
 """Bounded native geometry check for building-water replacement."""
 import subprocess
 from bootstrap_native import ROOT, bootstrap
+from development_storage import admit
+# Reuse the existing derived probe executable; retain its small diagnostic log.
+admit(ROOT, report_bytes=2**20, scratch_bytes=2*2**20, world_bytes=0)
 info=bootstrap(); folder=ROOT/'.build/water_solid_clip'; folder.mkdir(parents=True,exist_ok=True)
 exe=folder/'probe.exe'
 command=[info['zig'],'c++','-std=c++17','-O2','-ffp-contract=off',str(ROOT/'tests/native/water_solid_clip_probe.cpp'),'-o',str(exe)]

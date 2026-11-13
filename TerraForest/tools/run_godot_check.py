@@ -19,6 +19,21 @@ from cache_retention import finalize_cache
 from resource_limits import ResourceMonitor, require_free_space
 from development_storage import admit, register_worlds
 
+# These audited checks write only small logs/JSON, or two 1080p PNGs. Their
+# evidence remains in the owning run directory; they do not allocate exports.
+# This declares planned growth, not a change to any storage category limit.
+BOUNDED_WATER_REPORTS = {
+    "water_mesh_worker", "water_material_surface", "water_surface_topology",
+    "water_surface_continuity", "water_contact_volume", "water_contact_visual",
+    "water_blast_terrain", "water_blast_settling",
+}
+
+def planned_report_bytes(command):
+    scripts = [str(value) for value in command if str(value).startswith("res://tests/")]
+    if len(scripts) == 1 and Path(scripts[0]).stem in BOUNDED_WATER_REPORTS:
+        return 16 * 2**20
+    return 256 * 2**20
+
 
 def verify_pack_native(root=ROOT):
     def hashes(folder):
@@ -36,7 +51,7 @@ def command_for(engine, test, folder, extra, headless=False, persistent=False):
     if not (ROOT / "tests" / (test + ".gd")).is_file():
         raise ValueError("Repository test does not exist")
     reserved = {"--derived-cache", "--no-derived-cache", "--temporary",
-                "--snapshot-readonly", "--world-slot"}
+                "--snapshot-readonly", "--world-slot", "--check-evidence-dir"}
     if any(arg.split("=", 1)[0] in reserved or arg == "--" for arg in extra):
         raise ValueError("Cache and temporary-world options belong to this launcher")
     if persistent and test != "water_static_compound":
@@ -46,7 +61,7 @@ def command_for(engine, test, folder, extra, headless=False, persistent=False):
     command = [str(engine), "--path", str(ROOT), "--log-file", str(folder / "engine.log"),
                *(["--headless"] if headless else ["--fullscreen", "--resolution", "1920x1080"]),
                "--max-fps", "60", "--script", f"res://tests/{test}.gd", "--",
-               *([f"--world-slot=water_compound_check_{token}"] if persistent else ["--temporary", f"--world-slot=check_{token}"]), f"--derived-cache={cache}", *extra]
+               *([f"--world-slot=water_compound_check_{token}"] if persistent else ["--temporary", f"--world-slot=check_{token}"]), f"--derived-cache={cache}", f"--check-evidence-dir={folder}", *extra]
     return command, cache
 
 
@@ -60,7 +75,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
-                result['development_storage'] = admit(ROOT)
+                result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command))
             result['preflight_seconds'] = time.monotonic() - started
             started = time.monotonic()  # Storage admission is not engine startup timing.
             process = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,

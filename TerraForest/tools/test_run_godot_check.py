@@ -4,10 +4,14 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from run_godot_check import command_for, execute, verify_pack_native
+from run_godot_check import command_for, execute, verify_pack_native, planned_report_bytes
 
 
 class CheckLauncherTests(unittest.TestCase):
+    def test_report_growth_is_declared_only_for_audited_checks(self):
+        self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/water_mesh_worker.gd"]), 16 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/unknown.gd"]), 256 * 2**20)
+
     def test_pack_rejects_missing_or_mismatched_external_libraries(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -32,9 +36,10 @@ class CheckLauncherTests(unittest.TestCase):
         self.assertNotEqual(cache, other)
         self.assertTrue(cache.startswith("user://cache_eviction_world_"))
         self.assertIn("--derived-cache=" + cache, first[first.index("--")+1:])
+        self.assertIn("--check-evidence-dir=reports", first[first.index("--")+1:])
         self.assertIn("--temporary", second)
         for flag in ["--derived-cache=user://terrain_cache", "--derived-cache", "--no-derived-cache",
-                     "--world-slot=world", "--snapshot-readonly", "--temporary", "--"]:
+                     "--world-slot=world", "--snapshot-readonly", "--temporary", "--check-evidence-dir=elsewhere", "--"]:
             with self.subTest(flag=flag), self.assertRaises(ValueError):
                 command_for("godot", "cache_eviction_world", Path("reports"), [flag])
         with self.assertRaises(ValueError):
