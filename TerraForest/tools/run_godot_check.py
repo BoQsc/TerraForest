@@ -28,7 +28,7 @@ BOUNDED_WATER_REPORTS = {
     "water_player_world", "water_equilibrium_scope", "water_ocean_equilibrium",
     "water_region_store", "water_region_transfer", "water_storage_snapshot", "water_streaming_save",
     "water_equilibrium_replay", "water_equilibrium", "water_mesh_worker", "water_material_surface", "water_surface_topology",
-    "water_surface_continuity", "water_contact_volume", "water_contact_visual",
+    "water_surface_continuity", "water_contact_volume", "water_contact_visual", "water_contact_clip",
     "launcher_world_flow", "block_pager", "combat_remote_world", "water_blast_terrain", "water_blast_settling", "water_barrel_world", "water_implicit_proof", "block_solid_samples",
 }
 

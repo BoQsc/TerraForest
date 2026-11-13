@@ -58,6 +58,12 @@ integrated water driver, records the command/native hashes and retains logs.
 `maintain_water_captures.py` archives receipt-owned PNGs after process exit,
 keeping two ordinary ready runs per family (`water_barrel_world` and
 `water_player_world`). Failed runs retain their logs and archive receipts too.
+The owned capture names include the four reverse-angle shoreline views. If a
+run's original views were already archived, these use a supplemental receipt;
+the original receipt is never overwritten. Under report-budget pressure,
+`maintain_water_captures.py --apply --keep-ready 1` explicitly keeps the latest
+ready run per family and cold-retains the older one, within the at-most-two
+policy. At least one ready run is always retained; pins are respected.
 The desktop and process handles close after the owned child exits. No full
 export, source copy or saved world is allocated by these rendered checks.
 

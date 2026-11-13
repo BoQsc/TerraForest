@@ -27,8 +27,17 @@ class WaterCaptureOwnershipTests(unittest.TestCase):
                 (folder / 'barrel_after.png').write_bytes(b'evidence')
             (folders[4] / '.retain').touch()
             self.assertEqual(candidates(root), [folders[0], folders[5]])
+            self.assertEqual(candidates(root, 1), [folders[0], folders[5], folders[6]])
+            with self.assertRaises(ValueError):
+                candidates(root, 0)
             # An archive receipt makes a run ineligible for repeat retirement.
             (folders[0] / 'captures.archive.json').write_text('{}')
+            self.assertEqual(candidates(root), [folders[5]])
+            # New reverse views get a separate receipt; the original archive
+            # remains authoritative for the already-retired first-angle files.
+            (folders[0] / 'player_shore_after_reverse.png').write_bytes(b'reverse')
+            self.assertEqual(candidates(root), [folders[0], folders[5]])
+            (folders[0] / 'captures.supplement.archive.json').write_text('{}')
             self.assertEqual(candidates(root), [folders[5]])
 
 
