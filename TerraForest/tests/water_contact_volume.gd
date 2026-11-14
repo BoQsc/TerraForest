@@ -41,6 +41,24 @@ func run():
  check(not water.restore_snapshot(malformed) and water.statistics().water_ml==41667,"Oversized contact list is rejected atomically")
  malformed=data.duplicate();malformed.encode_float(count_at+4,NAN)
  check(not water.restore_snapshot(malformed) and water.statistics().water_ml==41667,"Non-finite cached triangle is rejected atomically")
+ var sliver:=data.duplicate()
+ for triangle in 4:
+  for vertex in 3:
+   var offset:int=count_at+4+triangle*36+vertex*12
+   sliver.encode_float(offset+8,0.0)
+   if vertex==2:sliver.encode_float(offset,1e-10)
+ check(water.restore_snapshot(sliver),"Small-area terrain triangles are valid contact geometry")
+ var sliver_vertices:=0
+ var sliver_degenerate:=0
+ for step in 100:
+  var packet:Dictionary=water.next_mesh(true)
+  if packet.is_empty():break
+  sliver_vertices+=packet.vertices
+  var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for i in range(0,vertices.size(),3):
+   if (vertices[i+1]-vertices[i]).cross(vertices[i+2]-vertices[i]).length_squared()==0:sliver_degenerate+=1
+ check(sliver_vertices>0 and not water.statistics().surface_budget_failed and water.statistics().water_ml==41667,"Clipping plane validity is independent of terrain triangle area")
+ check(sliver_degenerate==0,"Sub-precision contact fragments do not emit degenerate render triangles")
  var shallow:=data.duplicate();shallow.encode_u64(16,29167);shallow.encode_u64(base+20+cell*12,29167)
  check(water.restore_snapshot(shallow),"Partial fill exposes the terrain peak above water")
  var top_samples:=0;var above_floor:=true;var minimum_clearance:=INF;var free_top_samples:=0;var unresolved:=0
@@ -61,10 +79,11 @@ func run():
    var colors:PackedColorArray=packet.arrays[Mesh.ARRAY_COLOR]
    if colors.is_empty() or colors[i].r>.5:free_top_samples+=1
  print("CONTACT_CLEARANCE samples=",top_samples," free=",free_top_samples," minimum_m=",minimum_clearance)
- # This corner film is thinner than the 0.25 m extraction lattice at every
- # interior sample. Its explicit unresolved status is part of the replacement
- # contract; storage and contact queries must still retain it exactly.
- check(top_samples==0 and unresolved>0,"Sub-lattice corner film is reported unresolved rather than fabricated as a cell sheet")
+ # Exact clipping must retain this thin corner water while leaving the peak
+ # dry. Sampling used to omit it entirely; a full cell sheet is also incorrect.
+ check(top_samples>0 and free_top_samples>0 and above_floor and unresolved==0,"Thin corner water is rendered above the exact terrain contact")
+ check(not water.raycast_surface(Vector3(41.75,41.95,41.75),Vector3(41.75,41.51,41.75)).get("hit",false),"Exposed terrain peak has no fabricated water sheet")
+ check(water.statistics().water_ml==29167,"Thin corner boundary preserves every stored millilitre")
  var resolved:=data.duplicate();resolved.encode_u64(16,80000);resolved.encode_u64(base+20+cell*12,80000)
  check(water.restore_snapshot(resolved),"Resolved partial contact volume restores")
  var resolved_tops:=0;var excludes_peak:=true
@@ -81,6 +100,29 @@ func run():
    resolved_tops+=1;excludes_peak=excludes_peak and point.y>=actual.bottom-.00001
  check(resolved_tops>0 and excludes_peak,"Resolved free surface respects the interior terrain peak")
  check(water.statistics().water_ml==80000,"Contact clipping does not delete stored water")
+ var gradient:=data.duplicate();var gradient_total:=0
+ for z in range(2,5):
+  for x in range(2,5):
+   var i:=x+8*3+64*z;var amount:=41667 if x==3 and z==3 else 62500+(x-3)*3000+(z-3)*2000
+   gradient.encode_u64(base+20+i*12,amount);gradient_total+=amount
+ gradient.encode_u64(16,gradient_total)
+ check(water.restore_snapshot(gradient),"Unequal surrounding heads meet an exact interior terrain peak")
+ var contact_audit:Dictionary=load("res://tests/water_pool_topology.gd").audit(water)
+ check(contact_audit.failures==0,"Reconstructed sloping water remains closed at exact terrain contacts: "+str(contact_audit))
+ check(water.restore_snapshot(gradient),"Contact-gradient occupancy restores for clearance checks")
+ var gradient_samples:=0;var gradient_clear:=true
+ for step in 100:
+  var packet:Dictionary=water.next_mesh()
+  if packet.is_empty():break
+  var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+  for i in range(0,vertices.size(),3):
+   var a:Vector3=vertices[i]+packet.origin;var b:Vector3=vertices[i+1]+packet.origin;var c:Vector3=vertices[i+2]+packet.origin
+   if (c-a).cross(b-a).y<=0:continue
+   var point:Vector3=(a+b+c)/3
+   if point.x<41.5 or point.x>=42 or point.z<41.5 or point.z>=42:continue
+   gradient_samples+=1;gradient_clear=gradient_clear and point.y>=water.cell_geometry(Vector3(point.x,41.75,point.z)).bottom-.00001
+ check(gradient_samples>0 and gradient_clear,"Sloping free-surface triangles remain above the exact contact floor")
+ check(water.statistics().water_ml==gradient_total,"Contact-gradient reconstruction preserves exact stored quantity")
  DirAccess.make_dir_recursive_absolute("res://reports")
  var report:=FileAccess.open("res://reports/water_contact_volume.json",FileAccess.WRITE);report.store_string(JSON.stringify({"failures":failures,"cases":9}));report.close()
  print("WATER_CONTACT_VOLUME failures=",failures);quit(failures)

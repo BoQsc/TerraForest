@@ -217,8 +217,11 @@ func terrain_cases(entry:Dictionary,total:int)->void:
  check(await idle_water(),"Full terrain occupancy reference resamples and publishes")
  var geometry_after:=contact_signature(center)
  check(geometry_after==geometry_before and amounts(game.lakes.capture_snapshot())==conserved,"Narrow edit invalidation matches full terrain resampling without quantity changes")
+ var boundary_snapshot:PackedByteArray=game.lakes.capture_snapshot()
+ check(boundary_snapshot.size()<=8*1024*1024,"Failure reproduction fits its admitted snapshot allowance")
+ if boundary_snapshot.size()<=8*1024*1024:FileAccess.open(evidence.path_join("post_terrain.water"),FileAccess.WRITE).store_buffer(boundary_snapshot)
  results["boundary"]=boundary_topology(center)
- check(results.boundary.open_edges==0 and results.boundary.degenerate==0 and results.boundary.triangles>0,"Actual game water has a closed nondegenerate boundary across region seams")
+ check(results.boundary.failures==0,"Actual game water has a closed nondegenerate boundary across region seams")
  results["failures"]=failures;results["statistics"]=game.lakes.statistics()
  var file:=FileAccess.open(evidence.path_join("terrain_cases.json"),FileAccess.WRITE);file.store_string(JSON.stringify(results,"  "));file.close()
 
@@ -278,30 +281,7 @@ func contact_signature(center:Vector3)->PackedInt64Array:
     result.append(shape.get("capacity_ml",-1))
  return result
 
-func boundary_topology(origin:Vector3)->Dictionary:
- var edges:Dictionary={};var triangles:=0;var degenerate:=0;var volume:=0.0
- for node:MeshInstance3D in game.lakes._meshes.values():
-  if node.mesh==null:continue
-  var arrays:Array=node.mesh.surface_get_arrays(0)
-  var vertices:PackedVector3Array=arrays[Mesh.ARRAY_VERTEX]
-  var indices:PackedInt32Array=arrays[Mesh.ARRAY_INDEX]
-  if not indices.is_empty():
-   var expanded:=PackedVector3Array();expanded.resize(indices.size())
-   for i in indices.size():expanded[i]=vertices[indices[i]]
-   vertices=expanded
-  for i in range(0,vertices.size(),3):
-   triangles+=1
-   var points:Array[Vector3]=[vertices[i]+node.position,vertices[i+1]+node.position,vertices[i+2]+node.position]
-   if (points[1]-points[0]).cross(points[2]-points[0]).length_squared()<1e-12:degenerate+=1
-   volume+=(points[0]-origin).dot((points[2]-origin).cross(points[1]-origin))/6.0
-   for edge in 3:
-    var a:=str(Vector3i((points[edge]*4096).round()));var b:=str(Vector3i((points[(edge+1)%3]*4096).round()))
-    var key:=a+"|"+b if a<b else b+"|"+a
-    var pair:Vector2i=edges.get(key,Vector2i.ZERO);pair.x+=1;pair.y+=1 if a<b else -1;edges[key]=pair
- var open_edges:=0
- for key:String in edges:
-  var pair:Vector2i=edges[key]
-  if pair.x<2 or pair.x%2!=0 or pair.y!=0:
-   open_edges+=1
-   if open_edges<=16:print("WATER_OPEN_EDGE ",key," ",pair)
- return {"triangles":triangles,"degenerate":degenerate,"open_edges":open_edges,"rendered_m3":absf(volume),"owned_m3":game.lakes.statistics().water_ml/1000000.0}
+func boundary_topology(_origin:Vector3)->Dictionary:
+ var boundary=ClassDB.instantiate("NativeRegionalWater")
+ check(boundary.restore_snapshot(game.lakes.capture_snapshot()),"Actual occupied boundary snapshot restores")
+ return preload("res://tests/water_pool_topology.gd").audit(boundary)

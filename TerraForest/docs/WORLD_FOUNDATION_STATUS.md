@@ -2,9 +2,9 @@
 
 Both original Steam desktop shortcuts are restored byte-for-byte after the user
 rejected direct launcher targets. Preserve Steam routing. Prior direct-launcher
-verification below is historical and does not certify the Steam route. Loading
-still has a newly reported connected-water transaction failure; water performance
-is also rejected. Both remain open. See the last-world-startup issue for restoration
+verification below is historical and does not certify the Steam route. The reproduced water loading
+failures now pass source and package gameplay checks; strict frame-tail targets
+remain open in the water plan. See the last-world-startup issue for restoration
 receipts and exact Steam IDs. No Steam library entry or player save was changed.
 
 ## Last World launcher / new-world generation repair - 2026-11-13
@@ -27,14 +27,40 @@ the verified desktop links launch the source checkout through the new bootstrap.
 
 ## Continuous volumetric water replacement — 2026-11-13
 
-**Reopened / rejected, November 14.** The prior scoped result below does not
-establish completion. Cedar_Vale failed boundary preparation in
-`reports/checks/20261113T220245622499Z`; Hidden_Creek still fails connected-body
-admission in `20261113T220325524875Z`. The jagged shoreline is visibly rejected.
-The [active water plan](../issues/explosive-combat/water-plan.md) requires both
-actual saves to load, normal sea/lake barrel tests, two-angle contact inspection,
-and measured response/render performance before closure. This remains active
-work, with no deferred prerequisite or accepted ordinary-world size restriction.
+**November 14 immediate-editing correction: installed and gameplay verified.**
+Bounded conservative local response and urgent publication no longer wait for
+whole-lake relaxation. New edits interrupt unpublished wider work safely.
+`033256552641Z` passes normal sea/lake barrel, pickaxe and bucket interactions:
+167.948 / 199.065 / 208.160 ms after terrain publication; buckets 43.523–96.114 ms
+from action to publication, including active background meshing. Both angles of
+both first-response shores were inspected. Cross-layer reconstruction removes
+the rejected rectangular steps; shared depth queries match the surface.
+`034146103768Z` passes full terrain/contact/persistence/migration and a strict
+zero-open-edge audit. `034318578996Z` loads Hidden_Creek's twelve lakes without
+raising memory limits or changing the original save. Latest no-capture source
+water-main p95 is 0.841–0.846 ms; whole-game hitch tails remain explicit.
+The [current plan](../issues/explosive-combat/water-plan.md#immediate-editing-architecture-correction--november-14)
+retains failed/rejected evidence and measured tail limits. Final packaged run
+`035031045201Z` passes sea / lake / mining response at 163 / 228 / 192 ms and
+buckets at 40–68 ms. Export contracts and all native hash pairs pass. Water-main
+p95 is 0.850 ms, but the strict 1 ms tail target remains open: an equilibrium
+commit reaches 4.074 ms (whole frame 15.222 ms). Whole-game lake p99 is 50.984 ms;
+sea maximum includes a 125.479 ms handgun equip. Return to final-commit slicing
+and non-water hitch profiling for strict tail qualification; require repeated
+no-capture combat traces within the original targets. No locked-60-FPS claim.
+
+**Earlier November 14 checkpoint (superseded above).** Exact occupied-volume
+boundary extraction replaces the rejected sampled shoreline. Cedar_Vale passes
+normal sea/lake barrel placement and handgun explosions, two-angle captures,
+2 cm terrain-edge probes and exact finite quantity (`225102309377Z`).
+Hidden_Creek loads (`224511202975Z`); cube contacts pass within 1 cm, with inspected
+above/underwater views (`225311260236Z`). Original saves remain unchanged.
+The broader mining/deposition sequence now passes exact quantity, full terrain
+resampling, and the strict closed-boundary audit (`235510052357Z`, repeated in
+`20261114T000822936933Z`). The newer actual-game sea/lake run (`000646659838Z`)
+also passes all functional checks. Measured publication/frame costs remain
+active work, not deferred or accepted limitations. See the
+[water plan](../issues/explosive-combat/water-plan.md) for failures and next gates.
 
 [Current repair and evidence](../issues/explosive-combat/water-repair-2026-11-13.md):
 functional repair installed and verified. Bounded pre-edit ocean admission restores

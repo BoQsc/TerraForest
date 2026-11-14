@@ -22,6 +22,7 @@
 #include "snapshot_array.hpp"
 
 namespace terraforest {
+struct WaterSurfaceProfileCache;
 class NativeWaterRegionReceipt : public godot::RefCounted {
  GDCLASS(NativeWaterRegionReceipt,godot::RefCounted)
  friend class NativeWaterRegionStore;
@@ -50,6 +51,7 @@ public:
 class NativeWaterSnapshot;
 class NativeWaterMeshJob;
 class NativeWaterEquilibriumJob;
+struct EquilibriumCaptureState;
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
 struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const WaterSolidProfile>)*512;std::array<std::shared_ptr<const WaterSolidProfile>,512> cells;};
 // Immutable hand-off: only the terrain worker writes this object. No scene,
@@ -153,13 +155,16 @@ class NativeRegionalWater : public godot::RefCounted {
     }
     static constexpr size_t MAX_REGIONS=4096;
     static constexpr uint64_t MAX_TOTAL=uint64_t(1)<<52;
+    struct ReconstructedCell {uint16_t index;std::array<double,4> heights;};
     struct QuerySurface {
-        // Reuse the rendered indexed positions: query triangles stay identical
-        // without retaining three duplicate positions for every triangle.
+        // Identical triangles with position-only welding and region-local
+        // ownership. Shading duplicates and absolute owner coordinates are not
+        // retained in the CPU query cache.
         godot::PackedVector3Array vertices;
         godot::PackedInt32Array indices;
-        std::vector<godot::Vector3i> owners;
-        uint64_t bytes() const {return uint64_t(vertices.size())*sizeof(godot::Vector3)+uint64_t(indices.size())*sizeof(int32_t)+owners.size()*sizeof(godot::Vector3i);}
+        std::vector<uint16_t> owners;
+        std::vector<ReconstructedCell> reconstructed;
+        uint64_t bytes() const {return uint64_t(vertices.size())*sizeof(godot::Vector3)+uint64_t(indices.size())*sizeof(int32_t)+owners.size()*sizeof(uint16_t)+reconstructed.size()*sizeof(ReconstructedCell);}
         godot::Vector3 vertex(int index) const {return vertices[indices[index]];}
     };
     std::map<Key,QuerySurface> published_surfaces,staged_surfaces;
@@ -167,6 +172,15 @@ class NativeRegionalWater : public godot::RefCounted {
     int64_t staged_surface_delta=0;
     static constexpr uint64_t MAX_SURFACE_CACHE_BYTES=64*1024*1024;
     bool publication_enabled=false,publish_pending=false;
+    std::unordered_set<Key> equilibrium_dependencies;
+    std::unordered_set<Key> local_edit_regions;
+    std::unordered_set<Key> local_occupancy_regions;
+    // Unpublished relaxation is speculative. A new player edit can discard it
+    // without discarding that edit or waiting for a lake-wide mesh rebuild.
+    struct RelaxationBefore {SnapshotArray<uint64_t,512> water;std::vector<uint32_t> vacancies;uint8_t ocean_state;};
+    std::map<Key,RelaxationBefore> relaxation_before;
+    std::unordered_set<Key> relaxation_dirty_before,urgent_meshes;
+    bool background_change=false,batch_urgent=false;
     bool western_ocean=false,surrounding_ocean=false;
     std::unordered_set<Key> published_regions,staged_ready;
     bool ocean_column_published(int x,int z) const;
@@ -262,19 +276,25 @@ class NativeRegionalWater : public godot::RefCounted {
         godot::PackedVector2Array render_uv;
         godot::PackedColorArray render_colors;
         godot::PackedInt32Array render_indices;
-        std::vector<godot::Vector3i> owners;
+        godot::PackedVector3Array query_vertices;
+        godot::PackedInt32Array query_indices;
+        std::vector<uint16_t> owners;
+        std::vector<ReconstructedCell> reconstructed;
         godot::Dictionary faces;
     };
     bool surface_budget_failed=false;
     godot::Ref<NativeWaterMeshJob> pending_mesh_job;
+    godot::Ref<NativeWaterEquilibriumJob> equilibrium_capture;
+    godot::Ref<NativeWaterEquilibriumJob> continue_equilibrium_capture(uint64_t deadline);
     uint64_t mesh_worker_us=0,max_mesh_worker_us=0;
     bool surface_ready(Key owner,bool snapshot=false) const;
-    SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false,const std::atomic<bool> *cancel=nullptr) const;
+    SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false,const std::atomic<bool> *cancel=nullptr,WaterSurfaceProfileCache *profiles=nullptr) const;
     bool decode(const godot::PackedByteArray &data,bool install,bool prepare_render=true);
 protected: static void _bind_methods();
 public:
+    int64_t interrupt_relaxation();
     void settle_after_edit(const godot::AABB &bounds);
-    godot::Ref<NativeWaterEquilibriumJob> begin_equilibrium();
+    godot::Ref<NativeWaterEquilibriumJob> begin_equilibrium(int64_t budget_usec=0,bool local_response=false);
     godot::Dictionary finish_equilibrium(const godot::Ref<NativeWaterEquilibriumJob> &job);
     int64_t advance_settling(int64_t budget=256);
     void configure_settling_profile(bool enabled){settle_profiling=enabled;settle_face_us=settle_profiled_faces=settle_max_face_us=0;}
@@ -316,6 +336,7 @@ public:
     godot::Dictionary transfer_water(const godot::Vector3 &from,const godot::Vector3 &to,bool pour,godot::Object *inventory,int64_t slot,int64_t revision);
     godot::Vector3 surface_near(const godot::Vector3 &point,double radius) const;
     double depth_at(const godot::Vector3 &point) const;
+    godot::PackedByteArray capture_local_snapshot(const godot::AABB &bounds) const;
     bool dry_footprint(const godot::Vector3 &from,const godot::Vector3 &middle,const godot::Vector3 &to,double radius,double vertical_offset) const;
     bool overlaps_occupied(const godot::AABB &bounds) const;
     bool has_deferred_overlap(const godot::AABB &bounds) const;
@@ -323,11 +344,12 @@ public:
     godot::PackedByteArray placement_mask(const godot::TypedArray<godot::Transform3D> &transforms) const;
     godot::Dictionary raycast_vacancy(const godot::Vector3 &from,const godot::Vector3 &to) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
-    bool commit_mesh_batch(int64_t id);
+    bool commit_mesh_batch(int64_t id,const godot::Array &retiring=godot::Array(),const godot::Array &revealing=godot::Array());
     godot::Dictionary next_mesh_batch(bool background=false);
     // Diagnostic contact flag audits the closed volume with the same builder.
     // Runtime publication and picking use the same closed material boundary.
     godot::Dictionary next_mesh(bool include_contacts=false);
+    godot::Dictionary runtime_state() const;
     godot::Dictionary statistics() const;
     godot::PackedByteArray capture_streaming_snapshot(const godot::PackedByteArray &catalog) const;
     godot::Dictionary inspect_streaming_snapshot(const godot::PackedByteArray &data) const;
@@ -348,10 +370,14 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     int64_t ocean_exchange_ml=0;
     std::array<uint64_t,8> phase_us{};
     uint64_t reserved_bytes=0;
+    size_t cell_limit=131072;
+    size_t hierarchy_cell_limit=131072;
     static std::atomic<uint64_t> pending_bytes;
-    std::vector<uint64_t> required,changed_regions;
+    std::vector<uint64_t> required,changed_regions,capture_keys;
+    size_t capture_cursor=0;
+    std::shared_ptr<EquilibriumCaptureState> capture_selection;
     godot::String reason;
-    bool success=false,consumed=false;
+    bool success=false,consumed=false,local_response=false;
     std::atomic<bool> started{false},ready{false},cancelled{false};
 protected: static void _bind_methods();
 public:

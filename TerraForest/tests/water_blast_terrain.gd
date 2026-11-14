@@ -27,6 +27,18 @@ func moment(values:Dictionary)->float:
 	return sum
 func _initialize()->void:
 	core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[42,5]))
+	# Real terrain protocol rejects coordinates at its half-open outer bound.
+	# Water's final lattice node must nevertheless prepare at all four corners.
+	for coordinate in [Vector3i(0,9,0),Vector3i(499,9,0),Vector3i(0,9,499),Vector3i(499,9,499)]:
+		var edge=ClassDB.instantiate("NativeWaterTerrainPatch")
+		check(edge.configure(coordinate),"world-edge water patch configures")
+		var revision:int=core.execute(Codec.command(0)).decode_u32(12)
+		var epoch:int=core.execute(Codec.command(13)).decode_u32(12)
+		var status:=0
+		for attempt in 64:
+			status=edge.sample_terrain(core,2048,revision,epoch)
+			if status!=0:break
+		check(status==1,"world-edge occupancy completes without stale retry: "+str(coordinate))
 	var block:=Vector3(46,40,46);core.execute(Codec.brush(block,block,5,1,true,0))
 	var basin:=Vector3(46,45,46);core.execute(Codec.brush(basin,basin,2,0,false,0))
 	var water:RefCounted=ClassDB.instantiate("NativeRegionalWater")

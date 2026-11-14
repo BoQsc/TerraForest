@@ -9,7 +9,41 @@ func publication_fixture():
  water.brush(Vector3(41.75,41.501,41.75),0.0,99000)
  return water
 
+func grouped_fixture():
+ var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+9*6160);bytes.fill(0)
+ bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,9);bytes.encode_u64(16,900000)
+ for i in catalog.size():bytes[32+i]=catalog[i]
+ for n in 9:
+  var base:int=32+catalog.size()+n*6160
+  bytes.encode_u64(base,((10+n)<<24)|(10<<12)|10);bytes.encode_u32(base+8,1);base+=16
+  for i in 512:bytes.encode_u16(base+i*12+2,500)
+  bytes.encode_u64(base+(3+8*3+64*3)*12+4,100000)
+ var water=ClassDB.instantiate("NativeRegionalWater")
+ if not water.restore_snapshot(bytes):return null
+ return water
+func check_grouped_owners()->void:
+ var reference=grouped_fixture();var expected:Dictionary={}
+ for n in 100:
+  var packet:Dictionary=reference.next_mesh()
+  if packet.is_empty():break
+  expected[packet.coordinate]=packet.arrays
+ var water=grouped_fixture();var actual:Dictionary={};var jobs:=0;var committed:=false
+ for n in 100:
+  var packet:Dictionary=water.next_mesh_batch(true)
+  if packet.is_empty():break
+  if packet.has("job"):
+   jobs+=1
+   var task:=WorkerThreadPool.add_task(packet.job.prepare,false,"Parallel owner regression")
+   while not WorkerThreadPool.is_task_completed(task):await process_frame
+   WorkerThreadPool.wait_for_task_completion(task);continue
+  if packet.has("coordinate"):actual[packet.coordinate]=packet.arrays
+  if packet.complete:committed=water.commit_mesh_batch(packet.batch);break
+ print("GROUPED_OWNERS jobs=",jobs," committed=",committed," expected=",expected.size()," actual=",actual.size()," equal=",actual==expected)
+ check(jobs==1 and committed and expected.size()==9 and actual==expected,"Parallel owner group exactly matches serial geometry in stable owner order")
+ check(water.statistics().mesh_worker_reserved_bytes==0,"Parallel owner group releases its shared memory reservation")
 func run_worker_checks() -> void:
+ await check_grouped_owners()
  var reference=publication_fixture();var expected:Dictionary={}
  for n in 100:
   var packet:Dictionary=reference.next_mesh()
@@ -49,7 +83,12 @@ func run_worker_checks() -> void:
    completed=true
    check(not water.raycast_surface(Vector3(41.75,42.5,41.75),Vector3(41.75,41.5,41.75)).hit,"Completed worker arrays remain hidden before render publication")
    check(water.depth_at(Vector3(41.75,41.501,41.75))==0,"Unpublished water cannot change immersion")
-   published=water.commit_mesh_batch(packet.batch)
+   var old_mesh:=MeshInstance3D.new();var new_mesh:=MeshInstance3D.new()
+   root.add_child(old_mesh);root.add_child(new_mesh);new_mesh.visible=false
+   check(not water.commit_mesh_batch(packet.batch+1,[old_mesh],[new_mesh]) and old_mesh.visible and not new_mesh.visible,"Rejected publication preserves both visible generations")
+   published=water.commit_mesh_batch(packet.batch,[old_mesh],[new_mesh])
+   check(not old_mesh.visible and new_mesh.visible,"Query commit atomically replaces the visible mesh generation")
+   old_mesh.free();new_mesh.free()
    break
  check(jobs>0 and pending_single,"Only one prepared mesh job is returned while a worker is pending")
  check(changed and completed and actual==expected,"Live mutation cannot alter a worker's frozen mesh batch")

@@ -298,7 +298,11 @@ func detonate(id:int)->bool:
 	if barrels.is_removal_protected(id):return true
 	# The same native density edit, publication, water, vegetation and save path
 	# as mining. The environmental admission does not pay mining rewards.
-	if not game.mining_rewards.excavate_blast(base+Vector3.UP*.2,3.5):return false
+	var measured:=Time.get_ticks_usec()
+	var admitted:bool=game.mining_rewards.excavate_blast(base+Vector3.UP*.2,3.5)
+	game.terrain._record_stage("blast terrain admission",(Time.get_ticks_usec()-measured)/1000.0)
+	if not admitted:return false
+	measured=Time.get_ticks_usec()
 	# Water wake-up belongs to the shared committed terrain-edit listener.
 	# Mining and explosions therefore use the same revision and pause rules.
 	var trace_identity:=""
@@ -314,6 +318,8 @@ func detonate(id:int)->bool:
 		if destruction_trace.enabled:job.trace_identity=trace_identity
 		blast_jobs.append(job)
 	elif destruction_trace.enabled:destruction_trace.blocks_complete(trace_identity,Engine.get_physics_frames(),Time.get_ticks_usec())
+	game.terrain._record_stage("blast authoritative records",(Time.get_ticks_usec()-measured)/1000.0)
+	measured=Time.get_ticks_usec()
 	for other:int in barrels.get_ids():
 		var point:=barrel_position(other)+Vector3.UP*.5
 		if point.is_finite() and point.distance_squared_to(center)<36:damage_barrel(other,50)
@@ -326,7 +332,10 @@ func detonate(id:int)->bool:
 	if distance<7:
 		var damage:=80*(1-distance/7)
 		game.zombie_target.receive_zombie_attack(damage);game._show_lake_notice("Blast hit · %d damage"%roundi(damage))
+	game.terrain._record_stage("blast nearby actors",(Time.get_ticks_usec()-measured)/1000.0)
+	measured=Time.get_ticks_usec()
 	effects.explosion(center);play_sound(center,blast_audio);game.zombies.hear_noise(center,96)
+	game.terrain._record_stage("blast presentation",(Time.get_ticks_usec()-measured)/1000.0)
 	explosions+=1;game.terrain.changed_since_save=true;return true
 func step_blasts()->void:
 	if destruction_commit_active:return

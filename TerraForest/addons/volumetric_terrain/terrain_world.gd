@@ -325,10 +325,10 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	if accepted:
 		var water_lo:=Vector3.INF;var water_hi:=-Vector3.INF;var brushes_only:=true
 		for packet:PackedByteArray in selected:
-			if packet.decode_u32(0)!=2 or packet.decode_u32(32) not in [0,1]:brushes_only=false;break
+			if packet.decode_u32(0)!=2 or packet.decode_u32(32) not in [0,1,Codec.CONTACT_MINING_SHAPE]:brushes_only=false;break
 			var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
 			var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
-			var halo:=Vector3.ONE*(packet.decode_float(28)+2.0)
+			var halo:=Vector3.ONE*(packet.decode_float(28)+2.0+(Codec.CONTACT_MINING_HALO if packet.decode_u32(32)==Codec.CONTACT_MINING_SHAPE else 0.0))
 			water_lo=water_lo.min(a.min(b)-halo);water_hi=water_hi.max(a.max(b)+halo)
 		_water_edit_ticket=edit_ticket
 		_water_edit_bounds=AABB(water_lo,water_hi-water_lo) if brushes_only else AABB(safe_lo,safe_hi-safe_lo)

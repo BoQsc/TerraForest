@@ -1,10 +1,16 @@
 # First firearm and volumetric explosive destruction
 
 Current water replacement: [continuous volumetric water plan](water-plan.md).
-**Current status, November 14: OPEN / REJECTED.** Ordinary saved worlds still
-hit water preparation limits. The user rejected the saw-tooth natural shoreline;
-performance targets remain unmet. The earlier completion statements below are
-historical scoped results, superseded by the active plan and its failed evidence.
+**Current status, November 14: installed / scoped gameplay verified.** Local
+conservative response and urgent publication no longer wait for whole-lake
+relaxation. Final packaged sea/lake/mining updates measure 163 / 228 / 192 ms
+from terrain publication, buckets 40–68 ms including background interruption.
+Two-angle first-response shores and block contacts were inspected; closed-volume,
+loading, save/reopen, exact quantity and matching package/native checks pass.
+[Final evidence and measured limits](water-immediate-verification-2026-11-14.json):
+water-main p95 is 0.850 ms, but a 4.074 ms commit and whole-game hitch tails keep
+strict 1 ms / every-frame 60 FPS targets open. User visual approval is separate.
+Earlier completion statements below are historical scoped results.
 
 **November 13 player-report repair installed and verified.** Shoreline admission,
 local snapshot scope and terrain/object contact are repaired. The actual saved

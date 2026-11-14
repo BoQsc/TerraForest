@@ -156,7 +156,9 @@ func check_patterns():
   var packet:Dictionary=tiny.next_mesh(true)
   if packet.is_empty():break
   unresolved+=int(packet.faces.get("unresolved_wet_cells",0));tiny_vertices+=packet.vertices
- check(tiny_vertices==0 and unresolved==1 and tiny.statistics().water_ml==1000,"Sub-lattice film is conserved and explicitly unresolved")
+ check(tiny_vertices>0 and unresolved==0 and tiny.statistics().water_ml==1000,"Thin film has a rendered boundary and preserves its exact volume")
+ var tiny_again=pattern_fixture(1,false,1000)
+ check(topology(collect_surface(tiny_again)).closed,"Thin film is a closed volume rather than an unresolved sample")
  var bad:Array=[];var contact_merges:=0
  for full in [false,true]:
   for mask in range(1,256):
@@ -171,10 +173,72 @@ func check_patterns():
  print("MATERIAL_PATTERNS failures=",bad.size()," zero_width_contact_merges=",contact_merges)
  if not bad.is_empty():print("MATERIAL_PATTERN_FIRST_FAILURE ",bad[0])
  check(bad.is_empty(),"All 510 resolved patterns have closed boundaries without splitting connected water")
+func check_gradient_surface(cross_layer:bool=false)->void:
+ var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+4*6160);bytes.fill(0)
+ bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,4)
+ for i in catalog.size():bytes[32+i]=catalog[i]
+ var total:=0
+ for r in 4:
+  var rx:=10+r/2;var rz:=10+r%2;var base:int=32+catalog.size()+r*6160
+  bytes.encode_u64(base,(rx<<24)|(10<<12)|rz);bytes.encode_u32(base+8,1);base+=16
+  for i in 512:bytes.encode_u16(base+i*12,500);bytes.encode_u16(base+i*12+2,500)
+  for z in 8:
+   for x in 8:
+    var gx:=rx*8+x-82;var gz:=rz*8+z-82
+    if gx<0 or gz<0 or gx>=12 or gz>=12:continue
+    var amount:=100000+gx*5000+gz*3000 if cross_layer else 50000+gx*1250+gz*750;var i:=x+8*3+64*z
+    bytes.encode_u16(base+i*12,0);bytes.encode_u64(base+i*12+4,mini(amount,125000));total+=amount
+    if cross_layer:
+     bytes.encode_u16(base+(i+8)*12,0);bytes.encode_u64(base+(i+8)*12+4,maxi(0,amount-125000))
+ bytes.encode_u64(16,total)
+ var water=ClassDB.instantiate("NativeRegionalWater")
+ check(water.restore_snapshot(bytes),"Unequal-height four-region surface fixture loads")
+ var vertices:=collect_surface(water);var result:=topology(vertices);var inclined:=0;var volume:=0.0
+ for i in range(0,vertices.size(),3):
+  var a:=vertices[i]-Vector3(40,40,40);var b:=vertices[i+1]-Vector3(40,40,40);var c:=vertices[i+2]-Vector3(40,40,40)
+  var n:Vector3=(b-a).cross(c-a)
+  if absf(n.y)>.001 and absf(n.x)+absf(n.z)>.0001:inclined+=1
+  volume+=a.dot(b.cross(c))/6
+ check(result.closed and result.components==1,"Unequal-height reconstruction stays closed across region seams")
+ check(inclined>0,"Neighbouring unequal water heads reconstruct a sloping free surface")
+ check(absf(absf(volume)-total/1000000.0)<.002,"Linear free-surface reconstruction preserves geometric volume within float precision")
+ check(water.statistics().water_ml==total,"Free-surface reconstruction preserves every authoritative millilitre")
+ print("GRADIENT_SURFACE volume=",absf(volume)," owned=",total/1000000.0," inclined=",inclined)
+ var published=ClassDB.instantiate("NativeRegionalWater")
+ check(published.restore_snapshot(bytes),"Gradient publication fixture loads")
+ var shared_normals:Dictionary={};var normals_match:=true
+ for step in 100:
+  var packet:Dictionary=published.next_mesh_batch(false)
+  if packet.is_empty():break
+  if packet.has("coordinate"):
+   var positions:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
+   var normals:PackedVector3Array=packet.arrays[Mesh.ARRAY_NORMAL]
+   for i in positions.size():
+    if normals[i].y<.5:continue
+    var position:Vector3=positions[i]+packet.origin
+    if shared_normals.has(position) and shared_normals[position].distance_to(normals[i])>.00001:
+     if normals_match:print("NORMAL_SEAM position=",position," before=",shared_normals[position]," after=",normals[i])
+     normals_match=false
+    shared_normals[position]=normals[i]
+  if packet.complete:published.commit_mesh_batch(packet.batch)
+ check(normals_match,"Sloping surface normals agree at shared vertices across owner boundaries")
+ var aligned:=true;var linear:=true
+ for z in range(2,10):
+  for x in range(2,10):
+   var probe:=Vector3(41+x*.5+.13,41.51,41+z*.5+.37)
+   var hit:Dictionary=published.raycast_surface(probe+Vector3.UP,probe)
+   if not hit.get("hit",false) or absf(probe.y+published.depth_at(probe)-hit.point.y)>.00002:aligned=false
+   var expected:=41.5+(100000+(x-.24)*5000+(z+.24)*3000)/250000.0 if cross_layer else 41.5+(50000+(x-.24)*1250+(z+.24)*750)/250000.0
+   if not hit.get("hit",false) or absf(hit.point.y-expected)>.00002:linear=false
+ check(aligned,"Published immersion agrees with sloping rendered triangles at off-centre probes")
+ check(linear,"Linear free surface crosses cell layers without steps (cross_layer="+str(cross_layer)+")")
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
  check_vertical_repair()
  check_patterns()
+ check_gradient_surface()
+ check_gradient_surface(true)
  var water=fixture(false)
  check(water!=null,"two-region surface fixture loads")
  if water!=null:

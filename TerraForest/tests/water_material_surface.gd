@@ -168,7 +168,7 @@ func _initialize():
    for step in 100:
     var packet:Dictionary=water.next_mesh(true)
     if packet.is_empty():break
-    shared=shared and packet.faces.get("shared_surface_nets",false)
+    shared=shared and packet.faces.get("exact_cut_cell_boundary",false)
     var vertices:PackedVector3Array=packet.arrays[Mesh.ARRAY_VERTEX]
     for vertex_index in vertices.size():vertices[vertex_index]+=packet.origin
     for v in vertices:
@@ -196,7 +196,7 @@ func _initialize():
    invalid_misses=invalid_misses and not water.raycast_surface(center+Vector3.UP,center-Vector3.UP).hit
    cases+=1
  check_ocean_boundary()
- check(shared,"Water packets use the restored continuous surface extractor")
+ check(shared,"Water packets use the exact occupied-volume boundary")
  check(visible,"One-litre puddles retain nonzero geometry across vertical offsets")
  check(bounded,"Thin-water vertices stay between actual bottom and top")
  check(closed,"Stored-volume envelopes retain two triangles per welded edge across regions")

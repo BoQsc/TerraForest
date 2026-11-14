@@ -93,6 +93,9 @@ struct WaterCellProfile {
             C::Point fa=a,fb=b,fc=c;fa.y=t[0].y*.001;fb.y=t[1].y*.001;fc.y=t[2].y*.001;
             C::Point n=(fb-fa).cross(fc-fa);if(std::abs(n.y)<1e-15)return;
             if(n.y>0)n=n*(-1); // Keep air above the floor.
+            // A small triangle still defines the same plane. Pass a unit
+            // normal so clipping validity is independent of triangle area.
+            n=n*(1.0/std::sqrt(n.dot(n)));
             C::Polyhedron clipped;
             if(!C::clip(prism,{n,n.dot(fa)},clipped)){ok=false;return;}
             if(C::volume(clipped)>1e-15){if(pieces.size()==C::MAX_PIECES){ok=false;return;}pieces.push_back(std::move(clipped));}
@@ -110,6 +113,8 @@ struct WaterCellProfile {
     }
     double flat_volume(double h)const {
         if(h<=0)return 0;
+        if(!contact&&floor[0]==floor[1]&&floor[0]==floor[2]&&floor[0]==floor[3])
+            return std::max(0.0,std::min(h,ceiling)-std::max(0.0,floor[0]))*250;
         return std::max(0.0,raw_volume(h)-(minimum()<0?raw_volume(0):0));
     }
     uint64_t capacity()const{if(solid)return uint64_t(std::floor(solid->capacity()*1000000+1e-7));return uint64_t(std::floor(flat_volume(ceiling)+1e-7));}
@@ -118,6 +123,9 @@ struct WaterCellProfile {
     double volume(double h)const{return solid?solid->volume(h*.001)*1000000:flat_volume(h);}
     double head(uint64_t ml)const {
         if(solid)return solid->head(double(ml)*.000001)*1000;
+        if(!ml)return std::max(0.0,minimum());
+        if(!contact&&floor[0]==floor[1]&&floor[0]==floor[2]&&floor[0]==floor[3])
+            return std::min(ceiling,std::max(0.0,floor[0])+double(ml)/250);
             if(!ml)return std::max(0.0,minimum());
             if(ml>=capacity())return ceiling;
             if(ml>=flat_volume(maximum()))return std::min(ceiling,mean()+(ml+(minimum()<0?raw_volume(0):0))/250.0);

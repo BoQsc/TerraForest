@@ -1,3 +1,61 @@
+# Current architecture repair - 2026-11-14
+
+The current source game uses terrain-reactive finite volumetric water, enabled
+for ordinary mining, construction and barrel explosions. The older static-water
+guide below is historical. The [active plan](../issues/explosive-combat/water-plan.md)
+records current verification, rejected attempts and measured performance limits.
+
+Half-metre quantity cells are storage, not visible cubes. The mesh is the union
+boundary of occupied clipped polyhedra: terrain/structure contact clips each
+cell, internal faces are subtracted, and neighboring edge vertices are shared.
+This retains thin shoreline wedges that the former sampled isosurface missed.
+Shared 2^-22 m region-local coordinates preserve thin contact faces without
+kilometre-scale float rounding. Retraced collapsed edges cancel before triangulation.
+Closed diagnostic geometry includes buried contact faces; rendering and bucket
+picking omit those faces. Both derive from the same revision and publish together.
+
+Player edits use a conservative local transaction and urgent mesh publication;
+they do not wait for connected-lake equilibrium. Wider relaxation remains pending
+and can be interrupted by another edit. Unpublished wider changes roll back before
+the new edit, while already published water remains authoritative. Saving retains
+unfinished relaxation. Local finite redistribution tapers column heads into its
+unchanged boundary and preserves every stored millilitre.
+
+Shared free-surface heights are reconstructed across vertical cell/region layers
+before intersecting terrain. Interpolating already-clipped shoreline vertices is
+not used. Shared normals come from the same height field; published depth queries
+cache the matching triangular height planes instead of rebuilding meshes while
+swimming. Exact terrain/structure contact and isolated pockets remain clipped
+volume boundaries. Reconstruction uses bounded worker-local caches and two worker
+lanes inside the existing memory reservation.
+
+Finite equilibrium follows actual three-dimensional face connections. It gathers
+wet donors first, bounds background dry-space discovery with conservative capacity and donor
+connectivity, and solves levels with exact integer quantity accounting. Full-air
+cells use compact elevation counts. The surrounding sea is an explicit fixed-head
+reservoir; exchange is recorded, while disconnected inland water remains finite.
+Immutable worker snapshots, stale-revision rejection, bounded memory reservations
+and atomic publication remain in force. No per-cell scene nodes or full fluid
+velocity solver are introduced. Limits were not raised to admit the failing saves.
+The bounded local snapshot explores receiving space up to its retained boundary
+head, since the lower uniform-equilibrium estimate cannot bound a transient slope.
+
+Cedar_Vale sea/lake normal barrel explosions, actual pickaxe mining, bucket
+scoop/pour during background meshing, and Hidden_Creek loading pass. Both
+first-response shoreline angles and above/underwater cube contact were inspected.
+The complete terrain sequence passes a strict zero-open-edge boundary audit,
+including save/reopen and old-cache migration. Source first-response measurements
+are 168 / 199 / 208 ms for sea / lake / mining after terrain publication, and
+44–96 ms for bucket action-to-publication. These are measured local responses,
+not zero latency or final whole-lake equilibrium. The installed package is rebuilt
+with matching native libraries; its final gameplay run passes sea / lake / mining
+at 163 / 228 / 192 ms and buckets at 40–68 ms. Water-main p95 is 0.850 ms;
+a 4.074 ms combat commit and non-water frame spikes remain measured overruns.
+These checks do not certify every saved world, sustained 60 FPS, or user visual
+approval. Existing Steam shortcuts and original player saves are unchanged.
+
+---
+
 # Water in the playable world
 
 2026-11-10 source follow-up: the user requested water settling after explosions.

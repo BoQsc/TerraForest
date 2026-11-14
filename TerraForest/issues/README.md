@@ -1,6 +1,6 @@
 # Visual issue tracker
 
-**Water status, November 14: OPEN / REJECTED.** Actual-save loading failures, jagged shoreline contact and performance remain unresolved. The [active water plan](explosive-combat/water-plan.md) supersedes earlier completion claims below.
+**Water status, November 14: installed / scoped gameplay verified.** Local edits no longer wait for the lake. Packaged sea/lake barrels, mining, buckets during background meshing, loading, persistence and boundary/contact checks pass; two-angle first-response views were inspected. Strict frame-tail targets and user visual approval remain explicit in the [water plan](explosive-combat/water-plan.md).
 
 One folder per problem: relevant images, current status, changes, remaining work
 and a practical place to resume. Detailed evidence stays at its existing location.

@@ -14,7 +14,7 @@
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "50ce652fab3d30a2fb48c9546aa6900da241fdbf3ab956310f933e4038bcb921",
-        "res://project.godot": "2079417fe838766f7ef86c0ed7b34f0f775114e7b89bf35533ce556335a54996",
+        "res://project.godot": "5aa4a2f6148ef77a6d7233afe43a6412d2566a5645c71d1f7047942e070e4f8a",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
@@ -31,7 +31,7 @@
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "50ce652fab3d30a2fb48c9546aa6900da241fdbf3ab956310f933e4038bcb921",
-        "res://project.godot": "2079417fe838766f7ef86c0ed7b34f0f775114e7b89bf35533ce556335a54996",
+        "res://project.godot": "5aa4a2f6148ef77a6d7233afe43a6412d2566a5645c71d1f7047942e070e4f8a",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
@@ -86,7 +86,7 @@
         "res://addons/characters/runtime/assets/Torch_Torch_8.png.import": "5659d5b0a65bdac175deb5763dfde3a17b2d885bb5ac4f6364f517aae157e9f0",
         "res://addons/characters/runtime/held_item.gd": "e2fce6b1937cf1a7e75ae8d674ed39c287e9cff48eb4479aa36ab2a35dbdbc3d",
         "res://addons/characters/runtime/hidden_surface.gdshader": "0c9a2deeaa1ee872d18bc78a086d74e1fe6cb511c6ad6e149aa3e4f57b4dc61a",
-        "res://addons/characters/runtime/human_view.gd": "bd4d48c7c6b0896eefcc1100b58469891603aadab32938f0517cf6a8acb3168c",
+        "res://addons/characters/runtime/human_view.gd": "f8d3554aa2e8cd7a22c38231db567a3309d9528c35d87e20282e0c44331f7544",
         "res://addons/characters/runtime/muzzle_flash.gd": "e213337eafe9e6738b0371e553207c7f7d3f08bbf64f2302b9b9c111d719eb77",
         "res://addons/characters/runtime/muzzle_flash.gdshader": "846d35ad380d80aeeca8945748ab2656459c0ea0fe9f92ec09d5b31ca4757b69",
         "res://addons/characters/runtime/muzzle_smoke.gdshader": "3314d4aee40a0def47350d93400968742f70ba5f70875ed9dbd03ef6655bfbb4",
@@ -126,7 +126,7 @@
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "50ce652fab3d30a2fb48c9546aa6900da241fdbf3ab956310f933e4038bcb921",
-        "res://project.godot": "2079417fe838766f7ef86c0ed7b34f0f775114e7b89bf35533ce556335a54996",
+        "res://project.godot": "5aa4a2f6148ef77a6d7233afe43a6412d2566a5645c71d1f7047942e070e4f8a",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
@@ -152,7 +152,7 @@
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "50ce652fab3d30a2fb48c9546aa6900da241fdbf3ab956310f933e4038bcb921",
-        "res://project.godot": "2079417fe838766f7ef86c0ed7b34f0f775114e7b89bf35533ce556335a54996",
+        "res://project.godot": "5aa4a2f6148ef77a6d7233afe43a6412d2566a5645c71d1f7047942e070e4f8a",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }

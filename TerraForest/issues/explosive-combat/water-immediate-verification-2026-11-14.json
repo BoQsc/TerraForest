@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "date": "2026-11-14",
+  "status": "Implemented and installed; scoped gameplay verification passed; frame-tail overruns explicit",
+  "architecture": "Bounded conservative local response and urgent publication; interruptible wider relaxation; cross-layer clipped volume boundary; atomic surface/query publication",
+  "package_run": "reports/checks/20261114T035031045201Z",
+  "pack_sha256": "f9c9327b3fb13c00ee84be01770eb5cf95ddc90b21b3ac1123b4314684c9202e",
+  "native_sha256": {
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "076c05abf9227ca838eeb6e91a232c8d68a51cda8e23b03bb690104ff4553564",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "0fb2aa851bb857d4374f933adb2436a8d9824f7cfef54aed96dcea44cf4415b7"
+  },
+  "local_response_after_terrain_ms": {
+    "lake_mining": 192.12,
+    "lake_shore_blast": 228.188,
+    "sea_shore_blast": 163.084
+  },
+  "buckets": [
+    {
+      "interrupting_mesh": false,
+      "pending": 16,
+      "pour": false,
+      "visible_ms": 68.268
+    },
+    {
+      "interrupting_mesh": false,
+      "pending": 16,
+      "pour": true,
+      "visible_ms": 40.221
+    },
+    {
+      "interrupting_mesh": true,
+      "pending": 518,
+      "pour": false,
+      "visible_ms": 39.987
+    },
+    {
+      "interrupting_mesh": true,
+      "pending": 518,
+      "pour": true,
+      "visible_ms": 61.123
+    }
+  ],
+  "moving_camera": {
+    "water_off": {
+      "frame_max_ms": 21.672,
+      "frame_p95_ms": 14.507,
+      "frame_p99_ms": 16.293,
+      "gpu_p95_ms": 5.56599998474121,
+      "water_main_max_us": 938.0,
+      "water_main_p95_us": 752.0
+    },
+    "water_on_a": {
+      "frame_max_ms": 22.297,
+      "frame_p95_ms": 16.388,
+      "frame_p99_ms": 19.873,
+      "gpu_p95_ms": 7.02199983596802,
+      "water_main_max_us": 1110.0,
+      "water_main_p95_us": 850.0
+    },
+    "water_on_b": {
+      "frame_max_ms": 17.081,
+      "frame_p95_ms": 14.256,
+      "frame_p99_ms": 16.014,
+      "gpu_p95_ms": 7.53299999237061,
+      "water_main_max_us": 951.0,
+      "water_main_p95_us": 850.0
+    }
+  },
+  "combat": {
+    "lake_mining": {
+      "frame_max_ms": 34.424,
+      "frame_p95_ms": 16.646,
+      "frame_p99_ms": 22.059,
+      "water_main_max_us": 2142.0,
+      "water_main_p95_us": 813.0
+    },
+    "lake_shore_blast": {
+      "frame_max_ms": 75.25,
+      "frame_p95_ms": 18.376,
+      "frame_p99_ms": 50.984,
+      "water_main_max_us": 4074.0,
+      "water_main_p95_us": 850.0
+    },
+    "sea_shore_blast": {
+      "frame_max_ms": 152.821,
+      "frame_p95_ms": 17.536,
+      "frame_p99_ms": 22.119,
+      "water_main_max_us": 1251.0,
+      "water_main_p95_us": 850.0
+    }
+  },
+  "resources": {
+    "peak_private_commit_bytes": 3804860416,
+    "peak_working_set_bytes": 2220019712,
+    "peak_dedicated_gpu_bytes": 1518256128
+  },
+  "boundary": {
+    "degenerate": 0,
+    "duplicate_triangles": 0,
+    "edge_samples": [],
+    "failures": 0,
+    "mesh_complete": true,
+    "off_grid_vertices": 0,
+    "open_edges": 0,
+    "owned_m3": 558.892747,
+    "triangles": 23452,
+    "volume_m3": 558.89368089887
+  },
+  "evidence": {
+    "normal_two_angle_captures": "reports/checks/20261114T033256552641Z",
+    "full_terrain_contact_persistence": "reports/checks/20261114T034146103768Z",
+    "hidden_creek_twelve_lake_load": "reports/checks/20261114T034318578996Z",
+    "exact_failed_boundary_replay": "reports/checks/20261114T033902257122Z",
+    "continuity": "reports/checks/20261114T033902251123Z",
+    "streaming_save": "reports/checks/20261114T033902247836Z",
+    "export_contracts": "reports/building_standards/20261114T034545091212Z"
+  },
+  "limits": [
+    "Terrain latency begins at terrain publication, not button-down. Buckets measure action-to-publication.",
+    "All final rendered checks used a non-input isolated desktop; no desktop input or Steam shortcut changes. Earlier historical unisolated checks are documented separately.",
+    "No screenshots during final performance run. First-response lake depression is transient; wider equilibrium continues.",
+    "Water main p95 meets 1 ms; measured combat peak 4.074 ms exceeds the soft budget at equilibrium commit. That frame was 15.222 ms. Strict per-frame 1 ms acceptance remains open.",
+    "Whole-game 16.7 ms every-frame target remains unmet: lake p99 50.984 ms; sea maximum 152.821 ms includes measured handgun equip 125.479 ms with water work 0.059 ms.",
+    "Scoped engineering and agent visual inspection do not constitute user visual approval or universal save/geometry/FPS certification."
+  ]
+}

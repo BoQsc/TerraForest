@@ -1,22 +1,246 @@
 # Continuous volumetric water replacement
 
-Status: OPEN / REJECTED, 2026-11-14. The prior completion claim was too broad.
-Actual-save loading still fails, the user rejected the jagged natural shoreline,
-and response/frame targets remain unmet. Historical scoped passes in
-[earlier evidence](water-repair-2026-11-13.md) do not close these requirements.
-The latest failed reproductions and remaining work are recorded below.
+## Immediate editing architecture correction — November 14
+
+**Implemented and installed; scoped gameplay verification passed.**
+The final packaged run `035031045201Z` passes normal sea/lake barrels, actual
+pickaxe mining and four bucket actions, including interruption of background
+meshing. Sea / lake / mining response is 163.084 / 228.188 / 192.120 ms after
+terrain publication; bucket action-to-publication is 39.987–68.268 ms. Original
+player-save hashes are unchanged. All fourteen native library pairs match the
+source checkout. Export, nine required building contracts and packaged smoke /
+house-light checks pass. No desktop input or Steam shortcut changes were made.
+
+[Machine-readable final evidence](water-immediate-verification-2026-11-14.json)
+records exact hashes and timings. Moving-camera water-on frame p95 is
+14.256–16.388 ms; GPU p95 is 7.022–7.533 ms versus 5.566 ms with water hidden.
+Water-main p95 is 0.850 ms. **Strict tail targets remain unmet:** the final combat
+run has a 4.074 ms water equilibrium commit (whole frame 15.222 ms), exceeding
+the 1 ms soft budget. Whole-game lake p99 is 50.984 ms; sea maximum 152.821 ms
+includes a measured 125.479 ms handgun equip with only 0.059 ms water work.
+This delivers bounded local response, not an every-frame 1 ms / locked-60-FPS
+claim. Further tail optimization requires slicing/preparing the final native
+commit and separately addressing non-water equip/terrain/render spikes; closure
+requires repeated no-capture moving-combat traces within those original targets.
+These remaining performance limits are retained here and in foundation status.
+
+Source verification: local edits publish
+without waiting for the connected lake. `033256552641Z` passes normal barrel
+placement/handgun explosions at both sea and lake shores, actual pickaxe mining,
+and four bucket transactions including interruption of background meshing.
+First visible response after terrain publication is 167.948 / 199.065 / 208.160 ms
+for sea / lake / mining. Bucket input-to-publication is 43.523–96.114 ms.
+Both first-response camera angles at both shores were inspected; these capture
+the local response before wider equilibrium, not a later settled substitute.
+
+- Lake first response: [angle one](../../reports/checks/20261114T033256552641Z/player_lake_after.png),
+  [reverse angle](../../reports/checks/20261114T033256552641Z/player_lake_after_reverse.png).
+- Sea first response: [angle one](../../reports/checks/20261114T033256552641Z/player_shore_after.png),
+  [reverse angle](../../reports/checks/20261114T033256552641Z/player_shore_after_reverse.png).
+- Block contact: [above](../../reports/checks/20261114T034146103768Z/object_contact_above.png),
+  [underwater](../../reports/checks/20261114T034146103768Z/object_contact_underwater.png).
+
+These are engine viewport captures on a separate non-input desktop. The lake
+still has a transient depression at first response; wider settling continues.
+Paused-capture HUD FPS is not performance evidence. The no-capture camera-path
+measurement below is the performance comparison. User visual approval is separate.
+
+`034146103768Z` passes the complete actual-game barrel, mining/deposition,
+structure contact, save/reopen, pending settling and old-cache migration sequence.
+Its strict boundary audit has 23,452 triangles, zero open edges, duplicate or
+degenerate triangles, or off-grid vertices. The earlier three-edge failure is
+fixed without relaxing the audit (`033902257122Z` exact-state replay).
+Above/underwater block contact and deposition captures were inspected. Water
+reaches all four cube walls within 1 cm, and removal restores the boundary.
+`034318578996Z` loads the twelve-lake Hidden_Creek save with no capacity failure
+and unchanged source-save hash. Continuity (`033902251123Z`) and streaming/save
+(`033902247836Z`) pass against the same native build.
+
+Historical attempts and rejected evidence follow; their then-current status
+does not supersede the verification above.
+
+The connected-body transaction is rejected as the latency dependency for edits.
+Previous correctness passes below do not certify immediate response.
+
+- [x] Separate local conservative response and publication from connected-body
+  relaxation. Local discovery stops at a bounded transaction boundary; it must
+  not invent water or read unknown terrain as empty space.
+- [x] Give buckets and terrain edits priority, including interruption of an
+  already running wider solve/publication. Render and picking must agree.
+- [x] Measure first visible local response separately from final equilibrium.
+  Verify scoop/pour, mining, sea and lake normal barrel gameplay, repeated edits,
+  exact quantity, two camera angles and frame cost on the isolated desktop.
+- [x] Verify persistence of unfinished relaxation, final package/native parity,
+  and commit verified changes without modifying Steam shortcuts or user saves.
+
+Latest status: local latency passes, visual continuity does **not**. Runs
+`022357970584Z`, `023314388134Z`, `023930086975Z`, and `025344629909Z`
+pass the edit timing assertions but their first-response lake views are rejected
+for stepped/rectangular seams. Moving reconstruction before terrain clipping
+passes native gradient and terrain-peak closure tests (`025102351514Z`,
+`025102369467Z`), but does not resolve the actual-game seam. Do not present
+these native passes as visual acceptance. `025344629909Z` measures buckets
+35.881–73.771 ms and pickaxe response 192.432 ms. The subsequent no-capture run
+`025921236264Z` measures sea/lake/pickaxe 165.516/247.069/190.088 ms.
+Terrain timing starts at committed terrain publication, not button-down.
+Remaining: diagnose first-response seam; align reconstructed immersion queries;
+repeat current contact/persistence/loading/performance checks and package parity.
+
+`030216032261Z`/`030606560027Z` pass published immersion and shared-normal
+agreement. `030634707294Z` still has a rectangular first-response boundary, so
+shared normals alone are rejected as a fix. A cross-layer linear-surface
+regression (`031332096882Z`) fails both geometric-volume and smooth-height
+assertions: the old reconstruction stopped at each half-metre vertical layer.
+`031558363630Z/local_response.water_regions` preserves the exact normal-gameplay
+local state (877,368 bytes). Its full cross-section spans 44.161 to 43.447 m,
+crossing two layer boundaries. That diagnostic run also retains a 104.254 ms
+active-mesh bucket interruption failure; do not silently omit it from latency
+qualification. `031346697523Z` passes save/reopen of unfinished local settling.
+Cross-layer reconstruction is under test; no visual acceptance yet.
+
+Cross-layer reconstruction now passes `032424826916Z`, including 510 occupancy
+patterns, linear surfaces across vertical layers, geometric volume, shared
+normals and published immersion. Actual replay `032151666066Z` has zero height
+discontinuities at 14 sampled layer crossings. `032504100432Z` first-response
+sea/lake images were inspected from both angles: the earlier stepped/open
+rectangular seams are absent. This run still fails lake latency (263.067 ms).
+The subsequent no-capture performance run `032936321524Z` passes with
+sea/lake/mining 162.581/247.192/191.687 ms and buckets 43.641–57.037 ms, including
+active background mesh interruption. Moving water-on/off/on GPU p95 is
+6.555/5.215/7.249 ms; water-main p95 is 0.841/0.775/0.846 ms. Whole-game spikes
+remain: sea maximum includes a measured 130 ms handgun equip; lake p99 is
+52.432 ms with water work below 0.3 ms on its two worst frames. Do not claim a
+universal locked frame rate. Latest optimization avoids absent finite-owner
+meshing; full current integrated/contact/loading/persistence/package checks
+remain required before closure.
+
+`033256552641Z` passes current normal sea/lake/pickaxe latency at
+167.948/199.065/208.160 ms; all four first-response shore images were inspected.
+`033457375211Z` passes object probes within 1 cm and above/underwater inspection,
+mining/deposition, save/reload and old-cache migration, but **fails** the strict
+terrain boundary audit: three unmatched edges around a sub-micrometre triangle,
+with zero duplicate/degenerate/off-grid triangles. Its exact `post_terrain.water`
+snapshot is retained for replay. Tiny-face filtering is being corrected below
+the minimum representable area of the existing grid; the audit is not relaxed.
+
+Compiler receipt `reports/retained_artifacts/compiler-cache-20261114T0314.json`
+preserves/reconstruction-verifies 227 older derived objects (201,269,225 bytes),
+again keeping the newest two per name without changing any storage budget.
+
+Implementation in progress: an immutable bounded local solve precedes wider
+relaxation; pending settling no longer suppresses its publication. Background
+worker cancellation retains ownership until completion. No timing acceptance
+is claimed until the actual gameplay checks pass.
+
+New evidence: `014033888492Z` bounds a local response in a 144,000-cell lake
+to 161 cells / three regions and preserves pending wider work. `014623097257Z`
+and `015119272487Z` also verify interruption of a real unpublished quantity
+change followed by a new authoritative edit. The first integrated attempt,
+`014117469038Z`, was rejected: 438 ms lake / 1951 ms sea local response and a
+renderer light-unpair diagnostic. `014659390763Z` reaches visible sea-crater
+response in 365 ms but fails the 250 ms gate and exposes a background scheduling
+deadlock. Its receipt-matched test process was stopped programmatically; no user
+process or desktop input was involved. The failed evidence remains retained.
+
+Current changes under test separate urgent edit owners from unrelated ocean
+streaming, preserve rollback data for unpublished wider relaxation, permit
+background mesh draining while settling remains pending, defer node destruction
+to the frame boundary, and account a local snapshot once instead of once per
+seed. Actual-game bucket tests include an edit during wider lake relaxation;
+they measure click-to-publication, not only native transfer duration.
+
+Latest integrated evidence remains **rejected for terrain latency**:
+`015226025367Z` measured bucket scoop/pour 58.824/44.742 ms, but sea/lake/mining
+297.752/403.692/454.173 ms. `020000366720Z` and `020206722236Z` retained
+the failure; changing staged meshes from layer masks to visibility eliminated
+the renderer light-unpair diagnostic in those runs. `020342786322Z` measured
+317.722/337.116/321.635 ms and bucket 59.562/58.197 ms. No immediate-terrain
+acceptance is claimed. All of these runs used the isolated rendering runner,
+normal saved-game barrel placement/projectile damage, and protected source saves.
+The mining probe was subsequently corrected to locate the new collision floor
+and test newly excavated space, instead of assuming a one-metre-deep cut through
+the terrain's interpolated density grid. Subsequent checks must prove that probe.
+Remaining optimizations compare consumed occupancy profiles and exact contact
+fragments, retire completed edit seeds, and use water-specific edit bounds.
+
+`020916076474Z` first-response two-angle captures revealed a rectangular finite
+lake level step: **visual rejection**, even though the sea response was 194 ms.
+Those local captures, not later settled pictures, now gate acceptance. The first
+taper implementation (`021531819707Z`) was rejected because blending individual
+cell fill fractions left air gaps in a deep cut. The replacement tapers column
+head and solves its quantity exactly. `021944156627Z` fills both craters and the
+normal pickaxe excavation; active-background mesh interruption also passes at
+60.510/55.469 ms. Sea/lake/pickaxe latency is 200.881/257.635/291.447 ms, so this
+remains unfinished. This run used no captures; the latest column-head transition
+still needs visual inspection. Mesh optimization omits buried, unpickable contact
+triangulation in runtime buffers; complete closed-volume audits retain contacts.
+Native scope/mesh checks `021416428086Z`/`021502801018Z` passed the preceding
+candidate and require rerunning after the latest changes.
+
+Compiler cache admission was reached at `020627816429Z` before game launch.
+Receipt `reports/retained_artifacts/compiler-cache-20261114T0210.json` preserves
+and reconstruction-verifies 179 older derived Zig objects (201,405,698 bytes),
+retaining the newest two objects per name before retiring those loose copies.
+No storage limit, source asset, save, desktop input or Steam shortcut changed.
+
+Status: ACTIVE, 2026-11-14. The reproduced loading and contact failures now
+pass in the source game; performance and final package verification remain
+unfinished. Earlier rejected runs are retained below and are not acceptance
+evidence for the replacement.
+
+Architecture replacement in progress: the water mesh now extracts the boundary
+of clipped occupied volumes directly, subtracts internal faces, and shares edge
+vertices across cells/regions. It no longer samples away thin shoreline wedges.
+Query geometry uses the same triangles with position-only welding and compact
+region-local ownership. Finite discovery gathers existing donors first and uses
+a conservative receiving-capacity/connectivity proof to stop watershed growth.
+Region-indexed lookup blocks replace per-cell discovery hash allocations, and
+interior volume curves are aggregated by elevation during the head solve.
+
+`reports/checks/20261113T222632470888Z` passes actual Cedar_Vale sea/lake paid
+barrel placement and handgun explosions, 81 crater probes per shore, terrain-edge
+probes within 2 cm, exact lake quantity, and unchanged original save. Both after
+angles for both shores were inspected: the previous repeating shoreline notches
+are absent. This is scoped visual/functional evidence, not overall completion.
+`224511202975Z` loads Hidden_Creek successfully after normalizing small terrain
+triangle clipping planes. `225102309377Z` repeats both normal gameplay explosions
+with the final exact boundary, all contact/quantity checks passing. Both after
+angles were inspected. `225311260236Z` passes actual construction contact and
+removal, four probes within 1 cm, and above/underwater visual inspection.
+
+Latest source verification: `20261114T011942739249Z` passes both normal paid
+barrel/handgun shoreline cases, 81 crater probes each, shoreline contact within
+2 cm, exact finite quantity and original-save hashes. All four after-angle
+captures were inspected. `012058910303Z` repeats the formerly failing Hidden_Creek
+load successfully. `011426876301Z` passes mining, deposition, object contact,
+save recovery and the exact closed-boundary audit (22,694 triangles, zero open,
+duplicate, degenerate or off-grid faces). Object, deposition and underwater
+mining captures were inspected.
+
+The hidden-tool/handgun animation regression is fixed in `33026e8f`. Moving
+gameplay now measures 14.621-15.735 ms frame p95 versus 14.195 ms water-off,
+with handgun work 0.343-0.396 ms p95. Timing acceptance remains OPEN:
+sea/lake response after terrain publication is 1666/3059 ms, water main p95
+0.938/0.761 ms during those blasts, with atomic publication up to 2.293 ms.
+Moving residency/retirement still reaches 1.181 ms p95 in the first pass.
+These results do not meet the original 250 ms response / 1 ms water-main goals.
+
+The 144,000-cell full lake minus 1 ml and interrupted capture regression passes
+`003357265396Z`. Both connected-region selection and COW copying now yield to
+the main-thread budget, restart on edits, and retain the unchanged 256 MiB job /
+512 MiB aggregate reservations. No water is discarded or budget increased.
 
 ## Current repair and acceptance plan
 
 - [x] Reproduce the player's surrounding-ocean explosion and teleport-to-lake
   sequence against the current source and native binaries, using a read-only
   player-world input. Record snapshot admission and region growth.
-- [ ] Remove whole-world coupling from local equilibrium preparation without
+- [x] Remove whole-world coupling from local equilibrium preparation without
   raising memory limits or dropping water. Test growing ocean residency, local
   edits, interrupted work and fresh saved-world loading.
-- [ ] Reproduce and close the visible water/object gap. Geometric watertightness
+- [x] Reproduce and close the visible water/object gap. Geometric watertightness
   alone does not pass if water visibly retracts from the solid contact.
-- [ ] Run actual game barrels, shoreline breaches, mining and deposition with
+- [x] Run actual game barrels, shoreline breaches, mining and deposition with
   rendered before/after/underwater captures on an isolated desktop. Never switch
   the user's desktop or send desktop input. Inspect the resulting images.
 - [ ] Attribute response latency, main-thread work, frame tails and repeated
@@ -78,7 +302,7 @@ A 4,096-pool regression verifies the scope and untouched distant quantities.
   claiming every millilitre has independently visible geometry is not a requirement.
 - Do not claim marching cubes alone supplies occupancy, connectivity or motion.
 
-## Execution gates
+## Historical execution gates (superseded by current repair acceptance above)
 
 - [x] 1. Recover a coherent source baseline. Audit and remove the rejected boundary
   renderer and unqualified diffusion experiments; preserve unrelated work, saves,
@@ -536,3 +760,180 @@ Connected finite-body work needs compact connected volume/region representation
 and incremental invalidation, with exact quantity and spill connectivity tests;
 larger cell allowances alone have already failed. Neither direction is complete.
 Keep the 250 ms response / 1 ms main-thread / 16.7 ms frame targets unchanged.
+
+
+### Broader contact topology gate (still active)
+
+`20261113T230245806422Z` passes ordinary terrain mining/deposition, exact quantity,
+old-cache migration, unfinished-save loading, and optimized-versus-full occupancy
+comparison, but fails the final boundary topology check. Do not infer universal
+watertightness from barrel/cube images. The old checker rounded vertices to 1/4096 m
+and classified nonzero thin triangles as degenerate. Exact float-coordinate checks
+on the retained recovery fixture still find 265 unmatched edges, so this is not
+only a test-precision issue (`230714144228Z`). Boundary extraction now shares the
+vertices introduced by polygon subtraction as well as original solid vertices;
+that correction is being tested. `230703985148Z` was a test-script type-inference
+parse failure, corrected before rerunning; it is not a passing game result.
+
+
+`231432157032Z` closes the retained recovery fixture with exact float-coordinate
+edges and zero degenerate triangles. The complete game terrain sequence
+`231501612958Z` still fails its final topology gate (37 edges), despite passing
+mining, deposition, migration, unfinished-save recovery, quantity conservation,
+full-resample equivalence and cube contact. Its 1,479,492-byte `post_terrain.water`
+is retained for direct native replay. Canonical projected triangle cancellation
+and shared subdivisions at float precision remain under test. Do not treat the
+older fixture pass as completion of this newer actual-game case.
+
+
+### Exact region-local boundary repair
+
+`20261113T235241831622Z` passes the retained full-terrain snapshot: complete mesh,
+zero open edges, duplicates, degenerate triangles or off-grid vertices. Coordinates
+use a shared 2^-22 m grid in four-metre region-local buffers; the audit preserves
+those actual stored coordinates instead of first rounding kilometre-scale world
+positions to float. Neighbour clipping vertices share edge subdivisions before
+and after projection. Repeated perimeter vertices are preserved until retraced
+segments cancel; global vertex deduplication had manufactured thin cap faces.
+Numerically equivalent intersections within half a render-grid unit share a
+representative. Authoritative integer water quantities are unchanged.
+
+Rejected iterations remain in check reports `234505571001Z`, `234623359098Z`,
+`234744638961Z`, `234854468537Z`, `234941700774Z`, and `235138640375Z`.
+The full rendered terrain sequence, latest saved-world loading, both normal
+barrel shores/two angles, performance targets, and matched export remain open.
+The passing native replay alone does not close the plan.
+
+
+`20261113T235510052357Z` passes the full actual-game terrain sequence including
+the strict region-local boundary audit and four 1 cm cube-wall probes. Above-
+water deposition/contact and underwater contact captures were inspected.
+`235939343074Z` passes paid placement/handgun barrel explosions at both Cedar_Vale
+shores, 81 crater probes each, 2 cm shoreline probes, exact lake quantity, and
+original-save hash. All four after-angle captures were inspected: the repeating
+shoreline notches are absent. `20261114T000100463655Z` loads Hidden_Creek with
+unchanged save hash and no capacity/loading error.
+
+Publication now prepares replacement dictionaries before commit and retires old
+bookkeeping under the existing frame budget; render-layer swaps avoid costly
+visibility notifications. Latest measured lake worker is 297 ms, water main
+peak 4.932 ms (equilibrium plus residency in one frame), and whole-game lake
+frame p95 29.23 ms. These still FAIL the recorded performance targets.
+Active optimization: reuse proven wet-component adjacency, sort only nonzero
+integer remainders, invalidate the actual changed cell bounds, cache shared
+vertex projection, and avoid mesh preparation in the equilibrium commit frame.
+Re-run normal gameplay timing after native regressions. No target or memory
+budget has been raised.
+
+
+`20261114T000646659838Z` passes ordinary sea/lake barrels after reusing wet links
+and narrowing invalidation; lake equilibrium worker is 212.050 ms. Main-thread
+peak is still 4.085 ms, so performance is not closed. `000822936933Z` repeats the
+full terrain/cube sequence successfully. Both Steam desktop links were checked
+read-only and remain byte-for-byte identical to their original Steam backups.
+
+Budgeted COW snapshot capture now yields across main-thread slices and restarts
+on revision change. Its 144,000-cell interruption regression exposed a separate
+fixed-32-iteration head-search error: a full lake minus 1 ml failed quantity
+representation (`001208770930Z`, `001333657968Z`). The level search now resolves
+under 0.25 ml over the entire connected surface within 48 iterations. The exact
+quantity and interrupted-capture case passes in `001602349652Z`. No rounding
+loss is accepted and no memory guard was raised.
+
+
+### Incremental capture and combat attribution, November 14
+
+`003601818736Z` is a rejected diagnostic-script run (incorrect inventory API),
+not a game regression. Only its receipt-identified isolated game process was
+stopped programmatically; no desktop input or user game process was touched.
+Corrected fresh-handgun diagnostic `003712012117Z` passes and measures 0.34–0.42 ms
+handgun p95 / 14.93–15.55 ms whole-frame p95. The post-combat 11 ms cost is still
+being isolated. Water retirement now shares unused frame budget and ocean
+residency admits four regions per gameplay slice (sixteen during loading).
+Residency does not retire regions while an incremental snapshot is selecting them.
+Final full terrain, failed-save loading and package parity checks remain required.
+
+
+### Response latency attribution
+
+Handgun visibility restoration is committed as `33026e8f`; `004520102184Z`
+passes the hidden-item-to-handgun regression. In actual gameplay
+`004300195240Z`, moving-lake water-on p95 is 14.673–15.469 ms, versus 14.087 ms
+with water off; handgun p95 is 0.361–0.439 ms. Both ordinary shoreline blasts
+and exact water quantities still pass. Capture helpers now restore held-item
+visibility as well as camera/process state.
+
+Response is still a failed gate: `004550232066Z` records 1.938 s sea and 4.755 s
+lake after terrain publication. The lake solves in 0.223 s but invalidates 1,236
+mesh owners and serially prepares about twenty worker groups before publication.
+The current optimization skips provably empty mesh owners, caches full-cell
+classification, and bypasses polygon subtraction for completely covered faces.
+These changes require topology and actual-game verification before acceptance.
+
+
+`005110310495Z`, `005127251888Z`, `005141928328Z` and `005156302082Z`
+pass the retained post-terrain topology, 510-pattern surface continuity, material
+contact and worker regressions after the empty/full-face fast paths. Actual
+normal gameplay `005309433837Z` still takes 1.717 s sea / 4.590 s lake, so that
+optimization is not sufficient. Bounded meshing now tests two native Godot pool
+lanes over disjoint owner outputs, immutable shared input and the same memory
+reservation (including reserved scratch). Stable serial/parallel geometry and
+cancellation must pass before integrated timing acceptance.
+
+
+The first parallel comparison (`005713258513Z`, `005816361031Z`,
+`010012144211Z`) used nine nonadjacent owner regions but stopped after the first
+independent publication. It therefore compared one body against all nine. The
+fixture now uses contiguous owner regions, so one publication actually exercises
+the native group. Those rejected runs remain retained; no concurrency success is
+claimed from them.
+
+
+`010134249114Z` passes stable serial/parallel geometry for one contiguous
+nine-owner publication plus cancellation and reservation release. Actual normal
+sea/lake gameplay `010313503786Z` passes, with response 1.536 s / 3.206 s. This
+remains above the 250 ms target. Further bounded optimizations under test reuse
+region-index pointers during wet discovery, avoid full-air inverse-volume calls,
+skip fully enclosed air regions, and subtract overlapping rectangular columns
+as vertical intervals. General terrain/object clipping remains unchanged.
+
+
+`010832950499Z`, `010853485839Z`, `010907602741Z`, `010922861960Z`,
+`010937551954Z`, and `010952467379Z` pass large/interrupted equilibrium,
+ocean equilibrium, exact post-terrain topology, continuity, material/contact,
+and parallel mesh-worker regressions after region-index and rectangular-interval
+optimizations. A further fast path skips neighbour polygon reconstruction only
+when a 3x3 level-air neighbourhood, filled layer below, empty layer above, and
+one unsplit top quad prove no shared contact vertices exist. That fast path is
+not accepted until topology and the full terrain sequence pass.
+
+
+### Check-launch isolation correction
+
+The rendered gameplay runs used `--isolated-render` on a private non-input
+desktop, but native regressions were mistakenly invoked without `--headless`.
+The check runner previously defaulted to fullscreen; those runs must not be
+described as desktop-isolated. The omission has been disclosed. The runner now
+defaults to headless, requires explicit `--visible-render` for an interactive
+window, and makes display modes mutually exclusive. Dry-run checks verified
+all four selections without launching a game. All remaining native checks use
+explicit headless mode; rendered checks continue on the private desktop. No
+Steam shortcut was changed.
+
+### Latest boundary and gameplay evidence
+
+`011426876301Z` passes the full rendered terrain sequence and strict boundary
+audit. `011942739249Z` passes normal paid sea/lake barrels, two inspected angles
+per shore, and moving water-on/off/on measurements. `012058910303Z` passes
+Hidden_Creek loading. The rejected `011546593694Z` never launched: report storage
+admission stopped it. Eligible captures were cold-archived with verified receipts
+before retrying; limits and original saves were not changed.
+
+Uniform-floor inverse volume now uses its exact linear expression; scope,
+continuity, retained topology, materials, mesh workers and ocean checks pass
+(`012429612384Z`, `012454562618Z`, `012532846317Z`, `012620480999Z`,
+`012647918110Z`, `012705848871Z`). Further latency work caches cell profiles and
+heads across overlapping immutable worker halos. Each of two lanes owns at most
+8192 entries until the job ends; 8 MiB additional scratch is reserved *inside*
+the existing 128 MiB job allowance, reducing available output space. Geometry,
+conservation and integrated timing must pass before accepting this optimization.
