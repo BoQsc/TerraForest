@@ -23,12 +23,12 @@ from development_storage import admit, register_worlds
 # evidence remains in the owning run directory; they do not allocate exports.
 # This declares planned growth, not a change to any storage category limit.
 BOUNDED_WATER_REPORTS = {
-    "water_patch", "water_patch_contacts", "water_static_editing", "water_region_io",
+    "px9_handgun", "water_patch", "water_patch_contacts", "water_static_editing", "water_region_io",
     "water_region_retirement", "water_map_identity", "ocean_residency", "water_snapshot_cost",
     "water_player_world", "water_equilibrium_scope", "water_ocean_equilibrium",
     "water_region_store", "water_region_transfer", "water_storage_snapshot", "water_streaming_save",
     "water_equilibrium_replay", "water_equilibrium", "water_mesh_worker", "water_material_surface", "water_surface_topology",
-    "water_surface_continuity", "water_contact_volume", "water_contact_visual", "water_contact_clip",
+    "water_surface_continuity", "water_pool_topology", "water_contact_volume", "water_contact_visual", "water_contact_clip",
     "launcher_world_flow", "block_pager", "combat_remote_world", "water_blast_terrain", "water_blast_settling", "water_barrel_world", "water_implicit_proof", "block_solid_samples",
 }
 
@@ -40,8 +40,10 @@ BOUNDED_CONTRACT_REPORTS = {
 }
 
 def planned_report_bytes(command):
+    if "--water-load-only" in command and any(Path(str(value)).name == "water_player_world.gd" for value in command):
+        return 8 * 2**20  # One loaded-world capture plus bounded logs/JSON.
     if any(Path(str(value)).name in {"water_barrel_world.gd", "water_player_world.gd"} for value in command):
-        return 32 * 2**20
+        return 40 * 2**20  # Captures plus an at-most-8-MiB terrain failure snapshot.
     scripts = [str(value) for value in command if str(value).endswith(".gd")]
     if len(scripts) == 1 and Path(scripts[0]).stem == "building_materials":
         return 64 * 2**20
@@ -60,7 +62,7 @@ def verify_pack_native(root=ROOT):
     return source
 
 
-def command_for(engine, test, folder, extra, headless=False, persistent=False):
+def command_for(engine, test, folder, extra, headless=True, persistent=False):
     if not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", test):
         raise ValueError("Test must be a simple repository test name")
     if not (ROOT / "tests" / (test + ".gd")).is_file():
@@ -166,8 +168,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("test", help="tests/<name>.gd")
     parser.add_argument("--godot")
-    parser.add_argument("--headless", action="store_true")
-    parser.add_argument("--isolated-render", action="store_true", help="Render on a separate Windows desktop without switching or sending input")
+    display = parser.add_mutually_exclusive_group()
+    display.add_argument("--headless", action="store_true", help="No window (default)")
+    display.add_argument("--visible-render", action="store_true", help="Explicitly allow a window on the interactive desktop")
+    display.add_argument("--isolated-render", action="store_true", help="Render on a separate Windows desktop without switching or sending input")
     parser.add_argument("--pack", action="store_true", help="Installed resource pack with matching native libraries")
     parser.add_argument("--executable", action="store_true", help="Installed game executable and pack")
     parser.add_argument("--persistent", action="store_true", help="Unique disposable save slot; water_static_compound only")
@@ -183,7 +187,7 @@ def main(argv=None):
         parser.error("Use a positive timeout up to 600 seconds and nonempty completion text")
     config, _ = parse_args(["--godot", args.godot] if args.godot else [])
     packaged = args.pack or args.executable
-    if args.isolated_render and args.headless:parser.error("Choose rendered isolation or headless mode")
+    args.headless = not (args.isolated_render or args.visible_render)
     engine = (ROOT / "TerraForest.exe") if args.executable else Path(config.godot).resolve()
     native_hashes = verify_pack_native() if packaged else None
     if not engine.is_file():

@@ -12,7 +12,7 @@ NAMES = {name + '.png' for name in (
     'barrel_before', 'barrel_after', 'barrel_after_underwater', 'shore_before',
     'shore_after', 'shore_underwater', 'mining_underwater', 'deposition_above',
     'deposition_underwater', 'object_contact_above', 'object_contact_underwater')}
-NAMES.add('post_blast.water')
+NAMES.update(('post_blast.water', 'post_terrain.water'))
 NAMES.update(name + '.png' for name in ('player_shore_before', 'player_shore_after', 'player_shore_underwater', 'player_lake_before', 'player_lake_after', 'player_lake_underwater'))
 REVERSE_NAMES = {name + '_reverse.png' for name in ('player_shore_before', 'player_shore_after', 'player_lake_before', 'player_lake_after')}
 NAMES.update(REVERSE_NAMES)

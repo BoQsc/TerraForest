@@ -49,11 +49,14 @@ archive. The tool writes a separate receipt under `reports/artifact_retention`.
 
 ## Restoring evidence
 
+Checks default to headless operation. An interactive window requires the explicit
+`--visible-render` option; omit it for unattended work.
+
 Rendered water checks use `run_godot_check.py --isolated-render` on Windows.
 The process owns a separate non-input desktop; it never switches desktops or
 sends input. This is rendering isolation, not save isolation: the player-world
 driver explicitly loads the canonical input read-only into a temporary session
-and verifies its hash afterward. The launcher admits 32 MiB of reports for each
+and verifies its hash afterward. The launcher admits 40 MiB of reports for each
 integrated water driver, records the command/native hashes and retains logs.
 `maintain_water_captures.py` archives receipt-owned PNGs after process exit,
 keeping two ordinary ready runs per family (`water_barrel_world` and
