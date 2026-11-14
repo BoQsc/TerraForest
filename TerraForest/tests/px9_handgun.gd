@@ -25,7 +25,11 @@ func run()->void:
  var human:Node=tools.human
  var original:Mesh=human.body_mesh.mesh
  var split=preload("res://addons/player_runtime/first_person_meshes.gd").new();split.prepare(tools);split.set_active(true)
+ tools.hide();human._process(.016)
+ check(not human.animation_player.active,"hidden ordinary item suspends the base animation mixer")
  tools.equip(9)
+ tools.show();human._process(.016)
+ check(human.animation_player.active,"handgun restores the base mixer after a hidden item switch")
  check(human.px9!=null and human.px9.motion!=null,"exact Human R11 rest contract admits paired PX9 adapter")
  if human.px9==null or human.px9.motion==null:tools.free();quit(1);return
  check(human.body_mesh.mesh!=original,"PX9 selects corrected hand skin")

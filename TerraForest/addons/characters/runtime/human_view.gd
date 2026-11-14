@@ -459,15 +459,24 @@ func bucket_use(pouring:bool)->bool:
 	_sync_bucket_water()
 	return true
 
+var last_handgun_work:Dictionary={}
 func _process_handgun(delta:float)->void:
+	last_handgun_work.clear()
+	var mark:=Time.get_ticks_usec()
 	if px9==null:return
+	# The ordinary-item path disables the base mixer when hidden. Re-equipping
+	# a handgun after loading/holstering must restore it before manual advance.
+	animation_player.active=is_visible_in_tree()
 	model.position=Vector3.ZERO if third_person else Vector3(0,0,.06)
 	if not is_visible_in_tree():return
 	var moving:=is_instance_valid(body) and Vector2(body.velocity.x,body.velocity.z).length()>.15
 	var motion:String="run" if moving and Vector2(body.velocity.x,body.velocity.z).length()>6.5 else ("walk" if moving else "idle")
 	if is_instance_valid(body) and not body.is_on_floor():motion="jump"
+	last_handgun_work.setup=Time.get_ticks_usec()-mark;mark=Time.get_ticks_usec()
 	_play(("" if third_person else "PX9_Base_")+("Player_Crouch" if third_person and crouched else {"idle":"Idle","walk":"Walk","run":"Run","jump":"Jump"}[motion]),false,0)
+	last_handgun_work.play=Time.get_ticks_usec()-mark;mark=Time.get_ticks_usec()
 	animation_player.advance(delta)
+	last_handgun_work.base=Time.get_ticks_usec()-mark;mark=Time.get_ticks_usec()
 	var clock:Node=px9.motion
 	var ambient:=["idle","idle_empty","walk","run","jump","walk_empty","run_empty","jump_empty","aim_idle","aim_idle_empty"]
 	if clock.current_action in ambient or not clock.active:
@@ -477,18 +486,29 @@ func _process_handgun(delta:float)->void:
 	# Returning to idle here would restart it during a longer flight.
 	clock.auto_return=clock.current_action not in ["jump","jump_empty"]
 	clock.speed=PX9_RELOAD_SPEED if clock.current_action in ["reload","reload_empty"] else 1.0
+	last_handgun_work.request=Time.get_ticks_usec()-mark;mark=Time.get_ticks_usec()
 	px9.advance(delta)
+	last_handgun_work.motion=Time.get_ticks_usec()-mark;mark=Time.get_ticks_usec()
 	if clock.current_action in ["jump","jump_empty"] and not clock.active:clock.seek_seconds(clock.time_seconds)
+	last_handgun_work.seek=Time.get_ticks_usec()-mark;mark=Time.get_ticks_usec()
 	handgun_aiming=rifle_aiming
 	handgun_aim.advance(delta,rifle_aiming,clock)
+	last_handgun_work.aim=Time.get_ticks_usec()-mark;mark=Time.get_ticks_usec()
 	px9._after_pose(clock.current_action,clock.time_seconds,clock.current_frame())
+	last_handgun_work.mount=Time.get_ticks_usec()-mark;mark=Time.get_ticks_usec()
 	if rifle_holster_item>=0 and (clock.current_action!="holster" or not clock.active):
 		var next:=rifle_holster_item;var water:=rifle_holster_water
 		px9.unequip();px9.queue_free();px9=null;current=-1;rifle_holster_item=-1;equip(next,water);return
 	action_remaining=0.0 if clock.current_action in ambient or not clock.active else maxf(0,clock.duration_seconds()-clock.time_seconds)/clock.speed
 
+var last_handgun_process_us:=0
 func _process(delta: float) -> void:
-	if current==9:_process_handgun(delta);return
+	last_handgun_process_us=0
+	if current==9:
+		var started:=Time.get_ticks_usec()
+		_process_handgun(delta)
+		last_handgun_process_us=Time.get_ticks_usec()-started
+		return
 	# Align the new iron-sight plane with the FP camera while keeping the stock
 	# below the sightline. Third-person and magazine handling retain rig placement.
 	var aiming_ranger:=current==8 and not third_person and rifle_aiming and (action_remaining<=0 or active_clip=="FP_Ranger_Fire")
