@@ -4,6 +4,8 @@ extends RefCounted
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const EditCommands=preload("res://addons/volumetric_terrain/terrain_edit_commands.gd")
 const Lakes=preload("res://addons/volumetric_terrain/generated_lakes.gd")
+const ItemCatalog=preload("res://addons/player_runtime/item_catalog.gd")
+var inventory:RefCounted
 var core:RefCounted
 var water:RefCounted
 var archive:RefCounted
@@ -27,14 +29,20 @@ func open(slot:String)->bool:
 	if archive==null or not archive.acquire(path):return false
 	core=ClassDB.instantiate("TerrainCore")
 	water=ClassDB.instantiate("NativeRegionalWater")
-	if core==null or water==null:return false
+	inventory=ItemCatalog.create_inventory()
+	if core==null or water==null or inventory==null:return false
+	var has_loadout:=false
 	if FileAccess.file_exists(path):
 		var decoded:Dictionary=archive.decode(archive.read(path))
 		if not decoded.get("ok",false):return false
 		var sections:Dictionary=decoded.sections
 		# A host that does not own structure collision or region sidecars cannot
 		# safely edit such a save. Never rewrite it as a terrain-only archive.
-		if not sections.has("volumetric_water") or sections.size()!=(3 if sections.has(RECEIPT_SECTION) else 2):return false
+		for section in sections:
+			if section not in ["terrain","volumetric_water","player_loadout",RECEIPT_SECTION]:return false
+		if not sections.has("terrain") or not sections.has("volumetric_water"):return false
+		has_loadout=sections.has("player_loadout")
+		if has_loadout and not inventory.restore_storage_snapshot(sections.player_loadout):return false
 		var load_packet:=Codec.command(5)
 		load_packet.append_array(sections.terrain)
 		if not Codec.reply_ok(core.execute(load_packet)) or not water.restore_snapshot(sections.volumetric_water):return false
@@ -48,6 +56,7 @@ func open(slot:String)->bool:
 		catalog=ClassDB.instantiate("NativeLakeCatalog").encode(definitions.records)
 		var bake:Dictionary=ClassDB.instantiate("NativeGeneratedLakeBake").run(core,catalog,revision(),epoch(),60000)
 		if not bake.get("ok",false) or not water.restore_snapshot(bake.snapshot):return false
+	if not has_loadout and not ItemCatalog.grant_starter_loadout(inventory,true):return false
 	healthy=not catalog.is_empty()
 	return healthy
 
@@ -60,7 +69,7 @@ func save()->bool:
 	if not Codec.reply_ok(terrain):return false
 	var liquid:PackedByteArray=water.capture_streaming_snapshot(catalog)
 	if liquid.is_empty():return false
-	var sections:={"terrain":terrain.slice(12),"volumetric_water":liquid}
+	var sections:={"terrain":terrain.slice(12),"volumetric_water":liquid,"player_loadout":inventory.capture_storage_snapshot()}
 	if not operator_receipts.is_empty():
 		var history:=PackedByteArray()
 		for receipt in operator_receipts:history.append_array(receipt)
@@ -98,6 +107,24 @@ func sample_points(points:PackedVector3Array)->Dictionary:
 	return {"ok":true,"version":1,"revision":revision(),"water_ml":water.total_water_ml(),"samples":rows}
 
 signal edit_committed(revision:int,bounds:AABB)
+
+func water_surface(origin:Vector3,end:Vector3)->Dictionary:
+	if not healthy:return {"ok":false,"reason":"World unavailable"}
+	var extent:=Vector3(2000,256,2000)
+	for point:Vector3 in [origin,end]:
+		if not point.is_finite() or point!=point.clamp(Vector3.ZERO,extent):return {"ok":false,"reason":"Outside world"}
+	var distance_squared:=origin.distance_squared_to(end)
+	if distance_squared<1e-12 or distance_squared>25:return {"ok":false,"reason":"Invalid bucket reach"}
+	var surface:Dictionary=water.raycast_surface(origin,end)
+	var reply:={"ok":true,"version":1,"revision":revision(),"hit":surface.hit}
+	if surface.hit:
+		var point:Vector3=surface.point
+		var normal:Vector3=surface.normal
+		var cell:Vector3i=surface.cell
+		reply.point=[point.x,point.y,point.z]
+		reply.normal=[normal.x,normal.y,normal.z]
+		reply.cell=[cell.x,cell.y,cell.z]
+	return reply
 
 func last_request_id()->int:
 	return 0 if operator_receipts.is_empty() else operator_receipts[-1].decode_u32(4)
@@ -154,6 +181,9 @@ func _edit_brush(point:Vector3,radius:float,expected:int,request_id:int,deposit_
 			if prior.decode_u32(0)==brush_tag(deposit_material) and expected==prior.decode_u32(8) and point==receipt_point(prior) and radius==prior.decode_double(28):return receipt_reply(prior)
 			return {"ok":false,"reason":"Request ID already committed with different arguments"}
 		if request_id!=last+1 or request_id>0xffffffff:return {"ok":false,"reason":"Unexpected request ID"}
+	# Historical receipts may predate gameplay's minimum-radius check. Replay
+	# their acknowledgement above, but never admit another undersized brush.
+	if radius<Codec.MIN_BRUSH_RADIUS:return {"ok":false,"reason":"Invalid brush radius"}
 	if expected!=revision():return {"ok":false,"reason":"Stale revision"}
 	var bounds:=AABB(point-Vector3.ONE*radius,Vector3.ONE*radius*2)
 	var packet:=Codec.brush(point,point,radius,0,deposit_material!=0,maxi(1,deposit_material))

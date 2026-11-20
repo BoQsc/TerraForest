@@ -83,7 +83,7 @@ def run(engine, packaged, report, expected_archive=None):
                 raise RuntimeError((child.stdout+"\n"+child.stderr)[-4000:])
             return [json.loads(row[len(prefix):]) for row in child.stdout.splitlines() if row.startswith(prefix)]
 
-        original = invoke(host, samples()+["save", "quit"], "AUTHORITY ")
+        original = invoke(host, samples()+["v1 inventory", "save", "quit"], "AUTHORITY ")
         assert original[-1]["ok"] and original[0]["ready"]
         archive, = Path(temp).rglob("AuthorityCheck.trw")
         game_input = archive.parent.parent / "worlds" / archive.name
@@ -144,7 +144,8 @@ def run(engine, packaged, report, expected_archive=None):
         first = "v1 1 excavate 240 31 224 3 0"
         invalid = ["v2 1 excavate 240 31 224 3 0", "v1 0 excavate 240 31 224 3 0",
                    "v1 3 excavate 240 31 224 3 1", "v1 1 excavate 240 31 224 4 0",
-                   "v1 2 excavate 240 31 224 3 0", "excavate 240 31 224 3 0"]
+                   "v1 2 excavate 240 31 224 3 0", "excavate 240 31 224 3 0",
+                   "v1 2 excavate 240 31 224 0.25 1", "v1 2 deposit 240 31 224 0.25 2 1"]
         results = invoke(host, [first,first]+invalid+samples()+["save","quit"], "AUTHORITY ")
         assert results[0]["last_request_id"] == 0  # crashed unsaved receipt is gone
         ack = {"ok":True,"version":1,"request_id":1,"changed":True,"revision":1}
@@ -214,9 +215,21 @@ def run(engine, packaged, report, expected_archive=None):
                 assert sample["density"]<0 and sample["depth"]==0
             else:
                 assert sample["density"]==changed[i]["density"]
-        persisted = invoke(host, [place,place.replace("2 2 1","2 3 1"),"v1 35 excavate 240 31 224 2 1",*samples(),"quit"], "AUTHORITY ")
+        ray = "v1 water-surface 256.25 38 224.25 256.25 33 224.25"
+        persisted = invoke(host, [place,place.replace("2 2 1","2 3 1"),"v1 35 excavate 240 31 224 2 1",*samples(),ray,
+                                  ray.replace(" 33 ", " 30 "),ray.replace(" 33 ", " 38 "),
+                                  "v1 water-surface 256.25 50 224.25 256.25 46 224.25","v1 inventory","quit"], "AUTHORITY ")
         assert persisted[1]==place_ack and not persisted[2]["ok"] and not persisted[3]["ok"]
-        assert persisted[4:]==deposited_samples
+        assert persisted[4:-5]==deposited_samples
+        hit, too_far, empty_ray, miss, inventory = persisted[-5:]
+        assert inventory["slots"] == deposited_game["inventory"] == original[-2]["slots"]
+        assert any(slot["item"]==401 and slot["count"]==1 and slot["water_ml"]==0 for slot in inventory["slots"])
+        assert hit["ok"] and hit["hit"] and hit["revision"] == 2 and hit["cell"] == deposited_game["surface_cell"]
+        assert math.isclose(hit["point"][1], deposited_game["surface_y"], abs_tol=1e-4)
+        assert hit["point"][0::2] == [256.25, 224.25]
+        assert all(math.isclose(a,b,abs_tol=1e-4) for a,b in zip(hit["normal"],deposited_game["surface_normal"],strict=True))
+        assert not too_far["ok"] and not empty_ray["ok"] and miss["ok"] and not miss["hit"]
+        report["water_surface"] = hit
         report["deposition"] = dict(ack=place_ack, authority=deposited_samples, gameplay=deposited_game, profile=profile)
         # Corrupt only our disposable canonical file. Failure must preserve the
         # input for recovery and leave its verified backup intact.
@@ -227,6 +240,24 @@ def run(engine, packaged, report, expected_archive=None):
                                   creationflags=subprocess.CREATE_NO_WINDOW)
         assert rejected.returncode and archive.read_bytes()==corrupt
         assert hashlib.sha256(archive.with_suffix(".trw.bak").read_bytes()).digest()==backup_digest
+        # Size the import from this generated fixture. One native publication
+        # can hold the canonical, its staged successor and a backup copy.
+        checkpoint_limit = game_input.stat().st_size + (8 << 20)
+        live_bytes = sum(p.stat().st_size for p in Path(temp).rglob("*") if p.is_file())
+        admit(ROOT, report_bytes=65536, scratch_bytes=16 << 20, world_bytes=live_bytes+checkpoint_limit)
+        bucket, = invoke(base+["--script",str(script),"--","--bucket-checkpoint",
+                               f"--checkpoint-limit={checkpoint_limit}"], [], "GAME_BUCKET ")
+        checkpoint_path = archive.with_name("BucketCheck.trw")
+        live_bytes = sum(p.stat().st_size for p in Path(temp).rglob("*") if p.is_file())
+        admit(ROOT, report_bytes=65536, scratch_bytes=16 << 20, world_bytes=live_bytes+2*checkpoint_path.stat().st_size)
+        bucket_host = host[:-1]+["--authority-slot=BucketCheck"]
+        for commands in (["v1 inventory",*samples(),"save","quit"], ["v1 inventory",*samples(),"quit"]):
+            reopened = invoke(bucket_host,commands,"AUTHORITY ")
+            contents = reopened[1]["slots"][bucket["slot"]]
+            assert contents["count"] == 1 and contents["water_ml"] == 1_000_000
+            assert reopened[2]["water_ml"] == bucket["water_ml"] == original[1]["water_ml"]-1_000_000
+            if "save" in commands:assert reopened[-1]["ok"]
+        report["bucket_save_reload"] = bucket
         report.update(before=original[1:4], after=changed, reloaded=reloaded, gameplay=game,
                       initial_archive_sha256=original_digest.hex(), passed=True)
 

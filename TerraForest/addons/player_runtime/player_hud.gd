@@ -30,7 +30,6 @@ class GroundCatalog:
 const RESOURCES: Dictionary=ItemCatalog.RESOURCES
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7,212:8}
 var ground_tools_enabled:=false
-const STARTER_MATERIAL_COUNT:=64
 var inventory: RefCounted
 var reward_inbox: RefCounted
 var progression: RefCounted
@@ -145,17 +144,9 @@ func prepare() -> bool:
 	if survival==null:inventory=null;return false
 	equipment=ClassDB.instantiate("NativeContainerStore")
 	if not equipment.configure(inventory,1):return false
-	# Preserve the established starter belt; the new shovel is crafted or spawned.
-	for id: int in [1,2,3,4]: inventory.grant(id,1,inventory.snapshot().revision)
-	# Only the default for a missing loadout section. Restoration replaces all
-	# slots, including an explicitly empty saved inventory; never top up on load.
-	if gameplay_construction:
-		var supplies:=PackedInt64Array()
-		for id: int in MATERIALS: supplies.append_array(PackedInt64Array([id,STARTER_MATERIAL_COUNT]))
-		if not inventory.grant_items(supplies,inventory.snapshot().revision).ok:
-			inventory=null
-			return false
-	inventory.grant(401,1,inventory.snapshot().revision)
+	if not ItemCatalog.grant_starter_loadout(inventory,gameplay_construction):
+		inventory=null
+		return false
 	default_loadout=inventory.capture_storage_snapshot()
 	return true
 

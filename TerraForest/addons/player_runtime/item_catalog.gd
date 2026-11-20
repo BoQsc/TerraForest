@@ -103,3 +103,13 @@ static func create_inventory()->RefCounted:
 		if item==501:maximum=preload("res://addons/player_runtime/durability_catalog.gd").WORLD.vehicle
 		if maximum>0 and not inventory.register_durable(item,maximum):return null
 	return inventory
+
+# Use only for a new character or a missing player_loadout archive section.
+static func grant_starter_loadout(inventory:RefCounted,construction_supplies:bool)->bool:
+	for id:int in [1,2,3,4]:
+		if not inventory.grant(id,1,inventory.snapshot().revision).ok:return false
+	if construction_supplies:
+		var supplies:=PackedInt64Array()
+		for id:int in MATERIALS:supplies.append_array(PackedInt64Array([id,64]))
+		if not inventory.grant_items(supplies,inventory.snapshot().revision).ok:return false
+	return inventory.grant(401,1,inventory.snapshot().revision).ok

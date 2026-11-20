@@ -1,3 +1,26 @@
+## November 20 dedicated loadout and bucket targeting
+
+Windows pack `3f6598610b0a`, run `20261120T163411140862Z`, loaded a
+finite inland lake in the gameplay scene and transferred 1,000,000 ml from
+the lake into the bucket in slot 8. The standalone authority loaded the
+resulting terrain, water and loadout checkpoint, saved, terminated and
+reopened it. The lake retained 36,031,293,119 ml and the bucket held
+1,000,000 ml. On the separate deposited-terrain case both processes found
+the surface at y=36.46157 m and agreed on cell (512,72,448) and normal.
+An overlong or zero-length ray was rejected. A well-formed dry ray missed.
+No desktop input or player-owned save was used.
+
+The same pack's isolated Cedar Vale run `20261120T163618216552Z`
+passed both shoreline contact checks and repeated bucket collection and
+placement. Terrain publication to water draw took 140 ms at sea, 289 ms
+at the lake and 141 ms during mining. The lake missed the 250 ms gate.
+
+The slot query belongs to one trusted local operator. Its inventory revision
+is process-local. The next bucket command needs a persisted request identity
+and inventory precondition, including retries after restart, before it can
+qualify as an authoritative mutation. Player identities and replication
+remain separate milestones.
+
 ## November 20 local water mesh dispatch
 
 The installed Windows pack `3ba3ff687835` dispatched mesh preparation on the

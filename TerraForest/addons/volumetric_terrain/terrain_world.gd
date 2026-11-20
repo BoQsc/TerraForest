@@ -282,7 +282,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			var a := Vector3(packet.decode_float(4), packet.decode_float(8), packet.decode_float(12))
 			var b := Vector3(packet.decode_float(16), packet.decode_float(20), packet.decode_float(24))
 			var radius: float = packet.decode_float(28)
-			if not a.is_finite() or not b.is_finite() or not is_finite(radius) or radius < 0.5 or radius > 64.0:
+			if not a.is_finite() or not b.is_finite() or not is_finite(radius) or radius < Codec.MIN_BRUSH_RADIUS or radius > 64.0:
 				return false
 			if maxf(a.abs()[a.abs().max_axis_index()], b.abs()[b.abs().max_axis_index()]) > 10000.0:
 				return false

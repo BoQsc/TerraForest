@@ -13,6 +13,12 @@ func run()->void:
 	if failures==0:
 		game.teleport(Vector3(240,40,224))
 		check(await ready("authority_shore"),"Lake is resident")
+	if "--bucket-checkpoint" in OS.get_cmdline_user_args():
+		if failures==0:save_bucket_checkpoint(path)
+		check(FileAccess.get_sha256(path)==original,"Bucket checkpoint preserves the gameplay input")
+		game.terrain.shutdown();game.free()
+		await process_frame
+		quit(failures);return
 	if failures==0:
 		check(game.terrain.sculpt_sphere(Vector3(240,31,224),3,false,1),"Gameplay admits cross-boundary excavation")
 		check(await ready("authority_edit"),"Gameplay finishes water publication")
@@ -25,6 +31,30 @@ func run()->void:
 	game.terrain.shutdown();game.free()
 	await process_frame
 	quit(failures)
+
+func save_bucket_checkpoint(input_path:String)->void:
+	var inventory:RefCounted=game.player_hud.inventory
+	var state:Dictionary=inventory.snapshot()
+	var slot:int=state.slots.find_custom(func(row:Dictionary)->bool:return row.item==401)
+	if slot<0:check(false,"Gameplay starter bucket is present");return
+	var before:int=game.lakes.water.total_water_ml()
+	var transfer:Dictionary=game.lakes.bucket(Vector3(256.25,38,224.25),Vector3(256.25,33,224.25),false,inventory,slot,state.revision)
+	check(transfer.ok and before-game.lakes.water.total_water_ml()==1000000,"Gameplay transfers one cubic metre into the saved bucket")
+	if not transfer.ok:return
+	var archive:RefCounted=ClassDB.instantiate("NativeWorldArchive")
+	var output:=ProjectSettings.globalize_path("user://authority/BucketCheck.trw")
+	if FileAccess.file_exists(output) or not archive.acquire(output):check(false,"Disposable bucket checkpoint is available");return
+	var original:Dictionary=archive.decode(FileAccess.get_file_as_bytes(input_path))
+	var catalog:PackedByteArray=game.lakes.water.snapshot_catalog(original.sections.volumetric_water)
+	original.sections.volumetric_water=game.lakes.water.capture_streaming_snapshot(catalog)
+	original.sections.player_loadout=game.player_hud.capture_snapshot()
+	var limit:=0
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--checkpoint-limit="):limit=int(arg.trim_prefix("--checkpoint-limit="))
+	var checkpoint:PackedByteArray=archive.encode(original.sections)
+	check(not checkpoint.is_empty() and checkpoint.size()<=limit and archive.publish(output,checkpoint)==OK,"Publish matching gameplay inventory and water within the capture reservation")
+	archive.release()
+	print("GAME_BUCKET ",JSON.stringify({"slot":slot,"water_ml":game.lakes.water.total_water_ml()}))
 
 func sample_commit()->void:
 	var token:int=preload("res://addons/volumetric_terrain/surface_tokens.gd").allocate()
@@ -42,4 +72,8 @@ func sample_commit()->void:
 	if failures==0:
 		var depths:Array=[]
 		for point in POINTS:depths.append(game.lakes.depth_at(point))
-		print("GAME_AUTHORITY ",JSON.stringify({"revision":game.terrain.published_revision,"density":Array(received[0].values),"depth":depths,"water_ml":game.lakes.water.statistics().water_ml}))
+		var target:Dictionary=game.lakes.water.raycast_surface(Vector3(256.25,38,224.25),Vector3(256.25,33,224.25))
+		check(target.hit,"A bucket ray intersects the resident lake surface")
+		if not target.hit:return
+		var normal:Vector3=target.normal
+		print("GAME_AUTHORITY ",JSON.stringify({"revision":game.terrain.published_revision,"density":Array(received[0].values),"depth":depths,"water_ml":game.lakes.water.statistics().water_ml,"surface_y":target.point.y,"surface_cell":[target.cell.x,target.cell.y,target.cell.z],"surface_normal":[normal.x,normal.y,normal.z],"inventory":game.player_hud.inventory.snapshot().slots}))

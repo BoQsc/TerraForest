@@ -32,6 +32,13 @@ func run()->void:
 
 func command(args:PackedStringArray)->Dictionary:
 	if args==PackedStringArray(["edit-profile"]):return {"ok":true,"profile":world.last_edit_profile}
+	if args==PackedStringArray(["v1","inventory"]):
+		var state:Dictionary=world.inventory.snapshot()
+		return {"ok":true,"version":1,"slots":state.slots,"session_revision":state.revision}
+	if args.size()==8 and args[0]=="v1" and args[1]=="water-surface":
+		for index in range(2,8):
+			if not args[index].is_valid_float():return {"ok":false,"reason":"Invalid position"}
+		return world.water_surface(Vector3(float(args[2]),float(args[3]),float(args[4])),Vector3(float(args[5]),float(args[6]),float(args[7])))
 	if args.size()>=2 and args[0]=="v1" and args[1]=="sample":
 		var coordinates:=args.size()-2
 		if coordinates==0 or coordinates%3!=0 or coordinates>3*World.MAX_QUERY_POINTS:return {"ok":false,"reason":"Invalid point count"}

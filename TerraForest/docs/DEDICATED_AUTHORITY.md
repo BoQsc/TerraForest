@@ -18,6 +18,8 @@ lakes. Saving is explicit. A closed input pipe or `quit` releases the lease.
 | `lakes` | Read generated lake definitions |
 | `sample X Y Z` | Sample terrain density, height, water depth, total water and terrain revision |
 | `v1 sample X Y Z [X Y Z ...]` | Read one to eight world positions in order, returning one terrain revision and one total water quantity for the set |
+| `v1 water-surface X Y Z END_X END_Y END_Z` | Cast a bucket-length segment against the resident water surface. A hit returns world position, normal and owning cell as numeric triples, alongside the terrain revision. |
+| `v1 inventory` | Read the trusted local operator's 32 gameplay slots, including bucket contents and durability. The native inventory revision is scoped to the current process. |
 | `excavate X Y Z R REV` | Excavate a sphere against the specified revision and return the sample after water settles |
 | `v1 ID excavate X Y Z R REV` | Commit an ordered operator request and return its ID, resulting revision and changed flag |
 | `v1 ID deposit X Y Z R MATERIAL REV` | Add solid terrain, reconcile displaced water and commit under the same request stream. Material IDs 1 through 3 are accepted. |
@@ -35,8 +37,11 @@ with terrain and water, using at most 1,152 bytes of receipt payload. A
 legacy single receipt seeds the window. Two-section archives start at ID
 zero. After an unsaved exit resume at the high-water mark in the reopened slot.
 
-The current format accepts inline terrain, native volumetric water and
-the optional operator receipt. World
+The current format accepts inline terrain, native volumetric water, the
+gameplay `player_loadout` and the optional operator receipt. On opening a
+world without a loadout the host creates the standard construction-gameplay
+starter belt. An existing loadout, including an empty one, replaces that
+default. Saves publish the loadout and finite water in one archive. World
 archives with other components or paged sidecars need those providers and
 their collision inputs before this host can edit them. Keep their original
 saves in the gameplay world directory. The native archive takes the same
@@ -48,6 +53,11 @@ The batched read accepts finite coordinates within the 2000 × 256 × 2000 m
 world bounds. Invalid input rejects the whole read. Each entry in `samples`
 has `height`, `density` and `depth`. The enclosing response has `revision`
 and `water_ml`. Reads leave the excavation request stream untouched.
+The surface query uses the same native intersection as a player aiming a
+bucket. Both endpoints must be finite and inside the world. A nonzero ray
+up to five metres long can return a successful miss. New dedicated brushes
+must have radius 0.5 through 8 metres. A retained receipt from an older
+build still replays its original acknowledgement.
 The response to an edit follows the water solve. Concurrent gameplay admission,
 regional replication, authenticated peer request streams and 30 Hz scheduling remain open.
 The standalone process does not load the world scene, player, camera or HUD.
