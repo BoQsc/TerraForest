@@ -557,6 +557,52 @@ func _prepare_contact(source:Object,job:Dictionary,command:PackedByteArray,revis
 				_push(part)
 				break
 
+# Each worker holds a private snapshot of one 64 m group at the accepted
+# revision. Only complete ordinary terrain packets are eligible for early
+# installation. Missing resident data or an uncaptured shadow uses _build.
+func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary)->void:
+	for item:Dictionary in items:
+		var key:Vector3i=item.key
+		var start:=Time.get_ticks_usec()
+		var reply:PackedByteArray=source.execute(Codec.command(1,[key.x,key.y,key.z,1,job.build_epoch]))
+		if not Codec.reply_ok(reply):continue
+		var packet:=reply.slice(16)
+		var chunk:=Codec.decode_mesh(packet)
+		if chunk.has("error"):continue
+		var faces:PackedVector3Array=collision_recipes.merge_planar_faces(chunk.faces)
+		var recipes:Dictionary=collision_recipes.prepare(faces,_collision_piece_triangles)
+		if not recipes.ok:continue
+		chunk.merge({"collision_pieces":recipes.pieces,"collision_prepare_ms":recipes.prepare_ms,
+			"stamp":item.stamp,"key":key,"epoch":job.epoch,"ticket":job.ticket,"kind":"edit_chunk",
+			"worker_ms":(Time.get_ticks_usec()-start)/1000.0})
+		chunk.faces=PackedVector3Array()
+		completed[key]={"packet":packet,"worker_ms":chunk.worker_ms}
+		_push(chunk)
+
+func _dispatch_resident_groups(job:Dictionary,revision:int,scheduled:Dictionary)->Array:
+	var tasks:Array=[]
+	if job.tiles.size()<8 or region_terrain or brick_terrain or snapshot_terrain:return tasks
+	var groups:Dictionary={}
+	for item:Dictionary in job.tiles:
+		var key:Vector3i=item.key
+		if key.z not in [16,32] or item.has("brick_bottoms"):continue
+		var group:=Vector2i(key.x/64,key.y/64)*64
+		if not groups.has(group):groups[group]=[]
+		groups[group].append(item)
+	for group:Vector2i in groups:
+		if tasks.size()>=3:break
+		var items:Array=groups[group]
+		if items.size()<2:continue
+		var bounds:=Rect2i(group,Vector2i(64,64))
+		var source:Object=native.capture_contact_core(bounds,revision,job.build_epoch)
+		if source==null:continue
+		var completed:Dictionary={}
+		var task:=WorkerThreadPool.add_task(_build_resident_group.bind(source,items,job,completed),true,"Committed terrain owners")
+		if task<0:continue
+		tasks.append({"task":task,"completed":completed,"items":items})
+		for item:Dictionary in items:scheduled[item.key]=true
+	return tasks
+
 func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
 	return EditCommands.execute(native,commands,revision_before)
 
@@ -1551,7 +1597,10 @@ func _run() -> void:
 				# Stream finished patches to main-thread staging immediately. Worker
 				# builds and resource preparation OVERLAP instead of running in series.
 				var build_total: float = 0.0
+				var scheduled:Dictionary={}
+				var groups:=_dispatch_resident_groups(job,after_stats.decode_u32(12),scheduled)
 				for item: Dictionary in job["tiles"]:
+					if scheduled.has(item.key):continue
 					var selected: Array=item.get("brick_bottoms",[])
 					var retain_geometry:bool=item.has("brick_bottoms") and selected.is_empty()
 					# The 17m halo protects changes to the simplifier's page-presence
@@ -1579,6 +1628,19 @@ func _run() -> void:
 					chunk["epoch"] = job["epoch"]
 					chunk["ticket"] = job["ticket"]
 					_push(chunk)
+				for group:Dictionary in groups:
+					WorkerThreadPool.wait_for_task_completion(group.task)
+					for item:Dictionary in group["items"]:
+						if group.completed.has(item.key):
+							var result:Dictionary=group.completed[item.key]
+							_remember_packet(item.key,result.packet)
+							build_total+=float(result.worker_ms)
+							continue
+						var chunk:=_build(item.key,false,job.build_epoch,false,[],true)
+						build_total+=float(chunk.get("worker_ms",0.0))
+						if chunk.get("cancelled",false):chunk={"error":"Edit build cancelled; reload before further editing"}
+						chunk.merge({"stamp":item.stamp,"key":item.key,"epoch":job.epoch,"ticket":job.ticket,"kind":"edit_chunk"})
+						_push(chunk)
 				support_started=Time.get_ticks_usec()
 				var support_after:=_edit_support_samples(support_points,after_stats.decode_u32(12))
 				var support:Array=[]

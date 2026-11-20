@@ -1,3 +1,87 @@
+## Resident edit transaction results
+
+The two-frame terrain, collision and water publication gate is open.
+A large subtractive box or sphere stages changed pages privately, then installs
+the page buffers under the authority lock after resident admission succeeds.
+Up to three independent resident snapshots can reconstruct groups of ordinary
+fine terrain owners at that revision. Missing pages or a ray leaving the
+captured halo send the owner back through the normal builder. The two-angle
+test uses the same edit, geometry and physics entry points as the player.
+
+For each aligned 4 m water region the native terrain bridge now returns its
+exact triangle boundary, 729 half-metre density samples and 64 construction
+cells in one revision-stamped packet. Local invalidation looks up region keys
+by coordinate when cheaper than walking the sparse store. Water still solves
+quantities and subsequently publishes its render, picking and immersion data.
+The private terrain transaction does not make these later steps atomic with
+the presentation of terrain collision.
+
+The native comparison against `c6853dd2` matched 16 serialized artifacts.
+The 64 m cut changed 219,216 samples. Its replay changed zero, and an
+overlapping sphere changed 9,693. The test also rejected an admission after
+one new slot had been reserved and injected allocation failures. The field
+survived both. A separate check compared every triangle byte, density value
+and construction occupancy bit with the old probe protocol, including on the
+world boundary. [Native evidence](../reports/checks/20261120T221917366844Z_terrain_edit_core_parity.json).
+
+The isolated packaged game used the read-only Cedar Vale save, 1920 × 1080
+and the RTX 4050 Laptop GPU. Package SHA-256 was
+`029aa8b6a793d91bb23c3e12ccddf5f58c4ae75ef46d569935adbe7be4ea6732`.
+The executable harness also verified the external native-library hashes.
+
+| Workload | Collider and visible result | Frame intervals |
+|---|---|---|
+| Full 64 m cut | Center on draw 4 at 50.08 ms. Zero of nine changed probes across the footprint matched on draw two. The full terrain revision was drawn at 189.92 ms. | Worst interval during the cut was 25.27 ms. |
+| Sea barrel | Lowered floor on draw 2. First matching water on draw 8 at 128.41 ms after edit admission. | p99 26.26 ms, worst 54.12 ms. |
+| Lake barrel | Lowered floor on draw 2. First matching water on draw 18 at 306.46 ms after edit admission. | p99 57.07 ms, worst 88.69 ms. |
+
+The shoreline timing run disabled screenshots. Outside tagged diagnostics its
+p99 intervals were 26.02 ms at sea and 22.69 ms at the lake. Elapsed time
+from the initiating player action through barrel detonation to matching water
+was 1,210.15 ms at sea and 687.88 ms at the lake. These are engine intervals.
+[Full cut log](../reports/checks/20261120T223304480721Z/engine.log) ·
+[Barrel timing and per-frame timeline](../reports/checks/20261120T223351324938Z/normal_gameplay_blast_performance.json).
+
+Against the preceding package, the field fell from 29.38 ms to 21.62 ms and
+the full cut draw from 222.54 ms to 189.92 ms in these runs. The 36 replaced
+terrain owners had the same final mesh digest and the 3,750 collision samples
+matched byte for byte. The summed mesh worker times rose from 113.08 ms to
+136.01 ms with concurrency. This run shows a wall-time gain and does not
+establish reduced total CPU work. [Collision samples](../reports/checks/20261120T223304480721Z/brush_contacts.json).
+
+At first water publication all 81 crater probes per shore found water, and
+23 sea and 26 lake bank probes found contact within 2 cm. The measured sea
+point used the 40 m ocean presentation. The finite lake hit was at 44.011 m.
+The separate construction test excluded water inside the object, found contact
+within 1 cm on all four walls and restored the boundary on removal.
+[Barrel contact log](../reports/checks/20261120T223351324938Z/engine.log) ·
+[Object contact log](../reports/checks/20261120T223445390292Z/engine.log).
+
+| Scene | First camera | Reverse camera | Submerged |
+|---|---|---|---|
+| 64 m cut | [Before](../reports/checks/20261120T223531760792Z/cut_before_angle_1.png) · [after](../reports/checks/20261120T223531760792Z/cut_after_angle_1.png) | [Before](../reports/checks/20261120T223531760792Z/cut_before_angle_2.png) · [after](../reports/checks/20261120T223531760792Z/cut_after_angle_2.png) | Inland cut |
+| Sea barrel | [Before](../reports/checks/20261120T223615668518Z/player_shore_before.png) · [after](../reports/checks/20261120T223615668518Z/player_shore_after.png) | [Before](../reports/checks/20261120T223615668518Z/player_shore_before_reverse.png) · [after](../reports/checks/20261120T223615668518Z/player_shore_after_reverse.png) | [After](../reports/checks/20261120T223615668518Z/player_shore_underwater.png) |
+| Lake barrel | [Before](../reports/checks/20261120T223615668518Z/player_lake_before.png) · [after](../reports/checks/20261120T223615668518Z/player_lake_after.png) | [Before](../reports/checks/20261120T223615668518Z/player_lake_before_reverse.png) · [after](../reports/checks/20261120T223615668518Z/player_lake_after_reverse.png) | [After](../reports/checks/20261120T223615668518Z/player_lake_underwater.png) |
+
+The 64 m edit still reconstructs and installs replacement physics and render
+owners. The lake worker captured 122 regions, changed quantities in 51 and
+spent 28.33 ms in the local solver. Collider and water publication remained
+16 draws apart. Wider settling was still pending when the local water
+appeared. This limits the value of further changes to queue priorities.
+The next architectural requirement remains a resident edit representation
+shared by rendering and physics, with local water connectivity and capacity
+that can be updated at the same revision. Keep the full-footprint and
+shoreline checks as the acceptance criteria.
+
+An earlier qualification run on package `6c7e27468445` recorded a 1,323.7 ms
+first draw for the small brush. The run stopped exercising the large brush
+after that timing failure. The harness now attempts the 64 m edit when the
+terrain is ready even if an earlier timing check failed. The stall remains
+unexplained. [Retained outlier](../reports/checks/20261120T222025528698Z/engine.log).
+
+Earlier image pairs listed below may be cold. Their original run folders
+contain `captures.archive.json` with the hashes and restore information.
+
 ## Concurrent resident cut and shoreline publication
 
 **The two-frame gate remains open.** The terrain worker captures the resident

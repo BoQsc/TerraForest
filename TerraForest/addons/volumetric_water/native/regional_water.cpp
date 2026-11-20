@@ -125,32 +125,39 @@ int64_t NativeWaterTerrainPatch::sample_terrain(Object *core,int64_t budget,int6
     if(revision!=rev||epoch!=cancel)return status=-4;
     if(terrain_prepared)return prepare_structures();
     if(boundary.is_empty()){
-        PackedByteArray query;query.resize(24);query.encode_u32(0,32);query.encode_u32(4,rev);query.encode_u32(8,cancel);
+        PackedByteArray query;query.resize(24);query.encode_u32(0,budget>=729&&core->is_class("TerrainCore")?43:32);query.encode_u32(4,rev);query.encode_u32(8,cancel);
         query.encode_u32(12,coord.x*4);query.encode_u32(16,coord.y*4);query.encode_u32(20,coord.z*4);
         boundary=core->call("execute",query);
         if(boundary.size()<28||boundary.decode_u32(0)!=0x32505254||boundary.decode_u32(8)||boundary.decode_u32(12)!=uint64_t(rev)||boundary.decode_u32(16)!=uint64_t(cancel))return status=-4;
         uint32_t vertices=boundary.decode_u32(20),indices=boundary.decode_u32(24);
-        if(vertices>4096||indices>24576||indices%3||boundary.size()!=28+int64_t(vertices)*12+int64_t(indices)*4)return status=-2;
+        if(vertices>4096||indices>24576||indices%3||boundary.size()!=28+int64_t(vertices)*12+int64_t(indices)*4+(boundary.decode_u32(4)==43?729*4+64:0))return status=-2;
         for(uint32_t i=0;i<indices;++i)if(boundary.decode_u32(28+vertices*12+i*4)>=vertices)return status=-2;
     }
-    // The backend pins the terrain revision and cancel epoch around every call.
-    // One native interpolated batch (<=256 points), rather than a script call per sample.
-    const uint64_t started=Time::get_singleton()->get_ticks_usec();
-    const int count=std::min({int(budget),512,729-cursor});
-    PackedByteArray command;command.resize(12+count*12);command.encode_u32(0,31);command.encode_u32(4,rev);command.encode_u32(8,count);
-    for(int j=0;j<count;++j){int i=cursor+j;Vector3 p=Vector3(coord)*4.0+Vector3(i%9,(i/9)%9,i/81)*0.5;
-        p.y=std::clamp(double(p.y),1.0,255.0);
-        // The last region owns lattice nodes on x/z=2000, while the terrain
-        // probe protocol accepts positions strictly inside its domain. Sample
-        // the one-ULP interior limit; exact contact geometry still comes from
-        // the authoritative boundary packet. Never retry this as a stale edit.
-        p.x=std::min(p.x,std::nextafter(2000.f,0.f));
-        p.z=std::min(p.z,std::nextafter(2000.f,0.f));
-        command.encode_float(12+j*12,p.x);command.encode_float(16+j*12,p.y);command.encode_float(20+j*12,p.z);}
-    const PackedByteArray reply=core->call("execute",command);
-    if(!reply_ok(reply,20+count*4)||reply.decode_u32(12)!=uint64_t(rev)||reply.decode_u32(16)!=uint64_t(count))return status=-4;
-    for(int j=0;j<count;++j){float d=reply.decode_float(20+j*4);if(!std::isfinite(d))return status=-2;density[cursor++]=d;}
-    if(cursor<729){if(budget>count&&Time::get_singleton()->get_ticks_usec()-started<1500)return sample_terrain(core,budget-count,rev,cancel);return 0;}
+    const bool local_packet=boundary.decode_u32(4)==43;
+    if(local_packet){
+        const int at=boundary.size()-64-729*4;
+        for(int i=0;i<729;++i){density[i]=boundary.decode_float(at+i*4);if(!std::isfinite(density[i]))return status=-2;}
+        cursor=729;
+    }else{
+        // The backend pins the terrain revision and cancel epoch around every call.
+        // One native interpolated batch (<=256 points), rather than a script call per sample.
+        const uint64_t started=Time::get_singleton()->get_ticks_usec();
+        const int count=std::min({int(budget),512,729-cursor});
+        PackedByteArray command;command.resize(12+count*12);command.encode_u32(0,31);command.encode_u32(4,rev);command.encode_u32(8,count);
+        for(int j=0;j<count;++j){int i=cursor+j;Vector3 p=Vector3(coord)*4.0+Vector3(i%9,(i/9)%9,i/81)*0.5;
+            p.y=std::clamp(double(p.y),1.0,255.0);
+            // The last region owns lattice nodes on x/z=2000, while the terrain
+            // probe protocol accepts positions strictly inside its domain. Sample
+            // the one-ULP interior limit; exact contact geometry still comes from
+            // the authoritative boundary packet. Never retry this as a stale edit.
+            p.x=std::min(p.x,std::nextafter(2000.f,0.f));
+            p.z=std::min(p.z,std::nextafter(2000.f,0.f));
+            command.encode_float(12+j*12,p.x);command.encode_float(16+j*12,p.y);command.encode_float(20+j*12,p.z);}
+        const PackedByteArray reply=core->call("execute",command);
+        if(!reply_ok(reply,20+count*4)||reply.decode_u32(12)!=uint64_t(rev)||reply.decode_u32(16)!=uint64_t(count))return status=-4;
+        for(int j=0;j<count;++j){float d=reply.decode_float(20+j*4);if(!std::isfinite(d))return status=-2;density[cursor++]=d;}
+        if(cursor<729){if(budget>count&&Time::get_singleton()->get_ticks_usec()-started<1500)return sample_terrain(core,budget-count,rev,cancel);return 0;}
+    }
     // The raw trilinear density can protrude beyond its extracted boundary
     // (particularly a single deposited lattice sample). Reconstruct its narrow
     // band from the same terrain triangles rendered/collided by the game.
@@ -200,12 +207,20 @@ int64_t NativeWaterTerrainPatch::sample_terrain(Object *core,int64_t budget,int6
     }
     // Explicit one-metre terrain cubes are separate from smooth density.
     // Query cell centres on the same pinned worker revision.
-    PackedByteArray blocks;blocks.resize(12+512*12);blocks.encode_u32(0,33);blocks.encode_u32(4,rev);blocks.encode_u32(8,512);
-    for(int i=0;i<512;++i){Vector3 p=Vector3(coord)*4.0+Vector3(i%8,(i/8)%8,i/64)*.5+Vector3(.25,.25,.25);
-        blocks.encode_float(12+i*12,p.x);blocks.encode_float(16+i*12,p.y);blocks.encode_float(20+i*12,p.z);}
-    PackedByteArray occupied=core->call("execute",blocks);
-    if(!reply_ok(occupied,20+512*4)||occupied.decode_u32(12)!=uint64_t(rev))return status=-4;
-    for(int i=0;i<512;++i)if(occupied.decode_float(20+i*4)>0)floor[i]=ceiling[i]=500;
+    if(local_packet){
+        const int at=boundary.size()-64;
+        for(int i=0;i<512;++i){
+            int x=(i%8)/2,y=((i/8)%8)/2,z=(i/64)/2;
+            if(boundary[at+x+4*y+16*z])floor[i]=ceiling[i]=500;
+        }
+    }else{
+        PackedByteArray blocks;blocks.resize(12+512*12);blocks.encode_u32(0,33);blocks.encode_u32(4,rev);blocks.encode_u32(8,512);
+        for(int i=0;i<512;++i){Vector3 p=Vector3(coord)*4.0+Vector3(i%8,(i/8)%8,i/64)*.5+Vector3(.25,.25,.25);
+            blocks.encode_float(12+i*12,p.x);blocks.encode_float(16+i*12,p.y);blocks.encode_float(20+i*12,p.z);}
+        PackedByteArray occupied=core->call("execute",blocks);
+        if(!reply_ok(occupied,20+512*4)||occupied.decode_u32(12)!=uint64_t(rev))return status=-4;
+        for(int i=0;i<512;++i)if(occupied.decode_float(20+i*4)>0)floor[i]=ceiling[i]=500;
+    }
     // Retain the terrain triangles themselves, clipped only in X/Z. No
     // conversion to another density grid or four-corner floor approximation.
     auto prepared=std::make_shared<TerrainWaterContacts>();
@@ -622,11 +637,29 @@ void NativeRegionalWater::invalidate_buildings(const AABB &bounds){
 void NativeRegionalWater::invalidate_regions(const AABB &bounds,bool replace_water,bool buildings){
     if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return;
     cancel_mesh_batch();
-    // Restore prior amounts before edits; never regenerate water after mining.
+    // Look up resident and cached regions by coordinate for local edits.
+    // A map-wide invalidation still walks sparse entries only.
+    const Vector3 span(2000,256,2000);
+    const Vector3i lo=Vector3i((bounds.position.clamp(Vector3(),span)/4).floor());
+    const Vector3i end=Vector3i((bounds.get_end().clamp(Vector3(),span)/4).ceil());
+    const Vector3i size=end-lo;
+    const uint64_t boxes=uint64_t(size.x)*size.y*size.z;
+    auto overlaps=[&](Key k){return AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds);};
     std::vector<Key> affected;
-    for(const auto &[k,cached]:ocean_cache)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds))affected.push_back(k);
-    for(Key k:affected)restore_ocean_cache(k);
-    for(auto &[k,r]:regions)if(AABB(Vector3(position(k))*4.0,Vector3(4,4,4)).intersects(bounds)){
+    if(boxes<=regions.size()+ocean_cache.size()){
+        for(int z=lo.z;z<end.z;++z)for(int y=lo.y;y<end.y;++y)for(int x=lo.x;x<end.x;++x){
+            Key k=key(Vector3i(x,y,z));if(!overlaps(k))continue;
+            if(ocean_cache.count(k))restore_ocean_cache(k);
+            if(regions.count(k))affected.push_back(k);
+        }
+    }else{
+        for(const auto &[k,cached]:ocean_cache)if(overlaps(k))affected.push_back(k);
+        for(Key k:affected)restore_ocean_cache(k);
+        affected.clear();
+        for(const auto &[k,r]:regions)if(overlaps(k))affected.push_back(k);
+    }
+    for(Key k:affected){
+        Region &r=regions.at(k);
         if(r.ocean_state==1)r.ocean_state=2;
         invalidate_snapshot();
         // Only narrow mesh notifications when every pending invalidation is a

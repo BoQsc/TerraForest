@@ -918,7 +918,8 @@ func check_authoring_brush()->void:
    await RenderingServer.frame_post_draw
    var capture_path:=evidence.path_join("authoring_brush_%d.png"%i)
    check(root.get_texture().get_image().save_png(capture_path)==OK,"Rendered brush view retained")
-  if i==2 or failures>0:continue
+  # Keep the large-cut regression observable after a small-brush timing miss.
+  if i==2 or game.terrain.pending_edit or not game.terrain.latest_error.is_empty():continue
   var cut_angles:=i==1 and "--authoring-cut-angles" in OS.get_cmdline_user_args() and DisplayServer.get_name()!="headless"
   if cut_angles:await capture_cut_angles(center,"before")
   var revision:int=game.terrain.published_revision

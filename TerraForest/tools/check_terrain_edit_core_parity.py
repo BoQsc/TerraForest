@@ -26,7 +26,7 @@ def main():
     env = os.environ.copy()
     env['ZIG_GLOBAL_CACHE_DIR'] = str(CACHE/'zig-global-cache')
     env['ZIG_LOCAL_CACHE_DIR'] = str(ROOT/'.build/zig-local-cache')
-    report = {'baseline_commit': baseline_commit, 'admission': admission, 'scope': 'Exact serialized fields and edit receipts, four-generator semantic matrix and 256 ordered edits plus four complete mesh packets on generators 1/31; allocation failure rollback and balance. Field and mesh timings are separate; physics/publication/rendering excluded.', 'runs': {}}
+    report = {'baseline_commit': baseline_commit, 'admission': admission, 'scope': 'Exact serialized fields and edit receipts, 64 m box cut, replay and overlapping sphere, four-generator semantic matrix and 256 ordered edits plus four complete mesh packets on generators 1/31; allocation failure rollback and balance. Field and mesh timings are separate; physics/publication/rendering excluded.', 'runs': {}}
     # Receipt-owned temporary compiler products retire after both processes exit.
     with tempfile.TemporaryDirectory(prefix='edit_core_parity_', dir=ROOT/'.build') as temporary:
         for name, source in [('baseline', baseline), ('candidate', candidate), ('baseline_repeat', baseline)]:
@@ -44,7 +44,7 @@ def main():
             report['runs'][name] = {'core_sha256': hashlib.sha256(source).hexdigest(), 'exit_code': run.returncode, 'log': run.stdout+run.stderr, 'hashes': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(folder.glob('*.bin'))}}
     before, after = report['runs']['baseline'], report['runs']['candidate']
     repeated = report['runs']['baseline_repeat']
-    report['ok'] = before['exit_code'] == after['exit_code'] == repeated['exit_code'] == 0 and len(before['hashes']) == 14 and before['hashes'] == after['hashes'] == repeated['hashes']
+    report['ok'] = before['exit_code'] == after['exit_code'] == repeated['exit_code'] == 0 and len(before['hashes']) == 16 and before['hashes'] == after['hashes'] == repeated['hashes']
     report['harness_sha256'] = hashlib.sha256(harness.read_bytes()).hexdigest()
     report['included_harness_sha256'] = hashlib.sha256((harness.parent/'terrain_edit_atomicity_probe.cpp').read_bytes()).hexdigest()
     report['source_patch'] = subprocess.check_output(['git','diff','--',

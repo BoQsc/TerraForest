@@ -590,22 +590,128 @@ float World::sample(int x,int y,int z,u8*mat)const{
  if(mat)*mat=base_material(point,h);
  return base(point,h);
 }
+static bool generate_page(const World &w,int px,int py,int pz,Page &page){
+ page.key=page_key(px,py,pz);page.d=(i16*)tr_alloc(PAGE_SAMPLES*sizeof(i16));page.mat=(u8*)tr_alloc(PAGE_SAMPLES);
+ if(!page.d||!page.mat){if(page.d)tr_free(page.d);if(page.mat)tr_free(page.mat);page.d=nullptr;page.mat=nullptr;tr_oom=true;return false;}
+ zero_bytes(page.mat,PAGE_SAMPLES);
+ for(int z=0;z<16;z++)for(int x=0;x<16;x++){
+  float wx=float(px*16+x),wz=float(pz*16+z),h=w.edit_height(px*16+x,pz*16+z);
+  for(int y=0;y<16;y++){
+   int index=x+16*(z+16*y);V3 point={wx,float(py*16+y),wz};page.d[index]=quant(w.base(point,h));
+   page.mat[index]=w.base_material(point,h);
+  }
+ }
+ return true;
+}
 Page* World::ensure(int px,int py,int pz){
  u32 key=page_key(px,py,pz);int at=pages_by_key.get(key);if(at>=0)return resident_page(at)?&pages[at]:nullptr;
  if(pages.n>=(page_access?MAX_AUTHORED_PAGES:MAX_PAGES)||(page_access&&!page_access->admit(*this)))return nullptr;
- Page page;page.key=key;page.d=(i16*)tr_alloc(PAGE_SAMPLES*sizeof(i16));page.mat=(u8*)tr_alloc(PAGE_SAMPLES);
- if(!page.d||!page.mat){if(page.d)tr_free(page.d);if(page.mat)tr_free(page.mat);tr_oom=true;return nullptr;}
- zero_bytes(page.mat,PAGE_SAMPLES);
- for(int z=0;z<16;z++)for(int x=0;x<16;x++){
-  float wx=float(px*16+x),wz=float(pz*16+z),h=edit_height(px*16+x,pz*16+z);
-  for(int y=0;y<16;y++){
-   int index=x+16*(z+16*y);V3 point={wx,float(py*16+y),wz};page.d[index]=quant(base(point,h));
-   page.mat[index]=base_material(point,h);
-  }
- }
+ Page page;if(!generate_page(*this,px,py,pz,page))return nullptr;
  int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);if(page_access)page_access->inserted(*this,idx);return &pages[idx];
 }
 static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,ab(p.z-c.z)-r};return length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);}
+// Large excavations keep one replacement per touched page. Sampling, inventory
+// accounting and generation happen on private buffers. The live indices and
+// their revisions change only once all pages have passed resident admission.
+struct CutPages {
+ struct Replacement {Page data;int source;};
+ World &world;
+ List<Replacement> replacements;
+ Map by_key;
+ int added=0,changed=0;
+ u32 removed[16]{};
+ explicit CutPages(World &w):world(w){}
+ ~CutPages(){
+  for(int i=0;i<replacements.n;i++){tr_free(replacements[i].data.d);tr_free(replacements[i].data.mat);}
+  replacements.release();by_key.release();
+ }
+ Page *write_page(u32 key,int source,int px,int py,int pz){
+  int at=replacements.push({{},source});if(tr_oom)return nullptr;
+  Page &page=replacements[at].data;page.key=key;
+  if(source<0){
+   if(world.pages.n+added>=(world.page_access?MAX_AUTHORED_PAGES:MAX_PAGES))return nullptr;
+   if(!generate_page(world,px,py,pz,page))return nullptr;
+   ++added;
+  }else{
+   const Page &original=world.pages[source];
+   page.d=static_cast<i16*>(tr_alloc(PAGE_SAMPLES*sizeof(i16)));
+   page.mat=static_cast<u8*>(tr_alloc(PAGE_SAMPLES));
+   if(!page.d||!page.mat){tr_oom=true;return nullptr;}
+   copy_bytes(page.d,original.d,PAGE_SAMPLES*sizeof(i16));
+   copy_bytes(page.mat,original.mat,PAGE_SAMPLES);
+  }
+  by_key.put(key,at);return tr_oom?nullptr:&page;
+ }
+ bool commit(){
+  if(!changed)return true;
+  const int original_pages=world.pages.n;
+  if(added){
+   if(!world.pages.reserve(original_pages+added))return false;
+   int cap=world.pages_by_key.cap?world.pages_by_key.cap:64;
+   while((world.pages_by_key.n+added+1)*10>=cap*7)cap*=2;
+   if(cap!=world.pages_by_key.cap||(world.pages_by_key.used+added+1)*10>=cap*7)world.pages_by_key.rehash(cap);
+   if(tr_oom)return false;
+  }
+  // Reserve the live LRU slots in order. The edit pin protects these new
+  // slots. A rejection unwinds just the reservation; no old field was changed.
+  for(int i=0;i<replacements.n;i++){
+   auto &r=replacements[i];if(r.source>=0)continue;
+   if(world.page_access&&!world.page_access->admit(world)){
+    while(world.pages.n>original_pages){int at=world.pages.n-1;world.page_access->removed(world,at);--world.pages.n;}
+    return false;
+   }
+   Page slot;slot.key=r.data.key;r.source=world.pages.push(slot);
+   if(world.page_access)world.page_access->inserted(world,r.source);
+  }
+  ++world.storage_serial;
+  for(int i=0;i<replacements.n;i++){
+   auto &r=replacements[i];Page &live=world.pages[r.source];
+   if(r.source>=original_pages){
+    int x,y,z;decode_page(live.key,x,y,z);
+    world.pages_by_key.put(live.key,r.source);world.edit_columns[x+NP*z]|=1u<<y;
+   }
+   auto *old_density=live.d;auto *old_material=live.mat;
+   live.d=r.data.d;live.mat=r.data.mat;r.data.d=old_density;r.data.mat=old_material;
+   live.storage_version=world.storage_serial;live.geometry_digest_valid=false;
+  }
+  return true;
+ }
+};
+static bool stage_point_cut(World &w,V3 center,float radius,int shape,u8 material,V3 lo,V3 hi,int &changes,u32 *removed){
+ CutPages txn(w);
+ for(int z=fl(lo.z);z<=fl(hi.z);z++)for(int x=fl(lo.x);x<=fl(hi.x);x++){
+  float height=w.edit_height(x,z);
+  int source=-1,last_py=-1;u32 key=0;Page *replacement=nullptr;
+  for(int y=fl(lo.y);y<=fl(hi.y);y++){
+   V3 p={float(x),float(y),float(z)};
+   float brush=shape==1?box_distance(p,center,radius):length(p-center)-radius;
+   if(brush>SDF_BAND)continue;
+   int py=y>>4;
+   if(py!=last_py){
+    last_py=py;key=page_key(x>>4,py,z>>4);source=w.pages_by_key.get(key);
+    int at=txn.by_key.get(key);replacement=at<0?nullptr:&txn.replacements[at].data;
+   }
+   int j=(x&15)+16*((z&15)+16*(y&15));
+   const Page *samples=replacement?replacement:(source<0?nullptr:&w.pages[source]);
+   i16 old=samples?samples->d[j]:quant(w.base(p,height));
+   i16 value=y<=3?old:imx(old,quant(-brush));
+   if(x==0||x==WORLD||z==0||z==WORLD||y<=1||y>=255)value=imx(value,0);
+   if(value==old)continue;
+   if(!replacement){
+    replacement=txn.write_page(key,source,x>>4,py,z>>4);
+    if(!replacement)return false;
+   }
+   if(removed&&old<0&&value>=0){
+    u8 id=replacement->mat[j];if(id==0&&float(y)>=height-2.f)id=10;
+    if(id<16)++txn.removed[id];
+   }
+   replacement->d[j]=value;if(!w.has_geology())replacement->mat[j]=material;
+   ++txn.changed;
+  }
+ }
+ if(!txn.commit())return false;
+ changes=txn.changed;if(removed)copy_bytes(removed,txn.removed,sizeof(txn.removed));return true;
+}
 static bool contact_brush_center(World &world,V3 contact,V3 &center,float radius,bool &found){
  found=false;
  V3 low={mx(0,contact.x-3),mx(0,contact.y-3),mx(0,contact.z-3)};
@@ -675,13 +781,16 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  // sampling halo can cross an untouched page even when all edits fit.
  const int page_limit=page_access?MAX_AUTHORED_PAGES:MAX_PAGES;
  EditPagePin pin(*this,lo,hi);if(!prepare_pages(lo,hi))return false;
+ V3 arch_axis={b.x-a.x,0,b.z-a.z};float arch_inverse=shape==8?1.f/mx(dot(arch_axis,arch_axis),1e-8f):0;
+ if(!add&&radius>=12.f&&(shape==0||shape==1)&&a.x==b.x&&a.y==b.y&&a.z==b.z&&!paid_sample){
+  if(!stage_point_cut(*this,b,radius,shape,material,lo,hi,changes,removed_samples))return false;
+ }else{
  // Stage references and values before changing authoritative pages. Virtual
  // page admission preserves the old first-touch quantization/repaint behavior.
  struct EditSample {i32 page;u16 sample;i16 density;u8 flags;};
  List<EditSample> staged;List<u32> new_keys;Map planned;
  auto discard=[&](){staged.release();new_keys.release();planned.release();};
  int x0=fl(lo.x),x1=fl(hi.x),y0=fl(lo.y),y1=fl(hi.y),z0=fl(lo.z),z1=fl(hi.z);
- V3 arch_axis={b.x-a.x,0,b.z-a.z};float arch_inverse=shape==8?1.f/mx(dot(arch_axis,arch_axis),1e-8f):0;
  const bool point_sphere=edit_height_cache&&shape==0&&a.x==b.x&&a.y==b.y&&a.z==b.z;
  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
   float h=edit_height(x,z);int lastpy=-1,idx=-1,reference=0;bool present=false;u32 key=0;
@@ -748,6 +857,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
   page.d[sample.sample]=sample.density;if(sample.flags&1)page.mat[sample.sample]=material;else if(sample.flags&8)page.mat[sample.sample]=1;page.geometry_digest_valid=false;page.storage_version=storage_serial;
  }
  changes=staged.n;discard();
+ }
  // Construction is a separate exact grid. Smooth excavation removes whole intersected cubes,
  // rather than silently rounding them into the smooth density lattice.
  if(!add)for(int cz=fl(lo.z)/32;cz<=fl(hi.z)/32;cz++)for(int cx=fl(lo.x)/32;cx<=fl(hi.x)/32;cx++){
@@ -1574,7 +1684,9 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   u32 epoch=r.at+4<=r.n?r.u():terrain_build_epoch(&w);
   if(!r.good||ox<0||oz<0||ox>=2048||oz>=2048||(size!=16&&size!=32&&size!=64&&size!=128&&size!=256)||(step!=1&&step!=2&&step!=4&&step!=8)){out.p[8]=1;return;}
   Mesh m;
+  if(w.contact_snapshot)w.contact_outside=false;
   if(!build_patch(w,ox,oz,size,step,m,epoch,cmd==20)){out.p[8]=4;return;}
+  if(w.contact_snapshot&&w.contact_outside){m.release();out.p[8]=4;return;}
   out.u(w.revision);encode_mesh(m,ox,oz,size,step,out);m.release();
  }
  else if(cmd==42){
@@ -1869,7 +1981,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
   out.u(material);out.f(density);out.f(w.has_geology()?w.ore_weight(point,w.height(point.x,point.z)):0);
  }
- else if(cmd==32){
+ else if(cmd==32||cmd==43){
   // Worker-owned boundary packet for material integration. Reuse the exact
   // full-detail terrain extractor/connectivity, without lighting or LOD.
   // Request: revision, cancellation epoch, aligned 4 m region origin (x,y,z).
@@ -1884,6 +1996,28 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   out.u(w.revision);out.u(epoch);out.u(m.v.n);out.u(m.i.n);
   for(int i=0;i<m.v.n;i++)out.vec(m.v[i].p);
   for(int i=0;i<m.i.n;i++)out.u(m.i[i]);
+  if(cmd==43){
+   // Water contact consumes one revision of triangles, interpolated density
+   // and construction occupancy. A 4 m region spans just 125 terrain nodes.
+   float lattice[125];
+   for(int dz=0;dz<5;++dz)for(int dy=0;dy<5;++dy)for(int dx=0;dx<5;++dx)
+    lattice[dx+5*dy+25*dz]=w.sample(x+dx,imn(y+dy,255),z+dz);
+   for(int hz=0;hz<9;++hz)for(int hy=0;hy<9;++hy)for(int hx=0;hx<9;++hx){
+    V3 p={mn(x+hx*.5f,__builtin_nextafterf(float(WORLD),0.f)),clampf(y+hy*.5f,1.f,255.f),
+          mn(z+hz*.5f,__builtin_nextafterf(float(WORLD),0.f))};
+    int ix=fl(p.x)-x,iy=fl(p.y)-y,iz=fl(p.z)-z;
+    float dx=p.x-fl(p.x),dy=p.y-fl(p.y),dz=p.z-fl(p.z),value=0;
+    for(int k=0;k<8;++k){
+     float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
+     if(weight>0)value+=weight*lattice[(ix+(k&1))+5*(iy+((k>>1)&1))+25*(iz+((k>>2)&1))];
+    }
+    out.f(value);
+   }
+   u8 solids[64]{};
+   for(int dz=0;dz<4;++dz)for(int dy=0;dy<4;++dy)for(int dx=0;dx<4;++dx)
+    solids[dx+4*dy+16*dz]=w.blocks.get(block_key(x+dx,y+dy,z+dz))>0;
+   out.raw(solids,sizeof(solids));
+  }
   m.release();
  }
  else if(cmd==29||cmd==30||cmd==31||cmd==33||cmd==40){

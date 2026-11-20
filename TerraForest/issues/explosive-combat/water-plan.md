@@ -1,9 +1,9 @@
-**Two-frame qualification is open.** The November 20 packaged test now
-checks the first matching collider and visible water explicitly. Earlier
-queue submission and worker-completion callbacks failed the shoreline target
-and were removed. The working tree retains independent terrain reconstruction
-for the 64 m cut. The [qualification ledger](../../docs/WORLD_FOUNDATION_STATUS.md#concurrent-resident-cut-and-shoreline-publication)
-records the packaged timings and the remaining dependencies.
+**The two-frame gate remains open.** A resident excavation now stages changed
+terrain pages before committing the field. Water reads the changed boundary,
+density and solid blocks together at one terrain revision. The full cut and the
+sea and lake barrels still require presented-frame and contact evidence at the
+deadline. The [qualification ledger](../../docs/WORLD_FOUNDATION_STATUS.md#resident-edit-transaction-results)
+tracks the engine timings, camera pairs and remaining publication work.
 
 # Continuous volumetric water replacement
 

@@ -12,9 +12,12 @@ outlet before reusing connectivity. Run the same Cedar Vale blast, and compare
 the first visible result, contact and conservation before expanding this path.
 The [water issue](../issues/explosive-combat/water-plan.md) tracks that gate.
 
-Shoreline latency work resumed with a two-frame acceptance run covering the
-64 m cut and both shoreline blasts. Keep all three failing cases in the
-release ledger alongside the ordinary exploration and trader baseline.
+The release gate covers the full 64 m footprint and both shoreline barrels.
+Keep the authoritative terrain page transaction and the combined water contact
+packet under parity tests. Qualify their visible result with the nine spaced
+cut probes and the first draw containing the lowered floor and matching water.
+Record the timing of a local commit independently of wider work. See the
+[resident edit results](WORLD_FOUNDATION_STATUS.md#resident-edit-transaction-results).
 
 The resident cut now reconstructs on a separate terrain snapshot. The
 qualification route checks the first rendered shoreline against the lowered
