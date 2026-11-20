@@ -12,6 +12,11 @@ outlet before reusing connectivity. Run the same Cedar Vale blast, and compare
 the first visible result, contact and conservation before expanding this path.
 The [water issue](../issues/explosive-combat/water-plan.md) tracks that gate.
 
+The packaged 300/304 ms lake result for the reverted interior-face shortcut
+keeps this basin milestone open. Qualify the first resident inland cut with
+a known unchanged outlet, conserved basin quantity and matching water
+queries at first draw before expanding the new model to other edits.
+
 The first-commit size comparison now runs in `water_equilibrium_scope`.
 For a straight connected bank 16 and 128 regions long, opening the same
 cell sampled two regions and visited 13 cells at either size. Replacing

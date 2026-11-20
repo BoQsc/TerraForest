@@ -6,6 +6,10 @@ Pack `53d50e165613` eliminated 18 identical lake mesh replacements and still
 took 288 and 302 ms to draw the changed lake. The Windows
 gameplay route remains the acceptance test for that handoff.
 
+A direct interior-face extraction experiment preserved the pinned lake geometry
+but took 300 and 304 ms on the packaged route. It was reverted. The retained
+build is byte-matched to `20261120T172636344616Z` including external DLLs.
+
 ## November 20 dedicated loadout and bucket targeting
 
 Windows pack `3f6598610b0a`, run `20261120T163411140862Z`, loaded a

@@ -1,5 +1,20 @@
 # Continuous volumetric water replacement
 
+**Rejected interior-face shortcut.** Candidate `3e21d370` derived the
+horizontal face directly when a full lower cell, dry upper cell and level
+neighbours proved the boundary. In replay `20261120T173344900263Z`, 833 quads
+skipped general triangulation and all 43 owners matched the pinned geometry
+digest four times. First-publication ray, material, worker and topology
+checks passed. The packaged lake still took 300 and 304 ms to draw
+(`20261120T174009466145Z`, `20261120T174114742673Z`), against 288 and
+302 ms before. Sea took 141 ms in both runs. Mining took 152 and 158 ms.
+Both shoreline views, contact and quantity checks passed. Lake publication
+remained the only failed route assertion. Reverted in `8b307b67` and
+verified the installed pack and all 14 native libraries against the earlier
+gameplay receipt. The next experiment is the authority-owned basin
+quantity and regional capacity described in the project plan. This result
+does not support retaining a second triangulation path.
+
 Pack `53d50e165613` keeps existing render resources when a rebuilt owner's
 indexed render streams have the same SHA-256. Native picking, quantity and
 immersion still commit together. In Cedar Vale runs `20261120T172636344616Z`
