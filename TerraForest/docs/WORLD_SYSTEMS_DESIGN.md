@@ -111,3 +111,29 @@ Cache keys include generator/material/schema versions, canonical region revision
 Replication should send region baselines followed by ordered versioned deltas, with per-client interest sets and byte budgets. Players/entities require server ticks, input sequencing, interpolation/reconciliation and bounded queues. Mutable vegetation and buildings use stable IDs; visual grass and small stones regenerate locally from versioned seeds where gameplay allows it. Reliability and scalability require at least server-plus-two-client tests, late join, packet loss/reorder, edits across region boundaries and independent server memory/bandwidth measurements. No player-count claim is justified before those tests.
 
 Graphical measurements are fixed at 1920×1080 fullscreen, 100% 3D scale. Headless correctness and server simulations are reported separately. CPU-only entity integration throughput must not be presented as fully simulated/rendered vehicle or multiplayer throughput.
+## Finite shoreline edits following the November 20 packaged trials
+
+The first-visible crater is the relevant acceptance point. Adding nearby
+receivers closed the straight cut. Funding them directly from more donor
+cells made many distant mesh owners urgent. Even the reduced window took
+434 ms and missed a bank probe. [Measurements and rejected variants](../issues/explosive-combat/water-plan.md)
+
+The proposed next implementation is to cache connected basin capacity by
+water elevation. A cached region records connected cavities, the elevations
+at which they connect across faces, and how much water fits below a given
+elevation. The authority owns one finite quantity per connected basin.
+A dig or deposition updates the affected regional capacities and connections.
+For a basin whose connections remain intact, obtain the new water level from
+its aggregate capacity and conserved quantity. The edited mesh can use that
+committed level immediately. Every consumer, including buckets and immersion
+queries, must read the same revision. A distant mesh refresh must never
+credit or debit water a second time.
+
+Start with an inland excavation against a basin with a known unchanged outlet.
+Compare volume, depth, bank contact and shore publication time with the current
+solver in the actual game. Then exercise overhangs, breached sills, basin
+splits, bucket vacancies, displaced water, ocean exchange and interrupted
+save/reload before adopting a new save representation. Store the revision of
+the connectivity data with the quantities so a worker cannot commit a result
+computed against obsolete terrain. This proposal has no performance result
+yet.
