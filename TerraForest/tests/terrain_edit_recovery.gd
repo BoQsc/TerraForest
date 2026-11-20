@@ -51,7 +51,27 @@ func check_partial_publication()->void:
 	check(exits.is_empty() and untouched.collision_layer==1,"sparse publication keeps untouched collision in the scene tree")
 	check(incoming.collision_layer==1 and replaced.collision_layer==0 and terrain.tiles[key].stamp==2,"sparse publication swaps the edited collider at the committed stamp")
 	check(terrain.cache_bytes==before_bytes+40 and terrain.tiles[key].triangles==4,"sparse publication accounts for retained and replaced geometry once")
+func check_planar_collision()->void:
+	var recipes:RefCounted=ClassDB.instantiate("NativeTerrainCollision")
+	var quad:=PackedVector3Array([Vector3.ZERO,Vector3.RIGHT,Vector3(1,1,0),Vector3.ZERO,Vector3(1,1,0),Vector3.UP])
+	var adjacent:=quad.duplicate()
+	for vertex in quad:adjacent.append(vertex+Vector3.RIGHT)
+	var expected:=quad.duplicate()
+	for i in expected.size():expected[i].x*=2
+	check(recipes.merge_planar_faces(adjacent)==expected,"Adjacent coplanar faces merge with exact bounds and winding")
+	for offset in [Vector3(2,0,0),Vector3(1,0,.0001)]:
+		var separate:=quad.duplicate()
+		for vertex in quad:separate.append(vertex+offset)
+		check(recipes.merge_planar_faces(separate)==separate,"A gap or height discontinuity preserves original faces")
+	var reversed:=adjacent.duplicate()
+	reversed[7]=adjacent[8];reversed[8]=adjacent[7]
+	check(recipes.merge_planar_faces(reversed)==reversed,"Opposing triangle winding cannot fill a rectangle")
+	var hole:=adjacent.duplicate()
+	hole.remove_at(11);hole.remove_at(10);hole.remove_at(9)
+	check(recipes.merge_planar_faces(hole)==hole,"An unpaired triangle retains its open edge")
+
 func run()->void:
+	check_planar_collision()
 	terrain=Terrain.new();terrain.diagnostics_pause_streaming=true;terrain.backend=QueueGate.new()
 	terrain.save_slot="recovery_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
 	terrain.backend.world_generator=5;terrain.backend.disk_cache.enabled=false

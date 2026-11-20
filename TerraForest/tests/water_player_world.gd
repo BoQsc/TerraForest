@@ -835,6 +835,58 @@ func check_authoring_brush()->void:
    game.terrain.stage_measured.disconnect(record_exploration_stage)
    print("AUTHORING_MAIN_STAGES_MS ",JSON.stringify(exploration_terrain_stages))
    report_brush_dependencies(view,center,game.radius,owners_before,stamps_before)
+   if i==1 and "--authoring-collision-reuse" in OS.get_cmdline_user_args():
+    await physics_frame
+    record_brush_contacts(center)
+
+func record_brush_contacts(center:Vector3)->void:
+ var hits:Array=[]
+ var space:PhysicsDirectSpaceState3D=game.get_world_3d().direct_space_state
+ for axis in 3:
+  for sign_value in [-1,1]:
+   var normal:=Vector3.ZERO
+   normal[axis]=sign_value
+   for u in range(-36,37,3):
+    for v in range(-36,37,3):
+     var origin:=center
+     origin[(axis+1)%3]+=u+.173
+     origin[(axis+2)%3]+=v+.319
+     var ray:=PhysicsRayQueryParameters3D.create(origin+normal*48,origin-normal*48,1)
+     ray.exclude=[game.player.get_rid()]
+     ray.hit_back_faces=true
+     var hit:=space.intersect_ray(ray)
+     if hit.is_empty():hits.append(null)
+     else:
+      var position:Vector3=hit.position
+      var surface_normal:Vector3=hit.normal
+      hits.append([position[axis],surface_normal.x,surface_normal.y,surface_normal.z])
+ var file:=FileAccess.open(evidence.path_join("brush_contacts.json"),FileAccess.WRITE)
+ check(file!=null,"Retain post-publication collision ray samples")
+ if file!=null:file.store_string(JSON.stringify(hits))
+ for arg in OS.get_cmdline_user_args():
+  if arg.begins_with("--authoring-contact-reference="):
+   compare_brush_contacts(hits,arg.trim_prefix("--authoring-contact-reference="))
+
+func compare_brush_contacts(hits:Array,path:String)->void:
+ var reference=JSON.parse_string(FileAccess.get_file_as_string(path))
+ if not reference is Array or reference.size()!=hits.size():
+  check(false,"Reference uses the same six-direction contact grid")
+  return
+ var changed_hits:=0
+ var matches:=0
+ var max_distance:=0.0
+ var max_normal_difference:=0.0
+ for i in hits.size():
+  var a=reference[i]
+  var b=hits[i]
+  if a==null or b==null:
+   if a!=b:changed_hits+=1
+   continue
+  matches+=1
+  max_distance=maxf(max_distance,absf(a[0]-b[0]))
+  max_normal_difference=maxf(max_normal_difference,Vector3(a[1],a[2],a[3]).distance_to(Vector3(b[1],b[2],b[3])))
+ check(matches>0 and changed_hits==0 and max_distance<=.001 and max_normal_difference<=.001,"Edited surface matches reference hits, positions and normals")
+ print("AUTHORING_CONTACT_COMPARISON ",JSON.stringify({"rays":hits.size(),"hits":matches,"changed_hits":changed_hits,"max_distance_m":max_distance,"max_normal_difference":max_normal_difference}))
 
 # Keep CPU-side mesh arrays from the installed surface. Compare only after publication.
 func brush_mesh_owners(view:Camera3D,center:Vector3,radius:float)->Dictionary:

@@ -1165,7 +1165,9 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 					disk_cache.store_packet(owner,packet,content)
 					stages.write_us+=Time.get_ticks_usec()-mark
 				mark=Time.get_ticks_usec()
-				var recipes: Dictionary=collision_recipes.prepare(part.faces,_collision_piece_triangles)
+				var collision_faces:PackedVector3Array=part.faces
+				if foreground:collision_faces=collision_recipes.merge_planar_faces(collision_faces)
+				var recipes: Dictionary=collision_recipes.prepare(collision_faces,_collision_piece_triangles)
 				stages.recipes_us+=Time.get_ticks_usec()-mark
 				if not recipes.ok: return {"error":recipes.error}
 				part["collision_pieces"]=recipes.pieces
@@ -1255,7 +1257,9 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 		var epoch_reply: PackedByteArray = _call(Codec.command(13))
 		if epoch_reply.decode_u32(12) != expected_build_epoch:
 			return {"cancelled": true}
-		var recipes: Dictionary = collision_recipes.prepare(result["faces"], _collision_piece_triangles)
+		var collision_faces:PackedVector3Array=result.faces
+		if foreground:collision_faces=collision_recipes.merge_planar_faces(collision_faces)
+		var recipes: Dictionary = collision_recipes.prepare(collision_faces, _collision_piece_triangles)
 		if not recipes.ok:
 			return {"error": recipes.error}
 		epoch_reply = _call(Codec.command(13))

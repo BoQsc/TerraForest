@@ -564,6 +564,27 @@ worker preparation, physics registration and action-to-publication together.
 The sphere added no axis-aligned faces. Replay both with
 `--authoring-brush --authoring-dependencies --authoring-collision-reuse`.
 
+Pack `0c0af7490060` merges adjacent complete collision rectangles with exact
+plane, row, winding and edge agreement during foreground terrain builds.
+The renderer still receives the original mesh arrays. The 64 m cut now
+installs 16,892 triangles in 36 shapes (previously 56,610 in 73). The
+2 m sphere retained 1,288 triangles. The source baseline published the
+large cut in 358.5 ms (`20261120T184337096961Z`). Packaged runs
+`20261120T184936533992Z` and `20261120T185125394212Z` took 243.6 and
+224.9 ms, versus 355.2 ms in the previous pack. The latter took 14 frames
+with a 24.9 ms worst interval. Collision node attachment took 9.1 ms
+versus 35.0 ms. Mesh construction accounts for another 143.3 ms.
+The two-frame publication and 60 FPS gates remain open.
+
+The six-direction Jolt ray comparison against the original surface matched
+all 3,750 hit/miss outcomes (2,440 hits), with a maximum position difference
+of 0.184 mm and maximum normal-vector difference of 0.000050. Reproduce with
+`--authoring-contact-reference=<absolute path to baseline brush_contacts.json>`.
+A run using a project-relative reference failed to locate the external report.
+Debug regression `20261120T184500427017Z` also checked reversed winding, a
+height discontinuity, an open triangle and a gap between rectangles. These
+contact probes cover the sampled rays and do not qualify dynamic traversal.
+
 The preview is centred at the position used by the terrain command. Picking follows the
 active viewport camera in first and third person. Preview meshes are reused
 across frames. The primary player views and normal inventory actions remain
