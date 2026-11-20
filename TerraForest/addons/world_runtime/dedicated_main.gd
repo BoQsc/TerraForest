@@ -42,7 +42,7 @@ func command(args:PackedStringArray)->Dictionary:
 			points.append(Vector3(float(args[index]),float(args[index+1]),float(args[index+2])))
 		return world.sample_points(points)
 	var request_id:=0
-	if args.size()==8 and args[0]=="v1" and args[2]=="excavate":
+	if args.size()>=3 and args[0]=="v1" and ((args.size()==8 and args[2]=="excavate") or (args.size()==9 and args[2]=="deposit")):
 		if not args[1].is_valid_int():return {"ok":false,"reason":"Invalid request ID"}
 		request_id=int(args[1])
 		if request_id<1 or request_id>0xffffffff:return {"ok":false,"reason":"Invalid request ID"}
@@ -51,7 +51,7 @@ func command(args:PackedStringArray)->Dictionary:
 	if args==PackedStringArray(["lakes"]):
 		var definitions:Dictionary=ClassDB.instantiate("NativeLakeCatalog").decode(world.catalog)
 		return {"ok":true,"lakes":definitions.records}
-	if args.size() not in [4,6]:return {"ok":false,"reason":"Unknown command"}
+	if args.size() not in [4,6,7]:return {"ok":false,"reason":"Unknown command"}
 	for index in range(1,4):
 		if not args[index].is_valid_float():return {"ok":false,"reason":"Invalid position"}
 	var point:=Vector3(float(args[1]),float(args[2]),float(args[3]))
@@ -59,4 +59,6 @@ func command(args:PackedStringArray)->Dictionary:
 	if args.size()==4 and args[0]=="sample":return world.sample(point)
 	if args.size()==6 and args[0]=="excavate" and args[4].is_valid_float() and args[5].is_valid_int():
 		return world.excavate(point,float(args[4]),int(args[5]),request_id)
+	if args.size()==7 and request_id>0 and args[0]=="deposit" and args[4].is_valid_float() and args[5].is_valid_int() and args[6].is_valid_int():
+		return world.deposit(point,float(args[4]),int(args[5]),int(args[6]),request_id)
 	return {"ok":false,"reason":"Unknown command"}

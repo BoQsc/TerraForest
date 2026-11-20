@@ -173,7 +173,7 @@ def run(engine, packaged, report, expected_archive=None):
             else:
                 assert after["density"]>before["density"] and after["depth"]>0
         script = ROOT/"tests/authority_gameplay.gd"
-        game, = invoke(base+["--script",str(script)], [], "GAME_AUTHORITY ")
+        game, deposited_game = invoke(base+["--script",str(script)], [], "GAME_AUTHORITY ")
         for i,sample in enumerate(changed):
             assert game["revision"]==sample["revision"]
             assert game["water_ml"]==sample["water_ml"]
@@ -196,6 +196,28 @@ def run(engine, packaged, report, expected_archive=None):
         backup_digest = bytes.fromhex(report["edited_archive_sha256"])
         assert hashlib.sha256(archive.with_suffix(".trw.bak").read_bytes()).digest()==backup_digest
         report["receipt_window"] = dict(size=32, first_retained=3, last_retained=34, restored=True)
+        backup_digest = bytes.fromhex(digest(archive))
+        place = "v1 35 deposit 240 31 224 2 2 1"
+        place_ack = dict(ok=True, version=1, request_id=35, changed=True, revision=2)
+        deposited = invoke(host, [place.replace("2 2 1","2 0 1"),place,place,*samples(),"edit-profile","save","quit"], "AUTHORITY ")
+        assert not deposited[1]["ok"] and deposited[2] == deposited[3] == place_ack and deposited[-1]["ok"]
+        deposited_samples = deposited[4:-2]
+        assert len(deposited_samples) == len(POINTS)
+        profile = deposited[-2]["profile"]
+        assert 0 < profile["displacement_searches"] <= profile["displacement_visits"]
+        assert deposited_game["revision"] == 2 and deposited_game["water_ml"] == game["water_ml"]
+        for i, sample in enumerate(deposited_samples):
+            assert sample["revision"] == 2 and sample["water_ml"] == changed[i]["water_ml"]
+            for key in ("density","depth"):
+                assert math.isclose(deposited_game[key][i],sample[key],abs_tol=1e-4), (i,key,deposited_game,sample)
+            if i<2:
+                assert sample["density"]<0 and sample["depth"]==0
+            else:
+                assert sample["density"]==changed[i]["density"]
+        persisted = invoke(host, [place,place.replace("2 2 1","2 3 1"),"v1 35 excavate 240 31 224 2 1",*samples(),"quit"], "AUTHORITY ")
+        assert persisted[1]==place_ack and not persisted[2]["ok"] and not persisted[3]["ok"]
+        assert persisted[4:]==deposited_samples
+        report["deposition"] = dict(ack=place_ack, authority=deposited_samples, gameplay=deposited_game, profile=profile)
         # Corrupt only our disposable canonical file. Failure must preserve the
         # input for recovery and leave its verified backup intact.
         corrupt = archive.read_bytes()[:64]

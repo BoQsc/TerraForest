@@ -113,7 +113,7 @@ func restore_receipts(data:PackedByteArray)->bool:
 		var id:=receipt.decode_u32(4)
 		var before:=receipt.decode_u32(8)
 		var after:=receipt.decode_u32(12)
-		if receipt.decode_u32(0)!=1 or id==0 or (previous_id!=0 and id!=previous_id+1):return false
+		if receipt.decode_u32(0) not in [brush_tag(0),brush_tag(1),brush_tag(2),brush_tag(3)] or id==0 or (previous_id!=0 and id!=previous_id+1):return false
 		if before<previous_revision or after<before or after>before+1 or after>saved_revision:return false
 		if not valid_brush(receipt_point(receipt),receipt.decode_double(28)):return false
 		restored.append(receipt)
@@ -132,7 +132,17 @@ static func valid_brush(point:Vector3,radius:float)->bool:
 static func receipt_reply(receipt:PackedByteArray)->Dictionary:
 	return {"ok":true,"version":1,"request_id":receipt.decode_u32(4),"revision":receipt.decode_u32(12),"changed":receipt.decode_u32(8)!=receipt.decode_u32(12)}
 
+# The low byte is the record format. Material zero denotes excavation.
+static func brush_tag(deposit_material:int)->int:return 1 | (deposit_material << 8)
+
 func excavate(point:Vector3,radius:float,expected:int,request_id:int=0)->Dictionary:
+	return _edit_brush(point,radius,expected,request_id,0)
+
+func deposit(point:Vector3,radius:float,material:int,expected:int,request_id:int)->Dictionary:
+	if material<1 or material>3:return {"ok":false,"reason":"Invalid terrain material"}
+	return _edit_brush(point,radius,expected,request_id,material)
+
+func _edit_brush(point:Vector3,radius:float,expected:int,request_id:int,deposit_material:int)->Dictionary:
 	if not healthy:return {"ok":false,"reason":"World unavailable"}
 	if not valid_brush(point,radius):return {"ok":false,"reason":"Invalid brush bounds"}
 	if request_id!=0:
@@ -141,19 +151,19 @@ func excavate(point:Vector3,radius:float,expected:int,request_id:int=0)->Diction
 			var index:=operator_receipts.size()-1-(last-request_id)
 			if index<0:return {"ok":false,"reason":"Receipt expired","last_request_id":last}
 			var prior:=operator_receipts[index]
-			if expected==prior.decode_u32(8) and point==receipt_point(prior) and radius==prior.decode_double(28):return receipt_reply(prior)
+			if prior.decode_u32(0)==brush_tag(deposit_material) and expected==prior.decode_u32(8) and point==receipt_point(prior) and radius==prior.decode_double(28):return receipt_reply(prior)
 			return {"ok":false,"reason":"Request ID already committed with different arguments"}
 		if request_id!=last+1 or request_id>0xffffffff:return {"ok":false,"reason":"Unexpected request ID"}
 	if expected!=revision():return {"ok":false,"reason":"Stale revision"}
 	var bounds:=AABB(point-Vector3.ONE*radius,Vector3.ONE*radius*2)
-	var packet:=Codec.brush(point,point,radius,0,false,1)
+	var packet:=Codec.brush(point,point,radius,0,deposit_material!=0,maxi(1,deposit_material))
 	var began:=Time.get_ticks_usec()
 	var edit:=EditCommands.execute(core,[packet],expected)
 	if not Codec.reply_ok(edit.reply):return {"ok":false,"reason":"Terrain rejected brush"}
-	last_edit_profile={"terrain_us":Time.get_ticks_usec()-began,"invalidate_us":0,"patch_us":0,"patches":0,"solve_us":0,"commit_us":0,"capture_us":0,"solves":0,"solve_phases_us":[0,0,0,0,0,0,0,0]}
+	last_edit_profile={"terrain_us":Time.get_ticks_usec()-began,"invalidate_us":0,"patch_us":0,"patches":0,"solve_us":0,"commit_us":0,"capture_us":0,"solves":0,"displacement_visits":0,"displacement_searches":0,"solve_phases_us":[0,0,0,0,0,0,0,0]}
 	if edit.changed[0]:
 		var started:=Time.get_ticks_usec()
-		water.invalidate(bounds)
+		water.invalidate(bounds,deposit_material!=0)
 		water.settle_after_edit(bounds)
 		last_edit_profile.invalidate_us=Time.get_ticks_usec()-started
 		healthy=_resolve_water()
@@ -161,7 +171,7 @@ func excavate(point:Vector3,radius:float,expected:int,request_id:int=0)->Diction
 	if request_id!=0:
 		var operator_receipt:=PackedByteArray()
 		operator_receipt.resize(RECEIPT_SIZE)
-		operator_receipt.encode_u32(0,1)
+		operator_receipt.encode_u32(0,brush_tag(deposit_material))
 		operator_receipt.encode_u32(4,request_id)
 		operator_receipt.encode_u32(8,expected)
 		operator_receipt.encode_u32(12,revision())
@@ -208,6 +218,8 @@ func _resolve_water()->bool:
 				last_edit_profile.commit_us+=Time.get_ticks_usec()-started
 				if not result.get("ok",false):return false
 				last_edit_profile.solves+=1
+				last_edit_profile.displacement_visits+=int(result.displacement_visits)
+				last_edit_profile.displacement_searches+=int(result.displacement_searches)
 				for index in result.phase_us.size():
 					last_edit_profile.solve_phases_us[index]+=result.phase_us[index]
 	return false

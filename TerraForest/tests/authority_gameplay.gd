@@ -16,24 +16,30 @@ func run()->void:
 	if failures==0:
 		check(game.terrain.sculpt_sphere(Vector3(240,31,224),3,false,1),"Gameplay admits cross-boundary excavation")
 		check(await ready("authority_edit"),"Gameplay finishes water publication")
+	if failures==0:await sample_commit()
 	if failures==0:
-		var token:int=preload("res://addons/volumetric_terrain/surface_tokens.gd").allocate()
-		var received:Array=[]
-		var callback:=func(reply:Dictionary):
-			if reply.token==token:received.append(reply)
-		game.terrain.density_batch_ready.connect(callback)
-		var requested:=false
-		var deadline:=Time.get_ticks_msec()+10000
-		while received.is_empty() and Time.get_ticks_msec()<deadline:
-			if not requested:requested=game.terrain.request_interpolated_density_batch(PackedVector3Array(POINTS),token)
-			await process_frame
-		game.terrain.density_batch_ready.disconnect(callback)
-		check(not received.is_empty() and received[0].status=="ok","Committed terrain can be sampled")
-		if failures==0:
-			var depths:Array=[]
-			for point in POINTS:depths.append(game.lakes.depth_at(point))
-			print("GAME_AUTHORITY ",JSON.stringify({"revision":game.terrain.published_revision,"density":Array(received[0].values),"depth":depths,"water_ml":game.lakes.water.statistics().water_ml}))
+		check(game.terrain.sculpt_sphere(Vector3(240,31,224),2,true,2),"Gameplay deposits material into the wet cross-boundary cut")
+		check(await ready("authority_deposit"),"Gameplay finishes water displacement")
+	if failures==0:await sample_commit()
 	check(FileAccess.get_sha256(path)==original,"Input archive unchanged")
 	game.terrain.shutdown();game.free()
 	await process_frame
 	quit(failures)
+
+func sample_commit()->void:
+	var token:int=preload("res://addons/volumetric_terrain/surface_tokens.gd").allocate()
+	var received:Array=[]
+	var callback:=func(reply:Dictionary):
+		if reply.token==token:received.append(reply)
+	game.terrain.density_batch_ready.connect(callback)
+	var requested:=false
+	var deadline:=Time.get_ticks_msec()+10000
+	while received.is_empty() and Time.get_ticks_msec()<deadline:
+		if not requested:requested=game.terrain.request_interpolated_density_batch(PackedVector3Array(POINTS),token)
+		await process_frame
+	game.terrain.density_batch_ready.disconnect(callback)
+	check(not received.is_empty() and received[0].status=="ok","Committed terrain can be sampled")
+	if failures==0:
+		var depths:Array=[]
+		for point in POINTS:depths.append(game.lakes.depth_at(point))
+		print("GAME_AUTHORITY ",JSON.stringify({"revision":game.terrain.published_revision,"density":Array(received[0].values),"depth":depths,"water_ml":game.lakes.water.statistics().water_ml}))

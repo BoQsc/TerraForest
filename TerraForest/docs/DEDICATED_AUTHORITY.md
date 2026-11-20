@@ -20,6 +20,7 @@ lakes. Saving is explicit. A closed input pipe or `quit` releases the lease.
 | `v1 sample X Y Z [X Y Z ...]` | Read one to eight world positions in order, returning one terrain revision and one total water quantity for the set |
 | `excavate X Y Z R REV` | Excavate a sphere against the specified revision and return the sample after water settles |
 | `v1 ID excavate X Y Z R REV` | Commit an ordered operator request and return its ID, resulting revision and changed flag |
+| `v1 ID deposit X Y Z R MATERIAL REV` | Add solid terrain, reconcile displaced water and commit under the same request stream. Material IDs 1 through 3 are accepted. |
 | `edit-profile` | Read elapsed microseconds for the last executed brush, terrain patch sampling, water snapshot, equilibrium and commit. Patch and solve counts distinguish repeated work. Returns an empty profile before the first brush. |
 | `save` | Publish a verified compound archive and retain the preceding version as a backup |
 | `quit` | End the process |
@@ -77,3 +78,8 @@ saved request after restart and again after an intervening legacy excavation.
 The original acknowledgement also survives a newer versioned request. The gate
 fills the window, saves, restarts, and checks both retained endpoints, expired
 IDs, conflicting arguments, and unchanged terrain and water.
+
+The fixture also deposits material 2 into the water-filled cut. It checks
+water quantity and contact on both sides of the boundary after deposition
+and restart. Operation and material are part of the saved request identity.
+The edit profile reports receiver searches and cell visits for displaced water.
