@@ -537,6 +537,18 @@ on this route. Profile collision cooking, upload and staging across frames
 before changing the publication barrier. Replay with `--authoring-dependencies`
 on the inland authoring brush check below.
 
+In packaged run `20261120T183322985239Z`, the 64 m box published in
+355 ms. Across the edit, attaching collision nodes took 35.0 ms, resolving
+shape resources took 1.9 ms of cook time, and mesh creation/upload submission
+took 5.2 ms. These main-thread durations accumulate across frames and include
+nested stages. A source-game trial assembled each compound with its body
+disabled and registered it before publication (`20261120T183436492669Z`).
+Attachment fell to 2.2 ms, but registering the bodies took 34.2 ms, bringing
+total collision-piece work to 39.3 ms versus 38.1 ms in the packaged run.
+The trial was removed. The next collision design must reduce the physics
+geometry that changes or the cost of registering that geometry while
+preserving the exact edited surface and collision handoff.
+
 The preview is centred at the position used by the terrain command. Picking follows the
 active viewport camera in first and third person. Preview meshes are reused
 across frames. The primary player views and normal inventory actions remain

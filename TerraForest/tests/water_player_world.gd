@@ -787,6 +787,9 @@ func check_authoring_brush()->void:
   var audit:=i==1 and "--authoring-dependencies" in OS.get_cmdline_user_args()
   var owners_before:=brush_mesh_owners(view,center,game.radius) if audit else {}
   var stamps_before:Dictionary=game.terrain.stamps.duplicate() if audit else {}
+  if audit:
+   exploration_terrain_stages.clear()
+   game.terrain.stage_measured.connect(record_exploration_stage)
   var click:=InputEventMouseButton.new()
   click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
   var started:=Time.get_ticks_usec()
@@ -828,7 +831,10 @@ func check_authoring_brush()->void:
    "commit_ms":game.terrain.last_commit_ms,"after_worker_ms":game.terrain.last_prepare_latency_ms,
    "support_worker_ms":game.terrain.last_support_worker_ms,"support_publish_ms":game.terrain.last_support_publish_ms}
   print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"preparing":preparing,"feedback_us":feedback_us,"admission_us":game.terrain.edit_accepted_us-started if game.terrain.edit_ticket>ticket else null,"publication_us":previous-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us,"terrain_stages":terrain_stages}))
-  if audit:report_brush_dependencies(view,center,game.radius,owners_before,stamps_before)
+  if audit:
+   game.terrain.stage_measured.disconnect(record_exploration_stage)
+   print("AUTHORING_MAIN_STAGES_MS ",JSON.stringify(exploration_terrain_stages))
+   report_brush_dependencies(view,center,game.radius,owners_before,stamps_before)
 
 # Keep CPU-side mesh arrays from the installed surface. Compare only after publication.
 func brush_mesh_owners(view:Camera3D,center:Vector3,radius:float)->Dictionary:
