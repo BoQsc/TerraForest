@@ -8243,3 +8243,18 @@ Baseline stiffness remains known; further tuning is deferred until new feedback.
 Any future replacement needs comparative visual acceptance and live checks.
 Closed-book/whole-food
 presentation is still the simple scope; page turning/biting are not claimed.
+
+## Weapon audio default — 2026-11-20
+
+Shots (PX9, carbine and assault rifle) and explosions now use a Weapons slider
+under Audio, at 80% gain through the existing Effects bus: 20% below the previous
+level without lowering environmental effects. Existing Effects preferences remain
+applicable; reload and impact cues retain their existing levels.
+Runtime verification remains pending: the audio_runtime check was denied storage
+admission because reports occupied 4,518,915,778 bytes against a 4,294,967,296-byte
+budget. Evidence: reports/checks/20261120T145034243068Z/run.json. No engine test ran.
+After authorized retention brings reports within budget, rerun
+`python tools/run_godot_check.py audio_runtime --require "failures=0" --timeout 45`
+and confirm the in-game Weapons slider controls shots and explosions. The added
+checks cover 80% initial gain, routing through Effects and preservation of a
+selected gain across audio re-preparation. Listening acceptance remains unreviewed.

@@ -70,6 +70,12 @@ func run() -> void:
 	check(catalog.prepare(PackedStringArray()), "removing all audio content is valid")
 	var runtime := Runtime.new(); root.add_child(runtime)
 	check(runtime.prepare(PackedStringArray([BUILTIN])), "runtime prepares fixed pools")
+	var weapons_bus := AudioServer.get_bus_index("TerraForestWeapons")
+	check(weapons_bus >= 0 and AudioServer.get_bus_send(weapons_bus) == "TerraForestEffects", "weapon setting retains the Effects master control")
+	check(is_equal_approx(db_to_linear(AudioServer.get_bus_volume_db(weapons_bus)), .8), "weapons default to 20 percent less gain")
+	runtime.set_volume("Weapons", .5)
+	runtime.prepare(PackedStringArray([BUILTIN]))
+	check(is_equal_approx(db_to_linear(AudioServer.get_bus_volume_db(weapons_bus)), .5), "preparing audio again preserves the selected weapon volume")
 	var bed := runtime.start_loop("ambience.forest", {}, true)
 	check(bed > 0 and runtime.stop(bed), "background admission can be cancelled before playback starts")
 	await process_frame; await process_frame

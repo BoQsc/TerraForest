@@ -5,7 +5,7 @@ const Catalog = preload("res://addons/audio_runtime/catalog.gd")
 const SPATIAL_LIMIT := 32
 const BED_LIMIT := 4
 const SPATIAL_LOOP_LIMIT := 8
-const BUSES := ["Effects", "Ambience", "Voices", "UI"]
+const BUSES := ["Effects", "Weapons", "Ambience", "Voices", "UI"]
 var catalog := Catalog.new()
 var voices: Array[Dictionary] = []
 var beds: Array[Dictionary] = []
@@ -27,7 +27,10 @@ func prepare(paths: PackedStringArray) -> bool:
 	for title: String in BUSES:
 		if AudioServer.get_bus_index("TerraForest" + title) < 0:
 			AudioServer.add_bus(); var index := AudioServer.bus_count - 1
-			AudioServer.set_bus_name(index, "TerraForest" + title); AudioServer.set_bus_send(index, "Master")
+			AudioServer.set_bus_name(index, "TerraForest" + title)
+			# Weapon gain stacks with Effects, so the 80% default reduces only loud combat audio.
+			AudioServer.set_bus_send(index, "TerraForestEffects" if title == "Weapons" else "Master")
+			if title == "Weapons": set_volume(title, .8)
 	if voices.is_empty():
 		for i in SPATIAL_LIMIT:
 			var node := AudioStreamPlayer3D.new(); node.name = "Voice%d" % i; add_child(node)

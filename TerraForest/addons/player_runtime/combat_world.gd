@@ -456,5 +456,5 @@ func play_sound(point:Vector3,stream:AudioStream,gain_db:float=0.0)->void:
 		if not candidate.playing:player=candidate;break
 	if player==null:
 		if audio_pool.size()>=8:return
-		player=AudioStreamPlayer3D.new();player.bus="TerraForestEffects";player.max_distance=96;add_child(player);audio_pool.append(player)
+		player=AudioStreamPlayer3D.new();player.bus="TerraForestWeapons";player.max_distance=96;add_child(player);audio_pool.append(player)
 	player.volume_db=gain_db;player.global_position=point;player.stream=stream;player.play()
