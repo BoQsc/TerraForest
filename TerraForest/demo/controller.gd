@@ -14,6 +14,9 @@ var hud := Label.new()
 var status := Label.new()
 var help := Label.new()
 var pointer := MeshInstance3D.new()
+var block_preview := BoxMesh.new()
+var box_preview := BoxMesh.new()
+var sphere_preview := SphereMesh.new()
 var tool: int = 3
 var radius: float = 4.0
 var crouched:=false
@@ -298,9 +301,13 @@ func _setup_scene() -> void:
 	camera.add_child(flashlight)
 	add_child(player)
 	player.position = Vector3(960, 90, 1310)
-	var box := BoxMesh.new()
-	box.size = Vector3.ONE * 1.012
-	pointer.mesh = box
+	block_preview.size = Vector3.ONE * 1.012
+	box_preview.size = Vector3.ONE
+	sphere_preview.radius = 0.5
+	sphere_preview.height = 1.0
+	sphere_preview.radial_segments = 24
+	sphere_preview.rings = 12
+	pointer.mesh = block_preview
 	pointer.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var preview := StandardMaterial3D.new()
 	preview.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -767,14 +774,19 @@ func _update_edit(delta: float) -> void:
 		stroke_buffer.cancel_continuous()
 		last_capture_signature.clear()
 	_consume_stroke()
-	pointer.visible = false
 	latest_hit.clear()
 	if not captured:
+		pointer.hide()
 		terrain.set_interaction_target(Vector3.INF)
 		return
-	var start: Vector3 = camera.global_position
-	var end: Vector3 = start - camera.global_basis.z * edit_reach
+	var view := get_viewport().get_camera_3d()
+	if view == null:
+		pointer.hide()
+		return
+	var start: Vector3 = view.global_position
+	var end: Vector3 = start - view.global_basis.z * edit_reach
 	var query := PhysicsRayQueryParameters3D.create(start, end, 1)
+	query.exclude = [player.get_rid()]
 	query.hit_back_faces = false
 	latest_hit = get_world_3d().direct_space_state.intersect_ray(query)
 	# Terrain targeting must not wait for a streamed physics collider. Existing
@@ -782,6 +794,7 @@ func _update_edit(delta: float) -> void:
 	if latest_hit.is_empty():
 		latest_hit=_terrain_pick(start,end)
 	if latest_hit.is_empty():
+		pointer.hide()
 		return
 	var hit: Vector3 = latest_hit["position"]
 	terrain.set_interaction_target(hit)
@@ -789,6 +802,7 @@ func _update_edit(delta: float) -> void:
 	var add: bool = building and not mining
 	if tool == 1:
 		var cell: Vector3 = (hit + normal * (0.015 if add else -0.015)).floor()
+		if pointer.mesh != block_preview:pointer.mesh = block_preview
 		pointer.position = cell + Vector3.ONE * 0.5
 		pointer.scale = Vector3.ONE
 		pointer.visible = true
@@ -805,6 +819,11 @@ func _update_edit(delta: float) -> void:
 		var shape: int = 0 if tool == 3 else 1
 		if tool == 2:
 			center = center.snapped(Vector3.ONE)
+		var mesh: PrimitiveMesh = sphere_preview if shape == 0 else box_preview
+		if pointer.mesh != mesh:pointer.mesh = mesh
+		pointer.position = center
+		pointer.scale = Vector3.ONE * (2.0 * radius)
+		pointer.show()
 		if (mining or building) and cooldown <= 0.0:
 			if add and _brush_overlaps_player(center, radius * (1.74 if shape == 1 else 1.0)):
 				_reject_placement("Filling here would embed the player; move away first")

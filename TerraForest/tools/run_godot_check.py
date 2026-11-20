@@ -40,6 +40,9 @@ BOUNDED_CONTRACT_REPORTS = {
 }
 
 def planned_report_bytes(command):
+    if "--authoring-captures" in command and any(Path(str(value)).name == "water_player_world.gd" for value in command):
+        # Two additional 1080p frames on top of the normal route allowance.
+        return 16 * 2**20 + planned_report_bytes([arg for arg in command if arg != "--authoring-captures"])
     if ("--water-load-only" in command or "--water-no-captures" in command) and any(Path(str(value)).name == "water_player_world.gd" for value in command):
         return 8 * 2**20  # One loaded-world capture plus bounded logs/JSON.
     if any(Path(str(value)).name in {"water_barrel_world.gd", "water_player_world.gd"} for value in command):

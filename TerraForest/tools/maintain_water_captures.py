@@ -16,12 +16,13 @@ NAMES.update(('post_blast.water', 'post_terrain.water'))
 NAMES.update(name + '.png' for name in ('player_shore_before', 'player_shore_after', 'player_shore_underwater', 'player_lake_before', 'player_lake_after', 'player_lake_underwater'))
 REVERSE_NAMES = {name + '_reverse.png' for name in ('player_shore_before', 'player_shore_after', 'player_lake_before', 'player_lake_after')}
 NAMES.update(REVERSE_NAMES)
+NAMES.update(("authoring_brush_0.png","authoring_brush_1.png"))
 
 
 def candidates(root=ROOT, keep_ready=2):
     if keep_ready not in (1, 2):
         raise ValueError('Keep one or two ready runs; archived evidence remains restorable')
-    ready = {'water_barrel_world': [], 'water_player_world': []}
+    ready = {'water_barrel_world': [], 'water_player_world': [], 'authoring_brush': []}
     for manifest in sorted((root / 'reports/checks').glob('*/run.json')):
         run = json.loads(manifest.read_text(encoding='utf-8'))
         if run.get('result', {}).get('exit_code') is None:
@@ -33,6 +34,8 @@ def candidates(root=ROOT, keep_ready=2):
         family = Path(script).stem
         if family not in ready or script not in ('res://tests/' + family + '.gd', str(root / 'tests' / (family + '.gd'))):
             continue
+        if family == 'water_player_world' and '--authoring-captures' in command and '--water-load-only' in command:
+            family = 'authoring_brush'
         folder = confined(manifest.parent, root / 'reports/checks')
         if '--check-evidence-dir=' + str(folder) not in command:
             continue

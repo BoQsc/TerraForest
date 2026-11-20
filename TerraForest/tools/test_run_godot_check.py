@@ -13,7 +13,10 @@ class CheckLauncherTests(unittest.TestCase):
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/water_contact_clip.gd"]), 16 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/unknown.gd"]), 256 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/building_materials.gd"]), 64 * 2**20)
-        self.assertEqual(planned_report_bytes(["godot", "--script", str(Path("tests/water_barrel_world.gd").resolve())]), 32 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--script", str(Path("tests/water_barrel_world.gd").resolve())]), 40 * 2**20)
+        brush = ["godot", "--script", "res://tests/water_player_world.gd", "--authoring-captures"]
+        self.assertEqual(planned_report_bytes(brush), 56 * 2**20)
+        self.assertEqual(planned_report_bytes(brush + ["--water-load-only"]), 24 * 2**20)
 
     def test_pack_rejects_missing_or_mismatched_external_libraries(self):
         with tempfile.TemporaryDirectory() as directory:

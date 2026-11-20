@@ -576,6 +576,60 @@ func measure_grounded_route(filename:String="grounded_pacing.json")->void:
  game.session_menu.developer_hud.mouse_access=prior_access
  FileAccess.open(evidence.path_join(filename),FileAccess.WRITE).store_string(JSON.stringify(rows,"  "))
 
+func check_authoring_brush()->void:
+ game.player_view.entry.finish()
+ if "--authoring-at-spawn" not in OS.get_cmdline_user_args():
+  game.teleport(Vector3(1000,80,1000))
+  if not await ready("inland authoring"):check(false,"Authoring destination is resident");return
+ if not game.session_menu.developer:game.session_menu.toggle_developer()
+ game.session_menu.set_open(false)
+ game.app_focused=true
+ Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+ for i in 3:
+  game.radius=2 if i==0 else 32
+  if i==1 and "--authoring-at-spawn" not in OS.get_cmdline_user_args():
+   game.fly=true
+   game.player.global_position+=Vector3.UP*65
+  game.session_menu.activate_developer_slot(i)
+  game.player_view.set_enabled(i==1,false)
+  var view:Camera3D=root.get_camera_3d()
+  view.look_at(view.global_position+Vector3(.15,-1,-.1),Vector3.UP)
+  game._update_edit(0)
+  var shape_ok:bool=game.pointer.mesh==[game.sphere_preview,game.box_preview,game.block_preview][i]
+  check(game.pointer.visible and shape_ok,"Active camera shows the selected development brush "+str(i))
+  if game.latest_hit.is_empty():check(false,"Brush ray hits terrain");continue
+  var hit:Vector3=game.latest_hit.position
+  check((-view.global_basis.z).dot(view.global_position.direction_to(hit))>.999,"Aim follows the active camera")
+  var center:Vector3=hit-game.latest_hit.normal*game.radius*.55
+  if i==1:center=center.snapped(Vector3.ONE)
+  if i==2:center=(hit-game.latest_hit.normal*.015).floor()+Vector3.ONE*.5
+  check(game.pointer.position.is_equal_approx(center),"Preview matches brush centre")
+  check(game.pointer.scale.is_equal_approx(Vector3.ONE*(1 if i==2 else game.radius*2)),"Preview matches brush dimensions")
+  if i<2 and "--authoring-captures" in OS.get_cmdline_user_args() and DisplayServer.get_name()!="headless":
+   await RenderingServer.frame_post_draw
+   var capture_path:=evidence.path_join("authoring_brush_%d.png"%i)
+   check(root.get_texture().get_image().save_png(capture_path)==OK,"Rendered brush view retained")
+  if i==2 or failures>0:continue
+  var revision:int=game.terrain.published_revision
+  var click:=InputEventMouseButton.new()
+  click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
+  var started:=Time.get_ticks_usec()
+  Input.parse_input_event(click);Input.flush_buffered_events()
+  game._update_edit(1)
+  var admitted:bool=game.terrain.pending_edit
+  var admission_us:=Time.get_ticks_usec()-started
+  if not admitted:
+   print("AUTHORING_REJECTION ",JSON.stringify({"target":str(hit),"captured":str(game.last_capture_signature),"queued":game.stroke_buffer.samples.size(),"message":game.status.text,"terrain_error":game.terrain.latest_error}))
+  click=click.duplicate();click.pressed=false
+  Input.parse_input_event(click);Input.flush_buffered_events()
+  check(admitted,"Brush press submits an edit through the developer tool")
+  var frames:=0;var worst_us:=0;var previous:=started
+  while admitted and game.terrain.published_revision==revision and Time.get_ticks_usec()-started<60000000:
+   await process_frame
+   var now:=Time.get_ticks_usec()
+   worst_us=maxi(worst_us,now-previous);previous=now;frames+=1
+  check(game.terrain.published_revision>revision,"Authoring brush publishes a changed terrain revision")
+  print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"admitted":admitted,"admission_us":admission_us,"publication_us":Time.get_ticks_usec()-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us}))
 func run()->void:
  var sea_completed:=false
  for arg in OS.get_cmdline_user_args():
@@ -592,6 +646,7 @@ func run()->void:
  var qualification:bool="--qualification-route" in OS.get_cmdline_user_args()
  if qualification:begin_route_capture()
  check(await ready("initial"),"Actual player world loads read-only")
+ if "--authoring-brush" in OS.get_cmdline_user_args() and failures==0:await check_authoring_brush()
  if qualification and failures==0:await qualification_travel()
  if "--exploration-trader" in OS.get_cmdline_user_args():
   check(game.trader.anchor.is_finite(),"Saved world has a trader destination")

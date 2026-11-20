@@ -1,3 +1,39 @@
+## In-game terrain authoring
+
+The development belt's sphere, snapped box and single-cell tools now preview
+the brush at the centre used by the terrain command. Picking follows the
+active viewport camera in first and third person. Preview meshes are reused
+across frames. The primary player views and normal inventory actions remain
+the default way to play.
+
+On read-only Cedar Vale, source-game run `20261120T113443205539Z` used the
+development belt and ordinary mouse events to excavate inland. The 2 m radius
+sphere admitted in 0.771 ms and published in 27.139 ms (two game frames).
+The snapped box with 32 m half-extent admitted in 1.456 ms and published in
+335.214 ms (21 frames, worst game interval 22.036 ms). Preview geometry and
+camera alignment passed for all three tools. At the saved coastal spawn the
+32 m brush entered the stroke buffer and failed admission without a user-facing
+reason in `20261120T113545983761Z`. Large-scale editing is unqualified. The
+coastal water preparation enumerates a maximum of 512 region keys per edit;
+this brush spans more. Resolve the admission and publication path while
+preserving conserved water, revision atomicity, collision and visible surfaces.
+
+Run `water_player_world --isolated-render --timeout 235 --require "WATER_PLAYER_WORLD failures=0" -- --water-source-slot=Cedar_Vale --water-load-only --authoring-brush`
+with `tools/run_godot_check.py`. Add `--authoring-at-spawn` to reproduce the
+coastal failure. Verify the overview authoring path, zoom transitions, undo,
+save/reopen and full rendered frame budgets before closing the authoring gate.
+
+Packaged run `20261120T114749733149Z` renders the 2 m sphere at ground level
+and the 32 m box from 65 m above the same inland area using the third-person
+camera. `authoring_brush_0.png` and `authoring_brush_1.png` show the selected
+footprints. The clicks took 0.992 and 1.842 ms through admission; the changed
+terrain revisions appeared after 52.299 and 341.028 ms respectively. The
+worst observed game intervals were 34.677 and 35.285 ms. These are two
+samples from a rendered check with image readbacks. The optional
+`--authoring-captures` switch keeps the image cost out of ordinary timing runs.
+When the camera is inside a large brush its outer boundary can be off-screen.
+A projected-grid trial streaked across the terrain and was rejected.
+
 ## Dedicated hosting and client headroom
 
 Packaged Cedar Vale route `20261120T104316302094Z` recorded 9,645 frames.
