@@ -54,13 +54,22 @@ func save_bucket_checkpoint(input_path:String)->void:
 	var checkpoint:PackedByteArray=archive.encode(original.sections)
 	check(not checkpoint.is_empty() and checkpoint.size()<=limit and archive.publish(output,checkpoint)==OK,"Publish matching gameplay inventory and water within the capture reservation")
 	archive.release()
+	var hud=game.player_hud
+	if game.session_menu.developer:game.session_menu.toggle_developer()
+	hud.set_open(true)
+	var destination:=31
+	hud.drop_stack("player",destination,hud.drag_data("player",slot))
+	var moved_slots:Array=inventory.snapshot().slots
+	check(moved_slots[destination].water_ml==1000000,"Inventory drag carries the full bucket to the backpack")
+	hud.drop_stack("player",slot,hud.drag_data("player",destination))
+	hud.set_open(false)
 	var filled_quantity:int=game.lakes.water.total_water_ml()
 	if not await ready("gameplay_scoop"):check(false,"Gameplay publishes the scooped surface");return
 	var pour:Dictionary=game.lakes.bucket(Vector3(256.25,38,224.25),Vector3(256.25,33,224.25),true,inventory,slot,inventory.snapshot().revision)
 	if not pour.ok or not await ready("gameplay_pour"):check(false,"Gameplay publishes the poured surface");return
 	var after:Dictionary=game.lakes.water.raycast_surface(Vector3(256.25,38,224.25),Vector3(256.25,33,224.25))
 	check(after.hit and game.lakes.water.total_water_ml()==before and inventory.snapshot().slots==state.slots,"Gameplay pour restores quantity and slot contents")
-	if after.hit:print("GAME_BUCKET ",JSON.stringify({"slot":slot,"water_ml":filled_quantity,"poured_y":after.point.y,"poured_cell":[after.cell.x,after.cell.y,after.cell.z]}))
+	if after.hit:print("GAME_BUCKET ",JSON.stringify({"slot":slot,"water_ml":filled_quantity,"poured_y":after.point.y,"poured_cell":[after.cell.x,after.cell.y,after.cell.z],"move_destination":destination,"moved_slots":moved_slots}))
 
 func sample_commit()->void:
 	var token:int=preload("res://addons/volumetric_terrain/surface_tokens.gd").allocate()

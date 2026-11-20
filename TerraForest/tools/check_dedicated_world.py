@@ -315,6 +315,19 @@ def run(engine, packaged, report, expected_archive=None):
         assert all(row.get("pending") for row in attempts[:success]) and all(row==attempts[success] for row in attempts[success:])
         assert cold_run[-2]["digest"]==empty and cold_run[-1]["water_ml"]==original[1]["water_ml"]
         report["cold_bucket"] = dict(pending_replies=success+1, transferred_ml=attempts[success]["water_ml"])
+        destination = bucket["move_destination"]
+        move = f"v1 4 move-stack {slot} {destination} 1 {full}"
+        conflict = move.replace(f" {destination} 1 ", f" {destination} 2 ")
+        rows = invoke(bucket_host, [move.replace(full,empty), conflict, "v1 inventory",
+                                    move, move, conflict, "v1 inventory", "save", "quit"], "AUTHORITY ")
+        assert not rows[1]["ok"] and not rows[2]["ok"] and rows[3]["digest"] == full
+        assert rows[4]["ok"] and rows[4]["changed"] and rows[4] == rows[5] and not rows[6]["ok"]
+        assert rows[7]["slots"] == bucket["moved_slots"] and rows[8]["ok"]
+        restored = invoke(bucket_host, [move, "v1 inventory", samples()[0], "quit"], "AUTHORITY ")
+        assert restored[0]["last_request_id"] == 4 and restored[1] == rows[4]
+        assert restored[2]["digest"] == rows[7]["digest"] and restored[3] == imported[2]
+        report["inventory_move"] = dict(source=slot, destination=destination, reloaded=True,
+                                        matches_gameplay=True, digest=restored[2]["digest"])
         report["bucket_save_reload"] = bucket
         report.update(before=original[1:4], after=changed, reloaded=reloaded, gameplay=game,
                       initial_archive_sha256=original_digest.hex(), passed=True)

@@ -35,6 +35,10 @@ func command(args:PackedStringArray)->Dictionary:
 	if args==PackedStringArray(["v1","inventory"]):
 		var state:Dictionary=world.inventory.snapshot()
 		return {"ok":true,"version":1,"slots":state.slots,"session_revision":state.revision,"digest":world.inventory_digest().hex_encode()}
+	if args.size()==7 and args[0]=="v1" and args[2]=="move-stack":
+		for index in [1,3,4,5]:
+			if not args[index].is_valid_int():return {"ok":false,"reason":"Invalid inventory move"}
+		return world.move_stack(int(args[1]),int(args[3]),int(args[4]),int(args[5]),args[6])
 	if args.size()==12 and args[0]=="v1" and args[2] in ["scoop","pour"]:
 		for index in [1,9,10]:
 			if not args[index].is_valid_int():return {"ok":false,"reason":"Invalid bucket request"}

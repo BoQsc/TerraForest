@@ -44,6 +44,14 @@ build is byte-matched to `20261120T172636344616Z` including external DLLs.
 
 ## November 20 dedicated loadout and bucket targeting
 
+In packaged Windows run `20261120T181718751314Z` (pack `050186757f46`),
+the gameplay HUD moved a full 1,000,000 ml bucket from belt slot 8 to
+backpack slot 31. The dedicated operator's move matched all 32 slots.
+An outdated inventory digest, an excessive count and a conflicting retry
+were rejected. The saved move could be replayed after restart with the same
+acknowledgement, inventory digest and lake sample. This covers one trusted
+operator's carried inventory. Multi-peer ownership and replication remain open.
+
 Windows pack `3f6598610b0a`, run `20261120T163411140862Z`, loaded a
 finite inland lake in the gameplay scene and transferred 1,000,000 ml from
 the lake into the bucket in slot 8. The standalone authority loaded the

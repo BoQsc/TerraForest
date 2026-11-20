@@ -20,6 +20,7 @@ lakes. Saving is explicit. A closed input pipe or `quit` releases the lease.
 | `v1 sample X Y Z [X Y Z ...]` | Read one to eight world positions in order, returning one terrain revision and one total water quantity for the set |
 | `v1 water-surface X Y Z END_X END_Y END_Z` | Cast a bucket-length segment against the resident water surface. A hit returns world position, normal and owning cell as numeric triples, alongside the terrain revision. |
 | `v1 inventory` | Read the trusted local operator's 32 gameplay slots, including bucket contents and durability. The native inventory revision is scoped to the current process. |
+| `v1 ID move-stack FROM TO COUNT DIGEST` | Move, split, merge or swap carried items using the same native transfer as inventory drag and drop. Supply the digest from the inventory query. Whole-item moves carry water and durability. |
 | `v1 ID scoop X Y Z END_X END_Y END_Z SLOT REV DIGEST` | Collect water into the selected bucket. Pass the terrain revision and the loadout digest from the inventory query. |
 | `v1 ID pour X Y Z END_X END_Y END_Z SLOT REV DIGEST` | Place water using the same five-metre segment and inventory preconditions. |
 | `excavate X Y Z R REV` | Excavate a sphere against the specified revision and return the sample after water settles |
@@ -35,7 +36,7 @@ A retry of any of the last 32 committed IDs with identical arguments
 returns its original acknowledgement. Different arguments or skipped IDs
 are rejected. An expired ID returns the high-water mark so the caller can
 resynchronize. A successful explicit save publishes receipts with terrain,
-water and inventory. Brush records take 36 bytes and bucket records take 80.
+water and inventory. Brush records take 36 bytes, inventory moves take 60 and bucket records take 80.
 The combined history uses at most 2,560 bytes of receipt payload. A
 legacy single receipt seeds the window. Two-section archives start at ID
 zero. After an unsaved exit resume at the high-water mark in the reopened slot.

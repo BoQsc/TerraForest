@@ -26,6 +26,8 @@ const RECEIPT_SIZE:=36
 const SCOOP:=2
 const POUR:=258
 const BUCKET_RECEIPT_SIZE:=80
+const MOVE_STACK:=3
+const MOVE_RECEIPT_SIZE:=60
 
 func open(slot:String)->bool:
 	if not slot.is_valid_identifier() or slot.length()>64:return false
@@ -151,6 +153,7 @@ func restore_receipts(data:PackedByteArray)->bool:
 		var tag:=data.decode_u32(offset)
 		var is_bucket:=tag==SCOOP or tag==POUR
 		var length:=BUCKET_RECEIPT_SIZE if is_bucket else RECEIPT_SIZE
+		if tag==MOVE_STACK:length=MOVE_RECEIPT_SIZE
 		if data.size()-offset<length:return false
 		var receipt:=data.slice(offset,offset+length)
 		offset+=length
@@ -159,7 +162,9 @@ func restore_receipts(data:PackedByteArray)->bool:
 		var after:=receipt.decode_u32(12)
 		if id==0 or (previous_id!=0 and id!=previous_id+1):return false
 		if before<previous_revision or after<before or after>before+1 or after>saved_revision:return false
-		if is_bucket:
+		if tag==MOVE_STACK:
+			if before!=after or not valid_move(receipt.decode_u32(16),receipt.decode_u32(20),receipt.decode_u32(24)):return false
+		elif is_bucket:
 			var amount:=receipt.decode_u32(76)
 			if after!=before or receipt.decode_u32(40)>=32 or amount<1 or amount>1000000:return false
 			if not valid_bucket_ray(receipt_point(receipt),receipt_point(receipt,28)):return false
@@ -184,6 +189,7 @@ static func receipt_reply(receipt:PackedByteArray)->Dictionary:
 	if receipt.size()==BUCKET_RECEIPT_SIZE:
 		reply.changed=true
 		reply.water_ml=receipt.decode_u32(76)
+	elif receipt.decode_u32(0)==MOVE_STACK:reply.changed=true
 	return reply
 
 func inventory_digest()->PackedByteArray:
@@ -197,12 +203,50 @@ func remember(receipt:PackedByteArray)->void:
 	operator_receipts.append(receipt)
 
 signal bucket_committed(request_id:int,slot:int,poured:bool,water_ml:int)
+signal stack_moved(request_id:int,source:int,destination:int,count:int)
+
+static func valid_move(source:int,destination:int,count:int)->bool:
+	return source>=0 and source<32 and destination>=0 and destination<32 and source!=destination and count>0 and count<=0xffffffff
+
+static func valid_digest(value:String)->bool:
+	return value.length()==64 and value.is_valid_hex_number(false) and value[0] not in ["-","+"]
+
+func move_stack(id:int,source:int,destination:int,count:int,loadout:String)->Dictionary:
+	if not healthy:return {"ok":false,"reason":"World unavailable"}
+	if id<1 or id>0xffffffff or not valid_move(source,destination,count) or not valid_digest(loadout):
+		return {"ok":false,"reason":"Invalid inventory move"}
+	var digest:=loadout.hex_decode()
+	var receipt:=PackedByteArray()
+	receipt.resize(28)
+	receipt.encode_u32(0,MOVE_STACK)
+	receipt.encode_u32(4,id)
+	receipt.encode_u32(16,source)
+	receipt.encode_u32(20,destination)
+	receipt.encode_u32(24,count)
+	receipt.append_array(digest)
+	var last:=last_request_id()
+	if id<=last:
+		var index:=operator_receipts.size()-1-(last-id)
+		if index<0:return {"ok":false,"reason":"Receipt expired","last_request_id":last}
+		var prior:=operator_receipts[index]
+		if prior.decode_u32(0)==MOVE_STACK and prior.slice(16)==receipt.slice(16):return receipt_reply(prior)
+		return {"ok":false,"reason":"Request ID already committed with different arguments"}
+	if id!=last+1:return {"ok":false,"reason":"Unexpected request ID"}
+	if inventory_digest()!=digest:return {"ok":false,"reason":"Stale inventory"}
+	var result:Dictionary=inventory.transfer(source,destination,count,inventory.snapshot().revision)
+	if not result.ok:return result
+	var terrain_revision:=revision()
+	receipt.encode_u32(8,terrain_revision)
+	receipt.encode_u32(12,terrain_revision)
+	remember(receipt)
+	stack_moved.emit(id,source,destination,count)
+	return receipt_reply(receipt)
 
 func transfer_bucket(id:int,pour:bool,origin:Vector3,end:Vector3,slot:int,expected:int,loadout:String)->Dictionary:
 	if not healthy:return {"ok":false,"reason":"World unavailable"}
 	if not valid_bucket_ray(origin,end) or slot<0 or slot>=32 or id<1 or id>0xffffffff or expected<0 or expected>0xffffffff:
 		return {"ok":false,"reason":"Invalid bucket request"}
-	if loadout.length()!=64 or not loadout.is_valid_hex_number(false) or loadout[0] in ["-","+"]:return {"ok":false,"reason":"Invalid loadout digest"}
+	if not valid_digest(loadout):return {"ok":false,"reason":"Invalid loadout digest"}
 	var digest:=loadout.hex_decode()
 	var receipt:=PackedByteArray()
 	receipt.resize(BUCKET_RECEIPT_SIZE)
