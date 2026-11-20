@@ -10,6 +10,13 @@ func run_scope()->void:
  var water:=fixture(cells)
  var total:int=water.statistics().water_ml
  water.settle_after_edit(AABB(Vector3(donor)*.5,Vector3.ONE*.5))
+ var first_response:RefCounted=water.begin_equilibrium(0,true)
+ check(first_response!=null,"Resident edit admits a first response among 4,096 pools")
+ if first_response!=null:
+  first_response.prepare()
+  var immediate:Dictionary=water.finish_equilibrium(first_response)
+  check(immediate.get("ok",false) and immediate.get("snapshot_regions",4096)<16,"First response stays in the edited neighbourhood")
+  check(water.statistics().water_ml==total and water.runtime_state().settling_regions>0,"First response conserves water and retains future relaxation")
  var result:=await solve(water)
  check(result.get("ok",false) and result.get("snapshot_regions",4096)<16,"Local edit snapshots only its affected group with 4,096 resident pools: "+str(result))
  check(water.statistics().water_ml==total,"Scoped equilibrium conserves the entire store quantity")

@@ -10,6 +10,17 @@ then all 81 wet after settling. See the [water tracker](../issues/explosive-comb
 and [route command](PROJECT_PLAN.md). Stable 60 Hz and immediate local edits
 remain open.
 
+The native first-response path now selects an edit's recorded region keys
+directly and refreshes pending transfer work for changed regions. The
+4,096-pool and connected-lake regression passed 24 checks in
+`20261120T110833763121Z`. On the packaged Cedar Vale route
+`20261120T110909584324Z`, sea/lake/mining publication took
+193.35/282.347/182.658 ms. The sea surface ray, lake first-publication depth,
+lake bank contact and lake 250 ms deadline failed. The four bucket actions
+took 38.516–61.784 ms. Forest/trader frame intervals reached 21.431/28.445 ms
+at p99. This change removes scans of unrelated resident regions from bounded
+local jobs; these timings do not establish an end-to-end speedup.
+
 The [world systems design](WORLD_SYSTEMS_DESIGN.md#current-priority-one-world-for-dedicated-hosting-and-continuous-zoom) records the authority, plugin, zoom and scale milestones. The first native place query and publication event serve the trader today. The first standalone inland edit gate is exercised below. Paged saves, structures, authorization and asynchronous admission remain open. Dedicated hosting, zoom continuity and hundreds of concurrent players remain unqualified.
 
 The [dedicated host and regression command](DEDICATED_AUTHORITY.md) now run a

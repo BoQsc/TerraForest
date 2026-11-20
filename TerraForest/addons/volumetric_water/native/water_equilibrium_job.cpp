@@ -115,7 +115,15 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
         for(const auto &[k,r]:regions)if(r.settle_pending&&r.ocean_state&&r.has_density)pending_ocean.push_back(k);
         for(Key k:pending_ocean)if(!prepare_ocean_edit(AABB(Vector3(position(k))*4,Vector3(4,4,4))))return {};
     }
-    for(const auto &[k,r]:regions)if(r.settle_pending&&!r.valid&&(!local_response||local_edit_regions.empty()||local_edit_regions.count(k)))return {};
+    const bool bounded_edit=local_response&&!local_edit_regions.empty();
+    if(bounded_edit){
+        for(Key k:local_edit_regions){
+            auto found=regions.find(k);
+            if(found!=regions.end()&&found->second.settle_pending&&!found->second.valid)return {};
+        }
+    }else{
+        for(const auto &[k,r]:regions)if(r.settle_pending&&!r.valid)return {};
+    }
     if(!local_response)for(Key k:equilibrium_dependencies){
         auto found=regions.find(k);
         if(found==regions.end()||!found->second.valid){get(position(k)*8,true);return {};}
@@ -130,10 +138,16 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
     auto &s=*job->capture_selection;
     if(!local_response)s.candidate.insert(equilibrium_dependencies.begin(),equilibrium_dependencies.end());
     s.account_keys.assign(s.candidate.begin(),s.candidate.end());
-    for(const auto &[k,r]:regions){
-        bool selected=r.settle_pending&&(!local_response||local_edit_regions.empty()||local_edit_regions.count(k));
-        if(local_response&&!local_occupancy_regions.empty())selected=local_occupancy_regions.count(k)&&r.valid;
-        if(selected)s.seeds.push_back(k);
+    if(bounded_edit||(local_response&&!local_occupancy_regions.empty())){
+        const bool occupancy_changed=!local_occupancy_regions.empty();
+        const auto &keys=occupancy_changed?local_occupancy_regions:local_edit_regions;
+        for(Key k:keys){
+            auto found=regions.find(k);
+            if(found!=regions.end()&&(occupancy_changed?found->second.valid:found->second.settle_pending))s.seeds.push_back(k);
+        }
+        std::sort(s.seeds.begin(),s.seeds.end());
+    }else{
+        for(const auto &[k,r]:regions)if(r.settle_pending)s.seeds.push_back(k);
     }
     if(local_response){
         // One bounded union/accounting pass, rather than recopying and charging
@@ -214,14 +228,23 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
         for(int corner=0;corner<8;++corner)changed(base+Vector3i((corner&1)?hi.x:lo.x,(corner&2)?hi.y:lo.y,(corner&4)?hi.z:lo.z));
     }
     background_change=false;
-    settling.clear();settling_set.clear();
-    for(auto &[k,r]:regions){
-        const auto prepared=job->frozen->regions.find(k);
-        // A local response is a conservative transient, not a claim that the
-        // connected body has reached equilibrium. Persist its pending work.
-        if(!job->local_response&&prepared!=job->frozen->regions.end())r.settle_pending=prepared->second.settle_pending;
-        r.settle_mask.fill(0);
-        if(r.settle_pending)wake_settling(k);
+    if(job->local_response){
+        // Only changed quantities can change which faces of a pending region
+        // need another transfer. Keep distant pending work in queue order.
+        for(Key k:job->changed_regions){
+            auto found=regions.find(k);
+            if(found==regions.end()||!found->second.settle_pending)continue;
+            found->second.settle_mask.fill(0);
+            wake_settling(k);
+        }
+    }else{
+        settling.clear();settling_set.clear();
+        for(auto &[k,r]:regions){
+            const auto prepared=job->frozen->regions.find(k);
+            if(prepared!=job->frozen->regions.end())r.settle_pending=prepared->second.settle_pending;
+            r.settle_mask.fill(0);
+            if(r.settle_pending)wake_settling(k);
+        }
     }
     invalidate_snapshot();
     out["ok"]=true;out["changed_regions"]=int64_t(job->changed_regions.size());return out;
