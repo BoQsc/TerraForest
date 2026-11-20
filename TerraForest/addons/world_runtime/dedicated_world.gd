@@ -70,11 +70,34 @@ func save()->bool:
 	var payload:PackedByteArray=archive.encode(sections)
 	return not payload.is_empty() and archive.publish(path,payload)==OK
 
-func sample(point:Vector3)->Dictionary:
-	if not healthy or not point.is_finite():return {"ok":false,"reason":"World unavailable"}
+const MAX_QUERY_POINTS:=8
+
+func _sample_point(point:Vector3)->Dictionary:
+	if not point.is_finite():return {"ok":false,"reason":"Invalid position"}
 	var data:PackedByteArray=core.execute(Codec.point_command(point))
 	if not Codec.reply_ok(data) or data.size()<20:return {"ok":false}
-	return {"ok":true,"revision":revision(),"height":data.decode_float(12),"density":data.decode_float(16),"depth":water.depth_at(point),"water_ml":water.statistics().water_ml}
+	return {"ok":true,"height":data.decode_float(12),"density":data.decode_float(16),"depth":water.depth_at(point)}
+
+func sample(point:Vector3)->Dictionary:
+	if not healthy:return {"ok":false,"reason":"World unavailable"}
+	var result:=_sample_point(point)
+	if result.ok:
+		result.revision=revision()
+		result.water_ml=water.total_water_ml()
+	return result
+
+func sample_points(points:PackedVector3Array)->Dictionary:
+	if not healthy:return {"ok":false,"reason":"World unavailable"}
+	if points.is_empty() or points.size()>MAX_QUERY_POINTS:return {"ok":false,"reason":"Invalid point count"}
+	var rows:Array[Dictionary]=[]
+	for point:Vector3 in points:
+		if point!=point.clamp(Vector3.ZERO,Vector3(2000,256,2000)):return {"ok":false,"reason":"Outside world"}
+		var row:=_sample_point(point)
+		if not row.ok:return row
+		row.erase("ok")
+		rows.append(row)
+	# The authority serializes commands. Every sample belongs to this revision.
+	return {"ok":true,"version":1,"revision":revision(),"water_ml":water.total_water_ml(),"samples":rows}
 
 signal edit_committed(revision:int,bounds:AABB)
 

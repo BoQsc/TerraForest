@@ -148,11 +148,16 @@ func _initialize():
   var local:=publish(water,100)
   water.advance(1)
   var stats:Dictionary=water.statistics()
+  var query_start:=Time.get_ticks_usec()
+  var sampled_ml:int=0
+  for read in 1024:sampled_ml+=water.total_water_ml()
+  var quantity_read_us:=Time.get_ticks_usec()-query_start
+  check(sampled_ml==1024*int(stats.water_ml),"Scalar quantity matches the residency audit (%d regions)"%count)
   check(initial.complete and local.complete and edited==1000 and stats.water_ml==count*4000000+1000,"Publication and local edit conserve water (%d regions)"%count)
   check(initial.packets<=count*4 and initial.empty_packets==0,"Restore schedules surface owners without empty halo packets (%d regions)"%count)
   check(initial.batches==count and initial.largest_batch_packets==1 and initial.packets==count,"Each isolated pool publishes its one nonempty surface owner (%d regions)"%count)
   check(local.packets==1,"Local interior edit rebuilds only one owner (%d regions)"%count)
-  rows.append({"regions":count,"initial":initial,"local_edit":local,"query_cache_bytes":stats.query_cache_bytes,"resident_cell_bytes":stats.resident_cell_bytes})
+  rows.append({"regions":count,"initial":initial,"local_edit":local,"quantity_1024_reads_us":quantity_read_us,"query_cache_bytes":stats.query_cache_bytes,"resident_cell_bytes":stats.resident_cell_bytes})
  var edge_pool=fixture(1)
  publish(edge_pool,100)
  var edge_removed:int=edge_pool.brush(Vector3(43.75,41.75,43.75),0,-100)

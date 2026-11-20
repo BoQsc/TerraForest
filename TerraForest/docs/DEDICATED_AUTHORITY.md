@@ -17,6 +17,7 @@ lakes. Saving is explicit. A closed input pipe or `quit` releases the lease.
 | --- | --- |
 | `lakes` | Read generated lake definitions |
 | `sample X Y Z` | Sample terrain density, height, water depth, total water and terrain revision |
+| `v1 sample X Y Z [X Y Z ...]` | Read one to eight world positions in order, returning one terrain revision and one total water quantity for the set |
 | `excavate X Y Z R REV` | Excavate a sphere against the specified revision and return the sample after water settles |
 | `v1 ID excavate X Y Z R REV` | Commit an ordered operator request and return its ID, resulting revision and changed flag |
 | `save` | Publish a verified compound archive and retain the preceding version as a backup |
@@ -41,6 +42,10 @@ exclusive lease used by gameplay. A failed water transaction requires a
 reload of the last saved state.
 
 The operator pipe is local and trusted. This implementation serializes work.
+The batched read accepts finite coordinates within the 2000 × 256 × 2000 m
+world bounds. Invalid input rejects the whole read. Each entry in `samples`
+has `height`, `density` and `depth`. The enclosing response has `revision`
+and `water_ml`. Reads leave the excavation request stream untouched.
 The response to an edit follows the water solve. Concurrent gameplay admission,
 regional replication, authenticated peer request streams and 30 Hz scheduling remain open.
 The standalone process does not load the world scene, player, camera or HUD.

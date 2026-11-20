@@ -332,6 +332,7 @@ public:
     godot::Dictionary survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::String survey_cache_identity() const{return survey_saved_identity;}
     int64_t survey_revision_id() const {return int64_t(map_revision);}
+    int64_t total_water_ml() const {return int64_t(total);}
     godot::Dictionary survey_surfaces(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::Dictionary next_request();
     godot::Array next_requests(int64_t limit,bool ocean_only=true);

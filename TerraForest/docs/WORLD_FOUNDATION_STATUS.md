@@ -1,3 +1,27 @@
+## November 20 dedicated spatial queries
+
+The dedicated point query now reads the authoritative water counter directly.
+The previous call allocated a diagnostic dictionary and traversed all resident
+regions to return this single value. The versioned batch accepts one to eight
+points and returns height, density and water depth for each, with the shared
+revision and total quantity. The operator driver compares eight-point batches
+to eight individual reads in alternating order, validates repeated points and
+rejects invalid sizes and positions. Reads leave the mutation sequence intact.
+
+Scale fixture `20261120T135445733191Z` compared the scalar quantity with
+the full audit after a local brush edit. At 1, 16, 64 and 256 resident regions,
+1,024 reads took 134, 131, 134 and 130 µs respectively. The source-host pipe
+run `20261120T135353195089Z` measured 154 µs median for eight points batched
+and 248 µs for eight single requests. Both measurements include the pipe and
+client decoding. Network throughput and simultaneous peer capacity remain open.
+
+Installed host run `20261120T135811764900Z` passed the same comparisons,
+the legacy gameplay probes, save/reload, contention and receipt-retry cases.
+For 32 measured sets per mode, eight single reads took 251.45 µs median
+(389.4 µs maximum), and a batch took 157.75 µs median (198.6 µs maximum).
+The excavation took 439.051 ms. Game pack SHA-256 was
+`83b323f128d578f6cfa5da2b45ef63c780b34b6765c384dd83f878f90b741928`.
+
 ## November 20 dedicated excavation retries
 
 The Windows host accepts a versioned excavation from its trusted operator.

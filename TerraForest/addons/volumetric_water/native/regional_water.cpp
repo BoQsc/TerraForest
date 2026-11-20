@@ -304,6 +304,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("next_mesh_batch","background","indexed_only"),&NativeRegionalWater::next_mesh_batch,DEFVAL(false),DEFVAL(false));
     ClassDB::bind_method(D_METHOD("next_mesh","include_contacts"),&NativeRegionalWater::next_mesh,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
+    ClassDB::bind_method(D_METHOD("total_water_ml"),&NativeRegionalWater::total_water_ml);
     ClassDB::bind_method(D_METHOD("runtime_state"),&NativeRegionalWater::runtime_state);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
     ClassDB::bind_method(D_METHOD("retire_region","receipt","expected_revision"),&NativeRegionalWater::retire_region);

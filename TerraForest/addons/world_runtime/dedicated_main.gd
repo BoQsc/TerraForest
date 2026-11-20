@@ -31,6 +31,15 @@ func run()->void:
 	quit()
 
 func command(args:PackedStringArray)->Dictionary:
+	if args.size()>=2 and args[0]=="v1" and args[1]=="sample":
+		var coordinates:=args.size()-2
+		if coordinates==0 or coordinates%3!=0 or coordinates>3*World.MAX_QUERY_POINTS:return {"ok":false,"reason":"Invalid point count"}
+		var points:=PackedVector3Array()
+		for index in range(2,args.size(),3):
+			for axis in 3:
+				if not args[index+axis].is_valid_float():return {"ok":false,"reason":"Invalid position"}
+			points.append(Vector3(float(args[index]),float(args[index+1]),float(args[index+2])))
+		return world.sample_points(points)
 	var request_id:=0
 	if args.size()==8 and args[0]=="v1" and args[2]=="excavate":
 		if not args[1].is_valid_int():return {"ok":false,"reason":"Invalid request ID"}

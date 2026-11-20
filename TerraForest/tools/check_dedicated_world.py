@@ -10,6 +10,7 @@ import math
 import os
 from pathlib import Path
 import shutil
+from statistics import median
 import subprocess
 import tempfile
 import time
@@ -24,6 +25,46 @@ POINTS = [(239, 31, 224), (241, 31, 224), (256, 32, 224)]
 
 def samples():
     return ["sample %d %d %d" % point for point in POINTS]
+
+
+def check_query_burst(owner, lines):
+    # Compare equal point workloads on one settled revision, including IPC,
+    # JSON decoding and client receipt. Send each eight-point set in one flush.
+    points = (POINTS * 3)[:8]
+    triples = ["%d %d %d" % p for p in points]
+    singles = "\n".join("sample " + triple for triple in triples)
+    batch = "v1 sample " + " ".join(triples)
+    timings = {"single_requests": [], "batch_request": []}
+    for iteration in range(33):
+        reference = {}
+        order = list(timings) if iteration % 2 == 0 else list(reversed(timings))
+        for mode in order:
+            single = mode == "single_requests"
+            start = time.perf_counter_ns()
+            owner.stdin.write((singles if single else batch) + "\n")
+            owner.stdin.flush()
+            replies = [lines.get(timeout=10) for _ in range(8 if single else 1)]
+            elapsed_us = (time.perf_counter_ns() - start) / 1000
+            assert all(reply["ok"] and reply["revision"] == 1 for reply in replies)
+            if single:
+                assert all(reply["water_ml"] == replies[0]["water_ml"] for reply in replies)
+                rows = [{key: reply[key] for key in ("height", "density", "depth")} for reply in replies]
+            else:
+                assert replies[0]["version"] == 1 and len(replies[0]["samples"]) == 8
+                rows = replies[0]["samples"]
+            reference[mode] = (replies[0]["water_ml"], rows)
+            if iteration:
+                timings[mode].append(elapsed_us)
+        assert reference["single_requests"] == reference["batch_request"]
+    for invalid in ("v1 sample", "v1 sample 1 2", "v1 sample " + "1 2 3 " * 9,
+                    "v1 sample 239 31 224 bad 0 0", "v1 sample 239 31 224 -1 0 0"):
+        owner.stdin.write(invalid + "\n")
+        owner.stdin.flush()
+        reply = lines.get(timeout=10)
+        assert not reply["ok"] and "samples" not in reply
+    return {"points_per_set": len(points), "measured_sets_per_mode": len(timings["batch_request"]),
+            "round_trip_us": {mode: {"median": median(times), "max": max(times)}
+                              for mode, times in timings.items()}}
 
 
 def run(engine, packaged, report):
@@ -73,8 +114,13 @@ def run(engine, packaged, report):
                     started = time.perf_counter()
                     owner.stdin.write("v1 1 excavate 240 31 224 3 0\n")
                     owner.stdin.flush()
-                    assert lines.get(timeout=90)["ok"]
+                    edit_reply = lines.get(timeout=90)
+                    assert edit_reply["ok"]
                     report["edit_round_trip_ms"] = (time.perf_counter()-started)*1000
+                    report["query_burst"] = check_query_burst(owner, lines)
+                    owner.stdin.write("v1 1 excavate 240 31 224 3 0\n")
+                    owner.stdin.flush()
+                    assert lines.get(timeout=10) == edit_reply
                     report["idle_working_set_bytes"] = idle_metrics["working_set_bytes"]
                     report["peak_working_set_after_edit_bytes"] = with_metrics.sample()["peak_working_set_bytes"]
                     # Windows permits reading and copying the canonical archive
