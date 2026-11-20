@@ -1,5 +1,9 @@
 # Visual issue tracker
 
+In the latest [water check](explosive-combat/water-plan.md), two-angle
+shoreline contact passed and the lake still missed its publication gate.
+The dedicated bucket path now preserves transfers across command retries.
+
 The latest [shoreline check](explosive-combat/water-plan.md) retained
 two-angle sea and lake contact after enabling same-frame mesh dispatch.
 Lake water still missed its publication budget.

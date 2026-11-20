@@ -1,5 +1,12 @@
 # Continuous volumetric water replacement
 
+The November 20 two-angle Cedar Vale run `20261120T170148951946Z` on
+release water DLL `c35d972efdd2` passed the immediate and settled contact
+probes at both shores and repeated the interrupted bucket collection and
+placement. Terrain publication to first draw was 148 ms at sea and 335 ms
+at the lake. The lake publication check remains red. The dedicated bucket
+improvement applies to simulation-only picking.
+
 The November 20 same-frame mesh dispatch is present in pack `3ba3ff687835`.
 In the two-angle run `20261120T161930815264Z`, sea and lake contact probes
 passed immediately and after settling. The lake still exceeded 250 ms.

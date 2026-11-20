@@ -15,11 +15,33 @@ passed both shoreline contact checks and repeated bucket collection and
 placement. Terrain publication to water draw took 140 ms at sea, 289 ms
 at the lake and 141 ms during mining. The lake missed the 250 ms gate.
 
-The slot query belongs to one trusted local operator. Its inventory revision
-is process-local. The next bucket command needs a persisted request identity
-and inventory precondition, including retries after restart, before it can
-qualify as an authoritative mutation. Player identities and replication
-remain separate milestones.
+The operator now executes scoop and pour through gameplay's native bucket
+transfer. In packaged run `20261120T164724440728Z` a cold placement needed
+11 pending replies and transferred 1,000,000 ml exactly once. A resident
+pour hit cell (512,72,448) at y=36.466 m in both gameplay and the host.
+Both transfers replayed after a later brush and a restart. A changed loadout
+digest or conflicting request was rejected. Receipts are checkpointed with
+inventory and water. The slot belongs to a single trusted local operator.
+Remote identity, multi-peer arbitration, tick scheduling and replication
+remain open.
+
+The Windows authority now builds only picking geometry for unrendered water
+queries. In run `20261120T165541477283Z`, 128 off-centre rays through two
+sloping fixtures matched the published positions, normals and owner cells
+across region and cell-layer boundaries. The reference operator performed
+32 alternating scoop/pour pairs in each installed run. Medians were
+4.63/4.74 ms in `20261120T164930551130Z` and 3.99/3.99 ms in
+`20261120T170001430050Z` with release DLL `c35d972efdd2`. The latter
+maxima were 4.66/4.48 ms, including pipe transit. First-use transfers,
+retries, terrain revision and post-restart water/inventory comparisons are
+in the reports. This is a resident, single-operator workload.
+
+The isolated packaged gameplay run `20261120T170148951946Z` retained both
+shoreline angles, underwater views and lake mining. First water draw after
+terrain publication took 148 ms at sea, 335 ms at the lake and 164 ms for
+mining. Bucket interruption and shoreline contact passed. The 250 ms lake
+publication check failed. Blast-window frame p99 was about 54 ms at either
+shore; the rendered qualification gate remains open.
 
 ## November 20 local water mesh dispatch
 
