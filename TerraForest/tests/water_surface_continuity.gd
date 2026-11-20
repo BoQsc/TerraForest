@@ -223,15 +223,20 @@ func check_gradient_surface(cross_layer:bool=false)->void:
     shared_normals[position]=normals[i]
   if packet.complete:published.commit_mesh_batch(packet.batch)
  check(normals_match,"Sloping surface normals agree at shared vertices across owner boundaries")
+ var authority:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+ check(authority.restore_snapshot(bytes),"Authority loads the same sloping surface")
+ var same_hits:=true
  var aligned:=true;var linear:=true
  for z in range(2,10):
   for x in range(2,10):
    var probe:=Vector3(41+x*.5+.13,41.51,41+z*.5+.37)
    var hit:Dictionary=published.raycast_surface(probe+Vector3.UP,probe)
+   if authority.raycast_surface(probe+Vector3.UP,probe)!=hit:same_hits=false
    if not hit.get("hit",false) or absf(probe.y+published.depth_at(probe)-hit.point.y)>.00002:aligned=false
    var expected:=41.5+(100000+(x-.24)*5000+(z+.24)*3000)/250000.0 if cross_layer else 41.5+(50000+(x-.24)*1250+(z+.24)*750)/250000.0
    if not hit.get("hit",false) or absf(hit.point.y-expected)>.00002:linear=false
  check(aligned,"Published immersion agrees with sloping rendered triangles at off-centre probes")
+ check(same_hits,"Authority hits agree with rendered position, normal and cell across region seams")
  check(linear,"Linear free surface crosses cell layers without steps (cross_layer="+str(cross_layer)+")")
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")

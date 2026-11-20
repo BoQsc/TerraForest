@@ -1637,7 +1637,7 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
                 pending_mesh_job=job;result["job"]=job;result["pending"]=true;
                 mesh_us=Time::get_singleton()->get_ticks_usec()-start;max_mesh_us=std::max(max_mesh_us,mesh_us);return result;
             }
-            mesh=build_surface(k,true,false,nullptr,nullptr,indexed_only);
+            mesh=build_surface(k,true,false,nullptr,nullptr,indexed_only?SurfaceStreams::Indexed:SurfaceStreams::All);
         }
         if(!mesh.valid){cancel_mesh_batch();surface_budget_failed=true;result["failure"]="Water boundary preparation failed at "+String(position(k))+": "+String(mesh.faces.get("failure","unspecified geometry failure"));return result;}
         const uint64_t bytes=uint64_t(mesh.query_vertices.size())*sizeof(Vector3)+uint64_t(mesh.query_indices.size())*sizeof(int32_t)+mesh.owners.size()*sizeof(uint16_t)+mesh.reconstructed.size()*sizeof(ReconstructedCell);
@@ -1693,7 +1693,7 @@ const NativeRegionalWater::QuerySurface *NativeRegionalWater::query_surface(Key 
     }
     // Immediate native diagnostics have no renderer. The game enables published
     // queries with its first batch and never rebuilds geometry to target water.
-    SurfaceMesh mesh=build_surface(k);++query_builds;if(!mesh.valid)return nullptr;
+    SurfaceMesh mesh=build_surface(k,false,false,nullptr,nullptr,SurfaceStreams::Query);++query_builds;if(!mesh.valid)return nullptr;
     temporary={mesh.query_vertices,mesh.query_indices,std::move(mesh.owners),std::move(mesh.reconstructed)};return &temporary;
 }
 bool NativeRegionalWater::surface_ready(Key k,bool snapshot) const {
@@ -1771,7 +1771,9 @@ bool NativeRegionalWater::dry_surface_owner(Key k,bool snapshot) const {
         if(below->water[x+56+64*z])return false; // Reconstruction can cross the owner's lower face.
     return true;
 }
-NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool snapshot,bool include_contacts,const std::atomic<bool> *cancel,WaterSurfaceProfileCache *profiles,bool indexed_only) const {
+NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool snapshot,bool include_contacts,const std::atomic<bool> *cancel,WaterSurfaceProfileCache *profiles,SurfaceStreams streams) const {
+    const bool query_only=streams==SurfaceStreams::Query;
+    const bool indexed_only=streams!=SurfaceStreams::All;
     using B=WaterBoundary;using C=WaterSolidClip;
     SurfaceMesh output;
     output.faces["top"]=0;output.faces["bottom"]=0;output.faces["side"]=0;output.faces["triangles"]=0;output.faces["exact_cut_cell_boundary"]=true;
@@ -2185,14 +2187,14 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                         }
                         emitted_triangles.emplace(identity,std::make_pair(int(output.owners.size()),forward));removed_triangles.push_back(false);
                         for(auto v:{a,b,c}){
-                            Vector3 vertex_normal=normal;
-                            if(normal.y>.5&&!contact)vertex_normal=surface_normal(p,v);
-                            Vector3 world(float(p.x*.5+v.x),float(p.y*.5+v.y),float(p.z*.5+v.z));
                             Vector3 vertex((p.x-base.x)*.5+v.x,(p.y-base.y)*.5+v.y,(p.z-base.z)*.5+v.z);
                             std::array<float,3> query_key{vertex.x,vertex.y,vertex.z};auto query_found=query_ids.find(query_key);int query_id;
                             if(query_found==query_ids.end()){query_id=buffers.query_vertices.size();query_ids.emplace(query_key,query_id);buffers.query_vertices.push_back(vertex);}else query_id=query_found->second;
                             buffers.query_indices.push_back(query_id);
-                            if(contact&&!include_contacts)continue;
+                            if(query_only||(contact&&!include_contacts))continue;
+                            Vector3 vertex_normal=normal;
+                            if(normal.y>.5&&!contact)vertex_normal=surface_normal(p,v);
+                            Vector3 world(float(p.x*.5+v.x),float(p.y*.5+v.y),float(p.z*.5+v.z));
                             Color color(contact?0.f:1.f,1,1,1);Vector2 uv(world.x,world.z);
                             if(!indexed_only){buffers.vertices.push_back(vertex);buffers.normals.push_back(vertex_normal);buffers.uv.push_back(uv);buffers.colors.push_back(color);}
                             std::array<int64_t,7> key{int64_t(p.x)*2097152+llround(v.x*grid),int64_t(p.y)*2097152+llround(v.y*grid),int64_t(p.z)*2097152+llround(v.z*grid),llround(vertex_normal.x*1000000),llround(vertex_normal.y*1000000),llround(vertex_normal.z*1000000),int(contact)};
@@ -2208,7 +2210,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     if(std::find(removed_triangles.begin(),removed_triangles.end(),true)!=removed_triangles.end()){
         int kept=0,render_read=0,render_write=0;
         for(int i=0;i<int(output.owners.size());++i){
-            const auto owner=output.owners[i];bool rendered=include_contacts||!(owner&0x8000);
+            const auto owner=output.owners[i];bool rendered=!query_only&&(include_contacts||!(owner&0x8000));
             if(!removed_triangles[i]){
                 for(int e=0;e<3;++e)buffers.query_indices[kept*3+e]=buffers.query_indices[i*3+e];
                 output.owners[kept++]=owner;
@@ -2265,7 +2267,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         }
         int render_offset=0;
         for(int i=0;i<triangles;++i){
-            bool rendered=include_contacts||!(output.owners[i]&0x8000);
+            bool rendered=!query_only&&(include_contacts||!(output.owners[i]&0x8000));
             if(flip[i]){
                 int second=buffers.query_indices[i*3+1];buffers.query_indices[i*3+1]=buffers.query_indices[i*3+2];buffers.query_indices[i*3+2]=second;
                 if(rendered){
@@ -2342,6 +2344,7 @@ void NativeWaterMeshJob::_bind_methods(){
 void NativeWaterMeshJob::release_reservation(){if(reserved_bytes){pending_bytes.fetch_sub(reserved_bytes);reserved_bytes=0;}}
 NativeWaterMeshJob::~NativeWaterMeshJob(){release_reservation();}
 void NativeWaterMeshJob::prepare(){
+    using Streams=NativeRegionalWater::SurfaceStreams;
     bool expected=false;if(!started.compare_exchange_strong(expected,true))return;
     uint64_t start=Time::get_singleton()->get_ticks_usec();
     uint64_t retained=0;
@@ -2382,7 +2385,7 @@ void NativeWaterMeshJob::prepare(){
             while(!job.cancelled.load()){
             const size_t index=g.next_owner.fetch_add(1,std::memory_order_relaxed);
             if(index>=g.first_overflow.load())return;
-            auto surface=job.frozen->build_surface(job.owners[index],false,false,&job.cancelled,&profiles,job.indexed_only);
+            auto surface=job.frozen->build_surface(job.owners[index],false,false,&job.cancelled,&profiles,job.indexed_only?Streams::Indexed:Streams::All);
             uint64_t bytes=(*g.bytes)(surface),prior=g.retained.load();bool admitted=false;
             while(prior<=g.limit&&bytes<=g.limit-prior){
                 if(g.retained.compare_exchange_weak(prior,prior+bytes)){admitted=true;break;}
@@ -2402,13 +2405,13 @@ void NativeWaterMeshJob::prepare(){
             // Faster later owners may consume the group allowance before owner
             // zero finishes. Retry that owner alone under the original budget;
             // concurrency must not invent a failure for a serially valid mesh.
-            results.clear();auto surface=frozen->build_surface(owners.front(),false,false,&cancelled,nullptr,indexed_only);
+            results.clear();auto surface=frozen->build_surface(owners.front(),false,false,&cancelled,nullptr,indexed_only?Streams::Indexed:Streams::All);
             if(retained+surface_bytes(surface)>reserved_bytes){surface=NativeRegionalWater::SurfaceMesh{};surface.valid=false;surface.faces["failure"]="Water mesh owner exceeds reserved output capacity";}
             results.push_back(std::move(surface));
         }else results.resize(std::max(size_t(1),group.first_overflow.load()));
     }else if(!cancelled.load()&&frozen.is_valid())for(auto owner:owners){
         if(cancelled.load())break;
-        auto surface=frozen->build_surface(owner,false,false,&cancelled,nullptr,indexed_only);
+        auto surface=frozen->build_surface(owner,false,false,&cancelled,nullptr,indexed_only?Streams::Indexed:Streams::All);
         retained+=surface_bytes(surface);
         if(retained>reserved_bytes){
             if(results.empty()){surface.valid=false;surface.faces["failure"]="worker reservation exceeded: "+String::num_uint64(retained)+" bytes";results.push_back(std::move(surface));}

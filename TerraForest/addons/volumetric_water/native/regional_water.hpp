@@ -300,7 +300,8 @@ class NativeRegionalWater : public godot::RefCounted {
     uint64_t mesh_worker_us=0,max_mesh_worker_us=0;
     bool surface_ready(Key owner,bool snapshot=false) const;
     bool dry_surface_owner(Key owner,bool snapshot) const;
-    SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false,const std::atomic<bool> *cancel=nullptr,WaterSurfaceProfileCache *profiles=nullptr,bool indexed_only=false) const;
+    enum class SurfaceStreams { All, Indexed, Query };
+    SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false,const std::atomic<bool> *cancel=nullptr,WaterSurfaceProfileCache *profiles=nullptr,SurfaceStreams streams=SurfaceStreams::All) const;
     bool decode(const godot::PackedByteArray &data,bool install,bool prepare_render=true);
 protected: static void _bind_methods();
 public:
