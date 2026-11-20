@@ -158,10 +158,10 @@ def run(engine, packaged, report, expected_archive=None):
                                "v1 2 excavate 240 31 224 5 2",first,"quit"], "AUTHORITY ")
         assert restarted[0]["last_request_id"] == 1 and restarted[1] == ack
         assert restarted[-4]["revision"] == 2 and restarted[-3] == ack
-        assert restarted[-2]["ok"] and restarted[-2]["request_id"] == 2 and not restarted[-1]["ok"]
+        assert restarted[-2]["ok"] and restarted[-2]["request_id"] == 2 and restarted[-1] == ack
         reloaded = restarted[2:-4]
         report["operator_retry"] = {"reply":ack,"rejected_commands":invalid,
-                                    "restored_reply":restarted[1],"older_id_rejected":True}
+                                    "restored_reply":restarted[1],"delayed_duplicate":restarted[-1]}
         assert hashlib.sha256(archive.with_suffix(".trw.bak").read_bytes()).digest()==original_digest
         for i,(before, after, restored) in enumerate(zip(original[1:4], changed, reloaded, strict=True)):
             assert after["revision"] == before["revision"] + 1
@@ -179,6 +179,23 @@ def run(engine, packaged, report, expected_archive=None):
             assert game["water_ml"]==sample["water_ml"]
             for key in ("density","depth"):
                 assert math.isclose(game[key][i],sample[key],abs_tol=1e-4), (i,key,game[key][i],sample[key])
+        # Fill the reply window with no-op excavations, then retry through
+        # a fresh process. Only the explicit save publishes the new history.
+        def noop(request_id):
+            return f"v1 {request_id} excavate 240 230 224 1 1"
+        batch = invoke(host, [noop(i) for i in range(2,35)]+["save","quit"], "AUTHORITY ")
+        for i, row in enumerate(batch[1:-1], 2):
+            assert row == dict(ok=True, version=1, request_id=i, revision=1, changed=False), row
+        assert batch[-1]["ok"]
+        restored = invoke(host, [noop(3), noop(34), noop(2), first,
+                                "v1 3 excavate 241 230 224 1 1", *samples(), "quit"], "AUTHORITY ")
+        assert restored[0]["last_request_id"] == 34 and restored[1:3] == [batch[2], batch[-2]]
+        for row in restored[3:5]:
+            assert row == dict(ok=False, reason="Receipt expired", last_request_id=34), row
+        assert not restored[5]["ok"] and restored[6:] == changed
+        backup_digest = bytes.fromhex(report["edited_archive_sha256"])
+        assert hashlib.sha256(archive.with_suffix(".trw.bak").read_bytes()).digest()==backup_digest
+        report["receipt_window"] = dict(size=32, first_retained=3, last_retained=34, restored=True)
         # Corrupt only our disposable canonical file. Failure must preserve the
         # input for recovery and leave its verified backup intact.
         corrupt = archive.read_bytes()[:64]
@@ -187,7 +204,7 @@ def run(engine, packaged, report, expected_archive=None):
                                   capture_output=True, text=True, timeout=30,
                                   creationflags=subprocess.CREATE_NO_WINDOW)
         assert rejected.returncode and archive.read_bytes()==corrupt
-        assert hashlib.sha256(archive.with_suffix(".trw.bak").read_bytes()).digest()==original_digest
+        assert hashlib.sha256(archive.with_suffix(".trw.bak").read_bytes()).digest()==backup_digest
         report.update(before=original[1:4], after=changed, reloaded=reloaded, gameplay=game,
                       initial_archive_sha256=original_digest.hex(), passed=True)
 

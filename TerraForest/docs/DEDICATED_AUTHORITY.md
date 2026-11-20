@@ -26,13 +26,13 @@ lakes. Saving is explicit. A closed input pipe or `quit` releases the lease.
 
 One trusted operator owns the ordered stream for a slot. Start at
 `last_request_id + 1` and wait for the reply before issuing another request.
-Retry the most recently committed ID with identical arguments to recover
-its original acknowledgement. Reusing it with a different brush, skipping
-an ID or submitting an older ID returns an error. Rejected requests leave
-the next ID available. A successful explicit save publishes the latest
-36-byte receipt alongside the matching terrain and water. After an unsaved
-process exit, resume from the ID reported by the reopened slot. Existing
-two-section authority archives start at ID zero.
+A retry of any of the last 32 committed IDs with identical arguments
+returns its original acknowledgement. Different arguments or skipped IDs
+are rejected. An expired ID returns the high-water mark so the caller can
+resynchronize. A successful explicit save publishes these 36-byte records
+with terrain and water, using at most 1,152 bytes of receipt payload. A
+legacy single receipt seeds the window. Two-section archives start at ID
+zero. After an unsaved exit resume at the high-water mark in the reopened slot.
 
 The current format accepts inline terrain, native volumetric water and
 the optional operator receipt. World
@@ -74,5 +74,6 @@ final replacement to fail. It verifies the original bytes, removal of pending
 output, and a successful edit/save after restart. Local and dedicated global
 terrain revisions must agree and survive reload. The retry check repeats a
 saved request after restart and again after an intervening legacy excavation.
-Both replies must reproduce the original revision. After a newer versioned
-request succeeds, the older ID must be rejected.
+The original acknowledgement also survives a newer versioned request. The gate
+fills the window, saves, restarts, and checks both retained endpoints, expired
+IDs, conflicting arguments, and unchanged terrain and water.

@@ -11,9 +11,10 @@ var catalog:PackedByteArray
 var path:String
 var healthy:=false
 var last_edit_profile:Dictionary={}
-# The trusted operator has one ordered request stream. Publish its last
-# committed receipt in the same archive transaction as terrain and water.
-var operator_receipt:=PackedByteArray()
+# Requests are ordered. A bounded reply history covers delayed retries and
+# is checkpointed with terrain and water. Older IDs can never execute again.
+const RECEIPT_WINDOW:=32
+var operator_receipts:Array[PackedByteArray]=[]
 const RECEIPT_SECTION:="operator_receipt"
 const RECEIPT_SIZE:=36
 
@@ -38,14 +39,7 @@ func open(slot:String)->bool:
 		load_packet.append_array(sections.terrain)
 		if not Codec.reply_ok(core.execute(load_packet)) or not water.restore_snapshot(sections.volumetric_water):return false
 		catalog=water.snapshot_catalog(sections.volumetric_water)
-		if sections.has(RECEIPT_SECTION):
-			var receipt:PackedByteArray=sections[RECEIPT_SECTION]
-			if receipt.size()!=RECEIPT_SIZE or receipt.decode_u32(0)!=1 or receipt.decode_u32(4)==0:return false
-			var before:=receipt.decode_u32(8)
-			var after:=receipt.decode_u32(12)
-			if after<before or after>before+1 or after>revision():return false
-			if not valid_brush(receipt_point(receipt),receipt.decode_double(28)):return false
-			operator_receipt=receipt
+		if sections.has(RECEIPT_SECTION) and not restore_receipts(sections[RECEIPT_SECTION]):return false
 	else:
 		const GENERATOR:=17
 		if not Codec.reply_ok(core.execute(Codec.command(6,[1703,GENERATOR]))):return false
@@ -67,7 +61,10 @@ func save()->bool:
 	var liquid:PackedByteArray=water.capture_streaming_snapshot(catalog)
 	if liquid.is_empty():return false
 	var sections:={"terrain":terrain.slice(12),"volumetric_water":liquid}
-	if not operator_receipt.is_empty():sections[RECEIPT_SECTION]=operator_receipt
+	if not operator_receipts.is_empty():
+		var history:=PackedByteArray()
+		for receipt in operator_receipts:history.append_array(receipt)
+		sections[RECEIPT_SECTION]=history
 	var payload:PackedByteArray=archive.encode(sections)
 	return not payload.is_empty() and archive.publish(path,payload)==OK
 
@@ -103,7 +100,27 @@ func sample_points(points:PackedVector3Array)->Dictionary:
 signal edit_committed(revision:int,bounds:AABB)
 
 func last_request_id()->int:
-	return 0 if operator_receipt.is_empty() else operator_receipt.decode_u32(4)
+	return 0 if operator_receipts.is_empty() else operator_receipts[-1].decode_u32(4)
+
+func restore_receipts(data:PackedByteArray)->bool:
+	if data.is_empty() or data.size()%RECEIPT_SIZE!=0 or data.size()>RECEIPT_WINDOW*RECEIPT_SIZE:return false
+	var restored:Array[PackedByteArray]=[]
+	var previous_id:=0
+	var previous_revision:=0
+	var saved_revision:=revision()
+	for offset in range(0,data.size(),RECEIPT_SIZE):
+		var receipt:=data.slice(offset,offset+RECEIPT_SIZE)
+		var id:=receipt.decode_u32(4)
+		var before:=receipt.decode_u32(8)
+		var after:=receipt.decode_u32(12)
+		if receipt.decode_u32(0)!=1 or id==0 or (previous_id!=0 and id!=previous_id+1):return false
+		if before<previous_revision or after<before or after>before+1 or after>saved_revision:return false
+		if not valid_brush(receipt_point(receipt),receipt.decode_double(28)):return false
+		restored.append(receipt)
+		previous_id=id
+		previous_revision=after
+	operator_receipts=restored
+	return true
 
 static func receipt_point(receipt:PackedByteArray)->Vector3:
 	return Vector3(receipt.decode_float(16),receipt.decode_float(20),receipt.decode_float(24))
@@ -112,16 +129,19 @@ static func valid_brush(point:Vector3,radius:float)->bool:
 	if not point.is_finite() or not is_finite(radius) or radius<=0 or radius>8:return false
 	return AABB(Vector3.ZERO,Vector3(2000,256,2000)).encloses(AABB(point-Vector3.ONE*radius,Vector3.ONE*radius*2))
 
-func receipt_reply()->Dictionary:
-	return {"ok":true,"version":1,"request_id":last_request_id(),"revision":operator_receipt.decode_u32(12),"changed":operator_receipt.decode_u32(8)!=operator_receipt.decode_u32(12)}
+static func receipt_reply(receipt:PackedByteArray)->Dictionary:
+	return {"ok":true,"version":1,"request_id":receipt.decode_u32(4),"revision":receipt.decode_u32(12),"changed":receipt.decode_u32(8)!=receipt.decode_u32(12)}
 
 func excavate(point:Vector3,radius:float,expected:int,request_id:int=0)->Dictionary:
 	if not healthy:return {"ok":false,"reason":"World unavailable"}
 	if not valid_brush(point,radius):return {"ok":false,"reason":"Invalid brush bounds"}
 	if request_id!=0:
 		var last:=last_request_id()
-		if request_id==last:
-			if expected==operator_receipt.decode_u32(8) and point==receipt_point(operator_receipt) and radius==operator_receipt.decode_double(28):return receipt_reply()
+		if request_id<=last:
+			var index:=operator_receipts.size()-1-(last-request_id)
+			if index<0:return {"ok":false,"reason":"Receipt expired","last_request_id":last}
+			var prior:=operator_receipts[index]
+			if expected==prior.decode_u32(8) and point==receipt_point(prior) and radius==prior.decode_double(28):return receipt_reply(prior)
 			return {"ok":false,"reason":"Request ID already committed with different arguments"}
 		if request_id!=last+1 or request_id>0xffffffff:return {"ok":false,"reason":"Unexpected request ID"}
 	if expected!=revision():return {"ok":false,"reason":"Stale revision"}
@@ -139,6 +159,7 @@ func excavate(point:Vector3,radius:float,expected:int,request_id:int=0)->Diction
 		healthy=_resolve_water()
 	if not healthy:return {"ok":false,"reason":"Water commit failed; reload the last saved revision"}
 	if request_id!=0:
+		var operator_receipt:=PackedByteArray()
 		operator_receipt.resize(RECEIPT_SIZE)
 		operator_receipt.encode_u32(0,1)
 		operator_receipt.encode_u32(4,request_id)
@@ -148,7 +169,9 @@ func excavate(point:Vector3,radius:float,expected:int,request_id:int=0)->Diction
 		operator_receipt.encode_float(20,point.y)
 		operator_receipt.encode_float(24,point.z)
 		operator_receipt.encode_double(28,radius)
-	var response:=receipt_reply() if request_id!=0 else sample(point)
+		if operator_receipts.size()==RECEIPT_WINDOW:operator_receipts.pop_front()
+		operator_receipts.append(operator_receipt)
+	var response:=receipt_reply(operator_receipts[-1]) if request_id!=0 else sample(point)
 	last_edit_profile.total_us=Time.get_ticks_usec()-began
 	if edit.changed[0]:
 		edit_committed.emit(revision(),bounds)
