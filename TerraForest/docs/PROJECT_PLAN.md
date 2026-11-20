@@ -23,6 +23,20 @@ delivery. Measure end-to-end latency too. Publish working set, private memory,
 traffic per player, region and peer costs, performance under overload, and
 the last passing measured workload for each host class.
 
+The packaged baseline driver now supports `--qualification-route`. From the
+project directory run:
+
+```
+python tools/run_godot_check.py water_player_world --executable --isolated-render --timeout 600 --require "WATER_PLAYER_WORLD failures=0" -- --water-source-slot=Cedar_Vale --qualification-route --water-edit-response
+python tools/analyze_qualification_route.py reports/checks/<run-id>
+```
+
+Use the run manifest for engine, pack, native library and driver-script hashes
+and process-memory peaks. The frame stream includes position, yaw, terrain
+queue depth and asynchronous viewport timers. The engine frame signal does
+not observe actual presentation. The open baseline gate still needs external
+presentation measurements and the matched cold/warm campaign.
+
 ## Startup autosave corrected; paging promotion withheld - 2026-10-20
 
 Default-on compatibility checks passed model edit/save/fresh reopen and browser

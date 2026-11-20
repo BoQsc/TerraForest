@@ -1,5 +1,32 @@
 # Continuous volumetric water replacement
 
+**First-publication regression, November 20.** The Cedar Vale packaged route
+`20261120T104316302094Z` captures each blast from both sides before broader
+relaxation. In `player_lake_after_reverse.png` a straight edge crosses the
+open crater. The settled check passed every depth and contact probe. Repeat
+`20261120T104953892882Z` checks those same points at first publication too:
+52 of 81 excavated lake points failed depth and 23 of 25 bank contacts failed.
+At sea all 81 immediate depth probes passed but the centre surface ray missed.
+The settled sea and lake passed. Keep these first-publication checks in the
+qualification route and use `--water-immediate-contact --water-edit-response`
+on the same packaged driver for a focused reproduction. Run details and the
+image pairs are in `reports/checks/<run-id>/`.
+
+**Rejected changes to the local solve.** Admitting newly opened dry regions
+alone removed the straight cut but left too little local donor water. Run
+`20261120T105417373110Z` measured the local surface at 43.259 m and failed
+all 81 depth probes. Including three resident donor regions in each horizontal
+direction passed 81/81 depth and 26/26 contact probes in
+`20261120T105757172555Z`. Lake publication took 477.895 ms and mining
+587.012 ms. A two-region window limited to newly admitted receivers took
+434.171 ms at the lake and 530.778 ms for mining. It passed 81/81 crater
+probes, missed one of 27 bank contacts and missed the bucket scoop deadline.
+See both `player_lake_after` images and `receiver-window.patch` in
+`20261120T110055611848Z`. The packaged defaults were restored. The remaining
+design requirement is a way to account for connected finite volume without
+placing every donating region in the urgent mesh replacement. Recheck sea
+surface targeting separately from lake volume conservation.
+
 **November 20 contact regression observation.** During frame-pacing verification,
 `20261120T091739281463Z` misses one of 22 two-centimetre lake shoreline probes
 after the four bucket actions, including background-mesh interruption. The probe

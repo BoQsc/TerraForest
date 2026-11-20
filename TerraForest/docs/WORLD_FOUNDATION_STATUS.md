@@ -1,5 +1,15 @@
 ## Dedicated hosting and client headroom
 
+Packaged Cedar Vale route `20261120T104316302094Z` recorded 9,645 frames.
+Forest, trader and underground p99 intervals were 20.077, 25.052 and
+18.458 ms respectively. The maximum trader interval was 40.517 ms.
+The process reached 2,278,596,608 bytes working set. This run disabled the
+cap during blast timing. The repeat `20261120T104953892882Z` preserved the
+launch cap and found 52 of 81 lake crater probes dry on first publication,
+then all 81 wet after settling. See the [water tracker](../issues/explosive-combat/water-plan.md)
+and [route command](PROJECT_PLAN.md). Stable 60 Hz and immediate local edits
+remain open.
+
 The [world systems design](WORLD_SYSTEMS_DESIGN.md#current-priority-one-world-for-dedicated-hosting-and-continuous-zoom) records the authority, plugin, zoom and scale milestones. The first native place query and publication event serve the trader today. The first standalone inland edit gate is exercised below. Paged saves, structures, authorization and asynchronous admission remain open. Dedicated hosting, zoom continuity and hundreds of concurrent players remain unqualified.
 
 The [dedicated host and regression command](DEDICATED_AUTHORITY.md) now run a

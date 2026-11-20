@@ -80,7 +80,9 @@ func check_crater_coverage(center:Vector3,level:float,label:String)->void:
   contacts+=1
   var probe:Vector3=bank.position-direction*.02
   var top:Dictionary=game.lakes.water.raycast_surface(Vector3(probe.x,water_level+.3,probe.z),Vector3(probe.x,water_level-.3,probe.z))
-  if not top.get("hit",false) or absf(top.point.y-water_level)>.025:gaps.append({"point":str(probe),"water_hit":top.get("hit",false),"height":top.get("point",Vector3.INF).y})
+  if not top.get("hit",false) or absf(top.point.y-water_level)>.025:
+   var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(probe+Vector3.UP*2,probe-Vector3.UP*2,1))
+   gaps.append({"point":str(probe),"water_hit":top.get("hit",false),"height":top.get("point",Vector3.INF).y,"reference_y":water_level,"floor_y":floor_hit.get("position",Vector3.INF).y,"depth_at_probe":game.lakes.depth_at(probe),"angle_index":angle})
  print("SHORE_CONTACT ",label," sampled=",contacts," gaps=",JSON.stringify(gaps))
  check(contacts>=10 and gaps.is_empty(),label+" water reaches within 2 cm of the actual terrain waterline")
 var blast_metrics:Dictionary={}
@@ -107,8 +109,9 @@ func timing_stage(label:String,ms:float)->void:
   timing_totals[label]=float(timing_totals.get(label,0))+ms
 func start_timing(label:String)->void:
  if frame_phases==null:frame_phases=FramePhases.new();root.add_child(frame_phases)
- game.max_fps=0;game.background_fps=0;Engine.max_fps=0
- if DisplayServer.get_name()!="headless":DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+ if "--qualification-route" not in OS.get_cmdline_user_args() and "--water-immediate-contact" not in OS.get_cmdline_user_args():
+  game.max_fps=0;game.background_fps=0;Engine.max_fps=0
+  if DisplayServer.get_name()!="headless":DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
  game.structures.blocks.set_process_profiling_enabled(true)
  terrain_published_us=0;blast_started=Time.get_ticks_usec();blast_timeline.clear();blast_last_state=""
  if not game.terrain.region_changed.is_connected(terrain_published):game.terrain.region_changed.connect(terrain_published)
@@ -240,6 +243,7 @@ func mining_response_case(lake:Dictionary)->void:
  check(owned_amount()==before,"Mining conserves every owned millilitre")
 func capture(label:String,center:Vector3,level:float,underwater:bool=false)->void:
  if DisplayServer.get_name()=="headless" or "--water-no-captures" in OS.get_cmdline_user_args():return
+ capture_phase="capture "+label
  var processing:=game.is_processing();var physics:=game.is_physics_processing()
  var water_processing:bool=game.lakes.is_processing()
  game.lakes.set_process(false)
@@ -271,6 +275,10 @@ func capture(label:String,center:Vector3,level:float,underwater:bool=false)->voi
  # Encode only after both angles have been captured. PNG compression must not
  # become a fake low-FPS sample between the two views of the frozen state.
  for entry:Array in captures:entry[0].save_png(entry[1])
+ if route_started:
+  # The interval containing PNG encoding ends on the next frame.
+  await process_frame
+ capture_phase=""
 func _initialize()->void:run.call_deferred()
 func owned_amount()->int:
  # Pristine ocean residency can retire after travel; it is not owned lake mass.
@@ -381,7 +389,73 @@ func measure_game(lake:Dictionary)->void:
 func check(ok:bool,label:String)->void:
  if not ok:failures+=1
  print("PASS " if ok else "FAIL ",label)
+# Binary rows avoid allocating a dictionary or encoding JSON on every frame.
+# The phase index and column order are written alongside the samples.
+const ROUTE_COLUMNS:=["elapsed_us","interval_us","phase","viewport_cpu_ms","viewport_gpu_ms","queued","x","y","z","yaw"]
+const ROUTE_MAX_FRAMES:=36000
+var route_samples:=PackedFloat64Array()
+var route_phase_names:Array[String]=[]
+var route_phase:="load"
+var capture_phase:=""
+var route_scene_start:=0
+var route_started:=0
+var route_prior:=0
+var route_count:=0
+var route_overflow:=false
+func record_route_frame()->void:
+ var now:=Time.get_ticks_usec()
+ if route_count>=ROUTE_MAX_FRAMES:route_overflow=true;return
+ var label:=timing_phase if not timing_phase.is_empty() else route_phase
+ if not capture_phase.is_empty():label=capture_phase
+ var phase:=route_phase_names.find(label)
+ if phase<0:phase=route_phase_names.size();route_phase_names.append(label)
+ var index:=route_count*ROUTE_COLUMNS.size()
+ var viewport:=root.get_viewport_rid()
+ var p:Vector3=game.player.position
+ route_samples[index]=now-route_started
+ route_samples[index+1]=now-route_prior
+ route_samples[index+2]=phase
+ route_samples[index+3]=RenderingServer.viewport_get_measured_render_time_cpu(viewport)
+ route_samples[index+4]=RenderingServer.viewport_get_measured_render_time_gpu(viewport)
+ route_samples[index+5]=game.terrain.backend.queued()
+ route_samples[index+6]=p.x;route_samples[index+7]=p.y;route_samples[index+8]=p.z;route_samples[index+9]=game.yaw
+ route_prior=now;route_count+=1
+func begin_route_capture()->void:
+ route_samples.resize(ROUTE_MAX_FRAMES*ROUTE_COLUMNS.size())
+ route_started=Time.get_ticks_usec();route_prior=route_started
+ RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
+ process_frame.connect(record_route_frame)
+func finish_route_capture(source_sha:String)->void:
+ process_frame.disconnect(record_route_frame)
+ route_samples.resize(route_count*ROUTE_COLUMNS.size())
+ var f:=FileAccess.open(evidence.path_join("qualification_frames.bin"),FileAccess.WRITE)
+ f.store_buffer(route_samples.to_byte_array());f.close()
+ var description:={"scene_setup_us":route_started-route_scene_start,"columns":ROUTE_COLUMNS,"encoding":"little-endian float64","phases":route_phase_names,"frames":route_count,"overflow":route_overflow,"source_sha256":source_sha,"gpu":RenderingServer.get_video_adapter_name(),"viewport":str(root.size),"cap":Engine.max_fps,"monitor_hz":DisplayServer.screen_get_refresh_rate(),"scope":"Game intervals and asynchronous viewport measurements. Actual display presentation requires an external trace."}
+ description.settings={"renderer":RenderingServer.get_current_rendering_method(),"vsync":DisplayServer.window_get_vsync_mode(),"msaa_3d":root.msaa_3d,"scale_3d":root.scaling_3d_scale,"shadows":game.sun.shadow_enabled}
+ description.processor=OS.get_processor_name()
+ FileAccess.open(evidence.path_join("qualification_frames.json"),FileAccess.WRITE).store_string(JSON.stringify(description,"  "))
+ check(not route_overflow and route_count>0,"Complete bounded qualification frame record")
+func qualification_travel()->void:
+ route_phase="forest walk";await measure_grounded_route("forest_walk.json")
+ if not game.trader.anchor.is_finite():check(false,"World contains trader");return
+ game.teleport(game.trader.anchor+Vector3(0,0,16))
+ if not await ready("trader travel"):check(false,"Trader destination loads");return
+ route_phase="trader walk";await measure_grounded_route("trader_walk.json")
+ var mines:Array=game.quests.store.get_locations().filter(func(row):return row.layout=="coal_mine")
+ if mines.size()!=1:check(false,"World contains a coal mine");return
+ var site:Dictionary=mines[0]
+ var layouts=preload("res://addons/exploration/cave_layouts.gd")
+ var station:Vector3=Vector3(site.origin)+layouts.turn(Vector3(.5,.2,43),site.rotation)
+ game.teleport(station,station.y)
+ if not await ready("underground travel"):check(false,"Underground station loads");return
+ check(game.player.global_position.distance_to(station)<5,"Player arrived at underground station")
+ route_phase="underground turn"
+ var original:float=game.yaw
+ for frame in 240:
+  game.app_focused=true;game.yaw=original+TAU*frame/240.0;game.player.rotation.y=game.yaw
+  await process_frame
 func ready(label:String)->bool:
+ route_phase=label
  var deadline:=Time.get_ticks_msec()+120000
  var next_progress:=Time.get_ticks_msec()+10000
  while Time.get_ticks_msec()<deadline:
@@ -399,7 +473,7 @@ func ready(label:String)->bool:
   await process_frame
  print("PLAYER_WATER_FAILURE ",label," ",game.terrain.latest_error," ",JSON.stringify(game.lakes.statistics() if game.lakes.water!=null else {}));return false
 # Walk the same ground out and back using the production player motor.
-func measure_grounded_route()->void:
+func measure_grounded_route(filename:String="grounded_pacing.json")->void:
  game.player_view.entry.finish()
  game.fly=false
  var prior_access:bool=game.session_menu.developer_hud.mouse_access
@@ -407,9 +481,9 @@ func measure_grounded_route()->void:
  game.yaw=0
  game.player.rotation.y=0
  var rows:Array=[]
- var exploration:= "--exploration-profile" in OS.get_cmdline_user_args()
+ var exploration:= "--exploration-profile" in OS.get_cmdline_user_args() or "--qualification-route" in OS.get_cmdline_user_args()
  var prior_zombie_profiling:bool=game.zombies.profiling_enabled
- var trader_route:bool="--exploration-trader" in OS.get_cmdline_user_args()
+ var trader_route:bool="--exploration-trader" in OS.get_cmdline_user_args() or filename=="trader_walk.json"
  var last_trader_id:=0
  var trader_arrivals:=0
  var trader_retirements:=0
@@ -491,13 +565,13 @@ func measure_grounded_route()->void:
   check(trader_arrivals>=2 and trader_retirements>0,"Player leaves and re-enters the shop residency radius")
   check(trader_outfit_ok,"Returning shopkeeper has a visible woven outfit and active animation")
  if exploration:
-  RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),false)
+  if route_samples.is_empty():RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),false)
   game.terrain.stage_measured.disconnect(record_exploration_stage)
   game.zombies.profiling_enabled=prior_zombie_profiling
   for marker in route_markers:marker.queue_free()
   route_markers.clear()
  game.session_menu.developer_hud.mouse_access=prior_access
- FileAccess.open(evidence.path_join("grounded_pacing.json"),FileAccess.WRITE).store_string(JSON.stringify(rows,"  "))
+ FileAccess.open(evidence.path_join(filename),FileAccess.WRITE).store_string(JSON.stringify(rows,"  "))
 
 func run()->void:
  var sea_completed:=false
@@ -510,8 +584,12 @@ func run()->void:
  var original:=FileAccess.get_sha256(path)
  ProjectSettings.set_setting("terraforest/offscreen_session",true)
  preload("res://addons/world_runtime/session_options.gd").set_arguments(PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors"]),true)
+ route_scene_start=Time.get_ticks_usec()
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
+ var qualification:bool="--qualification-route" in OS.get_cmdline_user_args()
+ if qualification:begin_route_capture()
  check(await ready("initial"),"Actual player world loads read-only")
+ if qualification and failures==0:await qualification_travel()
  if "--exploration-trader" in OS.get_cmdline_user_args():
   check(game.trader.anchor.is_finite(),"Saved world has a trader destination")
   if game.trader.anchor.is_finite():
@@ -568,6 +646,7 @@ func run()->void:
   print("PLAYER_BLAST_PENDING ",game.terrain.pending_edit," ticket=",game.terrain.edit_ticket)
   await process_frame;await process_frame
   await local_response(point,"sea")
+  if qualification or "--water-immediate-contact" in OS.get_cmdline_user_args():check_crater_coverage(point,40,"sea immediate")
   if "--water-edit-response" in OS.get_cmdline_user_args():await capture("player_shore_after",point,40)
   sea_completed=await ready("coastal_blast")
   check(sea_completed,"Surrounding-ocean blast settles and republishes")
@@ -606,6 +685,7 @@ func run()->void:
      await process_frame
     check(not game.combat.barrels.get_ids().has(id),"Normal gameplay queue detonates lake shoreline barrel")
     await local_response(p,"lake")
+    if qualification or "--water-immediate-contact" in OS.get_cmdline_user_args():check_crater_coverage(p,lake.level,"lake immediate")
     if "--water-edit-response" in OS.get_cmdline_user_args():await capture("player_lake_after",p,lake.level)
     if "--water-edit-response" in OS.get_cmdline_user_args() and "--blast-only-timing" not in OS.get_cmdline_user_args():await bucket_response_cases(lake)
     check(await ready("lake_blast"),"Actual lake crater finishes finite equilibrium")
@@ -617,6 +697,7 @@ func run()->void:
     await capture("player_lake_underwater",p,lake.level,true)
     if "--water-edit-response" in OS.get_cmdline_user_args():await mining_response_case(lake)
    if "--water-player-performance" in OS.get_cmdline_user_args():await measure_game(lake)
+ if qualification:finish_route_capture(original)
  check(FileAccess.get_sha256(path)==original,"Original player save is unchanged")
  game.terrain.shutdown();game.free();await process_frame;await process_frame
  print("WATER_PLAYER_WORLD failures=",failures);quit(failures)
