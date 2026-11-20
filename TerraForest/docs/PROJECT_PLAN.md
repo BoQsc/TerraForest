@@ -3,6 +3,11 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
+The subsequent exact mesh dependency update reduced the tested crater from
+140 urgent owners to 132. Packaged run `20261120T142220024763Z` still spent
+385 ms publishing the local lake edit. See the [foundation status](WORLD_FOUNDATION_STATUS.md)
+for the two worker timings, geometry comparisons and dedicated archive check.
+
 Packaged run `20261120T140833686725Z` repeated the sea and lake explosions
 at 1080p with two camera angles each. Initial and settled contact probes
 passed at both shores. Lake water appeared 370 ms after terrain publication

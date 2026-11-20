@@ -481,26 +481,42 @@ WaterCellProfile NativeRegionalWater::surface_profile(const Vector3i &p,bool sna
     // not tilt an unchanged cell's surface or silently change its connections.
     return profile(*r,index(p));
 }
+// Each bit represents one owner in the 3x3x3 neighbourhood. Union the
+// two-cell reconstruction halos of the actual edits, including diagonal seams.
+uint32_t NativeRegionalWater::mesh_owner_mask(int cell_index){
+    static constexpr auto masks=[](){
+        std::array<uint32_t,512> result{};
+        for(int i=0;i<512;++i){
+            int x=i%8,y=(i/8)%8,z=i/64;
+            for(int dz=-(z<2);dz<=(z>=6);++dz)
+                for(int dy=-(y<2);dy<=(y>=6);++dy)
+                    for(int dx=-(x<2);dx<=(x>=6);++dx)
+                        result[i]|=1u<<((dz+1)*9+(dy+1)*3+dx+1);
+        }
+        return result;
+    }();
+    return masks[cell_index];
+}
 void NativeRegionalWater::changed(const Vector3i &p){
+    changed_owners(region_key(p),mesh_owner_mask(index(p)));
+}
+void NativeRegionalWater::changed_owners(Key k,uint32_t owners){
     surface_budget_failed=false;
-    Key touched=region_key(p);auto found=regions.find(touched);
+    auto found=regions.find(k);
     if(!generating_ocean&&found!=regions.end()&&found->second.ocean_state==1)found->second.ocean_state=2;
-    invalidate_snapshot();++changes;Key k=region_key(p);if(mesh_set.insert(k).second)meshes.push_back(k);
+    invalidate_snapshot();++changes;
     const bool urgent=!generating_ocean&&!background_change&&!fill.running;
-    if(urgent)urgent_meshes.insert(k);
-    // Reconstruction reads adjacent levels as well as the meshing halo. Owners may
-    // be empty storage regions; they still own boundary triangles.
-    Vector3i lo=position(region_key(Vector3i(std::max(p.x-2,0),std::max(p.y-2,0),std::max(p.z-2,0))));
-    Vector3i hi=position(region_key(Vector3i(std::min(p.x+2,3999),std::min(p.y+2,508),std::min(p.z+2,3999))));
-    for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){Key other=key(Vector3i(x,y,z));
-        if(other==k)continue;
-        // An absent inland region cannot own a water triangle. A former owner
-        // still needs a retirement packet, including one staged by an in-flight
-        // batch. Keep the procedural coastal band on its ordinary path.
-        if(!batch_active&&!publish_pending&&!(surrounding_ocean&&std::min({x,z,499-x,499-z})<35)
+    const Vector3i center=position(k);
+    for(int bit=0;owners;++bit,owners>>=1){
+        if(!(owners&1))continue;
+        Vector3i p=center+Vector3i(bit%3-1,(bit/3)%3-1,bit/9-1);
+        if(p.x<0||p.x>=500||p.z<0||p.z>=500||p.y<0||p.y>=64)continue;
+        Key other=key(p);
+        if(other!=k&&!batch_active&&!publish_pending&&!(surrounding_ocean&&std::min({p.x,p.z,499-p.x,499-p.z})<35)
             &&!regions.count(other)&&!published_regions.count(other)&&!published_surfaces.count(other))continue;
         if(urgent)urgent_meshes.insert(other);
-        if(mesh_set.insert(other).second)meshes.push_back(other);}
+        if(mesh_set.insert(other).second)meshes.push_back(other);
+    }
 }
 Array NativeRegionalWater::next_requests(int64_t limit,bool ocean_only){
     Array result;if(limit<1||limit>(ocean_only?8:32))return result;
@@ -534,7 +550,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
     if(solid_cache_bytes-old_bytes+new_bytes>64*1024*1024)return false;
     // Resampling a region is not an edit of all its cells. Compare the exact
     // contact fragments too: density corners alone miss thin shoreline cuts.
-    std::array<bool,512> geometry_changed{};
+    uint32_t changed_owners_mask=0;
     const auto &old=it->second;
     for(int i=0;i<512;++i){
         bool different=!old.has_density||old.floor[i]!=patch->floor[i]||old.ceiling[i]!=patch->ceiling[i];
@@ -561,7 +577,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
             auto b=patch->structures?patch->structures->cells[i]:nullptr;
             different=a!=b; // New immutable solid profiles conservatively rebuild.
         }
-        geometry_changed[i]=different;
+        if(different)changed_owners_mask|=mesh_owner_mask(i);
     }
     invalidate_snapshot(!seed_ocean);preserve_mesh_region(k);if(restored_cache.count(k))++cache_rebuilds;
     // Occupancy edits never own water destruction. Quantities remain in their
@@ -585,12 +601,8 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
     }
 
     bool wet=false;for(int i=0;i<512;++i)wet|=it->second.water[i]!=0;
-    // Union changed-cell bounds once, retaining changed()'s exact seam halo.
-    // Empty cells still matter when they bound a wet neighbour.
-    Vector3i lo(8,8,8),hi(-1,-1,-1);
-    for(int i=0;i<512;++i)if(geometry_changed[i]){Vector3i p(i%8,(i/8)%8,i/64);lo=lo.min(p);hi=hi.max(p);}
-    if(hi.x>=0&&local_edit_regions.count(k))local_occupancy_regions.insert(k);
-    if(wet&&hi.x>=0)for(int corner=0;corner<8;++corner)changed(base+Vector3i((corner&1)?hi.x:lo.x,(corner&2)?hi.y:lo.y,(corner&4)?hi.z:lo.z));
+    if(changed_owners_mask&&local_edit_regions.count(k))local_occupancy_regions.insert(k);
+    if(wet&&changed_owners_mask)changed_owners(k,changed_owners_mask);
     generating_ocean=false;
     it->second.limited_building_edit=false;
     it->second.replace_water=false;

@@ -256,6 +256,8 @@ class NativeRegionalWater : public godot::RefCounted {
     static bool in_domain(const godot::Vector3i &p);
     Region *get(const godot::Vector3i &p,bool request);
     const Region *get(const godot::Vector3i &p) const;
+    static uint32_t mesh_owner_mask(int cell_index);
+    void changed_owners(Key region, uint32_t owners);
     void changed(const godot::Vector3i &p);
     void request(Key k);
     void invalidate_regions(const godot::AABB &bounds,bool replace_water,bool buildings=false);

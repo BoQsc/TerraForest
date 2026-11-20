@@ -1,5 +1,16 @@
 # Continuous volumetric water replacement
 
+**November 20 local mesh invalidation.** Terrain resampling and water
+redistribution now queue the union of the changed cells' two-cell halos.
+Diagonal changes in one region queue seven owners in the sparse regression
+(`20261120T141919850599Z`). The packaged Cedar Vale lake blast queued
+132 urgent owners at first commit, down from 140. Both camera angles at
+each shore and the 81 crater probes per shore in `20261120T142005564440Z`
+show the crater filled at first publication. Sea/lake contact probes
+passed again after settlement and bucket interruption. This change leaves
+the visible response slow. Lake publication took 401 ms, mining took
+299 ms and one scoop took 104 ms. Keep all three timing failures open.
+
 **Rejected local lake handoff, November 20.** Runs `20261120T132949094958Z`
 and `20261120T133050159749Z` deferred presentation of 25 donor regions
 after committing the finite-water exchange. The first crater needed 78

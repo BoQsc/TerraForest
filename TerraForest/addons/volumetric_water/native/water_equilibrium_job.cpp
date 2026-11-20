@@ -234,16 +234,15 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
         if(live==regions.end()||prepared==job->frozen->regions.end())continue;
         auto &r=live->second;const auto &source=prepared->second;
         const auto &before=static_cast<const Region &>(r).water;
-        Vector3i lo(7,7,7),hi;bool any=false;
-        for(int i=0;i<512;++i)if(before[i]!=source.water[i]){auto q=Vector3i(i%8,(i/8)%8,i/64);lo=lo.min(q);hi=hi.max(q);any=true;}
-        if(!any)continue;
+        uint32_t owners=0;
+        for(int i=0;i<512;++i)if(before[i]!=source.water[i])owners|=mesh_owner_mask(i);
+        if(!owners)continue;
         if(!job->local_response&&publication_enabled)relaxation_before.emplace(k,RelaxationBefore{r.water,r.vacancies,r.ocean_state});
         r.water=source.water;
         if(job->frozen->surrounding_ocean&&r.ocean_state)r.vacancies=source.vacancies;
         else r.vacancies.clear();
         if(r.ocean_state==1)r.ocean_state=2;
-        const auto base=position(k)*8;
-        for(int corner=0;corner<8;++corner)changed(base+Vector3i((corner&1)?hi.x:lo.x,(corner&2)?hi.y:lo.y,(corner&4)?hi.z:lo.z));
+        changed_owners(k,owners);
     }
     background_change=false;
     if(job->local_response){

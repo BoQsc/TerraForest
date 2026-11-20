@@ -1,3 +1,26 @@
+## November 20 mesh dependencies after local edits
+
+Windows debug/release water libraries now invalidate mesh owners using the
+union of the actual changed-cell halos. The sparse diagonal case queues seven
+owners and the existing boundary continuity suite passes. The installed
+authority reproduced the prior complete edited archive byte for byte in
+`20261120T142331700710Z`.
+
+Cedar Vale capture `20261120T142005564440Z` reduced the lake blast's initial
+urgent owners from 140 to 132. All 66 live surface probes replayed with zero
+error (`20261120T142347391877Z`). The 43-owner rebuilt geometry retained
+its previous digest (`20261120T142347386838Z`). Captures, coverage and
+bucket interruption results are in the [water plan](../issues/explosive-combat/water-plan.md).
+
+Capture-free run `20261120T142220024763Z` measured terrain-to-water times
+of 154 ms at sea, 385 ms at the lake and 203 ms for mining. Corresponding
+action-to-draw times were 1283, 789 and 240 ms. Frame intervals at p99
+were 35.9, 25.6 and 24.7 ms. The lake timeline saw committed quantities
+at 526 ms and two successive mesh workers active by 546 and 673 ms, with
+the surface ready to publish by 776 ms. Return to these worker jobs and
+their handoff. Verify the same geometry digest and gameplay probes before
+accepting a faster path. The two-frame and stable-60 requirements remain open.
+
 ## November 20 cross-boundary excavation cost
 
 The Windows authority now reports brush, patch sampling, snapshot, native

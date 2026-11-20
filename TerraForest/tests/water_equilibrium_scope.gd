@@ -29,7 +29,29 @@ func check_new_receiver_scope()->void:
  check(result.get("snapshot_regions",0)==3,"The local snapshot includes the receiver, shore and disconnected candidate")
  check(result.get("ok",false) and water.statistics().water_ml==total,"First response conserves the complete finite quantity")
  check(water.capture_local_snapshot(pocket)==untouched,"A disconnected pool in the donor window remains byte-identical")
+func check_sparse_mesh_owners()->void:
+ var region:=Vector3i(10,10,10)
+ var cells:Dictionary={}
+ for z in range(-1,2):
+  for x in range(-1,2):
+   cells[(region+Vector3i(x,0,z))*8+Vector3i(3,3,3)]=[500,500,0]
+ for offset in [1,6]:
+  var high:=region*8+Vector3i(offset,3,offset)
+  cells[high]=[0,500,125001]
+  cells[high+Vector3i.DOWN]=[0,500,0]
+ var water:=fixture(cells)
+ while not water.next_mesh().is_empty():pass
+ var result:=await solve(water)
+ check(result.get("ok",false) and water.statistics().water_ml==250002,"Two diagonal pools settle in one region with conserved volume")
+ var owners:Array=[]
+ while true:
+  var mesh:Dictionary=water.next_mesh()
+  if mesh.is_empty():break
+  owners.append(mesh.coordinate-region)
+ var expected:=[Vector3i.ZERO,Vector3i.LEFT,Vector3i.RIGHT,Vector3i.FORWARD,Vector3i.BACK,Vector3i(-1,0,-1),Vector3i(1,0,1)]
+ check(owners.size()==expected.size() and expected.all(func(p):return owners.has(p)),"Sparse edits queue exactly the seven overlapping mesh owners: "+str(owners))
 func run_scope()->void:
+ await check_sparse_mesh_owners()
  check_new_receiver_scope()
  var cells:Dictionary={}
  for z in 64:
