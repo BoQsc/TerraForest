@@ -705,7 +705,11 @@ func check_authoring_brush()->void:
   if coastal:
    for frame in 5:await physics_frame
    check(game.terrain.edit_ticket==ticket+1 and game.terrain.published_revision==revision+1 and game.preparing_stroke.is_empty(),"Released coastal brush applies exactly once")
-  print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"preparing":preparing,"feedback_us":feedback_us,"admission_us":game.terrain.edit_accepted_us-started if game.terrain.edit_ticket>ticket else null,"publication_us":previous-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us}))
+  # Link player latency to the native edit and the terrain publication work.
+  var terrain_stages:={"worker_queue_ms":game.terrain.last_queue_ms,"field_ms":game.terrain.last_edit_ms,
+   "mesh_build_ms":game.terrain.last_total_build_ms,"geometry_tiles":game.terrain.last_density_tiles,
+   "commit_ms":game.terrain.last_commit_ms}
+  print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"preparing":preparing,"feedback_us":feedback_us,"admission_us":game.terrain.edit_accepted_us-started if game.terrain.edit_ticket>ticket else null,"publication_us":previous-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us,"terrain_stages":terrain_stages}))
 func run()->void:
  var sea_completed:=false
  var expected_source:=""

@@ -8,6 +8,14 @@ signal region_changed(bounds: AABB, revision: int)
 # repaint band. Two terrain lattice cells cover interpolation and meshing support.
 var _water_edit_ticket:=-1
 var _water_edit_bounds:=AABB()
+var _water_areas: Array[AABB] = []
+var _deposited_areas: Array[AABB] = []
+func water_edit_areas(fallback:AABB,deposits_only:bool=false)->Array[AABB]:
+	if _water_edit_ticket==edit_ticket:
+		return _deposited_areas.duplicate() if deposits_only else _water_areas.duplicate()
+	var areas:Array[AABB]=[fallback]
+	return areas
+
 func water_occupancy_edit_bounds(fallback:AABB)->AABB:
 	return _water_edit_bounds if _water_edit_ticket==edit_ticket else fallback
 
@@ -242,7 +250,8 @@ func republish_native_region(bounds: AABB, expected_revision: int) -> bool:
 	var reach:=maxf(0,edit_hi.y)*5.47
 	shadow_lo=edit_lo-Vector3(reach,0,reach);shadow_hi=edit_hi+Vector3(reach,0,reach)
 	edit_rollback.clear()
-	var affected:=_invalidate(geometry_lo,geometry_hi)
+	edit_geometry_bounds.assign([AABB(geometry_lo,geometry_hi-geometry_lo)])
+	var affected:=_invalidate()
 	edit_ticket+=1;pending_edit=true;edit_worker_done=false;batch_remaining=0
 	if not backend.submit({"kind":"republish","tiles":affected,"epoch":epoch,"ticket":edit_ticket,"revision":expected_revision,"geometry_lo":geometry_lo,"geometry_hi":geometry_hi},true):
 		pending_edit=false;_rollback_dirty();return false
@@ -262,6 +271,8 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	var safe_lo := Vector3.INF
 	var safe_hi := -Vector3.INF
 	var brushes_only:=true
+	var areas:Array[AABB]=[]
+	var deposits:Array[AABB]=[]
 	for packet in selected:
 		if packet.size() < 4:
 			return false
@@ -282,6 +293,10 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			var halo: Vector3 = Vector3.ONE * (radius + 5.0 + (Codec.CONTACT_MINING_HALO if shape==Codec.CONTACT_MINING_SHAPE else 0.0))
 			safe_lo = safe_lo.min(a.min(b) - halo)
 			safe_hi = safe_hi.max(a.max(b) + halo)
+			var occupancy_halo:=halo-Vector3.ONE*3
+			var area:=AABB(a.min(b)-occupancy_halo,(b-a).abs()+occupancy_halo*2)
+			areas.append(area)
+			if packet.decode_u32(36)!=0:deposits.append(area)
 		elif kind==28 and (packet.size() in [36,40,44,48,52] or packet.size()>=72):
 			var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
 			var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
@@ -328,16 +343,22 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	# occupancy. Admission and subsequent invalidation must use the same area.
 	var water_bounds:=AABB(safe_lo,safe_hi-safe_lo)
 	if brushes_only:water_bounds=water_bounds.grow(-3.0)
+	if not brushes_only:
+		areas.assign([water_bounds])
+		deposits.assign([water_bounds])
 	if water_edit_admission.is_valid():
-		var outcome:Variant=water_edit_admission.call(water_bounds,selected)
-		if outcome is bool:water_edit_status=OK if outcome else ERR_UNAVAILABLE
-		else:water_edit_status=int(outcome)
-		if water_edit_status!=OK:return false
+		for area in areas:
+			var outcome:Variant=water_edit_admission.call(area,selected)
+			if outcome is bool:water_edit_status=OK if outcome else ERR_UNAVAILABLE
+			else:water_edit_status=int(outcome)
+			if water_edit_status!=OK:return false
 	if edit_admission.is_valid() and not edit_admission.call(selected): return false
 	var accepted: bool = super.edit(data, safe_lo, safe_hi, captured_us, selected, member_captures)
 	if accepted:
 		_water_edit_ticket=edit_ticket
 		_water_edit_bounds=water_bounds
+		_water_areas=areas
+		_deposited_areas=deposits
 		for packet:PackedByteArray in selected:
 			var kind:int=packet.decode_u32(0)
 			if (kind==2 and packet.decode_u32(36)!=0) or (kind==3 and packet.decode_u32(16)!=0) or kind in [28,38]:

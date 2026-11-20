@@ -317,6 +317,35 @@ remains failed on three lake assertions and does not qualify frame pacing.
 
 ## In-game terrain authoring
 
+A brush batch now invalidates the union of its member footprints at each
+terrain detail level. Overlapping members advance a tile stamp once. The same
+member footprints, with water's sampling halo, are used for water admission,
+terrain resampling and settling. Only additive brushes in a brush batch request
+water displacement. Gameplay-worker run `20261120T150845838194Z` exercised
+two overlapping brushes near (320,320) and a third near (704,704). Eight
+16 m tiles advanced, and the middle tile and column retained their state.
+Mixed road/material packets retain conservative aggregate bounds.
+
+The rendered source-game run `20261120T150617727858Z` tested the terrain
+change with the normal developer belt. The 2 m radius sphere published in
+27.537 ms (2 frames). The 32 m half-extent box took 409.260 ms (22 frames).
+Separating disjoint brush footprints cannot reduce the work inside one large
+continuous cut. The single-brush publication and large coastal admission
+gates below remain open.
+
+Packaged repeat `20261120T151559964958Z` used PCK SHA-256
+`fd129c752b94e392a744e9d799a935e7d0a00aa749a1248d9acb0271e51c8f92`.
+The small brush published in 25.928 ms. The large brush took 341.043 ms;
+the native field took 29.635 ms and mesh construction reported 143.322 ms
+over 36 geometry tiles. The worker queue took 0.127 ms. These counters
+describe different stages and do not account for all time to visibility.
+For a continuous cut, measure which of those 36 meshes the near camera
+needs first and retain revision-consistent collision and water at handoff.
+The same package passed two-angle contact checks, basin conservation and
+bucket interruption on Cedar Vale in `20261120T151454928512Z`; sea, lake
+and mining took 149, 284 and 192 ms to publish local water. The lake timing
+assertion failed.
+
 The development belt's sphere, snapped box and single-cell tools now preview
 the brush at the centre used by the terrain command. Picking follows the
 active viewport camera in first and third person. Preview meshes are reused

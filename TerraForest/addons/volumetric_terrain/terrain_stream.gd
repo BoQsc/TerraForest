@@ -174,6 +174,7 @@ var edit_worker_done: bool = false
 var lighting_dirty: Dictionary = {}
 var lighting_in_flight: Dictionary = {}
 var lighting_generation: int = 0
+var edit_geometry_bounds: Array[AABB] = []
 var geometry_lo := Vector3.ZERO
 var geometry_hi := Vector3.ZERO
 var root_coverage: int = 0
@@ -1260,49 +1261,61 @@ func _cancel_density_requests(status: String) -> void:
 		if reply.kind=="placement_target":placement_target_received.emit(reply)
 		else:density_ray_received.emit(reply)
 
-func _select_dirty_owners(job: Dictionary, lo: Vector3, hi: Vector3) -> void:
+func _select_dirty_owners(job: Dictionary, members: int) -> void:
 	var key: Vector3i=job.key
 	if not tiles.has(key) or not tiles[key].has("bricks"): return
 	var bottoms: Array=[]
 	for bottom: int in tiles[key].bricks:
 		var child: Dictionary=tiles[key].bricks[bottom]
-		if child.has("region_bounds"):
-			# Include simplifier support and shared boundary samples.
-			var bounds: AABB=child.region_bounds.grow(17.0 if key.z>32 else 1.0)
-			if bounds.intersects(AABB(lo,hi-lo)): bottoms.append(bottom)
-		elif bottom<=hi.y and bottom+33>=lo.y: bottoms.append(bottom)
+		for i in edit_geometry_bounds.size():
+			if (members & (1 << i)) == 0: continue
+			var brush := edit_geometry_bounds[i]
+			if child.has("region_bounds"):
+				var region: AABB = child.region_bounds.grow(17.0 if key.z>32 else 1.0)
+				if not region.intersects(brush): continue
+			elif bottom>brush.end.y or bottom+33<brush.position.y: continue
+			bottoms.append(bottom)
+			break
 	job["brick_bottoms"]=bottoms
 
-func _invalidate(lo: Vector3, hi: Vector3) -> Array[Dictionary]:
+func _invalidate() -> Array[Dictionary]:
 	var affected: Array[Dictionary] = []
 	var refinement: Array[Dictionary] = []
-	for size: int in [16, 32, 64, 128, 256]:
-		var halo:=17.0 if (backend.region_terrain or backend.local_terrain) and size>32 else 0.0
-		var x0: int = maxi(0, floori((lo.x-halo) / float(size))) * size
-		var z0: int = maxi(0, floori((lo.z-halo) / float(size))) * size
-		var x1: int = mini(2047, ceili(hi.x+halo))
-		var z1: int = mini(2047, ceili(hi.z+halo))
-		for z in range(z0, z1 + 1, size):
-			for x in range(x0, x1 + 1, size):
-				var key := Vector3i(x, z, size)
-				var was_clean: bool=tiles.has(key) and not tiles[key].dirty
-				edit_rollback.push_back({"key": key, "stamp": int(stamps.get(key, 0)), "dirty": bool(tiles[key]["dirty"]) if tiles.has(key) else false})
-				stamps[key] = int(stamps.get(key, 0)) + 1
-				if tiles.has(key):
-					tiles[key]["dirty"] = true
-				if visible_cut.has(key):
-					last_density_tiles += 1
-					affected.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
-					_select_dirty_owners(affected[-1],lo,hi)
-				elif size == 16 and requested_keys.has(key):
-					# Repeated edits must not invalidate the same requested fine
-					# children forever. Publish a bounded set in this transaction,
-					# with the same field revision as the still-visible coarse mesh.
-					refinement.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
-					# A current hidden child can retain unaffected owners just like
-					# a visible child. Previously dirty children require a full build:
-					# this brush's bounds cannot account for earlier missed changes.
-					if was_clean: _select_dirty_owners(refinement[-1],lo,hi)
+	# Union the touched LOD tiles. Bits identify the individual brush footprints
+	# that reach each tile, including their simplifier halos.
+	var tile_members := {}
+	for i in edit_geometry_bounds.size():
+		var lo := edit_geometry_bounds[i].position
+		var hi := edit_geometry_bounds[i].end
+		for size: int in [16, 32, 64, 128, 256]:
+			var halo:=17.0 if (backend.region_terrain or backend.local_terrain) and size>32 else 0.0
+			var x0: int = maxi(0, floori((lo.x-halo) / float(size))) * size
+			var z0: int = maxi(0, floori((lo.z-halo) / float(size))) * size
+			var x1: int = mini(2047, ceili(hi.x+halo))
+			var z1: int = mini(2047, ceili(hi.z+halo))
+			for z in range(z0, z1 + 1, size):
+				for x in range(x0, x1 + 1, size):
+					var key := Vector3i(x, z, size)
+					tile_members[key] = int(tile_members.get(key,0)) | (1 << i)
+	for key: Vector3i in tile_members:
+		var was_clean: bool=tiles.has(key) and not tiles[key].dirty
+		edit_rollback.push_back({"key": key, "stamp": int(stamps.get(key, 0)), "dirty": bool(tiles[key]["dirty"]) if tiles.has(key) else false})
+		stamps[key] = int(stamps.get(key, 0)) + 1
+		if tiles.has(key):
+			tiles[key]["dirty"] = true
+		if visible_cut.has(key):
+			last_density_tiles += 1
+			affected.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
+			_select_dirty_owners(affected[-1],tile_members[key])
+		elif key.z == 16 and requested_keys.has(key):
+			# Repeated edits must not invalidate the same requested fine
+			# children forever. Publish a bounded set in this transaction,
+			# with the same field revision as the still-visible coarse mesh.
+			refinement.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
+			# A current hidden child can retain unaffected owners just like
+			# a visible child. Previously dirty children require a full build:
+			# this brush's bounds cannot account for earlier missed changes.
+			if was_clean: _select_dirty_owners(refinement[-1],tile_members[key])
 	refinement.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _distance(a["key"]) < _distance(b["key"]))
 	for index in range(mini(4, refinement.size())):
 		affected.push_back(refinement[index])
@@ -1316,7 +1329,12 @@ func _queue_lighting_refresh() -> void:
 	for key: Vector3i in tiles:
 		# Newly rebuilt geometry already contains current lighting. Inactive old
 		# cache entries get invalidated, not synchronously rebuilt for a dig.
-		if float(key.x + key.z) >= geometry_lo.x and float(key.x) <= geometry_hi.x and float(key.y + key.z) >= geometry_lo.z and float(key.y) <= geometry_hi.z:
+		var rebuilt := false
+		for bounds in edit_geometry_bounds:
+			if key.x+key.z>=bounds.position.x and key.x<=bounds.end.x and key.y+key.z>=bounds.position.z and key.y<=bounds.end.z:
+				rebuilt = true
+				break
+		if rebuilt:
 			if tiles[key].has("bricks"):
 				lighting_dirty[key]=lighting_generation
 				last_relight_tiles+=1
@@ -1413,6 +1431,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	latest_member_changes.clear()
 	edit_lo = lo
 	edit_hi = hi
+	edit_geometry_bounds.clear()
 	geometry_lo = Vector3.INF
 	geometry_hi = -Vector3.INF
 	for index in range(commands.size()):
@@ -1436,6 +1455,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			var cell := Vector3(command.decode_s32(4), command.decode_s32(8), command.decode_s32(12))
 			member_lo = cell - Vector3.ONE * 2.0
 			member_hi = cell + Vector3.ONE * 3.0
+		edit_geometry_bounds.append(AABB(member_lo,member_hi-member_lo))
 		geometry_lo = geometry_lo.min(member_lo)
 		geometry_hi = geometry_hi.max(member_hi)
 		var member_us: int = int(member_captures[index]["captured_us"]) if not member_captures.is_empty() else edit_started_us
@@ -1448,7 +1468,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	shadow_lo = lo - Vector3(reach, 0.0, reach)
 	shadow_hi = hi + Vector3(reach, 0.0, reach)
 	edit_rollback.clear()
-	var affected: Array[Dictionary] = _invalidate(geometry_lo, geometry_hi)
+	var affected: Array[Dictionary] = _invalidate()
 	edit_ticket += 1
 	pending_edit = true
 	edit_worker_done = false
@@ -1476,12 +1496,10 @@ func _rollback_dirty() -> void:
 	edit_rollback.clear()
 
 func _mark_modified_columns() -> void:
-	for z in range(maxi(0, floori(edit_lo.z / 16.0)), mini(125, floori(edit_hi.z / 16.0)) + 1):
-		for x in range(maxi(0, floori(edit_lo.x / 16.0)), mini(125, floori(edit_hi.x / 16.0)) + 1):
-			modified_columns[Vector2i(x, z)] = true
-	for z in range(maxi(0, floori(shadow_lo.z / 16.0)), mini(125, floori(shadow_hi.z / 16.0)) + 1):
-		for x in range(maxi(0, floori(shadow_lo.x / 16.0)), mini(125, floori(shadow_hi.x / 16.0)) + 1):
-			shadow_columns[Vector2i(x, z)] = true
+	for bounds in edit_geometry_bounds:
+		for z in range(maxi(0, floori(bounds.position.z/16.0)), mini(125, floori(bounds.end.z/16.0))+1):
+			for x in range(maxi(0, floori(bounds.position.x/16.0)), mini(125, floori(bounds.end.x/16.0))+1):
+				modified_columns[Vector2i(x,z)] = true
 
 func save_world() -> void:
 	if stopping or not world_ready:

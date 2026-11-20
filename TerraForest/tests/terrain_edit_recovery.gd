@@ -56,6 +56,27 @@ func run()->void:
 		check(terrain.edit(curved,Vector3.ZERO,Vector3.ONE) and await settled(),"inconsistent road profile is resolved by native validation")
 		check(terrain.last_edit_outcome.status=="rejected" and terrain.world_ready and terrain.backend.write_allowed,"invalid road profile cannot disable unrelated terrain tools")
 		check(terrain.sculpt_sphere(center,0.5,true) and await settled(),"minimum supported brush remains usable")
+	# Submit through the same terrain entry used by the in-game stroke buffer.
+	var brushes:Array[PackedByteArray]=[]
+	for point in [Vector3(320,80,320),Vector3(322,80,320),Vector3(704,80,704)]:
+		brushes.append(Codec.brush(point,point,2,0,point.x!=322,1))
+	var nearby:=Vector3i(320,320,16)
+	var middle:=Vector3i(512,512,16)
+	var old_stamp:int=terrain.stamps.get(nearby,0)
+	var water_areas:Array[AABB]=[]
+	terrain.water_edit_admission=func(bounds:AABB,_commands:Array)->int:
+		water_areas.append(bounds)
+		return OK
+	var submitted:bool=terrain.edit(brushes[0],Vector3.ZERO,Vector3.ONE,0,brushes)
+	check(submitted and await settled(),"separated brushes publish through the gameplay edit worker")
+	check(water_areas.size()==3 and terrain.water_edit_areas(AABB())==water_areas and not water_areas.any(func(area:AABB):return area.has_point(Vector3(512,80,512))),"water admission and committed edit use the same individual footprints")
+	check(terrain.water_edit_areas(AABB(),true)==[water_areas[0],water_areas[2]],"mixed batch displaces water only inside its additive brushes")
+	var changed_fine:=0
+	for key:Vector3i in terrain.stamps:
+		if key.z==16 and key.x>=304 and key.y>=304:changed_fine+=1
+	check(changed_fine==8,"three brush members touch eight fine tiles across the two sites")
+	check(terrain.stamps.get(nearby,0)==old_stamp+1 and terrain.stamps.has(Vector3i(704,704,16)),"overlapping brush halos advance each tile once")
+	check(not terrain.stamps.has(middle) and not terrain.modified_columns.has(Vector2i(32,32)),"untouched ground between batch members retains its mesh and column state")
 	terrain.shutdown();terrain.free()
 	await process_frame
 	var backend:=Backend.new();backend.world_generator=5;backend.disk_cache.enabled=false

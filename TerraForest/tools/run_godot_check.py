@@ -48,6 +48,8 @@ def planned_report_bytes(command):
     if any(Path(str(value)).name in {"water_barrel_world.gd", "water_player_world.gd"} for value in command):
         return 40 * 2**20  # Captures plus an at-most-8-MiB terrain failure snapshot.
     scripts = [str(value) for value in command if str(value).endswith(".gd")]
+    if len(scripts) == 1 and Path(scripts[0]).stem in {"terrain_edit_recovery", "location_reset_batch"}:
+        return 16 * 2**20  # Headless edit transactions write logs and a run receipt.
     if len(scripts) == 1 and Path(scripts[0]).stem == "building_materials":
         return 64 * 2**20
     if len(scripts) == 1 and Path(scripts[0]).stem in BOUNDED_WATER_REPORTS | BOUNDED_CONTRACT_REPORTS:

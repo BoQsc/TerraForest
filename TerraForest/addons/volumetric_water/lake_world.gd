@@ -161,7 +161,8 @@ func _ready() -> void:
   var status:int=water.prepare_ocean_edit_status(bounds)
   if status==ERR_BUSY and not _occupancy_failure.is_empty():return ERR_CANT_CREATE
   return status
- terrain.solid_deposited.connect(func(bounds:AABB):water.invalidate(terrain.water_occupancy_edit_bounds(bounds),true))
+ terrain.solid_deposited.connect(func(bounds:AABB):
+  for area:AABB in terrain.water_edit_areas(bounds,true):water.invalidate(area,true))
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.
  # Occupancy patches retain displaced quantity until redistribution can place it.
@@ -218,8 +219,9 @@ func _settle_committed_edit(bounds:AABB,_revision:int)->void:
  # even while paused; advancement remains separately gated by gameplay state.
  # The notification includes terrain meshing/shadow padding. Water connectivity
  # starts at the edited density bounds and supplies its own dependency halo.
- var changed_bounds:AABB=terrain.water_occupancy_edit_bounds(bounds) if _revision>0 else bounds
- water.settle_after_edit(changed_bounds)
+ if _revision>0:
+  for area:AABB in terrain.water_edit_areas(bounds):water.settle_after_edit(area)
+ else:water.settle_after_edit(bounds)
  if terrain.world_ready and not (loading_active.is_valid() and loading_active.call()):
   _interrupt_edit_work()
   _local_response_pending=true;_local_publication_pending=false
@@ -241,7 +243,7 @@ func _interrupt_edit_work()->void:
 func _invalidate(bounds:AABB) -> void:
  _interrupt_edit_work()
  _occupancy_failure=""
- water.invalidate(terrain.water_occupancy_edit_bounds(bounds))
+ for area:AABB in terrain.water_edit_areas(bounds):water.invalidate(area)
  _discard_builder()
 var last_process_us:int=0
 var last_process_work:Dictionary={}
