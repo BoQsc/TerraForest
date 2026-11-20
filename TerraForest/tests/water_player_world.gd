@@ -754,6 +754,9 @@ func check_authoring_brush()->void:
  game.session_menu.set_open(false)
  game.app_focused=true
  Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+ if "--authoring-drag" in OS.get_cmdline_user_args():
+  await check_authoring_drag()
+  return
  for i in (1 if coastal else 3):
   game.radius=2 if i==0 else 32
   if i==1 and "--authoring-at-spawn" not in OS.get_cmdline_user_args():
@@ -821,6 +824,59 @@ func check_authoring_brush()->void:
    "mesh_build_ms":game.terrain.last_total_build_ms,"geometry_tiles":game.terrain.last_density_tiles,
    "commit_ms":game.terrain.last_commit_ms}
   print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"preparing":preparing,"feedback_us":feedback_us,"admission_us":game.terrain.edit_accepted_us-started if game.terrain.edit_ticket>ticket else null,"publication_us":previous-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us,"terrain_stages":terrain_stages}))
+func brush_button(pressed:bool)->void:
+ var event:=InputEventMouseButton.new()
+ event.button_index=MOUSE_BUTTON_LEFT
+ event.pressed=pressed
+ Input.parse_input_event(event)
+ Input.flush_buffered_events()
+ game._update_edit(.06)
+
+func check_authoring_drag()->void:
+ game.radius=2
+ game.session_menu.activate_developer_slot(0)
+ var view:Camera3D=root.get_camera_3d()
+ view.look_at(view.global_position+Vector3(.15,-1,-.1),Vector3.UP)
+ game._update_edit(.06)
+ if game.latest_hit.is_empty():check(false,"Drag starts on resident terrain");return
+ var hit:Vector3=game.latest_hit.position
+ var origin:=view.global_position
+ var direction:=origin.direction_to(hit)
+ var probe:=PhysicsRayQueryParameters3D.create(origin,hit+direction*12,1)
+ probe.exclude=[game.player.get_rid()]
+ var revision:int=game.terrain.published_revision
+ brush_button(true)
+ brush_button(false)
+ check(game.terrain.pending_edit,"First excavation is in flight during the following drag")
+ view.look_at(hit+Vector3.RIGHT*3,Vector3.UP)
+ brush_button(true)
+ var clicked:Vector3=game.last_brush
+ view.look_at(hit+Vector3.RIGHT*3.75,Vector3.UP)
+ game._update_edit(.06)
+ check(game.last_brush.distance_to(clicked)>.1,"Held brush samples a different point")
+ view.look_at(view.global_position+Vector3(.1,1,.1),Vector3.UP)
+ game._update_edit(.06)
+ check(game.latest_hit.is_empty() and not game.stroke_valid,"Crossing empty sky ends the swept segment")
+ brush_button(false)
+ var queued:Array=game.stroke_buffer.samples
+ check(queued.size()==1 and queued[0].a.is_equal_approx(clicked) and queued[0].b.is_equal_approx(clicked),"Release retains the queued click at its original extent")
+ view.look_at(hit+Vector3.RIGHT*5,Vector3.UP)
+ var started:=Time.get_ticks_usec()
+ brush_button(true)
+ var frames:=0
+ while game.terrain.published_revision<revision+2 and Time.get_ticks_usec()-started<3000000:
+  await process_frame
+  frames+=1
+ var elapsed:=Time.get_ticks_usec()-started
+ check(game.terrain.published_revision>=revision+2 and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT),"Successive terrain revisions publish while the button remains held")
+ await physics_frame
+ var after:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(probe)
+ var cut_depth:=direction.dot(Vector3(after.position)-hit) if not after.is_empty() else 0.0
+ check(cut_depth>.1,"The original aim ray reaches the excavated surface before release")
+ print("AUTHORING_DRAG ",JSON.stringify({"elapsed_us":elapsed,"frames":frames,"cut_depth_m":cut_depth,"published":game.terrain.published_revision-revision}))
+ brush_button(false)
+ check(await ready("drag release"),"Remaining admitted work drains after release")
+
 func run()->void:
  var sea_completed:=false
  var expected_source:=""

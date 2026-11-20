@@ -525,6 +525,19 @@ active viewport camera in first and third person. Preview meshes are reused
 across frames. The primary player views and normal inventory actions remain
 the default way to play.
 
+In packaged Cedar Vale run `20261120T182051468002Z`, releasing a held
+sphere brush while another excavation was pending left the queued click
+extended along the cancelled drag. Moving the cursor through empty sky
+also retained the preceding sweep endpoint. The buffer now coalesces
+samples with matching release behaviour, and losing the terrain hit ends
+the swept segment. In `20261120T182751321343Z` (pack `5bce280777e4`),
+both checks passed. Two revisions published while the button remained down.
+The collision ray at the original aim point reached terrain 2.87 m deeper
+before release. The two publications were observed within 38.89 ms of the
+final press, including work already queued at that press. This measures a
+single resident 2 m brush sequence. Large-brush latency and sustained 60 FPS
+remain open. Add `--authoring-drag` to the inland brush check below to replay it.
+
 On read-only Cedar Vale, source-game run `20261120T113443205539Z` used the
 development belt and ordinary mouse events to excavate inland. The 2 m radius
 sphere admitted in 0.771 ms and published in 27.139 ms (two game frames).

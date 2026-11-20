@@ -35,7 +35,8 @@ func push_sweep(a: Vector3, b: Vector3, radius: float, shape: int, add: bool, ma
 		"shape": shape, "add": add, "material": material, "continuous": continuous}
 	if not samples.is_empty():
 		var last: Dictionary = samples.back()
-		if not bool(last["cube"]) and last["shape"] == shape and last["add"] == add and last["material"] == material and is_equal_approx(float(last["radius"]), radius):
+		# A held sample expires on release. A queued click survives it.
+		if not bool(last["cube"]) and last["continuous"] == continuous and last["shape"] == shape and last["add"] == add and last["material"] == material and is_equal_approx(float(last["radius"]), radius):
 			var start: Vector3 = last["a"]
 			var end: Vector3 = last["b"]
 			if end.distance_to(b) < 0.015:
@@ -47,7 +48,6 @@ func push_sweep(a: Vector3, b: Vector3, radius: float, shape: int, add: bool, ma
 			# Never replace an L-shaped stroke by a diagonal destructive shortcut.
 			if shape == 0 and end.distance_to(a) < 0.02 and span.length() <= minf(16.0, radius * 4.0) and deviation <= 0.04:
 				last["b"] = b
-				last["continuous"] = bool(last["continuous"]) and continuous
 				coalesced += 1
 				return true
 	if samples.size() >= LIMIT:

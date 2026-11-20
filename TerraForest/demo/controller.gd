@@ -826,6 +826,8 @@ func _update_edit(delta: float) -> void:
 	if latest_hit.is_empty():
 		latest_hit=_terrain_pick(start,end)
 	if latest_hit.is_empty():
+		stroke_valid = false
+		if terrain.interaction_target.is_finite():terrain.set_interaction_target(Vector3.INF)
 		pointer.hide()
 		return
 	var hit: Vector3 = latest_hit["position"]
