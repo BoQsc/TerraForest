@@ -1973,22 +1973,6 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         auto &cell=at(p);if(cell.boundary_built)return true;cell.boundary_built=true;
         if(!cell.amount&&!cell.reconstructed)return true;
         bool internal=full(cell);for(auto d:directions)internal&=full(at(p+d));if(internal)return true;
-        // A level free surface surrounded on all four sides by the same
-        // interval has exactly the top face of WaterSolidClip::box. Neighbour
-        // edge subdivision still runs at contacts and changes of slope.
-        if(streams!=SurfaceStreams::All&&cell.rectangular&&cell.bottom==0&&
-           full(at(p-Vector3i(0,1,0)))&&!at(p+Vector3i(0,1,0)).amount&&!at(p+Vector3i(0,1,0)).reconstructed){
-            bool level=true;
-            for(auto d:directions)if(!d.y){
-                const auto &neighbor=at(p+d);
-                if(!neighbor.rectangular||neighbor.bottom!=0||neighbor.top!=cell.top){level=false;break;}
-            }
-            if(level){
-                const double h=cell.top;
-                cell.boundary.push_back({{{0,h,0},{0,h,.5},{.5,h,.5},{.5,h,0}},{{0,1,0},h}});
-                return true;
-            }
-        }
         if(!build(cell)){output.faces["failure"]="occupied-cell clipping at "+String(p);return false;}
         for(size_t piece_index=0;piece_index<cell.pieces.size();++piece_index){
             const auto &piece=cell.pieces[piece_index];
@@ -2049,7 +2033,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     std::map<std::array<float,3>,int> query_ids;
     std::map<std::array<std::array<int64_t,3>,3>,std::pair<int,bool>> emitted_triangles;
     std::vector<bool> removed_triangles;
-    int tops=0,bottoms=0,sides=0,planar_quads=0;
+    int tops=0,bottoms=0,sides=0;
     auto buried=[&](Vector3i p,const BoundaryPolygon &face){
         C::Point center;for(auto v:face.polygon)center=center+v;center=center*(1./face.polygon.size());
         auto outside=center+face.plane.normal*1e-6;Vector3i other=p;auto local=outside;
@@ -2135,13 +2119,6 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                     if(!include_contacts&&buried(p,boundary))continue;
                     auto polygon=boundary.polygon;auto plane=boundary.plane;
                     if(B::area(polygon)<=B::MIN_AREA)continue;
-                    if(flat_interior&&streams!=SurfaceStreams::All){
-                        // No edge points can subdivide this horizontal quad.
-                        // Preserve the exact projection and triangle order
-                        // of the general extractor used by the reference path.
-                        for(auto &vertex:polygon)vertex=canonical(vertex);
-                        ++planar_quads;
-                    }else{
                     C::Face split;
                     for(size_t edge=0;edge<polygon.size();++edge){
                         auto a=polygon[edge],b=polygon[(edge+1)%polygon.size()],d=b-a;double norm=d.dot(d);
@@ -2178,7 +2155,6 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                         }
                     }
                     if(polygon.size()<3)continue;
-                    }
 
                     C::Point center;for(auto v:polygon)center=center+v;center=center*(1./polygon.size());
                     C::Point outside=center+plane.normal*1e-6;
@@ -2191,7 +2167,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                     C::Point cross;for(size_t i=0;i<polygon.size();++i)cross=cross+(polygon[i]-center).cross(polygon[(i+1)%polygon.size()]-center);
                     // Godot's front faces use clockwise winding.
                     if(cross.dot(plane.normal)>0)std::reverse(polygon.begin(),polygon.end());
-                    auto emit_triangle=[&](C::Point a,C::Point b,C::Point c){
+                    bool triangulated=B::triangulate(polygon,[&](C::Point a,C::Point b,C::Point c){
                         a=canonical(a);b=canonical(b);c=canonical(c);
                         if((b-a).cross(c-a).dot((b-a).cross(c-a))==0)return;
                         auto shaded=(c-a).cross(b-a);double shaded_length=B::length(shaded);
@@ -2227,11 +2203,8 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                             else id=found->second;buffers.render_indices.push_back(id);
                         }
                         output.owners.push_back(uint16_t(index(p)|(contact?0x8000:0)));if(normal.y>.001)++tops;else if(normal.y<-.001)++bottoms;else ++sides;
-                    };
-                    if(flat_interior&&streams!=SurfaceStreams::All){
-                        emit_triangle(polygon[3],polygon[0],polygon[1]);
-                        emit_triangle(polygon[1],polygon[2],polygon[3]);
-                    }else if(!B::triangulate(polygon,emit_triangle)){output.valid=false;output.faces["failure"]="non-convex rounded boundary at "+String(p);return output;}
+                    });
+                    if(!triangulated){output.valid=false;output.faces["failure"]="non-convex rounded boundary at "+String(p);return output;}
         }
     }
     if(std::find(removed_triangles.begin(),removed_triangles.end(),true)!=removed_triangles.end()){
@@ -2342,7 +2315,6 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
            hash->update(output.render_indices.to_byte_array())==OK)output.faces["render_digest"]=hash->finish();
     }
     output.faces["top"]=tops;output.faces["bottom"]=bottoms;output.faces["side"]=sides;
-    output.faces["planar_quads"]=planar_quads;
     output.faces["triangles"]=tops+bottoms+sides;output.faces["exact_cut_cell_boundary"]=true;
     return output;
 }
