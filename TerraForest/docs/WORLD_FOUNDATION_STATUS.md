@@ -1,5 +1,16 @@
 ## November 20 sea and lake blast check
 
+The installed receiver update passed all 81 depth probes at each shore and
+all 23 sea and 26 lake bank probes at first publication in two runs. The
+two immediate lake views in `20261120T123819287867Z` show a continuous
+crater waterline. Run `20261120T123947895282Z` repeated the edits without
+image capture. Sea, lake and mining publication took 172.180, 436.789 and
+200.645 ms from terrain publication. Four bucket updates took 47.044–53.057
+ms. Both runs failed the lake deadline. See
+[the water plan](../issues/explosive-combat/water-plan.md) for the installed
+library fingerprint and mesh-publication workload. Earlier failures below
+describe the reproduction that led to this update.
+
 Source-game run `20261120T122153098464Z` recorded the native cell geometry
 at each failed first-publication depth probe. Of 52 failures, 26 belonged
 to two absent regions, (171,10,192) and (172,10,192). The other 26 belonged

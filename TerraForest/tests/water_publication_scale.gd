@@ -5,6 +5,10 @@ const PublicationBudget=preload("res://addons/volumetric_water/publication_budge
 # these requests, a headless flow test measures a missing worker, not settling.
 class SolidTerrain extends RefCounted:
  func execute(command:PackedByteArray)->PackedByteArray:
+  if command.decode_u32(0)==32:
+   var boundary:=PackedByteArray();boundary.resize(28)
+   boundary.encode_u32(0,0x32505254);boundary.encode_u32(12,command.decode_u32(4));boundary.encode_u32(16,command.decode_u32(8))
+   return boundary
   var count:=command.decode_u32(8);var reply:=PackedByteArray();reply.resize(20+count*4);reply.fill(0)
   reply.encode_u32(0,0x32505254);reply.encode_u32(12,command.decode_u32(4));reply.encode_u32(16,count)
   for i in count:reply.encode_float(20+i*4,-1.0)

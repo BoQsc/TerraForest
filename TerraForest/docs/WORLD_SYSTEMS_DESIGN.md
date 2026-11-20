@@ -138,6 +138,17 @@ the connectivity data with the quantities so a worker cannot commit a result
 computed against obsolete terrain. This proposal has no performance result
 yet.
 
+The current finite-cell implementation admits missing regions within a
+bounded shoreline excavation up to the highest wet region layer in that
+edit. It samples terrain before solving. When an edit creates receivers, the
+local snapshot includes resident donor candidates within three horizontal
+regions of its seeds. Extra candidates supply water only through the solver's
+connected faces. A disconnected pool in the window keeps its previous
+quantities. This decision uses simulation state so local play and a headless
+authority can make the same selection. Donor cell redistribution still
+requires mesh publication across multiple regions; the basin-capacity design
+above remains necessary to qualify immediate editing at scale.
+
 The coastal authoring case has a different source of cost. At Cedar Vale's
 saved spawn, the 64 m wide box needs a 20 by 20 footprint in the current
 four-layer coastal admission band, or 1,600 region keys. The gate accepts at

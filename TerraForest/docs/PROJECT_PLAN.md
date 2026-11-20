@@ -3,6 +3,13 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
+November 20 local editing evidence: installed runs `20261120T123819287867Z`
+and `20261120T123947895282Z` passed sea and lake first-publication shoreline
+coverage after gameplay barrel explosions. Both failed the lake response
+deadline. The run without captures took 436.789 ms for lake publication.
+Timing, build identity and the fixed-angle evidence are recorded in
+[foundation status](WORLD_FOUNDATION_STATUS.md).
+
 | Gate | Required evidence | Status |
 | --- | --- | --- |
 | Packaged client baseline | Three cold and three warm forest, trader, underground, sea and lake routes. Pin build, save, configuration, camera paths and hardware. Record actual refresh misses, CPU/GPU times, queues, peaks, images and loading separately. | Open. Existing walks and two-angle water checks are inputs. Keep the lake contact failure after bucket interruption as a regression. |

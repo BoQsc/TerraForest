@@ -183,6 +183,7 @@ class NativeRegionalWater : public godot::RefCounted {
     std::unordered_set<Key> equilibrium_dependencies;
     std::unordered_set<Key> local_edit_regions;
     std::unordered_set<Key> local_occupancy_regions;
+    std::unordered_set<Key> local_receiver_regions;
     // Unpublished relaxation is speculative. A new player edit can discard it
     // without discarding that edit or waiting for a lake-wide mesh rebuild.
     struct RelaxationBefore {SnapshotArray<uint64_t,512> water;std::vector<uint32_t> vacancies;uint8_t ocean_state;};
@@ -383,6 +384,7 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     size_t hierarchy_cell_limit=131072;
     static std::atomic<uint64_t> pending_bytes;
     std::vector<uint64_t> required,changed_regions,capture_keys;
+    std::unordered_set<uint64_t> local_donors;
     size_t capture_cursor=0;
     std::shared_ptr<EquilibriumCaptureState> capture_selection;
     godot::String reason;

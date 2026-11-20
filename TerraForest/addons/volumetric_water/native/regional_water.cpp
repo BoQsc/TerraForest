@@ -700,8 +700,23 @@ void NativeRegionalWater::settle_after_edit(const AABB &bounds){
     if(hi.x<lo.x||hi.y<lo.y||hi.z<lo.z)return;
     lo=position(region_key(lo));hi=position(region_key(hi));
     if(int64_t(hi.x-lo.x+1)*(hi.y-lo.y+1)*(hi.z-lo.z+1)>512)return;
+    // A shoreline cut can expose terrain on the dry side of the last stored
+    // water region. Sample those receivers up to the highest nearby wet layer.
+    // The connected-face solve decides whether any of them may actually fill.
+    int highest_wet_layer=-1;
+    for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){
+        if(y<=highest_wet_layer)continue;
+        auto found=regions.find(key(Vector3i(x,y,z)));
+        if(found==regions.end()||found->second.ocean_state)continue;
+        const Region &r=found->second;
+        if(std::any_of(r.water.begin(),r.water.end(),[](uint64_t ml){return ml>0;}))highest_wet_layer=y;
+    }
     for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){
         Key k=key(Vector3i(x,y,z));if(ocean_cache.count(k))restore_ocean_cache(k);wake_settling(k);
+        if(y<=highest_wet_layer&&!regions.count(k)&&!(surrounding_ocean&&std::min({x,z,499-x,499-z})<35)){
+            get(Vector3i(x*8,std::max(2,y*8),z*8),true);
+            if(regions.count(k))local_receiver_regions.insert(k);
+        }
         if(regions.count(k))local_edit_regions.insert(k);
     }
 }
@@ -2123,23 +2138,31 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     // leaving its vertices shared correctly. Orient each connected component
     // from its largest face, preserving the outward geometric anchor rather
     // than independently trusting a collapsed clipping-plane normal.
-    struct EdgeUse {int triangle;bool forward;};
-    std::unordered_map<uint64_t,std::vector<EdgeUse>> edges;
+    struct EdgeUses {int first=-1,second=-1;bool forward=false,same=false;};
+    std::unordered_map<uint64_t,EdgeUses> edges;
     const int triangles=int(output.owners.size());
-    std::vector<std::vector<std::pair<int,bool>>> links(triangles);
-    std::vector<std::pair<double,int>> order;order.reserve(triangles);
+    const auto *indices=output.query_indices.ptr();
+    edges.reserve(triangles*2);
+    int inconsistent=0;
     for(int i=0;i<triangles;++i){
-        auto a=output.query_vertices[output.query_indices[i*3]],b=output.query_vertices[output.query_indices[i*3+1]],c=output.query_vertices[output.query_indices[i*3+2]];
-        order.push_back({double((b-a).cross(c-a).length_squared()),i});
-        for(int e=0;e<3;++e){int u=output.query_indices[i*3+e],v=output.query_indices[i*3+(e+1)%3];
-            uint64_t edge=(uint64_t(std::min(u,v))<<32)|uint32_t(std::max(u,v));edges[edge].push_back({i,u<v});}
-    }
-    bool inconsistent=false;
-    for(const auto &[key,uses]:edges)if(uses.size()==2){
-        bool same=uses[0].forward==uses[1].forward;inconsistent|=same;
-        links[uses[0].triangle].push_back({uses[1].triangle,same});links[uses[1].triangle].push_back({uses[0].triangle,same});
+        for(int e=0;e<3;++e){int u=indices[i*3+e],v=indices[i*3+(e+1)%3];
+            auto &uses=edges[(uint64_t(std::min(u,v))<<32)|uint32_t(std::max(u,v))];
+            if(uses.first<0){uses.first=i;uses.forward=u<v;}
+            else if(uses.second==-1){uses.second=i;uses.same=uses.forward==(u<v);inconsistent+=uses.same;}
+            else if(uses.second>=0){inconsistent-=uses.same;uses.second=-2;} // Only manifold pairs constrain winding.
+        }
     }
     if(inconsistent){
+        std::vector<std::vector<std::pair<int,bool>>> links(triangles);
+        for(const auto &[key,uses]:edges)if(uses.second>=0){
+            links[uses.first].push_back({uses.second,uses.same});links[uses.second].push_back({uses.first,uses.same});
+        }
+        std::vector<std::pair<double,int>> order;order.reserve(triangles);
+        const auto *vertices=output.query_vertices.ptr();
+        for(int i=0;i<triangles;++i){
+            auto a=vertices[indices[i*3]],b=vertices[indices[i*3+1]],c=vertices[indices[i*3+2]];
+            order.push_back({double((b-a).cross(c-a).length_squared()),i});
+        }
         std::sort(order.begin(),order.end(),std::greater<std::pair<double,int>>());
         std::vector<int8_t> flip(triangles,-1);std::vector<int> queue;
         for(const auto &[area,seed]:order)if(flip[seed]<0){
@@ -2436,7 +2459,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install,bool p
     }
     if(offset!=data.size())return false;
     if(sum!=expected)return false;if(!install)return true;
-    surface_budget_failed=false;equilibrium_dependencies.clear();local_edit_regions.clear();local_occupancy_regions.clear();relaxation_before.clear();relaxation_dirty_before.clear();urgent_meshes.clear();batch_urgent=false;deferred_regions.clear();settling.clear();settling_set.clear();settle_steps=settle_transfers=settle_us=0;
+    surface_budget_failed=false;equilibrium_dependencies.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();relaxation_before.clear();relaxation_dirty_before.clear();urgent_meshes.clear();batch_urgent=false;deferred_regions.clear();settling.clear();settling_set.clear();settle_steps=settle_transfers=settle_us=0;
     ocean_cache.clear();ocean_cache_bytes=0;ocean_cache_hits=0;invalidate_snapshot();cancel_mesh_batch();published_regions.clear();published_occupancy.clear();staged_occupancy.clear();staged_ready.clear();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);solid_cache_bytes=structure_bytes;restored_cache.clear();cache_rebuilds=0;requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
     // Storage intermediates need validated records, not meshing/query admission.
     if(!prepare_render)return true;
@@ -2488,7 +2511,7 @@ bool NativeRegionalWater::restore_prepared(const Ref<NativeWaterMapIdentity> &pr
  // Single-owner handoff after the loading worker has joined. No decoding,
  // contact reconstruction, or traversal of incoming regions on this thread.
  auto &source=*prepared->decoded.ptr();prepared->consumed=true;
- local_edit_regions.clear();local_occupancy_regions.clear();urgent_meshes.clear();relaxation_before.swap(source.relaxation_before);relaxation_dirty_before.swap(source.relaxation_dirty_before);batch_urgent=false;
+ local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();urgent_meshes.clear();relaxation_before.swap(source.relaxation_before);relaxation_dirty_before.swap(source.relaxation_dirty_before);batch_urgent=false;
  // Derived buffers belong to the old state too. Transfer ownership instead of
  // destructing every triangle, contact and frozen snapshot during installation.
  std::swap(saved_snapshot,source.saved_snapshot);std::swap(saved_catalog,source.saved_catalog);

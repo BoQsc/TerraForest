@@ -1,5 +1,20 @@
 # Continuous volumetric water replacement
 
+**November 20 installed receiver update.** Cedar Vale run
+`20261120T123819287867Z` passed all 81 first-publication crater-depth probes
+at each shore and all 23 sea and 26 lake bank probes. The lake's straight
+cut was gone in both `player_lake_after.png` and
+`player_lake_after_reverse.png`. The executable loaded the debug extension
+from `dist/addons/volumetric_water/bin` (SHA-256
+`569605243d5223bffe5c718c7189181ec230350a755e85d86a063c6c183450e1`).
+The strict route still failed the lake deadline. The local lake response
+took 498.773 ms and changed 51 regions. The timeline shows 48 pending terrain
+occupancy samples (region requests), then 150 urgent mesh owners. Three mesh
+worker groups ran before local publication. Retain the verified receiver and
+finite-volume behavior as the reference while reducing those costs. The
+reference route does not qualify immediate response, frame pacing, arbitrary
+underwater object contact, or larger authoring edits.
+
 Installed brush-admission build `2edffbb6`, run `20261120T120625031936Z`,
 reproduced the four first-publication failures. The sea centre ray missed.
 At the lake, immediate depth, bank contact and the 250 ms deadline failed.

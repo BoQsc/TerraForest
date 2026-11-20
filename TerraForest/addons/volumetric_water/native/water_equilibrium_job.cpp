@@ -97,7 +97,8 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::continue_equilibrium_capture
     while(job->capture_cursor<job->capture_keys.size()){
         Key k=job->capture_keys[job->capture_cursor++];const auto &r=regions.at(k);
         auto inserted=job->frozen->regions.emplace(k,r);
-        if(job->local_response&&r.ocean_state!=1)inserted.first->second.settle_pending=true;
+        if(job->local_response&&r.ocean_state!=1)
+            inserted.first->second.settle_pending=!job->local_donors.count(k);
         for(auto ml:r.water)job->frozen->total+=ml;
         if(r.settle_pending){auto old=published_occupancy.find(k);if(old!=published_occupancy.end())job->frozen->published_occupancy.emplace(k,old->second);}
         if(expired()&&job->capture_cursor<job->capture_keys.size())return {};
@@ -119,7 +120,7 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
     if(bounded_edit){
         for(Key k:local_edit_regions){
             auto found=regions.find(k);
-            if(found!=regions.end()&&found->second.settle_pending&&!found->second.valid)return {};
+            if(found!=regions.end()&&!found->second.valid)return {};
         }
     }else{
         for(const auto &[k,r]:regions)if(r.settle_pending&&!r.valid)return {};
@@ -156,6 +157,22 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
         for(Key k:s.seeds){s.candidate.insert(k);const auto p=position(k);
             for(auto d:adjacent){auto q=p+d;if(q.x<0||q.y<0||q.z<0||q.x>=500||q.y>=64||q.z>=500)continue;
                 auto found=regions.find(key(q));if(found!=regions.end()&&found->second.valid)s.candidate.insert(found->first);}
+        }
+        // If the excavation opens previously unsampled receivers, their
+        // initial quantity is zero. Include a bounded patch of resident
+        // donors before solving, so the crater draws from the lake.
+        const bool opened=std::any_of(s.seeds.begin(),s.seeds.end(),[&](Key k){
+            return local_receiver_regions.count(k)!=0;
+        });
+        if(opened)for(Key k:s.seeds){
+            auto p=position(k);
+            for(int dz=-3;dz<=3;++dz)for(int dx=-3;dx<=3;++dx){
+                auto q=p+Vector3i(dx,0,dz);
+                if(q.x<0||q.z<0||q.x>=500||q.z>=500)continue;
+                auto found=regions.find(key(q));
+                if(found!=regions.end()&&found->second.valid&&s.candidate.insert(found->first).second)
+                    job->local_donors.insert(found->first);
+            }
         }
         s.seeds.clear();s.account_keys.assign(s.candidate.begin(),s.candidate.end());
     }
@@ -204,7 +221,7 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     if(!job->success){out["reason"]=job->reason;return out;}
     // Completed load/background transactions must retire their edit seeds too.
     // Otherwise the next player edit inherits every earlier pending region.
-    for(const auto &[k,r]:job->frozen->regions){local_edit_regions.erase(k);local_occupancy_regions.erase(k);}
+    for(const auto &[k,r]:job->frozen->regions){local_edit_regions.erase(k);local_occupancy_regions.erase(k);local_receiver_regions.erase(k);}
     equilibrium_dependencies.clear();
     total=uint64_t(int64_t(total)+job->ocean_exchange_ml);
     // All quantities install together. Render/query/immersion remain on their
