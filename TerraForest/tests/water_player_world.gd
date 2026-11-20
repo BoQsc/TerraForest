@@ -137,6 +137,47 @@ var timing_phase:=""
 var timing_local_ms:=-1.0
 var action_started_us:=0
 var local_draw_us:=0
+var audit_meshes_before:Dictionary={}
+var audit_meshes_after:Dictionary={}
+var audit_edit_areas:Array[AABB]=[]
+func resident_render_meshes()->Dictionary:
+ var meshes:Dictionary={}
+ for coord:Vector3i in game.lakes._meshes:
+  meshes[coord]=game.lakes._meshes[coord].mesh
+ return meshes
+
+func compare_render_owners()->Dictionary:
+ # Compare the geometry actually submitted to the renderer. Read GPU-backed
+ # arrays only after the timed action. Held resources also cover removals.
+ var coordinates:=audit_meshes_before.keys()
+ for coord:Vector3i in audit_meshes_after:
+  if not audit_meshes_before.has(coord):coordinates.append(coord)
+ var owners:Array=[]
+ for coord:Vector3i in coordinates:
+  var previous:ArrayMesh=audit_meshes_before.get(coord)
+  var current:ArrayMesh=audit_meshes_after.get(coord)
+  if previous==current:continue
+  var bounds:=AABB(Vector3(coord)*4,Vector3.ONE*4)
+  var inside:=false
+  for area in audit_edit_areas:
+   if bounds.intersects(area):inside=true;break
+  var change:="added" if previous==null else "removed" if current==null else "changed"
+  var entry:Dictionary={"coordinate":str(coord),"intersects_edit":inside}
+  if previous!=null and current!=null:
+   var old_arrays:=previous.surface_get_arrays(0)
+   var new_arrays:=current.surface_get_arrays(0)
+   if old_arrays==new_arrays:change="identical"
+   elif old_arrays[Mesh.ARRAY_INDEX]==new_arrays[Mesh.ARRAY_INDEX]:
+    var from_vertices:PackedVector3Array=old_arrays[Mesh.ARRAY_VERTEX]
+    var to_vertices:PackedVector3Array=new_arrays[Mesh.ARRAY_VERTEX]
+    if from_vertices.size()==to_vertices.size():
+     var displacement:=Vector3.ZERO
+     for i in from_vertices.size():
+      displacement=displacement.max((from_vertices[i]-to_vertices[i]).abs())
+     entry.max_vertex_displacement_m=[displacement.x,displacement.y,displacement.z]
+  entry.geometry=change
+  owners.append(entry)
+ return {"edit_areas":str(audit_edit_areas),"replaced":owners}
 func measure_local_draw()->void:
  if timing_phase.is_empty() or not action_started_us or local_draw_us or not terrain_published_us:return
  if game.lakes._local_response_started_us>=action_started_us and not game.lakes._local_response_pending and not game.lakes._local_publication_pending:
@@ -161,6 +202,9 @@ func timing_stage(label:String,ms:float)->void:
   timing_stages[label]=float(timing_stages.get(label,0))+ms
   timing_totals[label]=float(timing_totals.get(label,0))+ms
 func start_timing(label:String)->void:
+ if "--water-owner-audit" in OS.get_cmdline_user_args():
+  audit_meshes_before=resident_render_meshes()
+  audit_meshes_after.clear();audit_edit_areas.clear()
  if frame_phases==null:frame_phases=FramePhases.new();root.add_child(frame_phases)
  if "--qualification-route" not in OS.get_cmdline_user_args() and "--water-immediate-contact" not in OS.get_cmdline_user_args():
   game.max_fps=0;game.background_fps=0;Engine.max_fps=0
@@ -232,6 +276,9 @@ func finish_timing()->void:
  blast_metrics[timing_phase].worst_frames=timing_worst.duplicate(true)
  blast_metrics[timing_phase].stage_totals=timing_totals.duplicate()
  blast_metrics[timing_phase].water_worst=timing_water_worst.duplicate(true)
+ if not audit_edit_areas.is_empty():
+  blast_metrics[timing_phase].render_owner_audit=compare_render_owners()
+  audit_meshes_before.clear();audit_meshes_after.clear()
  timing_phase=""
  FileAccess.open(evidence.path_join("normal_gameplay_blast_performance.json"),FileAccess.WRITE).store_string(JSON.stringify(blast_metrics,"  "))
 func local_response(point:Vector3,label:String)->void:
@@ -240,6 +287,9 @@ func local_response(point:Vector3,label:String)->void:
   if terrain_published_us>0 and game.lakes._local_response_started_us>=blast_started and not game.lakes._local_response_pending and not game.lakes._local_publication_pending:
    var latency:float=game.lakes._local_response_us/1000.0
    timing_diagnostic("first publication probes")
+   if "--water-owner-audit" in OS.get_cmdline_user_args():
+    audit_meshes_after=resident_render_meshes()
+    audit_edit_areas=game.terrain.water_edit_areas(AABB())
    timing_local_ms=latency
    print("LOCAL_WATER_RESPONSE ",label," ms=",latency," wider_pending=",game.lakes.water.runtime_state().settling_regions)
    print("LOCAL_WATER_SOLVE ",label," ",JSON.stringify(game.lakes.statistics().get("equilibrium_result",{})))

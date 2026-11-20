@@ -1,6 +1,8 @@
 The current [shoreline decision and measurements](../issues/explosive-combat/water-plan.md)
 track the dependency set between a committed edit and its first visible water
-surface. Pack `8bc1a4d21ff7` still took 352 ms at the lake. The Windows
+surface. The owner audit found 34 changed render meshes outside the terrain
+edit at first lake publication and 18 identical replacements outside it.
+Pack `8bc1a4d21ff7` still took 352 ms at the lake in the two-angle run. The Windows
 gameplay route remains the acceptance test for that handoff.
 
 ## November 20 dedicated loadout and bucket targeting

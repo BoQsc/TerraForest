@@ -1,5 +1,21 @@
 # Continuous volumetric water replacement
 
+**First-publication dependency measurement.** The optional packaged route
+flag `--water-owner-audit` retains mesh resources before an action and at
+local publication, then compares Godot's render arrays after measurement.
+In Cedar Vale runs `20261120T171607949226Z` and `20261120T171739337871Z`,
+the sea crater added 10 visible owners, all inside the terrain edit. Mining
+replaced 26 meshes, of which 18 were identical. The lake blast replaced or
+added 62. Outside the terrain edit, 18 replacements were identical and 34
+had different render arrays. Of the latter, 11 kept vertex count and index
+order and had zero horizontal movement with maximum vertical movement of
+149.66 mm each. The remaining 23 require a different index stream or vertex
+count. Clipping the batch to terrain edit bounds would leave stale water.
+The next implementation should distinguish interior free-surface level
+changes from contact/topology changes, with the same committed quantities
+feeding rendering and picking. Use the full extraction as the geometry
+reference. The lake took 305 and 462 ms to draw in these instrumented runs.
+
 **Current decision, November 20.** Keep the finite-volume model. Use the
 resident Cedar Vale shoreline edit as the unit of work for the authority and
 renderer. Measure how many regions the first visible crater actually depends
