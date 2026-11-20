@@ -265,6 +265,8 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
         }
     }
     invalidate_snapshot();
+    out["closed_basins"]=int64_t(job->closed_basins);
+    out["closed_basin_ml"]=int64_t(job->closed_basin_ml);
     out["ok"]=true;out["changed_regions"]=int64_t(job->changed_regions.size());return out;
 }
 void NativeWaterEquilibriumJob::prepare(){
@@ -585,8 +587,7 @@ void NativeWaterEquilibriumJob::prepare(){
 
                     auto q=p+steps[direction];if(!W::in_domain(q))continue;
                     auto r=store.regions.find(W::region_key(q));
-                    if(r==store.regions.end() || !r->second.valid || done.count(W::key(q)))
-                        complete_neighbourhood=false;
+                    if(done.count(W::key(q)))complete_neighbourhood=false;
                     // Certify a local vertical path to fixed-head sea. Air
                     // above an open reservoir is an outlet too; expanding that
                     // air as finite receiving capacity walks the entire coast.
@@ -625,15 +626,16 @@ void NativeWaterEquilibriumJob::prepare(){
                         if(outlets.empty())outlet_limit=upper;
                     }
                     if(r==store.regions.end()||!r->second.valid){
-                        // Local response has a closed transaction boundary.
-                        // It cannot borrow from unknown/distant water. Wider
-                        // relaxation follows after this volume is published.
-                        if(local_response)continue;
+                        // Test the unsampled neighbour as unobstructed air.
+                        // Only a reachable face can make the basin incomplete
+                        // at this head. Revisit blocked faces if the head rises.
                         Cell air;air.p=q;
                         if(connected(cells[cursor],air,direction,upper)){
+                            complete_neighbourhood=false;
+                            if(local_response)continue;
                             double value=std::max(cost[cursor],connection_height(cells[cursor],air,direction));auto key=W::region_key(q);
                             auto old=unknown_cost.find(key);if(old==unknown_cost.end()||value<old->second)unknown_cost[key]=value;
-                        }
+                        }else if(local_response)head_frontier.insert(int(cursor));
                         continue;
                     }
                     const int known=ids.at(W::region_key(q)).values[W::index(q)];
@@ -916,6 +918,9 @@ void NativeWaterEquilibriumJob::prepare(){
                 std::stable_sort(fractions.begin(),fractions.end(),[&](int a,int b){return cells[a].fraction>cells[b].fraction;});
                 for(int i:fractions)if(filled<quantity){++cells[i].after;++filled;}
                 if(filled!=quantity){reason="Local response integer remainder is unresolved";return false;}
+            }
+            if(complete_neighbourhood&&!needs_hierarchy&&!reservoir_graph){
+                ++closed_basins;closed_basin_ml+=quantity;
             }
             mark(4);
             for(const auto &c:cells){

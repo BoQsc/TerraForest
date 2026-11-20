@@ -6,6 +6,16 @@ Pack `53d50e165613` eliminated 18 identical lake mesh replacements and still
 took 288 and 302 ms to draw the changed lake. The Windows
 gameplay route remains the acceptance test for that handoff.
 
+The first closed-basin commit now levels an enclosed cut across a region
+boundary even with unsampled air overhead. The 76-check scope regression
+includes save/reload and open-bank controls. In the actual Cedar Vale cut,
+closure became known during wider settlement, after the 302 ms first draw.
+The capacity-index milestone remains open.
+
+Shoreline latency work is parked until the regional basin design is taken up.
+Dedicated/local edit and save/reload parity passed on this release DLL in
+`20261120T175417618007Z`. World exploration frame pacing is the active route.
+
 A direct interior-face extraction experiment preserved the pinned lake geometry
 but took 300 and 304 ms on the packaged route. It was reverted. The retained
 build is byte-matched to `20261120T172636344616Z` including external DLLs.

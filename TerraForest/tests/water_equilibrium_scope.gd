@@ -94,9 +94,34 @@ func connected_bank_edit(region_count:int,deposit:bool)->Dictionary:
  var quantities:=amounts(water)
  var bank_ml:int=quantities.get(bank,0)
  check(result.get("ok",false) and quantity==water.total_water_ml(),"Connected bank conserves its entire finite volume")
+ if not deposit:
+  check(result.get("closed_basins",-1)==0 and result.get("closed_basin_ml",-1)==0,
+   "An open wet face into the rest of the lake prevents a closed-basin claim")
  check(bank_ml==0 if deposit else bank_ml>0,"The edited bank reflects its new occupancy")
  check(quantities.get(Vector3i(79+8*region_count,83,83),0)==62500,"The distant end remains unchanged on first commit")
  return {"snapshot_regions":result.get("snapshot_regions",-1),"cells":result.get("cells",-1),"visits":result.get("displacement_visits",-1),"bank_ml":bank_ml}
+
+func check_basin_at_region_ceiling()->void:
+ # The dry region overhead is unsampled. Its lower face is above the
+ # highest water level, and all lateral faces of the basin are sealed.
+ var bank:Dictionary={}
+ for x in range(81,90):
+  bank[Vector3i(x,87,83)]=[0,500,90000 if x==84 else 0]
+ var water:=fixture(bank)
+ water.settle_after_edit(AABB(Vector3(42,43.5,41.5),Vector3(3,.25,.5)))
+ var job:RefCounted=water.begin_equilibrium(0,true)
+ check(job!=null,"Enclosed lake at a vertical region boundary admits the bank edit")
+ if job==null:return
+ job.prepare()
+ var result:Dictionary=water.finish_equilibrium(job)
+ var filled:=amounts(water)
+ check(result.get("closed_basins",0)==1 and result.get("closed_basin_ml",0)==90000,
+  "The committed closed basin accounts for exactly 90000 ml")
+ check(result.get("ok",false) and bank.keys().all(func(p):return filled.get(p,0)==10000),
+  "Unsampled space above the maximum head preserves the enclosed basin level: "+str(filled))
+ var reopened:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+ check(reopened.restore_snapshot(snapshot(water)) and amounts(reopened)==filled and reopened.total_water_ml()==90000,
+  "The boundary basin retains its exact volume and distribution after reload")
 
 func run_scope()->void:
  for deposit:bool in [false,true]:
@@ -120,6 +145,7 @@ func run_scope()->void:
   check(commit.get("ok",false) and bank.keys().all(func(p):return levels.get(p,0)==10000),
    "First local commit puts 90000 ml at one level across the enclosed bank cut")
  await check_sparse_mesh_owners()
+ check_basin_at_region_ceiling()
  check_new_receiver_scope()
  var cells:Dictionary={}
  for z in 64:

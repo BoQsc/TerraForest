@@ -12,10 +12,22 @@ outlet before reusing connectivity. Run the same Cedar Vale blast, and compare
 the first visible result, contact and conservation before expanding this path.
 The [water issue](../issues/explosive-combat/water-plan.md) tracks that gate.
 
+Shoreline latency is parked pending the regional basin architecture. Continue
+the rendered-client baseline with normal exploration and trader traversal.
+Keep the failing lake gate in the release ledger.
+
 The packaged 300/304 ms lake result for the reverted interior-face shortcut
 keeps this basin milestone open. Qualify the first resident inland cut with
 a known unchanged outlet, conserved basin quantity and matching water
 queries at first draw before expanding the new model to other edits.
+
+In packaged Cedar Vale run `20261120T175300888050Z`, the first lake cut
+had no confirmed closed component within the 122-region snapshot. The later
+settling pass reported one closed component and 11,494,906,048 ml. Use that
+wider pass to construct regional capacity and connectivity records. A load
+with no records needs an initial index before it can use this path. A local
+edit must validate its affected interfaces against the index revision; the
+local bounding box alone cannot establish closure.
 
 The first-commit size comparison now runs in `water_equilibrium_scope`.
 For a straight connected bank 16 and 128 regions long, opening the same

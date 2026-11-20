@@ -383,6 +383,7 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     godot::Ref<NativeRegionalWater> frozen;
     uint64_t revision=0,elapsed_us=0,visited_cells=0,blocked_ml=0;
     uint64_t displacement_visits=0,displacement_searches=0;
+    uint64_t closed_basins=0,closed_basin_ml=0;
     int64_t ocean_exchange_ml=0;
     std::array<uint64_t,8> phase_us{};
     uint64_t reserved_bytes=0;

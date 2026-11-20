@@ -1,5 +1,36 @@
 # Continuous volumetric water replacement
 
+**Shoreline latency work is parked.** The last accepted Cedar Vale run took
+302 ms from terrain publication to lake draw. Keep the saved-world route,
+two camera angles and stricter two-frame target. Reopen this issue for a
+basin architecture change that can reuse regional capacity and connectivity
+across edits. The next active performance workload is ordinary world exploration.
+
+**Resident basin closure.** Missing terrain above the maximum reachable
+water elevation used to make an enclosed bank edit take the transient
+redistribution path. In `20261120T174500969064Z`, 90,000 ml ended up split
+79,934/10,066 across two of nine identical cells. The native authority now
+tests whether water can reach a missing neighbour through its face. A higher
+head discovered later causes another frontier check. In
+`20261120T174758742230Z` the first commit put 10,000 ml in every cell across
+two regions, and archive reload retained those quantities. Both 16- and
+128-region controls with an open lateral face declined closure. The common
+solver reports the number and conserved quantity of closed components on a
+successful commit. This decision is valid for the current solve and head.
+It does not establish a reusable connectivity or capacity index for a lake.
+
+The packaged Cedar Vale run `20261120T175300888050Z` used release DLL
+`864e92b6c19d`. The sea and lake contact probes, interrupted buckets and
+mining passed. Both camera angles show water in the excavated banks. Terrain
+publication to first water draw took 140 ms at sea, 302 ms at the lake and
+165 ms during mining. The lake missed its 250 ms interim gate. The local
+lake job visited 15,222 cells and completed in 15.6 ms with zero confirmed
+closed basins. The wider solve visited 129,071 cells and reported one closed
+basin containing 11,494,906,048 ml. That result currently expires with the
+job. Reuse requires revisioned regional membership, capacity and outlet data.
+Packaged dedicated/local edit, bucket and checkpoint parity passed in
+`20261120T175417618007Z`.
+
 **Rejected interior-face shortcut.** Candidate `3e21d370` derived the
 horizontal face directly when a full lower cell, dry upper cell and level
 neighbours proved the boundary. In replay `20261120T173344900263Z`, 833 quads
