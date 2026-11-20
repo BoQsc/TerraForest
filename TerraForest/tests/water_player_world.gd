@@ -1,5 +1,35 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
+class BrushProfileBackend extends "res://addons/volumetric_terrain/terrain_backend.gd":
+ var stages:Array[float]=[0.0,0.0,0.0,0.0]
+ var tiles_profiled:=0
+ var measuring:=false
+ var light_start:=PackedByteArray()
+ func _push(result:Dictionary)->void:
+  if result.kind=="edit_begin":
+   stages.fill(0.0)
+   tiles_profiled=0
+   measuring=true
+   light_start=_call(Codec.command(15))
+  elif result.kind=="edit_done":
+   var light:=_call(Codec.command(15))
+   var counts:={}
+   var labels:=["rays","ray_steps","unresolved","probe_hits"]
+   for i in labels.size():counts[labels[i]]=(light.decode_u32(12+4*i)-light_start.decode_u32(12+4*i)) & 0xffffffff
+   print("AUTHORING_NATIVE_MS ",JSON.stringify({"tiles":tiles_profiled,"extraction":stages[0],"simplification":stages[1],"blocks":stages[2],"shading":stages[3],"build":result.build_total_ms,"lighting":counts}))
+   measuring=false
+  super._push(result)
+ func _build(key:Vector3i,base:bool,build_epoch:int,relight:bool=false,bottoms:Array=[],foreground:bool=false)->Dictionary:
+  var result:=super._build(key,base,build_epoch,relight,bottoms,foreground)
+  if measuring and foreground and not result.has("error"):
+   var region:Dictionary=result.get("region_stages",{})
+   if region.has("native_ms"):
+    for i in 4:stages[i]+=region.native_ms[i]
+   elif not result.get("cached",false) and not result.has("bricks"):
+    var profile:=_call(Codec.command(19))
+    for i in 4:stages[i]+=profile.decode_float(12+i*4)
+   tiles_profiled+=1
+  return result
 # Compact phase attribution without full trace output or desktop interaction.
 class FramePhases extends Node:
  var sample:Dictionary={}
@@ -928,6 +958,9 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
  var keys:=before.keys()
  for key in after:
   if not before.has(key):keys.append(key)
+ keys.sort()
+ var render_hash:=HashingContext.new()
+ render_hash.start(HashingContext.HASH_SHA256)
  for key:Vector3i in keys:
   if game.terrain.stamps.get(key,0)==old_stamps.get(key,0):continue
   var old:Dictionary=before.get(key,{})
@@ -935,6 +968,7 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
   var ids:=old.keys()
   for id in current:
    if not old.has(id):ids.append(id)
+  ids.sort()
   var replacements:=0
   for id in ids:
    var a:Dictionary=old.get(id,{})
@@ -947,6 +981,7 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
     compare_brush_collision(a.get("shapes",[]),b.get("shapes",[]),collision)
    var old_arrays:Array=a.get("arrays",[])
    var new_arrays:Array=b.get("arrays",[])
+   render_hash.update(var_to_bytes([key,id,new_arrays]))
    if old_arrays==new_arrays:
     counts.identical+=1
     continue
@@ -958,6 +993,7 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
   counts.replaced+=replacements
   if replacements>0:counts.tiles_with_replacements+=1
  check(counts.changed_in_frustum>0,"Brush changes installed mesh arrays inside the camera frustum")
+ counts.render_sha256=render_hash.finish().hex_encode()
  print("AUTHORING_DEPENDENCIES ",JSON.stringify(counts))
  if "--authoring-collision-reuse" in OS.get_cmdline_user_args():
   check(collision.old_triangles>0 and collision.new_triangles>0,"Compared installed physics triangles across publication")
@@ -1085,7 +1121,11 @@ func run()->void:
  ProjectSettings.set_setting("terraforest/offscreen_session",true)
  preload("res://addons/world_runtime/session_options.gd").set_arguments(PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors"]),true)
  route_scene_start=Time.get_ticks_usec()
- game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
+ game=load("res://demo/world.tscn").instantiate()
+ if "--authoring-native-profile" in OS.get_cmdline_user_args():
+  game.terrain.backend=BrushProfileBackend.new()
+  game.terrain.backend.profile_regions=true
+ game.temporary_world=true;root.add_child(game)
  var qualification:bool="--qualification-route" in OS.get_cmdline_user_args()
  if qualification:begin_route_capture()
  check(await ready("initial"),"Actual player world loads read-only")

@@ -1167,7 +1167,27 @@ struct RoofCache {
   u32 key=u32(x+2001*z)+1;int id=ids.get(key);if(id>=0)return tops[id];
   float h=w.height(float(x),float(z));int upper=imn(255,fl(h)+2);
   u32 bits=w.edit_columns[(x>>4)+NP*(z>>4)];for(int py=0;py<=15;py++)if(bits&(1u<<py))upper=imx(upper,imn(255,py*16+16));
-  float top=1,d_above=sample(x,upper,z);for(int y=upper-1;y>=1;y--){float d=sample(x,y,z);if(d<0){top=float(y)+d/(d-d_above);break;}d_above=d;}
+  // This is one vertical scan. Reuse its height and resident page and keep
+  // the intermediate air samples out of the general visibility hash table.
+  float top=1,d_above=0;
+  int last_page=-1,page_index=-1;
+  const Page *page=nullptr;
+  for(int y=upper;y>=1;--y){
+   if((y>>4)!=last_page){
+    last_page=y>>4;
+    page_index=w.pages_by_key.get(page_key(x>>4,last_page,z>>4));
+    page=page_index>=0?w.resident_page(page_index):nullptr;
+   }
+   float d;
+   if(page){
+    int offset=(x&15)+16*((z&15)+16*(y&15));
+    d=clampf(float(page->d[offset])/SDF_SCALE,-SDF_BAND,SDF_BAND);
+   }
+   else if(page_index<0)d=float(quant(w.base({float(x),float(y),float(z)},h)))/SDF_SCALE;
+   else d=sample(x,y,z);
+   if(y<upper&&d<0){top=float(y)+d/(d-d_above);break;}
+   d_above=d;
+  }
   ids.put(key,tops.n);tops.push(top);return top;
  }
  float cube_top(int x,int z){
@@ -1240,9 +1260,37 @@ static float owned_lattice_height(const World&w,int x,int z,EditHeightCache *cac
  if(w.owned_height_size>0&&w.owned_height_seed==w.seed&&w.owned_heights.n==n*n&&rx>=0&&rz>=0&&rx<n&&rz<n)return w.owned_heights[rx+n*rz];
  return cached_height(w,cache,x,z);
 }
+// Adjacent surface vertices interpolate overlapping lattice stencils. These
+// samples are valid only during this one read-only mesh build.
+struct PaintSample {u32 key=0;float base=0,current=0;u8 material=0;};
+struct PaintStencil {
+ PaintSample slots[1024];
+ bool read(const World &w,int x,int y,int z,EditHeightCache *heights,PaintSample &out){
+  bool inside=x>=0&&x<=WORLD&&z>=0&&z<=WORLD&&y>=0&&y<=WORLD_Y;
+  u32 key=inside?block_key(x,y,z):0;
+  auto &slot=slots[(u32(x)&15)|((u32(z)&15)<<4)|((u32(y)&3)<<8)];
+  if(inside&&slot.key==key){out=slot;return true;}
+  float height=owned_lattice_height(w,x,z,heights);
+  float original=w.base({float(x),float(y),float(z)},height);
+  out={key,float(quant(original))/SDF_SCALE,inside?original:SDF_BAND,0};
+  if(w.generator_id>=REGIONAL_WORLD_GENERATOR_ID&&y>=height-1.5f&&y<=height+1.f&&w.regional_asphalt(float(x),float(z)))out.material=4;
+  if(inside){
+   int index=w.pages_by_key.get(page_key(x>>4,y>>4,z>>4));
+   if(index>=0){
+    const Page *page=w.resident_page(index);
+    if(!page)return false;
+    int at=(x&15)+16*((z&15)+16*(y&15));
+    out.current=float(page->d[at])/SDF_SCALE;out.material=page->mat[at];
+   }
+   slot=out;
+  }
+  return true;
+ }
+};
 static void shade_mesh_impl(const World&w,Mesh&m,u32 expected_epoch,EditHeightCache *cache){
  const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
  if(cancelled(w,epoch))return;
+ PaintStencil stencil;
  for(int i=0;i<m.v.n;i++){
   if((i&31)==0&&cancelled(w,epoch))return;
   Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
@@ -1251,14 +1299,9 @@ static void shade_mesh_impl(const World&w,Mesh&m,u32 expected_epoch,EditHeightCa
   if(v.material<5){
    int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,asphalt=0,paved=0,solid=0,original[8];V3 influence{};
    for(int k=0;k<8;k++){
-    int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);u8 mat=0;
-    float sample_height=owned_lattice_height(w,sx,sz,cache);
-    float original_sample=w.base({float(sx),float(sy),float(sz)},sample_height);
-    if(w.generator_id>=REGIONAL_WORLD_GENERATOR_ID && sy>=sample_height-1.5f && sy<=sample_height+1.f && w.regional_asphalt(float(sx),float(sz)))mat=4;
-    float base=float(quant(original_sample))/SDF_SCALE;
-    float current=original_sample;
-    if(sx<0||sx>WORLD||sz<0||sz>WORLD||sy<0||sy>WORLD_Y)current=SDF_BAND;
-    else {int pi=w.pages_by_key.get(page_key(sx>>4,sy>>4,sz>>4));if(pi>=0){const Page*p=w.resident_page(pi);if(!p)return;int at=(sx&15)+16*((sz&15)+16*(sy&15));current=float(p->d[at])/SDF_SCALE;mat=p->mat[at];}}
+    PaintSample sample;
+    if(!stencil.read(w,x+(k&1),y+((k>>1)&1),z+((k>>2)&1),cache,sample))return;
+    float base=sample.base,current=sample.current;u8 mat=sample.material;
     original[k]=base;
     float weight=(k&1?f.x:1-f.x)*(k&2?f.y:1-f.y)*(k&4?f.z:1-f.z);float difference=current-base;
     delta+=difference*weight;
@@ -1355,6 +1398,12 @@ static bool edited_sky_neighborhood(const World &world,V3 origin){
  return false;
 }
 static float sample_diffuse_sky(const World &world,RoofCache &roof,V3 origin,u32 epoch,bool refine){
+ // Every sky ray starts 0.001 m from this origin. If the whole starting
+ // sphere is inside the map and below its floor, trace_visibility returns
+ // occluded for every direction on the first iteration.
+ constexpr float margin=.002f;
+ if(origin.y<1.f-margin && origin.x>=margin && origin.x<WORLD-margin &&
+    origin.z>=margin && origin.z<WORLD-margin)return 0.f;
  static const V3 sky_dirs[12]={
   {.80f,.60f,0},{-.80f,.60f,0},{0,.60f,.80f},{0,.60f,-.80f},
   {.9837f,.18f,0},{-.9837f,.18f,0},{0,.18f,.9837f},{0,.18f,-.9837f},

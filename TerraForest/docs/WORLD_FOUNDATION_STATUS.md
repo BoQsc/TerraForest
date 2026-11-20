@@ -585,6 +585,28 @@ Debug regression `20261120T184500427017Z` also checked reversed winding, a
 height discontinuity, an open triangle and a gap between rectangles. These
 contact probes cover the sampled rays and do not qualify dynamic traversal.
 
+With native stage timing enabled, the 64 m cut on the previous release DLL
+spent 97–110 ms shading the 36 replacement tiles and 27–32 ms extracting
+surfaces. Release DLL `725d67c98548` reuses exact material samples within
+each mesh, reads each resident density page once per vertical roof scan, and
+skips sky rays whose starting sphere lies wholly below the world floor and
+inside the map. In `20261120T190421166632Z` shading took 70.3 ms and
+extraction took 29.8 ms. The 36 replacement mesh arrays, including shading
+channels, retained SHA-256 `6573b79fa20a0b2e50648ebf446942425ac44ba03eed70effc9ecdcc0ce57fee`.
+All 3,750 reference collision rays passed and all 14 native parity artifacts
+matched the previous core in `20261120T190343992827Z_terrain_edit_core_parity.json`.
+The resource pack is unchanged. Only the two external terrain DLLs were updated.
+
+Full edit latency remains open. The packaged profiled run took 254 ms,
+the contact-audited repeat took 288 ms, and the plain authoring route took
+254 ms (`20261120T190512246546Z`, `20261120T190637277276Z`). The earlier
+225–244 ms result remains the faster observed end-to-end workload. In the
+plain run 53 ms elapsed between worker completion and publication.
+The shader work reduction did not establish a player-visible latency gain.
+Use `--authoring-native-profile` with the existing brush check to separate
+the four native mesh stages. The larger goal still requires a scalable
+handoff between edit computation and frame-budgeted client publication.
+
 The preview is centred at the position used by the terrain command. Picking follows the
 active viewport camera in first and third person. Preview meshes are reused
 across frames. The primary player views and normal inventory actions remain
