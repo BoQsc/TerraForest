@@ -43,6 +43,25 @@ func check_grouped_owners()->void:
  check(jobs==1 and committed and expected.size()==9 and actual==expected,"Parallel owner group exactly matches serial geometry in stable owner order")
  check(water.statistics().mesh_worker_reserved_bytes==0,"Parallel owner group releases its shared memory reservation")
 func run_worker_checks() -> void:
+ for arg:String in OS.get_cmdline_user_args():
+  if arg.begins_with("--water-mesh-replay="):
+   replay_meshes(arg.trim_prefix("--water-mesh-replay="));return
+ var dry=fixture(3,0,false,Vector3i(10,10,10),3,0)
+ var dry_commit:=false;var dry_jobs:=0
+ for step in 100:
+  var packet:Dictionary=dry.next_mesh_batch(true)
+  if packet.is_empty():break
+  if packet.has("job"):dry_jobs+=1;packet.job.prepare()
+  if packet.complete:dry_commit=dry.commit_mesh_batch(packet.batch)
+ check(dry_commit and dry_jobs==0,"Dry resident occupancy publishes without dispatching a boundary worker")
+ var dry_point:=Vector3(41.75,41.51,41.75)
+ check(dry.brush(dry_point,0.0,100000)==100000,"A previously dry owner accepts water")
+ for step in 100:
+  var packet:Dictionary=dry.next_mesh_batch(true)
+  if packet.is_empty():break
+  if packet.has("job"):packet.job.prepare()
+  if packet.complete:dry.commit_mesh_batch(packet.batch)
+ check(dry.raycast_surface(dry_point+Vector3.UP,dry_point-Vector3.UP).hit,"The newly wet owner publishes its pickable surface")
  await check_grouped_owners()
  var reference=publication_fixture();var expected:Dictionary={}
  for n in 100:
@@ -148,3 +167,38 @@ func run_worker_checks() -> void:
  coordinator.free()
  print("WATER_MESH_WORKER failures=",failures," jobs=",jobs)
  quit(1 if failures else 0)
+
+# Replay the same resident crater snapshot for before/after native comparisons.
+# Hashing and restoration are outside the measured boundary assembly time.
+func replay_meshes(path:String)->void:
+ var file:=FileAccess.open(path,FileAccess.READ)
+ if file==null:check(false,"Captured local water file opens");quit(1);return
+ var capture:Dictionary=file.get_var()
+ var packet_bytes:PackedByteArray=capture.snapshot
+ var expected:=""
+ for iteration in 4:
+  var store=ClassDB.instantiate("NativeRegionalWater")
+  if not store.restore_snapshot(packet_bytes):check(false,"Local water snapshot restores");quit(1);return
+  var owners:Dictionary={};var mesh_us:=0;var jobs:=0
+  for step in 10000:
+   var begin:=Time.get_ticks_usec()
+   var packet:Dictionary=store.next_mesh_batch(true)
+   if packet.is_empty():break
+   if packet.has("failure"):check(false,str(packet.failure));quit(1);return
+   if packet.has("job"):jobs+=1;packet.job.prepare()
+   if packet.complete and not store.commit_mesh_batch(packet.batch):
+    check(false,"Local water publication commits");quit(1);return
+   mesh_us+=Time.get_ticks_usec()-begin
+   if packet.has("coordinate"):
+    var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256)
+    hash.update(var_to_bytes(packet.render_arrays))
+    owners[packet.coordinate]=hash.finish()
+  var coordinates:=owners.keys();coordinates.sort()
+  var digest:=HashingContext.new();digest.start(HashingContext.HASH_SHA256)
+  for coordinate:Vector3i in coordinates:
+   digest.update(var_to_bytes(coordinate));digest.update(owners[coordinate])
+  var identity:=digest.finish().hex_encode()
+  if iteration==0:expected=identity
+  check(identity==expected and not owners.is_empty() and store.runtime_state().dirty_meshes==0,"Local replay produces all surface owners deterministically")
+  print("WATER_MESH_REPLAY ",JSON.stringify({"iteration":iteration,"jobs":jobs,"owners":owners.size(),"native_us":mesh_us,"geometry_sha256":identity,"source_sha256":FileAccess.get_sha256(path)}))
+ print("WATER_MESH_REPLAY failures=",failures);quit(failures)

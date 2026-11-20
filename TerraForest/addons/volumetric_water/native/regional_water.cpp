@@ -1552,6 +1552,12 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background){
     }
     result["batch"]=int64_t(batch_id);result["complete"]=false;
     uint64_t start=Time::get_singleton()->get_ticks_usec();
+    auto stage_dry=[&](Key owner){
+        if(published_surfaces.count(owner)||!dry_surface_owner(owner,true))return false;
+        staged_ready.insert(owner);
+        if(const Region *r=surface_region(owner,true))staged_occupancy.insert_or_assign(owner,*r);
+        return true;
+    };
     for(int attempt=0;attempt<8&&(!batch_queue.empty()||pending_mesh_job.is_valid());++attempt){
         Key k=0;SurfaceMesh mesh;
         if(pending_mesh_job.is_valid()){
@@ -1569,6 +1575,7 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background){
             k=batch_queue.front();batch_queue.pop_front();
             if(!surface_ready(k,true)){if(mesh_set.insert(k).second)meshes.push_back(k);if(batch_urgent)urgent_meshes.insert(k);continue;}
             if(background){
+                if(stage_dry(k))continue;
                 // At most two retained jobs globally: one cancelled predecessor
                 // and one current job. The script starts only one task at once.
                 constexpr uint64_t charge=128*1024*1024,limit=2*charge;
@@ -1578,9 +1585,9 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background){
                 Ref<NativeWaterMeshJob> job;job.instantiate();job->reserved_bytes=charge;job->owners.push_back(k);job->batch=batch_id;job->frozen.instantiate();
                 // Amortize worker dispatch and frame latency across a bounded
                 // group; packets still upload under the main-thread budget.
-                while(job->owners.size()<64&&!batch_queue.empty()){
+                for(int examined=0;examined<128&&job->owners.size()<64&&!batch_queue.empty();++examined){
                     Key next=batch_queue.front();batch_queue.pop_front();
-                    if(surface_ready(next,true))job->owners.push_back(next);
+                    if(surface_ready(next,true)){if(!stage_dry(next))job->owners.push_back(next);}
                     else {if(mesh_set.insert(next).second)meshes.push_back(next);if(batch_urgent)urgent_meshes.insert(next);}
                 }
                 uint64_t halo_bytes=0;
@@ -1735,6 +1742,16 @@ struct WaterSurfaceProfileCache {
     std::unordered_map<uint64_t,Entry> cells;
     static constexpr size_t MAX_CELLS=8192;
 };
+bool NativeRegionalWater::dry_surface_owner(Key k,bool snapshot) const {
+    const auto coordinate=position(k);
+    const Region *owner=surface_region(k,snapshot);
+    if(!owner)return !(surrounding_ocean&&std::min({coordinate.x,coordinate.z,499-coordinate.x,499-coordinate.z})<35);
+    if(!owner->valid||std::any_of(owner->water.begin(),owner->water.end(),[](uint64_t ml){return ml!=0;}))return false;
+    const Region *below=coordinate.y>0?surface_region(key(coordinate-Vector3i(0,1,0)),snapshot):nullptr;
+    if(below&&below->valid)for(int z=0;z<8;++z)for(int x=0;x<8;++x)
+        if(below->water[x+56+64*z])return false; // Reconstruction can cross the owner's lower face.
+    return true;
+}
 NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool snapshot,bool include_contacts,const std::atomic<bool> *cancel,WaterSurfaceProfileCache *profiles) const {
     using B=WaterBoundary;using C=WaterSolidClip;
     SurfaceMesh output;
@@ -1745,17 +1762,14 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     // Empty finite-water owners cannot emit a face: each clipped boundary is
     // owned by its occupied cell. Only the procedural coastal reservoir can
     // supply an absent owner; avoid constructing a halo for every dry dirty key.
-    if(!owner_region&&!(surrounding_ocean&&std::min({owner_coordinate.x,owner_coordinate.z,499-owner_coordinate.x,499-owner_coordinate.z})<35))return output;
+    if(dry_surface_owner(k,snapshot))return output;
     std::array<const Region*,27> region_halo{};
     for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){auto q=owner_coordinate+Vector3i(x,y,z);
         if(q.x>=0&&q.x<500&&q.y>=0&&q.y<64&&q.z>=0&&q.z<500)region_halo[x+1+3*(y+1+3*(z+1))]=surface_region(key(q),snapshot);
     }
     auto region_at=[&](Vector3i p)->const Region*{if(!in_domain(p))return nullptr;auto q=position(region_key(p))-owner_coordinate+Vector3i(1,1,1);return region_halo[q.x+3*(q.y+3*q.z)];};
     if(owner_region&&owner_region->valid&&std::none_of(owner_region->water.begin(),owner_region->water.end(),[](uint64_t ml){return ml!=0;})){
-        auto below=position(k)-Vector3i(0,1,0);const Region *lower=below.y>=0?surface_region(key(below),snapshot):nullptr;bool crossing=false;
-        if(lower&&lower->valid)for(int z=0;z<8;++z)for(int x=0;x<8;++x)crossing|=lower->water[x+8*7+64*z]>0;
-        if(!crossing)return output;
-        crossing=false;
+        bool crossing=false;
         for(int z=-1;z<=1;++z)for(int x=-1;x<=1;++x){const Region *neighbor=region_halo[x+1+3*(1+3*(z+1))];
             if(neighbor&&neighbor->valid)for(int dz=0;dz<8;++dz)for(int dx=0;dx<8;++dx)crossing|=neighbor->water[dx+64*dz]>0;
         }
@@ -1789,12 +1803,13 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         return C::Point{coordinate(p.x),coordinate(p.y),coordinate(p.z)};
     };
     struct BoundaryPolygon {C::Face polygon;C::Plane plane;};
-    struct CellBoundary {WaterCellProfile shape;uint64_t amount=0;double head=0,bottom=0,top=0,free_head=-1e30;std::array<double,4> heights{};bool reconstructed=false,has_head=false,rectangular=false;C::Pieces pieces;std::vector<BoundaryPolygon> boundary;bool built=false,boundary_built=false,full=false;};
+    struct CellBoundary {WaterCellProfile shape;uint64_t amount=0;double head=0,bottom=0,top=0,free_head=-1e30;std::array<double,4> heights{};bool reconstructed=false,has_head=false,rectangular=false;C::Pieces pieces;std::vector<BoundaryPolygon> boundary;bool initialized=false,built=false,boundary_built=false,full=false;};
     std::vector<CellBoundary> cells(3136);
     const Vector3i base=position(k)*8;
-    auto at=[&](Vector3i p)->CellBoundary&{auto q=p-base+Vector3i(3,4,3);return cells[q.x+14*(q.y+16*q.z)];};
-    for(int z=-3;z<=10;++z)for(int y=-4;y<=11;++y)for(int x=-3;x<=10;++x){
-        Vector3i p=base+Vector3i(x,y,z);auto &c=at(p);
+    auto at=[&](Vector3i p)->CellBoundary&{
+        auto q=p-base+Vector3i(3,4,3);auto &c=cells[q.x+14*(q.y+16*q.z)];
+        if(c.initialized)return c;
+        c.initialized=true;
         auto cached=profiles&&in_domain(p)?profiles->cells.find(key(p)):decltype(profiles->cells)::iterator{};
         if(profiles&&in_domain(p)&&cached!=profiles->cells.end()){
             c.shape=cached->second.shape;c.amount=cached->second.amount;c.head=cached->second.head;c.full=cached->second.full;
@@ -1814,13 +1829,12 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         if(c.amount&&!c.shape.solid&&!c.shape.contact&&std::all_of(c.shape.floor.begin(),c.shape.floor.end(),[&](double value){return value==c.shape.floor[0];})){
             c.bottom=std::max(0.,c.shape.floor[0])*.001;c.top=std::min(c.head,c.shape.ceiling)*.001;c.rectangular=c.top>c.bottom;
         }
-    }
-    for(int z=-3;z<=10;++z)for(int y=-4;y<=11;++y)for(int x=-3;x<=10;++x){auto p=base+Vector3i(x,y,z);auto &c=at(p);
-        if(!c.amount||c.shape.solid)continue;
-        auto above=p+Vector3i(0,1,0);const Region *r=region_at(above);
-        if(c.head>=499.9999&&r&&r->water[index(above)])continue;
-        c.free_head=p.y*.5+c.head*.001;
-    }
+        if(c.amount&&!c.shape.solid){
+            auto above=p+Vector3i(0,1,0);const Region *r=region_at(above);
+            if(c.head<499.9999||!r||!r->water[index(above)])c.free_head=p.y*.5+c.head*.001;
+        }
+        return c;
+    };
     auto build=[&](CellBoundary &c){
         if(c.built)return true;c.built=true;
         if(!c.amount&&!c.reconstructed)return true;
@@ -1867,9 +1881,16 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         return level-p.y*.5;
     };
     for(int z=-2;z<=9;++z)for(int y=-2;y<=9;++y)for(int x=-2;x<=9;++x){
-        auto p=base+Vector3i(x,y,z);auto &c=at(p);if(c.shape.solid||!c.shape.capacity())continue;
+        auto p=base+Vector3i(x,y,z);
         const Region *known=region_at(p);
         if(!known||!known->valid)continue; // Reconstruction cannot admit unknown air.
+        if(!known->water[index(p)]){
+            const auto below=p-Vector3i(0,1,0);
+            const Region *lower=region_at(below);
+            if(lower&&lower->valid){if(!lower->water[index(below)])continue;}
+            else if(!at(below).amount)continue;
+        }
+        auto &c=at(p);
         // Anchor to this occupied column, never a separate perched pocket below
         // it. An empty cell can only receive the continuation of its wet layer
         // immediately below; meshing must not fill air underneath floating water.
@@ -1883,6 +1904,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
             if(below.amount&&!below.shape.solid)reference=(p.y-1)*.5+below.head*.001;
         }
         if(reference< p.y*.5-.50001||reference>p.y*.5+1.00001)continue;
+        if(c.shape.solid||!c.shape.capacity())continue;
         c.has_head=true;
         for(int corner=0;corner<4;++corner){
             c.heights[corner]=corner_height(p,{(corner&1)*.5,reference-p.y*.5,((corner>>1)&1)*.5},reference);
@@ -1989,7 +2011,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
             // has only buried solid contacts. Prove that from capacities before
             // allocating its terrain polyhedra; retain full geometry for audits.
             bool buried_cell=!cell.reconstructed&&cell.amount>=cell.shape.capacity();
-            for(auto d:directions){const auto &n=at(p+d);buried_cell&=!n.reconstructed&&n.amount>=n.shape.capacity();}
+            for(auto d:directions){if(!buried_cell)break;const auto &n=at(p+d);buried_cell=!n.reconstructed&&n.amount>=n.shape.capacity();}
             if(buried_cell)continue;
         }
         if(!prepare_boundary(p)){output.valid=false;return output;}

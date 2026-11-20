@@ -1,5 +1,25 @@
 ## November 20 sea and lake blast check
 
+Installed runs `20261120T125442238100Z` and `20261120T125622010762Z`
+passed 81 depth probes per shore, 23 sea bank contacts and 26 lake bank
+contacts. The latter captured both views at first publication and recorded
+Cedar Vale SHA-256 `988048ed6ae59676c66d8692e51cf5eb7636a94a686f4787bf42fa1fe269ba44`.
+Lake publication still missed its deadline at 435.169 and 348.592 ms.
+Two mesh worker groups remained on the gameplay critical path.
+
+The boundary worker now resolves cell profiles when reconstruction or
+clipping reads them. A ready dry region with no possible lower-face crossing
+and no prior surface to retire can publish occupancy without a worker.
+Replaying the same captured crater four times with the previous library
+(`496dfb55`, run `20261120T125816549038Z`) and the current library
+(`20261120T125724266704Z`) produced identical rendered arrays across 43
+owners. Median native batch processing fell from 136.698 ms to 112.711 ms
+and dispatched groups fell from two to one in this replay. The replay omits
+terrain sampling, the equilibrium solve, GPU uploads and presentation.
+Supply `--water-mesh-replay=<absolute local_response.water_regions path>`
+to the headless water_mesh_worker check. To pin a gameplay repeat, pass
+`--water-source-sha256=<save hash>` to water_player_world.
+
 The current mesh builder assembles vertex attributes and indices in native
 vectors through clipping and winding repair, then copies each completed stream
 once into its Godot packed array. Inland neighbourhood edits skip absent

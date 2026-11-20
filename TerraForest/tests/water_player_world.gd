@@ -672,13 +672,18 @@ func check_authoring_brush()->void:
   print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"preparing":preparing,"feedback_us":feedback_us,"admission_us":game.terrain.edit_accepted_us-started if game.terrain.edit_ticket>ticket else null,"publication_us":previous-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us}))
 func run()->void:
  var sea_completed:=false
+ var expected_source:=""
  for arg in OS.get_cmdline_user_args():
   if arg.begins_with("--check-evidence-dir="):evidence=arg.trim_prefix("--check-evidence-dir=")
   if arg.begins_with("--water-source-slot="):slot=arg.trim_prefix("--water-source-slot=")
+  if arg.begins_with("--water-source-sha256="):expected_source=arg.trim_prefix("--water-source-sha256=").to_lower()
  if not slot.is_valid_identifier() or evidence.is_empty():quit(2);return
  var path:="user://worlds/"+slot+".trw"
  if not FileAccess.file_exists(path):check(false,"Player source exists");quit(1);return
  var original:=FileAccess.get_sha256(path)
+ print("WATER_GAMEPLAY_INPUT ",JSON.stringify({"slot":slot,"source_sha256":original,"viewport":str(root.size),"gpu":RenderingServer.get_video_adapter_name()}))
+ if original.is_empty() or (not expected_source.is_empty() and original!=expected_source):
+  check(false,"Player source matches the pinned water workload");quit(1);return
  ProjectSettings.set_setting("terraforest/offscreen_session",true)
  preload("res://addons/world_runtime/session_options.gd").set_arguments(PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors"]),true)
  route_scene_start=Time.get_ticks_usec()
