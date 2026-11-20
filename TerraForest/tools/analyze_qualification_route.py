@@ -54,6 +54,8 @@ def summarize(folder):
                 completed_checks=run.get("result",{}).get("passed"), driver_sha256=run.get("test_sha256"),
                 scope=description["scope"], refresh_hz=description["monitor_hz"],
                 settings=description.get("settings"), gpu=description["gpu"],
+                video_driver=description.get("video_driver"), processor=description.get("processor"),
+                physical_memory_bytes=description.get("physical_memory_bytes"),
                 process_resources=run.get("result",{}).get("resources"), phases=phases)
 
 

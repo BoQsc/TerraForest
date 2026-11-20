@@ -433,6 +433,9 @@ func finish_route_capture(source_sha:String)->void:
  var description:={"scene_setup_us":route_started-route_scene_start,"columns":ROUTE_COLUMNS,"encoding":"little-endian float64","phases":route_phase_names,"frames":route_count,"overflow":route_overflow,"source_sha256":source_sha,"gpu":RenderingServer.get_video_adapter_name(),"viewport":str(root.size),"cap":Engine.max_fps,"monitor_hz":DisplayServer.screen_get_refresh_rate(),"scope":"Game intervals and asynchronous viewport measurements. Actual display presentation requires an external trace."}
  description.settings={"renderer":RenderingServer.get_current_rendering_method(),"vsync":DisplayServer.window_get_vsync_mode(),"msaa_3d":root.msaa_3d,"scale_3d":root.scaling_3d_scale,"shadows":game.sun.shadow_enabled}
  description.processor=OS.get_processor_name()
+ description.video_driver=Array(OS.get_video_adapter_driver_info())
+ description.physical_memory_bytes=OS.get_memory_info().get("physical",-1)
+ description.os_version=OS.get_version()
  FileAccess.open(evidence.path_join("qualification_frames.json"),FileAccess.WRITE).store_string(JSON.stringify(description,"  "))
  check(not route_overflow and route_count>0,"Complete bounded qualification frame record")
 func qualification_travel()->void:
@@ -631,9 +634,9 @@ func run()->void:
   check(closest<2,"Actual surrounding shoreline ground found near sea level")
   if point==Vector3.INF:point=Vector3(50,39,1008)
   print("PLAYER_SHORE_TARGET ",point," distance_from_sea_level=",closest)
-  await capture("player_shore_before",point,40)
   var id:int=await gameplay_barrel(point)
   if id>0:point=game.combat.barrel_position(id)
+  await capture("player_shore_before",point,40)
   var revision:int=game.terrain.published_revision
   print("PLAYER_BLAST_ADMISSION position=",game.combat.barrel_position(id)," revision=",revision," protected=",game.combat.barrels.is_removal_protected(id))
   start_timing("sea_shore_blast")

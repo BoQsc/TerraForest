@@ -27,6 +27,15 @@ design requirement is a way to account for connected finite volume without
 placing every donating region in the urgent mesh replacement. Recheck sea
 surface targeting separately from lake volume conservation.
 
+Installed native build, `20261120T111738366582Z`: both fixed camera angles
+again show the straight cutoff through the inland crater. Both sea angles
+show water in the cut, while its first-publication centre ray still misses.
+The matched before and after sea cameras use the placed barrel's position.
+Sea/lake/mining measured 163.989/278.726/197.234 ms. The read-only source
+hash matched at exit. The trial widening the donor window is absent from this
+build. The four pictures named `player_{shore,lake}_after{,_reverse}.png`
+in that run are the current visual reference.
+
 **November 20 contact regression observation.** During frame-pacing verification,
 `20261120T091739281463Z` misses one of 22 two-centimetre lake shoreline probes
 after the four bucket actions, including background-mesh interruption. The probe

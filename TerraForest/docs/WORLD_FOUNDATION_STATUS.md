@@ -21,6 +21,16 @@ took 38.516–61.784 ms. Forest/trader frame intervals reached 21.431/28.445 ms
 at p99. This change removes scans of unrelated resident regions from bounded
 local jobs; these timings do not establish an end-to-end speedup.
 
+Repeat `20261120T111344946552Z` recorded 9,379 frames at 1080p on the
+i5-12450H / RTX 4050 Laptop. The game reported NVIDIA driver 32.0.16.1742,
+60 Hz, cap 60, Forward+, 1.0 render scale, VSync and shadows enabled.
+Forest/trader/underground p99 game intervals were 20.113/28.953/21.203 ms
+with viewport GPU p99 7.394/8.251/6.768 ms. Worst trader frame was 47.082 ms.
+The same four water assertions failed. Dedicated fixture receipt
+`20261120T111303245828Z/dedicated_world.json` records a passing restart and
+parity check, 532.42 ms edit round trip and 263,249,920 bytes peak working set
+through that edit. These are single-run Windows measurements.
+
 The [world systems design](WORLD_SYSTEMS_DESIGN.md#current-priority-one-world-for-dedicated-hosting-and-continuous-zoom) records the authority, plugin, zoom and scale milestones. The first native place query and publication event serve the trader today. The first standalone inland edit gate is exercised below. Paged saves, structures, authorization and asynchronous admission remain open. Dedicated hosting, zoom continuity and hundreds of concurrent players remain unqualified.
 
 The [dedicated host and regression command](DEDICATED_AUTHORITY.md) now run a
