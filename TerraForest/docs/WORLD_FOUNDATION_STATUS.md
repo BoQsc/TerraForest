@@ -34,6 +34,31 @@ samples from a rendered check with image readbacks. The optional
 When the camera is inside a large brush its outer boundary can be off-screen.
 A projected-grid trial streaked across the terrain and was rejected.
 
+Coastal preparation now distinguishes missing occupancy that is being built
+from unavailable saved regions, exhausted resident capacity and an oversized
+transaction. The authoring controller retains the captured brush and its
+terrain revision during preparation. Completed occupancy batches wake the
+request; it also renews its two-second native region lease. The original
+player-overlap and admission checks run again at submission. Travel, tool
+changes and intervening terrain revisions invalidate the pending intent.
+
+Packaged read-only run `20261120T120308111518Z` aimed a 2 m brush from
+offshore into coastal terrain outside the player's ready water area. A single
+press was released before preparation finished. Exactly one terrain revision
+published. The input handler took 1.290 ms, terrain admission occurred at
+222.509 ms and publication at 257.049 ms (15 frames). The worst observed
+game interval was 38.676 ms. This verifies reliable delivery while leaving
+the responsiveness and frame-time gates open. Use `--authoring-preparation`
+on the authoring route above. The large coastal brush remains a separate
+failed qualification case.
+
+Installed runs `20261120T120354226334Z` and `20261120T120444524289Z`
+verified that switching tools while preparing causes zero mutations and a
+competing command commits only its own change. Add `--authoring-cancel` or
+`--authoring-interrupt` to the preparation case to repeat them.
+`20261120T120537695881Z` still rejects the 64 m wide coastal box. The
+developer HUD now reports the coastal region limit at the point of rejection.
+
 ## Dedicated hosting and client headroom
 
 Packaged Cedar Vale route `20261120T104316302094Z` recorded 9,645 frames.

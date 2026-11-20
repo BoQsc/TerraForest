@@ -137,3 +137,19 @@ save/reload before adopting a new save representation. Store the revision of
 the connectivity data with the quantities so a worker cannot commit a result
 computed against obsolete terrain. This proposal has no performance result
 yet.
+
+The coastal authoring case has a different source of cost. At Cedar Vale's
+saved spawn, the 64 m wide box needs a 20 by 20 footprint in the current
+four-layer coastal admission band, or 1,600 region keys. The gate accepts at
+most 512. Sampling every layer across that rectangle before accepting the
+terrain command also delays a single small edit beyond the two-frame target.
+
+For an open sea, the next design to test is a spatial index of cavities
+connected to the reservoir at sea level, with explicit stored exceptions for
+bucket withdrawals and enclosed water. A terrain transaction should be able to
+publish its revision and update affected connectivity and exception records
+without materializing every pristine region in the rectangle. Test a wide
+coastal cut, a sealed tunnel below sea level, a breached tunnel, deposition
+that closes the breach, and a bucket withdrawal spanning save/reload. Check
+the resulting volumes and queryable surfaces at several depths. Passing an
+unrestricted flat-plane rendering check cannot establish these behaviours.

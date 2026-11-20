@@ -578,14 +578,19 @@ func measure_grounded_route(filename:String="grounded_pacing.json")->void:
 
 func check_authoring_brush()->void:
  game.player_view.entry.finish()
- if "--authoring-at-spawn" not in OS.get_cmdline_user_args():
+ var coastal:bool="--authoring-preparation" in OS.get_cmdline_user_args()
+ if coastal:
+  game.fly=true
+  game.teleport(Vector3(20,50,1008),50)
+  if not await ready("coastal brush preparation"):check(false,"Coastal authoring destination is resident");return
+ elif "--authoring-at-spawn" not in OS.get_cmdline_user_args():
   game.teleport(Vector3(1000,80,1000))
   if not await ready("inland authoring"):check(false,"Authoring destination is resident");return
  if not game.session_menu.developer:game.session_menu.toggle_developer()
  game.session_menu.set_open(false)
  game.app_focused=true
  Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
- for i in 3:
+ for i in (1 if coastal else 3):
   game.radius=2 if i==0 else 32
   if i==1 and "--authoring-at-spawn" not in OS.get_cmdline_user_args():
    game.fly=true
@@ -593,7 +598,7 @@ func check_authoring_brush()->void:
   game.session_menu.activate_developer_slot(i)
   game.player_view.set_enabled(i==1,false)
   var view:Camera3D=root.get_camera_3d()
-  view.look_at(view.global_position+Vector3(.15,-1,-.1),Vector3.UP)
+  view.look_at(Vector3(66,39.9,1008) if coastal else view.global_position+Vector3(.15,-1,-.1),Vector3.UP)
   game._update_edit(0)
   var shape_ok:bool=game.pointer.mesh==[game.sphere_preview,game.box_preview,game.block_preview][i]
   check(game.pointer.visible and shape_ok,"Active camera shows the selected development brush "+str(i))
@@ -611,25 +616,43 @@ func check_authoring_brush()->void:
    check(root.get_texture().get_image().save_png(capture_path)==OK,"Rendered brush view retained")
   if i==2 or failures>0:continue
   var revision:int=game.terrain.published_revision
+  var ticket:int=game.terrain.edit_ticket
   var click:=InputEventMouseButton.new()
   click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
   var started:=Time.get_ticks_usec()
   Input.parse_input_event(click);Input.flush_buffered_events()
   game._update_edit(1)
-  var admitted:bool=game.terrain.pending_edit
-  var admission_us:=Time.get_ticks_usec()-started
+  var preparing:bool=not game.preparing_stroke.is_empty()
+  var admitted:bool=game.terrain.pending_edit or preparing
+  if coastal:check(preparing,"One press is retained while the remote coastal brush prepares occupancy")
+  var feedback_us:=Time.get_ticks_usec()-started
   if not admitted:
    print("AUTHORING_REJECTION ",JSON.stringify({"target":str(hit),"captured":str(game.last_capture_signature),"queued":game.stroke_buffer.samples.size(),"message":game.status.text,"terrain_error":game.terrain.latest_error}))
   click=click.duplicate();click.pressed=false
   Input.parse_input_event(click);Input.flush_buffered_events()
-  check(admitted,"Brush press submits an edit through the developer tool")
+  check(admitted,"Development tool accepts the brush press")
+  if coastal and "--authoring-cancel" in OS.get_cmdline_user_args():
+   game.session_menu.activate_developer_slot(1)
+   check(game.preparing_stroke.is_empty(),"Changing tools cancels a preparing stroke")
+   check(await ready("cancelled authoring"),"Water preparation drains after brush cancellation")
+   check(game.terrain.edit_ticket==ticket and game.terrain.published_revision==revision,"A cancelled brush never mutates terrain")
+   return
+  if coastal and "--authoring-interrupt" in OS.get_cmdline_user_args():
+   check(game.terrain.sculpt_sphere(Vector3(60,72,1008),2,true,1),"Independent terrain command admitted during preparation")
+   check(await ready("intervening edit"),"Intervening terrain command publishes")
+   for frame in 5:await physics_frame
+   check(game.preparing_stroke.is_empty() and game.terrain.edit_ticket==ticket+1 and game.terrain.published_revision==revision+1,"A prepared brush cannot overwrite a newer terrain revision")
+   return
   var frames:=0;var worst_us:=0;var previous:=started
   while admitted and game.terrain.published_revision==revision and Time.get_ticks_usec()-started<60000000:
    await process_frame
    var now:=Time.get_ticks_usec()
    worst_us=maxi(worst_us,now-previous);previous=now;frames+=1
   check(game.terrain.published_revision>revision,"Authoring brush publishes a changed terrain revision")
-  print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"admitted":admitted,"admission_us":admission_us,"publication_us":Time.get_ticks_usec()-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us}))
+  if coastal:
+   for frame in 5:await physics_frame
+   check(game.terrain.edit_ticket==ticket+1 and game.terrain.published_revision==revision+1 and game.preparing_stroke.is_empty(),"Released coastal brush applies exactly once")
+  print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"preparing":preparing,"feedback_us":feedback_us,"admission_us":game.terrain.edit_accepted_us-started if game.terrain.edit_ticket>ticket else null,"publication_us":previous-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us}))
 func run()->void:
  var sea_completed:=false
  for arg in OS.get_cmdline_user_args():

@@ -74,7 +74,7 @@ func _terrain_pick(from: Vector3, to: Vector3) -> Dictionary:
 func _same_pending_surface(center: Vector3, shape: int, add: bool) -> bool:
 	# The picking collider remains the published surface until atomic commit.
 	# Do not enqueue an identical stamp against it repeatedly while it is stale.
-	if last_capture_signature.is_empty() or not terrain.pending_edit:
+	if last_capture_signature.is_empty() or (not terrain.pending_edit and preparing_stroke.is_empty()):
 		return false
 	return int(last_capture_signature["revision"]) == terrain.published_revision and int(last_capture_signature["shape"]) == shape and bool(last_capture_signature["add"]) == add and int(last_capture_signature["material"]) == material_id and is_equal_approx(float(last_capture_signature["radius"]), radius) and center.distance_to(last_capture_signature["center"]) < 0.001
 
@@ -448,10 +448,25 @@ func _update_loading() -> void:
 		DisplayServer.window_set_title("TerraForest — Human checkpoint 2026-10-09" if "--playtest-checkpoint" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) else "TerraForest — Human playtest (%s)" % ["temporary world" if temporary_world else "saved world"])
 		print("HUMAN_PLAYTEST_READY ", JSON.stringify({"presentation":Presentation.measurement(get_window()),"vsync":DisplayServer.window_get_vsync_mode(),"fps_cap":Engine.max_fps,"temporary":temporary_world,"slot":terrain.save_slot,"save_path":ProjectSettings.globalize_path(terrain.backend.save_path),"snapshot_terrain":terrain.backend.snapshot_terrain,"regional_terrain":terrain.backend.region_terrain}))
 
+var preparing_stroke:Array[Dictionary]=[]
+var preparing_epoch:=-1
+var preparing_revision:=-1
+var preparing_water_revision:=-1
+var renew_preparation_us:=0
+
 func _consume_stroke() -> void:
 	if loading_active or shutdown_requested or terrain.pending_edit or not terrain.world_ready:
 		return
-	var group: Array[Dictionary] = stroke_buffer.pop_batch()
+	if not preparing_stroke.is_empty() and (terrain.epoch!=preparing_epoch or terrain.density_revision!=preparing_revision):
+		preparing_stroke.clear()
+		_reject_placement("Terrain changed while preparing this brush. Aim again.")
+	# A completed occupancy batch wakes the edit. Renew interest periodically
+	# if the worker is busy, before the native two-second region lease expires.
+	if not preparing_stroke.is_empty() and preparing_water_revision==terrain.water_preparation_revision and Time.get_ticks_usec()<renew_preparation_us:return
+	var retry:=not preparing_stroke.is_empty()
+	if not retry and stroke_buffer.samples.is_empty():return
+	var group: Array[Dictionary] = preparing_stroke if retry else stroke_buffer.pop_batch()
+	if retry:preparing_stroke=[]
 	if group.is_empty():
 		return
 	var commands: Array[PackedByteArray] = []
@@ -483,7 +498,20 @@ func _consume_stroke() -> void:
 	if commands.is_empty():
 		return
 	if not terrain.edit(commands[0], lo, hi, int(members[0]["captured_us"]), commands, members):
-		if not terrain.latest_error.is_empty():_message("Brush not submitted: " + terrain.latest_error)
+		match terrain.water_edit_status:
+			ERR_BUSY:
+				preparing_stroke=group
+				preparing_epoch=terrain.epoch
+				preparing_revision=terrain.density_revision
+				preparing_water_revision=terrain.water_preparation_revision
+				renew_preparation_us=Time.get_ticks_usec()+1000000
+				if not retry:_message("Preparing water around the brush…")
+			ERR_PARAMETER_RANGE_ERROR:_reject_placement("This brush spans too many coastal water regions. Reduce its radius.")
+			ERR_UNAVAILABLE:_reject_placement("This edit needs water regions that are not resident.")
+			ERR_OUT_OF_MEMORY:_reject_placement("The water region store is full. This edit could not be applied.")
+			ERR_CANT_CREATE:_reject_placement("Water occupancy preparation failed. The terrain edit was not applied.")
+			_:
+				if not terrain.latest_error.is_empty():_message("Brush not submitted: " + terrain.latest_error)
 	elif contains_addition:
 		_terrain_placement_feedback()
 
@@ -589,6 +617,7 @@ func _clear_motion() -> void:
 	_cancel_edit_input()
 
 func _cancel_edit_input() -> void:
+	preparing_stroke.clear()
 	# Equipment changes cancel strokes without discarding held movement keys.
 	stroke_valid = false
 	stroke_buffer.cancel_continuous()
@@ -772,6 +801,9 @@ func _update_edit(delta: float) -> void:
 	if not mining and not building:
 		stroke_valid = false
 		stroke_buffer.cancel_continuous()
+		if continuous:
+			for index in range(preparing_stroke.size()-1,-1,-1):
+				if preparing_stroke[index].sample.get("continuous",false):preparing_stroke.remove_at(index)
 		last_capture_signature.clear()
 	_consume_stroke()
 	latest_hit.clear()

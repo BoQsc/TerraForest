@@ -317,6 +317,7 @@ public:
     godot::PackedByteArray ocean_publication_mask() const;
     godot::Dictionary update_ocean_residency(const godot::Vector3 &center,int64_t budget);
     bool prepare_ocean_edit(const godot::AABB &bounds);
+    int prepare_ocean_edit_status(const godot::AABB &bounds);
     // Conservative occupied-cell column envelope for cartography, not a mesh surface.
     godot::Dictionary survey_columns(int64_t cursor,int64_t expected_revision,int64_t region_budget) const;
     godot::String survey_cache_identity() const{return survey_saved_identity;}

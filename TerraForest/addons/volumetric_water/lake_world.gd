@@ -157,7 +157,11 @@ func _ready() -> void:
  _material.set_shader_parameter("ripple_normal",preload("res://addons/volumetric_water/textures/water_ripples_normal.png"))
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
  terrain.region_changed.connect(_settle_committed_edit)
- terrain.water_edit_admission=func(bounds:AABB,_selected:Array)->bool:return not water.has_deferred_overlap(bounds.grow(0.5)) and water.prepare_ocean_edit(bounds)
+ terrain.water_edit_admission=func(bounds:AABB,_selected:Array)->int:
+  if water.has_deferred_overlap(bounds.grow(0.5)):return ERR_UNAVAILABLE
+  var status:int=water.prepare_ocean_edit_status(bounds)
+  if status==ERR_BUSY and not _occupancy_failure.is_empty():return ERR_CANT_CREATE
+  return status
  terrain.solid_deposited.connect(func(bounds:AABB):water.invalidate(terrain.water_occupancy_edit_bounds(bounds),true))
  # Mining is admitted normally. Invalid regions retain their water and wait for
  # the committed terrain worker samples; they never flow against stale solids.
@@ -582,6 +586,7 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  if _builder==null or _builder_structure_revision!=_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or status==-4:_discard_builder();return
  if status==0:return
  if status==1:
+  terrain.water_preparation_revision+=1
   var accept_started:=Time.get_ticks_usec()
   var patches:Array=_builder_patches if not _builder_patches.is_empty() else [_builder]
   for patch:RefCounted in patches:

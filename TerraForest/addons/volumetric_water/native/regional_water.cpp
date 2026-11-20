@@ -266,6 +266,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("ocean_publication_mask"),&NativeRegionalWater::ocean_publication_mask);
     ClassDB::bind_method(D_METHOD("update_ocean_residency","center","budget"),&NativeRegionalWater::update_ocean_residency);
     ClassDB::bind_method(D_METHOD("prepare_ocean_edit","bounds"),&NativeRegionalWater::prepare_ocean_edit);
+    ClassDB::bind_method(D_METHOD("prepare_ocean_edit_status","bounds"),&NativeRegionalWater::prepare_ocean_edit_status);
     ClassDB::bind_method(D_METHOD("raycast_vacancy","from","to"),&NativeRegionalWater::raycast_vacancy);
     ClassDB::bind_method(D_METHOD("cell_geometry","point"),&NativeRegionalWater::cell_geometry);
     ClassDB::bind_method(D_METHOD("next_requests","limit","ocean_only"),&NativeRegionalWater::next_requests,DEFVAL(true));
@@ -348,30 +349,33 @@ bool NativeRegionalWater::restore_ocean_cache(Key k){
     return true;
 }
 bool NativeRegionalWater::prepare_ocean_edit(const AABB &bounds){
-    if(!surrounding_ocean)return true;
-    if(!bounds.position.is_finite()||!bounds.size.is_finite())return false;
+    return prepare_ocean_edit_status(bounds)==OK;
+}
+int NativeRegionalWater::prepare_ocean_edit_status(const AABB &bounds){
+    if(!surrounding_ocean)return OK;
+    if(!bounds.position.is_finite()||!bounds.size.is_finite())return ERR_INVALID_PARAMETER;
     const AABB area=bounds.grow(4.0);
     Vector3i lo=Vector3i((area.position/4.0).floor()).max(Vector3i(0,7,0));
     Vector3i hi=Vector3i(((area.position+area.size)/4.0).floor()).min(Vector3i(499,10,499));
-    if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return true;
+    if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return OK;
     std::vector<Key> keys;
     for(int z=lo.z;z<=hi.z;++z)for(int x=lo.x;x<=hi.x;++x){
         if(std::min({x,z,499-x,499-z})>=35)continue;
-        for(int y=lo.y;y<=hi.y;++y){keys.push_back(key(Vector3i(x,y,z)));if(keys.size()>512)return false;}
+        for(int y=lo.y;y<=hi.y;++y){keys.push_back(key(Vector3i(x,y,z)));if(keys.size()>512)return ERR_PARAMETER_RANGE_ERROR;}
     }
     bool ready=true;int admitted=0;uint64_t until=Time::get_singleton()->get_ticks_usec()+2000000;
     for(Key k:keys){
         ocean_edit_interests[k]=until;
-        if(deferred_regions.count(k)){ready=false;continue;}
+        if(deferred_regions.count(k))return ERR_UNAVAILABLE;
         if(!regions.count(k)&&ocean_cache.count(k))restore_ocean_cache(k);
         if(!regions.count(k)){
             ready=false;if(admitted>=16)continue;
-            trim_ocean_cache();if(regions.size()>=MAX_REGIONS){limit=true;continue;}
+            trim_ocean_cache();if(regions.size()>=MAX_REGIONS){limit=true;return ERR_OUT_OF_MEMORY;}
             Region r;r.ocean_state=1;regions.emplace(k,std::move(r));request(k);invalidate_snapshot(false);++admitted;
         }
         if(!regions.at(k).valid)ready=false;
     }
-    return ready;
+    return ready?OK:ERR_BUSY;
 }
 Dictionary NativeRegionalWater::update_ocean_residency(const Vector3 &center,int64_t budget){
     Dictionary out;out["ok"]=false;

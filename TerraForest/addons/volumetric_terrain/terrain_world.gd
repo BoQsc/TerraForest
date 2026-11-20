@@ -87,6 +87,8 @@ var density_revision: int = 0
 var last_edit_outcome: Dictionary={}
 var edit_admission: Callable
 var water_edit_admission: Callable
+var water_edit_status:int=OK
+var water_preparation_revision:=0
 
 func _read_stats(data: PackedByteArray) -> void:
 	super._read_stats(data)
@@ -249,6 +251,7 @@ func republish_native_region(bounds: AABB, expected_revision: int) -> bool:
 	return true
 
 func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0, commands: Array[PackedByteArray] = [], member_captures: Array[Dictionary] = []) -> bool:
+	water_edit_status=OK
 	# Validate the complete transaction before the base stream decodes or mutates it.
 	if not lo.is_finite() or not hi.is_finite() or commands.size() > 4:
 		return false
@@ -258,10 +261,12 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 		selected.append(data)
 	var safe_lo := Vector3.INF
 	var safe_hi := -Vector3.INF
+	var brushes_only:=true
 	for packet in selected:
 		if packet.size() < 4:
 			return false
 		var kind: int = packet.decode_u32(0)
+		if kind!=2:brushes_only=false
 		if kind == 2 and packet.size() == 44:
 			var a := Vector3(packet.decode_float(4), packet.decode_float(8), packet.decode_float(12))
 			var b := Vector3(packet.decode_float(16), packet.decode_float(20), packet.decode_float(24))
@@ -319,19 +324,20 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			safe_hi = safe_hi.max(Vector3(cell) + Vector3.ONE * (6.0 if kind==38 else 3.0))
 		else:
 			return false
-	if water_edit_admission.is_valid() and not water_edit_admission.call(AABB(safe_lo,safe_hi-safe_lo),selected): return false
+	# Brushes reserve five metres for terrain meshes but only two for water
+	# occupancy. Admission and subsequent invalidation must use the same area.
+	var water_bounds:=AABB(safe_lo,safe_hi-safe_lo)
+	if brushes_only:water_bounds=water_bounds.grow(-3.0)
+	if water_edit_admission.is_valid():
+		var outcome:Variant=water_edit_admission.call(water_bounds,selected)
+		if outcome is bool:water_edit_status=OK if outcome else ERR_UNAVAILABLE
+		else:water_edit_status=int(outcome)
+		if water_edit_status!=OK:return false
 	if edit_admission.is_valid() and not edit_admission.call(selected): return false
 	var accepted: bool = super.edit(data, safe_lo, safe_hi, captured_us, selected, member_captures)
 	if accepted:
-		var water_lo:=Vector3.INF;var water_hi:=-Vector3.INF;var brushes_only:=true
-		for packet:PackedByteArray in selected:
-			if packet.decode_u32(0)!=2 or packet.decode_u32(32) not in [0,1,Codec.CONTACT_MINING_SHAPE]:brushes_only=false;break
-			var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
-			var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
-			var halo:=Vector3.ONE*(packet.decode_float(28)+2.0+(Codec.CONTACT_MINING_HALO if packet.decode_u32(32)==Codec.CONTACT_MINING_SHAPE else 0.0))
-			water_lo=water_lo.min(a.min(b)-halo);water_hi=water_hi.max(a.max(b)+halo)
 		_water_edit_ticket=edit_ticket
-		_water_edit_bounds=AABB(water_lo,water_hi-water_lo) if brushes_only else AABB(safe_lo,safe_hi-safe_lo)
+		_water_edit_bounds=water_bounds
 		for packet:PackedByteArray in selected:
 			var kind:int=packet.decode_u32(0)
 			if (kind==2 and packet.decode_u32(36)!=0) or (kind==3 and packet.decode_u32(16)!=0) or kind in [28,38]:
