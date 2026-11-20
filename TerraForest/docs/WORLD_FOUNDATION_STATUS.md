@@ -317,6 +317,17 @@ remains failed on three lake assertions and does not qualify frame pacing.
 
 ## In-game terrain authoring
 
+Packaged Cedar Vale run `20261120T153524569786Z` on PCK SHA-256
+`75708747abaca909a4ae979364484ab5e5389282eab75f5f730972845ecced0b`
+published the 2 m brush in 20.476 ms and the 64 m box in 339.041 ms
+(21 frames). The box touched 36 tiles, with 28.611 ms of field work and
+140.895 ms of mesh construction. Both were single observations. At the
+sea and lake, run `20261120T153627275684Z` passed immediate and settled
+2 cm bank contact, including the bucket interruption, with two angles at
+each blast. Local water publication took 147, 313 and 175 ms for sea,
+lake and mining respectively; lake timing failed. Packaged local/dedicated
+archive and restart comparison `20261120T153746793059Z` passed.
+
 Native brush admission now accounts for pages that receive staged writes.
 An untouched page inside the sampling halo consumes no authored capacity.
 The unpaged regression populates all 16,384 pages, admits an existing-page
