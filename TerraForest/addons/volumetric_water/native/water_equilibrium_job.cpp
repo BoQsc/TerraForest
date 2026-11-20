@@ -193,6 +193,7 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     std::unique_ptr<NativeWaterEquilibriumJob,decltype(release)> lifetime(job.ptr(),release);
     PackedInt64Array phases;for(auto t:job->phase_us)phases.push_back(t);out["phase_us"]=phases;
     out["worker_us"]=int64_t(job->elapsed_us);out["cells"]=int64_t(job->visited_cells);
+    out["displacement_visits"]=int64_t(job->displacement_visits);out["displacement_searches"]=int64_t(job->displacement_searches);
     out["local_response"]=job->local_response;
     out["blocked_ml"]=int64_t(job->blocked_ml);out["reserved_bytes"]=int64_t(job->reserved_bytes);
     out["graph_cell_limit"]=int64_t(job->cell_limit);
@@ -290,9 +291,8 @@ void NativeWaterEquilibriumJob::prepare(){
             if(!local_response&&!(store.surrounding_ocean&&store.regions.at(W::region_key(p)).ocean_state))store.settle_cell(p,0);
         }
         if(!local_response&&!store.requests.empty()){required.assign(store.requests.begin(),store.requests.end());return false;}
-        std::unordered_set<uint64_t> replaced;
-        for(auto p:displaced)replaced.insert(W::key(p));
-        uint64_t displacement_visits=0;
+        std::unordered_map<uint64_t,bool> replaced;
+        for(auto p:displaced)replaced.emplace(W::key(p),false);
         auto displacement_shape=[&](Vector3i p){
             if(replaced.count(W::key(p))){
                 auto old=store.published_occupancy.find(W::region_key(p));
@@ -301,35 +301,51 @@ void NativeWaterEquilibriumJob::prepare(){
             }
             return W::profile(store.regions.at(W::region_key(p)),W::index(p));
         };
+        // Share a receiver search only after traversal proves a wet connection
+        // through the old occupancy. Each donor retains its unresolved excess.
+        struct Overflow {Vector3i point;uint64_t capacity;};
         for(auto donor:displaced){
-            auto &source=store.regions.at(W::region_key(donor));const int donor_index=W::index(donor);
-            const uint64_t capacity=W::profile(source,donor_index).capacity();
-            if(source.water[donor_index]<=capacity)continue;
-            // Cross the replaced, previously wet volume to reach its boundary;
-            // then search communicating air/water for receiving space. This
-            // handles the interior of a deposited solid, not just its skin.
+            const bool ocean_source=store.surrounding_ocean && store.regions.at(W::region_key(donor)).ocean_state;
+            std::deque<Overflow> sources;
+            auto admit_source=[&](Vector3i p){
+                const auto k=W::key(p);
+                auto found=replaced.find(k);
+                if(found==replaced.end()||found->second)return;
+                auto &r=store.regions.at(W::region_key(p));
+                if(bool(store.surrounding_ocean && r.ocean_state)!=ocean_source)return;
+                const int i=W::index(p);
+                const uint64_t capacity=W::profile(r,i).capacity();
+                found->second=true;
+                if(r.water[i]>capacity)sources.push_back({p,capacity});
+            };
+            admit_source(donor);
+            if(sources.empty())continue;
+            ++displacement_searches;
             using Entry=std::pair<int,uint64_t>;
             std::priority_queue<Entry,std::vector<Entry>,std::greater<Entry>> frontier;
             std::unordered_set<uint64_t> visited,unavailable;
             frontier.push({donor.y,W::key(donor)});visited.insert(W::key(donor));
-            while(!frontier.empty()&&source.water[donor_index]>capacity){
+            while(!frontier.empty()&&!sources.empty()){
                 auto p=W::position(frontier.top().second);frontier.pop();
                 if(++displacement_visits>4000000||cancelled.load()){reason="Displacement work budget exceeded";return false;}
                 auto &receiver=store.regions.at(W::region_key(p));const int i=W::index(p);
-                if(p!=donor){
-                    if(store.surrounding_ocean&&source.ocean_state&&receiver.ocean_state==1&&receiver.water[i]&&p.y*.5<40){
-                        // This receiver was reached through the same clipped
-                        // displacement connections as finite recipients. It is
-                        // certified pristine sea, so overflow leaves the local
-                        // transaction instead of creating an artificial mound.
-                        const auto amount=source.water[donor_index]-capacity;
-                        source.water[donor_index]-=amount;ocean_exchange_ml-=int64_t(amount);
-                        store.changed(donor);break;
-                    }
-                    uint64_t room=W::profile(receiver,i).capacity();room=room>receiver.water[i]?room-receiver.water[i]:0;
-                    uint64_t amount=std::min(room,source.water[donor_index]-capacity);
-                    if(amount){source.water[donor_index]-=amount;receiver.water[i]+=amount;store.changed(donor);store.changed(p);store.wake_settling(W::region_key(p),i);}
+                admit_source(p);
+                const uint64_t capacity=W::profile(receiver,i).capacity();
+                uint64_t room=capacity>receiver.water[i]?capacity-receiver.water[i]:0;
+                const bool outlet=ocean_source && receiver.ocean_state==1 && receiver.water[i] && p.y*.5<40 && !replaced.count(W::key(p));
+                bool filled=false;
+                while(!sources.empty()&&(room||outlet)){
+                    const auto &source=sources.front();
+                    auto &r=store.regions.at(W::region_key(source.point));
+                    const int index=W::index(source.point);
+                    const uint64_t excess=r.water[index]-source.capacity;
+                    const uint64_t amount=outlet?excess:std::min(excess,room);
+                    r.water[index]-=amount;store.changed(source.point);
+                    if(outlet)ocean_exchange_ml-=int64_t(amount);
+                    else{receiver.water[i]+=amount;room-=amount;filled=true;}
+                    if(amount==excess)sources.pop_front();
                 }
+                if(filled){store.changed(p);store.wake_settling(W::region_key(p),i);}
                 auto a=displacement_shape(p);
                 for(int direction=0;direction<6;++direction){
                     auto q=p+steps[direction];if(!W::in_domain(q)||visited.count(W::key(q)))continue;
@@ -344,7 +360,7 @@ void NativeWaterEquilibriumJob::prepare(){
                     visited.insert(W::key(q));frontier.push({q.y,W::key(q)});
                 }
             }
-            if(!local_response&&source.water[donor_index]>capacity&&!unavailable.empty()){required.assign(unavailable.begin(),unavailable.end());return false;}
+            if(!local_response&&!sources.empty()&&!unavailable.empty()){required.assign(unavailable.begin(),unavailable.end());return false;}
         }
         std::unordered_map<uint64_t,uint64_t> held;
         for(const auto &[k,r]:store.regions)if(r.settle_pending&&r.valid){

@@ -50,7 +50,34 @@ func check_sparse_mesh_owners()->void:
   owners.append(mesh.coordinate-region)
  var expected:=[Vector3i.ZERO,Vector3i.LEFT,Vector3i.RIGHT,Vector3i.FORWARD,Vector3i.BACK,Vector3i(-1,0,-1),Vector3i(1,0,1)]
  check(owners.size()==expected.size() and expected.all(func(p):return owners.has(p)),"Sparse edits queue exactly the seven overlapping mesh owners: "+str(owners))
+func check_connected_displacement()->void:
+ var cells:Dictionary={}
+ var donors:Array[Vector3i]=[]
+ for x in range(82,86):
+  var donor:=Vector3i(x,83,83)
+  donors.append(donor)
+  cells[donor]=[500,500,50000]
+  cells[donor+Vector3i.UP]=[0,500,0]
+ var pocket:=Vector3i(81,85,81)
+ cells[pocket]=[500,500,123]
+ var water:=fixture(cells)
+ water.settle_after_edit(AABB(Vector3(41.5,41.5,41.5),Vector3.ONE*.1))
+ var job:RefCounted=water.begin_equilibrium(0,true)
+ check(job!=null,"Wet deposition admits local displacement")
+ if job==null:return
+ job.prepare()
+ var result:Dictionary=water.finish_equilibrium(job)
+ var retained:=amounts(water)
+ check(result.get("ok",false) and result.get("displacement_searches",0)==2,
+  "Four communicating displaced donors share one search and the sealed pocket gets its own")
+ check(retained.get(pocket,0)==123 and water.total_water_ml()==200123,
+  "Unreachable excess stays in its own pocket")
+ for p in donors:
+  check(not retained.has(p) and retained.get(p+Vector3i.UP,0)==50000,
+   "Connected receivers contain the displaced volume at a common level")
+
 func run_scope()->void:
+ check_connected_displacement()
  # The cut connects nine cells across a region boundary. The fixture's
  # surrounding terrain is solid, including the neighbour past either end.
  var bank:Dictionary={}
