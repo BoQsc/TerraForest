@@ -4,14 +4,14 @@ var failures:=0
 func check(ok:bool,label:String):
  print("PASS " if ok else "FAIL ",label)
  if not ok:failures+=1
-func fixture(x:int,floor_mm:int,open_surroundings:bool=false,coordinate:Vector3i=Vector3i(10,10,10)):
+func fixture(x:int,floor_mm:int,open_surroundings:bool=false,coordinate:Vector3i=Vector3i(10,10,10),y:int=3,amount:int=1000):
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+6160);bytes.fill(0)
- bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,1);bytes.encode_u64(16,1000)
+ bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,1);bytes.encode_u64(16,amount)
  for i in catalog.size():bytes[32+i]=catalog[i]
  var base:int=32+catalog.size();bytes.encode_u64(base,(coordinate.x<<24)|(coordinate.y<<12)|coordinate.z);bytes.encode_u32(base+8,1);base+=16
  for i in 512:bytes.encode_u16(base+i*12,0 if open_surroundings else 500);bytes.encode_u16(base+i*12+2,500)
- var i:=x+8*3+64*3;bytes.encode_u16(base+i*12,floor_mm);bytes.encode_u64(base+i*12+4,1000)
+ var i:=x+8*y+64*3;bytes.encode_u16(base+i*12,floor_mm);bytes.encode_u64(base+i*12+4,amount)
  var water=ClassDB.instantiate("NativeRegionalWater")
  if not water.restore_snapshot(bytes):return null
  return water
@@ -49,6 +49,20 @@ func check_ocean_boundary():
   for i in range(0,vertices.size(),3):
    dry_wall=dry_wall or (vertices[i].x==42 and vertices[i+1].x==42 and vertices[i+2].x==42)
  check(dry_wall,"Resident dry ocean cell remains authoritative")
+ for amount:int in [125000,62500]:
+  var coast=fixture(3,0,false,Vector3i(10,9,10),7,amount)
+  coast.set_surrounding_ocean(true)
+  for step in 100:
+   var packet:Dictionary=coast.next_mesh_batch()
+   if packet.is_empty():break
+   if packet.complete:coast.commit_mesh_batch(packet.batch)
+  var pos:=Vector3(41.75,40,41.75)
+  var ray:Dictionary=coast.raycast_surface(pos+Vector3.UP,pos-Vector3.UP)
+  check(ray.hit==(amount==125000),"Ocean proxy picking requires an owned triangle at sea level, amount %d"%amount)
+  var near_point:Vector3=coast.surface_near(pos,.4)
+  check(near_point.is_finite()==(amount==125000),"Nearby ocean surface agrees with proxy picking, amount %d"%amount)
+  pos.x+=1
+  check(not coast.raycast_surface(pos+Vector3.UP,pos-Vector3.UP).hit,"Dry column beneath ocean proxy has no target")
 
 func check_batch():
  var reference=fixture(0,0);var expected:Dictionary={}

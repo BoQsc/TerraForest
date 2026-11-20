@@ -1,3 +1,23 @@
+## November 20 sea and lake blast check
+
+In Cedar Vale the first sea publication had a resident top triangle at 40 m
+while the surrounding ocean still displayed its proxy at exactly 40 m. The
+column-wide pick filter rejected this triangle. During that handoff the
+surface ray and nearest-surface query now accept published, upward-facing
+free triangles coincident with the proxy. The triangle supplies its original
+water-cell owner. Dry locations and submerged triangles remain untargetable.
+Source reproduction `20261120T120957210252Z` and material test
+`20261120T121330648333Z` cover the transition and negative controls.
+
+Installed rendered run `20261120T121401316352Z` checked both gameplay
+barrels on the same read-only save. Sea contact passed at all 23 bank probes
+both at local publication and after settling. Sea publication took 176.252 ms.
+The paired immediate lake captures still show the abrupt cutoff. Immediate
+lake depth and bank contact failed, with publication at 255.855 ms. After
+settling all 81 lake depth probes and 24 contact probes passed. Mining took
+206.979 ms and the four bucket updates took 71.775–95.799 ms. This run
+remains failed on three lake assertions and does not qualify frame pacing.
+
 ## In-game terrain authoring
 
 The development belt's sphere, snapped box and single-cell tools now preview

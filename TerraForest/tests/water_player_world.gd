@@ -69,6 +69,21 @@ func check_crater_coverage(center:Vector3,level:float,label:String)->void:
  print("CRATER_COVERAGE ",label," sampled=",sampled," missing=",JSON.stringify(missing))
  check(sampled>10 and missing.is_empty(),label+" water covers every sampled excavated air point below its level")
  var surface:Dictionary=game.lakes.water.raycast_surface(Vector3(center.x,level+1,center.z),Vector3(center.x,level-1,center.z))
+ if label.begins_with("sea"):
+  var column:=Vector2i(floori(center.x/4),floori(center.z/4))
+  var mask:PackedByteArray=game.lakes._surrounding_ocean.last_coverage
+  var detailed:=mask.size()==250000 and mask[column.x+500*column.y]!=0
+  var rendered_hits:Array[float]=[]
+  for layer in range(floori((level-1)/4),floori((level+1)/4)+1):
+   var instance:MeshInstance3D=game.lakes._meshes.get(Vector3i(column.x,layer,column.y))
+   if instance==null or not instance.is_visible_in_tree():continue
+   var faces:=instance.mesh.get_faces()
+   var origin:=instance.to_local(Vector3(center.x,level+1,center.z))
+   var end:=instance.to_local(Vector3(center.x,level-1,center.z))
+   for i in range(0,faces.size(),3):
+    var hit=Geometry3D.segment_intersects_triangle(origin,end,faces[i],faces[i+1],faces[i+2])
+    if hit!=null:rendered_hits.append(instance.to_global(hit).y)
+  print("SEA_PUBLICATION ",label," center=",center," detail=",detailed," mesh_hits=",rendered_hits," query=",surface)
  if not surface.get("hit",false):check(false,label+" shoreline reference surface exists");return
  var water_level:float=surface.point.y
  var contacts:=0;var gaps:Array=[]

@@ -166,6 +166,14 @@ class NativeRegionalWater : public godot::RefCounted {
         std::vector<ReconstructedCell> reconstructed;
         uint64_t bytes() const {return uint64_t(vertices.size())*sizeof(godot::Vector3)+uint64_t(indices.size())*sizeof(int32_t)+owners.size()*sizeof(uint16_t)+reconstructed.size()*sizeof(ReconstructedCell);}
         godot::Vector3 vertex(int index) const {return vertices[indices[index]];}
+        // While the ocean proxy is visible, only a resident free surface
+        // coincident with that plane can supply a visible interaction owner.
+        bool on_ocean_proxy(int i,int region_y) const {
+            if(owners[i/3]&0x8000)return false;
+            const float level=40-region_y*4;
+            const auto a=vertex(i),b=vertex(i+1),c=vertex(i+2);
+            return a.y==level&&b.y==level&&c.y==level&&(c-a).cross(b-a).y>0;
+        }
     };
     std::map<Key,QuerySurface> published_surfaces,staged_surfaces;
     uint64_t staged_surface_bytes=0;

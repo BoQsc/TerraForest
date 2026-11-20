@@ -1338,11 +1338,13 @@ Vector3 NativeRegionalWater::surface_near(const Vector3 &point,double radius) co
     Vector3 margin(radius+0.5,radius+0.5,radius+0.5);
     Vector3i lo=Vector3i(((point-margin)/4.0).floor()),hi=Vector3i(((point+margin)/4.0).floor());double distance=radius*radius;
     for(int z=std::max(0,lo.z);z<=std::min(499,hi.z);++z)for(int y=std::max(0,lo.y);y<=std::min(63,hi.y);++y)for(int x=std::max(0,lo.x);x<=std::min(499,hi.x);++x){
-        if(surrounding_ocean&&std::min({x,z,499-x,499-z})<35&&!ocean_column_published(x,z))continue;
+        const bool proxy=surrounding_ocean&&std::min({x,z,499-x,499-z})<35&&!ocean_column_published(x,z);
+        if(proxy&&(!publication_enabled||y<9||y>10))continue;
         Key k=key(Vector3i(x,y,z));if(!publication_enabled&&!surface_ready(k))continue;QuerySurface temporary;const QuerySurface *selected=query_surface(k,temporary);if(!selected)continue;const QuerySurface &mesh=*selected;
         Vector3 origin=Vector3(position(k))*4,local=point-origin;
         auto consider=[&](Vector3 q){double d=local.distance_squared_to(q);if(d<distance){distance=d;best=q+origin;}};
         for(int i=0;i<mesh.indices.size();i+=3){
+            if(proxy&&!mesh.on_ocean_proxy(i,y))continue;
             if((mesh.vertex(i+2)-mesh.vertex(i)).cross(mesh.vertex(i+1)-mesh.vertex(i)).y<=0)continue;
             Vector3 a=mesh.vertex(i),b=mesh.vertex(i+1),c=mesh.vertex(i+2);
             Vector3 u=b-a,v=c-a,n=u.cross(v);double n2=n.length_squared();if(n2<1e-16)continue;
@@ -1668,12 +1670,14 @@ Dictionary NativeRegionalWater::raycast_surface(const Vector3 &from,const Vector
     // The five-metre reach bounds the candidate owner box. Build from precisely
     // the rendering source; never use an independent shoreline polygon or level.
     for(int z=std::max(0,lo.z);z<=std::min(499,hi.z);++z)for(int y=std::max(0,lo.y);y<=std::min(63,hi.y);++y)for(int x=std::max(0,lo.x);x<=std::min(499,hi.x);++x){
-        if(surrounding_ocean&&std::min({x,z,499-x,499-z})<35&&!ocean_column_published(x,z))continue;
+        const bool proxy=surrounding_ocean&&std::min({x,z,499-x,499-z})<35&&!ocean_column_published(x,z);
+        if(proxy&&(!publication_enabled||y<9||y>10))continue;
         Key k=key(Vector3i(x,y,z));if(!publication_enabled&&!surface_ready(k))continue;
         QuerySurface temporary;const QuerySurface *selected=query_surface(k,temporary);if(!selected)continue;const QuerySurface &mesh=*selected;
         Vector3 local_from=from-Vector3(position(k))*4;
         for(int i=0;i<mesh.indices.size();i+=3){
             if(mesh.owners[i/3]&0x8000)continue; // Buried contact is not a bucket target.
+            if(proxy&&!mesh.on_ocean_proxy(i,y))continue;
             Vector3 a=mesh.vertex(i),e1=mesh.vertex(i+1)-a,e2=mesh.vertex(i+2)-a;
             Vector3 h=direction.cross(e2);double determinant=e1.dot(h);if(std::abs(determinant)<1e-12)continue;
             double inverse=1.0/determinant;Vector3 offset=local_from-a;double u=offset.dot(h)*inverse;if(u< -1e-6||u>1.000001)continue;
