@@ -1808,7 +1808,8 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         return C::Point{coordinate(p.x),coordinate(p.y),coordinate(p.z)};
     };
     struct BoundaryPolygon {C::Face polygon;C::Plane plane;};
-    struct CellBoundary {WaterCellProfile shape;uint64_t amount=0;double head=0,bottom=0,top=0,free_head=-1e30;std::array<double,4> heights{};bool reconstructed=false,has_head=false,rectangular=false;C::Pieces pieces;std::vector<BoundaryPolygon> boundary;bool initialized=false,built=false,boundary_built=false,full=false;};
+    struct HeadSample { double reference=-1e30,height=-1e30; };
+    struct CellBoundary {WaterCellProfile shape;uint64_t amount=0;double head=0,bottom=0,top=0,free_head=-1e30;HeadSample column;std::array<double,4> heights{};bool reconstructed=false,has_head=false,rectangular=false;C::Pieces pieces;std::vector<BoundaryPolygon> boundary;bool initialized=false,built=false,boundary_built=false,full=false;};
     std::vector<CellBoundary> cells(3136);
     const Vector3i base=position(k)*8;
     auto at=[&](Vector3i p)->CellBoundary&{
@@ -1869,11 +1870,13 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     // Reconstruct shared corner heights BEFORE intersecting terrain. Moving an
     // already clipped shoreline vertex would detach it from the terrain plane.
     auto column_head=[&](Vector3i p,double reference){
+        auto &sample=at(p).column;
+        if(sample.reference==reference)return sample.height;
         double selected=-1e30,distance=.75001;
         for(int dy=-2;dy<=2;++dy){const auto &c=at(p+Vector3i(0,dy,0));double level=c.free_head,d=std::abs(level-reference);
             if(d<distance){distance=d;selected=level;}
         }
-        return selected;
+        sample={reference,selected};return selected;
     };
     auto corner_height=[&](Vector3i p,C::Point v,double reference){
         const int ox=int(std::floor(v.x*2-.5)),oz=int(std::floor(v.z*2-.5));
@@ -1893,6 +1896,10 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         double level=(heights[0]*(1-tx)+heights[1]*tx)*(1-tz)+(heights[2]*(1-tx)+heights[3]*tx)*tz;
         return level-p.y*.5;
     };
+    // A shared corner can belong to four columns. Cache the exact
+    // reconstruction for this immutable owner, keyed by lattice position and
+    // reference head so stacked pockets still select their own layer.
+    std::array<HeadSample,13*12*13> corner_samples;
     for(int z=-2;z<=9;++z)for(int y=-2;y<=9;++y)for(int x=-2;x<=9;++x){
         auto p=base+Vector3i(x,y,z);
         const Region *known=region_at(p);
@@ -1920,7 +1927,10 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         if(c.shape.solid||!c.shape.capacity())continue;
         c.has_head=true;
         for(int corner=0;corner<4;++corner){
-            c.heights[corner]=corner_height(p,{(corner&1)*.5,reference-p.y*.5,((corner>>1)&1)*.5},reference);
+            const int dx=corner&1,dz=corner>>1;
+            auto &sample=corner_samples[x+2+dx+13*(y+2+12*(z+2+dz))];
+            if(sample.reference!=reference)sample={reference,corner_height(p,{dx*.5,reference-p.y*.5,dz*.5},reference)};
+            c.heights[corner]=sample.height;
             c.reconstructed|=std::abs(std::clamp(c.heights[corner],0.,.5)-c.head*.001)>.00001;
         }
         if(c.reconstructed){c.rectangular=false;c.full=false;
@@ -2325,13 +2335,17 @@ void NativeWaterMeshJob::prepare(){
             std::atomic<size_t> first_overflow;
             uint64_t limit;
             decltype(surface_bytes) *bytes;
+            std::atomic<size_t> next_owner{0};
         } group{this,retained,owners.size(),reserved_bytes-24*1024*1024,&surface_bytes};
         results.resize(owners.size());
-        auto task=[](void *context,uint32_t lane){
+        auto task=[](void *context,uint32_t){
             auto &g=*static_cast<Group*>(context);auto &job=*g.job;
             WaterSurfaceProfileCache profiles;profiles.cells.reserve(WaterSurfaceProfileCache::MAX_CELLS);
-            for(uint32_t index=lane;index<job.owners.size();index+=2){
-            if(job.cancelled.load()||index>=g.first_overflow.load())return;
+            // A cut shoreline owner costs much more than a flooded interior.
+            // Give the next owner to whichever existing lane finishes first.
+            while(!job.cancelled.load()){
+            const size_t index=g.next_owner.fetch_add(1,std::memory_order_relaxed);
+            if(index>=g.first_overflow.load())return;
             auto surface=job.frozen->build_surface(job.owners[index],false,false,&job.cancelled,&profiles,job.indexed_only);
             uint64_t bytes=(*g.bytes)(surface),prior=g.retained.load();bool admitted=false;
             while(prior<=g.limit&&bytes<=g.limit-prior){

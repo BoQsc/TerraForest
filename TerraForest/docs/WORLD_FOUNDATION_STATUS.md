@@ -1,3 +1,48 @@
+## November 20 first-draw and local surface qualification
+
+The installed water worker caches column and shared-corner height samples
+within an immutable mesh owner. Its two worker lanes take the next available
+owner when ready. The 43-owner pinned replay preserved the rendered-array
+digest on four runs (`20261120T133647618251Z`). A separate experiment
+deferred donor geometry and introduced a visible ridge. The
+[water issue](../issues/explosive-combat/water-plan.md) records the rejected
+handoff and its two-angle evidence.
+
+Cedar Vale run `20261120T133724057342Z` captures both shores from two
+angles. First-publication crater depths (81 per shore) and bank contact
+(23 sea, 26 lake) passed, as did the lake after a bucket interrupted
+background meshing. The native replay `20261120T133829927033Z` compared
+66 live ray samples to freshly reconstructed committed water at the same
+coordinates. Hit membership and heights matched exactly. The wider lake
+region-edge check found a maximum 0.004 mm height difference across
+28 pairs of wet probes separated horizontally by 0.5 mm.
+
+The installed construction cube fixture `20261120T133948089900Z` passed
+four wall contacts, solid exclusion and restoration after removal.
+Worker cancellation and mixed buffer requests passed in
+`20261120T134058858697Z`. The Windows authority and gameplay parity
+driver `20261120T134052295671Z` passed its cross-boundary excavation,
+archive ownership, interrupted save, restart and recovery checks.
+
+The installed timing pass `20261120T133849014781Z` used Cedar Vale,
+RTX 4050 Laptop, 1080p, with screenshots and bucket interruptions off.
+Times are milliseconds. First action is the first fire call against
+the barrel or the pickaxe strike. The draw timestamp is the first Godot
+post-draw signal after local publication. It includes weapon and terrain
+latency and does not measure monitor scanout.
+
+| Operation | Terrain publication to water | First action to drawn water | Frame interval p99 | Worst frame |
+| --- | ---: | ---: | ---: | ---: |
+| Sea barrel | 156.157 | 1287.842 | 28.591 | 53.058 |
+| Lake barrel | 314.787 | 683.190 | 24.443 | 27.509 |
+| Lake mining | 152.949 | 178.638 | 19.299 | 24.588 |
+
+Lake publication took 298.610 ms with visuals enabled. Both runs failed
+the 250 ms lake check. The two-frame publication and 60 Hz gates remain
+open. Future scheduling changes must preserve the committed surface across
+the visible lake. Avoid recomputing unchanged cell boundaries on the mesh
+worker's critical path, and compare first-draw samples to the same revision.
+
 ## November 20 indexed water publication
 
 Installed submerged cube run `20261120T131750662534Z` passed all four

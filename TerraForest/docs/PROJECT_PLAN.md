@@ -3,11 +3,13 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
-November 20 installed gameplay run `20261120T131924658010Z` passed first
+November 20 installed gameplay run `20261120T133724057342Z` passed first
 and settled sea/lake shoreline coverage, including the bucket interruption.
-Both fixed lake views now show the bank before and after the blast. The lake
-still failed its 250 ms check at 330 ms. Construction cube contact passed
-in `20261120T131750662534Z`. The two-frame and 60 Hz gates remain open.
+Both fixed lake views show the bank before and after the blast. A replay
+of committed water matched all 66 first-publication ray samples. The lake
+still failed its 250 ms check at 299 ms (315 ms without captures).
+Construction cube contact passed again in `20261120T133948089900Z`.
+The two-frame and 60 Hz gates remain open.
 See the [foundation status](WORLD_FOUNDATION_STATUS.md).
 
 | Gate | Required evidence | Status |

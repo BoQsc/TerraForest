@@ -56,6 +56,25 @@ var game:Node3D
 var failures:=0
 var evidence:=""
 var slot:="Amber_Pines"
+func check_lake_region_seams(center:Vector3,level:float,label:String)->void:
+ var sampled:=0
+ var largest_step:=0.0
+ for axis:int in [0,2]:
+  for region_offset in range(-4,5):
+   for lane:int in [-3,0,3]:
+    var at:=Vector3(center.x,level+2,center.z)
+    at[axis]=(floorf(center[axis]/4)+region_offset)*4
+    at[2-axis]+=lane
+    var offset:=Vector3.ZERO
+    offset[axis]=.00025
+    var left:Dictionary=game.lakes.water.raycast_surface(at-offset,at-offset-Vector3.UP*4)
+    var right:Dictionary=game.lakes.water.raycast_surface(at+offset,at+offset-Vector3.UP*4)
+    if not left.get("hit",false) or not right.get("hit",false):continue
+    if left.normal.y<.8 or right.normal.y<.8:continue
+    sampled+=1
+    largest_step=maxf(largest_step,absf(left.point.y-right.point.y))
+ print("LAKE_REGION_SEAMS ",label," wet_pairs=",sampled," max_step_m=",largest_step)
+ check(sampled>=10 and largest_step<=.0015,label+" adjacent lake regions meet across the open water surface")
 func check_crater_coverage(center:Vector3,level:float,label:String)->void:
  var sampled:=0;var missing:Array=[]
  for x in range(-5,6):
@@ -111,6 +130,12 @@ func terrain_published(_bounds:AABB,_revision:int)->void:
  if not timing_phase.is_empty():terrain_published_us=Time.get_ticks_usec()
 var timing_phase:=""
 var timing_local_ms:=-1.0
+var action_started_us:=0
+var local_draw_us:=0
+func measure_local_draw()->void:
+ if timing_phase.is_empty() or not action_started_us or local_draw_us or not terrain_published_us:return
+ if game.lakes._local_response_started_us>=action_started_us and not game.lakes._local_response_pending and not game.lakes._local_publication_pending:
+  local_draw_us=Time.get_ticks_usec()
 var timing_previous:=0
 var timing_frames:Array[float]=[]
 var timing_water:Array[float]=[]
@@ -130,7 +155,9 @@ func start_timing(label:String)->void:
   game.max_fps=0;game.background_fps=0;Engine.max_fps=0
   if DisplayServer.get_name()!="headless":DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
  game.structures.blocks.set_process_profiling_enabled(true)
- terrain_published_us=0;blast_started=Time.get_ticks_usec();blast_timeline.clear();blast_last_state=""
+ terrain_published_us=0;action_started_us=0;local_draw_us=0;blast_started=Time.get_ticks_usec();blast_timeline.clear();blast_last_state=""
+ if DisplayServer.get_name()!="headless" and not RenderingServer.frame_post_draw.is_connected(measure_local_draw):
+  RenderingServer.frame_post_draw.connect(measure_local_draw)
  if not game.terrain.region_changed.is_connected(terrain_published):game.terrain.region_changed.connect(terrain_published)
  timing_phase=label;timing_local_ms=-1;timing_frames.clear();timing_water.clear();timing_previous=Time.get_ticks_usec()
  timing_stages.clear();timing_worst.clear();timing_totals.clear();timing_water_worst.clear()
@@ -176,6 +203,7 @@ func finish_timing()->void:
  blast_metrics[timing_phase].water_after_terrain_ms=(Time.get_ticks_usec()-terrain_published_us)/1000.0 if terrain_published_us else -1
  blast_metrics[timing_phase].timeline=blast_timeline.duplicate(true)
  blast_metrics[timing_phase].local_response_ms=timing_local_ms
+ blast_metrics[timing_phase].action_to_local_draw_ms=(local_draw_us-action_started_us)/1000.0 if local_draw_us else -1
  blast_metrics[timing_phase].worst_frames=timing_worst.duplicate(true)
  blast_metrics[timing_phase].stage_totals=timing_totals.duplicate()
  blast_metrics[timing_phase].water_worst=timing_water_worst.duplicate(true)
@@ -190,17 +218,21 @@ func local_response(point:Vector3,label:String)->void:
    print("LOCAL_WATER_RESPONSE ",label," ms=",latency," wider_pending=",game.lakes.water.runtime_state().settling_regions)
    print("LOCAL_WATER_SOLVE ",label," ",JSON.stringify(game.lakes.statistics().get("equilibrium_result",{})))
    if label=="lake":
+    var packet:=PackedByteArray()
+    var first_surface:Array=[]
     if "--water-local-snapshot" in OS.get_cmdline_user_args():
-     var packet:PackedByteArray=game.lakes.water.capture_local_snapshot(AABB(point-Vector3(12,8,12),Vector3(24,12,24)))
+     packet=game.lakes.water.capture_local_snapshot(AABB(point-Vector3(12,8,12),Vector3(24,12,24)))
      check(not packet.is_empty() and packet.size()<8*1024*1024,"Local replay fits its declared eight MiB evidence allowance")
-     if not packet.is_empty() and packet.size()<8*1024*1024:FileAccess.open(evidence.path_join("local_response.water_regions"),FileAccess.WRITE).store_var({"point":point,"snapshot":packet})
     for axis:Vector3 in [Vector3.RIGHT,Vector3.BACK]:
      var heads:Array=[]
      for offset in range(-16,17):
       var sample:=point+axis*offset*.5+Vector3.UP*2
       var hit:Dictionary=game.lakes.water.raycast_surface(sample,sample-Vector3.UP*5)
+      if not packet.is_empty():first_surface.append({"from":sample,"height":hit.point.y if hit.get("hit",false) else null})
       heads.append([offset*.5,str(hit)])
      print("LOCAL_WATER_HEADS origin=",point," axis=",axis," ",JSON.stringify(heads))
+    if not packet.is_empty() and packet.size()<8*1024*1024:
+     FileAccess.open(evidence.path_join("local_response.water_regions"),FileAccess.WRITE).store_var({"point":point,"snapshot":packet,"first_surface":first_surface})
    var probe:=point-Vector3.UP
    if label=="mining":
     var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(point+Vector3.UP*3,point-Vector3.UP*5,1))
@@ -253,6 +285,7 @@ func mining_response_case(lake:Dictionary)->void:
  var target:Dictionary={"kind":"terrain","key":"terrain:%d:%d:%d"%[cell.x,cell.y,cell.z],"health":game.world_attack.Durability.WORLD.terrain,"material":"stone","name":"Terrain","position":ground.position,"normal":ground.normal}
  game.terrain.set_interaction_target(ground.position)
  start_timing("lake_mining")
+ action_started_us=Time.get_ticks_usec()
  check(game.world_attack.apply_target(target) and game.terrain.pending_edit,"Ordinary pickaxe damage and contact-mining stroke are admitted in the saved game")
  await local_response(ground.position+Vector3.UP*.25,"mining")
  check(await ready("mining"),"Mining completes wider relaxation")
@@ -351,6 +384,7 @@ func shoot_barrel(id:int)->void:
   game.app_focused=true
   game.camera.look_at(game.combat.barrel_position(id)+Vector3.UP*.5)
   var fire_started:=Time.get_ticks_usec()
+  if not action_started_us:action_started_us=fire_started
   game.combat.fire()
   timing_stage("ordinary handgun fire",(Time.get_ticks_usec()-fire_started)/1000.0)
   await physics_frame
@@ -781,6 +815,7 @@ func run()->void:
     var p:Vector3=ground.position;var owned:int=owned_amount()
     var id:int=await gameplay_barrel(p)
     if id>0:p=game.combat.barrel_position(id)
+    if "--water-immediate-contact" in OS.get_cmdline_user_args():check_lake_region_seams(p,lake.level,"before blast")
     await capture("player_lake_before",p,lake.level)
     start_timing("lake_shore_blast")
     await shoot_barrel(id)
@@ -790,12 +825,14 @@ func run()->void:
      await process_frame
     check(not game.combat.barrels.get_ids().has(id),"Normal gameplay queue detonates lake shoreline barrel")
     await local_response(p,"lake")
+    if "--water-immediate-contact" in OS.get_cmdline_user_args():check_lake_region_seams(p,lake.level,"first publication")
     if qualification or "--water-immediate-contact" in OS.get_cmdline_user_args():check_crater_coverage(p,lake.level,"lake immediate")
     if "--water-edit-response" in OS.get_cmdline_user_args():await capture("player_lake_after",p,lake.level)
     if "--water-edit-response" in OS.get_cmdline_user_args() and "--blast-only-timing" not in OS.get_cmdline_user_args():await bucket_response_cases(lake)
     check(await ready("lake_blast"),"Actual lake crater finishes finite equilibrium")
     finish_timing()
     check_crater_coverage(p,lake.level,"lake")
+    if "--water-immediate-contact" in OS.get_cmdline_user_args():check_lake_region_seams(p,lake.level,"settled")
     check(owned_amount()==owned,"Lake blast preserves every owned millilitre")
     check(game.lakes.depth_at(p-Vector3.UP)>.2,"Lake water occupies the excavated space below its former floor")
     if "--water-edit-response" not in OS.get_cmdline_user_args():await capture("player_lake_after",p,lake.level)

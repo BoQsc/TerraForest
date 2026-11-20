@@ -16,6 +16,20 @@ func _initialize()->void:
   if packet.get("complete",false):water.commit_mesh_batch(packet.batch)
   if packet.has("failure"):print(packet.failure);failures+=1;break
  var point:Vector3=data.point
+ # A watertight mesh can still have a ridge where two water revisions meet.
+ # Compare actual first-publication hits to a fresh mesh of the committed field.
+ var mismatches:=0
+ var max_error:=0.0
+ for sample:Dictionary in data.get("first_surface",[]):
+  var origin:Vector3=sample.from
+  var hit:Dictionary=water.raycast_surface(origin,origin-Vector3.UP*5)
+  if hit.get("hit",false)!=(sample.height!=null):
+   mismatches+=1
+  elif sample.height!=null:
+   max_error=maxf(max_error,absf(sample.height-hit.point.y))
+ if data.has("first_surface"):
+  print("FIRST_SURFACE_REPLAY samples=",data.first_surface.size()," mismatches=",mismatches," max_error_m=",max_error)
+  if data.first_surface.size()!=66 or mismatches or max_error>.001:failures+=1
  var tested:=0;var discontinuities:=0
  for offset in range(1,15):
   var z:=floorf(point.z*2)*.5+offset*.5

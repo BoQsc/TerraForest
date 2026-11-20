@@ -1,5 +1,16 @@
 # Continuous volumetric water replacement
 
+**Rejected local lake handoff, November 20.** Runs `20261120T132949094958Z`
+and `20261120T133050159749Z` deferred presentation of 25 donor regions
+after committing the finite-water exchange. The first crater needed 78
+urgent mesh owners instead of 140. Depth, shore contact and region-edge
+continuity passed, but both lake cameras revealed a dark angular ridge on
+the far side of the crater. At eight metres along +Z the first surface
+was 65 mm above the same point on the fully published local revision.
+The partial donor handoff has been removed. Preserve both captures and
+require a first-frame surface comparison against the committed local
+field when changing publication order.
+
 **November 20 submerged block contact.** Installed run
 `20261120T131316874925Z` reproduced a 123 mm dip around all four walls
 of a one-metre cube crossing a lake. Reconstruction sampled the top of
