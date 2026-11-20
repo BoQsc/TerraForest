@@ -22,8 +22,10 @@ def summarize(folder):
     if sys.byteorder!="little":
         samples.byteswap()
     indices = [columns.index(k) for k in ("phase","interval_us","viewport_cpu_ms","viewport_gpu_ms","queued")]
+    pose_indices = [columns.index(k) for k in ("elapsed_us","x","y","z","yaw")]
     series = {}
     streaks = {}
+    worst = {}
     previous = None
     streak = 0
     for offset in range(0,len(samples),len(columns)):
@@ -35,6 +37,10 @@ def summarize(folder):
         streaks[key] = max(streaks.get(key, 0), streak)
         previous = key
         series.setdefault(key,[]).append((interval/1000,cpu,gpu,queue))
+        if key not in worst or interval > worst[key]["interval_us"]:
+            elapsed,x,y,z,yaw = (samples[offset+i] for i in pose_indices)
+            worst[key] = dict(frame=offset//len(columns), elapsed_us=elapsed, interval_us=interval,
+                              position=[x,y,z], yaw=yaw, terrain_queue=int(queue))
     phases = {}
     for key,rows in series.items():
         interval,cpu,gpu,queues = zip(*rows)
@@ -42,10 +48,13 @@ def summarize(folder):
         phases[key] = dict(frames=len(rows), p99_frame_ms=sorted(interval)[index],
                            max_frame_ms=max(interval), intervals_above_budget=sum(t>1000/60 for t in interval),
                            longest_above_budget=streaks[key], viewport_cpu_p99_ms=sorted(cpu)[index],
-                           viewport_gpu_p99_ms=sorted(gpu)[index], max_terrain_queue=max(queues))
+                           viewport_gpu_p99_ms=sorted(gpu)[index], max_terrain_queue=max(queues),
+                           worst_frame=worst[key])
     return dict(source_sha256=description["source_sha256"], pack_sha256=run.get("pack_sha256"),
                 completed_checks=run.get("result",{}).get("passed"), driver_sha256=run.get("test_sha256"),
-                scope=description["scope"], refresh_hz=description["monitor_hz"], phases=phases)
+                scope=description["scope"], refresh_hz=description["monitor_hz"],
+                settings=description.get("settings"), gpu=description["gpu"],
+                process_resources=run.get("result",{}).get("resources"), phases=phases)
 
 
 if __name__=="__main__":

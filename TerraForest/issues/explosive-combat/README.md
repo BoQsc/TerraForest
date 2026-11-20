@@ -1,7 +1,12 @@
 # First firearm and volumetric explosive destruction
 
 Current water replacement: [continuous volumetric water plan](water-plan.md).
-**Current status, November 14: installed / scoped gameplay verified.** Local
+**November 20.** The packaged Cedar Vale route reproduced the first-visible lake
+cutoff, a missing sea surface query, and delayed publication. Settled checks
+passed in the same run. Two broader local solve trials missed the interaction
+budget. See the [current results and image IDs](water-plan.md).
+
+**November 14 verification.** Local
 conservative response and urgent publication no longer wait for whole-lake
 relaxation. Final packaged sea/lake/mining updates measure 163 / 228 / 192 ms
 from terrain publication, buckets 40–68 ms including background interruption.
