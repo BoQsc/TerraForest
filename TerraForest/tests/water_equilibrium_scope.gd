@@ -76,7 +76,33 @@ func check_connected_displacement()->void:
   check(not retained.has(p) and retained.get(p+Vector3i.UP,0)==50000,
    "Connected receivers contain the displaced volume at a common level")
 
+func connected_bank_edit(region_count:int,deposit:bool)->Dictionary:
+ var bank:=Vector3i(83,83,83)
+ var cells:Dictionary={}
+ for x in range(bank.x+1,80+8*region_count):
+  cells[Vector3i(x,bank.y,bank.z)]=[0,500,62500]
+ # The same occupancy and pre-edit quantity a terrain patch hands the solver.
+ cells[bank]=[500,500,62500] if deposit else [0,500,0]
+ var water:=fixture(cells)
+ var quantity:int=water.total_water_ml()
+ water.settle_after_edit(AABB(Vector3(bank)*.5,Vector3.ONE*.25))
+ var job:RefCounted=water.begin_equilibrium(0,true)
+ check(job!=null,"Resident connected bank admits an edit")
+ if job==null:return {}
+ job.prepare()
+ var result:Dictionary=water.finish_equilibrium(job)
+ var quantities:=amounts(water)
+ var bank_ml:int=quantities.get(bank,0)
+ check(result.get("ok",false) and quantity==water.total_water_ml(),"Connected bank conserves its entire finite volume")
+ check(bank_ml==0 if deposit else bank_ml>0,"The edited bank reflects its new occupancy")
+ check(quantities.get(Vector3i(79+8*region_count,83,83),0)==62500,"The distant end remains unchanged on first commit")
+ return {"snapshot_regions":result.get("snapshot_regions",-1),"cells":result.get("cells",-1),"visits":result.get("displacement_visits",-1),"bank_ml":bank_ml}
+
 func run_scope()->void:
+ for deposit:bool in [false,true]:
+  var small:=connected_bank_edit(16,deposit)
+  var large:=connected_bank_edit(128,deposit)
+  check(not small.is_empty() and small==large,"Eightfold lake length gives the same local work and bank quantity (deposit=%s): %s / %s"%[deposit,small,large])
  check_connected_displacement()
  # The cut connects nine cells across a region boundary. The fixture's
  # surrounding terrain is solid, including the neighbour past either end.

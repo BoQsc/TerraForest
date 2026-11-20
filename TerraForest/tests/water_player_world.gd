@@ -123,11 +123,14 @@ func check_crater_coverage(center:Vector3,level:float,label:String)->void:
  check(contacts>=10 and gaps.is_empty(),label+" water reaches within 2 cm of the actual terrain waterline")
 var blast_metrics:Dictionary={}
 var terrain_published_us:=0
+var terrain_admitted_us:=0
 var blast_timeline:Array[Dictionary]=[]
 var blast_started:=0
 var blast_last_state:=""
 func terrain_published(_bounds:AABB,_revision:int)->void:
- if not timing_phase.is_empty():terrain_published_us=Time.get_ticks_usec()
+ if action_started_us and not timing_phase.is_empty() and not terrain_published_us and game.terrain.edit_accepted_us>=action_started_us:
+  terrain_admitted_us=game.terrain.edit_accepted_us
+  terrain_published_us=Time.get_ticks_usec()
 var timing_phase:=""
 var timing_local_ms:=-1.0
 var action_started_us:=0
@@ -155,7 +158,7 @@ func start_timing(label:String)->void:
   game.max_fps=0;game.background_fps=0;Engine.max_fps=0
   if DisplayServer.get_name()!="headless":DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
  game.structures.blocks.set_process_profiling_enabled(true)
- terrain_published_us=0;action_started_us=0;local_draw_us=0;blast_started=Time.get_ticks_usec();blast_timeline.clear();blast_last_state=""
+ terrain_published_us=0;terrain_admitted_us=0;action_started_us=0;local_draw_us=0;blast_started=Time.get_ticks_usec();blast_timeline.clear();blast_last_state=""
  if DisplayServer.get_name()!="headless" and not RenderingServer.frame_post_draw.is_connected(measure_local_draw):
   RenderingServer.frame_post_draw.connect(measure_local_draw)
  if not game.terrain.region_changed.is_connected(terrain_published):game.terrain.region_changed.connect(terrain_published)
@@ -184,6 +187,7 @@ func sample_timing()->void:
  state.capture=game.lakes.last_process_work.get("equilibrium_capture",0)>0
  state.equilibrium_worker=game.lakes._equilibrium_task>=0
  state.mesh_worker=game.lakes._mesh_task>=0
+ state.commit_frame_mesh_dispatch=game.lakes.last_process_work.get("local_mesh_dispatched",false)
  state.published=game.lakes._published_mesh_batch_id
  state.local_response=game.lakes._local_response_pending
  state.local_publication=game.lakes._local_publication_pending
@@ -204,6 +208,10 @@ func finish_timing()->void:
  blast_metrics[timing_phase].timeline=blast_timeline.duplicate(true)
  blast_metrics[timing_phase].local_response_ms=timing_local_ms
  blast_metrics[timing_phase].action_to_local_draw_ms=(local_draw_us-action_started_us)/1000.0 if local_draw_us else -1
+ if terrain_admitted_us and terrain_published_us and local_draw_us:
+  blast_metrics[timing_phase].action_to_terrain_admission_ms=(terrain_admitted_us-action_started_us)/1000.0
+  blast_metrics[timing_phase].terrain_admission_to_publication_ms=(terrain_published_us-terrain_admitted_us)/1000.0
+  blast_metrics[timing_phase].terrain_publication_to_local_draw_ms=(local_draw_us-terrain_published_us)/1000.0
  blast_metrics[timing_phase].worst_frames=timing_worst.duplicate(true)
  blast_metrics[timing_phase].stage_totals=timing_totals.duplicate()
  blast_metrics[timing_phase].water_worst=timing_water_worst.duplicate(true)
