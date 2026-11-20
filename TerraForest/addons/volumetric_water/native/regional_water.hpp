@@ -16,6 +16,7 @@
 #include <deque>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <unordered_map>
 #include <unordered_set>
 #include "water_cell_profile.hpp"
@@ -360,7 +361,7 @@ public:
     godot::Dictionary raycast_vacancy(const godot::Vector3 &from,const godot::Vector3 &to) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
     bool commit_mesh_batch(int64_t id,const godot::Array &retiring=godot::Array(),const godot::Array &revealing=godot::Array());
-    godot::Dictionary next_mesh_batch(bool background=false,bool indexed_only=false);
+    godot::Dictionary next_mesh_batch(bool background=false,bool indexed_only=false,bool prepared_only=false);
     // Diagnostic contact flag audits the closed volume with the same builder.
     // Runtime publication and picking use the same closed material boundary.
     godot::Dictionary next_mesh(bool include_contacts=false);
@@ -411,6 +412,9 @@ class NativeWaterMeshJob : public godot::RefCounted {
     friend class NativeRegionalWater;
     godot::Ref<NativeRegionalWater> frozen;
     std::vector<NativeRegionalWater::SurfaceMesh> results;
+    // Completed owners can be uploaded while other lanes clip their surfaces.
+    std::mutex delivery_mutex;
+    std::map<size_t,NativeRegionalWater::SurfaceMesh> deliverable;
     std::vector<uint64_t> owners;
     size_t consumed=0;
     bool indexed_only=false;

@@ -175,6 +175,47 @@ var blast_metrics:Dictionary={}
 var terrain_published_us:=0
 var terrain_published_frame:=0
 var water_draw_frames:=0
+var shore_draw:Dictionary={}
+func shore_admitted(_bounds:AABB)->void:
+ if shore_draw.is_empty() or not action_started_us or shore_draw.has("admit_frame"):return
+ shore_draw.admit_frame=Engine.get_frames_drawn()
+ shore_draw.admit_us=game.terrain.edit_accepted_us
+
+func measure_shore_target()->void:
+ if not shore_draw.has("admit_frame") or shore_draw.has("draw_us"):return
+ var point:Vector3=shore_draw.point
+ if game.lakes.depth_at(point-Vector3.UP*.5)<.2:return
+ var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(shore_draw.ray)
+ if floor_hit.is_empty() or floor_hit.position.y>minf(point.y-.6,shore_draw.old_floor-.5):return
+ var hit:Dictionary=game.lakes.water.raycast_surface(point+Vector3.UP,point-Vector3.UP)
+ if not hit.get("hit",false):return
+ var column:=Vector2i(floori(point.x/4),floori(point.z/4))
+ var proxy:=false
+ if timing_phase=="sea_shore_blast":
+  var coverage:PackedByteArray=game.lakes._surrounding_ocean.last_coverage
+  proxy=coverage.size()==250000 and coverage[column.x+500*column.y]==0
+ var meshes:Array=[]
+ for layer in range(floori((point.y-1)/4),floori((point.y+1)/4)+1):
+  var node:MeshInstance3D=game.lakes._meshes.get(Vector3i(column.x,layer,column.y))
+  if node!=null and node.is_visible_in_tree():meshes.append([node.mesh,node.global_transform])
+ if not proxy and meshes.is_empty():return
+ shore_draw.merge({"draw_us":Time.get_ticks_usec(),"frame":Engine.get_frames_drawn(),"query_y":hit.point.y,"floor_y":floor_hit.position.y,"proxy":proxy,"meshes":meshes})
+
+func verify_shore_target()->Dictionary:
+ if not shore_draw.has("draw_us"):return {"matched":false}
+ var point:Vector3=shore_draw.point
+ var matched:bool=shore_draw.proxy and absf(shore_draw.query_y-40)<.025
+ if not shore_draw.proxy:
+  for owner:Array in shore_draw.meshes:
+   var faces:PackedVector3Array=owner[0].get_faces()
+   var transform:Transform3D=owner[1]
+   var origin:=transform.affine_inverse()*(point+Vector3.UP)
+   var end:=transform.affine_inverse()*(point-Vector3.UP)
+   for i in range(0,faces.size(),3):
+    var hit=Geometry3D.segment_intersects_triangle(origin,end,faces[i],faces[i+1],faces[i+2])
+    if hit!=null and absf((transform*Vector3(hit)).y-shore_draw.query_y)<.025:matched=true;break
+   if matched:break
+ return {"matched":matched,"frames":1+shore_draw.frame-shore_draw.admit_frame,"ms":(shore_draw.draw_us-shore_draw.admit_us)/1000.0,"proxy":shore_draw.proxy,"floor_before":shore_draw.old_floor,"floor_after":shore_draw.floor_y,"surface_y":shore_draw.query_y}
 var terrain_admitted_us:=0
 var blast_timeline:Array[Dictionary]=[]
 var blast_started:=0
@@ -238,6 +279,7 @@ func compare_render_owners()->Dictionary:
   owners.append(entry)
  return {"edit_areas":str(audit_edit_areas),"replaced":owners}
 func measure_local_draw()->void:
+ if not shore_draw.is_empty():measure_shore_target()
  if timing_phase.is_empty() or not action_started_us or local_draw_us or not terrain_published_us:return
  if game.lakes._local_response_started_us>=action_started_us and not game.lakes._local_response_pending and not game.lakes._local_publication_pending:
   local_draw_us=Time.get_ticks_usec()
@@ -261,7 +303,14 @@ func timing_stage(label:String,ms:float)->void:
  if not timing_phase.is_empty():
   timing_stages[label]=float(timing_stages.get(label,0))+ms
   timing_totals[label]=float(timing_totals.get(label,0))+ms
-func start_timing(label:String)->void:
+func start_timing(label:String,target:Vector3=Vector3.INF)->void:
+ shore_draw.clear()
+ if target.is_finite():
+  var ray:=PhysicsRayQueryParameters3D.create(target+Vector3.UP*8,target-Vector3.UP*8,1)
+  var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(ray)
+  check(not floor_hit.is_empty(),label+" has a baseline terrain collider")
+  if not floor_hit.is_empty():shore_draw={"point":target,"ray":ray,"old_floor":floor_hit.position.y}
+  if not game.terrain.region_invalidated.is_connected(shore_admitted):game.terrain.region_invalidated.connect(shore_admitted)
  if "--water-owner-audit" in OS.get_cmdline_user_args():
   audit_meshes_before=resident_render_meshes()
   audit_meshes_after.clear();audit_edit_areas.clear()
@@ -336,6 +385,11 @@ func finish_timing()->void:
   blast_metrics[timing_phase].terrain_to_water_frames=water_draw_frames
  if "--two-frame-edits" in OS.get_cmdline_user_args():
   check(local_draw_us>0 and water_draw_frames<=2 and local_draw_us-terrain_admitted_us<=33334,timing_phase+" draws the changed water within two frames of the terrain edit")
+ if not shore_draw.is_empty():
+  var target:=verify_shore_target()
+  blast_metrics[timing_phase].first_target_draw=target
+  check(target.matched,timing_phase+" first crater contact matches the rendered surface and lowered collider")
+  shore_draw.clear()
  blast_metrics[timing_phase].worst_frames=timing_worst.duplicate(true)
  blast_metrics[timing_phase].stage_totals=timing_totals.duplicate()
  blast_metrics[timing_phase].water_worst=timing_water_worst.duplicate(true)
@@ -849,12 +903,28 @@ func check_authoring_brush()->void:
   var verify_draw:=profiling or ("--two-frame-edits" in OS.get_cmdline_user_args() and not coastal)
   var draw_record:Dictionary={}
   var geometry_draw:Dictionary={}
+  var region_stats:={"published_tiles":0,"center_early":false}
+  var probe:=PhysicsRayQueryParameters3D.create(center+Vector3.UP*96,center-Vector3.UP*96,1)
+  probe.exclude=[game.player.get_rid()]
+  var sample_center:=func()->Vector3:
+   var collision:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(probe)
+   return collision.get("position",Vector3.INF)
+  var old_contact:Vector3=sample_center.call() if verify_draw else Vector3.INF
   var observe_geometry:=func(installed:int)->void:
-   if installed!=ticket+1:return
+   if installed!=ticket+1 or geometry_draw.has("installed_us"):return
    geometry_draw.installed_us=Time.get_ticks_usec()
    await RenderingServer.frame_post_draw
    geometry_draw.draw_us=Time.get_ticks_usec()
    geometry_draw.frame=Engine.get_frames_drawn()
+   geometry_draw.contact=sample_center.call()
+  var observe_region:=func(installed:int,keys:Array)->void:
+   if installed!=ticket+1:return
+   region_stats.published_tiles+=keys.size()
+   for key:Vector3i in keys:
+    if Rect2(key.x,key.y,key.z,key.z).has_point(Vector2(center.x,center.z)):
+     region_stats.center_early=true
+     observe_geometry.call(installed)
+     break
   var observe_draw:=func(row:Dictionary)->void:
    if row.ticket==ticket+1 and row.has("draw_us"):draw_record.merge(row)
   if profiling:
@@ -862,6 +932,7 @@ func check_authoring_brush()->void:
   if verify_draw:
    game.terrain.edit_measured.connect(observe_draw)
    game.terrain.edit_geometry_installed.connect(observe_geometry)
+   game.terrain.edit_region_installed.connect(observe_region)
   var click:=InputEventMouseButton.new()
   click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
   var started:=Time.get_ticks_usec()
@@ -902,9 +973,13 @@ func check_authoring_brush()->void:
    while draw_record.is_empty() and Time.get_ticks_usec()<draw_deadline:await process_frame
    game.terrain.edit_measured.disconnect(observe_draw)
    game.terrain.edit_geometry_installed.disconnect(observe_geometry)
+   game.terrain.edit_region_installed.disconnect(observe_region)
    check(geometry_draw.has("draw_us"),"Contact geometry has a matched post-draw receipt")
    if geometry_draw.has("draw_us"):
     var frames_to_draw:int=1+geometry_draw.frame-input_frame
+    var final_contact:Vector3=sample_center.call()
+    check(final_contact.is_finite() and old_contact.is_finite() and geometry_draw.contact.is_equal_approx(final_contact) and old_contact.distance_to(final_contact)>0.01,"Centre collision on the first drawn replacement matches the finished edit")
+    print("AUTHORING_REGION ",JSON.stringify(region_stats))
     print("AUTHORING_GEOMETRY_DRAW ",JSON.stringify({"radius":game.radius,"input_to_install_ms":(geometry_draw.installed_us-started)/1000.0,"input_to_draw_ms":(geometry_draw.draw_us-started)/1000.0,"frames_drawn":frames_to_draw}))
     if "--two-frame-edits" in OS.get_cmdline_user_args():
      check(frames_to_draw<=2 and geometry_draw.draw_us-started<=33334,"Authoring brush reaches first draw in two frames")
@@ -1261,7 +1336,7 @@ func run()->void:
   await capture("player_shore_before",point,40)
   var revision:int=game.terrain.published_revision
   print("PLAYER_BLAST_ADMISSION position=",game.combat.barrel_position(id)," revision=",revision," protected=",game.combat.barrels.is_removal_protected(id))
-  start_timing("sea_shore_blast")
+  start_timing("sea_shore_blast",Vector3(point.x,40,point.z))
   await shoot_barrel(id)
   var deadline:=Time.get_ticks_msec()+60000
   while Time.get_ticks_msec()<deadline and game.combat.barrels.get_ids().has(id):
@@ -1303,7 +1378,7 @@ func run()->void:
     if id>0:p=game.combat.barrel_position(id)
     if "--water-immediate-contact" in OS.get_cmdline_user_args():check_lake_region_seams(p,lake.level,"before blast")
     await capture("player_lake_before",p,lake.level)
-    start_timing("lake_shore_blast")
+    start_timing("lake_shore_blast",Vector3(p.x,lake.level,p.z))
     await shoot_barrel(id)
     var deadline:=Time.get_ticks_msec()+60000
     while Time.get_ticks_msec()<deadline and game.combat.barrels.get_ids().has(id):

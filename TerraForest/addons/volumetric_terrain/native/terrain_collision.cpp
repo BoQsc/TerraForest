@@ -90,8 +90,47 @@ PackedVector3Array merge_planar_faces(const PackedVector3Array &faces) {
     result.resize(used);
     return result;
 }
+// Surface-net quads straddle the owner's sample boundary. Compare the
+// complete triangles within two lattice samples of each face. A different
+// triangle order conservatively couples owners even if their surfaces match.
+int changed_rims(Vector3i key,const PackedVector3Array &a,const PackedInt32Array &ai,
+                 const PackedVector3Array &b,const PackedInt32Array &bi) {
+    if((key.z!=16 && key.z!=32) || ai.size()%3 || bi.size()%3)return 15;
+    int mask=0;
+    for(int side=0;side<4;++side){
+        const int axis=side<2?0:2;
+        const float limit=(axis==0?key.x:key.y)+(side%2?key.z-2:2);
+        auto next=[&](const PackedVector3Array &points,const PackedInt32Array &indices,
+                      int &cursor,Vector3 (&triangle)[3]){
+            while(cursor<indices.size()){
+                bool near=false;
+                for(int j=0;j<3;++j){
+                    const int i=indices[cursor++];
+                    if(i<0 || i>=points.size())return -1;
+                    triangle[j]=points[i];
+                    near|=side%2?triangle[j][axis]>=limit:triangle[j][axis]<=limit;
+                }
+                if(near)return 1;
+            }
+            return 0;
+        };
+        int old_cursor=0,new_cursor=0;
+        for(;;){
+            Vector3 old_face[3],new_face[3];
+            const int old_status=next(a,ai,old_cursor,old_face);
+            const int new_status=next(b,bi,new_cursor,new_face);
+            if(old_status==0 && new_status==0)break;
+            if(old_status!=1 || new_status!=1 || old_face[0]!=new_face[0] ||
+               old_face[1]!=new_face[1] || old_face[2]!=new_face[2]){
+                mask|=1<<side;break;
+            }
+        }
+    }
+    return mask;
+}
 }
 void NativeTerrainCollision::_bind_methods() {
+    ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("changed_rims","key","old_points","old_indices","points","indices"),&changed_rims);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("merge_planar_faces","faces"),&merge_planar_faces);
     ClassDB::bind_method(D_METHOD("prepare","faces","triangles_per_piece"), &NativeTerrainCollision::prepare);
 }

@@ -498,8 +498,8 @@ func _stage_render_owner(update:Dictionary)->void:
 
 func _publish_meshes() -> void:
  last_publication_work.clear()
- if _mesh_task>=0:
-  if not WorkerThreadPool.is_task_completed(_mesh_task):return
+ var prepared_only:=_mesh_task>=0 and not WorkerThreadPool.is_task_completed(_mesh_task)
+ if _mesh_task>=0 and not prepared_only:
   WorkerThreadPool.wait_for_task_completion(_mesh_task);_mesh_task=-1;_mesh_job=null
  # Build/upload within the existing soft budget; only a complete immutable
  # batch becomes visible. Flow may advance between calls without mixed edges.
@@ -510,7 +510,7 @@ func _publish_meshes() -> void:
  if budget_us<=0:return
  for publication in packets:
   var packet_started:=Time.get_ticks_usec()
-  var update:Dictionary=water.next_mesh_batch(true,true)
+  var update:Dictionary=water.next_mesh_batch(true,true,prepared_only)
   last_publication_work.native_packet=int(last_publication_work.get("native_packet",0))+Time.get_ticks_usec()-packet_started
   if update.is_empty():break
   if update.has("failure"):

@@ -302,7 +302,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);
     ClassDB::bind_method(D_METHOD("raycast_surface","from","to"),&NativeRegionalWater::raycast_surface);
     ClassDB::bind_method(D_METHOD("commit_mesh_batch","id","retiring","revealing"),&NativeRegionalWater::commit_mesh_batch,DEFVAL(Array()),DEFVAL(Array()));
-    ClassDB::bind_method(D_METHOD("next_mesh_batch","background","indexed_only"),&NativeRegionalWater::next_mesh_batch,DEFVAL(false),DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("next_mesh_batch","background","indexed_only","prepared_only"),&NativeRegionalWater::next_mesh_batch,DEFVAL(false),DEFVAL(false),DEFVAL(false));
     ClassDB::bind_method(D_METHOD("next_mesh","include_contacts"),&NativeRegionalWater::next_mesh,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("total_water_ml"),&NativeRegionalWater::total_water_ml);
@@ -1526,8 +1526,9 @@ int64_t NativeRegionalWater::interrupt_relaxation(){
     }
     return delta;
 }
-Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_only){
+Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_only,bool prepared_only){
     Dictionary result;publication_enabled=true;
+    if(prepared_only && (!batch_active || pending_mesh_job.is_null() || !indexed_only))return result;
     if(surface_budget_failed){result["batch"]=int64_t(batch_id);result["complete"]=false;result["failure"]="Water boundary preparation budget exceeded; last published water retained";return result;}
     if(publish_pending){result["batch"]=int64_t(batch_id);result["complete"]=true;return result;}
     if(!batch_active){
@@ -1536,8 +1537,24 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
         // together. Distant pools must not wait for one global mesh batch.
         for(auto it=urgent_meshes.begin();it!=urgent_meshes.end();)if(!mesh_set.count(*it))it=urgent_meshes.erase(it);else ++it;
         batch_urgent=!urgent_meshes.empty();
-        Key seed=batch_urgent?*urgent_meshes.begin():meshes.front();mesh_set.erase(seed);urgent_meshes.erase(seed);batch_owners.push_back(seed);
+        auto dry_before_and_after=[&](Key k){
+            if(published_surfaces.count(k)||!dry_surface_owner(k,false))return false;
+            auto old=published_occupancy.find(k);
+            if(old==published_occupancy.end())return true;
+            const Region &prior=old->second;
+            return std::none_of(prior.water.begin(),prior.water.end(),[](uint64_t ml){return ml!=0;});
+        };
+        Key seed=batch_urgent?*urgent_meshes.begin():meshes.front();
+        bool has_surface=false;
+        if(batch_urgent){
+            auto wet=std::find_if(urgent_meshes.begin(),urgent_meshes.end(),[&](Key k){return !dry_before_and_after(k);});
+            if(wet!=urgent_meshes.end()){seed=*wet;has_surface=true;}
+        }
+        mesh_set.erase(seed);urgent_meshes.erase(seed);batch_owners.push_back(seed);
         for(size_t i=0;i<batch_owners.size();++i){
+            // Include a dry neighbour's occupancy in this revision. Its empty
+            // surface cannot connect this mesh to a second pool across it.
+            if(has_surface && dry_before_and_after(batch_owners[i]))continue;
             Vector3i p=position(batch_owners[i]);
             for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){
                 Vector3i n=p+Vector3i(x,y,z);
@@ -1570,16 +1587,28 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
     for(int attempt=0;attempt<8&&(!batch_queue.empty()||pending_mesh_job.is_valid());++attempt){
         Key k=0;SurfaceMesh mesh;
         if(pending_mesh_job.is_valid()){
-            if(!pending_mesh_job->is_ready()){result["pending"]=true;return result;}
-            k=pending_mesh_job->owners[pending_mesh_job->consumed];
-            mesh=std::move(pending_mesh_job->results[pending_mesh_job->consumed++]);
+            if(prepared_only){
+                auto &job=*pending_mesh_job.ptr();
+                std::lock_guard<std::mutex> lock(job.delivery_mutex);
+                auto item=job.deliverable.find(job.consumed);
+                // Keep one completed successor. Only the joined job knows the
+                // final prefix that fits its reservation and can release it.
+                if(item==job.deliverable.end() || !job.deliverable.count(job.consumed+1)){
+                    result["pending"]=true;return result;
+                }
+                k=job.owners[job.consumed++];mesh=std::move(item->second);job.deliverable.erase(item);
+            }else{
+                if(!pending_mesh_job->is_ready()){result["pending"]=true;return result;}
+                k=pending_mesh_job->owners[pending_mesh_job->consumed];
+                mesh=std::move(pending_mesh_job->results[pending_mesh_job->consumed++]);
+            }
             // Callers can request the expanded diagnostic stream even after dispatch.
             if(mesh.valid&&!indexed_only&&pending_mesh_job->indexed_only&&!mesh.render_indices.is_empty()){
                 mesh=SurfaceMesh{};
                 mesh=build_surface(k,true);
             }
-            mesh_worker_us=pending_mesh_job->elapsed_us;max_mesh_worker_us=std::max(max_mesh_worker_us,mesh_worker_us);
-            if(pending_mesh_job->consumed==pending_mesh_job->results.size()){
+            if(!prepared_only){mesh_worker_us=pending_mesh_job->elapsed_us;max_mesh_worker_us=std::max(max_mesh_worker_us,mesh_worker_us);}
+            if(!prepared_only && pending_mesh_job->consumed==pending_mesh_job->results.size()){
                 // A dense group can fill its output allowance before all owners.
                 // Resume the untouched suffix instead of failing the whole lake.
                 batch_queue.insert(batch_queue.begin(),pending_mesh_job->owners.begin()+pending_mesh_job->consumed,pending_mesh_job->owners.end());
@@ -2402,7 +2431,10 @@ void NativeWaterMeshJob::prepare(){
             while(prior<=g.limit&&bytes<=g.limit-prior){
                 if(g.retained.compare_exchange_weak(prior,prior+bytes)){admitted=true;break;}
             }
-            if(admitted)job.results[index]=std::move(surface);
+            if(admitted){
+                std::lock_guard<std::mutex> lock(job.delivery_mutex);
+                job.deliverable.emplace(index,std::move(surface));
+            }
             else{
                 size_t first=g.first_overflow.load();while(index<first&&!g.first_overflow.compare_exchange_weak(first,index)){}
                 if(index==0){job.results[0].valid=false;job.results[0].faces["failure"]="Water mesh owner exceeds reserved output capacity";}
@@ -2413,6 +2445,11 @@ void NativeWaterMeshJob::prepare(){
         auto id=pool->add_native_group_task(task,&group,lanes,lanes,false,"Water boundary owners");
         if(id>=0)pool->wait_for_group_task_completion(id);
         else task(&group,0);
+        {
+            std::lock_guard<std::mutex> lock(delivery_mutex);
+            for(auto &[index,surface]:deliverable)results[index]=std::move(surface);
+            deliverable.clear();
+        }
         if(group.first_overflow.load()==0&&!cancelled.load()){
             // Faster later owners may consume the group allowance before owner
             // zero finishes. Retry that owner alone under the original budget;

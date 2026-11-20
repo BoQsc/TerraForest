@@ -16,6 +16,11 @@ Shoreline latency work resumed with a two-frame acceptance run covering the
 64 m cut and both shoreline blasts. Keep all three failing cases in the
 release ledger alongside the ordinary exploration and trader baseline.
 
+Packaged build `915301ac991d` confirmed that early publication of ready tiles
+still leaves the cut center waiting 15 drawn frames. The first matching water
+surface and lowered floor appeared after 10 frames at sea and 19 at the lake.
+See the [target measurements and remaining dependencies](WORLD_FOUNDATION_STATUS.md#packaged-edit-at-the-target-2026-11-20).
+
 The packaged 300/304 ms lake result for the reverted interior-face shortcut
 keeps this basin milestone open. Qualify the first resident inland cut with
 a known unchanged outlet, conserved basin quantity and matching water

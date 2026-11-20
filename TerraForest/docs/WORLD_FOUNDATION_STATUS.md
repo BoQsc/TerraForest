@@ -1,3 +1,36 @@
+## Packaged edit at the target (2026-11-20)
+
+Cedar Vale, isolated 1080p Windows game, RTX 4050 Laptop, pack SHA-256
+`915301ac991df83acb03d1b0aba96347ddce8a7935622da014f9d46981ef22a8`.
+Terrain installs eligible fine tiles and their colliders as soon as changed
+edges agree. The water worker makes completed indexed surfaces available
+during a group build. The observer checks the edit location at draw time.
+
+| Workload | First matching draw | Frame interval in edit window |
+|---|---|---|
+| 4 m brush | 1 frame, 23.25 ms from input | worst 27.94 ms |
+| 64 m cut | 15 frames, 241.32 ms from input | worst 26.71 ms |
+| Sea barrel | 10 frames, 193.45 ms from terrain admission | p99 121.91 ms |
+| Lake barrel | 19 frames, 315.47 ms from terrain admission | p99 57.22 ms |
+
+Terrain run `20261120T201439489420Z` published five tiles before the full
+64 m batch. The center remained coupled to its neighbours. Field mutation took
+32.91 ms, and 36 meshes took 127.58 ms. The target collider matched the final
+floor at its first changed draw. All 3,750 final ray results matched the prior run.
+The previous packaged cut took 244.27 ms. This single comparison establishes
+no material gain at the target.
+
+Blast run `20261120T201617032826Z` passed all 81 crater samples per shore
+and all 23 sea and 26 lake contact probes at first publication. The committed
+lake retained its water quantity. Matched camera pairs show the crater holding
+water at each shore. Neither shoreline met the two-frame deadline. Lake mining
+also missed, and the first lake water publication missed 250 ms. The player
+save hash was unchanged. Open work is to obtain render geometry, collision and
+water for the edited contact patch directly from the resident revision within
+two frames, including when that patch cuts a tile edge. Measure field mutation
+separately because it already consumes nearly the full 33.33 ms allowance.
+Retain the same probes and cameras when qualifying a replacement.
+
 ## Two-frame local edit qualification (2026-11-20)
 
 Source game, Cedar Vale, isolated Windows rendering, 1920×1080, RTX 4050

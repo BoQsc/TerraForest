@@ -1,5 +1,13 @@
 # Continuous volumetric water replacement
 
+**Packaged shoreline latency remains open.** In Cedar Vale run
+`20261120T201617032826Z`, the first drawn crater floor with matching water
+appeared 193.45 ms after terrain admission at sea and 315.47 ms at the lake.
+Each shore passed its contact probes. The run directory contains matched
+`player_shore` and `player_lake` images before and after the blast from each
+angle, a submerged view per shore and the per-frame JSON report.
+[Packaged cut and shoreline timings](../../docs/WORLD_FOUNDATION_STATUS.md#packaged-edit-at-the-target-2026-11-20)
+
 **Shoreline latency is open.** The November 20 source-game route
 `20261120T193306939954Z` overlaps occupancy sampling with terrain mesh
 staging and starts settlement when the matching colliders and surfaces are

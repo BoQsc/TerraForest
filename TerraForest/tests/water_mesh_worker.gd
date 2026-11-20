@@ -26,22 +26,29 @@ func grouped_fixture(count:int=9,edited:bool=false):
    var p:=Vector3((10+n)*4+1.75,41.75,41.75)
    if water.brush(p,0,-1000)!=1000:return null
  return water
-func check_grouped_owners(dispatch_indexed:=false,edited:=false)->void:
+func check_grouped_owners(dispatch_indexed:=false,edited:=false,stream_indexed:=false)->void:
  var count:=70 if edited else 9
  var reference=grouped_fixture(count,edited);var expected:Dictionary={}
  if reference==null:check(false,"Grouped mesh fixture accepts all edits");return
  for n in 100:
-  var packet:Dictionary=reference.next_mesh()
+  var packet:Dictionary=reference.next_mesh_batch(false,true) if stream_indexed else reference.next_mesh()
   if packet.is_empty():break
-  expected[packet.coordinate]=packet.arrays
+  if packet.has("coordinate"):expected[packet.coordinate]=packet.arrays
+  if stream_indexed and packet.complete:reference.commit_mesh_batch(packet.batch)
  var water=grouped_fixture(count,edited);var actual:Dictionary={};var jobs:=0;var committed:=false
  for n in 100:
-  var packet:Dictionary=water.next_mesh_batch(true,dispatch_indexed and jobs==0)
+  var packet:Dictionary=water.next_mesh_batch(true,stream_indexed or (dispatch_indexed and jobs==0))
   if packet.is_empty():break
   if packet.has("job"):
    jobs+=1
    var task:=WorkerThreadPool.add_task(packet.job.prepare,false,"Parallel owner regression")
-   while not WorkerThreadPool.is_task_completed(task):await process_frame
+   while not WorkerThreadPool.is_task_completed(task):
+    if stream_indexed:
+     var partial:Dictionary=water.next_mesh_batch(true,true,true)
+     if partial.has("coordinate"):
+      check(not actual.has(partial.coordinate) and not partial.complete,"An early owner appears once before commit")
+      actual[partial.coordinate]=partial.arrays
+    await process_frame
    WorkerThreadPool.wait_for_task_completion(task);continue
   if packet.has("coordinate"):actual[packet.coordinate]=packet.arrays
   if packet.complete:committed=water.commit_mesh_batch(packet.batch);break
@@ -71,6 +78,7 @@ func run_worker_checks() -> void:
  await check_grouped_owners()
  await check_grouped_owners(true)
  await check_grouped_owners(false,true)
+ await check_grouped_owners(true,true,true)
  var reference=publication_fixture();var expected:Dictionary={}
  for n in 100:
   var packet:Dictionary=reference.next_mesh()

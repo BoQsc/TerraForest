@@ -115,6 +115,7 @@ var staging: Array[Dictionary] = []
 var staging_versions: Dictionary = {}
 var staged_batch: Dictionary = {}
 signal edit_geometry_installed(ticket:int)
+signal edit_region_installed(ticket:int,keys:Array)
 var batch_remaining: int = 0
 var pending_edit: bool = false
 var edit_ticket: int = 0
@@ -515,7 +516,12 @@ func _receive(result: Dictionary) -> void:
 			if batch_remaining==0 and edit_worker_done: _commit_batch()
 			return
 		result["kind"] = "batch"
-		staging.push_front(result)
+		# Keep interactive tiles ahead of background work in worker priority
+		# order. Later arrivals must not push the aimed-at centre to the back.
+		var insert_at:=0
+		while insert_at<staging.size() and staging[insert_at].get("kind","")=="batch":
+			insert_at+=1
+		staging.insert(insert_at,result)
 	elif kind == "edit_done":
 		if not pending_edit or int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
 			return
@@ -592,6 +598,11 @@ func _receive(result: Dictionary) -> void:
 			_commit_batch()
 
 func _fail(text: String) -> void:
+	for key:Vector3i in staged_batch:
+		if staged_batch[key].get("local_active",false):
+			_set_active(staged_batch[key],false)
+			_set_active(tiles[key],true)
+			staged_batch[key].erase("local_active")
 	_edit_support_snapshots.clear();_edit_support_result.clear()
 	latest_error = text
 	world_ready = false
@@ -803,6 +814,7 @@ func _drain_staging() -> void:
 						continue
 					staged_batch[key] = entry
 					batch_remaining -= 1
+					if batch_remaining>0:_publish_ready_region(key)
 				else:
 					_install(key, entry)
 					if str(data.get("kind", "")) == "relight":
@@ -945,6 +957,48 @@ func _install(key: Vector3i, entry: Dictionary) -> void:
 	cache_bytes += int(entry["bytes"])
 	_set_active(entry, visible_cut.has(key))
 	if activation_keys.has(key): schedule_timer=0.0
+
+func _publish_ready_region(seed:Vector3i)->void:
+	# While an edit is pending the visible LOD cut is fixed. Whole fine tiles
+	# use their exact rendered triangles for collision. Keep old entries alive
+	# until the transaction finishes so a worker failure can restore them.
+	var group:Array[Vector3i]=[seed]
+	var visited:Dictionary={seed:true}
+	var at:=0
+	while at<group.size():
+		var key:=group[at]
+		at+=1
+		var entry:Dictionary=staged_batch.get(key,{})
+		if entry.get("local_active",false):continue
+		var old:Dictionary=tiles.get(key,{})
+		if not old.get("active",false) or not old.has("arrays") or not entry.has("arrays") or key.z>32 or old.step!=1 or entry.step!=1:return
+		if not entry.has("rims"):
+			entry.rims=backend.collision_recipes.changed_rims(key,old.arrays[Mesh.ARRAY_VERTEX],old.arrays[Mesh.ARRAY_INDEX],entry.arrays[Mesh.ARRAY_VERTEX],entry.arrays[Mesh.ARRAY_INDEX])
+		for dz in range(-1,2):
+			for dx in range(-1,2):
+				if dx==0 and dz==0:continue
+				var required:=0
+				if dx<0:required|=1
+				if dx>0:required|=2
+				if dz<0:required|=4
+				if dz>0:required|=8
+				if (int(entry.rims)&required)!=required:continue
+				var neighbor:=key+Vector3i(dx*key.z,dz*key.z,0)
+				if visited.has(neighbor):continue
+				if not tiles.has(neighbor) or not visible_cut.has(neighbor):return
+				if not tiles[neighbor].dirty:continue
+				if not staged_batch.has(neighbor):return
+				visited[neighbor]=true
+				group.append(neighbor)
+	var installed:Array[Vector3i]=[]
+	for key in group:
+		var entry:Dictionary=staged_batch[key]
+		if entry.get("local_active",false):continue
+		_set_active(tiles[key],false)
+		_set_active(entry,true)
+		entry.local_active=true
+		installed.append(key)
+	if not installed.is_empty():edit_region_installed.emit(edit_ticket,installed)
 
 func _install_edit_geometry()->void:
 	# Change every adjacent surface and its collider in the same main-thread
@@ -1354,7 +1408,19 @@ func _invalidate() -> Array[Dictionary]:
 	for index in range(mini(4, refinement.size())):
 		affected.push_back(refinement[index])
 		last_density_tiles += 1
-	affected.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _distance(a["key"]) < _distance(b["key"]))
+	# Build the region under a single brush first. The camera may be across
+	# the lake, particularly when authoring from the third-person view.
+	if edit_geometry_bounds.size()==1:
+		var center:=edit_geometry_bounds[0].get_center()
+		for item in affected:
+			var key:Vector3i=item.key
+			var offset:=Vector2(key.x+key.z*0.5-center.x,key.y+key.z*0.5-center.z)
+			item.brush_distance=offset.length_squared()
+		affected.sort_custom(func(a:Dictionary,b:Dictionary)->bool:
+			if a.brush_distance==b.brush_distance:return _distance(a.key)<_distance(b.key)
+			return a.brush_distance<b.brush_distance)
+	else:
+		affected.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _distance(a["key"]) < _distance(b["key"]))
 	return affected
 
 func _queue_lighting_refresh() -> void:
