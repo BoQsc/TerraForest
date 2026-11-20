@@ -549,6 +549,21 @@ The trial was removed. The next collision design must reduce the physics
 geometry that changes or the cost of registering that geometry while
 preserving the exact edited surface and collision handoff.
 
+Two packaged replays (`20261120T183654706820Z`, `20261120T183814686640Z`)
+counted the installed collision faces of the replaced mesh owners, preserving
+vertex coordinates, winding and triangle multiplicity. The small sphere
+retained 1,126 of 1,288 output triangles. The 64 m box retained 11,509 of
+56,610. Grouping faces by 4 m centroid cells within each owner would leave
+10,430 output triangles in wholly unchanged cells. Six of 73 output shape
+resources were already shared with the preceding surface. Persistent spatial
+ownership alone therefore covers only a minority of this large cut.
+Of the 45,101 new triangle occurrences, 41,598 lay exactly on an axis-aligned
+plane. Test exact coplanar simplification of the collision surface against
+this workload, preserving holes, seams, winding and Jolt contact. Measure
+worker preparation, physics registration and action-to-publication together.
+The sphere added no axis-aligned faces. Replay both with
+`--authoring-brush --authoring-dependencies --authoring-collision-reuse`.
+
 The preview is centred at the position used by the terrain command. Picking follows the
 active viewport camera in first and third person. Preview meshes are reused
 across frames. The primary player views and normal inventory actions remain

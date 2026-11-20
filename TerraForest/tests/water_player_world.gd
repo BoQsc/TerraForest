@@ -784,7 +784,7 @@ func check_authoring_brush()->void:
   if i==2 or failures>0:continue
   var revision:int=game.terrain.published_revision
   var ticket:int=game.terrain.edit_ticket
-  var audit:=i==1 and "--authoring-dependencies" in OS.get_cmdline_user_args()
+  var audit:="--authoring-dependencies" in OS.get_cmdline_user_args() and (i==1 or "--authoring-collision-reuse" in OS.get_cmdline_user_args())
   var owners_before:=brush_mesh_owners(view,center,game.radius) if audit else {}
   var stamps_before:Dictionary=game.terrain.stamps.duplicate() if audit else {}
   if audit:
@@ -859,12 +859,20 @@ func brush_mesh_owners(view:Camera3D,center:Vector3,radius:float)->Dictionary:
       in_view=false
       break
    records[brick]={"node":node.get_instance_id(),"arrays":entry.get("arrays",[]),"in_view":in_view}
+   if "--authoring-collision-reuse" in OS.get_cmdline_user_args():
+    var shapes:Array[ConcavePolygonShape3D]=[]
+    var body:StaticBody3D=entry.get("body")
+    if is_instance_valid(body):
+     for child in body.get_children():
+      if child is CollisionShape3D and child.shape is ConcavePolygonShape3D:shapes.append(child.shape)
+    records[brick].shapes=shapes
   owners[key]=records
  return owners
 
 func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:Dictionary,old_stamps:Dictionary)->void:
  var after:=brush_mesh_owners(view,center,radius)
  var counts:={"replaced":0,"identical":0,"attributes_only":0,"changed_in_frustum":0,"changed_outside":0,"retained":0,"tiles_with_replacements":0}
+ var collision:={"old_triangles":0,"new_triangles":0,"unchanged_triangles":0,"changed_axis_aligned":0,"old_shapes":0,"new_shapes":0,"shared_shapes":0,"stable_cell_triangles":{}}
  var keys:=before.keys()
  for key in after:
   if not before.has(key):keys.append(key)
@@ -883,6 +891,8 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
     counts.retained+=1
     continue
    replacements+=1
+   if a.has("shapes") or b.has("shapes"):
+    compare_brush_collision(a.get("shapes",[]),b.get("shapes",[]),collision)
    var old_arrays:Array=a.get("arrays",[])
    var new_arrays:Array=b.get("arrays",[])
    if old_arrays==new_arrays:
@@ -895,8 +905,64 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
    else:counts.changed_outside+=1
   counts.replaced+=replacements
   if replacements>0:counts.tiles_with_replacements+=1
- check(counts.changed_in_frustum>0,"Large brush changes installed mesh arrays inside the camera frustum")
+ check(counts.changed_in_frustum>0,"Brush changes installed mesh arrays inside the camera frustum")
  print("AUTHORING_DEPENDENCIES ",JSON.stringify(counts))
+ if "--authoring-collision-reuse" in OS.get_cmdline_user_args():
+  check(collision.old_triangles>0 and collision.new_triangles>0,"Compared installed physics triangles across publication")
+  collision.radius=radius
+  print("AUTHORING_COLLISION_REUSE ",JSON.stringify(collision))
+
+# Compare actual physics faces after timing the edit. A cyclic vertex rotation
+# preserves winding. Count duplicate triangles independently within each owner.
+func brush_collision_faces(shapes:Array)->Dictionary:
+ var triangles:={}
+ for shape:ConcavePolygonShape3D in shapes:
+  var faces:=shape.get_faces()
+  for i in range(0,faces.size(),3):
+   var first:=0
+   for j in range(1,3):
+    if faces[i+j]<faces[i+first]:first=j
+   var ordered:=PackedVector3Array([faces[i+first],faces[i+(first+1)%3],faces[i+(first+2)%3]])
+   var key:=ordered.to_byte_array().hex_encode()
+   if triangles.has(key):triangles[key].count+=1
+   else:
+    var planar:=false
+    for axis in 3:
+     if ordered[0][axis]==ordered[1][axis] and ordered[0][axis]==ordered[2][axis]:planar=true
+    triangles[key]={"count":1,"center":(ordered[0]+ordered[1]+ordered[2])/3.0,"axis_aligned":planar}
+ return triangles
+
+func compare_brush_collision(old_shapes:Array,new_shapes:Array,total:Dictionary)->void:
+ total.old_shapes+=old_shapes.size()
+ total.new_shapes+=new_shapes.size()
+ for shape in new_shapes:
+  if old_shapes.has(shape):total.shared_shapes+=1
+ var old:=brush_collision_faces(old_shapes)
+ var current:=brush_collision_faces(new_shapes)
+ var keys:=old.keys()
+ for key in current:
+  if not old.has(key):keys.append(key)
+ var bins:={4:{},8:{},16:{}}
+ for key in keys:
+  var a:int=old[key].count if old.has(key) else 0
+  var b:int=current[key].count if current.has(key) else 0
+  total.old_triangles+=a
+  total.new_triangles+=b
+  total.unchanged_triangles+=mini(a,b)
+  var record:Dictionary=current.get(key,old.get(key))
+  if record.axis_aligned:total.changed_axis_aligned+=maxi(0,b-a)
+  for width:int in bins:
+   var cell:=Vector3i((Vector3(record.center)/width).floor())
+   if not bins[width].has(cell):bins[width][cell]={"changed":false,"count":0}
+   var bin:Dictionary=bins[width][cell]
+   bin.changed=bin.changed or a!=b
+   bin.count+=b
+ for width:int in bins:
+  var stable:=0
+  for bin:Dictionary in bins[width].values():
+   if not bin.changed:stable+=int(bin.count)
+  total.stable_cell_triangles[width]=total.stable_cell_triangles.get(width,0)+stable
+
 func brush_button(pressed:bool)->void:
  var event:=InputEventMouseButton.new()
  event.button_index=MOUSE_BUTTON_LEFT
