@@ -9,6 +9,7 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <set>
 namespace terraforest {
 using namespace godot;
@@ -156,11 +157,35 @@ void NativeBoulderFracture::detach_tier(int64_t id,int tier){auto &rock=rocks.at
     if(tail!=id){auto &moved=rocks.at(tail);moved.slots[tier]=slot;group.instances->set_instance_transform(slot,moved.pose);group.instances->set_instance_custom_data(slot,custom(moved));}
     group.dirty=true;
 }
-void NativeBoulderFracture::select_tiers(int64_t id){auto &rock=rocks.at(id);
+double NativeBoulderFracture::select_tiers(int64_t id){auto &rock=rocks.at(id);
     const float scale=std::max({rock.pose.basis.get_column(0).length(),rock.pose.basis.get_column(1).length(),rock.pose.basis.get_column(2).length()})/12.f;
-    const float distance=view_eye.distance_to(rock.pose.origin)/std::max(.001f,scale*projection);
+    const float factor=std::max(.001f,scale*projection);
+    const float metres=view_eye.distance_to(rock.pose.origin);
+    const float distance=metres/factor;
     const bool selected[2]={!horizon||distance<104.f,horizon&&distance>=72.f};
     for(int tier=0;tier<2;++tier){if(selected[tier]&&rock.slots[tier]<0)attach_tier(id,tier);else if(!selected[tier])detach_tier(id,tier);}
+    return std::min(std::abs(metres-104.f*factor), std::abs(metres-72.f*factor));
+}
+void NativeBoulderFracture::update_view_tiers(bool projection_changed){
+    if(tier_layout_dirty){
+        tier_groups.clear();
+        for(const auto &entry:rocks){
+            if(tier_groups.empty() || tier_groups.back().ids.size()==32)tier_groups.emplace_back();
+            tier_groups.back().ids.push_back(entry.first);
+        }
+        tier_layout_dirty=false;
+        projection_changed=true;
+    }
+    for(auto &group:tier_groups){
+        if(!projection_changed && group.eye.distance_to(view_eye)<group.clearance)continue;
+        group.eye=view_eye;
+        double margin=std::numeric_limits<double>::infinity();
+        for(auto id:group.ids)margin=std::min(margin,select_tiers(id));
+        tier_checks+=int(group.ids.size());
+        // Round conservatively at either transition. Both mesh and shader
+        // still use the original 72/104 thresholds at the actual camera.
+        group.clearance=std::max(0.,margin-0.01);
+    }
 }
 void NativeBoulderFracture::attach(int64_t id){select_tiers(id);}
 void NativeBoulderFracture::detach(int64_t id){detach_tier(id,0);detach_tier(id,1);}
@@ -175,14 +200,14 @@ bool NativeBoulderFracture::upsert_rows(const PackedInt64Array &ids,const Packed
     if(rocks.size()+added>size_t(capacity))return false;
     for(int i=0;i<ids.size();++i){auto id=ids[i];const float *p=values.ptr()+i*12;Transform3D t(Basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]),Vector3(p[3],p[7],p[11]));int stage=damage_stage(id);
         auto at=rocks.find(id);if(at!=rocks.end()&&at->second.pose==t&&at->second.stage==stage)continue;
-        if(at!=rocks.end())detach(id);Rock rock;rock.pose=t;rock.stage=stage;rock.began=clock_seconds()-1.;rocks[id]=rock;attach(id);}
+        if(at!=rocks.end())detach(id);Rock rock;rock.pose=t;rock.stage=stage;rock.began=clock_seconds()-1.;rocks[id]=rock;finishing.erase(id);tier_layout_dirty=true;attach(id);}
     flush();return true;
 }
 bool NativeBoulderFracture::refresh_damage(const PackedInt64Array &ids){
     if(ids.size()>65536)return false;
     for(auto identity:ids){
         auto found=rocks.find(identity);if(found==rocks.end())continue;
-        detach(identity);auto &rock=found->second;rock.stage=damage_stage(identity);rock.began=clock_seconds()-1.;rock.tap=false;attach(identity);
+        finishing.erase(identity);detach(identity);auto &rock=found->second;rock.stage=damage_stage(identity);rock.began=clock_seconds()-1.;rock.tap=false;attach(identity);
     }
     flush();return true;
 }
@@ -193,24 +218,34 @@ bool NativeBoulderFracture::sync_damage(int64_t id,Vector3 hit_from){auto at=roc
     detach(id);r.stage=stage;attach(id);flush();return true;
 }
 bool NativeBoulderFracture::finish(int64_t id){auto at=rocks.find(id);if(at==rocks.end()||at->second.stage==3)return false;
-    detach(id);auto &r=at->second;r.stage=3;r.began=clock_seconds();r.tap=false;
+    detach(id);auto &r=at->second;r.stage=3;finishing.insert(id);r.began=clock_seconds();r.tap=false;
     if(is_inside_tree()){auto ray=PhysicsRayQueryParameters3D::create(r.pose.origin+Vector3(0,2,0),r.pose.origin-Vector3(0,24,0),1);Dictionary hit=get_world_3d()->get_direct_space_state()->intersect_ray(ray);
         if(!hit.is_empty()){Vector3 n=r.pose.basis.transposed().xform(Vector3(hit["normal"]));if(std::abs(n.y)>.01)r.slope=Vector2(-n.x/n.y,-n.z/n.y);}}
     attach(id);flush();return true;
 }
-void NativeBoulderFracture::remove_rows(const PackedInt64Array &ids){for(auto id:ids){auto at=rocks.find(id);if(at!=rocks.end()&&at->second.stage!=3){detach(id);rocks.erase(at);}}flush();}
-void NativeBoulderFracture::clear(){rocks.clear();for(auto &g:groups){g.ids.clear();if(g.instances.is_valid())g.instances->set_visible_instance_count(0);}}
+void NativeBoulderFracture::remove_rows(const PackedInt64Array &ids){for(auto id:ids){auto at=rocks.find(id);if(at!=rocks.end()&&at->second.stage!=3){detach(id);rocks.erase(at);tier_layout_dirty=true;}}flush();}
+void NativeBoulderFracture::clear(){rocks.clear();finishing.clear();tier_groups.clear();tier_layout_dirty=true;for(auto &g:groups){g.ids.clear();if(g.instances.is_valid())g.instances->set_visible_instance_count(0);}}
 void NativeBoulderFracture::advance_view(Vector3 eye,double projection_scale){
     if(!std::isfinite(projection_scale)||projection_scale<.1||projection_scale>32)return;
     if(projection!=float(projection_scale)){projection=float(projection_scale);view_valid=false;}advance(eye);
 }
 void NativeBoulderFracture::advance(Vector3 eye){if(material.is_null()||!eye.is_finite())return;double now=clock_seconds();
-    const bool view_changed=!view_valid||view_eye!=eye;view_eye=eye;view_valid=true;
+    const bool projection_changed=!view_valid;
+    const bool view_changed=projection_changed||view_eye!=eye;view_eye=eye;view_valid=true;
     for(int index=0;index<group_count;++index){auto appearance=groups[index].appearance;appearance->set_shader_parameter("cover_clock",now);appearance->set_shader_parameter("cover_eye",eye);appearance->set_shader_parameter("horizon_projection",projection);}
-    for(auto it=rocks.begin();it!=rocks.end();){if(it->second.stage==3&&now-it->second.began>=2.6){auto id=it->first;++it;detach(id);rocks.erase(id);}else{if(horizon&&view_changed)select_tiers(it->first);++it;}}
+    for(auto it=finishing.begin();it!=finishing.end();){
+        const auto id=*it;
+        if(now-rocks.at(id).began<2.6){++it;continue;}
+        detach(id);
+        rocks.erase(id);
+        it=finishing.erase(it);
+        tier_layout_dirty=true;
+    }
+    tier_checks=0;
+    if(horizon && (view_changed || tier_layout_dirty))update_view_tiers(projection_changed);
     flush();
 }
 int64_t NativeBoulderFracture::stage(int64_t id)const{auto at=rocks.find(id);return at==rocks.end()?-1:at->second.stage;}
 Ref<Mesh> NativeBoulderFracture::stage_mesh(int64_t stage)const{return stage>=0&&stage<group_count?groups[stage].mesh:Ref<Mesh>();}
-Dictionary NativeBoulderFracture::statistics()const{Dictionary out;int near=0,far=0;for(int index=0;index<4;++index){near+=groups[index].ids.size();far+=groups[index+4].ids.size();}out["roots"]=int64_t(rocks.size());out["draw_groups"]=group_count;out["near"]=near;out["far"]=far;out["cached_triangles"]=cache_triangles;out["capacity"]=capacity;out["horizon"]=horizon;return out;}
+Dictionary NativeBoulderFracture::statistics()const{Dictionary out;int near=0,far=0;for(int index=0;index<4;++index){near+=groups[index].ids.size();far+=groups[index+4].ids.size();}out["roots"]=int64_t(rocks.size());out["draw_groups"]=group_count;out["near"]=near;out["far"]=far;out["cached_triangles"]=cache_triangles;out["capacity"]=capacity;out["horizon"]=horizon;out["tier_checks"]=tier_checks;return out;}
 }

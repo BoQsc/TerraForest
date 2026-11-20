@@ -7,6 +7,7 @@
 #include <godot_cpp/classes/multi_mesh_instance3d.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <map>
+#include <set>
 #include <vector>
 #include <array>
 namespace terraforest {
@@ -20,6 +21,18 @@ class NativeBoulderFracture : public godot::Node3D {
     float projection=1.0f;
     std::array<Group,8> groups;
     std::map<int64_t,Rock> rocks;
+    // Every member keeps its selected tiers until the eye travels at least
+    // the minimum distance to a transition sphere in this group.
+    struct TierGroup {
+        std::vector<int64_t> ids;
+        godot::Vector3 eye;
+        double clearance = 0;
+    };
+    std::vector<TierGroup> tier_groups;
+    bool tier_layout_dirty = true;
+    std::set<int64_t> finishing;
+    int tier_checks = 0;
+    void update_view_tiers(bool projection_changed);
     godot::Ref<godot::RefCounted> durability;
     godot::Ref<godot::ShaderMaterial> material;
     int cache_triangles=0;
@@ -27,7 +40,7 @@ class NativeBoulderFracture : public godot::Node3D {
     void attach(int64_t id);
     void attach_tier(int64_t id,int tier);
     void detach_tier(int64_t id,int tier);
-    void select_tiers(int64_t id);
+    double select_tiers(int64_t id);
     void flush();
     void bounds(int stage);
     static godot::Color custom(const Rock &rock);

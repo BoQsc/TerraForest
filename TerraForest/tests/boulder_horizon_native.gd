@@ -73,6 +73,22 @@ func run()->void:
 	check(renderer.upsert_rows(ids,encode(poses)) and renderer.statistics().roots==2048,"world-sized renderer exceeds old 512-root limit within explicit 4096 cap")
 	renderer.advance_view(Vector3(100000,0,0),1)
 	check(renderer.statistics().far==2048 and renderer.statistics().near==0,"all world roots remain represented at distance")
+	var selection_ok:=true
+	var visited:=0
+	for step in 120:
+		var eye:=Vector3(64+step*.75,0,80)
+		renderer.advance_view(eye,1)
+		var state:Dictionary=renderer.statistics()
+		var near_count:=0
+		var far_count:=0
+		for row:Transform3D in poses:
+			var distance:=eye.distance_to(row.origin)
+			if distance<104:near_count+=1
+			if distance>=72:far_count+=1
+		selection_ok=selection_ok and state.near==near_count and state.far==far_count
+		visited+=int(state.tier_checks)
+	check(selection_ok,"Walking across detail boundaries matches exhaustive selection every step")
+	check(visited<120*poses.size()/4,"Moving camera checks fewer than one quarter of all rows: "+str(visited))
 	var invalid:=encode([Transform3D(Basis.IDENTITY,Vector3(NAN,0,0))])
 	check(not renderer.upsert_rows(PackedInt64Array([9000]),invalid) and renderer.statistics().roots==2048,"invalid publication cannot mutate live roots")
 	renderer.clear();check(renderer.statistics().roots==0 and renderer.statistics().far==0,"reset removes all far and near records")
