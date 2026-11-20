@@ -12,7 +12,7 @@ func run()->void:
 		if arg.begins_with("--authority-slot="):slot=arg.trim_prefix("--authority-slot=")
 	if DisplayServer.get_name()!="headless" or not world.open(slot):
 		printerr("Headless authority could not acquire or restore its world");quit(1);return
-	print("AUTHORITY ",JSON.stringify({"ready":true,"revision":world.revision()}))
+	print("AUTHORITY ",JSON.stringify({"ready":true,"revision":world.revision(),"last_request_id":world.last_request_id()}))
 	var pending:=""
 	while true:
 		# A larger blocking read on a Windows pipe may wait for another command.
@@ -31,6 +31,12 @@ func run()->void:
 	quit()
 
 func command(args:PackedStringArray)->Dictionary:
+	var request_id:=0
+	if args.size()==8 and args[0]=="v1" and args[2]=="excavate":
+		if not args[1].is_valid_int():return {"ok":false,"reason":"Invalid request ID"}
+		request_id=int(args[1])
+		if request_id<1 or request_id>0xffffffff:return {"ok":false,"reason":"Invalid request ID"}
+		args=args.slice(2)
 	if args==PackedStringArray(["save"]):return {"ok":world.save(),"revision":world.revision()}
 	if args==PackedStringArray(["lakes"]):
 		var definitions:Dictionary=ClassDB.instantiate("NativeLakeCatalog").decode(world.catalog)
@@ -42,5 +48,5 @@ func command(args:PackedStringArray)->Dictionary:
 	if not point.is_finite():return {"ok":false,"reason":"Invalid position"}
 	if args.size()==4 and args[0]=="sample":return world.sample(point)
 	if args.size()==6 and args[0]=="excavate" and args[4].is_valid_float() and args[5].is_valid_int():
-		return world.excavate(point,float(args[4]),int(args[5]))
+		return world.excavate(point,float(args[4]),int(args[5]),request_id)
 	return {"ok":false,"reason":"Unknown command"}

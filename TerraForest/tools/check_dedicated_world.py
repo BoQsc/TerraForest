@@ -71,7 +71,7 @@ def run(engine, packaged, report):
                                            creationflags=subprocess.CREATE_NO_WINDOW)
                     assert rival.returncode and "could not acquire" in rival.stderr
                     started = time.perf_counter()
-                    owner.stdin.write("excavate 240 31 224 3 0\n")
+                    owner.stdin.write("v1 1 excavate 240 31 224 3 0\n")
                     owner.stdin.flush()
                     assert lines.get(timeout=90)["ok"]
                     report["edit_round_trip_ms"] = (time.perf_counter()-started)*1000
@@ -91,10 +91,24 @@ def run(engine, packaged, report):
                 owner.kill()
                 owner.wait(timeout=10)
         assert hashlib.sha256(archive.read_bytes()).digest()==original_digest
-        results = invoke(host, ["excavate 240 31 224 3 0", "excavate 240 31 224 3 0"]+samples()+["save","quit"], "AUTHORITY ")
-        assert results[1]["ok"] and not results[2]["ok"] and results[-1]["ok"]
-        changed = results[3:6]
-        reloaded = invoke(host, samples()+["quit"], "AUTHORITY ")[1:]
+        first = "v1 1 excavate 240 31 224 3 0"
+        invalid = ["v2 1 excavate 240 31 224 3 0", "v1 0 excavate 240 31 224 3 0",
+                   "v1 3 excavate 240 31 224 3 1", "v1 1 excavate 240 31 224 4 0",
+                   "v1 2 excavate 240 31 224 3 0", "excavate 240 31 224 3 0"]
+        results = invoke(host, [first,first]+invalid+samples()+["save","quit"], "AUTHORITY ")
+        assert results[0]["last_request_id"] == 0  # crashed unsaved receipt is gone
+        ack = {"ok":True,"version":1,"request_id":1,"changed":True,"revision":1}
+        assert results[1] == results[2] == ack and results[-1]["ok"]
+        assert all(not row["ok"] for row in results[3:3+len(invalid)])
+        changed = results[3+len(invalid):-1]
+        restarted = invoke(host, [first]+samples()+["excavate 240 31 224 4 1",first,
+                               "v1 2 excavate 240 31 224 5 2",first,"quit"], "AUTHORITY ")
+        assert restarted[0]["last_request_id"] == 1 and restarted[1] == ack
+        assert restarted[-4]["revision"] == 2 and restarted[-3] == ack
+        assert restarted[-2]["ok"] and restarted[-2]["request_id"] == 2 and not restarted[-1]["ok"]
+        reloaded = restarted[2:-4]
+        report["operator_retry"] = {"reply":ack,"rejected_commands":invalid,
+                                    "restored_reply":restarted[1],"older_id_rejected":True}
         assert hashlib.sha256(archive.with_suffix(".trw.bak").read_bytes()).digest()==original_digest
         for i,(before, after, restored) in enumerate(zip(original[1:4], changed, reloaded, strict=True)):
             assert after["revision"] == before["revision"] + 1

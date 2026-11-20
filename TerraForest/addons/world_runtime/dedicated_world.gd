@@ -10,6 +10,11 @@ var archive:RefCounted
 var catalog:PackedByteArray
 var path:String
 var healthy:=false
+# The trusted operator has one ordered request stream. Publish its last
+# committed receipt in the same archive transaction as terrain and water.
+var operator_receipt:=PackedByteArray()
+const RECEIPT_SECTION:="operator_receipt"
+const RECEIPT_SIZE:=36
 
 func open(slot:String)->bool:
 	if not slot.is_valid_identifier() or slot.length()>64:return false
@@ -27,11 +32,19 @@ func open(slot:String)->bool:
 		var sections:Dictionary=decoded.sections
 		# A host that does not own structure collision or region sidecars cannot
 		# safely edit such a save. Never rewrite it as a terrain-only archive.
-		if sections.size()!=2 or not sections.has("volumetric_water"):return false
+		if not sections.has("volumetric_water") or sections.size()!=(3 if sections.has(RECEIPT_SECTION) else 2):return false
 		var load_packet:=Codec.command(5)
 		load_packet.append_array(sections.terrain)
 		if not Codec.reply_ok(core.execute(load_packet)) or not water.restore_snapshot(sections.volumetric_water):return false
 		catalog=water.snapshot_catalog(sections.volumetric_water)
+		if sections.has(RECEIPT_SECTION):
+			var receipt:PackedByteArray=sections[RECEIPT_SECTION]
+			if receipt.size()!=RECEIPT_SIZE or receipt.decode_u32(0)!=1 or receipt.decode_u32(4)==0:return false
+			var before:=receipt.decode_u32(8)
+			var after:=receipt.decode_u32(12)
+			if after<before or after>before+1 or after>revision():return false
+			if not valid_brush(receipt_point(receipt),receipt.decode_double(28)):return false
+			operator_receipt=receipt
 	else:
 		const GENERATOR:=17
 		if not Codec.reply_ok(core.execute(Codec.command(6,[1703,GENERATOR]))):return false
@@ -52,7 +65,9 @@ func save()->bool:
 	if not Codec.reply_ok(terrain):return false
 	var liquid:PackedByteArray=water.capture_streaming_snapshot(catalog)
 	if liquid.is_empty():return false
-	var payload:PackedByteArray=archive.encode({"terrain":terrain.slice(12),"volumetric_water":liquid})
+	var sections:={"terrain":terrain.slice(12),"volumetric_water":liquid}
+	if not operator_receipt.is_empty():sections[RECEIPT_SECTION]=operator_receipt
+	var payload:PackedByteArray=archive.encode(sections)
 	return not payload.is_empty() and archive.publish(path,payload)==OK
 
 func sample(point:Vector3)->Dictionary:
@@ -63,11 +78,30 @@ func sample(point:Vector3)->Dictionary:
 
 signal edit_committed(revision:int,bounds:AABB)
 
-func excavate(point:Vector3,radius:float,expected:int)->Dictionary:
-	if not healthy or expected!=revision():return {"ok":false,"reason":"Unavailable or stale revision"}
-	if not point.is_finite() or not is_finite(radius) or radius<=0 or radius>8:return {"ok":false,"reason":"Invalid brush"}
+func last_request_id()->int:
+	return 0 if operator_receipt.is_empty() else operator_receipt.decode_u32(4)
+
+static func receipt_point(receipt:PackedByteArray)->Vector3:
+	return Vector3(receipt.decode_float(16),receipt.decode_float(20),receipt.decode_float(24))
+
+static func valid_brush(point:Vector3,radius:float)->bool:
+	if not point.is_finite() or not is_finite(radius) or radius<=0 or radius>8:return false
+	return AABB(Vector3.ZERO,Vector3(2000,256,2000)).encloses(AABB(point-Vector3.ONE*radius,Vector3.ONE*radius*2))
+
+func receipt_reply()->Dictionary:
+	return {"ok":true,"version":1,"request_id":last_request_id(),"revision":operator_receipt.decode_u32(12),"changed":operator_receipt.decode_u32(8)!=operator_receipt.decode_u32(12)}
+
+func excavate(point:Vector3,radius:float,expected:int,request_id:int=0)->Dictionary:
+	if not healthy:return {"ok":false,"reason":"World unavailable"}
+	if not valid_brush(point,radius):return {"ok":false,"reason":"Invalid brush bounds"}
+	if request_id!=0:
+		var last:=last_request_id()
+		if request_id==last:
+			if expected==operator_receipt.decode_u32(8) and point==receipt_point(operator_receipt) and radius==operator_receipt.decode_double(28):return receipt_reply()
+			return {"ok":false,"reason":"Request ID already committed with different arguments"}
+		if request_id!=last+1 or request_id>0xffffffff:return {"ok":false,"reason":"Unexpected request ID"}
+	if expected!=revision():return {"ok":false,"reason":"Stale revision"}
 	var bounds:=AABB(point-Vector3.ONE*radius,Vector3.ONE*radius*2)
-	if not AABB(Vector3.ZERO,Vector3(2000,256,2000)).encloses(bounds):return {"ok":false,"reason":"Outside world"}
 	var packet:=Codec.brush(point,point,radius,0,false,1)
 	var edit:=EditCommands.execute(core,[packet],expected)
 	if not Codec.reply_ok(edit.reply):return {"ok":false,"reason":"Terrain rejected brush"}
@@ -76,9 +110,20 @@ func excavate(point:Vector3,radius:float,expected:int)->Dictionary:
 		water.settle_after_edit(bounds)
 		healthy=_resolve_water()
 	if not healthy:return {"ok":false,"reason":"Water commit failed; reload the last saved revision"}
+	if request_id!=0:
+		operator_receipt.resize(RECEIPT_SIZE)
+		operator_receipt.encode_u32(0,1)
+		operator_receipt.encode_u32(4,request_id)
+		operator_receipt.encode_u32(8,expected)
+		operator_receipt.encode_u32(12,revision())
+		operator_receipt.encode_float(16,point.x)
+		operator_receipt.encode_float(20,point.y)
+		operator_receipt.encode_float(24,point.z)
+		operator_receipt.encode_double(28,radius)
+	var response:=receipt_reply() if request_id!=0 else sample(point)
 	if edit.changed[0]:
 		edit_committed.emit(revision(),bounds)
-	return sample(point)
+	return response
 
 func _resolve_water()->bool:
 	var deadline:=Time.get_ticks_msec()+30000

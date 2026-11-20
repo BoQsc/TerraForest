@@ -1,3 +1,30 @@
+## November 20 dedicated excavation retries
+
+The Windows host accepts a versioned excavation from its trusted operator.
+One ordered stream per slot retains a 36-byte receipt for the last committed
+request. The same ID and arguments replay the original acknowledgement.
+A conflicting brush, stale expected revision, skipped ID, superseded ID or
+unknown command version cannot mutate the world. The receipt and the terrain
+and water snapshots share one save transaction. The operator can reconnect
+after restart and read the saved sequence number. Older inland saves open
+without a receipt. See the [operator protocol](DEDICATED_AUTHORITY.md).
+
+Source-host run `20261120T134434366351Z` exercised the real pipe and
+headless gameplay comparison. A failed archive replacement followed by an
+unsaved process exit restored the previous request ID, quantities and
+terrain. Authenticated gameplay sessions, per-peer streams, remote
+admission latency and 30 Hz scheduling still require implementation and
+qualification.
+
+Installed run `20261120T134928161757Z` passed the same suite, including
+replaying request 1 after a legacy edit advanced terrain to revision 2.
+The acknowledgement still reported revision 1. Gameplay and the restarted
+host agreed on both sides of the boundary and on the outside probe.
+Total finite water was 36,032,293,119 mL. The first operator excavation
+round trip was 421.706 ms, with a sampled process peak working set of
+265,183,232 bytes. Game pack SHA-256 was
+`2d6e266bd9fe9b187cd8e685b761373f12fc47f4e612125849cf1f21839d39a2`.
+
 ## November 20 first-draw and local surface qualification
 
 The installed water worker caches column and shared-corner height samples
