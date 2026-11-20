@@ -636,6 +636,9 @@ func measure_grounded_route(filename:String="grounded_pacing.json")->void:
  var trader_retirements:=0
  var trader_outfit_ok:=true
  var leg_ms:=15000 if exploration else 5000
+ var compare_sync:=exploration and "--compare-walk-vsync" in OS.get_cmdline_user_args()
+ var prior_sync:=DisplayServer.window_get_vsync_mode()
+ var reversed_order:="--walk-vsync-off-first" in OS.get_cmdline_user_args()
  if exploration and frame_phases==null:
   frame_phases=FramePhases.new()
   root.add_child(frame_phases)
@@ -645,8 +648,16 @@ func measure_grounded_route(filename:String="grounded_pacing.json")->void:
   game.zombies.profiling_enabled=true
   game.terrain.stage_measured.connect(record_exploration_stage)
  for lap in 2:
+  if compare_sync:
+   var sync:=DisplayServer.VSYNC_DISABLED if (lap==0)==reversed_order else DisplayServer.VSYNC_ENABLED
+   DisplayServer.window_set_vsync_mode(sync)
+   # Exclude the presentation-mode transition from the steady walk.
+   for warmup in 30:await process_frame
+   check(DisplayServer.window_get_vsync_mode()==sync,"Requested window presentation mode is active")
   var previous:=Time.get_ticks_usec()
   var frames:Array[float]=[]
+  var draw_samples:Array[float]=[]
+  var gpu_samples:Array[float]=[]
   var longest:=0
   var streak:=0
   var counts:=[0,0,0]
@@ -671,6 +682,9 @@ func measure_grounded_route(filename:String="grounded_pacing.json")->void:
     var ms:float=(now-previous)/1000.0
     previous=now
     frames.append(ms)
+    if compare_sync and frame_phases.sample.has("draw_ms"):
+     draw_samples.append(frame_phases.sample.draw_ms)
+     gpu_samples.append(RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()))
     if ms>1000.0/60.0:over_budget+=1
     worst_frame=maxf(worst_frame,ms)
     if exploration and (slowest.size()<8 or ms>float(slowest.back().ms)):
@@ -706,8 +720,14 @@ func measure_grounded_route(filename:String="grounded_pacing.json")->void:
   rows.append({"lap":lap,"frames":frames.size(),"over_20_33_50":counts,"longest_over_20":longest,"p99_ms":percentile(frames,.99),"cap":Engine.max_fps,"start":str(start),"turnaround":str(outward),"end":str(game.player.position)})
   rows.back().over_60fps_budget=over_budget
   rows.back().max_ms=worst_frame
+  if compare_sync:
+   rows.back().vsync=DisplayServer.window_get_vsync_mode()
+   rows.back().refresh_hz=DisplayServer.screen_get_refresh_rate()
+   rows.back().draw_p99_ms=percentile(draw_samples,.99)
+   rows.back().viewport_gpu_p99_ms=percentile(gpu_samples,.99)
   rows.back().slowest=slowest
   if trader_route:rows.back().max_trader_subtree_us=worst_trader_us
+ if compare_sync:DisplayServer.window_set_vsync_mode(prior_sync)
  if trader_route:
   check(trader_arrivals>=2 and trader_retirements>0,"Player leaves and re-enters the shop residency radius")
   check(trader_outfit_ok,"Returning shopkeeper has a visible woven outfit and active animation")

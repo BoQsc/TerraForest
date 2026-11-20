@@ -1,5 +1,14 @@
 ## Active client baseline — trader traversal
 
+Two more packaged runs compared VSync on and off on the same 1080p trader
+walk with the engine cap at 60 and the display reporting 60 Hz. In
+`20261120T180006866090Z` frame interval p99 was 28.40 ms on and 26.56 ms off.
+In `20261120T180215880364Z` the reverse order gave 32.19 ms off and 26.97 ms
+on. The second lap was faster in each run. Neither mode consistently improved
+pacing. Viewport GPU p99 ranged from 8.35 to 9.91 ms. These are engine
+intervals. The external presentation probe returned no samples. The 60 FPS
+gate remains open and game defaults are unchanged.
+
 In isolated packaged run `20261120T175635542570Z`, the player walked two
 30-second out-and-back laps through Cedar Vale's trader district at 1080p
 with the 60 FPS cap. Both laps crossed the shop residency boundary and
