@@ -24,6 +24,33 @@ func settled()->bool:
 	var deadline:=Time.get_ticks_msec()+5000
 	while terrain.pending_edit and Time.get_ticks_msec()<deadline:await process_frame
 	return not terrain.pending_edit
+func brick_entry(key:Vector3i,bottoms:Array,stamp:int)->Dictionary:
+	var entry:Dictionary=terrain._begin_entry({"key":key,"stamp":stamp,"bricks":[],"brick_partial":stamp>1,"triangles":bottoms.size(),"bytes":10*bottoms.size()})
+	terrain.add_child(entry.node)
+	for bottom:int in bottoms:
+		var node:=Node3D.new()
+		var body:=StaticBody3D.new()
+		body.collision_layer=0
+		node.add_child(body);entry.node.add_child(node)
+		entry.bricks[bottom]={"node":node,"body":body,"active":false,"bytes":10,"triangles":1}
+	return entry
+
+func check_partial_publication()->void:
+	var key:=Vector3i(1984,1984,16)
+	var before_bytes:int=terrain.cache_bytes
+	terrain.visible_cut.append(key)
+	var full:=brick_entry(key,[0,32,64,96],1)
+	terrain._install(key,full)
+	var untouched:StaticBody3D=full.bricks[32].body
+	var exits:Array=[]
+	untouched.tree_exiting.connect(func():exits.append(true))
+	var replaced:StaticBody3D=full.bricks[0].body
+	var patch:=brick_entry(key,[0],2)
+	var incoming:StaticBody3D=patch.bricks[0].body
+	terrain._install(key,patch)
+	check(exits.is_empty() and untouched.collision_layer==1,"sparse publication keeps untouched collision in the scene tree")
+	check(incoming.collision_layer==1 and replaced.collision_layer==0 and terrain.tiles[key].stamp==2,"sparse publication swaps the edited collider at the committed stamp")
+	check(terrain.cache_bytes==before_bytes+40 and terrain.tiles[key].triangles==4,"sparse publication accounts for retained and replaced geometry once")
 func run()->void:
 	terrain=Terrain.new();terrain.diagnostics_pause_streaming=true;terrain.backend=QueueGate.new()
 	terrain.save_slot="recovery_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
@@ -77,6 +104,7 @@ func run()->void:
 	check(changed_fine==8,"three brush members touch eight fine tiles across the two sites")
 	check(terrain.stamps.get(nearby,0)==old_stamp+1 and terrain.stamps.has(Vector3i(704,704,16)),"overlapping brush halos advance each tile once")
 	check(not terrain.stamps.has(middle) and not terrain.modified_columns.has(Vector2i(32,32)),"untouched ground between batch members retains its mesh and column state")
+	check_partial_publication()
 	terrain.shutdown();terrain.free()
 	await process_frame
 	var backend:=Backend.new();backend.world_generator=5;backend.disk_cache.enabled=false

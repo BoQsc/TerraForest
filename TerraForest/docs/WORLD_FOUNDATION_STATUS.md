@@ -317,6 +317,14 @@ remains failed on three lake assertions and does not qualify frame pacing.
 
 ## In-game terrain authoring
 
+For a partial tile replacing fewer than half its bricks, publication keeps
+the live terrain container and swaps the changed children. Untouched
+colliders stay in the physics tree. Source run `20261120T152029118789Z`
+checked their lifetime, the replacement collision layers, stamp, triangles
+and cache bytes. The 64 m box in rendered run `20261120T152101895164Z`
+still took 21 frames (337.783 ms, including 146.035 ms of mesh construction).
+This change qualified sparse collider continuity only.
+
 A brush batch now invalidates the union of its member footprints at each
 terrain detail level. Overlapping members advance a tile stamp once. The same
 member footprints, with water's sampling halo, are used for water admission,

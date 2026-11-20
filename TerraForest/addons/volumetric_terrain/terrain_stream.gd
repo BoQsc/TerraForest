@@ -900,17 +900,42 @@ func _set_active(entry: Dictionary, active: bool, inherited_visibility: bool=fal
 func _install(key: Vector3i, entry: Dictionary) -> void:
 	if tiles.has(key):
 		var old: Dictionary = tiles[key]
+		cache_bytes -= int(old.bytes)
 		if entry.get("brick_partial",false) and old.has("bricks"):
-			for bottom: int in old.bricks.keys():
-				if entry.bricks.has(bottom): continue
-				var retained: Dictionary=old.bricks[bottom]
-				retained.node.reparent(entry.node)
-				entry.bricks[bottom]=retained
-				entry.bytes+=int(retained.bytes)
-				entry.triangles+=int(retained.triangles)
-				old.bricks.erase(bottom)
-		cache_bytes -= int(old["bytes"])
-		_destroy_entry(old)
+			# Keep the live container when only a minority of its bricks changed.
+			# Reparenting an untouched StaticBody leaves and rejoins the physics
+			# space even when the collision layer and mesh revision stay the same.
+			if entry.bricks.size()*2 < old.bricks.size():
+				for bottom: int in entry.bricks:
+					if old.bricks.has(bottom):
+						var replaced: Dictionary = old.bricks[bottom]
+						old.bytes -= int(replaced.bytes)
+						old.triangles -= int(replaced.triangles)
+						_destroy_entry(replaced)
+					var replacement: Dictionary = entry.bricks[bottom]
+					replacement.node.reparent(old.node,false)
+					old.bricks[bottom] = replacement
+					_set_active(replacement,bool(old.active),true)
+				old.bytes += int(entry.bytes)
+				old.triangles += int(entry.triangles)
+				old.stamp = entry.stamp
+				old.used = entry.used
+				old.dirty = false
+				entry.bricks.clear()
+				_destroy_entry(entry)
+				entry = old
+			else:
+				for bottom: int in old.bricks.keys():
+					if entry.bricks.has(bottom): continue
+					var retained: Dictionary=old.bricks[bottom]
+					retained.node.reparent(entry.node)
+					entry.bricks[bottom]=retained
+					entry.bytes+=int(retained.bytes)
+					entry.triangles+=int(retained.triangles)
+					old.bricks.erase(bottom)
+				_destroy_entry(old)
+		else:
+			_destroy_entry(old)
 	tiles[key] = entry
 	_cut_dirty = _cut_dirty or visible_cut.has(key)
 	cache_bytes += int(entry["bytes"])
