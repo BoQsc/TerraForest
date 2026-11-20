@@ -392,6 +392,8 @@ func finish_timing()->void:
   var target:=verify_shore_target()
   blast_metrics[timing_phase].first_target_draw=target
   check(target.matched,timing_phase+" first crater contact matches the rendered surface and lowered collider")
+  if "--two-frame-edits" in OS.get_cmdline_user_args():
+   check(target.matched and target.frames<=2 and target.ms<=33.334,timing_phase+" first matching collider and rendered water meet the two-frame deadline")
   shore_draw.clear()
  blast_metrics[timing_phase].worst_frames=timing_worst.duplicate(true)
  blast_metrics[timing_phase].stage_totals=timing_totals.duplicate()
@@ -852,6 +854,29 @@ func measure_grounded_route(filename:String="grounded_pacing.json")->void:
  game.session_menu.developer_hud.mouse_access=prior_access
  FileAccess.open(evidence.path_join(filename),FileAccess.WRITE).store_string(JSON.stringify(rows,"  "))
 
+func capture_cut_angles(center:Vector3,phase:String)->void:
+ var previous:=root.get_camera_3d()
+ var camera:=Camera3D.new()
+ root.add_child(camera)
+ var show_pointer:bool=game.pointer.visible
+ var processing:bool=game.is_processing()
+ var physics:bool=game.is_physics_processing()
+ game.set_process(false);game.set_physics_process(false);game.pointer.visible=false
+ camera.make_current()
+ var offsets:=[Vector3(-54,75,60),Vector3(59,70,-58)]
+ for i in offsets.size():
+  camera.global_position=center+offsets[i]
+  camera.look_at(center+Vector3.UP*8,Vector3.UP)
+  await RenderingServer.frame_post_draw
+  await RenderingServer.frame_post_draw
+  var picture:=root.get_texture().get_image()
+  picture.resize(1280,720,Image.INTERPOLATE_LANCZOS)
+  var path:=evidence.path_join("cut_%s_angle_%d.png"%[phase,i+1])
+  check(root.get_camera_3d()==camera and picture.save_png(path)==OK,"Retained cut angle %d %s"%[i+1,phase])
+ previous.make_current();camera.queue_free()
+ game.pointer.visible=show_pointer
+ game.set_process(processing);game.set_physics_process(physics)
+
 func check_authoring_brush()->void:
  game.player_view.entry.finish()
  var coastal:bool="--authoring-preparation" in OS.get_cmdline_user_args()
@@ -894,6 +919,8 @@ func check_authoring_brush()->void:
    var capture_path:=evidence.path_join("authoring_brush_%d.png"%i)
    check(root.get_texture().get_image().save_png(capture_path)==OK,"Rendered brush view retained")
   if i==2 or failures>0:continue
+  var cut_angles:=i==1 and "--authoring-cut-angles" in OS.get_cmdline_user_args() and DisplayServer.get_name()!="headless"
+  if cut_angles:await capture_cut_angles(center,"before")
   var revision:int=game.terrain.published_revision
   var ticket:int=game.terrain.edit_ticket
   var audit:="--authoring-dependencies" in OS.get_cmdline_user_args() and (i==1 or "--authoring-collision-reuse" in OS.get_cmdline_user_args())
@@ -912,16 +939,24 @@ func check_authoring_brush()->void:
   var sample_center:=func()->Vector3:
    var collision:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(probe)
    return collision.get("position",Vector3.INF)
-  var sample_patch:=func()->PackedVector3Array:
+  var sample_patch:=func(spacing:float=1.0)->PackedVector3Array:
    var contacts:=PackedVector3Array()
    for dz in [-1.0,0.0,1.0]:
     for dx in [-1.0,0.0,1.0]:
-     var point:=center+Vector3(dx,0,dz)
+     var point:=center+Vector3(dx,0,dz)*spacing
      var ray:=PhysicsRayQueryParameters3D.create(point+Vector3.UP*96,point-Vector3.UP*96,1)
      ray.exclude=probe.exclude
      var sample_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(ray)
      contacts.append(sample_hit.get("position",Vector3.INF))
    return contacts
+  var footprint:Dictionary={}
+  var check_footprint:=verify_draw and i==1 and "--two-frame-edits" in OS.get_cmdline_user_args()
+  var footprint_spacing:float=game.radius*.75
+  var observe_second_draw:=func()->void:
+   await RenderingServer.frame_post_draw
+   await RenderingServer.frame_post_draw
+   footprint.samples=sample_patch.call(footprint_spacing)
+  if check_footprint:footprint.before=sample_patch.call(footprint_spacing)
   var old_contact:Vector3=sample_center.call() if verify_draw else Vector3.INF
   var observe_geometry:=func(installed:int)->void:
    if installed!=ticket+1 or geometry_draw.has("installed_us"):return
@@ -955,6 +990,7 @@ func check_authoring_brush()->void:
   click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
   var started:=Time.get_ticks_usec()
   var input_frame:=Engine.get_frames_drawn()
+  if check_footprint:observe_second_draw.call()
   Input.parse_input_event(click);Input.flush_buffered_events()
   game._update_edit(1)
   var preparing:bool=not game.preparing_stroke.is_empty()
@@ -992,6 +1028,17 @@ func check_authoring_brush()->void:
    game.terrain.edit_measured.disconnect(observe_draw)
    game.terrain.edit_geometry_installed.disconnect(observe_geometry)
    game.terrain.edit_region_installed.disconnect(observe_region)
+   if check_footprint:
+    if not footprint.has("samples"):await RenderingServer.frame_post_draw
+    var final_samples:PackedVector3Array=sample_patch.call(footprint_spacing)
+    var changed:=0
+    var matched:=0
+    for index in final_samples.size():
+     if not final_samples[index].is_finite() or final_samples[index].is_equal_approx(footprint.before[index]):continue
+     changed+=1
+     if footprint.has("samples") and final_samples[index].is_equal_approx(footprint.samples[index]):matched+=1
+    print("AUTHORING_SECOND_DRAW_FOOTPRINT ",JSON.stringify({"spacing_m":footprint_spacing,"changed":changed,"matched":matched}))
+    check(changed>0 and matched==changed,"Changed collision probes across the brush footprint match the finished edit on draw two")
    check(geometry_draw.has("draw_us"),"Contact geometry has a matched post-draw receipt")
    if geometry_draw.has("draw_us"):
     var frames_to_draw:int=1+geometry_draw.frame-input_frame
@@ -1028,6 +1075,7 @@ func check_authoring_brush()->void:
   if coastal:
    for frame in 5:await physics_frame
    check(game.terrain.edit_ticket==ticket+1 and game.terrain.published_revision==revision+1 and game.preparing_stroke.is_empty(),"Released coastal brush applies exactly once")
+  if cut_angles:await capture_cut_angles(center,"after")
   # Link player latency to the native edit and the terrain publication work.
   var terrain_stages:={"worker_queue_ms":game.terrain.last_queue_ms,"field_ms":game.terrain.last_edit_ms,
    "mesh_build_ms":game.terrain.last_total_build_ms,"geometry_tiles":game.terrain.last_density_tiles,

@@ -19,10 +19,13 @@ NAMES.update(REVERSE_NAMES)
 NAMES.update(("authoring_brush_0.png","authoring_brush_1.png"))
 
 
+NAMES.update(f"cut_{phase}_angle_{angle}.png" for phase in ("before","after") for angle in (1,2))
+
+
 def candidates(root=ROOT, keep_ready=2):
     if keep_ready not in (1, 2):
         raise ValueError('Keep one or two ready runs; archived evidence remains restorable')
-    ready = {'water_barrel_world': [], 'water_player_world': [], 'authoring_brush': []}
+    ready = {'water_barrel_world': [], 'water_player_world': [], 'authoring_brush': [], 'authoring_cut_angles': []}
     for manifest in sorted((root / 'reports/checks').glob('*/run.json')):
         run = json.loads(manifest.read_text(encoding='utf-8'))
         if run.get('result', {}).get('exit_code') is None:
@@ -36,6 +39,8 @@ def candidates(root=ROOT, keep_ready=2):
             continue
         if family == 'water_player_world' and '--authoring-captures' in command and '--water-load-only' in command:
             family = 'authoring_brush'
+        if family == 'water_player_world' and '--authoring-cut-angles' in command and '--water-load-only' in command:
+            family = 'authoring_cut_angles'
         folder = confined(manifest.parent, root / 'reports/checks')
         if '--check-evidence-dir=' + str(folder) not in command:
             continue

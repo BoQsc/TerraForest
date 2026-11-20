@@ -505,7 +505,7 @@ func _receive(result: Dictionary) -> void:
 		latest_member_changes = result.get("member_changed", [])
 		_contact_accepted_ticket=edit_ticket
 		_activate_contact()
-		_record_stage("resident cut worker",float(result.get("contact_ms",0)))
+		_record_stage("resident cut snapshot and dispatch" if result.get("contact_parallel",false) else "resident cut worker",float(result.get("contact_ms",0)))
 		last_edit_ms = float(result["edit_ms"])
 		last_queue_ms = float(result["queue_ms"])
 		last_total_build_ms = 0.0

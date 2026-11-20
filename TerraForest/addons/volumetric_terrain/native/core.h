@@ -81,6 +81,10 @@ struct World {
  int seed=1703, revision=0, edits=0;u64 changed_samples=0;
  u64 storage_serial=1;
  PageAccess *page_access=nullptr; // Owner is the native binding; never serialized.
+ // A bounded reconstruction copy rejects lighting rays leaving its captured columns.
+ bool contact_snapshot=false;
+ int contact_x0=0,contact_z0=0,contact_x1=WORLD,contact_z1=WORLD;
+ mutable bool contact_outside=false;
  bool pages_pinned=false;V3 pin_lo{},pin_hi{};
  const Page *resident_page(int index)const;
  bool prepare_pages(V3 lo,V3 hi);

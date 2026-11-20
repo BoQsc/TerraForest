@@ -73,6 +73,7 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("capture_contact_core","bounds","revision","epoch"),&TerrainCore::capture_contact_core);
         godot::ClassDB::bind_method(godot::D_METHOD("execute_explosion_cohort","commands"), &TerrainCore::execute_explosion_cohort);
         godot::ClassDB::bind_method(godot::D_METHOD("configure_mesh_height_cache","enabled"), &TerrainCore::configure_mesh_height_cache);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_material_deposits","earthworks"), &TerrainCore::material_deposits);
@@ -604,6 +605,58 @@ public:
         return true;
     }
     godot::Dictionary residency_stats(){std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary d;if(residency_)d=residency_->stats(world_);else{d["active"]=false;d["catalog_pages"]=world_.pages.n;d["resident_pages"]=world_.pages.n;d["resident_limit"]=MAX_PAGES;}d["generator"]=world_.generator_id;d["seed"]=world_.seed;return d;}
+    godot::Ref<TerrainCore> capture_contact_core(godot::Rect2i bounds,int64_t revision,int64_t epoch){
+        std::lock_guard<std::mutex> lock(mutex_);
+        if(world_.contact_snapshot||revision!=world_.revision||epoch!=terrain_build_epoch(&world_)||
+           bounds.size.x<=0||bounds.size.y<=0||bounds.size.x>64||bounds.size.y>64||
+           bounds.position.x<0||bounds.position.y<0||bounds.position.x>WORLD-bounds.size.x||
+           bounds.position.y>WORLD-bounds.size.y)return {};
+        godot::Ref<TerrainCore> copy;copy.instantiate();
+        if(copy.is_null()||tr_oom)return {};
+        World &dst=copy->world_;
+        dst.contact_snapshot=true;dst.seed=world_.seed;dst.generator_id=world_.generator_id;
+        dst.revision=world_.revision;dst.surface_style=world_.surface_style;dst.cache_mesh_heights=true;
+        dst.regional_roads=world_.regional_roads;dst.site_count=world_.site_count;dst.basin_count=world_.basin_count;
+        copy_bytes(dst.sites,world_.sites,sizeof(dst.sites));
+        copy_bytes(dst.road_points,world_.road_points,sizeof(dst.road_points));
+        copy_bytes(dst.buildable_weights,world_.buildable_weights,sizeof(dst.buildable_weights));
+        copy_bytes(dst.basins,world_.basins,sizeof(dst.basins));
+        copy_bytes(dst.basin_cells,world_.basin_cells,sizeof(dst.basin_cells));
+        dst.caves.resize(world_.caves.n);if(tr_oom)return {};
+        copy_bytes(dst.caves.p,world_.caves.p,sizeof(Cave)*dst.caves.n);
+        dst.index_cave_columns();copy->control_.epoch=u32(epoch);
+        const int x0=imx(0,bounds.position.x-32),z0=imx(0,bounds.position.y-32);
+        const int x1=imn(WORLD,bounds.get_end().x+32),z1=imn(WORLD,bounds.get_end().y+32);
+        dst.contact_x0=x0;dst.contact_z0=z0;dst.contact_x1=x1;dst.contact_z1=z1;
+        for(int z=z0/16;z<=z1/16;++z)for(int x=x0/16;x<=x1/16;++x){
+            u32 mask=world_.edit_columns[x+WORLD_PAGE_COLUMNS*z];
+            dst.edit_columns[x+WORLD_PAGE_COLUMNS*z]=mask;
+            while(mask){
+                int y=__builtin_ctz(mask);mask&=mask-1;
+                u32 key=1+x+WORLD_PAGE_COLUMNS*(z+WORLD_PAGE_COLUMNS*y);
+                int id=world_.pages_by_key.get(key);
+                if(id<0||dst.pages.n>=256)return {};
+                const Page &source=world_.pages[id];
+                // A foreground copy never causes disk I/O or evicts another page.
+                if(!source.d||!source.mat)return {};
+                int at=dst.pages.push(Page{});if(tr_oom)return {};
+                Page &page=dst.pages[at];page.key=key;
+                page.d=static_cast<i16*>(tr_alloc(PAGE_SAMPLES*sizeof(i16)));
+                page.mat=static_cast<u8*>(tr_alloc(PAGE_SAMPLES));
+                if(!page.d||!page.mat)return {};
+                copy_bytes(page.d,source.d,PAGE_SAMPLES*sizeof(i16));
+                copy_bytes(page.mat,source.mat,PAGE_SAMPLES);
+                dst.pages_by_key.put(key,at);if(tr_oom)return {};
+            }
+        }
+        for(int z=z0/32;z<=z1/32;++z)for(int x=x0/32;x<=x1/32;++x){
+            const auto &column=world_.block_columns[x+64*z];
+            if(column.n>8192-dst.blocks.n)return {};
+            for(int i=0;i<column.n;++i)
+                if(!dst.set_block(column[i],world_.blocks.get(column[i]))||tr_oom)return {};
+        }
+        return copy;
+    }
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) {
         if(packet.size()<4 || packet.size()>512LL*1024*1024)return reply(0,1);
         const uint32_t command=packet.decode_u32(0);

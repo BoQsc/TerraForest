@@ -528,9 +528,9 @@ func _push(result: Dictionary) -> void:
 func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)
 
-func _prepare_contact(domain:Dictionary,command:PackedByteArray,revision:int,epoch:int)->Array[Dictionary]:
-	var parts:Array[Dictionary]=[]
-	if domain.is_empty():return parts
+func _prepare_contact(source:Object,job:Dictionary,command:PackedByteArray,revision:int)->void:
+	var domain:Dictionary=job.get("contact_domain",{})
+	if domain.is_empty():return
 	var bounds:Rect2i=domain.bounds
 	for key:Vector3i in domain["keys"]:
 		var packet:=PackedByteArray()
@@ -541,17 +541,21 @@ func _prepare_contact(domain:Dictionary,command:PackedByteArray,revision:int,epo
 		packet.encode_float(28,command.decode_float(28));packet.encode_u32(32,command.decode_u32(32))
 		packet.encode_u32(36,bounds.position.x);packet.encode_u32(40,bounds.position.y)
 		packet.encode_u32(44,bounds.end.x);packet.encode_u32(48,bounds.end.y)
-		packet.encode_u32(52,revision);packet.encode_u32(56,epoch)
-		var result:=_call(packet)
-		if not Codec.reply_ok(result):return []
+		packet.encode_u32(52,revision);packet.encode_u32(56,job.build_epoch)
+		var result:PackedByteArray=source.execute(packet)
+		if not Codec.reply_ok(result):return
 		var part:=Codec.decode_mesh(result.slice(16))
-		if part.has("error"):return []
+		if part.has("error"):return
 		var recipes:Dictionary=collision_recipes.prepare(part.faces,_collision_piece_triangles)
-		if not recipes.ok:return []
+		if not recipes.ok:return
 		part.merge({"key":key,"collision_pieces":recipes.pieces,"contact_count":domain["keys"].size(),"contact_bounds":bounds,"worker_ms":0.0})
 		part.faces=PackedVector3Array()
-		parts.append(part)
-	return parts
+		# Start hidden mesh and collider preparation while the next owner is built.
+		for item:Dictionary in job.tiles:
+			if item.key==key:
+				part.merge({"stamp":item.stamp,"kind":"edit_chunk","epoch":job.epoch,"ticket":job.ticket})
+				_push(part)
+				break
 
 func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
 	return EditCommands.execute(native,commands,revision_before)
@@ -1503,21 +1507,22 @@ func _run() -> void:
 		elif kind == "edit":
 			_apply_components(job.get("component_snapshot", {}))
 			var before_stats: PackedByteArray = _call(Codec.command(0))
+			var begin: int = Time.get_ticks_usec()
+			var commands: Array = job.get("commands", [job["command"]])
+			var contact_task:=-1
+			var domain:Dictionary=job.get("contact_domain",{})
+			if not domain.is_empty():
+				var revision:=before_stats.decode_u32(12)
+				var snapshot:Object=native.capture_contact_core(domain.bounds,revision,job.build_epoch)
+				if snapshot!=null:
+					contact_task=WorkerThreadPool.add_task(_prepare_contact.bind(snapshot,job,commands[0],revision),true,"Resident terrain cut")
+				if contact_task<0:_prepare_contact(native,job,commands[0],revision)
+			var contact_ms:=float(Time.get_ticks_usec()-begin)/1000.0
 			var support_started:=Time.get_ticks_usec()
 			var support_points:Array=job.get("support_points",[])
 			var support_before:=_edit_support_samples(support_points,before_stats.decode_u32(12))
 			var support_ms:float=(Time.get_ticks_usec()-support_started)/1000.0
-			var begin: int = Time.get_ticks_usec()
-			var commands: Array = job.get("commands", [job["command"]])
-			var contact:=_prepare_contact(job.get("contact_domain",{}),commands[0],before_stats.decode_u32(12),job.build_epoch)
-			var contact_ms:=float(Time.get_ticks_usec()-begin)/1000.0
 			begin=Time.get_ticks_usec()
-			for part in contact:
-				for item:Dictionary in job.tiles:
-					if item.key==part.key:
-						part.merge({"stamp":item.stamp,"kind":"edit_chunk","epoch":job.epoch,"ticket":job.ticket})
-						_push(part)
-						break
 			var execution:=_execute_edit_commands(commands,before_stats.decode_u32(12))
 			var reply:PackedByteArray=execution.reply
 			var member_changed:Array[bool]=execution.changed
@@ -1532,6 +1537,7 @@ func _run() -> void:
 					cache_valid=false
 			var no_change: bool = Codec.reply_ok(reply) and before_stats.decode_u32(12) == after_stats.decode_u32(12)
 			if not Codec.reply_ok(reply) or no_change:
+				if contact_task>=0:WorkerThreadPool.wait_for_task_completion(contact_task)
 				_push({"kind": "edit", "chunks": [], "reply": reply, "epoch": job["epoch"],
 					"ticket": job["ticket"], "edit_ms": edit_ms, "stats": after_stats,
 					"queue_ms": queue_ms, "no_change": no_change, "recoverable":recoverable, "member_changed": member_changed, "removed_samples":removed_samples, "worker_finished_us": Time.get_ticks_usec()})
@@ -1540,7 +1546,8 @@ func _run() -> void:
 				latest_packets.clear()
 				latest_packet_bytes = 0
 				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],
-					"count": job["tiles"].size(), "contact_ms":contact_ms, "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
+					"count": job["tiles"].size(), "contact_ms":contact_ms, "contact_parallel":contact_task>=0, "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
+				if contact_task>=0:WorkerThreadPool.wait_for_task_completion(contact_task)
 				# Stream finished patches to main-thread staging immediately. Worker
 				# builds and resource preparation OVERLAP instead of running in series.
 				var build_total: float = 0.0

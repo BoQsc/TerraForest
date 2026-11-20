@@ -1,3 +1,10 @@
+**Two-frame qualification is open.** The November 20 packaged test now
+checks the first matching collider and visible water explicitly. Earlier
+queue submission and worker-completion callbacks failed the shoreline target
+and were removed. The working tree retains independent terrain reconstruction
+for the 64 m cut. The [qualification ledger](../../docs/WORLD_FOUNDATION_STATUS.md#concurrent-resident-cut-and-shoreline-publication)
+records the packaged timings and the remaining dependencies.
+
 # Continuous volumetric water replacement
 
 **Current packaged result.** After starting water work at field acceptance,

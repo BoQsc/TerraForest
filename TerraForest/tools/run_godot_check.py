@@ -40,15 +40,21 @@ BOUNDED_CONTRACT_REPORTS = {
 }
 
 def planned_report_bytes(command):
+    if "--authoring-cut-angles" in command and "--water-load-only" in command and "--authoring-captures" not in command and any(Path(str(value)).name == "water_player_world.gd" for value in command):
+        # Four bounded 1280 x 720 RGBA images plus the normal load-only logs.
+        return 24 * 2**20
     if "--authoring-captures" in command and any(Path(str(value)).name == "water_player_world.gd" for value in command):
         # Two additional 1080p frames on top of the normal route allowance.
         return 16 * 2**20 + planned_report_bytes([arg for arg in command if arg != "--authoring-captures"])
     if ("--water-load-only" in command or "--water-no-captures" in command) and any(Path(str(value)).name == "water_player_world.gd" for value in command):
         return 8 * 2**20  # One loaded-world capture plus bounded logs/JSON.
+    if "--water-contact-only" in command and any(Path(str(value)).name == "water_barrel_world.gd" for value in command):
+        # This route exits after two 1080p RGBA captures, the log and receipt.
+        return 24 * 2**20
     if any(Path(str(value)).name in {"water_barrel_world.gd", "water_player_world.gd"} for value in command):
         return 40 * 2**20  # Captures plus an at-most-8-MiB terrain failure snapshot.
     scripts = [str(value) for value in command if str(value).endswith(".gd")]
-    if len(scripts) == 1 and Path(scripts[0]).stem in {"terrain_edit_recovery", "location_reset_batch"}:
+    if len(scripts) == 1 and Path(scripts[0]).stem in {"terrain_edit_recovery", "location_reset_batch", "terrain_field_patch"}:
         return 16 * 2**20  # Headless edit transactions write logs and a run receipt.
     if len(scripts) == 1 and Path(scripts[0]).stem == "building_materials":
         return 64 * 2**20

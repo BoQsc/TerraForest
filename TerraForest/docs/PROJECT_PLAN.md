@@ -16,10 +16,11 @@ Shoreline latency work resumed with a two-frame acceptance run covering the
 64 m cut and both shoreline blasts. Keep all three failing cases in the
 release ledger alongside the ordinary exploration and trader baseline.
 
-The current packaged run showed the 64 m cut center before the remaining mesh
-batch. It took seven frames. Sea and lake took nine and fifteen frames.
-[Resident edit qualification](WORLD_FOUNDATION_STATUS.md#resident-edit-publication-in-packaged-cedar-vale)
-records the separate timing clocks, collision results and outstanding barriers.
+The resident cut now reconstructs on a separate terrain snapshot. The
+qualification route checks the first rendered shoreline against the lowered
+physics floor and samples the wider 64 m footprint specifically on draw two.
+Keep the timing gate open until all three edits meet it.
+[Retained and rejected implementations, timings and image IDs](WORLD_FOUNDATION_STATUS.md#concurrent-resident-cut-and-shoreline-publication)
 
 Packaged build `915301ac991d` confirmed that early publication of ready tiles
 still leaves the cut center waiting 15 drawn frames. The first matching water

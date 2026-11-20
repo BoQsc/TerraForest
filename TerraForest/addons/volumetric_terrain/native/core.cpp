@@ -1260,6 +1260,9 @@ static int trace_visibility(const World&w,V3 origin,V3 direction,RoofCache*roof,
   // After a cavity ray emerges outdoors, standard directional shadow maps
   // handle the remaining exterior occluders. This is a cavity-light gate,
   // not a replacement for all world-space shadows / global illumination.
+  if(w.contact_snapshot && (p.x<w.contact_x0||p.z<w.contact_z0||p.x>=w.contact_x1||p.z>=w.contact_z1)){
+   w.contact_outside=true;return 2;
+  }
   if(roof&&p.y>roof->upper_at(p.x,p.z)+.02f)return false;
   int x=fl(p.x),y=fl(p.y),z=fl(p.z);
   if(w.blocks.get(block_key(x,y,z))>=0)return true;
@@ -1596,7 +1599,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    }
   Mesh m;bool ok=extract_vertices(w,x,z,size,m,epoch,0,WORLD_Y,nullptr,&cut);
   if(ok){connect_patch(w,x,z,size,m,0,WORLD_Y,&cut);add_blocks(w,x,z,size,m);shade_mesh(w,m,epoch);}
-  if(ok&&!tr_oom&&!cancelled(w,epoch)){out.u(revision);encode_mesh(m,x,z,size,1,out);}
+  if(ok&&!tr_oom&&!w.contact_outside&&!cancelled(w,epoch)){out.u(revision);encode_mesh(m,x,z,size,1,out);}
   else out.p[8]=4;
   m.release();
  }

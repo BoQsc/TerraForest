@@ -1,3 +1,84 @@
+## Concurrent resident cut and shoreline publication
+
+**The two-frame gate remains open.** The terrain worker captures the resident
+cut footprint and a 32 m halo before the edit. An independent worker rebuilds
+the local geometry and collision while the authority processes the field edit.
+The foreground copy reads resident pages only, with limits of 256 authored
+pages and 8,192 construction cells. An unavailable copy uses the previous
+serial path. A lighting ray leaving the captured halo rejects the local
+replacement. The existing terrain stays visible through rejection. An accepted
+replacement still needs the authoritative revision and the seam check.
+
+The retained Windows package has SHA-256
+`6cc48b5bae6e8fb81f90fa288d8770b28631eca8c9159bea2debdd215fb0e881`.
+Both tests used the isolated rendered executable and the read-only Cedar
+Vale input at 1920 x 1080 on the RTX 4050 Laptop GPU.
+
+| Workload | First matching draw | Other measurements |
+|---|---|---|
+| 64 m cut | 5 draws, 56.63 ms from input | Local install 50.77 ms, full revision drawn at 222.54 ms, worst frame 23.62 ms |
+| Sea barrel | 11 draws, 184.15 ms from terrain admission | Collider on draw 3, eight further draws to matching water |
+| Lake barrel | 17 draws, 284.94 ms from terrain admission | Collider on draw 2, fifteen further draws to matching water |
+
+On draw two, zero of nine probes at 24 m spacing matched the final 64 m cut.
+On the first local draw, all nine central probes at 1 m spacing matched. The
+3,750 final collision samples had the same digest as the preceding package.
+The full field transaction took 29.38 ms. The bounded snapshot and dispatch
+allowed the local surface and its collider to overlap that transaction.
+The native field parity test matched all 14 artifacts, and the snapshot
+regression compared the entire cut packet after the live field advanced.
+[Cut log](../reports/checks/20261120T213513986170Z/engine.log),
+[snapshot regression](../reports/checks/20261120T212455531398Z/engine.log).
+
+A separate camera run retained both sides of the complete rectangular
+excavation. The before and after views use the same transforms. They show
+the finished footprint and do not measure its publication time.
+[First view before](../reports/checks/20261120T214132777843Z/cut_before_angle_1.png),
+[after](../reports/checks/20261120T214132777843Z/cut_after_angle_1.png),
+[reverse before](../reports/checks/20261120T214132777843Z/cut_before_angle_2.png),
+[after](../reports/checks/20261120T214132777843Z/cut_after_angle_2.png).
+
+All 81 crater probes per shore found water at first publication. All 23 sea
+and 26 lake bank probes found contact within 2 cm. Both fixed before/after
+views and both submerged views were reviewed. The sea surface at the probe
+came from the ocean presentation at 40 m. The lake mesh and pick agreed at
+44.011 m. Outside tagged diagnostics, p99 frame intervals were 51.98 ms at
+sea and 20.06 ms inland in the capture run. These are engine draw intervals.
+[Sea and lake timings](../reports/checks/20261120T213617488418Z/normal_gameplay_blast_performance.json),
+[sea first angle](../reports/checks/20261120T213617488418Z/player_shore_after.png),
+[sea reverse](../reports/checks/20261120T213617488418Z/player_shore_after_reverse.png),
+[lake first angle](../reports/checks/20261120T213617488418Z/player_lake_after.png),
+[lake reverse](../reports/checks/20261120T213617488418Z/player_lake_after_reverse.png).
+
+A separate run disabled screenshot readback and the owner audit. Sea drew
+the changed floor in two draws and matching water in eight (131.45 ms).
+Lake drew the changed floor in three draws and matching water in sixteen
+(261.76 ms). Raw blast-window p99 / maximum intervals were 33.20 / 55.02 ms
+at sea and 71.55 / 83.51 ms inland. Excluding tagged test diagnostics, p99
+was 28.20 and 26.29 ms respectively. Finite lake quantity was conserved
+exactly. The mining timing check also failed.
+[Timing repeat](../reports/checks/20261120T213752984011Z/normal_gameplay_blast_performance.json).
+
+The separate construction fixture placed a full cube through the lake surface
+at 48.251 m. All four probes 1 cm outside the walls hit the free surface, the
+cube interior was dry, and removing the cube restored the water boundary.
+[Above water](../reports/checks/20261120T213903031033Z/object_contact_above.png),
+[submerged](../reports/checks/20261120T213903031033Z/object_contact_underwater.png).
+
+Cedar Vale experiment `20261120T212835030237Z` tested earlier water sampling,
+worker completion callbacks and the existing publication budget. Both barrel
+colliders arrived on draw two. Matching water appeared on draw 10 at sea
+(170.08 ms) and draw 16 inland (278.71 ms). The water solve itself took 2.02
+and 16.18 ms respectively. All 23 sea and 26 inland first-publication bank
+probes passed. The four bucket operations took 35-57 ms. The water scheduling
+experiment was removed after it failed to improve shoreline latency.
+
+A subsequent implementation must give a resident edit its own authoritative
+terrain, collider and water publication. The cut still needs the full field
+receipt. Shoreline immersion, picking and rendered geometry still publish as
+a connected group. Preserve the existing conservation and contact tests and
+measure the first draw and complete footprint independently.
+
 ## Resident edit publication in packaged Cedar Vale
 
 Windows packaged game at 1920×1080 on the RTX 4050 Laptop GPU. Pack SHA-256
