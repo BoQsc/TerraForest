@@ -520,7 +520,24 @@ and mining took 149, 284 and 192 ms to publish local water. The lake timing
 assertion failed.
 
 The development belt's sphere, snapped box and single-cell tools now preview
-the brush at the centre used by the terrain command. Picking follows the
+the selected volume in both player views.
+
+For the 64 m Cedar Vale box, packaged runs `20261120T183016035232Z` and
+`20261120T183140579994Z` compared installed mesh owners across publication.
+All 36 replacements intersected the camera frustum in the old or new surface.
+The other 101 owners in the stamped tiles retained their nodes. In the second
+run every replacement changed vertices or indices. Frustum intersection is
+conservative and does not test occlusion. Publication took 342 and 358 ms.
+The second run measured 33.3 ms of field editing, 153.2 ms of mesh builds
+and 23.3 ms of vegetation support work on the worker. Another 131.6 ms
+elapsed from worker completion to the publication measurement. Commit took
+9.5 ms, including 7.9 ms applying vegetation support. These stages overlap.
+Skipping off-camera or duplicate replacements offers no demonstrated saving
+on this route. Profile collision cooking, upload and staging across frames
+before changing the publication barrier. Replay with `--authoring-dependencies`
+on the inland authoring brush check below.
+
+The preview is centred at the position used by the terrain command. Picking follows the
 active viewport camera in first and third person. Preview meshes are reused
 across frames. The primary player views and normal inventory actions remain
 the default way to play.

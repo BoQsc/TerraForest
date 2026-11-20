@@ -784,6 +784,9 @@ func check_authoring_brush()->void:
   if i==2 or failures>0:continue
   var revision:int=game.terrain.published_revision
   var ticket:int=game.terrain.edit_ticket
+  var audit:=i==1 and "--authoring-dependencies" in OS.get_cmdline_user_args()
+  var owners_before:=brush_mesh_owners(view,center,game.radius) if audit else {}
+  var stamps_before:Dictionary=game.terrain.stamps.duplicate() if audit else {}
   var click:=InputEventMouseButton.new()
   click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
   var started:=Time.get_ticks_usec()
@@ -822,8 +825,72 @@ func check_authoring_brush()->void:
   # Link player latency to the native edit and the terrain publication work.
   var terrain_stages:={"worker_queue_ms":game.terrain.last_queue_ms,"field_ms":game.terrain.last_edit_ms,
    "mesh_build_ms":game.terrain.last_total_build_ms,"geometry_tiles":game.terrain.last_density_tiles,
-   "commit_ms":game.terrain.last_commit_ms}
+   "commit_ms":game.terrain.last_commit_ms,"after_worker_ms":game.terrain.last_prepare_latency_ms,
+   "support_worker_ms":game.terrain.last_support_worker_ms,"support_publish_ms":game.terrain.last_support_publish_ms}
   print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"preparing":preparing,"feedback_us":feedback_us,"admission_us":game.terrain.edit_accepted_us-started if game.terrain.edit_ticket>ticket else null,"publication_us":previous-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us,"terrain_stages":terrain_stages}))
+  if audit:report_brush_dependencies(view,center,game.radius,owners_before,stamps_before)
+
+# Keep CPU-side mesh arrays from the installed surface. Compare only after publication.
+func brush_mesh_owners(view:Camera3D,center:Vector3,radius:float)->Dictionary:
+ var owners:={}
+ var planes:=view.get_frustum()
+ for key:Vector3i in game.terrain.tiles:
+  var footprint:=Rect2(Vector2(key.x,key.y),Vector2(key.z,key.z))
+  if not footprint.grow(radius+32).has_point(Vector2(center.x,center.z)):continue
+  var tile:Dictionary=game.terrain.tiles[key]
+  var bricks:Dictionary=tile.get("bricks",{-1:tile})
+  var records:={}
+  for brick:int in bricks:
+   var entry:Dictionary=bricks[brick]
+   var node:Node3D=entry.node
+   var in_view:=false
+   if node is MeshInstance3D and node.is_visible_in_tree():
+    var box:AABB=node.global_transform*node.get_aabb()
+    in_view=true
+    for plane in planes:
+     # Godot frustum normals point outward. Exclude only a wholly outside box.
+     if plane.distance_to(box.get_center())>plane.normal.abs().dot(box.size*.5):
+      in_view=false
+      break
+   records[brick]={"node":node.get_instance_id(),"arrays":entry.get("arrays",[]),"in_view":in_view}
+  owners[key]=records
+ return owners
+
+func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:Dictionary,old_stamps:Dictionary)->void:
+ var after:=brush_mesh_owners(view,center,radius)
+ var counts:={"replaced":0,"identical":0,"attributes_only":0,"changed_in_frustum":0,"changed_outside":0,"retained":0,"tiles_with_replacements":0}
+ var keys:=before.keys()
+ for key in after:
+  if not before.has(key):keys.append(key)
+ for key:Vector3i in keys:
+  if game.terrain.stamps.get(key,0)==old_stamps.get(key,0):continue
+  var old:Dictionary=before.get(key,{})
+  var current:Dictionary=after.get(key,{})
+  var ids:=old.keys()
+  for id in current:
+   if not old.has(id):ids.append(id)
+  var replacements:=0
+  for id in ids:
+   var a:Dictionary=old.get(id,{})
+   var b:Dictionary=current.get(id,{})
+   if a.get("node",0)==b.get("node",0):
+    counts.retained+=1
+    continue
+   replacements+=1
+   var old_arrays:Array=a.get("arrays",[])
+   var new_arrays:Array=b.get("arrays",[])
+   if old_arrays==new_arrays:
+    counts.identical+=1
+    continue
+   if old_arrays.size()==Mesh.ARRAY_MAX and new_arrays.size()==Mesh.ARRAY_MAX:
+    if old_arrays[Mesh.ARRAY_VERTEX]==new_arrays[Mesh.ARRAY_VERTEX] and old_arrays[Mesh.ARRAY_INDEX]==new_arrays[Mesh.ARRAY_INDEX]:
+     counts.attributes_only+=1
+   if a.get("in_view",false) or b.get("in_view",false):counts.changed_in_frustum+=1
+   else:counts.changed_outside+=1
+  counts.replaced+=replacements
+  if replacements>0:counts.tiles_with_replacements+=1
+ check(counts.changed_in_frustum>0,"Large brush changes installed mesh arrays inside the camera frustum")
+ print("AUTHORING_DEPENDENCIES ",JSON.stringify(counts))
 func brush_button(pressed:bool)->void:
  var event:=InputEventMouseButton.new()
  event.button_index=MOUSE_BUTTON_LEFT
