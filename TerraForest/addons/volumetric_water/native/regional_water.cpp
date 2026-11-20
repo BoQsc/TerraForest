@@ -664,13 +664,8 @@ void NativeRegionalWater::process_fill(){
         if(q.x<fill.low.x||q.x>=fill.high.x||q.y<fill.low.y||q.y>=fill.high.y||q.z<fill.low.z||q.z>=fill.high.z||q.y*500>=fill.level)continue;
         Region *other=get(q,true);if(!other){retry=true;continue;}int j=index(q);
         auto next=profile(*other,j);if(!next.capacity())continue;
-        int axis=q.x!=p.x?0:2,side=q[axis]>p[axis];
-        double opening=std::max(shape.opening(axis,side),next.opening(axis,1-side));
-        bool connected=direction==0?(shape.open_bottom&&next.ceiling==500):direction==5?(shape.ceiling==500&&next.open_bottom):
-            (opening<std::min(shape.ceiling,next.ceiling)&&head>opening);
-        if(shape.solid||next.solid){double next_head=fill.level-q.y*500;
-            connected=direction==0?WaterCellProfile::vertical_overlap(next,next_head,shape,head):direction==5?WaterCellProfile::vertical_overlap(shape,head,next,next_head):WaterCellProfile::face_overlap(shape,head,next,next_head,axis,side);}
-        if(connected&&fill.seen.insert(key(q)).second)fill.queue.push_back(key(q));}
+        const int next_head=fill.level-q.y*500;
+        if(WaterCellProfile::connected(shape,head,next,next_head,direction)&&fill.seen.insert(key(q)).second)fill.queue.push_back(key(q));}
     // Revisit just this frontier after missing terrain arrives. Already assigned
     // amounts are idempotent; a disconnected air interval is never a fill edge.
     if(retry)fill.queue.push_back(key(p));

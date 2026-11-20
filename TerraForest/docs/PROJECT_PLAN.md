@@ -3,6 +3,15 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
+Water is the first terrain-and-authority integration case. Use the basin
+model in [the architecture contract](WORLD_SYSTEMS_DESIGN.md) for the inland
+bank cut. Establish which cavities are connected, give the enclosed water
+one conserved quantity and compute its level from capacity. Cache capacity
+per region so a bank edit can replace the affected contribution. Certify the
+outlet before reusing connectivity. Run the same Cedar Vale blast, and compare
+the first visible result, contact and conservation before expanding this path.
+The [water issue](../issues/explosive-combat/water-plan.md) tracks that gate.
+
 Installed run `20261120T143633262102Z` processed the 132 urgent lake mesh
 owners in one job. The first water update took 340 ms after the terrain
 edit. This remains above the interaction budget. The [foundation status](WORLD_FOUNDATION_STATUS.md)

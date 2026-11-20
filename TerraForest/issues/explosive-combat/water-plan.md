@@ -1,5 +1,17 @@
 # Continuous volumetric water replacement
 
+**Enclosed basin first commit, November 20.** An entirely sampled connected
+basin can now publish a common level on its first local edit across a region
+boundary. Cedar Vale's large lake still takes the bounded donor path. At
+the same crater the packaged run `20261120T145825355695Z` passed waterline
+contact from both shores, bucket interruption and finite conservation, but
+took 469 ms from terrain publication to visible lake water. Two fixed
+angles and submerged captures are in the run directory. Next implement
+region-owned capacity contributions to the connected lake, then repeat
+this exact edit at two lake sizes and verify local publish cost, quantity,
+revision and unchanged outlets. Timing and visual qualification remain open.
+
+
 **November 20 crater mesh dispatch.** The first lake publication now sends
 the affected owners through one native job when their shared occupancy
 fits the existing reservation. The 70-owner regression commits one job

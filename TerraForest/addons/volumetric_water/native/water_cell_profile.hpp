@@ -253,11 +253,23 @@ struct WaterCellProfile {
         }
         return false;
     }
-    // Lowest opening on a shared face. Piecewise linear floors agree across
-    // the face because they come from identical cached terrain edge samples.
-    double opening(int axis,int side)const {
-        if(axis==0)return side?std::min(floor[1],floor[3]):std::min(floor[0],floor[2]);
-        return side?std::min(floor[2],floor[3]):std::min(floor[0],floor[1]);
+    bool is_full_air() const {
+        return !solid && !contact && ceiling==500 && open_bottom &&
+            *std::max_element(floor.begin(),floor.end())<=0;
+    }
+
+    // The six directions use regional water's down, +X, -X, +Z, -Z, up order.
+    // Both wet intervals must overlap at the same point on their common face.
+    static bool connected(const WaterCellProfile &a,double ah,const WaterCellProfile &b,double bh,int direction){
+        if(ah<=0 || bh<=0)return false;
+        if(a.is_full_air() && b.is_full_air()){
+            if(direction==0)return bh>=500;
+            if(direction==5)return ah>=500;
+            return true;
+        }
+        if(direction==0)return b.ceiling==500 && a.open_bottom && vertical_overlap(b,bh,a,ah);
+        if(direction==5)return a.ceiling==500 && b.open_bottom && vertical_overlap(a,ah,b,bh);
+        return face_overlap(a,ah,b,bh,direction<=2?0:2,direction==1||direction==3?1:0);
     }
 };
 }

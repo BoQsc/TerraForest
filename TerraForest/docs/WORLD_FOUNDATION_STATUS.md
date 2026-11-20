@@ -1,3 +1,23 @@
+## November 20 first local commit for enclosed basins
+
+Lake authoring and equilibrium now test the same shared face for a wet
+opening. An enclosed connected component inside a local terrain snapshot
+publishes the level implied by its available capacity and conserved quantity.
+The regression with nine cells spanning two regions and 90,000 ml failed
+before the change and passed on the first commit afterwards (scope runs
+`20261120T145627252953Z` and `20261120T145737965449Z`, 39 checks on the
+latter). This certificate applies only when the discovered neighbourhood is
+sampled. Large lakes still need persistent regional capacity and connectivity
+so their edited shores can use a basin level without scanning distant water.
+
+Cedar Vale packaged run `20261120T145825355695Z` used release water DLL
+`744eea78e341a2656442d2381dc09f46a4d5ca6f975b4fb83bf1ecbbee93c139`.
+Both shores passed initial and settled 2 cm contact checks. Each blast was
+captured from two angles and underneath. Terrain-to-water publication took
+163 ms at sea, 469 ms at the lake and 242 ms for mining. The lake exceeded
+the 250 ms regression threshold. The two-frame and 60 Hz gates remain open.
+See the [gameplay issue](../issues/explosive-combat/water-plan.md).
+
 ## November 20 shoreline mesh worker and publication
 
 The native mesh builder rejects out-of-cell subdivision candidates before

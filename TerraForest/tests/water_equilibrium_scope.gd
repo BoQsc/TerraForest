@@ -51,6 +51,21 @@ func check_sparse_mesh_owners()->void:
  var expected:=[Vector3i.ZERO,Vector3i.LEFT,Vector3i.RIGHT,Vector3i.FORWARD,Vector3i.BACK,Vector3i(-1,0,-1),Vector3i(1,0,1)]
  check(owners.size()==expected.size() and expected.all(func(p):return owners.has(p)),"Sparse edits queue exactly the seven overlapping mesh owners: "+str(owners))
 func run_scope()->void:
+ # The cut connects nine cells across a region boundary. The fixture's
+ # surrounding terrain is solid, including the neighbour past either end.
+ var bank:Dictionary={}
+ for x in range(81,90):
+  bank[Vector3i(x,83,83)]=[0,500,90000 if x==84 else 0]
+ var basin:=fixture(bank)
+ basin.settle_after_edit(AABB(Vector3(42,41.5,41.5),Vector3(3,.5,.5)))
+ var basin_job:RefCounted=basin.begin_equilibrium(0,true)
+ check(basin_job!=null,"A resident enclosed bank edit starts a local transaction")
+ if basin_job!=null:
+  basin_job.prepare()
+  var commit:Dictionary=basin.finish_equilibrium(basin_job)
+  var levels:=amounts(basin)
+  check(commit.get("ok",false) and bank.keys().all(func(p):return levels.get(p,0)==10000),
+   "First local commit puts 90000 ml at one level across the enclosed bank cut")
  await check_sparse_mesh_owners()
  check_new_receiver_scope()
  var cells:Dictionary={}

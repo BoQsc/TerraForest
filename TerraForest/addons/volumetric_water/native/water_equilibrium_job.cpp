@@ -380,16 +380,10 @@ void NativeWaterEquilibriumJob::prepare(){
         struct CellIndex {const W::Region *region=nullptr;std::array<int,512> values;};
         std::unordered_map<uint64_t,CellIndex> ids;
         for(const auto &[key,r]:store.regions){auto &block=ids[key];block.region=&r;block.values.fill(-1);}
-        auto full_air=[](const WaterCellProfile &p){return !p.solid&&!p.contact&&p.ceiling==500&&p.open_bottom&&*std::max_element(p.floor.begin(),p.floor.end())<=0;};
-        auto volume_at=[&](const Cell &c,double level){return full_air(c.shape)?std::clamp((level-c.p.y*.5)*250000.,0.,125000.):c.shape.volume((level-c.p.y*.5)*1000.);};
+        auto volume_at=[&](const Cell &c,double level){return c.shape.is_full_air()?std::clamp((level-c.p.y*.5)*250000.,0.,125000.):c.shape.volume((level-c.p.y*.5)*1000.);};
         auto connected=[&](const Cell &a,const Cell &b,int direction,double level){
             double ah=std::clamp((level-a.p.y*.5)*1000.,0.,500.),bh=std::clamp((level-b.p.y*.5)*1000.,0.,500.);
-            if(ah<=0||bh<=0)return false;
-            // Interior air cells have a fully open common face.
-            if(full_air(a.shape)&&full_air(b.shape))return true;
-            if(direction==0)return b.shape.ceiling==500&&a.shape.open_bottom&&WaterCellProfile::vertical_overlap(b.shape,bh,a.shape,ah);
-            if(direction==5)return a.shape.ceiling==500&&b.shape.open_bottom&&WaterCellProfile::vertical_overlap(a.shape,ah,b.shape,bh);
-            return WaterCellProfile::face_overlap(a.shape,ah,b.shape,bh,direction<=2?0:2,direction==1||direction==3?1:0);
+            return WaterCellProfile::connected(a.shape,ah,b.shape,bh,direction);
         };
         // The surrounding procedural sea has an open level-40 boundary, unlike
         // finite authored lakes. Freeze a local halo and flood only connected
@@ -457,6 +451,10 @@ void NativeWaterEquilibriumJob::prepare(){
             if(done.count(W::key(seed)))continue;
             cells.clear();for(auto &[key,block]:ids)block.values.fill(-1);
             struct Outlet {int cell;double level;};
+            // A resident component surrounded by sampled terrain has no external
+            // donor boundary. Its first local commit can use the conserved
+            // quantity and the same basin level as the full authority solve.
+            bool complete_neighbourhood=true;
             std::vector<Outlet> outlets;
             auto add=[&](Vector3i p,const W::Region &r){
                 const int i=W::index(p),id=int(cells.size());
@@ -481,11 +479,8 @@ void NativeWaterEquilibriumJob::prepare(){
                     int id=block->values[index];
                     if(id>=0){cells[cursor].adjacent[direction]=id;continue;}
                     const auto a=cells[cursor].shape,b=W::profile(r,index);
-                    const double ah=full_air(a)?cells[cursor].before/250.:a.head(cells[cursor].before),bh=full_air(b)?r.water[index]/250.:b.head(r.water[index]);
-                    const bool open=full_air(a)&&full_air(b)?(direction==0?bh>=500:direction==5?ah>=500:true):direction==0?b.ceiling==500&&a.open_bottom&&WaterCellProfile::vertical_overlap(b,bh,a,ah):
-                        direction==5?a.ceiling==500&&b.open_bottom&&WaterCellProfile::vertical_overlap(a,ah,b,bh):
-                        WaterCellProfile::face_overlap(a,ah,b,bh,direction<=2?0:2,direction==1||direction==3?1:0);
-                    if(!open)continue;
+                    const double ah=a.is_full_air()?cells[cursor].before/250.:a.head(cells[cursor].before),bh=b.is_full_air()?r.water[index]/250.:b.head(r.water[index]);
+                    if(!WaterCellProfile::connected(a,ah,b,bh,direction))continue;
                     if(id<0){if(cells.size()>=MAX_CELLS){reason="Wet component exceeds reserved graph storage";return false;}id=add(q,r);}
                     cells[cursor].adjacent[direction]=id;
                 }
@@ -494,7 +489,7 @@ void NativeWaterEquilibriumJob::prepare(){
             // Disconnected bodies have independent heads. A high inland lake
             // must not flood the coastal discovery frontier up to its elevation.
             double upper=seed.y*.5+cells.front().shape.head(cells.front().before)*.001;
-            for(const auto &c:cells)upper=std::max(upper,c.p.y*.5+(full_air(c.shape)?c.before/250.:c.shape.head(c.before))*.001);
+            for(const auto &c:cells)upper=std::max(upper,c.p.y*.5+(c.shape.is_full_air()?c.before/250.:c.shape.head(c.before))*.001);
             double scanned_head=upper;uint64_t scans=0;bool deferred_body=false;
             using Reach=std::pair<double,int>;
             std::priority_queue<Reach,std::vector<Reach>,std::greater<Reach>> reach;
@@ -507,7 +502,7 @@ void NativeWaterEquilibriumJob::prepare(){
             std::unordered_map<uint64_t,double> unknown_cost;
             double outlet_limit=upper;
             auto connection_height=[&](const Cell &a,const Cell &b,int direction){
-                if(full_air(a.shape)&&full_air(b.shape))return std::min(upper,std::max(a.p.y,b.p.y)*.5+2e-9);
+                if(a.shape.is_full_air()&&b.shape.is_full_air())return std::min(upper,std::max(a.p.y,b.p.y)*.5+2e-9);
                 if(!a.shape.solid&&!b.shape.solid){
                     double height=direction==0||direction==5?std::max(a.p.y,b.p.y)*.5:
                         a.p.y*.5+WaterCellProfile::floor_spill_height(a.shape,b.shape,direction<=2?0:2,direction==1||direction==3?1:0)*.001;
@@ -574,6 +569,8 @@ void NativeWaterEquilibriumJob::prepare(){
 
                     auto q=p+steps[direction];if(!W::in_domain(q))continue;
                     auto r=store.regions.find(W::region_key(q));
+                    if(r==store.regions.end() || !r->second.valid || done.count(W::key(q)))
+                        complete_neighbourhood=false;
                     // Certify a local vertical path to fixed-head sea. Air
                     // above an open reservoir is an outlet too; expanding that
                     // air as finite receiving capacity walks the entire coast.
@@ -661,7 +658,7 @@ void NativeWaterEquilibriumJob::prepare(){
             std::array<std::vector<int>,512> cut_layers;
             std::array<double,513> volume_below{};
             for(size_t i=0;i<cells.size();++i){const auto &c=cells[i];quantity+=c.before;low=std::min(low,c.p.y*.5);queries.emplace_back(c.shape);
-                if(full_air(c.shape))++air_layers[c.p.y];
+                if(c.shape.is_full_air())++air_layers[c.p.y];
                 else{
                     cut_layers[c.p.y].push_back(int(i));
                     volume_below[c.p.y+1]+=std::min(double(queries[i].capacity()),queries[i].volume(500.));
@@ -685,7 +682,7 @@ void NativeWaterEquilibriumJob::prepare(){
                 if(std::abs(volume-double(quantity))<=error){
                     volume=0;
                     for(size_t y=0;y<air_layers.size();++y)if(air_layers[y])volume+=air_layers[y]*std::clamp((middle-y*.5)*250000.,0.,125000.);
-                    for(size_t i=0;i<cells.size();++i)if(!full_air(cells[i].shape))
+                    for(size_t i=0;i<cells.size();++i)if(!cells[i].shape.is_full_air())
                         volume+=std::min(double(queries[i].capacity()),queries[i].volume((middle-cells[i].p.y*.5)*1000.));
                 }
                 if(volume<double(quantity))low=middle;else high=middle;
@@ -712,7 +709,7 @@ void NativeWaterEquilibriumJob::prepare(){
                 uint64_t key=(uint64_t(std::min(i,j))<<32)|uint32_t(std::max(i,j));
                 auto cached=spill_cache.find(key);if(cached!=spill_cache.end())return cached->second;
                 const auto &a=cells[i],&b=cells[j];double height;
-                if(full_air(a.shape)&&full_air(b.shape))return std::min(upper,std::max(a.p.y,b.p.y)*.5+2e-9);
+                if(a.shape.is_full_air()&&b.shape.is_full_air())return std::min(upper,std::max(a.p.y,b.p.y)*.5+2e-9);
                 if(!a.shape.solid&&!b.shape.solid){
                     height=direction==0||direction==5?std::max(a.p.y,b.p.y)*.5:
                         a.p.y*.5+WaterCellProfile::floor_spill_height(a.shape,b.shape,direction<=2?0:2,direction==1||direction==3?1:0)*.001;
@@ -855,7 +852,7 @@ void NativeWaterEquilibriumJob::prepare(){
                     if(filled!=node.quantity){reason="Basin remainder exceeds bounded rounding";return false;}
                 }
             }
-            if(local_response&&!needs_hierarchy&&!reservoir_graph){
+            if(local_response&&!complete_neighbourhood&&!needs_hierarchy&&!reservoir_graph){
                 // A local response is a transient, not a smaller sealed lake.
                 // Keep the outer cell ring unchanged and taper redistribution
                 // into it. A uniform local head creates an artificial rectangular

@@ -12,7 +12,18 @@ int main(){
     for(uint64_t ml:{1u,10u,1000u,10000u,62500u})require(std::abs(ramp.volume(ramp.head(ml))-ml)<0.02,"head inversion conserves sub-litre and full-cell quantities");
     auto shape=ramp.footprint(250);
     require(std::abs(shape.area-0.5)<1e-8&&std::abs(shape.x-0.25)<1e-8&&std::abs(shape.z-0.5)<1e-8,"wetted centroid excludes the dry half of the slope");
-    require(ramp.opening(0,0)==0&&ramp.opening(0,1)==500,"opposite floor faces have distinct spill heights");
+    WaterCellProfile bank_a,bank_b;
+    bank_a.floor={0,0,500,500};
+    bank_b.floor={500,500,0,0};
+    require(!WaterCellProfile::connected(bank_a,250,bank_b,250,1),
+        "opposing slopes touching at one point keep basins separate");
+    require(WaterCellProfile::connected(bank_a,251,bank_b,251,1) &&
+            WaterCellProfile::connected(bank_b,251,bank_a,251,2),
+        "a shared opening above the sill connects both directions");
+    WaterCellProfile air;
+    require(!WaterCellProfile::connected(air,499,air,100,5) &&
+            WaterCellProfile::connected(air,500,air,100,5),
+        "stacked water connects only when the lower interval reaches the interface");
     WaterCellProfile flat;flat.floor.fill(275);
     require(flat.capacity()==56250&&flat.head(10000)==315,"flat cells retain their exact constant-area behavior");
     float wall[8]={-1,-1,-1,-1,1,1,1,1};

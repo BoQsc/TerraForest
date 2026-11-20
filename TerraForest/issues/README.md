@@ -1,6 +1,6 @@
 # Visual issue tracker
 
-**Water status, November 20.** The installed game fills both shoreline craters while wider settling continues. A reproduced 123 mm surface dip around a construction cube was corrected and checked at all four walls. A faster update that produced an angular lake ridge was rejected. The current build prepares the 132 urgent lake mesh owners in one job and matches all 66 first-publication samples against the committed field. The lake still misses the 250 ms check, and both shores exceed the two-frame target. See the [water plan](explosive-combat/water-plan.md).
+**Water status, November 20.** The installed game fills both shoreline craters while wider settling continues. A reproduced 123 mm surface dip around a construction cube was corrected and checked at all four walls. A faster update that produced an angular lake ridge was rejected. The current build prepares the 132 urgent lake mesh owners in one job and matches all 66 first-publication samples against the committed field. The lake still misses the 250 ms check, and both shores exceed the two-frame target. The first local edit now levels enclosed basins across region boundaries. Cedar Vale still took 469 ms in packaged run `20261120T145825355695Z`. See the [water plan](explosive-combat/water-plan.md).
 
 One folder per problem: relevant images, current status, changes, remaining work
 and a practical place to resume. Detailed evidence stays at its existing location.
