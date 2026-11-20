@@ -22,7 +22,7 @@ func grouped_fixture():
  var water=ClassDB.instantiate("NativeRegionalWater")
  if not water.restore_snapshot(bytes):return null
  return water
-func check_grouped_owners()->void:
+func check_grouped_owners(dispatch_indexed:=false)->void:
  var reference=grouped_fixture();var expected:Dictionary={}
  for n in 100:
   var packet:Dictionary=reference.next_mesh()
@@ -30,7 +30,7 @@ func check_grouped_owners()->void:
   expected[packet.coordinate]=packet.arrays
  var water=grouped_fixture();var actual:Dictionary={};var jobs:=0;var committed:=false
  for n in 100:
-  var packet:Dictionary=water.next_mesh_batch(true)
+  var packet:Dictionary=water.next_mesh_batch(true,dispatch_indexed and jobs==0)
   if packet.is_empty():break
   if packet.has("job"):
    jobs+=1
@@ -63,6 +63,7 @@ func run_worker_checks() -> void:
   if packet.complete:dry.commit_mesh_batch(packet.batch)
  check(dry.raycast_surface(dry_point+Vector3.UP,dry_point-Vector3.UP).hit,"The newly wet owner publishes its pickable surface")
  await check_grouped_owners()
+ await check_grouped_owners(true)
  var reference=publication_fixture();var expected:Dictionary={}
  for n in 100:
   var packet:Dictionary=reference.next_mesh()
@@ -176,13 +177,16 @@ func replay_meshes(path:String)->void:
  var capture:Dictionary=file.get_var()
  var packet_bytes:PackedByteArray=capture.snapshot
  var expected:=""
+ var indexed_only:="--water-indexed-only" in OS.get_cmdline_user_args()
+ for arg:String in OS.get_cmdline_user_args():
+  if arg.begins_with("--water-expected-geometry-sha256="):expected=arg.trim_prefix("--water-expected-geometry-sha256=").to_lower()
  for iteration in 4:
   var store=ClassDB.instantiate("NativeRegionalWater")
   if not store.restore_snapshot(packet_bytes):check(false,"Local water snapshot restores");quit(1);return
-  var owners:Dictionary={};var mesh_us:=0;var jobs:=0
+  var owners:Dictionary={};var mesh_us:=0;var jobs:=0;var expanded_bytes:=0
   for step in 10000:
    var begin:=Time.get_ticks_usec()
-   var packet:Dictionary=store.next_mesh_batch(true)
+   var packet:Dictionary=store.next_mesh_batch(true,true) if indexed_only else store.next_mesh_batch(true)
    if packet.is_empty():break
    if packet.has("failure"):check(false,str(packet.failure));quit(1);return
    if packet.has("job"):jobs+=1;packet.job.prepare()
@@ -190,6 +194,9 @@ func replay_meshes(path:String)->void:
     check(false,"Local water publication commits");quit(1);return
    mesh_us+=Time.get_ticks_usec()-begin
    if packet.has("coordinate"):
+    if not indexed_only:
+     for slot in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_TEX_UV,Mesh.ARRAY_COLOR]:
+      expanded_bytes+=packet.arrays[slot].to_byte_array().size()
     var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256)
     hash.update(var_to_bytes(packet.render_arrays))
     owners[packet.coordinate]=hash.finish()
@@ -198,7 +205,7 @@ func replay_meshes(path:String)->void:
   for coordinate:Vector3i in coordinates:
    digest.update(var_to_bytes(coordinate));digest.update(owners[coordinate])
   var identity:=digest.finish().hex_encode()
-  if iteration==0:expected=identity
+  if expected.is_empty():expected=identity
   check(identity==expected and not owners.is_empty() and store.runtime_state().dirty_meshes==0,"Local replay produces all surface owners deterministically")
-  print("WATER_MESH_REPLAY ",JSON.stringify({"iteration":iteration,"jobs":jobs,"owners":owners.size(),"native_us":mesh_us,"geometry_sha256":identity,"source_sha256":FileAccess.get_sha256(path)}))
+  print("WATER_MESH_REPLAY ",JSON.stringify({"iteration":iteration,"jobs":jobs,"owners":owners.size(),"native_us":mesh_us,"expanded_bytes":expanded_bytes,"geometry_sha256":identity,"source_sha256":FileAccess.get_sha256(path)}))
  print("WATER_MESH_REPLAY failures=",failures);quit(failures)

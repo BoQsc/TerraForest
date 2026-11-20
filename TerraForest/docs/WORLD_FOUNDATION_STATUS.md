@@ -1,3 +1,46 @@
+## November 20 indexed water publication
+
+Installed submerged cube run `20261120T131750662534Z` passed all four
+wall contact probes following a four-wall failure. See the
+[object contact report](../issues/explosive-combat/water-plan.md).
+The captured lake crater kept its indexed digest after the contact fix
+(headless run `20261120T131809626819Z`).
+
+In the same installed build, run `20261120T131924658010Z` recorded both
+camera angles before and after each blast. The lake reverse view now sees
+the bank before excavation, clear of foreground foliage. Local publication
+took 146 ms at sea, 330 ms at the lake and 205 ms for mining. The four
+bucket actions took 40–71 ms and conserved the combined world and inventory
+quantity. The settled lake still passed its 81 depth and 24 bank probes
+after the bucket interrupted meshing. Water extension SHA-256 (loaded debug)
+was `8e3a6d747b9727b65b8f00452fc1e6bc30f4b08a45eb3cb7816e6519674d9495`.
+
+Repeat `20261120T132038800606Z` disabled screenshots and omitted bucket
+interruptions during blast timing. Sea, lake and mining publication took
+198, 365 and 200 ms. Corresponding process-frame interval p99 was 35.437,
+23.990 and 19.692 ms, with worst frames of 52.593, 26.141 and 21.278 ms.
+These are instrumented game frames. Fixed-refresh presentation qualification
+is still outstanding.
+
+The game requests indexed render and query geometry. Diagnostic callers can
+still request expanded triangle attributes. For the same 43 crater owners,
+the new game path omitted 892,224 bytes of expanded arrays and preserved the
+indexed geometry digest in every replay. Four-run median native batch times
+were 135.466 ms expanded and 103.306 ms indexed (runs
+`20261120T130415722483Z` and `20261120T130432751758Z`). A repeat indexed
+median of 162.231 ms shows the timing variance; the byte reduction is repeatable.
+
+Installed Cedar Vale runs `20261120T130949888605Z` and
+`20261120T131057238533Z` reached gameplay at spawn and after lake travel.
+At first water publication each crater passed 81 depth probes. All 23 sea
+and 26 lake shoreline probes passed. Sea response was 149 and 147 ms,
+lake 367 and 312 ms, and mining 183 and 180 ms. All exceed two frames.
+In the first run the finite lake solve took 18 ms, touched 51 regions and
+led to 140 urgent mesh owners. Two worker groups preceded local publication.
+The existing synchronized group of adjacent owners remains a latency
+bottleneck. Measure terrain-to-water handoff and mesh publication separately
+when qualifying a smaller revision-consistent publication unit.
+
 ## November 20 sea and lake blast check
 
 Installed runs `20261120T125442238100Z` and `20261120T125622010762Z`

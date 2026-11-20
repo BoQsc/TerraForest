@@ -1,5 +1,17 @@
 # Continuous volumetric water replacement
 
+**November 20 submerged block contact.** Installed run
+`20261120T131316874925Z` reproduced a 123 mm dip around all four walls
+of a one-metre cube crossing a lake. Reconstruction sampled the top of
+the water under the cube as though it were an exposed surface. The mesher
+now excludes a water-to-solid ceiling contact from free-surface interpolation.
+Run `20261120T131750662534Z` measured a level of 48.2511 m one centimetre
+outside each wall, matching the open-water reference. The solid interior
+was dry and removing the block restored the water boundary. The report
+contains `object_contact_above.png` and `object_contact_underwater.png`.
+This fixture covers a construction cube. Moving hull contact remains a
+separate qualification case.
+
 **November 20 installed receiver update.** Cedar Vale run
 `20261120T123819287867Z` passed all 81 first-publication crater-depth probes
 at each shore and all 23 sea and 26 lake bank probes. The lake's straight

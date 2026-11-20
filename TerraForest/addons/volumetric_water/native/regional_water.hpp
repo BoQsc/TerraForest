@@ -298,7 +298,7 @@ class NativeRegionalWater : public godot::RefCounted {
     uint64_t mesh_worker_us=0,max_mesh_worker_us=0;
     bool surface_ready(Key owner,bool snapshot=false) const;
     bool dry_surface_owner(Key owner,bool snapshot) const;
-    SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false,const std::atomic<bool> *cancel=nullptr,WaterSurfaceProfileCache *profiles=nullptr) const;
+    SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false,const std::atomic<bool> *cancel=nullptr,WaterSurfaceProfileCache *profiles=nullptr,bool indexed_only=false) const;
     bool decode(const godot::PackedByteArray &data,bool install,bool prepare_render=true);
 protected: static void _bind_methods();
 public:
@@ -356,7 +356,7 @@ public:
     godot::Dictionary raycast_vacancy(const godot::Vector3 &from,const godot::Vector3 &to) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
     bool commit_mesh_batch(int64_t id,const godot::Array &retiring=godot::Array(),const godot::Array &revealing=godot::Array());
-    godot::Dictionary next_mesh_batch(bool background=false);
+    godot::Dictionary next_mesh_batch(bool background=false,bool indexed_only=false);
     // Diagnostic contact flag audits the closed volume with the same builder.
     // Runtime publication and picking use the same closed material boundary.
     godot::Dictionary next_mesh(bool include_contacts=false);
@@ -407,6 +407,7 @@ class NativeWaterMeshJob : public godot::RefCounted {
     std::vector<NativeRegionalWater::SurfaceMesh> results;
     std::vector<uint64_t> owners;
     size_t consumed=0;
+    bool indexed_only=false;
     uint64_t batch=0,elapsed_us=0,reserved_bytes=0;
     static std::atomic<uint64_t> pending_bytes;
     std::atomic<bool> started{false},ready{false},cancelled{false};

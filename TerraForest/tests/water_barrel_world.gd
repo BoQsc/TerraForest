@@ -141,6 +141,7 @@ func object_contact_case(entry:Dictionary)->void:
  check(reference.get("hit",false),"Reference free surface exists beside object")
  if reference.get("hit",false):
   var level:float=reference.point.y
+  print("OBJECT_CONTACT_REFERENCE level=",level," cell=",cell)
   check(level>cell.y and level<cell.y+1,"Cube crosses the current free surface, not an obsolete authored height")
   check(game.lakes.depth_at(Vector3(cell)+Vector3(.5,.1,.5))==0,"Solid cube excludes water inside its occupied volume")
   for offset in [Vector3(-.51,0,0),Vector3(.51,0,0),Vector3(0,0,-.51),Vector3(0,0,.51)]:
@@ -284,4 +285,4 @@ func contact_signature(center:Vector3)->PackedInt64Array:
 func boundary_topology(_origin:Vector3)->Dictionary:
  var boundary=ClassDB.instantiate("NativeRegionalWater")
  check(boundary.restore_snapshot(game.lakes.capture_snapshot()),"Actual occupied boundary snapshot restores")
- return preload("res://tests/water_pool_topology.gd").audit(boundary)
+ return preload("water_pool_topology.gd").audit(boundary)

@@ -1,6 +1,6 @@
 # Visual issue tracker
 
-**Water status, November 14: installed / scoped gameplay verified.** Local edits no longer wait for the lake. Packaged sea/lake barrels, mining, buckets during background meshing, loading, persistence and boundary/contact checks pass; two-angle first-response views were inspected. Strict frame-tail targets and user visual approval remain explicit in the [water plan](explosive-combat/water-plan.md).
+**Water status, November 20.** The installed game fills both shoreline craters while wider settling continues. A reproduced 123 mm surface dip around a construction cube was corrected and checked at all four walls. The lake still misses the 250 ms publication check, and both shores exceed the two-frame target. See the [water plan](explosive-combat/water-plan.md).
 
 One folder per problem: relevant images, current status, changes, remaining work
 and a practical place to resume. Detailed evidence stays at its existing location.

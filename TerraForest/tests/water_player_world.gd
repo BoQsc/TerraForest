@@ -279,7 +279,9 @@ func capture(label:String,center:Vector3,level:float,underwater:bool=false)->voi
  await RenderingServer.frame_post_draw
  captures.append([root.get_texture().get_image(),evidence.path_join(label+".png")])
  if not underwater:
-  game.camera.global_position=Vector3(center.x+5,level+(3.5 if "lake" in label else 1.5),center.z-4)
+  # Keep the second lake view on the water side of Cedar Vale's bank trees.
+  var reverse_offset:=Vector3(5,5,4) if "lake" in label else Vector3(5,1.5,-4)
+  game.camera.global_position=Vector3(center.x,level,center.z)+reverse_offset
   game.camera.look_at(Vector3(center.x,level-.6,center.z),Vector3.UP)
   game.water_camera.update()
   for frame in 4:await process_frame

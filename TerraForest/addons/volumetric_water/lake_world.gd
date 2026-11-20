@@ -451,7 +451,7 @@ func _publish_meshes() -> void:
  if budget_us<=0:return
  for publication in packets:
   var packet_started:=Time.get_ticks_usec()
-  var update:Dictionary=water.next_mesh_batch(true)
+  var update:Dictionary=water.next_mesh_batch(true,true)
   last_publication_work.native_packet=int(last_publication_work.get("native_packet",0))+Time.get_ticks_usec()-packet_started
   if update.is_empty():break
   if update.has("failure"):
@@ -470,7 +470,7 @@ func _publish_meshes() -> void:
   if update.has("coordinate"):
    var geometry:ArrayMesh=null
    if update.vertices>0:
-    geometry=ArrayMesh.new();geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.get("render_arrays",update.arrays))
+    geometry=ArrayMesh.new();geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.render_arrays)
    if geometry!=null or _meshes.has(update.coordinate):
     var node:MeshInstance3D=null
     if geometry!=null:

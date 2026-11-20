@@ -3,12 +3,12 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
-November 20 local editing evidence: installed runs `20261120T123819287867Z`
-and `20261120T123947895282Z` passed sea and lake first-publication shoreline
-coverage after gameplay barrel explosions. Both failed the lake response
-deadline. The run without captures took 436.789 ms for lake publication.
-Timing, build identity and the fixed-angle evidence are recorded in
-[foundation status](WORLD_FOUNDATION_STATUS.md).
+November 20 installed gameplay run `20261120T131924658010Z` passed first
+and settled sea/lake shoreline coverage, including the bucket interruption.
+Both fixed lake views now show the bank before and after the blast. The lake
+still failed its 250 ms check at 330 ms. Construction cube contact passed
+in `20261120T131750662534Z`. The two-frame and 60 Hz gates remain open.
+See the [foundation status](WORLD_FOUNDATION_STATUS.md).
 
 | Gate | Required evidence | Status |
 | --- | --- | --- |
