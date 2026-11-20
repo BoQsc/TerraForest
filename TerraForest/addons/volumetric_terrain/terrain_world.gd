@@ -370,13 +370,20 @@ func request_material_edit(field:RefCounted,minimum:Vector3,maximum:Vector3,add:
 	if not world_ready or pending_edit or foreground_brush or stopping:return false
 	return backend.submit({"kind":"material_edit","field":field,"minimum":minimum,"maximum":maximum,"add":add,"token":token,"epoch":epoch,"revision":density_revision,"field_revision":field_revision})
 
+func water_sampling_revision()->int:
+	if not pending_edit:return published_revision
+	if last_edit_outcome.get("epoch",-1)==epoch and last_edit_outcome.get("ticket",-1)==edit_ticket and last_edit_outcome.get("status","")=="building" and latest_error.is_empty():
+		return published_revision+1
+	return -1
+
 func request_lake_slice(builder: RefCounted, token: int) -> bool:
 	# Optional native addon protocol: terrain has no dependency on its renderer.
 	if builder == null or builder.get_class() not in ["NativeWaterTerrainPatch", "NativeWaterTerrainBatch"]:
 		return false
-	if not world_ready or pending_edit or stopping:
+	var target:=water_sampling_revision()
+	if not world_ready or target<0 or stopping:
 		return false
-	return backend.submit({"kind": "lake_slice", "builder": builder, "token": token, "epoch": epoch, "revision": published_revision, "density_revision": density_revision})
+	return backend.submit({"kind": "lake_slice", "builder": builder, "token": token, "epoch": epoch, "revision": target, "density_revision": density_revision})
 
 func request_density_batch(points: PackedVector3Array,token: int,support_depth: int=0) -> bool:
 	if not world_ready or pending_edit or foreground_brush or stopping: return false

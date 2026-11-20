@@ -1,3 +1,26 @@
+## Two-frame local edit qualification (2026-11-20)
+
+Source game, Cedar Vale, isolated Windows rendering, 1920×1080, RTX 4050
+Laptop. Terrain can install prepared render meshes and colliders together
+while the worker finishes vegetation support. Water can sample the matching
+committed density before those colliders are ready. It holds prepared
+occupancy until the geometry handoff.
+
+In `20261120T193422315040Z` the 4 m brush reached its first engine draw in
+17.57 ms (two frames). The 64 m cut took 192.53 ms (13 frames), with a worst
+edit interval of 23.24 ms. All 3,750 post-edit physics ray results matched
+`20261120T191239652271Z` byte for byte. Field mutation took 28.75 ms and
+36 terrain meshes took 110.28 ms to build. The current geometry handoff still
+waits for all affected tiles.
+
+In `20261120T193306939954Z`, terrain publication to first water draw took
+120.09 ms at sea and 272.59 ms at the lake. The blast-window frame p99s
+were 51.00 and 53.74 ms respectively. The local mining draw took 149.64 ms.
+Crater coverage, terrain contact and lake quantity checks passed. See the
+[shoreline issue](../issues/explosive-combat/water-plan.md). The source-game
+runs exercise the normal input and simulation paths. Packaging, two-frame
+large edits and stable 60 FPS remain open.
+
 ## Dedicated checkpoint opened by gameplay (2026-11-20)
 
 In Windows packaged run `20261120T191826368964Z` (pack `0c0af7490060`),

@@ -114,6 +114,7 @@ var roots: Array[Vector3i] = []
 var staging: Array[Dictionary] = []
 var staging_versions: Dictionary = {}
 var staged_batch: Dictionary = {}
+signal edit_geometry_installed(ticket:int)
 var batch_remaining: int = 0
 var pending_edit: bool = false
 var edit_ticket: int = 0
@@ -754,6 +755,9 @@ func _drain_staging() -> void:
 			_commit_batch()
 			last_publish_ms=last_commit_ms
 			continue
+		if pending_edit and batch_remaining==0 and not staged_batch.is_empty() and latest_error.is_empty():
+			_install_edit_geometry()
+			continue
 		_select_preparation_work()
 		if preparation.is_empty():
 			if staging.is_empty():
@@ -942,6 +946,18 @@ func _install(key: Vector3i, entry: Dictionary) -> void:
 	_set_active(entry, visible_cut.has(key))
 	if activation_keys.has(key): schedule_timer=0.0
 
+func _install_edit_geometry()->void:
+	# Change every adjacent surface and its collider in the same main-thread
+	# turn. Support sampling can finish independently on the terrain worker.
+	_record_stage("geometry ready",0.0)
+	for key: Vector3i in staged_batch:
+		if staged_batch[key].get("retain_geometry",false):
+			tiles[key].stamp=staged_batch[key].stamp
+			tiles[key].dirty=false
+		else: _install(key, staged_batch[key])
+	staged_batch.clear()
+	edit_geometry_installed.emit(edit_ticket)
+
 func _commit_batch() -> void:
 	var commit_begin: int = Time.get_ticks_usec()
 	if _edit_support_result.size()!=_edit_support_snapshots.size():
@@ -957,14 +973,7 @@ func _commit_batch() -> void:
 	last_support_publish_ms=(Time.get_ticks_usec()-commit_begin)/1000.0
 	_record_stage("vegetation edit publish",last_support_publish_ms)
 	_edit_support_snapshots.clear();_edit_support_result.clear()
-	# All edited neighboring surfaces/colliders are already prepared off-screen.
-	# Publish the complete set in one main-thread turn; old colliders survive until here.
-	for key: Vector3i in staged_batch:
-		if staged_batch[key].get("retain_geometry",false):
-			tiles[key].stamp=staged_batch[key].stamp
-			tiles[key].dirty=false
-		else: _install(key, staged_batch[key])
-	staged_batch.clear()
+	if not staged_batch.is_empty():_install_edit_geometry()
 	pending_edit = false
 	last_geometry_done_us = Time.get_ticks_usec()
 	_queue_lighting_refresh()

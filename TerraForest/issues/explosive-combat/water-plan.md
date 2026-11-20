@@ -1,10 +1,15 @@
 # Continuous volumetric water replacement
 
-**Shoreline latency work is parked.** The last accepted Cedar Vale run took
-302 ms from terrain publication to lake draw. Keep the saved-world route,
-two camera angles and stricter two-frame target. Reopen this issue for a
-basin architecture change that can reuse regional capacity and connectivity
-across edits. The next active performance workload is ordinary world exploration.
+**Shoreline latency is open.** The November 20 source-game route
+`20261120T193306939954Z` overlaps occupancy sampling with terrain mesh
+staging and starts settlement when the matching colliders and surfaces are
+installed. From terrain publication to the first water draw, sea took eight
+frames (120.1 ms) and lake took seventeen (272.6 ms). Both failed the
+two-frame gate. At first publication all 81 crater probes passed per shore,
+with 23 sea and 26 lake waterline contacts within the 2 cm tolerance.
+Two views before and after each blast and submerged views accompany the
+timings. The first local draw still depends on completing a batch of water
+surfaces. Regional basin capacity and connectivity remain open.
 
 **Resident basin closure.** Missing terrain above the maximum reachable
 water elevation used to make an enclosed bank edit take the transient

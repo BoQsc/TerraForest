@@ -155,6 +155,7 @@ func _ready() -> void:
  _material.shader=preload("res://addons/volumetric_water/water.gdshader")
  _material.set_shader_parameter("ripple_normal",preload("res://addons/volumetric_water/textures/water_ripples_normal.png"))
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
+ terrain.edit_geometry_installed.connect(_terrain_geometry_installed)
  terrain.region_changed.connect(_settle_committed_edit)
  terrain.water_edit_admission=func(bounds:AABB,_selected:Array)->int:
   if water.has_deferred_overlap(bounds.grow(0.5)):return ERR_UNAVAILABLE
@@ -199,6 +200,7 @@ func remove_lake(id:int) -> void:
  water.remove_bounds(AABB(item.origin,Vector3(item.cells)*item.spacing))
  _lakes.erase(id);terrain.changed_since_save=true;catalog_changed.emit()
 func clear(preserve_store:bool=false) -> void:
+ _installed_edit_ticket=-1
  _local_response_pending=false;_local_publication_pending=false
  if _equilibrium_job!=null:_equilibrium_job.cancel()
  _equilibrium_failure="";_equilibrium_failed_revision=-1
@@ -214,12 +216,24 @@ func clear(preserve_store:bool=false) -> void:
   var empty:=PackedByteArray();empty.resize(500*500);empty.fill(0);_surrounding_ocean.publish(empty)
  _discard_builder()
  _have_bounds=false;_last_changes=0
+var _installed_edit_ticket:=-1
+func _terrain_geometry_installed(ticket:int)->void:
+ if terrain.water_sampling_revision()<0:return
+ _installed_edit_ticket=ticket
+ var low:Vector3=terrain.geometry_lo.min(terrain.edit_lo)
+ var high:Vector3=terrain.geometry_hi.max(terrain.edit_hi)
+ _queue_settlement(AABB(low,high-low),true)
+
 func _settle_committed_edit(bounds:AABB,_revision:int)->void:
+ if _revision>0 and _installed_edit_ticket==terrain.edit_ticket:return
+ _queue_settlement(bounds,_revision>0)
+
+func _queue_settlement(bounds:AABB,terrain_edit:bool)->void:
  # Mining, blasts and other terrain edits share the committed revision. Queue
  # even while paused; advancement remains separately gated by gameplay state.
  # The notification includes terrain meshing/shadow padding. Water connectivity
  # starts at the edited density bounds and supplies its own dependency halo.
- if _revision>0:
+ if terrain_edit:
   for area:AABB in terrain.water_edit_areas(bounds):water.settle_after_edit(area)
  else:water.settle_after_edit(bounds)
  if terrain.world_ready and not (loading_active.is_valid() and loading_active.call()):
@@ -241,6 +255,7 @@ func _interrupt_edit_work()->void:
   _mesh_task=-1;_mesh_job=null
  _clear_staged_meshes();_mesh_batch_id=-1
 func _invalidate(bounds:AABB) -> void:
+ _installed_edit_ticket=-1
  _interrupt_edit_work()
  _occupancy_failure=""
  for area:AABB in terrain.water_edit_areas(bounds):water.invalidate(area)
@@ -269,6 +284,11 @@ func _measured_step(delta:float)->void:
    WorkerThreadPool.wait_for_task_completion(_retirement_jobs[i].task);_retirement_jobs.remove_at(i)
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
+ var geometry_ready:bool=not terrain.pending_edit or _installed_edit_ticket==terrain.edit_ticket
+ if not _prepared_slice.is_empty() and geometry_ready:
+  var prepared:=_prepared_slice
+  _prepared_slice={}
+  _slice_ready(prepared.token,1,prepared.epoch,prepared.revision)
  if blocks!=null:blocks.set_occupancy_interest(PackedVector3Array())
  water.set_western_ocean(terrain.backend.world_generator==18)
  water.set_surrounding_ocean(terrain.backend.world_generator in [19,21,23,25,27,29,31])
@@ -310,7 +330,7 @@ func _measured_step(delta:float)->void:
    break
  # A resident edit can hand its commit to publication on this same frame.
  # Wider equilibrium still waits for the previous publication.
- var can_solve:bool=_filling_id==0 and not terrain.pending_edit and ((loading_active.is_valid() and loading_active.call()) or (settling_active.is_valid() and settling_active.call()))
+ var can_solve:bool=_filling_id==0 and geometry_ready and ((loading_active.is_valid() and loading_active.call()) or (settling_active.is_valid() and settling_active.call()))
  var solving_local:bool=can_solve and _local_response_pending
  if solving_local:
   var began:=Time.get_ticks_usec();_advance_equilibrium();last_process_work.equilibrium=Time.get_ticks_usec()-began
@@ -332,14 +352,15 @@ func _measured_step(delta:float)->void:
  elif can_solve and not solving_local:
   var began:=Time.get_ticks_usec();_advance_equilibrium();last_process_work.equilibrium=Time.get_ticks_usec()-began
  var occupancy_started:=Time.get_ticks_usec()
- if not _busy and not terrain.pending_edit and _occupancy_failure.is_empty():
+ var sampling_revision:int=terrain.water_sampling_revision()
+ if not _busy and _prepared_slice.is_empty() and sampling_revision>=0 and _occupancy_failure.is_empty():
   var request:Dictionary=water.next_request()
   if not request.is_empty():
    var preparing_load:bool=loading_active.is_valid() and loading_active.call()
-   if (_builder==null or _revision!=terrain.published_revision) and (preparing_load or _surrounding_ocean!=null or before.settling_regions>0) and _pending_bucket.is_empty() and _pending_dev.is_empty():
-    _prepare_terrain_batch(before.settling_regions==0 and not preparing_load)
-   if _builder==null or _revision!=terrain.published_revision:
-    _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_builder_reused=false;_revision=terrain.published_revision
+   if (_builder==null or _revision!=sampling_revision) and (preparing_load or _surrounding_ocean!=null or before.settling_regions>0) and _pending_bucket.is_empty() and _pending_dev.is_empty():
+    _prepare_terrain_batch(before.settling_regions==0 and not preparing_load and not terrain.pending_edit,sampling_revision)
+   if _builder==null or _revision!=sampling_revision:
+    _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_builder_reused=false;_revision=sampling_revision
     _builder_structure_revision=_structure_revision
     if blocks!=null:
      var hull_started:=Time.get_ticks_usec()
@@ -549,10 +570,10 @@ func _structure_hulls(bounds:AABB)->Dictionary:
   blocks.set_occupancy_interest(PackedVector3Array([bounds.get_center()]))
  return result
 
-func _prepare_terrain_batch(ocean_only:bool) -> void:
+func _prepare_terrain_batch(ocean_only:bool,sampling_revision:int) -> void:
  _discard_builder()
  _builder_reused=false
- _revision=terrain.published_revision
+ _revision=sampling_revision
  _builder_structure_revision=_structure_revision
  var hull_started:=Time.get_ticks_usec()
  for coordinate:Vector3i in water.next_requests(8 if ocean_only else 32,ocean_only):
@@ -571,7 +592,9 @@ func _prepare_terrain_batch(ocean_only:bool) -> void:
  var batch:RefCounted=ClassDB.instantiate("NativeWaterTerrainBatch")
  if batch.configure(_builder_patches):_builder=batch
  else:_discard_builder()
+var _prepared_slice:Dictionary={}
 func _discard_builder() -> void:
+ _prepared_slice={}
  if not _cached_job.is_empty():_cached_job.builder.cancel_cached()
  _builder=null
  _builder_patches.clear()
@@ -601,8 +624,11 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
    if int(info.status)<0:_slice_failure=info
  if token!=_token:return
  _busy=false
- if _builder==null or _builder_structure_revision!=_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or status==-4:_discard_builder();return
+ if _builder==null or _builder_structure_revision!=_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.water_sampling_revision() or status==-4:_discard_builder();return
  if status==0:return
+ if status==1 and terrain.pending_edit and _installed_edit_ticket!=terrain.edit_ticket:
+  _prepared_slice={"token":token,"epoch":epoch_id,"revision":revision}
+  return
  if status==1:
   terrain.water_preparation_revision+=1
   var accept_started:=Time.get_ticks_usec()

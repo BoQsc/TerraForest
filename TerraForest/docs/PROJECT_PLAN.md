@@ -12,9 +12,9 @@ outlet before reusing connectivity. Run the same Cedar Vale blast, and compare
 the first visible result, contact and conservation before expanding this path.
 The [water issue](../issues/explosive-combat/water-plan.md) tracks that gate.
 
-Shoreline latency is parked pending the regional basin architecture. Continue
-the rendered-client baseline with normal exploration and trader traversal.
-Keep the failing lake gate in the release ledger.
+Shoreline latency work resumed with a two-frame acceptance run covering the
+64 m cut and both shoreline blasts. Keep all three failing cases in the
+release ledger alongside the ordinary exploration and trader baseline.
 
 The packaged 300/304 ms lake result for the reverted interior-face shortcut
 keeps this basin milestone open. Qualify the first resident inland cut with

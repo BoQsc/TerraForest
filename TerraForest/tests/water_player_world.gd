@@ -173,6 +173,8 @@ func check_crater_coverage(center:Vector3,level:float,label:String)->void:
  check(contacts>=10 and gaps.is_empty(),label+" water reaches within 2 cm of the actual terrain waterline")
 var blast_metrics:Dictionary={}
 var terrain_published_us:=0
+var terrain_published_frame:=0
+var water_draw_frames:=0
 var terrain_admitted_us:=0
 var blast_timeline:Array[Dictionary]=[]
 var blast_started:=0
@@ -181,6 +183,7 @@ func terrain_published(_bounds:AABB,_revision:int)->void:
  if action_started_us and not timing_phase.is_empty() and not terrain_published_us and game.terrain.edit_accepted_us>=action_started_us:
   terrain_admitted_us=game.terrain.edit_accepted_us
   terrain_published_us=Time.get_ticks_usec()
+  terrain_published_frame=Engine.get_frames_drawn()
 var timing_phase:=""
 var timing_local_ms:=-1.0
 var action_started_us:=0
@@ -238,6 +241,7 @@ func measure_local_draw()->void:
  if timing_phase.is_empty() or not action_started_us or local_draw_us or not terrain_published_us:return
  if game.lakes._local_response_started_us>=action_started_us and not game.lakes._local_response_pending and not game.lakes._local_publication_pending:
   local_draw_us=Time.get_ticks_usec()
+  water_draw_frames=1+Engine.get_frames_drawn()-terrain_published_frame
 var timing_previous:=0
 var timing_frames:Array[float]=[]
 var timing_play_frames:Array[float]=[]
@@ -329,6 +333,9 @@ func finish_timing()->void:
   blast_metrics[timing_phase].action_to_terrain_admission_ms=(terrain_admitted_us-action_started_us)/1000.0
   blast_metrics[timing_phase].terrain_admission_to_publication_ms=(terrain_published_us-terrain_admitted_us)/1000.0
   blast_metrics[timing_phase].terrain_publication_to_local_draw_ms=(local_draw_us-terrain_published_us)/1000.0
+  blast_metrics[timing_phase].terrain_to_water_frames=water_draw_frames
+ if "--two-frame-edits" in OS.get_cmdline_user_args():
+  check(local_draw_us>0 and water_draw_frames<=2 and local_draw_us-terrain_admitted_us<=33334,timing_phase+" draws the changed water within two frames of the terrain edit")
  blast_metrics[timing_phase].worst_frames=timing_worst.duplicate(true)
  blast_metrics[timing_phase].stage_totals=timing_totals.duplicate()
  blast_metrics[timing_phase].water_worst=timing_water_worst.duplicate(true)
@@ -839,15 +846,26 @@ func check_authoring_brush()->void:
    exploration_terrain_stages.clear()
    game.terrain.stage_measured.connect(record_exploration_stage)
   var profiling:=game.terrain.backend is BrushProfileBackend and not coastal
+  var verify_draw:=profiling or ("--two-frame-edits" in OS.get_cmdline_user_args() and not coastal)
   var draw_record:Dictionary={}
+  var geometry_draw:Dictionary={}
+  var observe_geometry:=func(installed:int)->void:
+   if installed!=ticket+1:return
+   geometry_draw.installed_us=Time.get_ticks_usec()
+   await RenderingServer.frame_post_draw
+   geometry_draw.draw_us=Time.get_ticks_usec()
+   geometry_draw.frame=Engine.get_frames_drawn()
   var observe_draw:=func(row:Dictionary)->void:
    if row.ticket==ticket+1 and row.has("draw_us"):draw_record.merge(row)
   if profiling:
    game.terrain.stage_measured.connect(record_brush_staging)
+  if verify_draw:
    game.terrain.edit_measured.connect(observe_draw)
+   game.terrain.edit_geometry_installed.connect(observe_geometry)
   var click:=InputEventMouseButton.new()
   click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
   var started:=Time.get_ticks_usec()
+  var input_frame:=Engine.get_frames_drawn()
   Input.parse_input_event(click);Input.flush_buffered_events()
   game._update_edit(1)
   var preparing:bool=not game.preparing_stroke.is_empty()
@@ -879,12 +897,21 @@ func check_authoring_brush()->void:
   check(game.terrain.published_revision>revision,"Authoring brush publishes a changed terrain revision")
   if profiling:
    game.terrain.stage_measured.disconnect(record_brush_staging)
+  if verify_draw:
    var draw_deadline:=Time.get_ticks_usec()+500000
    while draw_record.is_empty() and Time.get_ticks_usec()<draw_deadline:await process_frame
    game.terrain.edit_measured.disconnect(observe_draw)
+   game.terrain.edit_geometry_installed.disconnect(observe_geometry)
+   check(geometry_draw.has("draw_us"),"Contact geometry has a matched post-draw receipt")
+   if geometry_draw.has("draw_us"):
+    var frames_to_draw:int=1+geometry_draw.frame-input_frame
+    print("AUTHORING_GEOMETRY_DRAW ",JSON.stringify({"radius":game.radius,"input_to_install_ms":(geometry_draw.installed_us-started)/1000.0,"input_to_draw_ms":(geometry_draw.draw_us-started)/1000.0,"frames_drawn":frames_to_draw}))
+    if "--two-frame-edits" in OS.get_cmdline_user_args():
+     check(frames_to_draw<=2 and geometry_draw.draw_us-started<=33334,"Authoring brush reaches first draw in two frames")
    check(not draw_record.is_empty(),"First terrain post-draw receipt belongs to this brush ticket")
    if not draw_record.is_empty():
     print("AUTHORING_FIRST_DRAW ",JSON.stringify({"ticket":draw_record.ticket,"input_to_commit_ms":(draw_record.publish_us-started)/1000.0,"input_to_draw_ms":(draw_record.draw_us-started)/1000.0,"commit_to_draw_ms":(draw_record.draw_us-draw_record.publish_us)/1000.0}))
+  if profiling:
    var events:Dictionary=game.terrain.backend.handoff
    var waits:Array[float]=[]
    var staging:Array[float]=[]
@@ -918,7 +945,7 @@ func check_authoring_brush()->void:
 func record_brush_staging(stage:String,ms:float)->void:
  # Observe completed tiles at the end of each slice and immediately before
  # the atomic swap clears staged_batch. Times are upper bounds within a slice.
- if stage not in ["staging frame","vegetation edit publish"]:return
+ if stage not in ["staging frame","geometry ready"]:return
  var events:Dictionary=game.terrain.backend.handoff
  var now:=Time.get_ticks_usec()
  for key in game.terrain.staged_batch:
