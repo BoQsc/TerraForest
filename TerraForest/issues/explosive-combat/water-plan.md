@@ -1,4 +1,4 @@
-**The two-frame gate remains open.** A resident excavation now stages changed
+**The two-frame gate remains open.** The [resident geometry trial](../../docs/WORLD_FOUNDATION_STATUS.md#resident-terrain-geometry-and-shoreline-contact) records the two camera pairs, cube contact and repeated barrel timings. Sea took 108–127 ms and lake took 224–274 ms. A resident excavation now stages changed
 terrain pages before committing the field. Water reads the changed boundary,
 density and solid blocks together at one terrain revision. The full cut and the
 sea and lake barrels still require presented-frame and contact evidence at the

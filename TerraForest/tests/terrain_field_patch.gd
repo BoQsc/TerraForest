@@ -91,12 +91,31 @@ func run()->void:
 	var build_epoch:int=core.execute(Codec.command(13)).decode_u32(12)
 	var frozen:RefCounted=core.capture_contact_core(bounds,state.revision,build_epoch)
 	check(frozen!=null and core.capture_contact_core(bounds,state.revision+1,build_epoch)==null,"only a matching contact revision can be captured")
+	# Compare the shared density-cell surface against independent extraction.
+	var owner:=Codec.command(20,[992,992,32,1,build_epoch])
+	var canonical:PackedByteArray=core.execute(Codec.command(1,[992,992,32,1,build_epoch]))
+	var shared_mesh:PackedByteArray=frozen.execute(owner)
+	check(Codec.reply_ok(shared_mesh) and shared_mesh.slice(12)==canonical.slice(12),"resident cells reproduce the rendered mesh and collision packet")
+	for coord in [Vector3i(1008,40,1008),Vector3i(1004,36,1004),Vector3i(992,40,992)]:
+		var contact:=Codec.command(43,[state.revision,build_epoch,coord.x,coord.y,coord.z])
+		var actual:PackedByteArray=frozen.execute(contact)
+		check(Codec.reply_ok(actual) and actual==core.execute(contact),"shared reconstruction reproduces water triangles, samples and solids at "+str(coord))
 	var packet:=Codec.command(42,[992,992,32])
 	packet.append_array(PackedFloat32Array([point.x,point.y,point.z,32.0]).to_byte_array())
 	packet.append_array(PackedInt32Array([1,992,992,1024,1024,state.revision,build_epoch]).to_byte_array())
 	var prior:PackedByteArray=core.execute(packet)
 	check(Codec.reply_ok(prior),"reference contact includes regional generator and authored samples")
 	check(Codec.reply_ok(core.execute(Codec.brush(point,point,32,1,false,0))),"authority advances independently")
+	state=core.field_patch_state()
+	var cut_reader:RefCounted=core.capture_contact_core(Rect2i(976,976,64,64),state.revision,build_epoch)
+	check(cut_reader!=null,"full excavation fits a bounded edit reader")
+	if cut_reader!=null:
+		for x in [976,1008,1036]:
+			for z in [976,1008,1036]:
+				for y in [4,8,36,40]:
+					var contact:=Codec.command(43,[state.revision,build_epoch,x,y,z])
+					var local:PackedByteArray=cut_reader.execute(contact)
+					check(Codec.reply_ok(local) and local==core.execute(contact),"full excavation cell index agrees with ordinary water contact at "+str(Vector3i(x,y,z)))
 	check(not Codec.reply_ok(core.execute(packet)),"stale contact packet rejected on live authority")
 	check(frozen!=null and frozen.execute(packet)==prior,"isolated contact produces byte-identical geometry after live edit")
 	store.close()

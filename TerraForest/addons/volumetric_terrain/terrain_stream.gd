@@ -116,6 +116,7 @@ var staging_versions: Dictionary = {}
 var staged_batch: Dictionary = {}
 # Main-thread publication partner for a wet edit. Both halves keep the last
 # published scene while their revision-owned replacements are prepared.
+var resident_edit_surface:Dictionary={}
 var _joint_ticket:=-1
 var _joint_epoch:=-1
 var _joint_owners:Dictionary={}
@@ -296,7 +297,7 @@ func shutdown() -> void:
 	# deferred retired roots explicitly instead of leaking them on shutdown.
 	if not preparation.is_empty():
 		var prepared: Node = preparation["entry"]["node"]
-		if is_instance_valid(prepared):
+		if is_instance_valid(prepared) and not preparation.entry.has("resident_swap"):
 			prepared.free()
 		preparation.clear()
 	for paused: Dictionary in paused_preparations:
@@ -538,6 +539,7 @@ func _receive(result: Dictionary) -> void:
 		if int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
 			return
 		latest_member_changes = result.get("member_changed", [])
+		resident_edit_surface=result.get("resident_surface",{})
 		_contact_accepted_ticket=edit_ticket
 		_activate_contact()
 		_record_stage("resident cut snapshot and dispatch" if result.get("contact_parallel",false) else "resident cut worker",float(result.get("contact_ms",0)))
@@ -665,10 +667,24 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 	var key: Vector3i = data["key"]
 	var arrays: Array = data["arrays"]
 	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-	var mesh_node: Node3D = Node3D.new() if indices.is_empty() else MeshInstance3D.new()
-	mesh_node.name = "Patch_%d_%d_%d" % [key.x, key.y, key.z]
-	mesh_node.visible = false
-	var body: StaticBody3D = null
+	# Keep the registered instance and body for ordinary one-shape owners.
+	# Only the replacement resources are private during staging.
+	var slot:Dictionary={}
+	var old:Dictionary=tiles.get(key,{})
+	if data.get("kind","")=="batch" and not data.has("contact_count") and not data.has("brick_bottom") and not indices.is_empty() and data.collision_pieces.size()==1:
+		var previous_body:StaticBody3D=old.get("body")
+		if old.get("node") is MeshInstance3D and is_instance_valid(previous_body) and previous_body.get_child_count()==1:
+			var collider:=previous_body.get_child(0) as CollisionShape3D
+			if collider!=null:slot={"collider":collider,"old_shape":collider.shape,"old_mesh":old.node.mesh,"applied":false}
+	var mesh_node:Node3D
+	var body:StaticBody3D
+	if slot.is_empty():
+		mesh_node=Node3D.new() if indices.is_empty() else MeshInstance3D.new()
+		mesh_node.name="Patch_%d_%d_%d" % [key.x,key.y,key.z]
+		mesh_node.visible=false
+	else:
+		mesh_node=old.node
+		body=old.body
 	var layout: Dictionary = {}
 	if not indices.is_empty():
 		# Empty owners retain their logical identity without a rendering instance.
@@ -677,7 +693,8 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 		var mesh := ArrayMesh.new()
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays, [], {}, Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE)
 		mesh.surface_set_material(0, material)
-		mesh_node.mesh = mesh
+		if slot.is_empty():mesh_node.mesh=mesh
+		else:slot.mesh=mesh
 		var count: int = mesh.surface_get_array_len(0)
 		var format: int = mesh.surface_get_format(0)
 		layout = {"count": count, "stride": RenderingServer.mesh_surface_get_format_attribute_stride(format, count),
@@ -685,7 +702,7 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 			"uv2": RenderingServer.mesh_surface_get_format_offset(format, count, Mesh.ARRAY_TEX_UV2),
 			"color": RenderingServer.mesh_surface_get_format_offset(format, count, Mesh.ARRAY_COLOR),
 			"compressed": (format & Mesh.ARRAY_FLAG_COMPRESS_ATTRIBUTES) != 0}
-		if not data["collision_pieces"].is_empty():
+		if slot.is_empty() and not data["collision_pieces"].is_empty():
 			body = StaticBody3D.new()
 			body.name = "MatchingCollision"
 			body.collision_layer = 0
@@ -694,11 +711,23 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 			mesh_node.add_child(body)
 	last_mesh_upload_ms = float(Time.get_ticks_usec() - upload_begin) / 1000.0
 	_record_stage("mesh upload/create", last_mesh_upload_ms)
-	return {"node": mesh_node, "body": body, "dirty": false, "stamp": data["stamp"],
+	var result:Dictionary={"node": mesh_node, "body": body, "dirty": false, "stamp": data["stamp"],
 		"step": int(data.get("step",maxi(1,key.z/32))),
 		"arrays": arrays, "attribute_layout": layout, "collision_shapes": {}, "lighting_only": bool(data.get("lighting_only", false)),
 		"triangles": int(data["triangles"]), "bytes": int(data["bytes"]),
 		"used": Time.get_ticks_msec(), "key": key, "active": false, "cavity_visibility": bool(data.get("cavity_visibility", true))}
+
+	if not slot.is_empty():result.resident_swap=slot
+	return result
+
+func _apply_resident_swap(entry:Dictionary,active:bool)->void:
+	var slot:Dictionary=entry.resident_swap
+	if slot.applied==active:return
+	var started:=Time.get_ticks_usec()
+	slot.collider.shape=slot.shape if active else slot.old_shape
+	entry.node.mesh=slot.mesh if active else slot.old_mesh
+	slot.applied=active
+	_record_stage("resident resource swap",(Time.get_ticks_usec()-started)/1000.0)
 
 func _prepare_piece() -> bool:
 	if preparation.data.has("bricks"):
@@ -747,10 +776,13 @@ func _prepare_piece() -> bool:
 		else:
 			collision_pieces_built += 1
 		var attach_begin: int = Time.get_ticks_usec()
-		var collision := CollisionShape3D.new()
-		collision.shape = prepared["shape"]
-		var body: StaticBody3D = preparation["entry"]["body"]
-		body.add_child(collision)
+		if entry.has("resident_swap"):
+			entry.resident_swap.shape=prepared.shape
+		else:
+			var collision:=CollisionShape3D.new()
+			collision.shape=prepared.shape
+			var body:StaticBody3D=entry.body
+			body.add_child(collision)
 		_record_stage("collision node attach", float(Time.get_ticks_usec() - attach_begin) / 1000.0)
 		preparation["piece_at"] = at + 1
 		if profile_collision_pieces:
@@ -837,7 +869,7 @@ func _drain_staging() -> void:
 				break
 			preparation = {"data": data, "entry": _begin_entry(data), "piece_at": 0}
 			var attach_begin:=Time.get_ticks_usec()
-			add_child(preparation.entry.node)
+			if not preparation.entry.has("resident_swap"):add_child(preparation.entry.node)
 			_record_stage("prepared subtree attach",(Time.get_ticks_usec()-attach_begin)/1000.0)
 		else:
 			var data: Dictionary = preparation["data"]
@@ -944,6 +976,7 @@ func _detach_retired_collision(entry: Dictionary) -> void:
 		body.process_mode = Node.PROCESS_MODE_DISABLED
 
 func _destroy_entry(entry: Dictionary) -> void:
+	if entry.has("resident_swap"):return # Its nodes belong to the installed tile.
 	_detach_retired_collision(entry)
 	var node: Node3D = entry.get("node")
 	if is_instance_valid(node):
@@ -968,7 +1001,12 @@ func _install(key: Vector3i, entry: Dictionary) -> void:
 	if tiles.has(key):
 		var old: Dictionary = tiles[key]
 		cache_bytes -= int(old.bytes)
-		if entry.get("brick_partial",false) and old.has("bricks"):
+		if entry.has("resident_swap"):
+			_apply_resident_swap(entry,true)
+			entry.active=old.active
+			retired_payloads.append(entry.resident_swap)
+			entry.erase("resident_swap")
+		elif entry.get("brick_partial",false) and old.has("bricks"):
 			# Keep the live container when only a minority of its bricks changed.
 			# Reparenting an untouched StaticBody leaves and rejoins the physics
 			# space even when the collision layer and mesh revision stay the same.
@@ -1069,6 +1107,9 @@ func _activate_contact()->void:
 
 func _set_edit_replacement(key:Vector3i, replacement:Dictionary, active:bool)->void:
 	var original:Dictionary=tiles[key]
+	if replacement.has("resident_swap"):
+		_apply_resident_swap(replacement,active)
+		return
 	if replacement.get("brick_partial",false) and original.has("bricks"):
 		# Original and replacement parents coexist until commit. Only the
 		# children actually replaced relinquish their visual and physics space.
@@ -1173,6 +1214,7 @@ func _commit_batch() -> void:
 	_edit_support_snapshots.clear();_edit_support_result.clear()
 	if not staged_batch.is_empty():_install_edit_geometry()
 	pending_edit = false
+	resident_edit_surface={}
 	last_geometry_done_us = Time.get_ticks_usec()
 	_queue_lighting_refresh()
 	changed_since_save = true
@@ -1721,6 +1763,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	shadow_lo = lo - Vector3(reach, 0.0, reach)
 	shadow_hi = hi + Vector3(reach, 0.0, reach)
 	edit_rollback.clear()
+	resident_edit_surface={}
 	var affected: Array[Dictionary] = _invalidate()
 	edit_ticket += 1
 	pending_edit = true

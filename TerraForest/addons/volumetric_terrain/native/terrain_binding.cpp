@@ -615,7 +615,7 @@ public:
         if(copy.is_null()||tr_oom)return {};
         World &dst=copy->world_;
         dst.contact_snapshot=true;dst.seed=world_.seed;dst.generator_id=world_.generator_id;
-        dst.revision=world_.revision;dst.surface_style=world_.surface_style;dst.cache_mesh_heights=true;
+        dst.revision=world_.revision;dst.contact_revision=dst.revision;dst.surface_style=world_.surface_style;dst.cache_mesh_heights=true;
         dst.regional_roads=world_.regional_roads;dst.site_count=world_.site_count;dst.basin_count=world_.basin_count;
         copy_bytes(dst.sites,world_.sites,sizeof(dst.sites));
         copy_bytes(dst.road_points,world_.road_points,sizeof(dst.road_points));

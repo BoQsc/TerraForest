@@ -560,11 +560,11 @@ func _prepare_contact(source:Object,job:Dictionary,command:PackedByteArray,revis
 # Each worker holds a private snapshot of one 64 m group at the accepted
 # revision. Only complete ordinary terrain packets are eligible for early
 # installation. Missing resident data or an uncaptured shadow uses _build.
-func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary)->void:
+func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,share_contacts:bool=false)->void:
 	for item:Dictionary in items:
 		var key:Vector3i=item.key
 		var start:=Time.get_ticks_usec()
-		var reply:PackedByteArray=source.execute(Codec.command(1,[key.x,key.y,key.z,1,job.build_epoch]))
+		var reply:PackedByteArray=source.execute(Codec.command(20 if share_contacts else 1,[key.x,key.y,key.z,1,job.build_epoch]))
 		if not Codec.reply_ok(reply):continue
 		var packet:=reply.slice(16)
 		var chunk:=Codec.decode_mesh(packet)
@@ -579,8 +579,30 @@ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Di
 		completed[key]={"packet":packet,"worker_ms":chunk.worker_ms}
 		_push(chunk)
 
-func _dispatch_resident_groups(job:Dictionary,revision:int,scheduled:Dictionary)->Array:
+# Small edits share one immutable native field and its canonical cell vertices
+# between terrain render/collision and adjacent water-contact reconstruction.
+func _resident_edit_surface(job:Dictionary,revision:int)->Dictionary:
+	if region_terrain or brick_terrain or snapshot_terrain or job.tiles.is_empty():return {}
+	var bounds:=Rect2i()
+	for item:Dictionary in job.tiles:
+		var key:Vector3i=item.key
+		if key.z not in [16,32] or item.has("brick_bottoms"):return {}
+		var tile:=Rect2i(key.x,key.y,key.z,key.z)
+		bounds=tile if not bounds.has_area() else bounds.merge(tile)
+		if bounds.size.x>64 or bounds.size.y>64:return {}
+	var core:Object=native.capture_contact_core(bounds,revision,job.build_epoch)
+	if core==null:return {}
+	return {"core":core,"bounds":bounds,"ticket":job.ticket,"epoch":job.epoch}
+
+func _dispatch_resident_groups(job:Dictionary,revision:int,scheduled:Dictionary,surface:Dictionary)->Array:
 	var tasks:Array=[]
+	if not surface.is_empty():
+		var completed:Dictionary={}
+		var task:=WorkerThreadPool.add_task(_build_resident_group.bind(surface.core,job.tiles,job,completed,true),true,"Shared terrain edit surface")
+		if task>=0:
+			tasks.append({"task":task,"completed":completed,"items":job.tiles})
+			for item:Dictionary in job.tiles:scheduled[item.key]=true
+			return tasks
 	if job.tiles.size()<8 or region_terrain or brick_terrain or snapshot_terrain:return tasks
 	var groups:Dictionary={}
 	for item:Dictionary in job.tiles:
@@ -1591,14 +1613,15 @@ func _run() -> void:
 				cache_valid = false
 				latest_packets.clear()
 				latest_packet_bytes = 0
-				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],
+				var surface:=_resident_edit_surface(job,after_stats.decode_u32(12))
+				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],"resident_surface":surface,
 					"count": job["tiles"].size(), "contact_ms":contact_ms, "contact_parallel":contact_task>=0, "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
 				if contact_task>=0:WorkerThreadPool.wait_for_task_completion(contact_task)
 				# Stream finished patches to main-thread staging immediately. Worker
 				# builds and resource preparation OVERLAP instead of running in series.
 				var build_total: float = 0.0
 				var scheduled:Dictionary={}
-				var groups:=_dispatch_resident_groups(job,after_stats.decode_u32(12),scheduled)
+				var groups:=_dispatch_resident_groups(job,after_stats.decode_u32(12),scheduled,surface)
 				for item: Dictionary in job["tiles"]:
 					if scheduled.has(item.key):continue
 					var selected: Array=item.get("brick_bottoms",[])

@@ -57,6 +57,8 @@ struct ExactSkyProbe {V3 origin;u32 sky_bits=0;};
 // Stable owner storage outside World, so reset/load cannot reset cancellation.
 struct BuildControl {u32 epoch=0;};
 struct GeometryCache;
+// Derived from immutable authored samples on first use by a surface reader.
+struct SurfaceSignPage { u16 columns[256]; u32 valid[8]; };
 struct World;
 struct PageAccess {
  virtual bool load(World&,int)=0;
@@ -83,6 +85,8 @@ struct World {
  PageAccess *page_access=nullptr; // Owner is the native binding; never serialized.
  // A bounded reconstruction copy rejects lighting rays leaving its captured columns.
  bool contact_snapshot=false;
+ int contact_revision=-1;
+ mutable List<SurfaceSignPage> contact_signs;
  int contact_x0=0,contact_z0=0,contact_x1=WORLD,contact_z1=WORLD;
  mutable bool contact_outside=false;
  bool pages_pinned=false;V3 pin_lo{},pin_hi{};

@@ -1,3 +1,27 @@
+## Resident terrain geometry and shoreline contact
+
+The packaged local edit reuses an accepted terrain snapshot across terrain, collision and water contact extraction. Ordinary single-shape owners can keep their registered physics and render nodes through publication. The 64 m cut reused all 36 nodes. The first matching shoreline draw now checks the visible terrain triangles against the physics floor. Publication latency remains a release blocker.
+
+Package SHA-256 `a5884655a9330f4d8ae0aee814aa1b87c7b11e0ad56455e4912169eca2f607d5`, isolated 1080p RTX 4050 Laptop, Cedar Vale fixture. Times below start at terrain edit admission for barrels and brush input for the cut. Frame intervals are engine observations. The barrel timing runs disabled capture.
+
+| Workload | Previous package | First matching draw | Worst frame interval |
+|---|---|---|---|
+| Full 64 m cut | 193.51 ms | 134.15 ms full publication. At draw two, 0 of 9 probes matched. Center matched on draw five at 46.48 ms. | 31.63 ms, previously 24.39 ms |
+| Sea barrel | 91.17 ms | 108.09 and 127.29 ms, draws 7 and 8 | 78.99 and 52.46 ms |
+| Lake barrel | 222.00 ms | 274.49 and 223.75 ms, draws 17 and 14 | 77.70 and 80.04 ms |
+
+Both barrels lowered the floor and exposed matching water on the same draw. Visible terrain and physics differed by 0.027 mm at the crater probes. All 23 sea and 26 lake waterline samples found water within 2 cm, and the lake conserved its quantity. The submerged cube excluded water inside and had surface contact within 1 cm on all four sides. The cut's 3,750 end-state collision samples matched the earlier validated result byte for byte. In the repeated run, bucket feedback measured at the visible water change took 41.6 to 50.4 ms, and mining took 130.5 ms from action to local draw. None of these results qualifies stable 60 FPS.
+
+| Workload | First camera before / after | Second camera before / after | Submerged |
+|---|---|---|---|
+| 64 m cut | [Before](../reports/checks/20261120T232311164057Z/cut_before_angle_1.png) / [After](../reports/checks/20261120T232311164057Z/cut_after_angle_1.png) | [Before](../reports/checks/20261120T232311164057Z/cut_before_angle_2.png) / [After](../reports/checks/20261120T232311164057Z/cut_after_angle_2.png) | Inland |
+| Sea barrel | [Before](../reports/checks/20261120T232513426507Z/player_shore_before.png) / [After](../reports/checks/20261120T232513426507Z/player_shore_after.png) | [Before](../reports/checks/20261120T232513426507Z/player_shore_before_reverse.png) / [After](../reports/checks/20261120T232513426507Z/player_shore_after_reverse.png) | [Contact](../reports/checks/20261120T232513426507Z/player_shore_underwater.png) |
+| Lake barrel | [Before](../reports/checks/20261120T232513426507Z/player_lake_before.png) / [After](../reports/checks/20261120T232513426507Z/player_lake_after.png) | [Before](../reports/checks/20261120T232513426507Z/player_lake_before_reverse.png) / [After](../reports/checks/20261120T232513426507Z/player_lake_after_reverse.png) | [Contact](../reports/checks/20261120T232513426507Z/player_lake_underwater.png) |
+
+[Cube above](../reports/checks/20261120T232626473480Z/object_contact_above.png) and [submerged](../reports/checks/20261120T232626473480Z/object_contact_underwater.png). [First barrel timing](../reports/checks/20261120T232417386198Z/normal_gameplay_blast_performance.json) and [repeat timing](../reports/checks/20261120T232741542485Z/normal_gameplay_blast_performance.json). [Native field and seam checks](../reports/checks/20261120T231825759712Z/engine.log) and [Packaged terrain recovery](../reports/checks/20261120T232844676291Z/engine.log).
+
+The cut spent 20.65 ms changing the field and 17.13 ms in combined publication. Shoreline water used 48 shared contact patches per barrel, but the local water surface still waits for replacement meshes. Park further tuning of owner reuse. Resume at the changed-cell geometry boundary with independently replaceable surface and collider pieces and an indexed regional water capacity and connectivity record. Closure requires full-footprint agreement on draw two, both barrel contacts and frame intervals inside budget in the packaged route.
+
 ## Joint shoreline publication in the packaged game
 
 The sea and lake barrel craters first exposed matching collision and water

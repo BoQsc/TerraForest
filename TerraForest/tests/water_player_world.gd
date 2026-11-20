@@ -202,6 +202,12 @@ func measure_shore_target()->void:
   var node:MeshInstance3D=game.lakes._meshes.get(Vector3i(column.x,layer,column.y))
   if node!=null and node.is_visible_in_tree():meshes.append([node.mesh,node.global_transform])
  if not proxy and meshes.is_empty():return
+ # Freeze the actual renderer and transform behind the sampled collider.
+ # Read triangles after timing so mesh readback cannot stall the measured draw.
+ var terrain_node:=floor_hit.collider.get_parent() as MeshInstance3D
+ if terrain_node!=null and terrain_node.is_visible_in_tree():
+  shore_draw.terrain_mesh=terrain_node.mesh
+  shore_draw.terrain_transform=terrain_node.global_transform
  shore_draw.merge({"draw_us":Time.get_ticks_usec(),"frame":Engine.get_frames_drawn(),"query_y":hit.point.y,"floor_y":floor_hit.position.y,"proxy":proxy,"meshes":meshes})
 
 func verify_shore_target()->Dictionary:
@@ -218,7 +224,17 @@ func verify_shore_target()->Dictionary:
     var hit=Geometry3D.segment_intersects_triangle(origin,end,faces[i],faces[i+1],faces[i+2])
     if hit!=null and absf((transform*Vector3(hit)).y-shore_draw.query_y)<.025:matched=true;break
    if matched:break
- return {"matched":matched,"floor_frames":1+shore_draw.floor_draw_frame-shore_draw.admit_frame,"floor_ms":(shore_draw.floor_draw_us-shore_draw.admit_us)/1000.0,"floor_to_water_frames":shore_draw.frame-shore_draw.floor_draw_frame,"frames":1+shore_draw.frame-shore_draw.admit_frame,"ms":(shore_draw.draw_us-shore_draw.admit_us)/1000.0,"proxy":shore_draw.proxy,"floor_before":shore_draw.old_floor,"floor_after":shore_draw.floor_y,"surface_y":shore_draw.query_y}
+ var terrain_error:=INF
+ if shore_draw.has("terrain_mesh"):
+  var transform:Transform3D=shore_draw.terrain_transform
+  var floor_point:=Vector3(point.x,shore_draw.floor_y,point.z)
+  var start:=transform.affine_inverse()*(floor_point+Vector3.UP*.1)
+  var end:=transform.affine_inverse()*(floor_point-Vector3.UP*.1)
+  var faces:PackedVector3Array=shore_draw.terrain_mesh.get_faces()
+  for i in range(0,faces.size(),3):
+   var floor_hit=Geometry3D.segment_intersects_triangle(start,end,faces[i],faces[i+1],faces[i+2])
+   if floor_hit!=null:terrain_error=minf(terrain_error,absf((transform*Vector3(floor_hit)).y-floor_point.y))
+ return {"matched":matched and terrain_error<=.001,"terrain_collision_error_m":terrain_error if is_finite(terrain_error) else -1.0,"floor_frames":1+shore_draw.floor_draw_frame-shore_draw.admit_frame,"floor_ms":(shore_draw.floor_draw_us-shore_draw.admit_us)/1000.0,"floor_to_water_frames":shore_draw.frame-shore_draw.floor_draw_frame,"frames":1+shore_draw.frame-shore_draw.admit_frame,"ms":(shore_draw.draw_us-shore_draw.admit_us)/1000.0,"proxy":shore_draw.proxy,"floor_before":shore_draw.old_floor,"floor_after":shore_draw.floor_y,"surface_y":shore_draw.query_y}
 var terrain_admitted_us:=0
 var blast_timeline:Array[Dictionary]=[]
 var blast_started:=0
@@ -1175,7 +1191,8 @@ func brush_mesh_owners(view:Camera3D,center:Vector3,radius:float)->Dictionary:
      if plane.distance_to(box.get_center())>plane.normal.abs().dot(box.size*.5):
       in_view=false
       break
-   records[brick]={"node":node.get_instance_id(),"arrays":entry.get("arrays",[]),"in_view":in_view}
+   var mesh_id:int=node.mesh.get_instance_id() if node is MeshInstance3D and node.mesh!=null else 0
+   records[brick]={"node":node.get_instance_id(),"mesh":mesh_id,"arrays":entry.get("arrays",[]),"in_view":in_view}
    if "--authoring-collision-reuse" in OS.get_cmdline_user_args():
     var shapes:Array[ConcavePolygonShape3D]=[]
     var body:StaticBody3D=entry.get("body")
@@ -1188,7 +1205,7 @@ func brush_mesh_owners(view:Camera3D,center:Vector3,radius:float)->Dictionary:
 
 func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:Dictionary,old_stamps:Dictionary)->void:
  var after:=brush_mesh_owners(view,center,radius)
- var counts:={"replaced":0,"identical":0,"attributes_only":0,"changed_in_frustum":0,"changed_outside":0,"retained":0,"tiles_with_replacements":0}
+ var counts:={"replaced":0,"identical":0,"attributes_only":0,"changed_in_frustum":0,"changed_outside":0,"retained":0,"tiles_with_replacements":0,"resident_nodes_reused":0}
  var collision:={"old_triangles":0,"new_triangles":0,"unchanged_triangles":0,"changed_axis_aligned":0,"old_shapes":0,"new_shapes":0,"shared_shapes":0,"stable_cell_triangles":{}}
  var keys:=before.keys()
  for key in after:
@@ -1209,8 +1226,10 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
    var a:Dictionary=old.get(id,{})
    var b:Dictionary=current.get(id,{})
    if a.get("node",0)==b.get("node",0):
-    counts.retained+=1
-    continue
+    if a.get("mesh",0)==b.get("mesh",0):
+     counts.retained+=1
+     continue
+    counts.resident_nodes_reused+=1
    replacements+=1
    if a.has("shapes") or b.has("shapes"):
     compare_brush_collision(a.get("shapes",[]),b.get("shapes",[]),collision)

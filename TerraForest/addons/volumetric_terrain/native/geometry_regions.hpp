@@ -67,7 +67,45 @@ static void order_vertices(Vertex*p,int lo,int hi){
   if(j-lo<hi-i){if(lo<j)order_vertices(p,lo,j);lo=i;}else{if(i<hi)order_vertices(p,i,hi);hi=j;}
  }
 }
-static bool cached_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch){
+// Transfer a complete 16 m column, preserving the ordinary cache budget.
+static const List<Vertex>* retain_geometry_column(GeometryCache&c,int x,int z,List<Vertex>&vertices){
+ int key=geometry_key(x,z),slot=int(c.index[key])-1;
+ u64 bytes=u64(vertices.cap)*sizeof(Vertex);
+ if(slot>=0)discard_region(c,slot,false);
+ if(bytes>c.budget){++c.bypasses;return &vertices;}
+ while(c.bytes+bytes>c.budget){int victim=geometry_victim(c);if(victim<0)break;discard_region(c,victim,true);}
+ slot=-1;for(int i=0;i<GEOMETRY_SLOTS;i++)if(!c.regions[i].present){slot=i;break;}
+ if(slot<0){slot=geometry_victim(c);discard_region(c,slot,true);}
+ auto&r=c.regions[slot];r.x=x;r.z=z;r.used=++c.clock;r.present=true;r.dirty=false;
+ r.vertices=vertices;vertices=List<Vertex>{};c.index[key]=u16(slot+1);c.bytes+=bytes;c.entries++;
+ return &r.vertices;
+}
+// A resident mesh already contains every original cell representative in its
+// interior. Water can reuse these columns without extracting the surrounding
+// owners merely to read their one-cell rims.
+static bool remember_surface_columns(const World&w,int ox,int oz,int size,const Mesh&m){
+ auto*c=ensure_geometry_cache(w);if(!c)return false;
+ for(int z=oz;z<oz+size;z+=16)for(int x=ox;x<ox+size;x+=16){
+  List<Vertex> column;
+  for(int i=0;i<m.v.n;i++){
+   const auto&v=m.v[i];
+   if(v.cx>=x&&v.cx<x+16&&v.cz>=z&&v.cz<z+16)column.push(v);
+  }
+  if(tr_oom){column.release();return false;}
+  retain_geometry_column(*c,x,z,column);column.release();
+ }
+ return true;
+}
+static bool has_surface_columns(const World&w,int ox,int oz,int size){
+ const auto*c=w.geometry_cache;if(!c)return false;
+ for(int z=fl(float(oz-1)/16)*16;z<oz+size&&z<=WORLD;z+=16)
+  for(int x=fl(float(ox-1)/16)*16;x<ox+size&&x<=WORLD;x+=16){
+   int slot=int(c->index[geometry_key(x,z)])-1;
+   if(slot<0||c->regions[slot].dirty)return false;
+  }
+ return true;
+}
+static bool cached_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y){
  if(!ensure_geometry_cache(w))return false;
  auto&c=*w.geometry_cache;
  const int first_x=fl(float(ox-1)/16)*16,first_z=fl(float(oz-1)/16)*16;
@@ -81,19 +119,9 @@ static bool cached_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoc
    if(!extract_vertices(w,x,z,16,temporary,epoch)){temporary.release();return false;}
    // Drop halo representatives: every cached cell has exactly one owner.
    int count=0;for(int i=0;i<temporary.v.n;i++){const Vertex&v=temporary.v[i];if(v.cx>=x&&v.cx<x+16&&v.cz>=z&&v.cz<z+16)temporary.v[count++]=v;}temporary.v.n=count;
-   u64 bytes=u64(temporary.v.cap)*sizeof(Vertex);
-   if(slot>=0)discard_region(c,slot,false);
-   if(bytes>c.budget){c.bypasses++;selected=&temporary.v;}
-   else{
-    while(c.bytes+bytes>c.budget){int victim=geometry_victim(c);if(victim<0)break;discard_region(c,victim,true);}
-    slot=-1;for(int i=0;i<GEOMETRY_SLOTS;i++)if(!c.regions[i].present){slot=i;break;}
-    if(slot<0){slot=geometry_victim(c);discard_region(c,slot,true);}
-    auto&r=c.regions[slot];r.x=x;r.z=z;r.used=++c.clock;r.present=true;r.dirty=false;
-    r.vertices=temporary.v;temporary.v=List<Vertex>{};c.index[key]=u16(slot+1);c.bytes+=bytes;c.entries++;
-    selected=&r.vertices;
-   }
+   selected=retain_geometry_column(c,x,z,temporary.v);
   }
-  for(int i=0;i<selected->n;i++){const Vertex&v=(*selected)[i];if(v.cx>=ox-1&&v.cx<ox+size&&v.cz>=oz-1&&v.cz<oz+size)m.v.push(v);}
+  for(int i=0;i<selected->n;i++){const Vertex&v=(*selected)[i];if(v.cx>=ox-1&&v.cx<ox+size&&v.cz>=oz-1&&v.cz<oz+size&&v.cy>=y_begin-1&&v.cy<y_end)m.v.push(v);}
   temporary.release();if(tr_oom)return false;
  }
  // Preserve the original z/x/y order, hence triangulation, simplification and

@@ -3,6 +3,8 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
+The [packaged resident geometry trial](WORLD_FOUNDATION_STATUS.md#resident-terrain-geometry-and-shoreline-contact) reduced the full cut to 134 ms. Both barrel routes still miss the two-frame gate.
+
 Water is the first terrain-and-authority integration case. Use the basin
 model in [the architecture contract](WORLD_SYSTEMS_DESIGN.md) for the inland
 bank cut. Establish which cavities are connected, give the enclosed water

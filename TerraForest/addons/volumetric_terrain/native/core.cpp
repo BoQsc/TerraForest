@@ -540,7 +540,7 @@ void World::init_generator(int p_seed,u32 generator){
  caves.push({{990,60,975},{1090,49,900},7});caves.push({{1090,49,900},{1090,49,900},17});
  V3 e2={480,height(480,800)-2,800};caves.push({e2,{460,54,690},6});caves.push({{460,54,690},{430,52,575},8});caves.push({{430,52,575},{420,52,550},18});
 }
-void World::release(){owned_heights.release();release_geometry_cache(*this);light_roofs.release();light_samples.release();light_tops.release();light_probe_ids.release();light_probes.release();light_exact_probes.release();lighting_revision=-1;for(int i=0;i<pages.n;i++){if(pages[i].d)tr_free(pages[i].d);if(pages[i].mat)tr_free(pages[i].mat);}pages.release();pages_by_key.release();blocks.release();caves.release();for(int i=0;i<block_columns.n;i++)block_columns[i].release();block_columns.release();if(edit_columns)tr_free(edit_columns);edit_columns=nullptr;}
+void World::release(){contact_signs.release();owned_heights.release();release_geometry_cache(*this);light_roofs.release();light_samples.release();light_tops.release();light_probe_ids.release();light_probes.release();light_exact_probes.release();lighting_revision=-1;for(int i=0;i<pages.n;i++){if(pages[i].d)tr_free(pages[i].d);if(pages[i].mat)tr_free(pages[i].mat);}pages.release();pages_by_key.release();blocks.release();caves.release();for(int i=0;i<block_columns.n;i++)block_columns[i].release();block_columns.release();if(edit_columns)tr_free(edit_columns);edit_columns=nullptr;}
 static u32 page_key(int x,int y,int z){return u32(x+NP*(z+NP*y))+1;}
 static void decode_page(u32 k,int&x,int&y,int&z){int v=int(k-1);x=v%NP;v/=NP;z=v%NP;y=v/NP;}
 const Page *World::resident_page(int index)const{
@@ -1094,6 +1094,36 @@ struct LocalCut {
   return float(quant(mx(previous,mn(-distance,interior))))/SDF_SCALE;
  }
 };
+// For four resident, authored sample columns a mixed sign is necessary for
+// a cell to own a surface vertex. Cull only provably uniform cells. The last
+// row of each slab reads another page and stays on the ordinary sampler.
+static void mask_uniform_cells(const World&w,int gx,int gz,u32 pages,u32 (&rows)[8]){
+ if(w.contact_signs.n!=w.pages.n){w.contact_signs.resize(w.pages.n);if(tr_oom)return;}
+ while(pages){
+  const int py=__builtin_ctz(pages);pages&=pages-1;
+  if(py>=16)continue;
+  int shift=(py&1)*16;
+  u32 candidates=(rows[py/2]>>shift)&0x7fff;
+  if(__builtin_popcount(candidates)<4)continue;
+  u32 any=0,all=0xffff;
+  for(int i=0;i<4;i++){
+   int x=gx+(i&1),z=gz+(i>>1);
+   if(x<0||z<0||x>WORLD||z>WORLD){all=0;any=0xffff;break;}
+   int page=w.pages_by_key.get(page_key(x>>4,py,z>>4));
+   if(page<0){all=0;any=0xffff;break;}
+   int col=(x&15)+16*(z&15);auto&index=w.contact_signs[page];
+   u32 bit=1u<<(col&31);
+   if(!(index.valid[col>>5]&bit)){
+    u16 signs=0;const i16*values=w.pages[page].d+col;
+    for(int y=0;y<16;y++)signs|=u16(values[256*y]<0)<<y;
+    index.columns[col]=signs;index.valid[col>>5]|=bit;
+   }
+   u32 signs=index.columns[col];all&=signs;any|=signs;
+  }
+  const u32 crossing=(any|(any>>1))&~(all&(all>>1));
+  rows[py/2]&=~((candidates&~crossing)<<shift);
+ }
+}
 static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y,const float*cached_heights=nullptr,const LocalCut*cut=nullptr){
  const int hn=size+2;List<float> heights;
  if(!cached_heights){heights.resize(hn*hn);
@@ -1122,6 +1152,10 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
   for(int j=0;j<w.caves.n;j++){const Cave&c=w.caves[j];if(gx+1<mn(c.a.x,c.b.x)-c.r-2||gx>mx(c.a.x,c.b.x)+c.r+2||gz+1<mn(c.a.z,c.b.z)-c.r-2||gz>mx(c.a.z,c.b.z)+c.r+2)continue;mark_y(ybits,fl(mn(c.a.y,c.b.y)-c.r-2),fl(mx(c.a.y,c.b.y)+c.r+2)+1);low=mn(low,mn(c.a.y,c.b.y)-c.r-2);high=mx(high,mx(c.a.y,c.b.y)+c.r+2);}
   u32 mask=0;for(int zz=0;zz<2;zz++)for(int xx=0;xx<2;xx++){int px=(gx+xx)>>4,pz=(gz+zz)>>4;if(px>=0&&px<NP&&pz>=0&&pz<NP)mask|=w.edit_columns[px+NP*pz];}
   if(mask)for(int py=0;py<=16;py++)if(mask&(1u<<py)){mark_y(ybits,py*16-1,py*16+17);low=mn(low,float(py*16-1));high=mx(high,float(py*16+16));}
+   if(mask&&!cut&&w.contact_snapshot&&w.contact_revision==w.revision){
+    mask_uniform_cells(w,gx,gz,mask,ybits);
+    if(tr_oom){cache.release();heights.release();return false;}
+   }
    int y0=imx(imx(0,y_begin-1),fl(low)),y1=imn(y_end-1,fl(high)+1);
   // Page indices for the four vertical sample columns are shared across all Y cells.
   int cached_py=-999,page_indices[4]={-1,-1,-1,-1};
@@ -1213,7 +1247,9 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
  if(w.profile_mesh)zero_bytes(w.mesh_stage_ms,sizeof(w.mesh_stage_ms));
  const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
  if(cancelled(w,epoch))return false;
- bool ok=region_cache?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch);
+ bool remember=region_cache&&w.contact_snapshot&&size<=32&&ox%16==0&&oz%16==0&&ox+size<=WORLD&&oz+size<=WORLD;
+ bool ok=region_cache&&!remember?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch);
+ if(ok&&remember)ok=remember_surface_columns(w,ox,oz,size,m);
  if(!ok){m.release();return false;}
  connect_patch(w,ox,oz,size,m);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
@@ -1990,7 +2026,11 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(revision!=w.revision||cancelled(w,epoch)){out.p[8]=4;return;}
   Mesh m;int ox=imx(0,x-1),oz=imx(0,z-1),yb=imx(0,y-1),ye=imn(WORLD_Y,y+5);
   // One-cell ownership halo retains faces crossing the requested region.
-  if(!extract_vertices(w,ox,oz,6,m,epoch,yb,ye)){m.release();out.p[8]=4;return;}
+  // Frozen edit readers share reconstructed density cells with their renderer
+  // and collider. Connectivity keeps the original ownership and vertical halo.
+  bool extracted=w.contact_snapshot&&has_surface_columns(w,ox,oz,6)
+   ?cached_vertices(w,ox,oz,6,m,epoch,yb,ye):extract_vertices(w,ox,oz,6,m,epoch,yb,ye);
+  if(!extracted){m.release();out.p[8]=4;return;}
   connect_patch(w,ox,oz,6,m,yb,ye);
   if(cancelled(w,epoch)){m.release();out.p[8]=4;return;}
   out.u(w.revision);out.u(epoch);out.u(m.v.n);out.u(m.i.n);

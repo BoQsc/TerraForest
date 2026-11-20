@@ -490,10 +490,11 @@ var _staged_over_capacity_delta_ml:=0
 var _replacement_removals:Array[Vector3i]=[]
 var _replacement_hidden:Array[MeshInstance3D]=[]
 var _replacement_visible:Array[MeshInstance3D]=[]
+var _resident_water_meshes:Dictionary[Vector3i,ArrayMesh]={}
 func _clear_replacement_bookkeeping()->void:
  _replacement_faces.clear();_replacement_removals.clear()
  _staged_over_capacity_delta_ml=0
- _replacement_hidden.clear();_replacement_visible.clear()
+ _replacement_hidden.clear();_replacement_visible.clear();_resident_water_meshes.clear()
 func _clear_staged_meshes()->void:
  _waiting_mesh_commit=-1
  for coordinate:Vector3i in _staged_meshes:
@@ -525,13 +526,18 @@ func _stage_render_owner(update:Dictionary)->void:
   if previous!=null and digest.size()==32 and digest==old_faces.get("render_digest",PackedByteArray()):
    # The native batch still commits the new picking and immersion state.
    return
- if previous!=null:_replacement_hidden.append(previous)
  if update.vertices==0:
+  if previous!=null:_replacement_hidden.append(previous)
   _replacement_removals.append(coord)
   _staged_meshes[coord]=null
   return
  var geometry:=ArrayMesh.new()
  geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.render_arrays)
+ if previous!=null and terrain.joint_edit_pending():
+  _staged_meshes[coord]=previous
+  _resident_water_meshes[coord]=geometry
+  return
+ if previous!=null:_replacement_hidden.append(previous)
  var node:=MeshInstance3D.new()
  node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material
  node.position=bounds.position;node.visible=false;node.mesh=geometry;add_child(node)
@@ -597,6 +603,8 @@ func _commit_prepared_water(batch:int)->bool:
  _mesh_commit_count=_staged_meshes.size()
  # Install only this revision's changed owners, in the same main-thread
  # call as the native visibility and picking commit.
+ for coord:Vector3i in _resident_water_meshes:
+  _staged_meshes[coord].mesh=_resident_water_meshes[coord]
  _meshes.merge(_staged_meshes,true)
  _mesh_faces.merge(_replacement_faces,true)
  _published_over_capacity_ml+=_staged_over_capacity_delta_ml
@@ -670,14 +678,19 @@ func _start_edit_patches(revision:int)->bool:
    var solids:Dictionary=_structure_hulls(AABB(Vector3(coord)*4,Vector3(4,4,4)))
    if not solids.ok or not patch.set_structure_hulls(solids.hulls):return false
   patches.append(patch)
- _edit_patch_job={"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":revision,
+ var surface:Dictionary=terrain.resident_edit_surface
+ var shared:Object=null
+ if surface.get("ticket",-1)==terrain.edit_ticket and surface.epoch==terrain.epoch and Rect2i(surface.bounds).encloses(bounds):
+  shared=surface.core
+ _edit_patch_job={"shared":shared,"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":revision,
   "structures":_structure_revision,"field":terrain.density_revision,"cancel":terrain.backend.build_epoch,
   "patches":patches,"bounds":bounds,"ready":false}
  _edit_patch_task=WorkerThreadPool.add_task(_prepare_edit_patches.bind(terrain.backend.native,_edit_patch_job),true,"Local edited water contacts")
  return _edit_patch_task>=0
 
 func _prepare_edit_patches(core:Object,job:Dictionary)->void:
- var snapshot:Object=core.capture_contact_core(job.bounds,job.field,job.cancel)
+ var snapshot:Object=job.shared
+ if snapshot==null:snapshot=core.capture_contact_core(job.bounds,job.field,job.cancel)
  if snapshot==null:return
  for patch:RefCounted in job.patches:
   var status:int=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
@@ -685,6 +698,7 @@ func _prepare_edit_patches(core:Object,job:Dictionary)->void:
   if status!=1:return
  job.ready=true
 
+var _shared_contact_patches:=0
 var _edit_patch_attempt:=-1
 func _poll_edit_patches()->void:
  if _edit_patch_task<0 or not WorkerThreadPool.is_task_completed(_edit_patch_task):return
@@ -697,6 +711,7 @@ func _poll_edit_patches()->void:
    _occupancy_failure="Local water occupancy cache budget reached"
    terrain.message_changed.emit(_occupancy_failure)
    return
+ if job.shared!=null:_shared_contact_patches+=job.patches.size()
  terrain.water_preparation_revision+=1
 
 var _prepared_slice:Dictionary={}
@@ -795,6 +810,7 @@ func statistics() -> Dictionary:
  s.ocean_boundary_exchange_ml=_ocean_exchange_ml
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1
+ s.shared_edit_contact_patches=_shared_contact_patches
  s.occupancy_failure=_occupancy_failure
  s.equilibrium_blocked_ml=_equilibrium_blocked_ml
  s.mesh_commit_nodes_us=_mesh_commit_nodes_us;s.mesh_commit_native_us=_mesh_commit_native_us;s.mesh_commit_mask_us=_mesh_commit_mask_us;s.mesh_commit_count=_mesh_commit_count;s.retired_mesh_nodes=_retired_mesh_nodes.size()

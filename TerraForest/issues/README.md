@@ -1,9 +1,9 @@
 # Visual issue tracker
 
 Shoreline latency is parked for the [regional basin architecture](explosive-combat/water-plan.md).
-The latest packaged lake draw took 302 ms.
+The [resident geometry trial](../docs/WORLD_FOUNDATION_STATUS.md#resident-terrain-geometry-and-shoreline-contact) measured 224–274 ms at the lake and 108–127 ms at sea.
 
-In the latest [water check](explosive-combat/water-plan.md), two-angle
+In an earlier [water check](explosive-combat/water-plan.md), two-angle
 shoreline contact passed and lake publication took 288 and 302 ms.
 The dedicated bucket path now preserves transfers across command retries.
 
