@@ -114,6 +114,41 @@ var roots: Array[Vector3i] = []
 var staging: Array[Dictionary] = []
 var staging_versions: Dictionary = {}
 var staged_batch: Dictionary = {}
+# Main-thread publication partner for a wet edit. Both halves keep the last
+# published scene while their revision-owned replacements are prepared.
+var _joint_ticket:=-1
+var _joint_epoch:=-1
+var _joint_owners:Dictionary={}
+func reserve_joint_edit(ticket:int,areas:Array[AABB])->void:
+	if not pending_edit or ticket!=edit_ticket:return
+	_joint_owners.clear()
+	for key:Vector3i in _edit_visible_owners:
+		var tile:=Rect2(key.x,key.y,key.z,key.z)
+		for bounds:AABB in areas:
+			if tile.intersects(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)),true):
+				_joint_owners[key]=true
+				break
+	if not _joint_owners.is_empty():
+		_joint_epoch=epoch
+		_joint_ticket=ticket
+
+func joint_edit_pending()->bool:
+	return pending_edit and _joint_epoch==epoch and _joint_ticket==edit_ticket
+
+func publish_joint_edit(ticket:int,install_water:Callable)->bool:
+	if ticket!=edit_ticket or not joint_edit_pending() or not latest_error.is_empty():return false
+	var owners:Dictionary={}
+	for key:Vector3i in _joint_owners:
+		if owners.has(key):continue
+		var group:=_ready_edit_group(key)
+		if group.is_empty():return false
+		for id:Vector3i in group:owners[id]=true
+	if not install_water.call():return false
+	_joint_ticket=-1
+	_joint_owners.clear()
+	_install_ready_edit_group(owners.keys())
+	return true
+
 signal edit_geometry_installed(ticket:int)
 signal edit_region_installed(ticket:int,keys:Array)
 # The frozen visible cut can contain several tile sizes along one brush edge.
@@ -773,11 +808,12 @@ func _drain_staging() -> void:
 		# may already have exhausted this slice; keep the old complete surface
 		# until the next available slice rather than stacking the swap on top.
 		if pending_edit and edit_worker_done and batch_remaining==0:
-			if not latest_error.is_empty():break
+			if not latest_error.is_empty() or joint_edit_pending():break
 			_commit_batch()
 			last_publish_ms=last_commit_ms
 			continue
 		if pending_edit and batch_remaining==0 and not staged_batch.is_empty() and latest_error.is_empty():
+			if joint_edit_pending():break
 			_install_edit_geometry()
 			continue
 		_select_preparation_work()
@@ -1024,7 +1060,7 @@ func _stage_contact(key:Vector3i,entry:Dictionary,data:Dictionary)->void:
 	_activate_contact()
 
 func _activate_contact()->void:
-	if not _contact_checked or _contact_visible or _contact_accepted_ticket!=edit_ticket:return
+	if joint_edit_pending() or not _contact_checked or _contact_visible or _contact_accepted_ticket!=edit_ticket:return
 	for id:Vector3i in _contact_entries:
 		_set_active(tiles[id],false)
 		_set_active(_contact_entries[id],true)
@@ -1042,17 +1078,17 @@ func _set_edit_replacement(key:Vector3i, replacement:Dictionary, active:bool)->v
 		_set_active(original,not active)
 	_set_active(replacement,active)
 
-func _publish_ready_region(seed:Vector3i)->void:
-	if not _edit_visible_owners.has(seed):return
+func _ready_edit_group(seed:Vector3i)->Array[Vector3i]:
+	if not _edit_visible_owners.has(seed):return []
 	var group:Array[Vector3i]=[seed]
 	var visited:Dictionary={seed:true}
 	var at:=0
 	while at<group.size():
 		var key:=group[at]
 		at+=1
-		if _contact_visible and _contact_entries.has(key):return
+		if _contact_visible and _contact_entries.has(key):return []
 		var entry:Dictionary=staged_batch.get(key,{})
-		if entry.is_empty():return
+		if entry.is_empty():return []
 		if entry.get("local_active",false) or entry.get("retain_geometry",false):continue
 		var old:Dictionary=tiles[key]
 		if not entry.has("rims"):
@@ -1073,9 +1109,19 @@ func _publish_ready_region(seed:Vector3i)->void:
 				if not _edit_owner_cells.has(cell):continue
 				var neighbor:Vector3i=_edit_owner_cells[cell]
 				if visited.has(neighbor):continue
-				if not staged_batch.has(neighbor):return
+				if not staged_batch.has(neighbor):return []
 				visited[neighbor]=true
 				group.append(neighbor)
+	return group
+
+func _publish_ready_region(seed:Vector3i)->void:
+	var group:=_ready_edit_group(seed)
+	if joint_edit_pending():
+		for key:Vector3i in group:
+			if _joint_owners.has(key):return
+	_install_ready_edit_group(group)
+
+func _install_ready_edit_group(group:Array)->void:
 	var installed:Array[Vector3i]=[]
 	for key in group:
 		var entry:Dictionary=staged_batch[key]
@@ -1110,6 +1156,7 @@ func _install_edit_geometry()->void:
 	edit_geometry_installed.emit(edit_ticket)
 
 func _commit_batch() -> void:
+	if joint_edit_pending():return
 	var commit_begin: int = Time.get_ticks_usec()
 	if _edit_support_result.size()!=_edit_support_snapshots.size():
 		backend.disable_snapshot_writes("terrain support results missing")

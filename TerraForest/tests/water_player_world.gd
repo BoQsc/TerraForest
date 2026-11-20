@@ -393,6 +393,7 @@ func finish_timing()->void:
   blast_metrics[timing_phase].first_target_draw=target
   check(target.matched,timing_phase+" first crater contact matches the rendered surface and lowered collider")
   if "--two-frame-edits" in OS.get_cmdline_user_args():
+   check(target.matched and target.floor_to_water_frames==0,timing_phase+" publishes crater collision and water on the same draw")
    check(target.matched and target.frames<=2 and target.ms<=33.334,timing_phase+" first matching collider and rendered water meet the two-frame deadline")
   shore_draw.clear()
  blast_metrics[timing_phase].worst_frames=timing_worst.duplicate(true)
@@ -956,6 +957,7 @@ func check_authoring_brush()->void:
   var observe_second_draw:=func()->void:
    await RenderingServer.frame_post_draw
    await RenderingServer.frame_post_draw
+   footprint.draw_us=Time.get_ticks_usec()
    footprint.samples=sample_patch.call(footprint_spacing)
   if check_footprint:footprint.before=sample_patch.call(footprint_spacing)
   var old_contact:Vector3=sample_center.call() if verify_draw else Vector3.INF
@@ -1038,7 +1040,7 @@ func check_authoring_brush()->void:
      if not final_samples[index].is_finite() or final_samples[index].is_equal_approx(footprint.before[index]):continue
      changed+=1
      if footprint.has("samples") and final_samples[index].is_equal_approx(footprint.samples[index]):matched+=1
-    print("AUTHORING_SECOND_DRAW_FOOTPRINT ",JSON.stringify({"spacing_m":footprint_spacing,"changed":changed,"matched":matched}))
+    print("AUTHORING_SECOND_DRAW_FOOTPRINT ",JSON.stringify({"spacing_m":footprint_spacing,"input_to_second_draw_ms":(footprint.draw_us-started)/1000.0,"changed":changed,"matched":matched}))
     check(changed>0 and matched==changed,"Changed collision probes across the brush footprint match the finished edit on draw two")
    check(geometry_draw.has("draw_us"),"Contact geometry has a matched post-draw receipt")
    if geometry_draw.has("draw_us"):

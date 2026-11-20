@@ -286,6 +286,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("raycast_vacancy","from","to"),&NativeRegionalWater::raycast_vacancy);
     ClassDB::bind_method(D_METHOD("cell_geometry","point"),&NativeRegionalWater::cell_geometry);
     ClassDB::bind_method(D_METHOD("next_requests","limit","ocean_only"),&NativeRegionalWater::next_requests,DEFVAL(true));
+    ClassDB::bind_method(D_METHOD("pending_edit_patches"),&NativeRegionalWater::pending_edit_patches);
     ClassDB::bind_method(D_METHOD("next_request"),&NativeRegionalWater::next_request);
     ClassDB::bind_method(D_METHOD("accept_patch","patch"),&NativeRegionalWater::accept_patch);
     ClassDB::bind_method(D_METHOD("set_western_ocean","enabled"),&NativeRegionalWater::set_western_ocean);
@@ -317,7 +318,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("placement_mask","transforms"),&NativeRegionalWater::placement_mask);
     ClassDB::bind_method(D_METHOD("raycast_surface","from","to"),&NativeRegionalWater::raycast_surface);
     ClassDB::bind_method(D_METHOD("commit_mesh_batch","id","retiring","revealing"),&NativeRegionalWater::commit_mesh_batch,DEFVAL(Array()),DEFVAL(Array()));
-    ClassDB::bind_method(D_METHOD("next_mesh_batch","background","indexed_only","prepared_only"),&NativeRegionalWater::next_mesh_batch,DEFVAL(false),DEFVAL(false),DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("next_mesh_batch","background","indexed_only","prepared_only","joint_edit"),&NativeRegionalWater::next_mesh_batch,DEFVAL(false),DEFVAL(false),DEFVAL(false),DEFVAL(false));
     ClassDB::bind_method(D_METHOD("next_mesh","include_contacts"),&NativeRegionalWater::next_mesh,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("total_water_ml"),&NativeRegionalWater::total_water_ml);
@@ -542,6 +543,18 @@ Array NativeRegionalWater::next_requests(int64_t limit,bool ocean_only){
         result.push_back(position(k));if(result.size()==limit)break;
     }
     return result;
+}
+Array NativeRegionalWater::pending_edit_patches() const{
+    Array coordinates;
+    // A missing member makes the fast path ineligible. The normal sampler
+    // retains ownership of its reservation and retries at the same revision.
+    for(Key k:local_edit_regions){
+        auto r=regions.find(k);
+        if(r==regions.end()||r->second.valid)continue;
+        if(!request_set.count(k)||coordinates.size()>=64)return {};
+        coordinates.push_back(position(k));
+    }
+    return coordinates;
 }
 Dictionary NativeRegionalWater::next_request(){
     Dictionary d;if(requests.empty())return d;Key k=requests.front();
@@ -1559,7 +1572,7 @@ int64_t NativeRegionalWater::interrupt_relaxation(){
     }
     return delta;
 }
-Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_only,bool prepared_only){
+Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_only,bool prepared_only,bool joint_edit){
     Dictionary result;publication_enabled=true;
     if(prepared_only && (!batch_active || pending_mesh_job.is_null() || !indexed_only))return result;
     if(surface_budget_failed){result["batch"]=int64_t(batch_id);result["complete"]=false;result["failure"]="Water boundary preparation budget exceeded; last published water retained";return result;}
@@ -1570,6 +1583,16 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
         // together. Distant pools must not wait for one global mesh batch.
         for(auto it=urgent_meshes.begin();it!=urgent_meshes.end();)if(!mesh_set.count(*it))it=urgent_meshes.erase(it);else ++it;
         batch_urgent=!urgent_meshes.empty();
+        // A joint terrain edit publishes its dirty water owners together,
+        // including separate wet pockets within the changed terrain. Wider
+        // equilibrium stays in the ordinary queue.
+        if(joint_edit&&!batch_urgent)return result;
+        if(joint_edit){
+            for(Key k:urgent_meshes)if(!surface_ready(k,false))return result;
+            batch_owners.assign(urgent_meshes.begin(),urgent_meshes.end());
+            for(Key k:batch_owners)mesh_set.erase(k);
+            urgent_meshes.clear();
+        }else{
         auto dry_before_and_after=[&](Key k){
             if(published_surfaces.count(k)||!dry_surface_owner(k,false))return false;
             auto old=published_occupancy.find(k);
@@ -1595,6 +1618,7 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
                 Key k=key(n);if(batch_urgent&&!urgent_meshes.count(k))continue;
                 if(mesh_set.erase(k)){urgent_meshes.erase(k);batch_owners.push_back(k);}
             }
+        }
         }
         // Reconstruction and readiness read only each owner's one-region halo.
         // Copy-on-write must not retain mutations elsewhere in the world.

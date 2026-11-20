@@ -306,6 +306,7 @@ class NativeRegionalWater : public godot::RefCounted {
     bool decode(const godot::PackedByteArray &data,bool install,bool prepare_render=true);
 protected: static void _bind_methods();
 public:
+    godot::Array pending_edit_patches() const;
     int64_t interrupt_relaxation();
     void settle_after_edit(const godot::AABB &bounds);
     godot::Ref<NativeWaterEquilibriumJob> begin_equilibrium(int64_t budget_usec=0,bool local_response=false);
@@ -361,7 +362,7 @@ public:
     godot::Dictionary raycast_vacancy(const godot::Vector3 &from,const godot::Vector3 &to) const;
     godot::Dictionary raycast_surface(const godot::Vector3 &from,const godot::Vector3 &to) const;
     bool commit_mesh_batch(int64_t id,const godot::Array &retiring=godot::Array(),const godot::Array &revealing=godot::Array());
-    godot::Dictionary next_mesh_batch(bool background=false,bool indexed_only=false,bool prepared_only=false);
+    godot::Dictionary next_mesh_batch(bool background=false,bool indexed_only=false,bool prepared_only=false,bool joint_edit=false);
     // Diagnostic contact flag audits the closed volume with the same builder.
     // Runtime publication and picking use the same closed material boundary.
     godot::Dictionary next_mesh(bool include_contacts=false);

@@ -1,3 +1,58 @@
+## Joint shoreline publication in the packaged game
+
+The sea and lake barrel craters first exposed matching collision and water
+on the same draw. All three workloads missed the two-frame deadline.
+The terrain and water still prepare separate replacements. The scene now
+checks the wet terrain owners, their changed seams and the local water
+replacements before switching them in one main-thread call. Unrelated terrain
+can publish independently. Water contact sampling can use an immutable local
+copy of the accepted terrain field when the affected requests fit one snapshot.
+
+The package SHA-256 was
+`0b548c6a0b089eeadabb111339f348960d1ea0c6dcb8db44224c5d8002a5b7ab`.
+The isolated executable used Cedar Vale, the RTX 4050 Laptop GPU and 1080p.
+The barrel timing run disabled captures. Frame intervals below are engine
+measurements. The cut run captured the two viewpoints outside the edit interval.
+
+| Workload | Result | Frame intervals |
+|---|---|---|
+| Full 64 m cut | At draw two (30.37 ms), 0 of 9 changed collision probes matched. Center first drew at 54.34 ms on draw 5. The full revision drew at 193.51 ms. | Worst 24.39 ms |
+| Sea barrel | First matching floor and water on draw 6, 91.17 ms after edit admission. The sea probe used the 40 m ocean surface. | p99 31.33 ms, worst 51.62 ms |
+| Lake barrel | First matching floor and finite water mesh on draw 14, 222.00 ms after edit admission. | p99 56.96 ms, worst 72.96 ms |
+
+The previous package first exposed the collider on draw two at both shores.
+Joining the publications removed a visible disagreement and delayed the collider.
+The first matching result arrived 37.24 ms earlier at sea and 84.46 ms earlier
+at the lake in this comparison. Wider settling was still pending. The cut rebuilt
+36 terrain owners and spent 21.41 ms in the field edit alone. Nine collision
+probes across the cut compare the second draw with the finished surface.
+[Cut log](../reports/checks/20261120T225218559041Z/engine.log) ·
+[Shore timing](../reports/checks/20261120T225306413648Z/normal_gameplay_blast_performance.json).
+
+All 81 crater probes per shore had coverage at first local publication. All
+23 sea and 26 lake bank probes met the 2 cm tolerance. In the separate object
+test, all four walls had water within 1 cm, the interior stayed dry, and removal
+restored the water boundary. Mining still missed the timing gate.
+[Shore contact](../reports/checks/20261120T225306413648Z/engine.log) ·
+[Object contact](../reports/checks/20261120T225356964556Z/engine.log).
+
+| View | First camera, before and after | Second camera, before and after |
+|---|---|---|
+| 64 m cut | [Before](../reports/checks/20261120T225218559041Z/cut_before_angle_1.png) · [after](../reports/checks/20261120T225218559041Z/cut_after_angle_1.png) | [Before](../reports/checks/20261120T225218559041Z/cut_before_angle_2.png) · [after](../reports/checks/20261120T225218559041Z/cut_after_angle_2.png) |
+| Sea barrel | [Before](../reports/checks/20261120T225443370384Z/player_shore_before.png) · [after](../reports/checks/20261120T225443370384Z/player_shore_after.png) | [Before](../reports/checks/20261120T225443370384Z/player_shore_before_reverse.png) · [after](../reports/checks/20261120T225443370384Z/player_shore_after_reverse.png) |
+| Lake barrel | [Before](../reports/checks/20261120T225443370384Z/player_lake_before.png) · [after](../reports/checks/20261120T225443370384Z/player_lake_after.png) | [Before](../reports/checks/20261120T225443370384Z/player_lake_before_reverse.png) · [after](../reports/checks/20261120T225443370384Z/player_lake_after_reverse.png) |
+
+The before and after pairs show the crater extending each shoreline from both
+views. The sea uses its surrounding ocean presentation at the sampled point.
+[Sea underwater](../reports/checks/20261120T225443370384Z/player_shore_underwater.png) and
+[lake underwater](../reports/checks/20261120T225443370384Z/player_lake_underwater.png).
+
+Keep milestone 5 open. A resident representation that can replace the changed
+terrain triangles, their collision and adjacent water contacts within 33.33 ms
+is still required. A faster worker queue or holding back an already prepared
+collider cannot establish that result. Reuse these unchanged gameplay gates
+when evaluating the next representation.
+
 ## Resident edit transaction results
 
 The two-frame terrain, collision and water publication gate is open.
@@ -40,7 +95,7 @@ p99 intervals were 26.02 ms at sea and 22.69 ms at the lake. Elapsed time
 from the initiating player action through barrel detonation to matching water
 was 1,210.15 ms at sea and 687.88 ms at the lake. These are engine intervals.
 [Full cut log](../reports/checks/20261120T223304480721Z/engine.log) ·
-[Barrel timing and per-frame timeline](../reports/checks/20261120T223351324938Z/normal_gameplay_blast_performance.json).
+[Barrel timing and per-frame timeline](../reports/checks/20261120T223351324938Z/timing.archive.json).
 
 Against the preceding package, the field fell from 29.38 ms to 21.62 ms and
 the full cut draw from 222.54 ms to 189.92 ms in these runs. The 36 replaced

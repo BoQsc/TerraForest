@@ -202,6 +202,7 @@ func remove_lake(id:int) -> void:
  _lakes.erase(id);terrain.changed_since_save=true;catalog_changed.emit()
 func clear(preserve_store:bool=false) -> void:
  _settlement_ticket=-1;_installed_edit_ticket=-1
+ _waiting_mesh_commit=-1;_edit_patch_attempt=-1
  _local_response_pending=false;_local_publication_pending=false
  if _equilibrium_job!=null:_equilibrium_job.cancel()
  _equilibrium_failure="";_equilibrium_failed_revision=-1
@@ -276,9 +277,16 @@ func _interrupt_edit_work()->void:
  _clear_staged_meshes();_mesh_batch_id=-1
 func _invalidate(bounds:AABB) -> void:
  _settlement_ticket=-1;_installed_edit_ticket=-1
+ _waiting_mesh_commit=-1;_edit_patch_attempt=-1
  _interrupt_edit_work()
  _occupancy_failure=""
- for area:AABB in terrain.water_edit_areas(bounds):water.invalidate(area)
+ var areas:Array[AABB]=terrain.water_edit_areas(bounds)
+ var wet_areas:Array[AABB]=[]
+ for area:AABB in areas:
+  water.invalidate(area)
+  if settling_active.is_valid() and settling_active.call() and water.overlaps_occupied(area.grow(.5)):
+   wet_areas.append(area)
+ if not wet_areas.is_empty():terrain.reserve_joint_edit(terrain.edit_ticket,wet_areas)
  _discard_builder()
 var last_process_us:int=0
 var last_process_work:Dictionary={}
@@ -309,6 +317,10 @@ func _measured_step(delta:float)->void:
  # the corresponding terrain geometry and collision are ready.
  if terrain.pending_edit and _settlement_ticket!=terrain.edit_ticket and terrain.water_sampling_revision()>=0:
   _begin_terrain_settlement(terrain.edit_ticket)
+ _poll_edit_patches()
+ if terrain.joint_edit_pending() and _settlement_ticket==terrain.edit_ticket and not _busy and _edit_patch_attempt!=terrain.edit_ticket:
+  _edit_patch_attempt=terrain.edit_ticket
+  _start_edit_patches(terrain.water_sampling_revision())
  var geometry_ready:bool=not terrain.pending_edit or _installed_edit_ticket==terrain.edit_ticket
  if not _prepared_slice.is_empty() and (geometry_ready or _settlement_ticket==terrain.edit_ticket):
   var prepared:=_prepared_slice
@@ -355,7 +367,7 @@ func _measured_step(delta:float)->void:
    break
  # A resident edit can hand its commit to publication on this same frame.
  # Wider equilibrium still waits for the previous publication.
- var can_solve:bool=_filling_id==0 and (geometry_ready or (_local_response_pending and _settlement_ticket==terrain.edit_ticket)) and ((loading_active.is_valid() and loading_active.call()) or (settling_active.is_valid() and settling_active.call()))
+ var can_solve:bool=_filling_id==0 and (geometry_ready or (_local_response_pending and _settlement_ticket==terrain.edit_ticket)) and ((loading_active.is_valid() and loading_active.call()) or (settling_active.is_valid() and settling_active.call()) or terrain.joint_edit_pending())
  var solving_local:bool=can_solve and _local_response_pending
  if solving_local:
   var began:=Time.get_ticks_usec();_advance_equilibrium();last_process_work.equilibrium=Time.get_ticks_usec()-began
@@ -369,7 +381,11 @@ func _measured_step(delta:float)->void:
   if _local_publication_pending:
    var publication_state:Dictionary=water.runtime_state()
    if publication_state.urgent_meshes==0 and not publication_state.urgent_batch:
-    _local_publication_pending=false;_local_response_us=Time.get_ticks_usec()-_local_response_started_us
+    # An accepted recut can leave every water quantity and surface unchanged.
+    if terrain.joint_edit_pending():
+     terrain.publish_joint_edit(terrain.edit_ticket,func()->bool:return true)
+    if not terrain.joint_edit_pending():
+     _local_publication_pending=false;_local_response_us=Time.get_ticks_usec()-_local_response_started_us
  # Authored filling and blast-woken settling have separate native budgets.
  if _filling_id!=0:water.advance(2048,delta)
  # A restored unfinished transaction must settle during loading: the loading
@@ -378,7 +394,7 @@ func _measured_step(delta:float)->void:
   var began:=Time.get_ticks_usec();_advance_equilibrium();last_process_work.equilibrium=Time.get_ticks_usec()-began
  var occupancy_started:=Time.get_ticks_usec()
  var sampling_revision:int=terrain.water_sampling_revision()
- if not _busy and _prepared_slice.is_empty() and sampling_revision>=0 and _occupancy_failure.is_empty():
+ if not _busy and _edit_patch_task<0 and _prepared_slice.is_empty() and sampling_revision>=0 and _occupancy_failure.is_empty():
   var request:Dictionary=water.next_request()
   if not request.is_empty():
    var preparing_load:bool=loading_active.is_valid() and loading_active.call()
@@ -523,6 +539,7 @@ func _stage_render_owner(update:Dictionary)->void:
  _replacement_visible.append(node)
 
 func _publish_meshes() -> void:
+ if terrain.joint_edit_pending() and (_settlement_ticket!=terrain.edit_ticket or not _local_publication_pending):return
  last_publication_work.clear()
  var prepared_only:=_mesh_task>=0 and not WorkerThreadPool.is_task_completed(_mesh_task)
  if _mesh_task>=0 and not prepared_only:
@@ -536,7 +553,7 @@ func _publish_meshes() -> void:
  if budget_us<=0:return
  for publication in packets:
   var packet_started:=Time.get_ticks_usec()
-  var update:Dictionary=water.next_mesh_batch(true,true,prepared_only)
+  var update:Dictionary=water.next_mesh_batch(true,true,prepared_only,terrain.joint_edit_pending())
   last_publication_work.native_packet=int(last_publication_work.get("native_packet",0))+Time.get_ticks_usec()-packet_started
   if update.is_empty():break
   if update.has("failure"):
@@ -557,6 +574,9 @@ func _publish_meshes() -> void:
   last_publication_work.upload=int(last_publication_work.get("upload",0))+Time.get_ticks_usec()-upload_started
   if update.complete:
    # Commit on its own short slice if staging already consumed this frame.
+   if terrain.joint_edit_pending():
+    terrain.publish_joint_edit(terrain.edit_ticket,_commit_prepared_water.bind(update.batch))
+    break
    if Time.get_ticks_usec()-mesh_started>150:break
    if terrain.pending_edit and _installed_edit_ticket!=terrain.edit_ticket:
     _waiting_mesh_commit=update.batch
@@ -565,13 +585,13 @@ func _publish_meshes() -> void:
    if not _surface_failure.is_empty():break
   if Time.get_ticks_usec()-mesh_started>=budget_us:break
  _mesh_publish_us=Time.get_ticks_usec()-mesh_started;_mesh_max_publish_us=maxi(_mesh_max_publish_us,_mesh_publish_us)
-func _commit_prepared_water(batch:int)->void:
+func _commit_prepared_water(batch:int)->bool:
  _waiting_mesh_commit=-1
  var commit_started:=Time.get_ticks_usec()
  var native_started:=Time.get_ticks_usec()
  if not water.commit_mesh_batch(batch,_replacement_hidden,_replacement_visible):
   _clear_staged_meshes();_surface_failure="Water query publication did not match rendered batch"
-  push_error(_surface_failure);return
+  push_error(_surface_failure);return false
  _mesh_commit_native_us=Time.get_ticks_usec()-native_started
  var bookkeeping_started:=Time.get_ticks_usec()
  _mesh_commit_count=_staged_meshes.size()
@@ -595,6 +615,8 @@ func _commit_prepared_water(batch:int)->void:
  # Every staged node now belongs to _meshes; no cancellation cleanup scan.
  _staged_meshes={};_have_staged_bounds=false;_clear_replacement_bookkeeping()
  _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
+
+ return true
 
 func _structure_hulls(bounds:AABB)->Dictionary:
  var result:Dictionary=blocks.solid_hulls(bounds)
@@ -626,6 +648,57 @@ func _prepare_terrain_batch(ocean_only:bool,sampling_revision:int) -> void:
  var batch:RefCounted=ClassDB.instantiate("NativeWaterTerrainBatch")
  if batch.configure(_builder_patches):_builder=batch
  else:_discard_builder()
+# The terrain field and construction hulls are immutable for this worker.
+# It prepares every pending patch of the local edit in one trip. No live
+# water ownership or scene nodes are handed to the worker.
+var _edit_patch_task:=-1
+var _edit_patch_job:Dictionary={}
+
+func _start_edit_patches(revision:int)->bool:
+ if _edit_patch_task>=0 or _busy or not terrain.joint_edit_pending():return false
+ var coords:Array=water.pending_edit_patches()
+ if coords.is_empty():return false
+ var first:Vector3i=coords[0]
+ var bounds:=Rect2i(first.x*4,first.z*4,4,4)
+ var patches:Array[RefCounted]=[]
+ for coord:Vector3i in coords:
+  bounds=bounds.merge(Rect2i(coord.x*4,coord.z*4,4,4))
+  if bounds.size.x>64 or bounds.size.y>64:return false
+  var patch:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
+  if not patch.configure(coord):return false
+  if blocks!=null:
+   var solids:Dictionary=_structure_hulls(AABB(Vector3(coord)*4,Vector3(4,4,4)))
+   if not solids.ok or not patch.set_structure_hulls(solids.hulls):return false
+  patches.append(patch)
+ _edit_patch_job={"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":revision,
+  "structures":_structure_revision,"field":terrain.density_revision,"cancel":terrain.backend.build_epoch,
+  "patches":patches,"bounds":bounds,"ready":false}
+ _edit_patch_task=WorkerThreadPool.add_task(_prepare_edit_patches.bind(terrain.backend.native,_edit_patch_job),true,"Local edited water contacts")
+ return _edit_patch_task>=0
+
+func _prepare_edit_patches(core:Object,job:Dictionary)->void:
+ var snapshot:Object=core.capture_contact_core(job.bounds,job.field,job.cancel)
+ if snapshot==null:return
+ for patch:RefCounted in job.patches:
+  var status:int=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
+  while status==0:status=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
+  if status!=1:return
+ job.ready=true
+
+var _edit_patch_attempt:=-1
+func _poll_edit_patches()->void:
+ if _edit_patch_task<0 or not WorkerThreadPool.is_task_completed(_edit_patch_task):return
+ WorkerThreadPool.wait_for_task_completion(_edit_patch_task)
+ var job:=_edit_patch_job
+ _edit_patch_task=-1;_edit_patch_job={}
+ if not job.ready or job.ticket!=terrain.edit_ticket or job.epoch!=terrain.epoch or job.structures!=_structure_revision or job.cancel!=terrain.backend.build_epoch or job.revision!=terrain.water_sampling_revision() or not terrain.joint_edit_pending():return
+ for patch:RefCounted in job.patches:
+  if not water.accept_patch(patch):
+   _occupancy_failure="Local water occupancy cache budget reached"
+   terrain.message_changed.emit(_occupancy_failure)
+   return
+ terrain.water_preparation_revision+=1
+
 var _prepared_slice:Dictionary={}
 func _discard_builder() -> void:
  _prepared_slice={}
@@ -640,6 +713,7 @@ func _poll_cached_task() -> void:
  cached_preparation_profiled.emit(info.cached_worker_us/1000.0,maxi(0,info.cached_started_us-job.submitted_us)/1000.0,info.status)
  _slice_ready(job.token,info.status,job.epoch,job.revision)
 func _exit_tree() -> void:
+ if _edit_patch_task>=0:WorkerThreadPool.wait_for_task_completion(_edit_patch_task)
  if _equilibrium_task>=0:
   _equilibrium_job.cancel();WorkerThreadPool.wait_for_task_completion(_equilibrium_task);_equilibrium_task=-1
  if _mesh_task>=0:
