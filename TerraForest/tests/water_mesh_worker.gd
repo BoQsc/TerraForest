@@ -190,7 +190,7 @@ func replay_meshes(path:String)->void:
  for iteration in 4:
   var store=ClassDB.instantiate("NativeRegionalWater")
   if not store.restore_snapshot(packet_bytes):check(false,"Local water snapshot restores");quit(1);return
-  var owners:Dictionary={};var mesh_us:=0;var jobs:=0;var expanded_bytes:=0
+  var owners:Dictionary={};var mesh_us:=0;var jobs:=0;var expanded_bytes:=0;var planar_quads:=0
   for step in 10000:
    var begin:=Time.get_ticks_usec()
    var packet:Dictionary=store.next_mesh_batch(true,true) if indexed_only else store.next_mesh_batch(true)
@@ -201,6 +201,7 @@ func replay_meshes(path:String)->void:
     check(false,"Local water publication commits");quit(1);return
    mesh_us+=Time.get_ticks_usec()-begin
    if packet.has("coordinate"):
+    planar_quads+=int(packet.faces.get("planar_quads",0))
     if not indexed_only:
      for slot in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_TEX_UV,Mesh.ARRAY_COLOR]:
       expanded_bytes+=packet.arrays[slot].to_byte_array().size()
@@ -214,5 +215,5 @@ func replay_meshes(path:String)->void:
   var identity:=digest.finish().hex_encode()
   if expected.is_empty():expected=identity
   check(identity==expected and not owners.is_empty() and store.runtime_state().dirty_meshes==0,"Local replay produces all surface owners deterministically")
-  print("WATER_MESH_REPLAY ",JSON.stringify({"iteration":iteration,"jobs":jobs,"owners":owners.size(),"native_us":mesh_us,"expanded_bytes":expanded_bytes,"geometry_sha256":identity,"source_sha256":FileAccess.get_sha256(path)}))
+  print("WATER_MESH_REPLAY ",JSON.stringify({"iteration":iteration,"jobs":jobs,"owners":owners.size(),"native_us":mesh_us,"expanded_bytes":expanded_bytes,"planar_quads":planar_quads,"geometry_sha256":identity,"source_sha256":FileAccess.get_sha256(path)}))
  print("WATER_MESH_REPLAY failures=",failures);quit(failures)
