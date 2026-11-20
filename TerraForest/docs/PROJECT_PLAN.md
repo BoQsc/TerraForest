@@ -1638,6 +1638,8 @@ Only one delivery milestone is active. Supporting work must name the coverage ro
 | M5 Scale and release qualification | Increased density/distance, endurance, recovery and distributable build | Stated workloads sustain target behavior; memory/VRAM/disk growth and failures are measured; clean-machine release checks pass |
 | M6 Multiplayer implementation and qualification | Authoritative session with interest-managed world/entity state | Server plus two clients and network fault tests first, then measured scaling. Architectural readiness remains a requirement throughout M1ā€“M5 |
 
+The November 20 priority brings the first dedicated-host authority path forward. Its scoped gate is a renderer-independent terrain and water command with save, restart and replay parity. Two-client transport and population qualification remain separate gates. See the [hosting and continuous zoom plan](WORLD_SYSTEMS_DESIGN.md#current-priority-one-world-for-dedicated-hosting-and-continuous-zoom).
+
 M6 is not authorization to market earlier milestones as completing the large-multiplayer goal. Reassess its placement after M4 before release scope is finalized. Likewise, a successful M4 scene does not prove an arbitrary city size.
 
 ## Deferred work and return triggers

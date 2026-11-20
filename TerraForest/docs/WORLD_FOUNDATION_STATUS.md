@@ -1,3 +1,7 @@
+## Dedicated hosting and client headroom
+
+The [world systems design](WORLD_SYSTEMS_DESIGN.md#current-priority-one-world-for-dedicated-hosting-and-continuous-zoom) records the authority, plugin, zoom and scale milestones. The first native place query and publication event serve the trader today. The next integration gate is the same terrain and water edit from local gameplay and a separate simulation-only host, including save and restart. Dedicated hosting, zoom continuity and hundreds of concurrent players remain unqualified.
+
 ## November 20 frame pacing
 
 An extended Cedar Vale walk now measures ordinary terrain and the trader district.
