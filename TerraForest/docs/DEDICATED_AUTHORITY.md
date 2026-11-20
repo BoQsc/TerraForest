@@ -41,6 +41,11 @@ directory and removes its own files after exit. It uses the production game
 scene in headless mode for the local comparison. Rendering and presentation
 timing are separate qualification gates.
 
+Each run retains a compact `reports/checks/<run-id>/dedicated_world.json`
+with executable and native hashes, workload, probe values before and after the
+edit, reloaded values, operator round trip and process memory. The large test
+worlds remain disposable.
+
 The fixture cuts a three-metre sphere at (240, 31, 224), crossing both a
 terrain tile boundary and water-region boundaries. It compares density and
 water depth at x=239 and x=241, water conservation, and an outside-terrain

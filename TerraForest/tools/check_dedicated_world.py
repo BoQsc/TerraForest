@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 """Launch independent authority and gameplay processes against an owned temporary world."""
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 from queue import Queue
@@ -14,6 +15,8 @@ import tempfile
 import time
 
 from development_storage import ROOT, admit
+from play_checkpoint import revision_metadata
+from retained_artifacts import digest
 from windows_process_metrics import ProcessMetrics
 
 POINTS = [(239, 31, 224), (241, 31, 224), (256, 32, 224)]
@@ -23,8 +26,7 @@ def samples():
     return ["sample %d %d %d" % point for point in POINTS]
 
 
-def run(engine, packaged):
-    admit(ROOT, report_bytes=65536, scratch_bytes=16 << 20, world_bytes=160 << 20)
+def run(engine, packaged, report):
     with tempfile.TemporaryDirectory(prefix="terraforest-authority-") as temp:
         env = dict(os.environ, APPDATA=temp)
         base = [str(engine), "--headless", "--path", str(ROOT / "dist" if packaged else ROOT)]
@@ -72,9 +74,9 @@ def run(engine, packaged):
                     owner.stdin.write("excavate 240 31 224 3 0\n")
                     owner.stdin.flush()
                     assert lines.get(timeout=90)["ok"]
-                    print("Operator edit round trip ms", round((time.perf_counter()-started)*1000,2),
-                          "idle working set", idle_metrics["working_set_bytes"],
-                          "peak working set", with_metrics.sample()["peak_working_set_bytes"])
+                    report["edit_round_trip_ms"] = (time.perf_counter()-started)*1000
+                    report["idle_working_set_bytes"] = idle_metrics["working_set_bytes"]
+                    report["peak_working_set_after_edit_bytes"] = with_metrics.sample()["peak_working_set_bytes"]
                     # Windows permits reading and copying the canonical archive
                     # through this handle but denies the final replacement.
                     with archive.open("rb") as pinned:
@@ -119,7 +121,8 @@ def run(engine, packaged):
                                   creationflags=subprocess.CREATE_NO_WINDOW)
         assert rejected.returncode and archive.read_bytes()==corrupt
         assert hashlib.sha256(archive.with_suffix(".trw.bak").read_bytes()).digest()==original_digest
-        print("PASS dedicated restart, stale revision, local-game density, depth and water conservation", changed)
+        report.update(before=original[1:4], after=changed, reloaded=reloaded, gameplay=game,
+                      initial_archive_sha256=original_digest.hex(), passed=True)
 
 
 if __name__=="__main__":
@@ -127,4 +130,25 @@ if __name__=="__main__":
     parser.add_argument("--godot", required=True,type=Path)
     parser.add_argument("--pack",action="store_true")
     args=parser.parse_args()
-    run(args.godot.resolve(),args.pack)
+    admit(ROOT, report_bytes=65536, scratch_bytes=16 << 20, world_bytes=160 << 20)
+    engine = args.godot.resolve()
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    folder = ROOT/"reports/checks"/stamp
+    folder.mkdir()
+    report = dict(test="dedicated_world", passed=False, utc=stamp, engine=str(engine),
+                  points=POINTS, seed=1703, generator=17, brush=[240,31,224,3],
+                  processor=os.environ.get("PROCESSOR_IDENTIFIER"), **revision_metadata())
+    try:
+        report["engine_sha256"] = digest(engine)
+        if args.pack:
+            report["pack_sha256"] = digest(ROOT/"dist/TerraForest.pck")
+        libraries = (ROOT/"dist" if args.pack else ROOT)/"addons"
+        report["native_sha256"] = {p.name:digest(p) for p in sorted(libraries.glob("*/bin/*.dll"))}
+        run(engine,args.pack,report)
+    except Exception as error:
+        report["error"] = repr(error)
+        raise
+    finally:
+        evidence = folder/"dedicated_world.json"
+        evidence.write_text(json.dumps(report,indent=2),encoding="utf-8")
+        print("PASS" if report["passed"] else "FAIL", evidence)
