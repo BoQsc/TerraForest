@@ -108,6 +108,17 @@ if budget['status'] == 'exceeded':
     raise ValueError('Distributable content exceeds the 5 GB budget; existing installed pack retained')
 if budget['status'] == 'warning':
     print('WARNING: Distributable content has reached its size warning budget')
+world_check = subprocess.run(
+    [str(engine), '--headless', '--path', str(staging), '--main-pack', str(pack),
+     '--check-only', '--script', 'res://demo/world.gd'],
+    cwd=staging, capture_output=True, text=True, timeout=60)
+# A dependency of world.gd can fail compilation with a zero process exit.
+world_log = world_check.stdout + '\n' + world_check.stderr
+(root/'reports/world_script_pack_gate.log').write_text(world_log, encoding='utf-8')
+if world_check.returncode or 'ERROR:' in world_log:
+    print(world_log[-6000:])
+    sys.exit(1)
+print('PASS packaged gameplay world script and preload dependencies')
 smoke=subprocess.run([str(engine),'--headless','--path',str(staging),'--main-pack',str(pack),'--quit-after','180','--','--temporary'],cwd=staging,capture_output=True,text=True,timeout=60)
 smoke_log=smoke.stdout+'\n'+smoke.stderr
 (root/'reports/pack_smoke.log').write_text(smoke_log,encoding='utf-8')
