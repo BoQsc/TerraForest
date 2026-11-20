@@ -75,6 +75,14 @@ def run(engine, packaged):
                     print("Operator edit round trip ms", round((time.perf_counter()-started)*1000,2),
                           "idle working set", idle_metrics["working_set_bytes"],
                           "peak working set", with_metrics.sample()["peak_working_set_bytes"])
+                    # Windows permits reading and copying the canonical archive
+                    # through this handle but denies the final replacement.
+                    with archive.open("rb") as pinned:
+                        owner.stdin.write("save\n")
+                        owner.stdin.flush()
+                        assert not lines.get(timeout=90)["ok"]
+                        assert hashlib.sha256(pinned.read()).digest() == original_digest
+                    assert not list(archive.parent.glob(archive.name + ".pending.*"))
                 finally:
                     with_metrics.close()
             finally:
@@ -87,16 +95,18 @@ def run(engine, packaged):
         reloaded = invoke(host, samples()+["quit"], "AUTHORITY ")[1:]
         assert hashlib.sha256(archive.with_suffix(".trw.bak").read_bytes()).digest()==original_digest
         for i,(before, after, restored) in enumerate(zip(original[1:4], changed, reloaded, strict=True)):
-            for key in ("density","depth","water_ml"):
+            assert after["revision"] == before["revision"] + 1
+            for key in ("density","depth","water_ml","revision"):
                 assert restored[key]==after[key], (key,after,restored)
             assert before["water_ml"]==after["water_ml"]
             if i==2:
-                assert before["density"]==after["density"]
+                assert before["density"]==after["density"] and before["height"]==after["height"]
             else:
                 assert after["density"]>before["density"] and after["depth"]>0
         script = ROOT/"tests/authority_gameplay.gd"
         game, = invoke(base+["--script",str(script)], [], "GAME_AUTHORITY ")
         for i,sample in enumerate(changed):
+            assert game["revision"]==sample["revision"]
             assert game["water_ml"]==sample["water_ml"]
             for key in ("density","depth"):
                 assert math.isclose(game[key][i],sample[key],abs_tol=1e-4), (i,key,game[key][i],sample[key])

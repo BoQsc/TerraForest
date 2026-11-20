@@ -32,7 +32,7 @@ func run()->void:
 		if failures==0:
 			var depths:Array=[]
 			for point in POINTS:depths.append(game.lakes.depth_at(point))
-			print("GAME_AUTHORITY ",JSON.stringify({"density":Array(received[0].values),"depth":depths,"water_ml":game.lakes.water.statistics().water_ml}))
+			print("GAME_AUTHORITY ",JSON.stringify({"revision":game.terrain.published_revision,"density":Array(received[0].values),"depth":depths,"water_ml":game.lakes.water.statistics().water_ml}))
 	check(FileAccess.get_sha256(path)==original,"Input archive unchanged")
 	game.terrain.shutdown();game.free()
 	await process_frame

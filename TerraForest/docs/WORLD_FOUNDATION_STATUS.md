@@ -24,6 +24,12 @@ set was 265,318,400 bytes. Neither a 30 Hz service nor the full Linux host
 budget is qualified. The headless scene comparison does not measure display
 presentation. Current support covers inline inland terrain/water archives.
 
+The subsequent Windows publication-failure check passed after a forced sharing
+violation at final replacement. The unchanged canonical archive reopened, and
+local, dedicated and reloaded terrain revisions agreed. That run measured
+414.23 ms for the operator edit and 263,028,736 bytes peak working set.
+The Linux host is unavailable; its total-system capacity gate remains open.
+
 Packaged headless verification `20261120T100915069525Z` covers index invalidation, rejected input, event ordering relative to publication and exact snapshot roundtrip. With 1,024 road records the 64 full-plan reads took 45,308 microseconds total versus 12 microseconds for the indexed query. This benchmark measures local metadata reads only.
 
 The installed Cedar Vale trader route (`20261120T100935793737Z`) passed exit, re-entry, visible outfit, animation and unchanged-save checks. Per-lap p99 was 27.84 / 22.12 ms and maximum was 36.74 / 32.39 ms. The client still misses its 16.67 ms budget.

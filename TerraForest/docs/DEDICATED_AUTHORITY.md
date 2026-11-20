@@ -46,3 +46,7 @@ terrain tile boundary and water-region boundaries. It compares density and
 water depth at x=239 and x=241, water conservation, and an outside-terrain
 probe at x=256. It tests process restart, archive contention, stale revision,
 unsaved process termination, backup identity, and rejected corrupt input.
+The Windows gate also holds the canonical archive open across a save to force
+final replacement to fail. It verifies the original bytes, removal of pending
+output, and a successful edit/save after restart. Local and dedicated global
+terrain revisions must agree and survive reload.
