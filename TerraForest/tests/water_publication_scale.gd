@@ -153,6 +153,12 @@ func _initialize():
   check(initial.batches==count and initial.largest_batch_packets==1 and initial.packets==count,"Each isolated pool publishes its one nonempty surface owner (%d regions)"%count)
   check(local.packets==1,"Local interior edit rebuilds only one owner (%d regions)"%count)
   rows.append({"regions":count,"initial":initial,"local_edit":local,"query_cache_bytes":stats.query_cache_bytes,"resident_cell_bytes":stats.resident_cell_bytes})
+ var edge_pool=fixture(1)
+ publish(edge_pool,100)
+ var edge_removed:int=edge_pool.brush(Vector3(43.75,41.75,43.75),0,-100)
+ check(edge_removed==100 and edge_pool.statistics().dirty_meshes==1,"An inland corner edit queues its resident surface owner")
+ var edge_update:=publish(edge_pool,100)
+ check(edge_update.complete and edge_update.packets==1 and edge_pool.statistics().water_ml==3999900,"The corner edit publishes and conserves the remaining water")
  var scoped=fixture(256)
  var scoped_first:Dictionary=scoped.next_mesh_batch()
  var distant_added:=0

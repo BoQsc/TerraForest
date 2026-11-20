@@ -492,11 +492,14 @@ void NativeRegionalWater::changed(const Vector3i &p){
     Vector3i lo=position(region_key(Vector3i(std::max(p.x-2,0),std::max(p.y-2,0),std::max(p.z-2,0))));
     Vector3i hi=position(region_key(Vector3i(std::min(p.x+2,3999),std::min(p.y+2,508),std::min(p.z+2,3999))));
     for(int z=lo.z;z<=hi.z;++z)for(int y=lo.y;y<=hi.y;++y)for(int x=lo.x;x<=hi.x;++x){Key other=key(Vector3i(x,y,z));
+        if(other==k)continue;
+        // An absent inland region cannot own a water triangle. A former owner
+        // still needs a retirement packet, including one staged by an in-flight
+        // batch. Keep the procedural coastal band on its ordinary path.
+        if(!batch_active&&!publish_pending&&!(surrounding_ocean&&std::min({x,z,499-x,499-z})<35)
+            &&!regions.count(other)&&!published_regions.count(other)&&!published_surfaces.count(other))continue;
         if(urgent)urgent_meshes.insert(other);
-        if(other!=k&&mesh_set.insert(other).second)meshes.push_back(other);}
-    for(const Vector3i &d:directions){Vector3i n=p+d;if(!in_domain(n))continue;Key other=region_key(n);
-        if(urgent)urgent_meshes.insert(other);
-        if(other!=k&&mesh_set.insert(other).second)meshes.push_back(other);}
+        if(mesh_set.insert(other).second)meshes.push_back(other);}
 }
 Array NativeRegionalWater::next_requests(int64_t limit,bool ocean_only){
     Array result;if(limit<1||limit>(ocean_only?8:32))return result;
@@ -1957,6 +1960,14 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         }
         return true;
     };
+    // Build and repair triangles in contiguous native memory. Crossing the
+    // extension API for each vertex attribute makes dense crater meshes costly.
+    struct {
+        std::vector<Vector3> vertices,normals,render_vertices,render_normals,query_vertices;
+        std::vector<Vector2> uv,render_uv;
+        std::vector<Color> colors,render_colors;
+        std::vector<int32_t> render_indices,query_indices;
+    } buffers;
     std::map<std::array<int64_t,7>,int> render_ids;
     std::map<std::array<float,3>,int> query_ids;
     std::map<std::array<std::array<int64_t,3>,3>,std::pair<int,bool>> emitted_triangles;
@@ -2101,15 +2112,15 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                             Vector3 world(float(p.x*.5+v.x),float(p.y*.5+v.y),float(p.z*.5+v.z));
                             Vector3 vertex((p.x-base.x)*.5+v.x,(p.y-base.y)*.5+v.y,(p.z-base.z)*.5+v.z);
                             std::array<float,3> query_key{vertex.x,vertex.y,vertex.z};auto query_found=query_ids.find(query_key);int query_id;
-                            if(query_found==query_ids.end()){query_id=output.query_vertices.size();query_ids.emplace(query_key,query_id);output.query_vertices.push_back(vertex);}else query_id=query_found->second;
-                            output.query_indices.push_back(query_id);
+                            if(query_found==query_ids.end()){query_id=buffers.query_vertices.size();query_ids.emplace(query_key,query_id);buffers.query_vertices.push_back(vertex);}else query_id=query_found->second;
+                            buffers.query_indices.push_back(query_id);
                             if(contact&&!include_contacts)continue;
                             Color color(contact?0.f:1.f,1,1,1);Vector2 uv(world.x,world.z);
-                            output.vertices.push_back(vertex);output.normals.push_back(vertex_normal);output.uv.push_back(uv);output.colors.push_back(color);
+                            buffers.vertices.push_back(vertex);buffers.normals.push_back(vertex_normal);buffers.uv.push_back(uv);buffers.colors.push_back(color);
                             std::array<int64_t,7> key{int64_t(p.x)*2097152+llround(v.x*grid),int64_t(p.y)*2097152+llround(v.y*grid),int64_t(p.z)*2097152+llround(v.z*grid),llround(vertex_normal.x*1000000),llround(vertex_normal.y*1000000),llround(vertex_normal.z*1000000),int(contact)};
                             auto found=render_ids.find(key);int id;
-                            if(found==render_ids.end()){id=output.render_vertices.size();render_ids.emplace(key,id);output.render_vertices.push_back(vertex);output.render_normals.push_back(vertex_normal);output.render_uv.push_back(uv);output.render_colors.push_back(color);}
-                            else id=found->second;output.render_indices.push_back(id);
+                            if(found==render_ids.end()){id=buffers.render_vertices.size();render_ids.emplace(key,id);buffers.render_vertices.push_back(vertex);buffers.render_normals.push_back(vertex_normal);buffers.render_uv.push_back(uv);buffers.render_colors.push_back(color);}
+                            else id=found->second;buffers.render_indices.push_back(id);
                         }
                         output.owners.push_back(uint16_t(index(p)|(contact?0x8000:0)));if(normal.y>.001)++tops;else if(normal.y<-.001)++bottoms;else ++sides;
                     });
@@ -2121,18 +2132,18 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         for(int i=0;i<int(output.owners.size());++i){
             const auto owner=output.owners[i];bool rendered=include_contacts||!(owner&0x8000);
             if(!removed_triangles[i]){
-                for(int e=0;e<3;++e)output.query_indices.set(kept*3+e,output.query_indices[i*3+e]);
+                for(int e=0;e<3;++e)buffers.query_indices[kept*3+e]=buffers.query_indices[i*3+e];
                 output.owners[kept++]=owner;
                 if(rendered){for(int e=0;e<3;++e){
-                    output.vertices.set(render_write+e,output.vertices[render_read+e]);output.normals.set(render_write+e,output.normals[render_read+e]);
-                    output.uv.set(render_write+e,output.uv[render_read+e]);output.colors.set(render_write+e,output.colors[render_read+e]);
-                    output.render_indices.set(render_write+e,output.render_indices[render_read+e]);
+                    buffers.vertices[render_write+e]=buffers.vertices[render_read+e];buffers.normals[render_write+e]=buffers.normals[render_read+e];
+                    buffers.uv[render_write+e]=buffers.uv[render_read+e];buffers.colors[render_write+e]=buffers.colors[render_read+e];
+                    buffers.render_indices[render_write+e]=buffers.render_indices[render_read+e];
                 }render_write+=3;}
             }
             if(rendered)render_read+=3;
         }
-        output.owners.resize(kept);output.query_indices.resize(kept*3);output.render_indices.resize(render_write);
-        output.vertices.resize(render_write);output.normals.resize(render_write);output.uv.resize(render_write);output.colors.resize(render_write);
+        output.owners.resize(kept);buffers.query_indices.resize(kept*3);buffers.render_indices.resize(render_write);
+        buffers.vertices.resize(render_write);buffers.normals.resize(render_write);buffers.uv.resize(render_write);buffers.colors.resize(render_write);
     }
     // Float projection can invert an extremely narrow contact triangle while
     // leaving its vertices shared correctly. Orient each connected component
@@ -2141,7 +2152,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     struct EdgeUses {int first=-1,second=-1;bool forward=false,same=false;};
     std::unordered_map<uint64_t,EdgeUses> edges;
     const int triangles=int(output.owners.size());
-    const auto *indices=output.query_indices.ptr();
+    const auto *indices=buffers.query_indices.data();
     edges.reserve(triangles*2);
     int inconsistent=0;
     for(int i=0;i<triangles;++i){
@@ -2158,7 +2169,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
             links[uses.first].push_back({uses.second,uses.same});links[uses.second].push_back({uses.first,uses.same});
         }
         std::vector<std::pair<double,int>> order;order.reserve(triangles);
-        const auto *vertices=output.query_vertices.ptr();
+        const auto *vertices=buffers.query_vertices.data();
         for(int i=0;i<triangles;++i){
             auto a=vertices[indices[i*3]],b=vertices[indices[i*3+1]],c=vertices[indices[i*3+2]];
             order.push_back({double((b-a).cross(c-a).length_squared()),i});
@@ -2178,19 +2189,38 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
         for(int i=0;i<triangles;++i){
             bool rendered=include_contacts||!(output.owners[i]&0x8000);
             if(flip[i]){
-                int second=output.query_indices[i*3+1];output.query_indices.set(i*3+1,output.query_indices[i*3+2]);output.query_indices.set(i*3+2,second);
+                int second=buffers.query_indices[i*3+1];buffers.query_indices[i*3+1]=buffers.query_indices[i*3+2];buffers.query_indices[i*3+2]=second;
                 if(rendered){
-                    for(int e=0;e<3;++e){int old=output.render_indices[render_offset+e],id=output.render_vertices.size();
-                        output.render_vertices.push_back(output.render_vertices[old]);output.render_normals.push_back(-output.render_normals[old]);
-                        output.render_uv.push_back(output.render_uv[old]);output.render_colors.push_back(output.render_colors[old]);output.render_indices.set(render_offset+e,id);
-                        output.normals.set(render_offset+e,-output.normals[render_offset+e]);}
-                    auto swap_values=[&](auto &values){auto value=values[render_offset+1];values.set(render_offset+1,values[render_offset+2]);values.set(render_offset+2,value);};
-                    swap_values(output.vertices);swap_values(output.normals);swap_values(output.uv);swap_values(output.colors);swap_values(output.render_indices);
+                    for(int e=0;e<3;++e){int old=buffers.render_indices[render_offset+e],id=buffers.render_vertices.size();
+                        buffers.render_vertices.push_back(buffers.render_vertices[old]);buffers.render_normals.push_back(-buffers.render_normals[old]);
+                        buffers.render_uv.push_back(buffers.render_uv[old]);buffers.render_colors.push_back(buffers.render_colors[old]);buffers.render_indices[render_offset+e]=id;
+                        buffers.normals[render_offset+e]=-buffers.normals[render_offset+e];}
+                    auto swap_values=[&](auto &values){std::swap(values[render_offset+1],values[render_offset+2]);};
+                    swap_values(buffers.vertices);swap_values(buffers.normals);swap_values(buffers.uv);swap_values(buffers.colors);swap_values(buffers.render_indices);
                 }
             }
             if(rendered)render_offset+=3;
         }
     }
+    // Publish each final stream in one copy and release its working capacity
+    // before allocating the next packed array.
+    auto pack=[](auto &source,auto &destination){
+        if(source.empty())return;
+        destination.resize(source.size());
+        std::copy(source.begin(),source.end(),destination.ptrw());
+        std::decay_t<decltype(source)>().swap(source);
+    };
+    pack(buffers.vertices,output.vertices);
+    pack(buffers.normals,output.normals);
+    pack(buffers.uv,output.uv);
+    pack(buffers.colors,output.colors);
+    pack(buffers.render_vertices,output.render_vertices);
+    pack(buffers.render_normals,output.render_normals);
+    pack(buffers.render_uv,output.render_uv);
+    pack(buffers.render_colors,output.render_colors);
+    pack(buffers.render_indices,output.render_indices);
+    pack(buffers.query_vertices,output.query_vertices);
+    pack(buffers.query_indices,output.query_indices);
     output.faces["top"]=tops;output.faces["bottom"]=bottoms;output.faces["side"]=sides;
     output.faces["triangles"]=tops+bottoms+sides;output.faces["exact_cut_cell_boundary"]=true;
     return output;

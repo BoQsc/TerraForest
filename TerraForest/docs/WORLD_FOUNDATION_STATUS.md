@@ -1,5 +1,18 @@
 ## November 20 sea and lake blast check
 
+The current mesh builder assembles vertex attributes and indices in native
+vectors through clipping and winding repair, then copies each completed stream
+once into its Godot packed array. Inland neighbourhood edits skip absent
+owners that have no mesh to retire. The fixed lake blast queued 140 urgent
+owners, compared with 150 previously. Installed no-capture run
+`20261120T124634361942Z` measured 151.372 ms for sea, 366.515 ms for lake,
+182.458 ms for mining and 46.375–48.620 ms for buckets. Paired-camera run
+`20261120T124732785411Z` measured 382.667 ms at the lake. The two runs
+passed the existing immediate depth and bank checks and failed the lake
+deadline. The former straight cutoff was absent in both camera views.
+Mesh worker, watertight topology and publication scaling checks passed;
+the inland corner regression is in `20261120T124845567592Z`.
+
 The installed receiver update passed all 81 depth probes at each shore and
 all 23 sea and 26 lake bank probes at first publication in two runs. The
 two immediate lake views in `20261120T123819287867Z` show a continuous
