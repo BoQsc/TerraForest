@@ -2,6 +2,7 @@
 # One persistent sleeping worker. It owns the native world; scene nodes stay on the main thread.
 extends RefCounted
 const Codec = preload("res://addons/volumetric_terrain/mesh_codec.gd")
+const EditCommands=preload("res://addons/volumetric_terrain/terrain_edit_commands.gd")
 var thread := Thread.new()
 var mutex := Mutex.new()
 var semaphore := Semaphore.new()
@@ -528,17 +529,7 @@ func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)
 
 func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
-	var reply:=PackedByteArray()
-	var changed:Array[bool]=[]
-	var removed_samples:=PackedInt64Array();removed_samples.resize(16)
-	for command:PackedByteArray in commands:
-		reply=_call(command)
-		var removed:=Codec.excavation_samples(reply)
-		for material in range(16):removed_samples[material]+=removed[material]
-		var revision_after:int=_call(Codec.command(0)).decode_u32(12)
-		changed.append(revision_after!=revision_before);revision_before=revision_after
-		if not Codec.reply_ok(reply):removed_samples.fill(0);break
-	return {"reply":reply,"changed":changed,"removed":removed_samples}
+	return EditCommands.execute(native,commands,revision_before)
 
 func _recoverable_edit_rejection(commands:Array,reply:PackedByteArray,before:PackedByteArray,after:PackedByteArray)->bool:
 	if reply.size()<12 or reply.decode_u32(0)!=Codec.REPLY_MAGIC or reply.decode_u32(4) not in [2,3,28,38,41] or reply.decode_u32(8) not in [1,2,3]:return false

@@ -1,3 +1,28 @@
+## World authority and qualification milestones (November 20)
+
+The following gates track the Windows-first hosting and strategy-to-first-person
+work. An engineering check closes only the behaviour it exercises.
+
+| Gate | Required evidence | Status |
+| --- | --- | --- |
+| Packaged client baseline | Three cold and three warm forest, trader, underground, sea and lake routes. Pin build, save, configuration, camera paths and hardware. Record actual refresh misses, CPU/GPU times, queues, peaks, images and loading separately. | Open. Existing walks and two-angle water checks are inputs. Keep the lake contact failure after bucket interruption as a regression. |
+| Dedicated authority | Real client and dedicated processes commit the same cross-boundary edit. Verify density, water, unchanged neighbours, revisions, generation, save, crash recovery and restart. | Inland terrain/water slice implemented. See foundation status for verified coverage and unsupported save types. |
+| Small Linux host | Test an isolated 1-core, 400 MB total system with OS and Forge measured. Record boot, idle, first region, join, edit, peak save and restart. Increase players and regions until the first failure. | Open. Port archive locking, atomic publication and native terrain/water storage first. |
+| Shared operations | Use validated versioned commands, stable identity, idempotency, bounded queries and post-commit events for buckets, mining, barrels, construction, inventory, actors, vehicles, trade and remote orders. | Shared terrain packet execution integrated into the gameplay worker and dedicated host. Migration and multiplayer identity remain open. |
+| Continuous zoom and local edits | Keep canonical simulation independent of camera zoom; share region simulation across players. Measure input feedback, admit/commit and visible publication separately. Verify two angles at each shore, submerged contact and transitions under repeated edits. | Open. |
+| Session replication | Forge discovery plus private direct joins. Two real clients, authenticated authority, late join, competing edits, faults, slow readers and recovery. Benchmark Forge traffic before selecting the gameplay transport. | Open. Existing community room traffic has no gameplay authority. |
+| Trusted extensions | Versioned server/client manifest, commands, queries, events, persistence and teardown. Sample out-of-tree mod in both camera modes and hosted play; dependency, unavailable-content and save preservation tests. | Open. |
+| Scale and distribution | Separate load generators at 32, 100 and 200 active players, including 64 in one hotspot. Qualify simultaneous exploration, edits and combat, autosaves, reconnect, crash recovery, installation, three repeats and an eight-hour soak. | Open. |
+
+At 1080p on the Lenovo reference the target is 13.3 ms p99 CPU and GPU work
+each, and zero game-attributable missed refreshes on the fixed 60 Hz routes.
+At 30 Hz the authority target is 26.7 ms p99 work with bounded queue age.
+Give input feedback by the next client frame, admit within one tick at p99,
+and publish local changes within two rendered frames at p99 after commit
+delivery. Measure end-to-end latency too. Publish working set, private memory,
+traffic per player, region and peer costs, performance under overload, and
+the last passing measured workload for each host class.
+
 ## Startup autosave corrected; paging promotion withheld - 2026-10-20
 
 Default-on compatibility checks passed model edit/save/fresh reopen and browser

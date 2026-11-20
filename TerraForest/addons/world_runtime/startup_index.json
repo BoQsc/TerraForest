@@ -547,9 +547,13 @@
   "res://addons/volumetric_terrain/surface_tokens.gd": [],
   "res://addons/volumetric_terrain/terrain_backend.gd": [
     "res://addons/volumetric_terrain/mesh_codec.gd",
+    "res://addons/volumetric_terrain/terrain_edit_commands.gd",
     "res://addons/world_runtime/generation_mesh_handoff.gd",
     "res://addons/volumetric_terrain/derived_cache.gd",
     "res://addons/volumetric_terrain/generated_lakes.gd"
+  ],
+  "res://addons/volumetric_terrain/terrain_edit_commands.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd"
   ],
   "res://addons/volumetric_terrain/terrain_stream.gd": [
     "res://addons/volumetric_terrain/terrain_backend.gd",

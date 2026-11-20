@@ -1,6 +1,18 @@
 ## Dedicated hosting and client headroom
 
-The [world systems design](WORLD_SYSTEMS_DESIGN.md#current-priority-one-world-for-dedicated-hosting-and-continuous-zoom) records the authority, plugin, zoom and scale milestones. The first native place query and publication event serve the trader today. The next integration gate is the same terrain and water edit from local gameplay and a separate simulation-only host, including save and restart. Dedicated hosting, zoom continuity and hundreds of concurrent players remain unqualified.
+The [world systems design](WORLD_SYSTEMS_DESIGN.md#current-priority-one-world-for-dedicated-hosting-and-continuous-zoom) records the authority, plugin, zoom and scale milestones. The first native place query and publication event serve the trader today. The first standalone inland edit gate is exercised below. Paged saves, structures, authorization and asynchronous admission remain open. Dedicated hosting, zoom continuity and hundreds of concurrent players remain unqualified.
+
+The [dedicated host and regression command](DEDICATED_AUTHORITY.md) now run a
+cross-boundary excavation against native terrain and water in an independent
+Windows process. The installed game scene and saved/restarted host agreed at
+all three probes. Both excavated cells had density 2 and depth 5.458628 m.
+Total finite water stayed at 36,032,293,119 mL. The test also verified an
+exclusive writer, rejected stale revision, unchanged canonical save after
+unsaved process termination, previous-version backup and corrupt-input refusal.
+The installed operator round trip was 404.56 ms and the sampled peak working
+set was 265,318,400 bytes. Neither a 30 Hz service nor the full Linux host
+budget is qualified. The headless scene comparison does not measure display
+presentation. Current support covers inline inland terrain/water archives.
 
 Packaged headless verification `20261120T100915069525Z` covers index invalidation, rejected input, event ordering relative to publication and exact snapshot roundtrip. With 1,024 road records the 64 full-plan reads took 45,308 microseconds total versus 12 microseconds for the indexed query. This benchmark measures local metadata reads only.
 

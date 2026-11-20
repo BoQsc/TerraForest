@@ -12,11 +12,17 @@ var last_error:=""
 var stage_timings:Dictionary={}
 var continue_started_ms:=0
 var continue_consumed:=false
+func _dedicated()->bool:
+	var main:Script=get_tree().get_script()
+	return main!=null and main.resource_path=="res://addons/world_runtime/dedicated_main.gd"
+
 func _enter_tree()->void:
+	if _dedicated():return
 	# The host exists before browser, loading, generation and gameplay scenes.
 	Presentation.migrate_boot_settings()
 	Presentation.apply(get_window())
 func _ready()->void:
+	if _dedicated():return
 	if "--frame-trace" in OS.get_cmdline_user_args():
 		var trace:=preload("res://addons/world_runtime/frame_trace.gd").new()
 		trace.name="FrameTrace";add_child(trace)
