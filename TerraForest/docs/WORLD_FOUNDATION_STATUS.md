@@ -1,3 +1,14 @@
+## November 20 frame pacing
+
+The [grounded route and handgun investigation](../issues/runtime-performance/README.md)
+tracks first-equip latency, counts of slow frames on cold and repeated walks,
+and the contribution of test-only quantity verification to lake explosion traces.
+General movement pacing remains open. Reproduce slow frames on the same route
+after the handgun fix, attribute the time inside those intervals, and require
+repeatable reductions in slow-frame counts and consecutive slow frames without
+regressing bucket, mining or shoreline response. A kernel scheduling trace
+requires a host with `CPU.Light` profiling permitted.
+
 ## Steam launch path correction — 2026-11-13
 
 Both original Steam desktop shortcuts are restored byte-for-byte after the user

@@ -3,6 +3,7 @@ extends Node3D
 ## Camera-local presentation. The existing native motor remains the player owner.
 signal handgun_event(event_name:String,details:Dictionary)
 var px9:Node
+var last_equip_stages:Dictionary={}
 var handgun_aim=preload("res://addons/characters/runtime/px9_aim_layer.gd").new()
 var handgun_flash:Node3D
 var handgun_empty:=true
@@ -43,6 +44,7 @@ var model: Node3D
 var animation_player: AnimationPlayer
 var meshes: Array[MeshInstance3D] = []
 var body_mesh: MeshInstance3D
+var handgun_body_mesh: ArrayMesh
 var original_body_mesh: Mesh
 var unarmed_body_mesh: ArrayMesh
 var clips: Dictionary = {}
@@ -202,6 +204,10 @@ func _collect(node: Node) -> void:
 		meshes.append(node)
 		if String(node.name)=="Human_Body":
 			body_mesh=node;original_body_mesh=node.mesh
+			# Construct the per-avatar mesh while the world is loading. Equipping
+			# only binds it; materials still follow the active avatar.
+			handgun_body_mesh=load("res://addons/characters/runtime/px9/Human.px9_eclipse.body.res") as ArrayMesh
+			handgun_body_mesh=handgun_body_mesh.duplicate(false)
 			unarmed_body_mesh=UNARMED_BODY.duplicate()
 			for surface in original_body_mesh.get_surface_count():
 				unarmed_body_mesh.surface_set_material(surface,original_body_mesh.surface_get_material(surface))
@@ -252,16 +258,22 @@ func equip(item: int, water_ml:int=-1) -> void:
 	_sync_equipment()
 	if current==9:
 		if px9==null:
+			var started:=Time.get_ticks_usec()
 			px9=PX9.new();px9.auto_process=false;add_child(px9)
 			var definition:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(PX9_PATH))
 			var weapon:Node3D=preload("res://addons/characters/runtime/px9/PX9_Eclipse_FP.glb").instantiate()
+			last_equip_stages["weapon_us"]=Time.get_ticks_usec()-started
+			started=Time.get_ticks_usec()
 			_prepare_empty_px9(weapon,definition)
-			var result:int=px9.equip(model,weapon,preload("res://addons/characters/runtime/px9/Human.px9_eclipse.res"),definition,PX9_PATH)
+			var result:int=px9.equip(model,weapon,preload("res://addons/characters/runtime/px9/Human.px9_eclipse.res"),definition,PX9_PATH,{"Human_Body":handgun_body_mesh})
+			last_equip_stages["adapter_us"]=Time.get_ticks_usec()-started
+			started=Time.get_ticks_usec()
 			if result!=OK:push_error("PX9 equip failed: "+str(result));return
 			body_mesh.mesh.set_meta("px9_hand_skin",true)
 			px9.item.set_meta("first_person_equipment",true)
 			_collect_px9(px9.item)
 			handgun_aim.prepare(px9.motion)
+			last_equip_stages["aim_us"]=Time.get_ticks_usec()-started
 			_prepare_px9_flash()
 			px9.event_reached.connect(func(event:String,details:Dictionary):handgun_event.emit(event,details))
 			px9.action_finished.connect(func(action:String):

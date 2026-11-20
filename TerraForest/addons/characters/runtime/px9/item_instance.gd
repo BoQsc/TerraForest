@@ -25,7 +25,7 @@ func _ready() -> void:
 	process_priority = 20
 
 func equip(human_model: Node3D, item_model: Node3D, library: AnimationLibrary,
-		definition: Dictionary, definition_path: String) -> Error:
+		definition: Dictionary, definition_path: String, prepared_meshes: Dictionary = {}) -> Error:
 	unequip()
 	item = item_model
 	if human_model == null or item_model == null or library == null:
@@ -47,7 +47,7 @@ func equip(human_model: Node3D, item_model: Node3D, library: AnimationLibrary,
 		unequip()
 		return ERR_CANT_CREATE
 	body_shapes = HumanLayer.save_and_neutralize_body_shapes(human_model)
-	var overridden := HumanLayer.apply_mesh_overrides(human_model, definition.get("human", {}).get("mesh_overrides", []), definition_path)
+	var overridden := HumanLayer.apply_mesh_overrides(human_model, definition.get("human", {}).get("mesh_overrides", []), definition_path, prepared_meshes)
 	if not bool(overridden["passed"]):
 		push_error(String(overridden["error"]))
 		unequip()

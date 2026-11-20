@@ -75,13 +75,14 @@ static func restore_body_shapes(snapshot: Array) -> void:
 		for index in mini(values.size(), mesh.get_blend_shape_count()):
 			mesh.set_blend_shape_value(index, values[index])
 
-static func apply_mesh_overrides(model: Node, overrides: Array, definition_path: String) -> Dictionary:
+static func apply_mesh_overrides(model: Node, overrides: Array, definition_path: String, prepared_meshes: Dictionary = {}) -> Dictionary:
 	var snapshots: Array = []
 	for record: Dictionary in overrides:
 		var name := String(record.get("mesh", ""))
 		var instance := model.find_child(name, true, false) as MeshInstance3D
 		var path := Definition.resolve_file(definition_path, String(record.get("resource", "")))
-		var supplied := load(path) as ArrayMesh
+		var prepared := prepared_meshes.get(name) as ArrayMesh
+		var supplied := prepared if prepared != null else load(path) as ArrayMesh
 		if instance == null or instance.mesh == null or supplied == null:
 			restore_meshes(snapshots)
 			return {"passed":false,"snapshots":[],"error":"Cannot resolve per-item body mesh override: " + name}
@@ -93,7 +94,7 @@ static func apply_mesh_overrides(model: Node, overrides: Array, definition_path:
 			if original.get_blend_shape_name(shape) != supplied.get_blend_shape_name(shape):
 				restore_meshes(snapshots)
 				return {"passed":false,"snapshots":[],"error":"Body variant morph names differ from the active model"}
-		var variant := supplied.duplicate(false) as ArrayMesh
+		var variant := prepared if prepared != null else supplied.duplicate(false) as ArrayMesh
 		for surface in original.get_surface_count():
 			variant.surface_set_material(surface, original.surface_get_material(surface))
 		snapshots.append({"mesh":weakref(instance),"original":original})

@@ -100,6 +100,7 @@ func sample_timing()->void:
  var specializations:=Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SPECIALIZATION)
  timing_worst.append({"frame_ms":(now-timing_previous)/1000.0,"stages":timing_stages.duplicate(),"water_main_us":game.lakes.last_process_us,"pipeline_draw_delta":pipelines-timing_pipeline_draw,"pipeline_specialization_delta":specializations-timing_pipeline_specialization,"render_setup_ms":RenderingServer.get_frame_setup_time_cpu(),"render_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()),"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()),"process_ms":Performance.get_monitor(Performance.TIME_PROCESS)*1000,"physics_ms":Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000})
  timing_pipeline_draw=pipelines;timing_pipeline_specialization=specializations
+ timing_worst.back().sample_end_unix_ms=Time.get_unix_time_from_system()*1000
  timing_worst.back().frame_phases=frame_phases.sample.duplicate()
  timing_worst.back().other_main_us={"handgun":game.tool_view.human.last_handgun_process_us,"forest":game.vegetation.last_process_us,"ecosystem":game.ecosystem.last_process_us,"ground_cover":game.ground_cover.last_process_us,"model_paging":game.model_paging.last_process_us if game.model_paging!=null else 0}
  timing_worst.back().native_blocks=game.structures.blocks.process_frame_profile()
@@ -248,9 +249,17 @@ func _initialize()->void:run.call_deferred()
 func owned_amount()->int:
  # Pristine ocean residency can retire after travel; it is not owned lake mass.
  # Use the production save snapshot's non-regenerable quantity, outside timing.
+ var measure:bool=not timing_phase.is_empty() and frame_phases.usage!=null
+ var before_cpu:PackedInt64Array=frame_phases.usage.thread_work() if measure else PackedInt64Array()
+ var started:=Time.get_ticks_usec()
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var frozen:Variant=game.lakes.water.capture_storage_snapshot(catalog)
  var bytes:PackedByteArray=frozen if frozen is PackedByteArray else frozen.serialize_snapshot()
+ if measure:
+  timing_stage("test-only quantity snapshot",(Time.get_ticks_usec()-started)/1000.0)
+  var after_cpu:PackedInt64Array=frame_phases.usage.thread_work()
+  if before_cpu.size()==2 and after_cpu.size()==2 and before_cpu[1]>=0:
+   timing_stage("snapshot main-thread CPU",(after_cpu[1]-before_cpu[1])/1000.0)
  check(bytes.size()>=32 and bytes.decode_u32(0)==0x31575256,"Owned-quantity snapshot is complete")
  return bytes.decode_u64(16) if bytes.size()>=32 else -1
 func gameplay_barrel(point:Vector3)->int:
@@ -281,6 +290,7 @@ func shoot_barrel(id:int)->void:
  var equip_started:=Time.get_ticks_usec()
  check(game.player_hud.equip_item(9),"Handgun equipped for barrel ignition")
  timing_stage("handgun equip",(Time.get_ticks_usec()-equip_started)/1000.0)
+ print("EQUIP_STAGES ",game.tool_view.human.get("last_equip_stages"))
  game.camera.look_at(game.combat.barrel_position(id)+Vector3.UP*.5)
  var deadline:=Time.get_ticks_msec()+10000
  var shots_before:int=game.combat.shots
@@ -362,6 +372,50 @@ func ready(label:String)->bool:
     print("PLAYER_WATER_STATE ",label," ",JSON.stringify(game.lakes.statistics()));return true
   await process_frame
  print("PLAYER_WATER_FAILURE ",label," ",game.terrain.latest_error," ",JSON.stringify(game.lakes.statistics() if game.lakes.water!=null else {}));return false
+# Walk the same ground out and back using the production player motor.
+func measure_grounded_route()->void:
+ game.player_view.entry.finish()
+ game.fly=false
+ var prior_access:bool=game.session_menu.developer_hud.mouse_access
+ game.session_menu.developer_hud.mouse_access=true
+ game.yaw=0
+ game.player.rotation.y=0
+ var rows:Array=[]
+ for lap in 2:
+  var previous:=Time.get_ticks_usec()
+  var frames:Array[float]=[]
+  var longest:=0
+  var streak:=0
+  var counts:=[0,0,0]
+  var start:Vector3=game.player.position
+  var outward:=Vector3.ZERO
+  for leg in 2:
+   var keycode:=KEY_D if leg==0 else KEY_A
+   game.controls.set_key(keycode,true,Time.get_ticks_usec())
+   var until:=Time.get_ticks_msec()+5000
+   while Time.get_ticks_msec()<until:
+    game.app_focused=true
+    var phase:=1.0-(until-Time.get_ticks_msec())/5000.0
+    game.yaw=.35*sin(phase*TAU)
+    game.player.rotation.y=game.yaw
+    await process_frame
+    var now:=Time.get_ticks_usec()
+    var ms:float=(now-previous)/1000.0
+    previous=now
+    frames.append(ms)
+    for n in 3:
+     if ms>[20,33,50][n]:counts[n]+=1
+    streak=streak+1 if ms>20 else 0
+    longest=maxi(longest,streak)
+   game.controls.set_key(keycode,false,Time.get_ticks_usec())
+   if leg==0:
+    outward=game.player.position
+    var delta:Vector3=outward-start
+    check(Vector2(delta.x,delta.z).length()>4,"Grounded route actually traverses terrain")
+  rows.append({"lap":lap,"frames":frames.size(),"over_20_33_50":counts,"longest_over_20":longest,"p99_ms":percentile(frames,.99),"cap":Engine.max_fps,"start":str(start),"turnaround":str(outward),"end":str(game.player.position)})
+ game.session_menu.developer_hud.mouse_access=prior_access
+ FileAccess.open(evidence.path_join("grounded_pacing.json"),FileAccess.WRITE).store_string(JSON.stringify(rows,"  "))
+
 func run()->void:
  var sea_completed:=false
  for arg in OS.get_cmdline_user_args():
@@ -375,6 +429,7 @@ func run()->void:
  preload("res://addons/world_runtime/session_options.gd").set_arguments(PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors"]),true)
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
  check(await ready("initial"),"Actual player world loads read-only")
+ if "--grounded-pacing" in OS.get_cmdline_user_args():await measure_grounded_route()
  if "--water-load-only" in OS.get_cmdline_user_args():
   check(FileAccess.get_sha256(path)==original,"Original player save is unchanged")
   game.terrain.shutdown();game.free();await process_frame;await process_frame
@@ -464,7 +519,7 @@ func run()->void:
     check(not game.combat.barrels.get_ids().has(id),"Normal gameplay queue detonates lake shoreline barrel")
     await local_response(p,"lake")
     if "--water-edit-response" in OS.get_cmdline_user_args():await capture("player_lake_after",p,lake.level)
-    if "--water-edit-response" in OS.get_cmdline_user_args():await bucket_response_cases(lake)
+    if "--water-edit-response" in OS.get_cmdline_user_args() and "--blast-only-timing" not in OS.get_cmdline_user_args():await bucket_response_cases(lake)
     check(await ready("lake_blast"),"Actual lake crater finishes finite equilibrium")
     finish_timing()
     check_crater_coverage(p,lake.level,"lake")

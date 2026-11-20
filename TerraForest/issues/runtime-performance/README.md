@@ -1,5 +1,56 @@
 # Runtime performance
 
+The installed November 20 package (`091617996922Z`) reduces first PX9 equip
+from 134.332 to 31.763 ms on the same saved-world sea encounter. The old and
+new packages use the same no-capture driver with `--grounded-pacing`,
+`--blast-only-timing`, `--water-edit-response` and `--water-no-captures`.
+On the new package the first and second grounded laps contain 4/602 and 3/602
+frames over 20 ms. Each late frame occurs alone, and neither lap has a frame
+over 33 ms. Both versions traverse 26.7 m each way with a turning view. Walking
+precedes equip, so the between-run variation does not establish a causal walking
+improvement. Sea / lake / pickaxe water response takes 155.545 / 214.212 /
+172.746 ms from terrain publication. Lake-blast p99 is 17.840 ms in this run.
+All 74 PX9 behavior checks pass (`091351428429Z`). The avatar retains its own
+corrected mesh during play, and the load/duplicate cost moves into world setup.
+
+`091739281463Z` records a separate instrumented package run. A read-only Windows
+process-thread observer sampled the owned process's earliest-created thread
+2,286 times (10 ms requested interval) into `main_thread_samples.csv`. Matching
+the wall clock to the four longest lake frames, all 15 samples inside them show
+Running. Each frame includes 30.8–37.2 ms of conservation snapshot work, with
+31.25 ms of main-thread CPU accumulation at the OS counter resolution. These
+samples cannot reconstruct every scheduling transition. Buckets publish in
+38.3–48.7 ms, but this run **fails** one of 22 lake contact probes after bucket
+interruption, at (688.191, 44.14063, 770.5733). Keep that geometry result open
+independently of equip timing. The explosion-only run and full source run passed
+their probes. No contact tolerances or water runtime code changed in this fix.
+
+An unobserved full repeat (`091856930220Z`) confirms the same missing contact
+at the same coordinate. First handgun equip takes 29.191 ms, buckets 34.597–
+49.897 ms and sea/lake/mining response 145.119 / 227.484 / 145.525 ms. On the
+two grounded laps, 3/602 and 2/602 frames exceed 20 ms, with zero over 33 ms.
+The repeated contact failure keeps overall water acceptance open.
+
+The November 20 frame-pacing investigation uses Cedar_Vale, an isolated render
+desktop and a read-only game session. On the original package (`090919214690Z`),
+the 60 FPS grounded turn-and-walk route crosses x=1856 and returns to within a
+metre of its starting point. The first and second ten-second laps respectively
+have 44 and 7 frames over 20 ms, none over 33 ms, and longest runs of 5 and 2
+consecutive frames over 20 ms. First handgun equip takes 134.332 ms. The old
+package also misses the 250 ms lake response target in this run (291.527 ms).
+
+The candidate prepares the player-specific corrected hand skin during world
+loading, retaining the ordinary material, animation, attachment and restoration
+paths. In the instrumented source comparison the first equip drops from 171.872
+to 33.317 ms. The timed preparation/adapter portion drops from 124.696 to 2.335 ms.
+In that same candidate run the four slowest lake frames include 28–33 ms each
+of test-only save serialization for conservation assertions. The separate
+`--blast-only-timing` measurement excludes the four intervening bucket actions
+and their assertions. Full correctness runs retain them. Windows denied the
+kernel scheduling trace (`CPU.Light`, `0xc5585011`), so wait versus runnable
+time in the remaining hitches is still unassigned. Evidence is under
+`reports/checks/20261120T090454969528Z`, `090725457603Z`, and `090919214690Z`.
+
 [Combat CPU work after the human playtest](combat-cpu-2026-11-13.md) records native
 skin baking from exact offline packets, removal of redundant animated hit areas,
 and debris-free corpse restoration. Median controlled arm severing falls from

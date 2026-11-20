@@ -1,5 +1,15 @@
 # Continuous volumetric water replacement
 
+**November 20 contact regression observation.** During frame-pacing verification,
+`20261120T091739281463Z` misses one of 22 two-centimetre lake shoreline probes
+after the four bucket actions, including background-mesh interruption. The probe
+at (688.191, 44.14063, 770.5733) has no published surface hit. The crater depth,
+sea contact and exact bucket quantity tests pass. The timing repair changes
+handgun presentation only. Reproduce with Cedar_Vale and the full bucket sequence
+and compare the clipped shore, queried triangles and actual terrain at this
+point. The prior scoped passes below do not close this intermittent failure.
+`20261120T091856930220Z` reproduces the same miss with the thread sampler off.
+
 ## Immediate editing architecture correction — November 14
 
 **Implemented and installed; scoped gameplay verification passed.**
