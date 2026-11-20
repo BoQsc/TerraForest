@@ -65,7 +65,9 @@ func check_crater_coverage(center:Vector3,level:float,label:String)->void:
    var hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(p+Vector3.UP*8,p-Vector3.UP*8,1))
    if hit.is_empty() or hit.position.y>p.y-.1:continue
    sampled+=1
-   if game.lakes.depth_at(p)<.2:missing.append({"point":str(p),"floor":hit.position.y})
+   if game.lakes.depth_at(p)<.2:
+    var live:Dictionary=game.lakes.water.cell_geometry(p)
+    missing.append({"point":str(p),"floor":hit.position.y,"region":str(Vector3i((p/4).floor())),"resident":not live.is_empty(),"capacity_ml":live.get("capacity_ml",0),"head":live.get("head",0)})
  print("CRATER_COVERAGE ",label," sampled=",sampled," missing=",JSON.stringify(missing))
  check(sampled>10 and missing.is_empty(),label+" water covers every sampled excavated air point below its level")
  var surface:Dictionary=game.lakes.water.raycast_surface(Vector3(center.x,level+1,center.z),Vector3(center.x,level-1,center.z))

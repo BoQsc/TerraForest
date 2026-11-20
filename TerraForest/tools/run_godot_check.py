@@ -25,7 +25,7 @@ from development_storage import admit, register_worlds
 BOUNDED_WATER_REPORTS = {
     "px9_handgun", "water_patch", "water_patch_contacts", "water_static_editing", "water_region_io",
     "water_region_retirement", "water_map_identity", "ocean_residency", "water_snapshot_cost",
-    "water_player_world", "water_local_surface", "water_equilibrium_scope", "water_ocean_equilibrium",
+    "water_player_world", "water_publication_scale", "water_local_surface", "water_equilibrium_scope", "water_ocean_equilibrium",
     "water_region_store", "water_region_transfer", "water_storage_snapshot", "water_streaming_save",
     "water_equilibrium_replay", "water_equilibrium", "water_mesh_worker", "water_material_surface", "water_surface_topology",
     "water_surface_continuity", "water_pool_topology", "water_contact_volume", "water_contact_visual", "water_contact_clip",

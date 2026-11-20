@@ -1,5 +1,22 @@
 ## November 20 sea and lake blast check
 
+Source-game run `20261120T122153098464Z` recorded the native cell geometry
+at each failed first-publication depth probe. Of 52 failures, 26 belonged
+to two absent regions, (171,10,192) and (172,10,192). The other 26 belonged
+to two resident regions with positive capacity in the probe cells and
+insufficient water depth. The missing-region line is at world Z = 772 m.
+Both receiver admission and finite water allocation affect this crater.
+The sea passed all 23 first-publication bank probes. Lake publication took
+269.258 ms in this run with another game process active.
+
+Mesh publication now installs only the changed region entries and updates
+the published over-capacity total by delta. It previously duplicated the
+entire resident mesh and face dictionaries for each batch and later walked
+their keys to retire the copies. Scale check `20261120T122305695396Z`
+exercised through 256 owners, loading and play, and full removal of one pool
+while retaining the same distant mesh instance. This bounds the scope of
+dictionary maintenance; the end-to-end latency gate remains open.
+
 In Cedar Vale the first sea publication had a resident top triangle at 40 m
 while the surrounding ocean still displayed its proxy at exactly 40 m. The
 column-wide pick filter rejected this triangle. During that handoff the

@@ -64,8 +64,6 @@ var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
 # Hidden superseded instances are destroyed under the normal frame budget.
 var _retired_mesh_nodes:Array[MeshInstance3D]=[]
-var _retired_mesh_maps:Array[Dictionary]=[]
-var _retired_mesh_keys:Array[Array]=[]
 var _staged_bounds:=AABB()
 var _have_staged_bounds:=false
 var _residency_focus:=Vector2i(-9999,-9999)
@@ -85,6 +83,7 @@ var _mesh_max_publish_us:int=0
 var _mesh_commit_us:int=0
 var _mesh_max_commit_us:int=0
 var _mesh_faces:Dictionary={}
+var _published_over_capacity_ml:=0
 var _ocean_horizon:MeshInstance3D
 var _surrounding_ocean:Node3D
 var _ocean_admitting:=false
@@ -208,6 +207,7 @@ func clear(preserve_store:bool=false) -> void:
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
  _clear_staged_meshes();_meshes.clear();_mesh_faces.clear();_mesh_batch_id=0;_published_mesh_batch_id=0
+ _published_over_capacity_ml=0
  if not preserve_store:water=ClassDB.instantiate("NativeRegionalWater")
  if _surrounding_ocean!=null:
   var empty:=PackedByteArray();empty.resize(500*500);empty.fill(0);_surrounding_ocean.publish(empty)
@@ -257,10 +257,6 @@ func _process(delta:float) -> void:
  var retired_count:=0
  while not _retired_mesh_nodes.is_empty() and retired_count<4 and Time.get_ticks_usec()<retirement_deadline:
   _retired_mesh_nodes.pop_back().queue_free();retired_count+=1
- while not _retired_mesh_maps.is_empty() and Time.get_ticks_usec()<retirement_deadline:
-  var keys:Array=_retired_mesh_keys.back()
-  if keys.is_empty():_retired_mesh_keys.pop_back();_retired_mesh_maps.pop_back()
-  else:_retired_mesh_maps.back().erase(keys.pop_back())
  last_process_work.retirement=Time.get_ticks_usec()-retired_begin
  last_process_us=Time.get_ticks_usec()-measured_begin
  _process_deadline=0
@@ -417,13 +413,14 @@ func _advance_equilibrium()->void:
  _equilibrium_job=water.begin_equilibrium(mini(350,_process_deadline-capture_started),_local_response_pending)
  last_process_work.equilibrium_capture=Time.get_ticks_usec()-capture_started
  if _equilibrium_job!=null:_equilibrium_task=WorkerThreadPool.add_task(_equilibrium_job.prepare,false,"Water connected-body equilibrium")
-var _replacement_nodes:Dictionary={}
 var _replacement_faces:Dictionary={}
+var _staged_over_capacity_delta_ml:=0
 var _replacement_removals:Array[Vector3i]=[]
 var _replacement_hidden:Array[MeshInstance3D]=[]
 var _replacement_visible:Array[MeshInstance3D]=[]
 func _clear_replacement_bookkeeping()->void:
- _replacement_nodes={};_replacement_faces={};_replacement_removals.clear()
+ _replacement_faces.clear();_replacement_removals.clear()
+ _staged_over_capacity_delta_ml=0
  _replacement_hidden.clear();_replacement_visible.clear()
 func _clear_staged_meshes()->void:
  for coordinate:Vector3i in _staged_meshes:
@@ -469,7 +466,6 @@ func _publish_meshes() -> void:
   if update.get("pending",false):break
   if update.batch!=_mesh_batch_id:
    _clear_staged_meshes();_mesh_batch_id=update.batch
-   _replacement_nodes=_meshes.duplicate();_replacement_faces=_mesh_faces.duplicate()
   var upload_started:=Time.get_ticks_usec()
   if update.has("coordinate"):
    var geometry:ArrayMesh=null
@@ -483,11 +479,14 @@ func _publish_meshes() -> void:
      node=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material
      node.position=Vector3(update.coordinate)*4;node.visible=false;node.mesh=geometry;add_child(node)
     _staged_meshes[update.coordinate]=node
+    if _mesh_faces.has(update.coordinate):
+     _staged_over_capacity_delta_ml-=int(_mesh_faces[update.coordinate].get("over_capacity_ml",0))
     if _meshes.has(update.coordinate):_replacement_hidden.append(_meshes[update.coordinate])
     if geometry==null:
-     _replacement_removals.append(update.coordinate);_replacement_nodes.erase(update.coordinate);_replacement_faces.erase(update.coordinate)
+     _replacement_removals.append(update.coordinate)
     else:
-     _replacement_nodes[update.coordinate]=node;_replacement_faces[update.coordinate]=update.faces
+     _replacement_faces[update.coordinate]=update.faces
+     _staged_over_capacity_delta_ml+=int(update.faces.get("over_capacity_ml",0))
      _replacement_visible.append(node)
     var bounds:=AABB(Vector3(update.coordinate)*4,Vector3(4,4,4))
     _staged_bounds=_staged_bounds.merge(bounds) if _have_staged_bounds else bounds;_have_staged_bounds=true
@@ -503,11 +502,13 @@ func _publish_meshes() -> void:
    _mesh_commit_native_us=Time.get_ticks_usec()-native_started
    var bookkeeping_started:=Time.get_ticks_usec()
    _mesh_commit_count=_staged_meshes.size()
-   # Retain old dictionaries for budgeted retirement. Publication swaps the
-   # prepared maps; it does not merge or destroy every lake entry this frame.
-   for old:Dictionary in [_meshes,_mesh_faces,_staged_meshes]:
-    _retired_mesh_maps.append(old);_retired_mesh_keys.append(old.keys())
-   _meshes=_replacement_nodes;_mesh_faces=_replacement_faces
+   # Install only this revision's changed owners, in the same main-thread
+   # call as the native visibility and picking commit.
+   _meshes.merge(_staged_meshes,true)
+   _mesh_faces.merge(_replacement_faces,true)
+   _published_over_capacity_ml+=_staged_over_capacity_delta_ml
+   for coordinate:Vector3i in _replacement_removals:
+    _meshes.erase(coordinate);_mesh_faces.erase(coordinate)
    _retired_mesh_nodes.append_array(_replacement_hidden)
    if _have_staged_bounds:
     _changed_bounds=_changed_bounds.merge(_staged_bounds) if _have_bounds else _staged_bounds;_have_bounds=true
@@ -654,8 +655,7 @@ func statistics() -> Dictionary:
  s.equilibrium_commit_us=_equilibrium_commit_us
  s.equilibrium_pending=_equilibrium_task>=0
  s.surface_failure=_surface_failure
- s.published_over_capacity_ml=0
- for faces:Dictionary in _mesh_faces.values():s.published_over_capacity_ml+=faces.get("over_capacity_ml",0)
+ s.published_over_capacity_ml=_published_over_capacity_ml
  s.bucket_native_us=_bucket_native_us;s.max_bucket_native_us=_max_bucket_native_us
  s.exclusion_notify_us=_exclusion_notify_us;s.accept_patch_us=_accept_patch_us;s.hull_snapshot_us=_hull_snapshot_us
  s.mesh_publish_us=_mesh_publish_us;s.max_mesh_publish_us=_mesh_max_publish_us
