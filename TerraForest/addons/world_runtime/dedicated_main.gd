@@ -31,6 +31,7 @@ func run()->void:
 	quit()
 
 func command(args:PackedStringArray)->Dictionary:
+	if args==PackedStringArray(["edit-profile"]):return {"ok":true,"profile":world.last_edit_profile}
 	if args.size()>=2 and args[0]=="v1" and args[1]=="sample":
 		var coordinates:=args.size()-2
 		if coordinates==0 or coordinates%3!=0 or coordinates>3*World.MAX_QUERY_POINTS:return {"ok":false,"reason":"Invalid point count"}

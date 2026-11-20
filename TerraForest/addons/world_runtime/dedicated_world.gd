@@ -10,6 +10,7 @@ var archive:RefCounted
 var catalog:PackedByteArray
 var path:String
 var healthy:=false
+var last_edit_profile:Dictionary={}
 # The trusted operator has one ordered request stream. Publish its last
 # committed receipt in the same archive transaction as terrain and water.
 var operator_receipt:=PackedByteArray()
@@ -126,11 +127,15 @@ func excavate(point:Vector3,radius:float,expected:int,request_id:int=0)->Diction
 	if expected!=revision():return {"ok":false,"reason":"Stale revision"}
 	var bounds:=AABB(point-Vector3.ONE*radius,Vector3.ONE*radius*2)
 	var packet:=Codec.brush(point,point,radius,0,false,1)
+	var began:=Time.get_ticks_usec()
 	var edit:=EditCommands.execute(core,[packet],expected)
 	if not Codec.reply_ok(edit.reply):return {"ok":false,"reason":"Terrain rejected brush"}
+	last_edit_profile={"terrain_us":Time.get_ticks_usec()-began,"invalidate_us":0,"patch_us":0,"patches":0,"solve_us":0,"commit_us":0,"capture_us":0,"solves":0,"solve_phases_us":[0,0,0,0,0,0,0,0]}
 	if edit.changed[0]:
+		var started:=Time.get_ticks_usec()
 		water.invalidate(bounds)
 		water.settle_after_edit(bounds)
+		last_edit_profile.invalidate_us=Time.get_ticks_usec()-started
 		healthy=_resolve_water()
 	if not healthy:return {"ok":false,"reason":"Water commit failed; reload the last saved revision"}
 	if request_id!=0:
@@ -144,6 +149,7 @@ func excavate(point:Vector3,radius:float,expected:int,request_id:int=0)->Diction
 		operator_receipt.encode_float(24,point.z)
 		operator_receipt.encode_double(28,radius)
 	var response:=receipt_reply() if request_id!=0 else sample(point)
+	last_edit_profile.total_us=Time.get_ticks_usec()-began
 	if edit.changed[0]:
 		edit_committed.emit(revision(),bounds)
 	return response
@@ -155,17 +161,30 @@ func _resolve_water()->bool:
 	while Time.get_ticks_msec()<deadline:
 		var request:Dictionary=water.next_request()
 		if not request.is_empty():
+			var started:=Time.get_ticks_usec()
 			var patch:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
 			if not patch.configure(request.coordinate):return false
 			var status:=0
 			while status==0 and Time.get_ticks_msec()<deadline:
 				status=patch.sample_terrain(core,2048,rev,generation)
 			if status!=1 or not water.accept_patch(patch):return false
+			last_edit_profile.patch_us+=Time.get_ticks_usec()-started
+			last_edit_profile.patches+=1
 		elif water.runtime_state().settling_regions==0:
 			return true
 		else:
+			var started:=Time.get_ticks_usec()
 			var job:RefCounted=water.begin_equilibrium()
+			last_edit_profile.capture_us+=Time.get_ticks_usec()-started
 			if job!=null:
+				started=Time.get_ticks_usec()
 				job.prepare()
-				if not water.finish_equilibrium(job).get("ok",false):return false
+				last_edit_profile.solve_us+=Time.get_ticks_usec()-started
+				started=Time.get_ticks_usec()
+				var result:Dictionary=water.finish_equilibrium(job)
+				last_edit_profile.commit_us+=Time.get_ticks_usec()-started
+				if not result.get("ok",false):return false
+				last_edit_profile.solves+=1
+				for index in result.phase_us.size():
+					last_edit_profile.solve_phases_us[index]+=result.phase_us[index]
 	return false

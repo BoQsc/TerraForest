@@ -3,6 +3,15 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
+Packaged run `20261120T140833686725Z` repeated the sea and lake explosions
+at 1080p with two camera angles each. Initial and settled contact probes
+passed at both shores. Lake water appeared 370 ms after terrain publication
+and 752 ms after the action. The local equilibrium worker used 15.8 ms.
+The timeline shows 140 urgent mesh owners queued at local commit and about
+250 ms between that commit and the draw. Prioritize the visible geometry
+handoff as well as authority discovery. The dedicated archive comparison
+passed on the installed executable in `20261120T141032140550Z`.
+
 November 20 installed gameplay run `20261120T133724057342Z` passed first
 and settled sea/lake shoreline coverage, including the bucket interruption.
 Both fixed lake views show the bank before and after the blast. A replay

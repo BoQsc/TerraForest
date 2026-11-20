@@ -67,7 +67,7 @@ def check_query_burst(owner, lines):
                               for mode, times in timings.items()}}
 
 
-def run(engine, packaged, report):
+def run(engine, packaged, report, expected_archive=None):
     with tempfile.TemporaryDirectory(prefix="terraforest-authority-") as temp:
         env = dict(os.environ, APPDATA=temp)
         base = [str(engine), "--headless", "--path", str(ROOT / "dist" if packaged else ROOT)]
@@ -117,6 +117,10 @@ def run(engine, packaged, report):
                     edit_reply = lines.get(timeout=90)
                     assert edit_reply["ok"]
                     report["edit_round_trip_ms"] = (time.perf_counter()-started)*1000
+                    owner.stdin.write("edit-profile\n")
+                    owner.stdin.flush()
+                    report["edit_profile"] = lines.get(timeout=10)["profile"]
+                    assert report["edit_profile"]["solves"] > 0
                     report["query_burst"] = check_query_burst(owner, lines)
                     owner.stdin.write("v1 1 excavate 240 31 224 3 0\n")
                     owner.stdin.flush()
@@ -147,6 +151,9 @@ def run(engine, packaged, report):
         assert results[1] == results[2] == ack and results[-1]["ok"]
         assert all(not row["ok"] for row in results[3:3+len(invalid)])
         changed = results[3+len(invalid):-1]
+        report["edited_archive_sha256"] = digest(archive)
+        if expected_archive and report["edited_archive_sha256"] != expected_archive:
+            raise AssertionError("Edited terrain/water archive differs from the reference run")
         restarted = invoke(host, [first]+samples()+["excavate 240 31 224 4 1",first,
                                "v1 2 excavate 240 31 224 5 2",first,"quit"], "AUTHORITY ")
         assert restarted[0]["last_request_id"] == 1 and restarted[1] == ack
@@ -189,6 +196,7 @@ if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--godot", required=True,type=Path)
     parser.add_argument("--pack",action="store_true")
+    parser.add_argument("--expect-edited-sha256", help="Compare the complete edited archive with a matched build")
     args=parser.parse_args()
     admit(ROOT, report_bytes=65536, scratch_bytes=16 << 20, world_bytes=160 << 20)
     engine = args.godot.resolve()
@@ -204,7 +212,7 @@ if __name__=="__main__":
             report["pack_sha256"] = digest(ROOT/"dist/TerraForest.pck")
         libraries = (ROOT/"dist" if args.pack else ROOT)/"addons"
         report["native_sha256"] = {p.name:digest(p) for p in sorted(libraries.glob("*/bin/*.dll"))}
-        run(engine,args.pack,report)
+        run(engine,args.pack,report,args.expect_edited_sha256)
     except Exception as error:
         report["error"] = repr(error)
         raise

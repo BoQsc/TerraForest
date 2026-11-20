@@ -1,3 +1,20 @@
+## November 20 cross-boundary excavation cost
+
+The Windows authority now reports brush, patch sampling, snapshot, native
+solve and commit times through `edit-profile`. Native equilibrium indexes
+cut-cell volumes by elevation during the water-level search. Each candidate
+level reuses the saturated volume below it. Close numerical ties use the
+original summation order to preserve integer water allocation.
+
+Matched source-host runs `20261120T140214254634Z` and
+`20261120T140450718119Z` saved byte-identical edited archives
+(`6fc049f0b977a1d9c62f77abaa0bb3dc87be737506d51bf281a1d74fd63d39b5`).
+The level search and integer allocation together took 149.7 and 74.7 ms
+respectively. Full edits took 432.6 and 409.6 ms. Discovery took 214.3 ms
+in the latter run. These are single-operation samples. The synchronous
+authority edit still exceeds the 26.7 ms tick budget. Return to discovery
+and scheduling with matched saves and measured local publication latency.
+
 ## November 20 dedicated spatial queries
 
 The dedicated point query now reads the authoritative water counter directly.

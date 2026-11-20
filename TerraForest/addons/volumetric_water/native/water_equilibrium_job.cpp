@@ -5,6 +5,7 @@
 #include <godot_cpp/classes/time.hpp>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <numeric>
 #include <queue>
 #include <bitset>
@@ -657,19 +658,37 @@ void NativeWaterEquilibriumJob::prepare(){
             mark(1);
             uint64_t quantity=0;double low=upper;
             std::vector<WaterVolumeQuery> queries;queries.reserve(cells.size());
-            std::array<uint32_t,512> air_layers{};std::vector<int> boundary_cells;
+            std::array<uint32_t,512> air_layers{};
+            std::array<std::vector<int>,512> cut_layers;
+            std::array<double,513> volume_below{};
             for(size_t i=0;i<cells.size();++i){const auto &c=cells[i];quantity+=c.before;low=std::min(low,c.p.y*.5);queries.emplace_back(c.shape);
-                if(full_air(c.shape))++air_layers[c.p.y];else boundary_cells.push_back(int(i));}
+                if(full_air(c.shape))++air_layers[c.p.y];
+                else{
+                    cut_layers[c.p.y].push_back(int(i));
+                    volume_below[c.p.y+1]+=std::min(double(queries[i].capacity()),queries[i].volume(500.));
+                }}
             if(!quantity)continue;
+            for(size_t y=0;y<air_layers.size();++y)
+                volume_below[y+1]+=volume_below[y]+125000.*air_layers[y];
             double high=upper;
             // Resolve less than one ml over the entire connected surface, not
             // only a fixed head precision. Large full lakes can differ by 1 ml.
             for(int iteration=0;iteration<48;++iteration){
-                const double middle=(low+high)*.5;double volume=0;
-                // Interior volumes share one linear curve per elevation. Only
-                // cut cells need their individual terrain/solid evaluator.
-                for(size_t y=0;y<air_layers.size();++y)if(air_layers[y])volume+=air_layers[y]*std::clamp((middle-y*.5)*250000.,0.,125000.);
-                for(int i:boundary_cells)volume+=std::min(double(queries[i].capacity()),queries[i].volume((middle-cells[i].p.y*.5)*1000.));
+                const double middle=(low+high)*.5;
+                const int layer=std::clamp(int(std::floor(middle*2)),0,511);
+                const double depth=std::clamp((middle-layer*.5)*1000.,0.,500.);
+                double volume=volume_below[layer]+air_layers[layer]*depth*250.;
+                for(int i:cut_layers[layer])volume+=std::min(double(queries[i].capacity()),queries[i].volume(depth));
+                // Reordering positive sums can change a bisection decision at
+                // a roundoff tie. Preserve the original sum order there so that
+                // deterministic millilitre remainders survive save and replay.
+                const double error=4.*(cells.size()+512)*std::numeric_limits<double>::epsilon()*std::max(volume,double(quantity));
+                if(std::abs(volume-double(quantity))<=error){
+                    volume=0;
+                    for(size_t y=0;y<air_layers.size();++y)if(air_layers[y])volume+=air_layers[y]*std::clamp((middle-y*.5)*250000.,0.,125000.);
+                    for(size_t i=0;i<cells.size();++i)if(!full_air(cells[i].shape))
+                        volume+=std::min(double(queries[i].capacity()),queries[i].volume((middle-cells[i].p.y*.5)*1000.));
+                }
                 if(volume<double(quantity))low=middle;else high=middle;
                 if((high-low)*double(cells.size())*250000.<.25)break;
             }
