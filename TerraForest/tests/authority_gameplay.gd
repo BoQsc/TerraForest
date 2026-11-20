@@ -2,7 +2,8 @@
 extends "water_player_world.gd"
 const POINTS:=[Vector3(239,31,224),Vector3(241,31,224),Vector3(256,32,224)]
 func run()->void:
-	var slot_name:="AuthorityCheck"
+	var inspect_saved:="--inspect-authority-save" in OS.get_cmdline_user_args()
+	var slot_name:="AuthorityReload" if inspect_saved else "AuthorityCheck"
 	var path:="user://worlds/"+slot_name+".trw"
 	if not FileAccess.file_exists(path):quit(2);return
 	var original:=FileAccess.get_sha256(path)
@@ -13,6 +14,12 @@ func run()->void:
 	if failures==0:
 		game.teleport(Vector3(240,40,224))
 		check(await ready("authority_shore"),"Lake is resident")
+	if inspect_saved:
+		if failures==0:await sample_commit()
+		check(FileAccess.get_sha256(path)==original,"Inspecting the saved authority edit preserves its archive")
+		game.terrain.shutdown();game.free()
+		await process_frame
+		quit(failures);return
 	if "--bucket-checkpoint" in OS.get_cmdline_user_args():
 		if failures==0:await save_bucket_checkpoint(path)
 		check(FileAccess.get_sha256(path)==original,"Bucket checkpoint preserves the gameplay input")
@@ -91,4 +98,4 @@ func sample_commit()->void:
 		check(target.hit,"A bucket ray intersects the resident lake surface")
 		if not target.hit:return
 		var normal:Vector3=target.normal
-		print("GAME_AUTHORITY ",JSON.stringify({"revision":game.terrain.published_revision,"density":Array(received[0].values),"depth":depths,"water_ml":game.lakes.water.statistics().water_ml,"surface_y":target.point.y,"surface_cell":[target.cell.x,target.cell.y,target.cell.z],"surface_normal":[normal.x,normal.y,normal.z],"inventory":game.player_hud.inventory.snapshot().slots}))
+		print("GAME_AUTHORITY ",JSON.stringify({"revision":received[0].revision,"density":Array(received[0].values),"depth":depths,"water_ml":game.lakes.water.statistics().water_ml,"surface_y":target.point.y,"surface_cell":[target.cell.x,target.cell.y,target.cell.z],"surface_normal":[normal.x,normal.y,normal.z],"inventory":game.player_hud.inventory.snapshot().slots}))

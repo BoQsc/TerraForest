@@ -1,3 +1,18 @@
+## Dedicated checkpoint opened by gameplay (2026-11-20)
+
+In Windows packaged run `20261120T191826368964Z` (pack `0c0af7490060`),
+a fresh game process opened the dedicated host's saved cross-boundary cut and
+deposition. Its terrain density query returned saved revision 2. Inventory,
+finite water (36,032,293,119 ml) and the surface cell matched the independent
+local edit. All three density and depth probes and the surface height and
+normal agreed within 0.0001. The earlier check reported a session mesh
+publication counter, which starts at zero on load.
+
+The host's deposition took 386.1 ms, including 300.7 ms in the water solve
+and 80.5 ms sampling eight occupancy patches. The displacement search visited
+169,671 cells. This inline inland checkpoint verifies state across processes.
+Interactive latency, per-region revisions and paged worlds remain open.
+
 ## Terrain edit latency decision (2026-11-20)
 
 In isolated packaged Cedar Vale run `20261120T191239652271Z`, input to the

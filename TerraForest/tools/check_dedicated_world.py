@@ -260,6 +260,21 @@ def run(engine, packaged, report, expected_archive=None):
         assert not too_far["ok"] and not empty_ray["ok"] and miss["ok"] and not miss["hit"]
         report["water_surface"] = hit
         report["deposition"] = dict(ack=place_ack, authority=deposited_samples, gameplay=deposited_game, profile=profile)
+        # Open the authority's actual edited checkpoint in a fresh game process.
+        # The earlier local comparison applied both edits in memory.
+        checkpoint = game_input.with_name("AuthorityReload.trw")
+        live_bytes = sum(p.stat().st_size for p in Path(temp).rglob("*") if p.is_file())
+        admit(ROOT, report_bytes=65536, scratch_bytes=16 << 20, world_bytes=live_bytes+archive.stat().st_size)
+        shutil.copyfile(archive, checkpoint)
+        loaded_game, = invoke(base+["--script",str(script),"--","--inspect-authority-save"], [], "GAME_AUTHORITY ")
+        for key in ("revision", "water_ml", "inventory", "surface_cell"):
+            assert loaded_game[key] == deposited_game[key], key
+        for key in ("density", "depth", "surface_normal"):
+            for actual, expected in zip(loaded_game[key], deposited_game[key], strict=True):
+                assert math.isclose(actual, expected, abs_tol=1e-4), (key, actual, expected)
+        assert math.isclose(loaded_game["surface_y"], deposited_game["surface_y"], abs_tol=1e-4)
+        report["authority_checkpoint_in_gameplay"] = dict(sha256=digest(checkpoint), samples=loaded_game)
+        checkpoint.unlink()
         # Corrupt only our disposable canonical file. Failure must preserve the
         # input for recovery and leave its verified backup intact.
         corrupt = archive.read_bytes()[:64]
