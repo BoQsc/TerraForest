@@ -39,7 +39,8 @@ def main():
             built = subprocess.run(command, capture_output=True, text=True, env=env, timeout=120)
             if built.returncode:
                 raise RuntimeError(built.stdout+built.stderr)
-            run = subprocess.run([str(exe)], cwd=folder, capture_output=True, text=True, timeout=30)
+            arguments = ['--require-full-world-edit'] if name == 'candidate' else []
+            run = subprocess.run([str(exe), *arguments], cwd=folder, capture_output=True, text=True, timeout=30)
             report['runs'][name] = {'core_sha256': hashlib.sha256(source).hexdigest(), 'exit_code': run.returncode, 'log': run.stdout+run.stderr, 'hashes': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(folder.glob('*.bin'))}}
     before, after = report['runs']['baseline'], report['runs']['candidate']
     repeated = report['runs']['baseline_repeat']

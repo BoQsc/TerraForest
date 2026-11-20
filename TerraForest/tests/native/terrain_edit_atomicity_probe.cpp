@@ -88,7 +88,41 @@ static bool small_edit_sweep(){
  printf("{\"case\":\"voxel_and_paid_stamp_allocation_sweep\",\"passed\":%s,\"attempts\":%d,\"forced_failures\":%d}\n",passed?"true":"false",attempts,forced);
  return passed;
 }
-int main(){
+// A compact setup for a full unpaged world: every page below 64 m in this
+// square has authored, uniform solid density. Pages have normal owned storage.
+static bool full_world_edit(){
+ World world;world.init(1703,5);
+ for(int y=0;y<4;y++)for(int z=0;z<64;z++)for(int x=0;x<64;x++){
+  Page page;page.key=1+x+WORLD_PAGE_COLUMNS*(z+WORLD_PAGE_COLUMNS*y);
+  page.d=(i16*)tr_alloc(PAGE_SAMPLES*sizeof(i16));page.mat=(u8*)tr_alloc(PAGE_SAMPLES);
+  for(int i=0;i<PAGE_SAMPLES;i++){page.d[i]=-4096;page.mat[i]=1;}
+  int index=world.pages.push(page);world.pages_by_key.put(page.key,index);
+  world.edit_columns[x+WORLD_PAGE_COLUMNS*z]|=1u<<y;
+ }
+ V3 lo,hi,air{1500,230,1500};int changes=0;
+ bool ok=world.pages.n==MAX_PAGES;
+ // The brush halo extends across x=1024. Both sides are rock there, so
+ // excavation centred one radius farther inside modifies existing pages only.
+ ok=ok&&world.edit(air,air,4,0,false,1,lo,hi,changes)&&changes==0;
+ V3 inside{1016,30,512};
+ ok=ok&&world.edit(inside,inside,4,0,false,1,lo,hi,changes)&&changes>0;
+ const auto revision=world.revision;
+ ok=ok&&!world.edit(air,air,4,0,true,1,lo,hi,changes)&&changes==0
+      &&world.revision==revision&&world.pages.n==MAX_PAGES;
+ // This cut stages changes in existing pages before it encounters a new
+ // page at x=1024. An over-budget cut must leave those earlier samples intact.
+ V3 edge{1023,30,512};
+ bool add=world.sample(1024,30,512)>=0;
+ if(add){
+  Page *existing=world.ensure(1022/16,30/16,512/16);
+  existing->d[(1022&15)+16*((512&15)+16*(30&15))]=4096;
+ }
+ float before=world.sample(1022,30,512);
+ ok=ok&&!world.edit(edge,edge,4,0,add,1,lo,hi,changes)&&changes==0
+      &&world.sample(1022,30,512)==before&&world.revision==revision;
+ world.release();return ok;
+}
+static int common_edit_checks(){
  tr_alloc=allocate;tr_realloc=reallocate;tr_free=release;int failures=0;
  bool fixtures=parity_fields();printf("{\"case\":\"successful_edit_fields\",\"passed\":%s}\n",fixtures?"true":"false");failures+=!fixtures;
  for(int existing=0;existing<2;existing++){
@@ -108,4 +142,11 @@ int main(){
  printf("{\"case\":\"allocation_balance\",\"passed\":%s,\"live\":%d}\n",live_allocations==0?"true":"false",live_allocations);
  failures+=live_allocations!=0;
  return failures?1:0;
+}
+
+int main(){
+ int failures=common_edit_checks();
+ bool capacity_ok=full_world_edit()&&live_allocations==0;
+ printf("{\"case\":\"full_world_admits_existing_page_edit_and_noop\",\"passed\":%s}\n",capacity_ok?"true":"false");
+ return failures||!capacity_ok;
 }

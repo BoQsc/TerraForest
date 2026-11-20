@@ -4,8 +4,11 @@
 #undef main
 #include <chrono>
 
-int main(){
- int failures=atomicity_main();
+int main(int argc,char **argv){
+ int failures=common_edit_checks();
+ bool capacity_ok=full_world_edit()&&live_allocations==0;
+ printf("{\"case\":\"full_world_edit\",\"passed\":%s}\n",capacity_ok?"true":"false");
+ if(argc>1 && !std::strcmp(argv[1],"--require-full-world-edit"))failures+=!capacity_ok;
  for(int generator:{1,31})for(int repeat=0;repeat<5;repeat++){
   World world;world.init(1703,generator);float height=world.height(1296,1296);
   EditHeightCache cache;world.edit_height_cache=&cache;

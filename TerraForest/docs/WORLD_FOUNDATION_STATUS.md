@@ -317,6 +317,19 @@ remains failed on three lake assertions and does not qualify frame pacing.
 
 ## In-game terrain authoring
 
+Native brush admission now accounts for pages that receive staged writes.
+An untouched page inside the sampling halo consumes no authored capacity.
+The unpaged regression populates all 16,384 pages, admits an existing-page
+edit and an empty excavation, then rejects additions requiring new storage.
+An edit crossing the boundary preserves earlier samples and the revision on
+rejection. The page limit and rollback contract are unchanged. Native report
+`20261120T153245994840Z_terrain_edit_core_parity.json` failed the capacity
+case on both baseline runs and passed on the candidate. All 14 existing
+field, receipt and mesh outputs matched across the three runs. The separate
+historical hash check pinned to `8b756bb8` differs on seven of eight files
+on both current and pre-change cores; that compatibility discrepancy remains
+open. The coastal water admission limit is independent.
+
 For a partial tile replacing fewer than half its bricks, publication keeps
 the live terrain container and swaps the changed children. Untouched
 colliders stay in the physics tree. Source run `20261120T152029118789Z`

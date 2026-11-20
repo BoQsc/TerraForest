@@ -650,9 +650,9 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  if(shape==2||(shape>=5&&shape<=7)){float span=length(V3{b.x-a.x,0,b.z-a.z});float cap_rise=curve?.25f*(span+radius+shoulder):ab(b.y-a.y)*(radius+shoulder)/span;lo.y=mx(0,mn(a.y,b.y)-cap_rise-depth-SDF_BAND-1);hi.y=mn(255,mx(a.y,b.y)+cap_rise+clearance+SDF_BAND+1);}
  if((shape==2||(shape>=5&&shape<=7))&&shoulder>0){lo.x=mx(0,lo.x-shoulder);lo.z=mx(0,lo.z-shoulder);hi.x=mn(WORLD,hi.x+shoulder);hi.z=mn(WORLD,hi.z+shoulder);}
  if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return false;
- // Capacity check before mutation: fail the edit, never silently discard terrain.
- int need=0;for(int py=fl(lo.y)/16;py<=fl(hi.y)/16;py++)for(int pz=fl(lo.z)/16;pz<=fl(hi.z)/16;pz++)for(int px=fl(lo.x)/16;px<=fl(hi.x)/16;px++)if(pages_by_key.get(page_key(px,py,pz))<0)need++;
- if(pages.n+need>(page_access?MAX_AUTHORED_PAGES:MAX_PAGES))return false;
+ // Only a page with a staged write consumes an authored page slot. The
+ // sampling halo can cross an untouched page even when all edits fit.
+ const int page_limit=page_access?MAX_AUTHORED_PAGES:MAX_PAGES;
  EditPagePin pin(*this,lo,hi);if(!prepare_pages(lo,hi))return false;
  // Stage references and values before changing authoritative pages. Virtual
  // page admission preserves the old first-touch quantization/repaint behavior.
@@ -692,6 +692,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    if(paid_sample&&previous<0)continue; // Never repaint or deepen existing solid resources.
    if(q==previous&&!repaint)continue;
    if(!present){
+    if(pages.n+new_keys.n>=page_limit){discard();return false;}
     int at=new_keys.push(key);planned.put(key,at);if(tr_oom){discard();return false;}
     present=true;reference=-1-at;
    }
