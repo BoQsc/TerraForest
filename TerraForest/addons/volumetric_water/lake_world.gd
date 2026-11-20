@@ -155,6 +155,7 @@ func _ready() -> void:
  _material.shader=preload("res://addons/volumetric_water/water.gdshader")
  _material.set_shader_parameter("ripple_normal",preload("res://addons/volumetric_water/textures/water_ripples_normal.png"))
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
+ terrain.edit_region_installed.connect(_terrain_region_installed)
  terrain.edit_geometry_installed.connect(_terrain_geometry_installed)
  terrain.region_changed.connect(_settle_committed_edit)
  terrain.water_edit_admission=func(bounds:AABB,_selected:Array)->int:
@@ -200,7 +201,7 @@ func remove_lake(id:int) -> void:
  water.remove_bounds(AABB(item.origin,Vector3(item.cells)*item.spacing))
  _lakes.erase(id);terrain.changed_since_save=true;catalog_changed.emit()
 func clear(preserve_store:bool=false) -> void:
- _installed_edit_ticket=-1
+ _settlement_ticket=-1;_installed_edit_ticket=-1
  _local_response_pending=false;_local_publication_pending=false
  if _equilibrium_job!=null:_equilibrium_job.cancel()
  _equilibrium_failure="";_equilibrium_failed_revision=-1
@@ -216,16 +217,35 @@ func clear(preserve_store:bool=false) -> void:
   var empty:=PackedByteArray();empty.resize(500*500);empty.fill(0);_surrounding_ocean.publish(empty)
  _discard_builder()
  _have_bounds=false;_last_changes=0
+var _settlement_ticket:=-1
+var _waiting_mesh_commit:=-1
 var _installed_edit_ticket:=-1
+func _terrain_region_installed(ticket:int,_keys:Array)->void:
+ if ticket==_installed_edit_ticket:return
+ var bounds:=AABB(terrain.geometry_lo,terrain.geometry_hi-terrain.geometry_lo)
+ for area:AABB in terrain.water_edit_areas(bounds):
+  if not terrain.edit_geometry_ready_in(area):return
+ _terrain_geometry_installed(ticket)
+
 func _terrain_geometry_installed(ticket:int)->void:
+ if ticket==_installed_edit_ticket:return
  if terrain.water_sampling_revision()<0:return
  _installed_edit_ticket=ticket
+ _begin_terrain_settlement(ticket)
+ if _waiting_mesh_commit>=0:_commit_prepared_water(_waiting_mesh_commit)
+
+func _begin_terrain_settlement(ticket:int)->void:
+ if _settlement_ticket==ticket:return
+ _settlement_ticket=ticket
  var low:Vector3=terrain.geometry_lo.min(terrain.edit_lo)
  var high:Vector3=terrain.geometry_hi.max(terrain.edit_hi)
  _queue_settlement(AABB(low,high-low),true)
 
 func _settle_committed_edit(bounds:AABB,_revision:int)->void:
- if _revision>0 and _installed_edit_ticket==terrain.edit_ticket:return
+ if _revision>0 and _settlement_ticket==terrain.edit_ticket:
+  # An offscreen edit may complete without installing a visible terrain tile.
+  _terrain_geometry_installed(terrain.edit_ticket)
+  return
  _queue_settlement(bounds,_revision>0)
 
 func _queue_settlement(bounds:AABB,terrain_edit:bool)->void:
@@ -255,7 +275,7 @@ func _interrupt_edit_work()->void:
   _mesh_task=-1;_mesh_job=null
  _clear_staged_meshes();_mesh_batch_id=-1
 func _invalidate(bounds:AABB) -> void:
- _installed_edit_ticket=-1
+ _settlement_ticket=-1;_installed_edit_ticket=-1
  _interrupt_edit_work()
  _occupancy_failure=""
  for area:AABB in terrain.water_edit_areas(bounds):water.invalidate(area)
@@ -284,8 +304,13 @@ func _measured_step(delta:float)->void:
    WorkerThreadPool.wait_for_task_completion(_retirement_jobs[i].task);_retirement_jobs.remove_at(i)
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
+ # Sampling and settlement consume the accepted density revision. The native
+ # published occupancy and visible nodes stay on the prior revision until
+ # the corresponding terrain geometry and collision are ready.
+ if terrain.pending_edit and _settlement_ticket!=terrain.edit_ticket and terrain.water_sampling_revision()>=0:
+  _begin_terrain_settlement(terrain.edit_ticket)
  var geometry_ready:bool=not terrain.pending_edit or _installed_edit_ticket==terrain.edit_ticket
- if not _prepared_slice.is_empty() and geometry_ready:
+ if not _prepared_slice.is_empty() and (geometry_ready or _settlement_ticket==terrain.edit_ticket):
   var prepared:=_prepared_slice
   _prepared_slice={}
   _slice_ready(prepared.token,1,prepared.epoch,prepared.revision)
@@ -330,7 +355,7 @@ func _measured_step(delta:float)->void:
    break
  # A resident edit can hand its commit to publication on this same frame.
  # Wider equilibrium still waits for the previous publication.
- var can_solve:bool=_filling_id==0 and geometry_ready and ((loading_active.is_valid() and loading_active.call()) or (settling_active.is_valid() and settling_active.call()))
+ var can_solve:bool=_filling_id==0 and (geometry_ready or (_local_response_pending and _settlement_ticket==terrain.edit_ticket)) and ((loading_active.is_valid() and loading_active.call()) or (settling_active.is_valid() and settling_active.call()))
  var solving_local:bool=can_solve and _local_response_pending
  if solving_local:
   var began:=Time.get_ticks_usec();_advance_equilibrium();last_process_work.equilibrium=Time.get_ticks_usec()-began
@@ -454,6 +479,7 @@ func _clear_replacement_bookkeeping()->void:
  _staged_over_capacity_delta_ml=0
  _replacement_hidden.clear();_replacement_visible.clear()
 func _clear_staged_meshes()->void:
+ _waiting_mesh_commit=-1
  for coordinate:Vector3i in _staged_meshes:
   var node:MeshInstance3D=_staged_meshes[coordinate]
   if is_instance_valid(node) and _meshes.get(coordinate)!=node:_retired_mesh_nodes.append(node)
@@ -532,36 +558,44 @@ func _publish_meshes() -> void:
   if update.complete:
    # Commit on its own short slice if staging already consumed this frame.
    if Time.get_ticks_usec()-mesh_started>150:break
-   var commit_started:=Time.get_ticks_usec()
-   var native_started:=Time.get_ticks_usec()
-   if not water.commit_mesh_batch(update.batch,_replacement_hidden,_replacement_visible):
-    _clear_staged_meshes();_surface_failure="Water query publication did not match rendered batch"
-    push_error(_surface_failure);return
-   _mesh_commit_native_us=Time.get_ticks_usec()-native_started
-   var bookkeeping_started:=Time.get_ticks_usec()
-   _mesh_commit_count=_staged_meshes.size()
-   # Install only this revision's changed owners, in the same main-thread
-   # call as the native visibility and picking commit.
-   _meshes.merge(_staged_meshes,true)
-   _mesh_faces.merge(_replacement_faces,true)
-   _published_over_capacity_ml+=_staged_over_capacity_delta_ml
-   for coordinate:Vector3i in _replacement_removals:
-    _meshes.erase(coordinate);_mesh_faces.erase(coordinate)
-   _retired_mesh_nodes.append_array(_replacement_hidden)
-   if _have_staged_bounds:
-    _changed_bounds=_changed_bounds.merge(_staged_bounds) if _have_bounds else _staged_bounds;_have_bounds=true
-   _mesh_commit_nodes_us=Time.get_ticks_usec()-bookkeeping_started
-   last_publication_work.commit_nodes=_mesh_commit_nodes_us
-   last_publication_work.commit_native=_mesh_commit_native_us
-   _published_mesh_batch_id=update.batch
-   var mask_started:=Time.get_ticks_usec()
-   if _surrounding_ocean!=null:_surrounding_ocean.publish(water.ocean_publication_mask())
-   _mesh_commit_mask_us=Time.get_ticks_usec()-mask_started
-   # Every staged node now belongs to _meshes; no cancellation cleanup scan.
-   _staged_meshes={};_have_staged_bounds=false;_clear_replacement_bookkeeping()
-   _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
+   if terrain.pending_edit and _installed_edit_ticket!=terrain.edit_ticket:
+    _waiting_mesh_commit=update.batch
+    break
+   _commit_prepared_water(update.batch)
+   if not _surface_failure.is_empty():break
   if Time.get_ticks_usec()-mesh_started>=budget_us:break
  _mesh_publish_us=Time.get_ticks_usec()-mesh_started;_mesh_max_publish_us=maxi(_mesh_max_publish_us,_mesh_publish_us)
+func _commit_prepared_water(batch:int)->void:
+ _waiting_mesh_commit=-1
+ var commit_started:=Time.get_ticks_usec()
+ var native_started:=Time.get_ticks_usec()
+ if not water.commit_mesh_batch(batch,_replacement_hidden,_replacement_visible):
+  _clear_staged_meshes();_surface_failure="Water query publication did not match rendered batch"
+  push_error(_surface_failure);return
+ _mesh_commit_native_us=Time.get_ticks_usec()-native_started
+ var bookkeeping_started:=Time.get_ticks_usec()
+ _mesh_commit_count=_staged_meshes.size()
+ # Install only this revision's changed owners, in the same main-thread
+ # call as the native visibility and picking commit.
+ _meshes.merge(_staged_meshes,true)
+ _mesh_faces.merge(_replacement_faces,true)
+ _published_over_capacity_ml+=_staged_over_capacity_delta_ml
+ for coordinate:Vector3i in _replacement_removals:
+  _meshes.erase(coordinate);_mesh_faces.erase(coordinate)
+ _retired_mesh_nodes.append_array(_replacement_hidden)
+ if _have_staged_bounds:
+  _changed_bounds=_changed_bounds.merge(_staged_bounds) if _have_bounds else _staged_bounds;_have_bounds=true
+ _mesh_commit_nodes_us=Time.get_ticks_usec()-bookkeeping_started
+ last_publication_work.commit_nodes=_mesh_commit_nodes_us
+ last_publication_work.commit_native=_mesh_commit_native_us
+ _published_mesh_batch_id=batch
+ var mask_started:=Time.get_ticks_usec()
+ if _surrounding_ocean!=null:_surrounding_ocean.publish(water.ocean_publication_mask())
+ _mesh_commit_mask_us=Time.get_ticks_usec()-mask_started
+ # Every staged node now belongs to _meshes; no cancellation cleanup scan.
+ _staged_meshes={};_have_staged_bounds=false;_clear_replacement_bookkeeping()
+ _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
+
 func _structure_hulls(bounds:AABB)->Dictionary:
  var result:Dictionary=blocks.solid_hulls(bounds)
  if result.get("unavailable",false):
@@ -626,7 +660,7 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  _busy=false
  if _builder==null or _builder_structure_revision!=_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.water_sampling_revision() or status==-4:_discard_builder();return
  if status==0:return
- if status==1 and terrain.pending_edit and _installed_edit_ticket!=terrain.edit_ticket:
+ if status==1 and terrain.pending_edit and _settlement_ticket!=terrain.edit_ticket:
   _prepared_slice={"token":token,"epoch":epoch_id,"revision":revision}
   return
  if status==1:

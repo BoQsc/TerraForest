@@ -528,6 +528,31 @@ func _push(result: Dictionary) -> void:
 func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)
 
+func _prepare_contact(domain:Dictionary,command:PackedByteArray,revision:int,epoch:int)->Array[Dictionary]:
+	var parts:Array[Dictionary]=[]
+	if domain.is_empty():return parts
+	var bounds:Rect2i=domain.bounds
+	for key:Vector3i in domain["keys"]:
+		var packet:=PackedByteArray()
+		packet.resize(60)
+		packet.encode_u32(0,42)
+		packet.encode_u32(4,key.x);packet.encode_u32(8,key.y);packet.encode_u32(12,key.z)
+		for i in 3:packet.encode_float(16+i*4,command.decode_float(4+i*4))
+		packet.encode_float(28,command.decode_float(28));packet.encode_u32(32,command.decode_u32(32))
+		packet.encode_u32(36,bounds.position.x);packet.encode_u32(40,bounds.position.y)
+		packet.encode_u32(44,bounds.end.x);packet.encode_u32(48,bounds.end.y)
+		packet.encode_u32(52,revision);packet.encode_u32(56,epoch)
+		var result:=_call(packet)
+		if not Codec.reply_ok(result):return []
+		var part:=Codec.decode_mesh(result.slice(16))
+		if part.has("error"):return []
+		var recipes:Dictionary=collision_recipes.prepare(part.faces,_collision_piece_triangles)
+		if not recipes.ok:return []
+		part.merge({"key":key,"collision_pieces":recipes.pieces,"contact_count":domain["keys"].size(),"contact_bounds":bounds,"worker_ms":0.0})
+		part.faces=PackedVector3Array()
+		parts.append(part)
+	return parts
+
 func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
 	return EditCommands.execute(native,commands,revision_before)
 
@@ -1484,6 +1509,15 @@ func _run() -> void:
 			var support_ms:float=(Time.get_ticks_usec()-support_started)/1000.0
 			var begin: int = Time.get_ticks_usec()
 			var commands: Array = job.get("commands", [job["command"]])
+			var contact:=_prepare_contact(job.get("contact_domain",{}),commands[0],before_stats.decode_u32(12),job.build_epoch)
+			var contact_ms:=float(Time.get_ticks_usec()-begin)/1000.0
+			begin=Time.get_ticks_usec()
+			for part in contact:
+				for item:Dictionary in job.tiles:
+					if item.key==part.key:
+						part.merge({"stamp":item.stamp,"kind":"edit_chunk","epoch":job.epoch,"ticket":job.ticket})
+						_push(part)
+						break
 			var execution:=_execute_edit_commands(commands,before_stats.decode_u32(12))
 			var reply:PackedByteArray=execution.reply
 			var member_changed:Array[bool]=execution.changed
@@ -1506,7 +1540,7 @@ func _run() -> void:
 				latest_packets.clear()
 				latest_packet_bytes = 0
 				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],
-					"count": job["tiles"].size(), "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
+					"count": job["tiles"].size(), "contact_ms":contact_ms, "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
 				# Stream finished patches to main-thread staging immediately. Worker
 				# builds and resource preparation OVERLAP instead of running in series.
 				var build_total: float = 0.0

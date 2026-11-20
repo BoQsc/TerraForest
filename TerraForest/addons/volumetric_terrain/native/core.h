@@ -87,6 +87,11 @@ struct World {
  u32 generator_id=TERRAIN_GENERATOR_ID;
  Basin basins[12]{};int basin_count=0;
  u16 basin_cells[64]{};
+ // Immutable generator geometry, indexed by 64 m horizontal columns.
+ u64 cave_columns[32*32]{};
+ int indexed_caves=-1;
+ void index_cave_columns();
+ void init_generator(int seed,u32 generator);
  void scatter_lakes(bool varied=false);
  V3 road_points[4][25]{}; // Immutable derived routes; reconstructed from seed/version.
  void plan_roads();

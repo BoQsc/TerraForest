@@ -184,9 +184,12 @@ func shore_admitted(_bounds:AABB)->void:
 func measure_shore_target()->void:
  if not shore_draw.has("admit_frame") or shore_draw.has("draw_us"):return
  var point:Vector3=shore_draw.point
- if game.lakes.depth_at(point-Vector3.UP*.5)<.2:return
  var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(shore_draw.ray)
  if floor_hit.is_empty() or floor_hit.position.y>minf(point.y-.6,shore_draw.old_floor-.5):return
+ if not shore_draw.has("floor_draw_frame"):
+  shore_draw.floor_draw_frame=Engine.get_frames_drawn()
+  shore_draw.floor_draw_us=Time.get_ticks_usec()
+ if game.lakes.depth_at(point-Vector3.UP*.5)<.2:return
  var hit:Dictionary=game.lakes.water.raycast_surface(point+Vector3.UP,point-Vector3.UP)
  if not hit.get("hit",false):return
  var column:=Vector2i(floori(point.x/4),floori(point.z/4))
@@ -215,7 +218,7 @@ func verify_shore_target()->Dictionary:
     var hit=Geometry3D.segment_intersects_triangle(origin,end,faces[i],faces[i+1],faces[i+2])
     if hit!=null and absf((transform*Vector3(hit)).y-shore_draw.query_y)<.025:matched=true;break
    if matched:break
- return {"matched":matched,"frames":1+shore_draw.frame-shore_draw.admit_frame,"ms":(shore_draw.draw_us-shore_draw.admit_us)/1000.0,"proxy":shore_draw.proxy,"floor_before":shore_draw.old_floor,"floor_after":shore_draw.floor_y,"surface_y":shore_draw.query_y}
+ return {"matched":matched,"floor_frames":1+shore_draw.floor_draw_frame-shore_draw.admit_frame,"floor_ms":(shore_draw.floor_draw_us-shore_draw.admit_us)/1000.0,"floor_to_water_frames":shore_draw.frame-shore_draw.floor_draw_frame,"frames":1+shore_draw.frame-shore_draw.admit_frame,"ms":(shore_draw.draw_us-shore_draw.admit_us)/1000.0,"proxy":shore_draw.proxy,"floor_before":shore_draw.old_floor,"floor_after":shore_draw.floor_y,"surface_y":shore_draw.query_y}
 var terrain_admitted_us:=0
 var blast_timeline:Array[Dictionary]=[]
 var blast_started:=0
@@ -909,6 +912,16 @@ func check_authoring_brush()->void:
   var sample_center:=func()->Vector3:
    var collision:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(probe)
    return collision.get("position",Vector3.INF)
+  var sample_patch:=func()->PackedVector3Array:
+   var contacts:=PackedVector3Array()
+   for dz in [-1.0,0.0,1.0]:
+    for dx in [-1.0,0.0,1.0]:
+     var point:=center+Vector3(dx,0,dz)
+     var ray:=PhysicsRayQueryParameters3D.create(point+Vector3.UP*96,point-Vector3.UP*96,1)
+     ray.exclude=probe.exclude
+     var sample_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(ray)
+     contacts.append(sample_hit.get("position",Vector3.INF))
+   return contacts
   var old_contact:Vector3=sample_center.call() if verify_draw else Vector3.INF
   var observe_geometry:=func(installed:int)->void:
    if installed!=ticket+1 or geometry_draw.has("installed_us"):return
@@ -917,12 +930,17 @@ func check_authoring_brush()->void:
    geometry_draw.draw_us=Time.get_ticks_usec()
    geometry_draw.frame=Engine.get_frames_drawn()
    geometry_draw.contact=sample_center.call()
+   if i==1:geometry_draw.patch=sample_patch.call()
+   if i==1 and "--authoring-captures" in OS.get_cmdline_user_args():
+    check(root.get_texture().get_image().save_png(evidence.path_join("authoring_cut_first_draw.png"))==OK,"Captured the first drawn cut at the editing camera")
+
   var observe_region:=func(installed:int,keys:Array)->void:
    if installed!=ticket+1:return
    region_stats.published_tiles+=keys.size()
    for key:Vector3i in keys:
     if Rect2(key.x,key.y,key.z,key.z).has_point(Vector2(center.x,center.z)):
      region_stats.center_early=true
+     region_stats.resident_cut=game.terrain._contact_visible
      observe_geometry.call(installed)
      break
   var observe_draw:=func(row:Dictionary)->void:
@@ -979,6 +997,13 @@ func check_authoring_brush()->void:
     var frames_to_draw:int=1+geometry_draw.frame-input_frame
     var final_contact:Vector3=sample_center.call()
     check(final_contact.is_finite() and old_contact.is_finite() and geometry_draw.contact.is_equal_approx(final_contact) and old_contact.distance_to(final_contact)>0.01,"Centre collision on the first drawn replacement matches the finished edit")
+    if geometry_draw.has("patch"):
+     var final_patch:PackedVector3Array=sample_patch.call()
+     var matches:=0
+     for pi in final_patch.size():
+      if final_patch[pi].is_finite() and final_patch[pi].is_equal_approx(geometry_draw.patch[pi]):matches+=1
+     region_stats.first_draw_floor_matches=matches
+     check(matches==9,"Nine collision rays at the edited floor agree on first draw and after handoff")
     print("AUTHORING_REGION ",JSON.stringify(region_stats))
     print("AUTHORING_GEOMETRY_DRAW ",JSON.stringify({"radius":game.radius,"input_to_install_ms":(geometry_draw.installed_us-started)/1000.0,"input_to_draw_ms":(geometry_draw.draw_us-started)/1000.0,"frames_drawn":frames_to_draw}))
     if "--two-frame-edits" in OS.get_cmdline_user_args():

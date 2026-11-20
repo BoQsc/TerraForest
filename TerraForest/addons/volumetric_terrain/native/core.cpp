@@ -329,7 +329,11 @@ static float capsule(V3 p,V3 a,V3 b,float r){V3 pa=p-a,ba=b-a;float t=clampf(dot
 float World::base(V3 p,float h)const{
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return SDF_BAND;
  float d=p.y-h;
- for(int i=0;i<caves.n;i++){
+ const bool indexed=indexed_caves==caves.n&&p.x>=0&&p.x<2048&&p.z>=0&&p.z<2048;
+ u64 candidates=indexed?cave_columns[(int(p.x)>>6)+32*(int(p.z)>>6)]:0;
+ for(int i=0;indexed?candidates!=0:i<caves.n;i++){
+  // Preserve generator order so coincident fields produce identical samples.
+  if(indexed){i=__builtin_ctzll(candidates);candidates&=candidates-1;}
   const Cave&c=caves[i];
   if(p.x<mn(c.a.x,c.b.x)-c.r-5||p.x>mx(c.a.x,c.b.x)+c.r+5||p.z<mn(c.a.z,c.b.z)-c.r-5||p.z>mx(c.a.z,c.b.z)+c.r+5||p.y<mn(c.a.y,c.b.y)-c.r-5||p.y>mx(c.a.y,c.b.y)+c.r+5)continue;
   float air=-capsule(p,c.a,c.b,c.r);
@@ -406,7 +410,24 @@ void World::scatter_lakes(bool varied){
   for(int row=top;row<=bottom;row++)for(int column=left;column<=right;column++)basin_cells[column+8*row]|=u16(1u<<lake);
  }
 }
+void World::index_cave_columns(){
+ indexed_caves=-1;
+ if(caves.n>64)return;
+ zero_bytes(cave_columns,sizeof(cave_columns));
+ for(int i=0;i<caves.n;i++){
+  const Cave &c=caves[i];
+  int x0=imx(0,fl((mn(c.a.x,c.b.x)-c.r-5)/64)),x1=imn(31,fl((mx(c.a.x,c.b.x)+c.r+5)/64));
+  int z0=imx(0,fl((mn(c.a.z,c.b.z)-c.r-5)/64)),z1=imn(31,fl((mx(c.a.z,c.b.z)+c.r+5)/64));
+  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++)cave_columns[x+32*z]|=u64(1)<<i;
+ }
+ indexed_caves=caves.n;
+}
 void World::init(int p_seed,u32 generator){
+ indexed_caves=-1;
+ init_generator(p_seed,generator);
+ index_cave_columns();
+}
+void World::init_generator(int p_seed,u32 generator){
  seed=p_seed;generator_id=surrounding_coast(generator)||generator==BUILDABLE_REGION_GENERATOR_ID||distributed_region(generator)?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;
@@ -576,7 +597,7 @@ Page* World::ensure(int px,int py,int pz){
  if(!page.d||!page.mat){if(page.d)tr_free(page.d);if(page.mat)tr_free(page.mat);tr_oom=true;return nullptr;}
  zero_bytes(page.mat,PAGE_SAMPLES);
  for(int z=0;z<16;z++)for(int x=0;x<16;x++){
-  float wx=float(px*16+x),wz=float(pz*16+z),h=height(wx,wz);
+  float wx=float(px*16+x),wz=float(pz*16+z),h=edit_height(px*16+x,pz*16+z);
   for(int y=0;y<16;y++){
    int index=x+16*(z+16*y);V3 point={wx,float(py*16+y),wz};page.d[index]=quant(base(point,h));
    page.mat[index]=base_material(point,h);
@@ -948,7 +969,22 @@ void add_blocks(const World&w,int ox,int oz,int size,Mesh&m,int y_begin,int y_en
 }
 static void mark_y(u32*bits,int lo,int hi){lo=imx(0,lo);hi=imn(255,hi);for(int y=lo;y<=hi;y++)bits[y>>5]|=1u<<(y&31);}
 struct CachedSample {i16 value;u8 material,valid;};
-static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y,const float*cached_heights=nullptr){
+// A resident cut uses the ordinary lattice reconstruction. Restrict the
+// excavation to an interior prism until the rest of the revision is ready.
+struct LocalCut {
+ V3 center;
+ float radius;
+ int shape,x0,z0,x1,z1;
+ float density(int x,int y,int z,float previous)const{
+  int edge=imn(imn(x-x0,x1-x),imn(z-z0,z1-z));
+  if(edge<=2||y<=3||y>=255)return previous;
+  V3 p={float(x),float(y),float(z)};
+  float distance=shape==1?box_distance(p,center,radius):length(p-center)-radius;
+  float interior=mn(float(edge-4),8.f-mx(ab(float(x)-center.x),ab(float(z)-center.z)));
+  return float(quant(mx(previous,mn(-distance,interior))))/SDF_SCALE;
+ }
+};
+static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y,const float*cached_heights=nullptr,const LocalCut*cut=nullptr){
  const int hn=size+2;List<float> heights;
  if(!cached_heights){heights.resize(hn*hn);
  for(int z=-1;z<=size;z++){
@@ -966,6 +1002,12 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
   float h[4]={height_values[(x+1)+hn*(z+1)],height_values[(x+2)+hn*(z+1)],height_values[(x+1)+hn*(z+2)],height_values[(x+2)+hn*(z+2)]};
   float low=mn(mn(h[0],h[1]),mn(h[2],h[3]))-2,high=mx(mx(h[0],h[1]),mx(h[2],h[3]))+1;
   u32 ybits[8]={};mark_y(ybits,fl(low),fl(high)+1);
+  if(cut&&ab(gx+.5f-cut->center.x)<=10.f&&ab(gz+.5f-cut->center.z)<=10.f){
+   // Only cells with a writable corner can gain a crossing. The
+   // sealed world underside is outside the brush reconstruction domain.
+   int bottom=imx(3,fl(cut->center.y-cut->radius)-2),top=fl(cut->center.y+cut->radius)+2;
+   mark_y(ybits,bottom,top);low=mn(low,float(bottom));high=mx(high,float(top));
+  }
   bool side=gx<1||gz<1||gx>=WORLD-1||gz>=WORLD-1;if(side){low=0;mark_y(ybits,0,fl(high)+1);}
   for(int j=0;j<w.caves.n;j++){const Cave&c=w.caves[j];if(gx+1<mn(c.a.x,c.b.x)-c.r-2||gx>mx(c.a.x,c.b.x)+c.r+2||gz+1<mn(c.a.z,c.b.z)-c.r-2||gz>mx(c.a.z,c.b.z)+c.r+2)continue;mark_y(ybits,fl(mn(c.a.y,c.b.y)-c.r-2),fl(mx(c.a.y,c.b.y)+c.r+2)+1);low=mn(low,mn(c.a.y,c.b.y)-c.r-2);high=mx(high,mx(c.a.y,c.b.y)+c.r+2);}
   u32 mask=0;for(int zz=0;zz<2;zz++)for(int xx=0;xx<2;xx++){int px=(gx+xx)>>4,pz=(gz+zz)>>4;if(px>=0&&px<NP&&pz>=0&&pz<NP)mask|=w.edit_columns[px+NP*pz];}
@@ -984,6 +1026,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
     if(cached.valid){d[k]=float(cached.value)/SDF_SCALE;mats[k]=cached.material;if(d[k]<0)signs|=1u<<k;continue;}
     int py=yy>>4;if(py!=cached_py){for(int c=0;c<4;c++){int sx=gx+(c&1),sz=gz+((c>>1)&1);page_indices[c]=sx<0||sz<0||sx>WORLD||sz>WORLD?-1:w.pages_by_key.get(page_key(sx>>4,py,sz>>4));}cached_py=py;}
     int pi=page_indices[hc];if(pi>=0){const Page*p=w.resident_page(pi);if(!p)return false;int at=(xx&15)+16*((zz&15)+16*(yy&15));d[k]=float(p->d[at])/SDF_SCALE;mats[k]=p->mat[at];}else d[k]=float(quant(w.base({float(xx),float(yy),float(zz)},h[hc])))/SDF_SCALE;
+    if(cut)d[k]=cut->density(xx,yy,zz,d[k]);
     cached.value=quant(d[k]);cached.material=mats[k];cached.valid=1;
     if(d[k]<0)signs|=1u<<k;
    }
@@ -1003,7 +1046,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
  heights.release();return true;
 }
 
-static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y){
+static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y,const LocalCut*cut=nullptr){
  Map ids,face_vertices;
  for(int j=0;j<m.v.n;j++){const Vertex&v=m.v[j];u32 k=cell_key(v.cx-ox,v.cy,v.cz-oz,size);if(ids.get(k)<0)ids.put(k,j);}
  terraforest::connect_material_surface(m.v.n,{ox,ox+size,y_begin,y_end,oz,oz+size},
@@ -1015,7 +1058,7 @@ static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begi
   [&](int axis,int x,int y,int z){return !((axis==0&&(y<1||z<oz))||(axis==2&&y<1));},
   [&](int x,int y,int z,int axis,int ex,int ey,int ez,int edge_axis,int left,int right){
    unsigned arc=0;V3 p=terraforest::density_face_arc(x,y,z,axis,ex,ey,ez,edge_axis,
-    [&](int xx,int yy,int zz){return float(quant(w.sample(xx,yy,zz)))/SDF_SCALE;},arc);
+    [&](int xx,int yy,int zz){float d=float(quant(w.sample(xx,yy,zz)))/SDF_SCALE;return cut?cut->density(xx,yy,zz,d):d;},arc);
    u32 key=(cell_key(x-ox,y,z-oz,size)*3+axis)*4+arc;int found=face_vertices.get(key);if(found>=0)return found;
    Vertex v=m.v[left];v.p=p;v.n=normal(m.v[left].n+m.v[right].n);v.mask=0;
    int id=m.v.push(v);face_vertices.put(key,id);return id;
@@ -1531,13 +1574,45 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(!build_patch(w,ox,oz,size,step,m,epoch,cmd==20)){out.p[8]=4;return;}
   out.u(w.revision);encode_mesh(m,ox,oz,size,step,out);m.release();
  }
+ else if(cmd==42){
+  int x=int(r.u()),z=int(r.u()),size=int(r.u());
+  LocalCut cut;cut.center=r.vec();cut.radius=r.f();cut.shape=int(r.u());
+  cut.x0=int(r.u());cut.z0=int(r.u());cut.x1=int(r.u());cut.z1=int(r.u());
+  u32 revision=r.u(),epoch=r.u();
+  if(!r.good||n!=60||(size!=16&&size!=32)||x<0||z<0||x>WORLD-size||z>WORLD-size||
+     cut.x0<0||cut.z0<0||cut.x1>WORLD||cut.z1>WORLD||cut.x0>x||cut.z0>z||
+     cut.x1<x+size||cut.z1<z+size||cut.x1-cut.x0>64||cut.z1-cut.z0>64||
+     !(cut.radius>=.5f&&cut.radius<=64.f&&cut.center.y>=0&&cut.center.y<=WORLD_Y&&
+       cut.center.x>=cut.x0&&cut.center.x<=cut.x1&&cut.center.z>=cut.z0&&cut.center.z<=cut.z1)||
+     (cut.shape!=0&&cut.shape!=1)||revision!=u32(w.revision)||cancelled(w,epoch)){out.p[8]=1;return;}
+  // Exact construction occupancy stays with the normal edit path.
+  for(int cz=z/32;cz<=(z+size-1)/32;cz++)for(int cx=x/32;cx<=(x+size-1)/32;cx++)
+   for(int i=0;i<w.block_columns[cx+64*cz].n;i++){
+    int bx,by,bz;decode_block(w.block_columns[cx+64*cz][i],bx,by,bz);
+    if(bx<x||bx>=x+size||bz<z||bz>=z+size)continue;
+    V3 point={bx+.5f,by+.5f,bz+.5f};
+    float d=cut.shape==1?box_distance(point,cut.center,cut.radius):length(point-cut.center)-cut.radius;
+    if(d<=0){out.p[8]=1;return;}
+   }
+  Mesh m;bool ok=extract_vertices(w,x,z,size,m,epoch,0,WORLD_Y,nullptr,&cut);
+  if(ok){connect_patch(w,x,z,size,m,0,WORLD_Y,&cut);add_blocks(w,x,z,size,m);shade_mesh(w,m,epoch);}
+  if(ok&&!tr_oom&&!cancelled(w,epoch)){out.u(revision);encode_mesh(m,x,z,size,1,out);}
+  else out.p[8]=4;
+  m.release();
+ }
  else if(cmd==2){
   V3 a=r.vec(),b=r.vec();float radius=r.f();int shape=int(r.u()),add=int(r.u()),mat=int(r.u());
   bool contact=shape==3;
   if(!r.good||n!=44||!(radius>=.5f&&radius<=64.f)||(shape!=0&&shape!=1&&!contact)||add<0||add>1||mat<0||mat>3||!(ab(a.x)<=10000&&ab(b.x)<=10000&&ab(a.y)<=10000&&ab(b.y)<=10000&&ab(a.z)<=10000&&ab(b.z)<=10000)||(contact&&(add||radius>1.f||dot(b-a,b-a)>.25f))){out.p[8]=1;return;}
   V3 lo=a,hi=a;int changes=0;u32 removed[16]{};bool found=true;
   bool ok=!contact||contact_brush_center(w,a,b,radius,found);
-  if(ok&&found)ok=w.edit(contact?b:a,b,radius,contact?0:shape,add!=0,u8(mat),lo,hi,changes,1.f,0.f,0.f,removed);
+  if(ok&&found){
+   EditHeightCache heights;
+   auto *previous=w.edit_height_cache;
+   if(!previous&&radius>=12)w.edit_height_cache=&heights;
+   ok=w.edit(contact?b:a,b,radius,contact?0:shape,add!=0,u8(mat),lo,hi,changes,1.f,0.f,0.f,removed);
+   w.edit_height_cache=previous;
+  }
   if(!ok)out.p[8]=2;
   out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);for(u32 count:removed)out.u(ok?count:0);
  }

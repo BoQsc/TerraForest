@@ -1,3 +1,64 @@
+## Resident edit publication in packaged Cedar Vale
+
+Windows packaged game at 1920×1080 on the RTX 4050 Laptop GPU. Pack SHA-256
+`3855859b64f1c4e8a324509cf7a3871791eb9786a7713a0e66d12eeaaf71bf3b`.
+Isolated game process, both runs loaded the same read-only Cedar Vale save.
+
+| Workload | Previous first target draw | Current first target draw | Current frame time |
+|---|---|---|---|
+| 4 m brush | 1 frame, 23.25 ms | 1 frame, 17.84 ms | 22.83 ms worst |
+| 64 m cut | 15 frames, 241.32 ms | 7 frames, 93.52 ms | 25.25 ms worst |
+| Sea barrel | 10 frames, 193.45 ms | 9 frames, 143.47 ms | 56.53 ms p99 |
+| Lake barrel | 19 frames, 315.47 ms | 15 frames, 244.28 ms | 55.33 ms p99 |
+
+Brush measurements start at input. Barrel measurements start at terrain
+admission and require both a lowered physics floor and visible water matching
+the surface query. Timing excludes the firing animation and time to detonation.
+These are engine draws. The two-frame and fixed-refresh presentation gates remain open.
+
+**Terrain.** Packaged run `20261120T210154150792Z` first showed the bounded
+portion of the 64 m excavation while the wider surface was still building.
+The resident mesh uses the ordinary density reconstruction, keeps the outer
+rim attached to the original field, and supplies its own matching collider.
+The game prepares the resources while the canonical edit executes and applies
+them after confirmation. All nine floor probes matched at first draw and after
+handoff. All 3,750 final rays and the final render-geometry digest matched the
+previous build. Full publication took 243.15 ms. The native contact preparation
+took 26.93 ms and canonical field mutation took 26.21 ms. Those operations still
+run serially on the terrain worker. The native parity run
+`20261120T205754663312Z_terrain_edit_core_parity.json` matched all 14 binary
+outputs against the previous core, including the allocation-failure checks.
+
+**Water.** Packaged run `20261120T210235529648Z` checked the normal gameplay
+barrels. Water can prepare against the accepted density revision before the
+terrain mesh is ready. Publication waits for matching terrain geometry in the
+affected visible owners. The sea floor changed from 39.92 m to 36.80 m at a
+40.00 m surface. The lake floor changed from 44.19 m to 41.00 m at a 44.01 m
+surface. All 81 crater probes per shore and all 23 sea and 26 lake waterline
+probes passed at first publication. Lake quantity was conserved exactly.
+Both fixed camera angles show the filled crater at both shores. Submerged
+captures and the per-frame JSON are in the same run directory. Outside tagged
+harness diagnostics, blast-window p99 was 56.53 ms at sea and 25.43 ms at
+the lake. The mining timing gate also failed.
+
+A second packaged run (`20261120T210546966718Z`) tracked the lowered collider
+before checking water each draw. The sea collider arrived in 2 frames
+(32.57 ms), and matching water followed 7 frames later. The lake collider
+also arrived in 2 frames (31.72 ms), with water 14 frames later. Thus the
+barrel terrain already meets the local deadline on that run, while water
+publication still leaves a visible interval to close. The 64 m visual repeat
+(`20261120T210340533041Z`) captured the first bounded opening under the
+active brush in `authoring_cut_first_draw.png`. Nine local collision rays
+still matched final geometry. Screenshot readback was excluded from the
+performance run in the table.
+
+**Open dependency.** The bounded cut still waits for the full native field
+transaction to acknowledge the edit. The first shoreline draw still waits for
+the connected group of prepared water surfaces. A replacement needs a local
+authority transaction with independently publishable water volume, terrain
+geometry and collision at the same revision. Preserve conservation, rollback,
+rim checks, both camera pairs and the cold edit timings when qualifying it.
+
 ## Packaged edit at the target (2026-11-20)
 
 Cedar Vale, isolated 1080p Windows game, RTX 4050 Laptop, pack SHA-256

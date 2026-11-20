@@ -7,6 +7,7 @@
 #include <godot_cpp/variant/array.hpp>
 #include <algorithm>
 #include <tuple>
+#include <map>
 #include <vector>
 
 namespace terraforest {
@@ -128,8 +129,40 @@ int changed_rims(Vector3i key,const PackedVector3Array &a,const PackedInt32Array
     }
     return mask;
 }
+// A replacement may triangulate its interior differently. Its oriented open
+// edges are the contract with neighbouring owners. Cancel internal pairs.
+bool matching_cut_boundary(Vector3i key,int sides,const PackedVector3Array &before,const PackedInt32Array &old_indices,
+                           const PackedVector3Array &after,const PackedInt32Array &new_indices){
+    using Edge=std::pair<Vector3,Vector3>;
+    std::map<Edge,int> difference;
+    auto accumulate=[&](const PackedVector3Array &points,const PackedInt32Array &indices,int sign){
+        if(indices.size()%3)return false;
+        for(int i=0;i<indices.size();i+=3){
+            Vector3 face[3];
+            for(int j=0;j<3;j++){
+                int index=indices[i+j];
+                if(index<0||index>=points.size()||!points[index].is_finite())return false;
+                face[j]=points[index];
+            }
+            for(int j=0;j<3;j++){
+                auto a=face[j],b=face[(j+1)%3];
+                if(a==b)continue;
+                const bool near=((sides&1)&&MAX(a.x,b.x)<=key.x+2)||((sides&2)&&MIN(a.x,b.x)>=key.x+key.z-2)||
+                                ((sides&4)&&MAX(a.z,b.z)<=key.y+2)||((sides&8)&&MIN(a.z,b.z)>=key.y+key.z-2);
+                if(!near)continue;
+                auto edge=std::minmax(a,b);
+                difference[Edge(edge.first,edge.second)]+=a<b?sign:-sign;
+            }
+        }
+        return true;
+    };
+    if(!accumulate(before,old_indices,1)||!accumulate(after,new_indices,-1))return false;
+    return std::all_of(difference.begin(),difference.end(),[](const auto &row){return row.second==0;});
+}
+
 }
 void NativeTerrainCollision::_bind_methods() {
+    ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("matching_cut_boundary","key","sides","old_points","old_indices","points","indices"),&matching_cut_boundary);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("changed_rims","key","old_points","old_indices","points","indices"),&changed_rims);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("merge_planar_faces","faces"),&merge_planar_faces);
     ClassDB::bind_method(D_METHOD("prepare","faces","triangles_per_piece"), &NativeTerrainCollision::prepare);

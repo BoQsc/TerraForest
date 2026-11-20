@@ -1,5 +1,14 @@
 # Continuous volumetric water replacement
 
+**Current packaged result.** After starting water work at field acceptance,
+sea showed matching contact in 9 frames (143.47 ms) and lake in 15 frames
+(244.28 ms). Both missed the 2-frame gate. Contact, conservation and camera
+captures are recorded in [the resident edit qualification](../../docs/WORLD_FOUNDATION_STATUS.md#resident-edit-publication-in-packaged-cedar-vale).
+The two after-blast angles are `player_shore_after.png` and
+`player_shore_after_reverse.png` for sea, and `player_lake_after.png` and
+`player_lake_after_reverse.png` for lake, under
+`reports/checks/20261120T210235529648Z/`.
+
 **Packaged shoreline latency remains open.** In Cedar Vale run
 `20261120T201617032826Z`, the first drawn crater floor with matching water
 appeared 193.45 ms after terrain admission at sea and 315.47 ms at the lake.

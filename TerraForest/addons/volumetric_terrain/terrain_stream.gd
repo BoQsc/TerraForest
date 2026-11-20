@@ -116,6 +116,13 @@ var staging_versions: Dictionary = {}
 var staged_batch: Dictionary = {}
 signal edit_geometry_installed(ticket:int)
 signal edit_region_installed(ticket:int,keys:Array)
+# The frozen visible cut can contain several tile sizes along one brush edge.
+var _contact_entries:Dictionary={}
+var _contact_visible:=false
+var _contact_checked:=false
+var _contact_accepted_ticket:=-1
+var _edit_visible_owners:Dictionary={}
+var _edit_owner_cells:Dictionary={}
 var batch_remaining: int = 0
 var pending_edit: bool = false
 var edit_ticket: int = 0
@@ -496,6 +503,9 @@ func _receive(result: Dictionary) -> void:
 		if int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
 			return
 		latest_member_changes = result.get("member_changed", [])
+		_contact_accepted_ticket=edit_ticket
+		_activate_contact()
+		_record_stage("resident cut worker",float(result.get("contact_ms",0)))
 		last_edit_ms = float(result["edit_ms"])
 		last_queue_ms = float(result["queue_ms"])
 		last_total_build_ms = 0.0
@@ -546,6 +556,7 @@ func _receive(result: Dictionary) -> void:
 	elif kind == "edit":
 		if int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
 			return
+		_retire_contact()
 		latest_member_changes = result.get("member_changed", [])
 		last_edit_ms = float(result["edit_ms"])
 		last_queue_ms = float(result.get("queue_ms", 0.0))
@@ -598,10 +609,10 @@ func _receive(result: Dictionary) -> void:
 			_commit_batch()
 
 func _fail(text: String) -> void:
+	_retire_contact()
 	for key:Vector3i in staged_batch:
 		if staged_batch[key].get("local_active",false):
-			_set_active(staged_batch[key],false)
-			_set_active(tiles[key],true)
+			_set_edit_replacement(key,staged_batch[key],false)
 			staged_batch[key].erase("local_active")
 	_edit_support_snapshots.clear();_edit_support_result.clear()
 	latest_error = text
@@ -812,9 +823,12 @@ func _drain_staging() -> void:
 					if int(data["ticket"]) != edit_ticket:
 						_destroy_entry(entry)
 						continue
+					if data.has("contact_count"):
+						_stage_contact(key,entry,data)
+						continue
 					staged_batch[key] = entry
 					batch_remaining -= 1
-					if batch_remaining>0:_publish_ready_region(key)
+					_publish_ready_region(key)
 				else:
 					_install(key, entry)
 					if str(data.get("kind", "")) == "relight":
@@ -873,6 +887,7 @@ func _forget_light_job(data: Dictionary) -> void:
 		lighting_in_flight.erase(data["key"])
 
 func _staging_valid(data: Dictionary) -> bool:
+	if data.has("contact_count") and (not pending_edit or int(data.ticket)!=edit_ticket):return false
 	var key: Vector3i = data["key"]
 	if int(data["epoch"]) != epoch or int(data["stamp"]) != int(stamps.get(key, 0)):
 		return false
@@ -958,49 +973,131 @@ func _install(key: Vector3i, entry: Dictionary) -> void:
 	_set_active(entry, visible_cut.has(key))
 	if activation_keys.has(key): schedule_timer=0.0
 
+func _contact_domain(commands:Array)->Dictionary:
+	if commands.size()!=1:return {}
+	var packet:PackedByteArray=commands[0]
+	if packet.size()!=44 or packet.decode_u32(0)!=2 or packet.decode_u32(36)!=0 or packet.decode_u32(32)>1 or packet.decode_float(28)<12:return {}
+	var center:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
+	if center!=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24)):return {}
+	# Cover the target and a full SDF band on all sides with resident fine tiles.
+	var corner:=Vector2i(floori((center.x-8)/16)*16,floori((center.z-8)/16)*16)
+	var end:=Vector2i(ceili((center.x+8)/16)*16,ceili((center.z+8)/16)*16)
+	var bounds:=Rect2i(corner,end-corner)
+	var keys:Array[Vector3i]=[]
+	for z in range(corner.y,end.y,16):
+		for x in range(corner.x,end.x,16):
+			var key:Vector3i=_edit_owner_cells.get(Vector2i(x,z),Vector3i.ZERO)
+			if key.z==0 or not tiles[key].has("arrays") or tiles[key].step!=1:return {}
+			if not keys.has(key):
+				keys.append(key)
+				bounds=bounds.merge(Rect2i(key.x,key.y,key.z,key.z))
+	var covered:=0
+	for key in keys:covered+=key.z*key.z
+	if covered!=bounds.get_area() or keys.size()>4:return {}
+	return {"keys":keys,"bounds":bounds}
+
+func _retire_contact()->void:
+	for key:Vector3i in _contact_entries:
+		_destroy_entry(_contact_entries[key])
+		if _contact_visible and tiles.has(key):_set_active(tiles[key],true)
+	_contact_entries.clear()
+	_contact_visible=false
+	_contact_checked=false
+
+func _stage_contact(key:Vector3i,entry:Dictionary,data:Dictionary)->void:
+	_contact_entries[key]=entry
+	if _contact_entries.size()!=int(data.contact_count):return
+	var bounds:Rect2i=data.contact_bounds
+	for id:Vector3i in _contact_entries:
+		var outer:=0
+		if id.x==bounds.position.x:outer|=1
+		if id.x+id.z==bounds.end.x:outer|=2
+		if id.y==bounds.position.y:outer|=4
+		if id.y+id.z==bounds.end.y:outer|=8
+		var old:Array=tiles[id].arrays
+		var replacement:Array=_contact_entries[id].arrays
+		if not backend.collision_recipes.matching_cut_boundary(id,outer,old[Mesh.ARRAY_VERTEX],old[Mesh.ARRAY_INDEX],replacement[Mesh.ARRAY_VERTEX],replacement[Mesh.ARRAY_INDEX]):
+			_record_stage("resident cut boundary mismatch",0)
+			_retire_contact()
+			return
+	_contact_checked=true
+	_activate_contact()
+
+func _activate_contact()->void:
+	if not _contact_checked or _contact_visible or _contact_accepted_ticket!=edit_ticket:return
+	for id:Vector3i in _contact_entries:
+		_set_active(tiles[id],false)
+		_set_active(_contact_entries[id],true)
+	_contact_visible=true
+	edit_region_installed.emit(edit_ticket,_contact_entries.keys())
+
+func _set_edit_replacement(key:Vector3i, replacement:Dictionary, active:bool)->void:
+	var original:Dictionary=tiles[key]
+	if replacement.get("brick_partial",false) and original.has("bricks"):
+		# Original and replacement parents coexist until commit. Only the
+		# children actually replaced relinquish their visual and physics space.
+		for id:int in replacement.bricks:
+			if original.bricks.has(id):_set_active(original.bricks[id],not active)
+	else:
+		_set_active(original,not active)
+	_set_active(replacement,active)
+
 func _publish_ready_region(seed:Vector3i)->void:
-	# While an edit is pending the visible LOD cut is fixed. Whole fine tiles
-	# use their exact rendered triangles for collision. Keep old entries alive
-	# until the transaction finishes so a worker failure can restore them.
+	if not _edit_visible_owners.has(seed):return
 	var group:Array[Vector3i]=[seed]
 	var visited:Dictionary={seed:true}
 	var at:=0
 	while at<group.size():
 		var key:=group[at]
 		at+=1
+		if _contact_visible and _contact_entries.has(key):return
 		var entry:Dictionary=staged_batch.get(key,{})
-		if entry.get("local_active",false):continue
-		var old:Dictionary=tiles.get(key,{})
-		if not old.get("active",false) or not old.has("arrays") or not entry.has("arrays") or key.z>32 or old.step!=1 or entry.step!=1:return
+		if entry.is_empty():return
+		if entry.get("local_active",false) or entry.get("retain_geometry",false):continue
+		var old:Dictionary=tiles[key]
 		if not entry.has("rims"):
-			entry.rims=backend.collision_recipes.changed_rims(key,old.arrays[Mesh.ARRAY_VERTEX],old.arrays[Mesh.ARRAY_INDEX],entry.arrays[Mesh.ARRAY_VERTEX],entry.arrays[Mesh.ARRAY_INDEX])
-		for dz in range(-1,2):
-			for dx in range(-1,2):
-				if dx==0 and dz==0:continue
-				var required:=0
-				if dx<0:required|=1
-				if dx>0:required|=2
-				if dz<0:required|=4
-				if dz>0:required|=8
-				if (int(entry.rims)&required)!=required:continue
-				var neighbor:=key+Vector3i(dx*key.z,dz*key.z,0)
+			entry.rims=15
+			if old.has("arrays") and entry.has("arrays") and old.step==1 and entry.step==1:
+				entry.rims=backend.collision_recipes.changed_rims(key,old.arrays[Mesh.ARRAY_VERTEX],old.arrays[Mesh.ARRAY_INDEX],entry.arrays[Mesh.ARRAY_VERTEX],entry.arrays[Mesh.ARRAY_INDEX])
+		var rims:int=entry.rims
+		if rims==0:continue
+		for z in range(key.y-16,key.y+key.z+16,16):
+			for x in range(key.x-16,key.x+key.z+16,16):
+				var sides:=0
+				if x<key.x:sides|=1
+				elif x>=key.x+key.z:sides|=2
+				if z<key.y:sides|=4
+				elif z>=key.y+key.z:sides|=8
+				if sides==0 or (rims&sides)!=sides:continue
+				var cell:=Vector2i(x,z)
+				if not _edit_owner_cells.has(cell):continue
+				var neighbor:Vector3i=_edit_owner_cells[cell]
 				if visited.has(neighbor):continue
-				if not tiles.has(neighbor) or not visible_cut.has(neighbor):return
-				if not tiles[neighbor].dirty:continue
 				if not staged_batch.has(neighbor):return
 				visited[neighbor]=true
 				group.append(neighbor)
 	var installed:Array[Vector3i]=[]
 	for key in group:
 		var entry:Dictionary=staged_batch[key]
-		if entry.get("local_active",false):continue
-		_set_active(tiles[key],false)
-		_set_active(entry,true)
+		if entry.get("local_active",false) or entry.get("retain_geometry",false):continue
+		_set_edit_replacement(key,entry,true)
 		entry.local_active=true
 		installed.append(key)
 	if not installed.is_empty():edit_region_installed.emit(edit_ticket,installed)
 
+func edit_geometry_ready_in(bounds:AABB)->bool:
+	if not pending_edit or _edit_visible_owners.is_empty():return false
+	var area:=Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z))
+	var matched:=false
+	for key:Vector3i in _edit_visible_owners:
+		if not area.intersects(Rect2(key.x,key.y,key.z,key.z),true):continue
+		matched=true
+		var staged:Dictionary=staged_batch.get(key,{})
+		if not staged.get("local_active",false) and not staged.get("retain_geometry",false):return false
+	return matched
+
 func _install_edit_geometry()->void:
+	_retire_contact()
 	# Change every adjacent surface and its collider in the same main-thread
 	# turn. Support sampling can finish independently on the terrain worker.
 	_record_stage("geometry ready",0.0)
@@ -1421,6 +1518,15 @@ func _invalidate() -> Array[Dictionary]:
 			return a.brush_distance<b.brush_distance)
 	else:
 		affected.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _distance(a["key"]) < _distance(b["key"]))
+	_edit_visible_owners.clear()
+	_edit_owner_cells.clear()
+	for item in affected:
+		var owner:Vector3i=item.key
+		if not visible_cut.has(owner):continue
+		_edit_visible_owners[owner]=true
+		for z in range(owner.y,owner.y+owner.z,16):
+			for x in range(owner.x,owner.x+owner.z,16):
+				_edit_owner_cells[Vector2i(x,z)]=owner
 	return affected
 
 func _queue_lighting_refresh() -> void:
@@ -1576,7 +1682,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	var support:=_capture_edit_support(AABB(geometry_lo,geometry_hi-geometry_lo))
 	var support_snapshots:Array=[]
 	for provider:Dictionary in _edit_support_snapshots:support_snapshots.append(provider.snapshot)
-	var accepted: bool = backend.submit({"kind": "edit", "command": data, "commands": commands, "tiles": affected,
+	var accepted: bool = backend.submit({"kind": "edit", "command": data, "commands": commands, "tiles": affected, "contact_domain":_contact_domain(commands),
 		"epoch": epoch, "ticket": edit_ticket, "geometry_lo": geometry_lo, "geometry_hi": geometry_hi,"support_points":support,"support_snapshots":support_snapshots}, true)
 	if not accepted:
 		pending_edit = false
@@ -1654,6 +1760,7 @@ func reload_world(reset: bool = false) -> void:
 	world_ready = false
 	_cancel_density_requests("stale")
 	var teardown_begin:=Time.get_ticks_usec()
+	_retire_contact()
 	for key: Vector3i in tiles:
 		_destroy_entry(tiles[key])
 	for key: Vector3i in staged_batch:
