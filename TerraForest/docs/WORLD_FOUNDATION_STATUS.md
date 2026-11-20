@@ -15,6 +15,14 @@ in the latter run. These are single-operation samples. The synchronous
 authority edit still exceeds the 26.7 ms tick budget. Return to discovery
 and scheduling with matched saves and measured local publication latency.
 
+Packaged capture-free repeat `20261120T141232051671Z` reached both shores.
+Terrain publication to local water draw took 153 ms at sea, 454 ms at the
+lake and 251 ms after mining. End-to-end action to draw took 1275, 871
+and 290 ms respectively. Frame intervals at p99 were 37.6, 37.8 and
+28.2 ms on those intervals. Lake and mining exceeded the existing 250 ms
+check. The companion visual run and the replay of its committed lake
+surface are recorded in the project plan.
+
 ## November 20 dedicated spatial queries
 
 The dedicated point query now reads the authoritative water counter directly.
