@@ -1,3 +1,16 @@
+## Active client baseline — trader traversal
+
+In isolated packaged run `20261120T175635542570Z`, the player walked two
+30-second out-and-back laps through Cedar Vale's trader district at 1080p
+with the 60 FPS cap. Both laps crossed the shop residency boundary and
+restored the animated, clothed shopkeeper. Frame interval p99 was 28.50 and
+26.81 ms (1,717 and 1,764 frames); maxima were 45.57 and 46.42 ms.
+The eight slowest sampled intervals per lap reported viewport GPU work of
+5.96–8.49 ms across both laps. At the worst intervals, CPU-side pre-draw to
+post-draw elapsed time was 23.90 and 21.58 ms. This includes waits; further
+render-thread and presentation attribution is needed. The harness's pass
+certifies traversal and residency behaviour. Fixed-refresh qualification is open.
+
 The current [shoreline decision and measurements](../issues/explosive-combat/water-plan.md)
 track the dependency set between a committed edit and its first visible water
 surface. The owner audit found 34 changed render meshes outside the terrain
