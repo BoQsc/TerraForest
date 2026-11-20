@@ -1,3 +1,22 @@
+## November 20 local water mesh dispatch
+
+The installed Windows pack `3ba3ff687835` dispatched mesh preparation on the
+commit frame for the Cedar Vale sea blast, lake blast and mining action.
+The previous no-capture run `20261120T160600951466Z` measured 162, 336
+and 187 ms from terrain publication to first water draw. The matched
+run `20261120T161833866646Z` measured 143, 287 and 158 ms. First shot
+to blast terrain admission took 1,074 ms at sea and 376 ms inland; admission
+to visible terrain took 25 and 26 ms. The firearm case includes successive
+shots before the barrel detonates. The 60 Hz and two-frame gates remain open.
+
+Run `20261120T161930815264Z` repeated both camera angles, immersion,
+bucket interruption and shoreline probes. The lake missed the 250 ms local
+publication check at 283 ms. The first package attempt failed to compile
+the lake script during gameplay loading. The corrected pack passed both
+the world-script compilation check and gameplay loading. The exporter now
+checks preload errors before publishing. See the [plan](PROJECT_PLAN.md)
+for the connected-bank size comparison and its remaining level discrepancy.
+
 ## November 20 wet terrain deposition
 
 The local game scene failed when adding a two-metre solid sphere inside a

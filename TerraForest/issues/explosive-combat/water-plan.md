@@ -1,5 +1,12 @@
 # Continuous volumetric water replacement
 
+The November 20 same-frame mesh dispatch is present in pack `3ba3ff687835`.
+In the two-angle run `20261120T161930815264Z`, sea and lake contact probes
+passed immediately and after settling. The lake still exceeded 250 ms.
+The matched capture-free runs and first-commit basin-level discrepancy are
+recorded in the [foundation status](../../docs/WORLD_FOUNDATION_STATUS.md)
+and [project plan](../../docs/PROJECT_PLAN.md).
+
 **Wet deposition, November 20.** Filling a wet cross-boundary crater with
 solid terrain could exhaust the displacement work limit. The local game and
 dedicated host now conserve the finite water in that case. Keep this edit

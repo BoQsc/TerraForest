@@ -1,5 +1,9 @@
 # Visual issue tracker
 
+The latest [shoreline check](explosive-combat/water-plan.md) retained
+two-angle sea and lake contact after enabling same-frame mesh dispatch.
+Lake water still missed its publication budget.
+
 Wet deposition in a cross-boundary crater now has a local gameplay and
 dedicated-host regression. Barrel response time remains open at both shores.
 See the [water issue](explosive-combat/water-plan.md).

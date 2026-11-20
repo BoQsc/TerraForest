@@ -12,6 +12,16 @@ outlet before reusing connectivity. Run the same Cedar Vale blast, and compare
 the first visible result, contact and conservation before expanding this path.
 The [water issue](../issues/explosive-combat/water-plan.md) tracks that gate.
 
+The first-commit size comparison now runs in `water_equilibrium_scope`.
+For a straight connected bank 16 and 128 regions long, opening the same
+cell sampled two regions and visited 13 cells at either size. Replacing
+the bank with solid terrain sampled two regions and took two displacement
+visits at either size (run `20261120T160811117311Z`). The opened cell got
+56,529 ml at both sizes. A uniform final level would give it 62,000 ml
+and approximately 62,439 ml respectively. This establishes bounded first
+work for this geometry. It leaves a measurable difference between local
+redistribution and the level of the whole basin.
+
 Installed run `20261120T143633262102Z` processed the 132 urgent lake mesh
 owners in one job. The first water update took 340 ms after the terrain
 edit. This remains above the interaction budget. The [foundation status](WORLD_FOUNDATION_STATUS.md)

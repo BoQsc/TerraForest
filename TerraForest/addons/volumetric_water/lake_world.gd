@@ -308,10 +308,19 @@ func _measured_step(delta:float)->void:
    if water.begin_fill(AABB(item.origin,Vector3(item.cells)*item.spacing),item.level,item.seed,item.amount):_filling_id=item.id
    else:item.dirty=false;item.failure="Water authoring bounds unavailable";lake_failed.emit(item.id,-2);catalog_changed.emit()
    break
+ # A resident edit can hand its commit to publication on this same frame.
+ # Wider equilibrium still waits for the previous publication.
+ var can_solve:bool=_filling_id==0 and not terrain.pending_edit and ((loading_active.is_valid() and loading_active.call()) or (settling_active.is_valid() and settling_active.call()))
+ var solving_local:bool=can_solve and _local_response_pending
+ if solving_local:
+  var began:=Time.get_ticks_usec();_advance_equilibrium();last_process_work.equilibrium=Time.get_ticks_usec()-began
  # Show edits before advancing their flow. Native immutable batches retain
  # that state if publication spans more than one frame.
- if (not offline_preparation or _filling_id==0) and (not _ocean_admitting or before.urgent_meshes>0 or before.urgent_batch) and not _local_response_pending:
+ var can_publish:bool=not solving_local or _process_deadline==0 or Time.get_ticks_usec()<_process_deadline
+ if can_publish and (not offline_preparation or _filling_id==0) and (not _ocean_admitting or before.urgent_meshes>0 or before.urgent_batch) and not _local_response_pending:
+  var prior_task:=_mesh_task
   var began:=Time.get_ticks_usec();_publish_meshes();last_process_work.publication=Time.get_ticks_usec()-began
+  if solving_local and _mesh_task>=0 and _mesh_task!=prior_task:last_process_work.local_mesh_dispatched=true
   if _local_publication_pending:
    var publication_state:Dictionary=water.runtime_state()
    if publication_state.urgent_meshes==0 and not publication_state.urgent_batch:
@@ -320,7 +329,7 @@ func _measured_step(delta:float)->void:
  if _filling_id!=0:water.advance(2048,delta)
  # A restored unfinished transaction must settle during loading: the loading
  # gate itself waits for its matching water geometry. Paused gameplay still waits.
- elif not terrain.pending_edit and ((loading_active.is_valid() and loading_active.call()) or (settling_active.is_valid() and settling_active.call())):
+ elif can_solve and not solving_local:
   var began:=Time.get_ticks_usec();_advance_equilibrium();last_process_work.equilibrium=Time.get_ticks_usec()-began
  var occupancy_started:=Time.get_ticks_usec()
  if not _busy and not terrain.pending_edit and _occupancy_failure.is_empty():
@@ -395,7 +404,6 @@ func _advance_equilibrium()->void:
   if result.get("ok",false):_ocean_exchange_ml+=int(result.get("ocean_exchange_ml",0))
   _equilibrium_phases=result.get("phase_us",PackedInt64Array())
   _equilibrium_worker_us=int(result.get("worker_us",0));_equilibrium_cells=int(result.get("cells",0))
-  # The next frame publishes; do not stack mesh preparation onto the solve commit.
   if result.get("ok",false) or result.get("pending",false) or result.get("stale",false):
    _equilibrium_failure="";_equilibrium_failed_revision=-1
   else:
