@@ -25,6 +25,32 @@ class FramePhases extends Node:
  func _exit_tree()->void:
   if RenderingServer.frame_pre_draw.is_connected(pre_draw):RenderingServer.frame_pre_draw.disconnect(pre_draw)
   if RenderingServer.frame_post_draw.is_connected(post_draw):RenderingServer.frame_post_draw.disconnect(post_draw)
+# Sample between sibling subtrees in scene processing order to locate work
+# outside the game controller's explicit timers. Enabled only by the route driver.
+class RouteProcessMarker extends Node:
+ var observe:Callable
+ func _process(_delta:float)->void:observe.call()
+var route_markers:Array[Node]=[]
+var route_section_us:Dictionary={}
+var route_trader_section:=""
+var route_marker_time:=0
+func mark_route_section(label:String)->void:
+ var now:=Time.get_ticks_usec()
+ route_section_us[label]=now-route_marker_time
+ route_marker_time=now
+func install_route_markers()->void:
+ for child:Node in game.get_children():
+  var marker:=RouteProcessMarker.new()
+  var script:Script=child.get_script()
+  var label:=str(child.name)+" "+(script.resource_path if script else child.get_class())
+  if child==game.trader:route_trader_section=label
+  marker.observe=mark_route_section.bind(label)
+  route_markers.append(marker)
+  game.add_child(marker)
+  game.move_child(marker,child.get_index()+1)
+var exploration_terrain_stages:Dictionary={}
+func record_exploration_stage(label:String,ms:float)->void:
+ exploration_terrain_stages[label]=float(exploration_terrain_stages.get(label,0.0))+ms
 var frame_phases:FramePhases
 var game:Node3D
 var failures:=0
@@ -381,28 +407,72 @@ func measure_grounded_route()->void:
  game.yaw=0
  game.player.rotation.y=0
  var rows:Array=[]
+ var exploration:= "--exploration-profile" in OS.get_cmdline_user_args()
+ var prior_zombie_profiling:bool=game.zombies.profiling_enabled
+ var trader_route:bool="--exploration-trader" in OS.get_cmdline_user_args()
+ var last_trader_id:=0
+ var trader_arrivals:=0
+ var trader_retirements:=0
+ var trader_outfit_ok:=true
+ var leg_ms:=15000 if exploration else 5000
+ if exploration and frame_phases==null:
+  frame_phases=FramePhases.new()
+  root.add_child(frame_phases)
+ if exploration:
+  RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
+  install_route_markers()
+  game.zombies.profiling_enabled=true
+  game.terrain.stage_measured.connect(record_exploration_stage)
  for lap in 2:
   var previous:=Time.get_ticks_usec()
   var frames:Array[float]=[]
   var longest:=0
   var streak:=0
   var counts:=[0,0,0]
+  var over_budget:=0
+  var slowest:Array=[]
+  var worst_frame:=0.0
+  var worst_trader_us:=0
   var start:Vector3=game.player.position
   var outward:=Vector3.ZERO
   for leg in 2:
    var keycode:=KEY_D if leg==0 else KEY_A
    game.controls.set_key(keycode,true,Time.get_ticks_usec())
-   var until:=Time.get_ticks_msec()+5000
+   var until:=Time.get_ticks_msec()+leg_ms
    while Time.get_ticks_msec()<until:
     game.app_focused=true
-    var phase:=1.0-(until-Time.get_ticks_msec())/5000.0
+    var phase:=1.0-(until-Time.get_ticks_msec())/float(leg_ms)
     game.yaw=.35*sin(phase*TAU)
     game.player.rotation.y=game.yaw
+    route_marker_time=Time.get_ticks_usec()
     await process_frame
     var now:=Time.get_ticks_usec()
     var ms:float=(now-previous)/1000.0
     previous=now
     frames.append(ms)
+    if ms>1000.0/60.0:over_budget+=1
+    worst_frame=maxf(worst_frame,ms)
+    if exploration and (slowest.size()<8 or ms>float(slowest.back().ms)):
+     slowest.append({
+      "ms":ms, "position":str(game.player.position), "phase":frame_phases.sample.duplicate(),
+      "viewport_gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()),
+      "viewport_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()),
+      "scene_sections_us":route_section_us.duplicate(), "terrain_ms":exploration_terrain_stages.duplicate(),
+      "zombie_us":game.zombies.update_phase_us.duplicate(), "residents":game.zombies.residents.size(),
+      "water_us":game.lakes.last_process_us, "trees_us":game.vegetation.last_process_us,
+      "ecosystem_us":game.ecosystem.last_process_us, "cover_us":game.ground_cover.last_process_us})
+     slowest.sort_custom(func(a,b):return a.ms>b.ms)
+     if slowest.size()>8:slowest.pop_back()
+    if trader_route:
+     worst_trader_us=maxi(worst_trader_us,int(route_section_us.get(route_trader_section,0)))
+     var id:int=game.trader.actor.get_instance_id() if is_instance_valid(game.trader.actor) else 0
+     if last_trader_id!=id:
+      if id:
+       trader_arrivals+=1
+       trader_outfit_ok=trader_outfit_ok and game.trader.human.is_visible_in_tree() and game.trader.human.clothing.worn==PackedInt32Array([301,302,303]) and game.trader.human.animation_player.is_playing()
+      else:trader_retirements+=1
+      last_trader_id=id
+    if exploration:exploration_terrain_stages.clear()
     for n in 3:
      if ms>[20,33,50][n]:counts[n]+=1
     streak=streak+1 if ms>20 else 0
@@ -413,6 +483,19 @@ func measure_grounded_route()->void:
     var delta:Vector3=outward-start
     check(Vector2(delta.x,delta.z).length()>4,"Grounded route actually traverses terrain")
   rows.append({"lap":lap,"frames":frames.size(),"over_20_33_50":counts,"longest_over_20":longest,"p99_ms":percentile(frames,.99),"cap":Engine.max_fps,"start":str(start),"turnaround":str(outward),"end":str(game.player.position)})
+  rows.back().over_60fps_budget=over_budget
+  rows.back().max_ms=worst_frame
+  rows.back().slowest=slowest
+  if trader_route:rows.back().max_trader_subtree_us=worst_trader_us
+ if trader_route:
+  check(trader_arrivals>=2 and trader_retirements>0,"Player leaves and re-enters the shop residency radius")
+  check(trader_outfit_ok,"Returning shopkeeper has a visible woven outfit and active animation")
+ if exploration:
+  RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),false)
+  game.terrain.stage_measured.disconnect(record_exploration_stage)
+  game.zombies.profiling_enabled=prior_zombie_profiling
+  for marker in route_markers:marker.queue_free()
+  route_markers.clear()
  game.session_menu.developer_hud.mouse_access=prior_access
  FileAccess.open(evidence.path_join("grounded_pacing.json"),FileAccess.WRITE).store_string(JSON.stringify(rows,"  "))
 
@@ -429,6 +512,11 @@ func run()->void:
  preload("res://addons/world_runtime/session_options.gd").set_arguments(PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors"]),true)
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
  check(await ready("initial"),"Actual player world loads read-only")
+ if "--exploration-trader" in OS.get_cmdline_user_args():
+  check(game.trader.anchor.is_finite(),"Saved world has a trader destination")
+  if game.trader.anchor.is_finite():
+   game.teleport(game.trader.anchor+Vector3(0,0,16))
+   check(await ready("trader_exploration"),"Trader district becomes playable")
  if "--grounded-pacing" in OS.get_cmdline_user_args():await measure_grounded_route()
  if "--water-load-only" in OS.get_cmdline_user_args():
   check(FileAccess.get_sha256(path)==original,"Original player save is unchanged")

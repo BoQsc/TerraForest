@@ -86,7 +86,7 @@ func capture()->PackedByteArray:
 func restore(bytes:PackedByteArray)->bool:
 	if not store.restore_storage_snapshot(bytes):return false
 	_unbind_visuals();state=store.snapshot();restore_passenger=state.passenger;pilot_bound=false;car=null
-	if is_instance_valid(host.actor):host.actor.free();host.actor=null;host.human=null
+	host.retire_actor()
 	graph_revision=-1;command.clear();boarding_goal=Vector3.INF
 	return true
 func changed()->void:

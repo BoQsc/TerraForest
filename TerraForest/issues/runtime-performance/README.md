@@ -1,5 +1,58 @@
 # Runtime performance
 
+## Exploring Cedar Vale at 60 FPS
+
+The extended grounded route uses two 30-second laps with ordinary player
+movement and turning. Each lap covers approximately 160 m. Run
+`tools/run_godot_check.py water_player_world --pack --isolated-render --timeout 240 --require failures=0 -- --water-source-slot=Cedar_Vale --grounded-pacing --exploration-profile --water-load-only`
+with and without `--exploration-trader`. The read-only run records intervals
+at the game process-frame signal, including the count above 16.67 ms,
+p99, maximum and consecutive frames over 20 ms. These intervals include cap
+pacing and do not measure display presentation. A successful traversal and
+unchanged save hash establish functional completion only.
+
+The native boulder renderer skips distance checks on groups whose nearest
+detail transition cannot have been crossed since inspection. On 120 camera
+moves with 2,048 rocks it checked 10,016 rows against 245,760 in the exhaustive
+reference and matched both detail counts every step (093018316273Z).
+The ordinary packaged route before this change (092349479136Z) recorded
+p99 of 17.80 and 17.66 ms. With it installed (093409576848Z), p99 was
+25.33 and 17.51 ms. This establishes a reduction in rock-selection work,
+while whole-game walking performance varies and remains above budget.
+A trial sharing a time budget between terrain dispatch and staging recorded
+a 36 ms frame (092609600100Z) and was reverted.
+
+In the trader district (093229249929Z), four frames exceeded 50 ms across
+two laps. The worst took 236.43 ms, including 215.54 ms in process callbacks.
+Two hitches near x=1843 exceeded 200 ms on separate laps. Neither cap changes
+nor rendering quality reductions were used.
+
+A repeat with timings between scene subtrees (093749948921Z) attributed
+187 to 233 ms to the trader on three slow frames. Leaving and returning to
+the shop destroyed and rebuilt its dressed human model. During world loading
+the shop now prepares one visual, then keeps it hidden with processing disabled
+while the trader is away. The character body is still created only with a valid
+floor and collision readiness. Save restoration and ordinary departure use the
+same retirement path. This trades one retained character visual and its initial
+loading cost for predictable re-entry. In the source replay (094108616917Z),
+worst frames were 37.12 and 36.12 ms with no frames above 50 ms.
+
+Packaged Cedar Vale verification (094838318372Z) crossed the residency boundary
+in both directions, reactivated a visible, animated and dressed merchant, and
+verified the input save hash. Per lap the maximum trader-subtree cost was 6.04
+and 5.93 ms. Whole-frame maxima were 34.20 and 31.54 ms, p99 was 22.50 and
+22.22 ms, and 53/1786 and 29/1796 intervals exceeded 20 ms. No frame exceeded
+50 ms. The worst interval included 24.95 ms between pre-draw and post-draw.
+The latest available viewport GPU timer at that sample was 6.53 ms and the
+viewport CPU timer was 6.19 ms. These asynchronous counters cannot attribute
+the entire draw interval to either the GPU or the driver. Record presentation
+intervals and correlate render-thread work on a repeated walk before changing
+world detail or adding a global streaming scheduler.
+
+The final ordinary-terrain package replay (095033983749Z) recorded p99 of
+19.98 and 17.83 ms, maxima of 32.04 and 24.05 ms, and 18 and 5 intervals above
+20 ms. The ordinary route also remains above the 16.67 ms target.
+
 The installed November 20 package (`091617996922Z`) reduces first PX9 equip
 from 134.332 to 31.763 ms on the same saved-world sea encounter. The old and
 new packages use the same no-capture driver with `--grounded-pacing`,

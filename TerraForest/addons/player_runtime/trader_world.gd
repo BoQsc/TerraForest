@@ -9,6 +9,7 @@ var trader:=Trade.new()
 var ui:=preload("res://addons/player_runtime/trader_panel.gd").new()
 var actor:CharacterBody3D
 var human:Node3D
+var prepared_human:Node3D
 var ride:=preload("res://addons/player_runtime/trader_ride.gd").new()
 var anchor:=Vector3.INF
 var seen_revision:=-1
@@ -24,6 +25,18 @@ func _ready()->void:
 	add_child(ui)
 	ui.closed.connect(_closed)
 	ui.traded.connect(func():game.terrain.changed_since_save=true;game.player_hud.refresh())
+	_prepare_appearance()
+
+func _prepare_appearance()->void:
+	# One shopkeeper per world. Prepare its skin during loading and keep the
+	# dormant visual owned by the world whenever the shop has no collision body.
+	prepared_human=preload("res://addons/characters/runtime/human_view.gd").new();add_child(prepared_human)
+	prepared_human.position=Vector3.ZERO;prepared_human.rotation=Vector3.ZERO;prepared_human.set_third_person(true);prepared_human.set_process(false)
+	# Role appearance only: no goods are transferred from the finite stock.
+	prepared_human.clothing.set_slots([{"item":301,"count":1},{"item":302,"count":1},{"item":303,"count":1}])
+	prepared_human.animation_player.callback_mode_process=AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_IDLE
+	prepared_human.hide()
+	prepared_human.process_mode=Node.PROCESS_MODE_DISABLED
 
 func allowed()->bool:
 	return game.app_focused and game.terrain.world_ready and not game.loading_active and not game.shutdown_requested and not game.terrain.pending_edit and not game.world_vehicle.driving and not game.fly and not game.session_menu.visible_ui()
@@ -73,7 +86,7 @@ func _process(delta:float)->void:
 		resident=not floor_hit.is_empty() and floor_hit.normal.y>=.85
 	if not resident:
 		ui.close()
-		if is_instance_valid(actor) and not ride.active():actor.free();actor=null;human=null
+		if not ride.active():retire_actor()
 		return
 	if not is_instance_valid(actor):
 		actor=CharacterBody3D.new();actor.name="Trader_civic_01";actor.collision_layer=8;actor.collision_mask=15|(1<<16)|(1<<18)
@@ -81,14 +94,20 @@ func _process(delta:float)->void:
 		var shape:=CapsuleShape3D.new();shape.radius=.34;shape.height=1.8
 		var collision:=CollisionShape3D.new();collision.shape=shape;collision.position.y=.9;actor.add_child(collision)
 		add_child(actor);actor.global_position=at
-		human=preload("res://addons/characters/runtime/human_view.gd").new();actor.add_child(human)
-		human.position=Vector3.ZERO;human.rotation=Vector3.ZERO;human.set_third_person(true);human.set_process(false)
-		# Role appearance only: no goods are transferred from the finite stock.
-		human.clothing.set_slots([{"item":301,"count":1},{"item":302,"count":1},{"item":303,"count":1}])
-		human.animation_player.callback_mode_process=AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_IDLE
+		human=prepared_human
+		human.reparent(actor,false)
+		human.process_mode=Node.PROCESS_MODE_INHERIT
+		human.show()
 		human.animation_player.play(human.clips.get("Idle",human.clips["FP_Unarmed_Idle"]))
 		ride.actor_created()
 	if ui.opened and not reachable():ui.close()
+
+func retire_actor()->void:
+	if not is_instance_valid(actor):return
+	human.hide()
+	human.process_mode=Node.PROCESS_MODE_DISABLED
+	human.reparent(self,false)
+	actor.free();actor=null;human=null
 
 func animate_walk(moving:bool)->void:
 	if not is_instance_valid(human):return

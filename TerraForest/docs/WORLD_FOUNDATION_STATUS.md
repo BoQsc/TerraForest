@@ -1,5 +1,11 @@
 ## November 20 frame pacing
 
+An extended Cedar Vale walk now measures ordinary terrain and the trader district.
+Rebuilding the shopkeeper on residency changes caused repeated 200 ms hitches.
+The shop now prepares one dressed visual during loading and reuses it on return.
+The native boulder selection optimization reduces row checks, while the 60 FPS
+exploration target remains open. See the route measurements below.
+
 The [grounded route and handgun investigation](../issues/runtime-performance/README.md)
 tracks first-equip latency, counts of slow frames on cold and repeated walks,
 and the contribution of test-only quantity verification to lake explosion traces.
