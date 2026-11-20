@@ -172,9 +172,17 @@ func compare_render_owners()->Dictionary:
     var to_vertices:PackedVector3Array=new_arrays[Mesh.ARRAY_VERTEX]
     if from_vertices.size()==to_vertices.size():
      var displacement:=Vector3.ZERO
+     var min_dy:=INF
+     var max_dy:=-INF
      for i in from_vertices.size():
-      displacement=displacement.max((from_vertices[i]-to_vertices[i]).abs())
+      var offset:=to_vertices[i]-from_vertices[i]
+      displacement=displacement.max(offset.abs())
+      min_dy=minf(min_dy,offset.y);max_dy=maxf(max_dy,offset.y)
      entry.max_vertex_displacement_m=[displacement.x,displacement.y,displacement.z]
+     entry.uniform_vertical_translation=(from_vertices.size()>0 and displacement.x==0 and displacement.z==0 and min_dy==max_dy
+      and old_arrays[Mesh.ARRAY_NORMAL]==new_arrays[Mesh.ARRAY_NORMAL]
+      and old_arrays[Mesh.ARRAY_COLOR]==new_arrays[Mesh.ARRAY_COLOR]
+      and old_arrays[Mesh.ARRAY_TEX_UV]==new_arrays[Mesh.ARRAY_TEX_UV])
   entry.geometry=change
   owners.append(entry)
  return {"edit_areas":str(audit_edit_areas),"replaced":owners}

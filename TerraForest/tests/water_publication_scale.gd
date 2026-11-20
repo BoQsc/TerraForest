@@ -116,12 +116,24 @@ func scene_publication()->void:
  nodes[1].loading_active=func()->bool:return false
  var distant:=Vector3i(10,10,13)
  var unchanged:MeshInstance3D=nodes[1]._meshes[distant]
+ var owner:=Vector3i(10,10,10)
+ var original:MeshInstance3D=nodes[1]._meshes[owner]
+ var edit_point:=Vector3(41.75,41.75,41.75)
+ var initial_hit:Dictionary=nodes[1].water.raycast_surface(start,finish)
+ var taken:int=nodes[1].water.brush(edit_point,0.0,-1000)
+ var restored:int=nodes[1].water.brush(edit_point,0.0,1000)
+ for frame in 120:
+  nodes[1]._publish_meshes()
+  if nodes[1].statistics().render_ready:break
+  await process_frame
+ check(taken==1000 and restored==1000 and nodes[1].statistics().render_ready and nodes[1]._meshes[owner]==original and nodes[1].water.raycast_surface(start,finish)==initial_hit,"Rebuilding an identical edited surface retains its mesh and picking result")
  var removed:int=nodes[1].water.brush(Vector3(41.75,41.75,41.75),0.0,-1000)
  for frame in 120:
   nodes[1]._publish_meshes()
   if nodes[1].statistics().render_ready:break
   await process_frame
  check(nodes[1]._meshes[distant]==unchanged,"Local publication retains the distant mesh instance")
+ check(nodes[1]._meshes[owner]!=original,"A changed surface replaces the edited mesh")
  check(removed==1000 and nodes[1].statistics().render_ready and nodes[1].water.statistics().water_ml==64000000*4-1000,"Edited water remains publishable after loading mode ends")
  var drained:=0
  for z in 8:
@@ -131,7 +143,6 @@ func scene_publication()->void:
   nodes[1]._publish_meshes()
   if nodes[1].statistics().render_ready:break
   await process_frame
- var owner:=Vector3i(10,10,10)
  check(drained==3999000 and nodes[1].statistics().render_ready and not nodes[1]._meshes.has(owner) and not nodes[1]._mesh_faces.has(owner) and not nodes[1].water.raycast_surface(start,finish).hit,"Draining the complete region retires its mesh, face counts and pick surface together")
  check(nodes[1]._meshes[distant]==unchanged and unchanged.visible,"Draining a region retains the neighbouring pool")
  print("WATER_LOADING_PUBLICATION calls_gameplay=",frames[0]," calls_loading=",frames[1])

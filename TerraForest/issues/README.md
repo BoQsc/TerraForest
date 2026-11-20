@@ -1,7 +1,7 @@
 # Visual issue tracker
 
 In the latest [water check](explosive-combat/water-plan.md), two-angle
-shoreline contact passed and lake publication took 352 ms.
+shoreline contact passed and lake publication took 288 and 302 ms.
 The dedicated bucket path now preserves transfers across command retries.
 
 The latest [shoreline check](explosive-combat/water-plan.md) retained

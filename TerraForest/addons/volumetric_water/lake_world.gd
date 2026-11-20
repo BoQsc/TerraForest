@@ -447,6 +447,34 @@ func _start_mesh_job(job:RefCounted)->void:
   _mesh_job.prepare();_mesh_job=null
 
 var last_publication_work:Dictionary={}
+func _stage_render_owner(update:Dictionary)->void:
+ var coord:Vector3i=update.coordinate
+ var previous:MeshInstance3D=_meshes.get(coord)
+ if previous==null and update.vertices==0:return
+ var old_faces:Dictionary=_mesh_faces.get(coord,{})
+ _staged_over_capacity_delta_ml-=int(old_faces.get("over_capacity_ml",0))
+ var bounds:=AABB(Vector3(coord)*4,Vector3(4,4,4))
+ _staged_bounds=_staged_bounds.merge(bounds) if _have_staged_bounds else bounds;_have_staged_bounds=true
+ if update.vertices>0:
+  _replacement_faces[coord]=update.faces
+  _staged_over_capacity_delta_ml+=int(update.faces.get("over_capacity_ml",0))
+  var digest:PackedByteArray=update.faces.get("render_digest",PackedByteArray())
+  if previous!=null and digest.size()==32 and digest==old_faces.get("render_digest",PackedByteArray()):
+   # The native batch still commits the new picking and immersion state.
+   return
+ if previous!=null:_replacement_hidden.append(previous)
+ if update.vertices==0:
+  _replacement_removals.append(coord)
+  _staged_meshes[coord]=null
+  return
+ var geometry:=ArrayMesh.new()
+ geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.render_arrays)
+ var node:=MeshInstance3D.new()
+ node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material
+ node.position=bounds.position;node.visible=false;node.mesh=geometry;add_child(node)
+ _staged_meshes[coord]=node
+ _replacement_visible.append(node)
+
 func _publish_meshes() -> void:
  last_publication_work.clear()
  if _mesh_task>=0:
@@ -478,28 +506,7 @@ func _publish_meshes() -> void:
    _clear_staged_meshes();_mesh_batch_id=update.batch
   var upload_started:=Time.get_ticks_usec()
   if update.has("coordinate"):
-   var geometry:ArrayMesh=null
-   if update.vertices>0:
-    geometry=ArrayMesh.new();geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.render_arrays)
-   if geometry!=null or _meshes.has(update.coordinate):
-    var node:MeshInstance3D=null
-    if geometry!=null:
-     # Prepare the complete replacement while hidden, under the upload budget.
-     # Publication only toggles visibility; mesh registration is already done.
-     node=MeshInstance3D.new();node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material
-     node.position=Vector3(update.coordinate)*4;node.visible=false;node.mesh=geometry;add_child(node)
-    _staged_meshes[update.coordinate]=node
-    if _mesh_faces.has(update.coordinate):
-     _staged_over_capacity_delta_ml-=int(_mesh_faces[update.coordinate].get("over_capacity_ml",0))
-    if _meshes.has(update.coordinate):_replacement_hidden.append(_meshes[update.coordinate])
-    if geometry==null:
-     _replacement_removals.append(update.coordinate)
-    else:
-     _replacement_faces[update.coordinate]=update.faces
-     _staged_over_capacity_delta_ml+=int(update.faces.get("over_capacity_ml",0))
-     _replacement_visible.append(node)
-    var bounds:=AABB(Vector3(update.coordinate)*4,Vector3(4,4,4))
-    _staged_bounds=_staged_bounds.merge(bounds) if _have_staged_bounds else bounds;_have_staged_bounds=true
+   _stage_render_owner(update)
   last_publication_work.upload=int(last_publication_work.get("upload",0))+Time.get_ticks_usec()-upload_started
   if update.complete:
    # Commit on its own short slice if staging already consumed this frame.

@@ -2302,6 +2302,18 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     pack(buffers.render_indices,output.render_indices);
     pack(buffers.query_vertices,output.query_vertices);
     pack(buffers.query_indices,output.query_indices);
+    if(streams==SurfaceStreams::Indexed&&!output.render_indices.is_empty()){
+        // Render ownership is independent of subsurface picking and immersion.
+        // All attribute streams have one element per vertex; framing the two
+        // counts also makes the boundary of every hashed stream unambiguous.
+        Ref<HashingContext> hash;hash.instantiate();
+        PackedByteArray counts;counts.resize(16);
+        counts.encode_u64(0,output.render_vertices.size());counts.encode_u64(8,output.render_indices.size());
+        if(hash->start(HashingContext::HASH_SHA256)==OK&&hash->update(counts)==OK&&
+           hash->update(output.render_vertices.to_byte_array())==OK&&hash->update(output.render_normals.to_byte_array())==OK&&
+           hash->update(output.render_uv.to_byte_array())==OK&&hash->update(output.render_colors.to_byte_array())==OK&&
+           hash->update(output.render_indices.to_byte_array())==OK)output.faces["render_digest"]=hash->finish();
+    }
     output.faces["top"]=tops;output.faces["bottom"]=bottoms;output.faces["side"]=sides;
     output.faces["triangles"]=tops+bottoms+sides;output.faces["exact_cut_cell_boundary"]=true;
     return output;

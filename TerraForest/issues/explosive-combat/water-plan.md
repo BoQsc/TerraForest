@@ -1,5 +1,18 @@
 # Continuous volumetric water replacement
 
+Pack `53d50e165613` keeps existing render resources when a rebuilt owner's
+indexed render streams have the same SHA-256. Native picking, quantity and
+immersion still commit together. In Cedar Vale runs `20261120T172636344616Z`
+(two-angle captures) and `20261120T172806739407Z` (captures disabled), the
+lake replaced 44 render meshes instead of 62, and mining replaced 8 instead
+of 26. All 18 identical replacements disappeared in each case. Sea/lake/mining
+terrain-to-draw times were 140/288/152 ms and 140/302/143 ms. The lake
+missed 250 ms in both runs. The worker still extracts full geometry before
+the renderer can reuse it. In both lake runs 15 further replacements had
+identical vertex offsets in Y, indices, normals, colors and UVs. Qualify
+a change that avoids extraction on the path to first draw before investing
+in more upload-only savings. Preserve the full geometry as a reference.
+
 **First-publication dependency measurement.** The optional packaged route
 flag `--water-owner-audit` retains mesh resources before an action and at
 local publication, then compares Godot's render arrays after measurement.
