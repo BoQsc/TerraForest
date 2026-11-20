@@ -1,5 +1,18 @@
 # Continuous volumetric water replacement
 
+**November 20 crater mesh dispatch.** The first lake publication now sends
+the affected owners through one native job when their shared occupancy
+fits the existing reservation. The 70-owner regression commits one job
+and matches the serial arrays exactly. The prior limit split the same
+gameplay crater into two jobs, with a frame handoff between them.
+Run `20261120T143633262102Z` took 340 ms from terrain publication to the
+lake draw with captures disabled (previous build 385 ms). Visual run
+`20261120T143735944389Z` took 342 ms and retained bank contact at both
+shores, including the lake after bucket interruption. Both camera angles
+were reviewed. The 66 live lake probes and the 43-owner geometry digest
+matched the committed replay. Lake latency still fails the 250 ms check.
+Mining took 185 ms in the timing run and 284 ms in the visual run.
+
 **November 20 local mesh invalidation.** Terrain resampling and water
 redistribution now queue the union of the changed cells' two-cell halos.
 Diagonal changes in one region queue seven owners in the sparse regression

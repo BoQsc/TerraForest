@@ -12,6 +12,7 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/classes/worker_thread_pool.hpp>
+#include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
@@ -1603,7 +1604,10 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
                 Ref<NativeWaterMeshJob> job;job.instantiate();job->reserved_bytes=charge;job->indexed_only=indexed_only;job->owners.push_back(k);job->batch=batch_id;job->frozen.instantiate();
                 // Amortize worker dispatch and frame latency across a bounded
                 // group; packets still upload under the main-thread budget.
-                for(int examined=0;examined<128&&job->owners.size()<64&&!batch_queue.empty();++examined){
+                // Keep a local edit together when it fits the immutable
+                // snapshot. Background rebuilds retain their smaller slices.
+                const size_t owner_limit=batch_urgent?128:64;
+                for(size_t examined=0;examined<2*owner_limit&&job->owners.size()<owner_limit&&!batch_queue.empty();++examined){
                     Key next=batch_queue.front();batch_queue.pop_front();
                     if(surface_ready(next,true)){if(!stage_dry(next))job->owners.push_back(next);}
                     else {if(mesh_set.insert(next).second)meshes.push_back(next);if(batch_urgent)urgent_meshes.insert(next);}
@@ -1611,11 +1615,14 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
                 uint64_t halo_bytes=0;
                 for(size_t owner_index=0;owner_index<job->owners.size();++owner_index){
                 Key owner=job->owners[owner_index];Vector3i c=position(owner);
+                std::array<std::pair<Key,const Region*>,27> additions;
+                size_t count=0;
                 uint64_t additional=0;
                 for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){
                     Vector3i p=c+Vector3i(x,y,z);if(p.x<0||p.y<0||p.z<0||p.x>=500||p.y>=64||p.z>=500)continue;
                     Key neighbor=key(p);if(job->frozen->regions.count(neighbor))continue;
                     if(const Region *region=surface_region(neighbor,true)){
+                        additions[count++]={neighbor,region};
                         additional+=sizeof(Region)+Region::payload_bytes;
                         if(region->contacts)additional+=region->contacts->bytes;
                         if(region->structures)additional+=region->structures->bytes;
@@ -1626,11 +1633,10 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
                     job->owners.resize(owner_index);break;
                 }
                 halo_bytes+=additional;
-                for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){
-                    Vector3i p=c+Vector3i(x,y,z);if(p.x<0||p.y<0||p.z<0||p.x>=500||p.y>=64||p.z>=500)continue;
-                    Key neighbor=key(p);const Region *region=surface_region(neighbor,true);
-                    if(region)job->frozen->regions.emplace(neighbor,*region);
-                }
+                // The live store cannot change during this main-thread call.
+                // Copy only newly admitted halo regions, once per snapshot.
+                for(size_t i=0;i<count;++i)
+                    job->frozen->regions.emplace(additions[i].first,*additions[i].second);
                 }
                 job->frozen->western_ocean=western_ocean;job->frozen->surrounding_ocean=surrounding_ocean;
                 pending_mesh_job=job;result["job"]=job;result["pending"]=true;
@@ -2073,6 +2079,13 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
             C::Point shift{dx*.5,dy*.5,dz*.5};
             for(const auto &face:neighbor.boundary)for(auto point:face.polygon){
                 point=point+shift;
+                // Rounding to the shared grid can move a point by at most
+                // one grid step. Most vertices of a neighbouring polygon
+                // are strictly outside this cell and need no projection.
+                constexpr double margin=1./grid;
+                if(point.x < -margin || point.x > .5+margin ||
+                   point.y < -margin || point.y > .5+margin ||
+                   point.z < -margin || point.z > .5+margin)continue;
                 C::Point local=canonical(point);
                 if(local.x<0||local.x>.5||local.y<0||local.y>.5||local.z<0||local.z>.5)continue;
                 edge_points.emplace(std::array<int64_t,3>{llround(point.x*1e9),llround(point.y*1e9),llround(point.z*1e9)},point);
@@ -2086,13 +2099,25 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
             std::array<double,3> identity{point.x,point.y,point.z};
             auto cached=projection_cache.find(identity);if(cached!=projection_cache.end())return cached->second;
             auto result=canonical(point);
-            for(const auto &[key,candidate]:edge_points){auto delta=candidate-point;
+            // The map is ordered by rounded nanometres. Restrict the exact
+            // distance test to the x interval that can contain a match.
+            const int64_t first_x=llround((point.x-.5/grid)*1e9)-1;
+            const int64_t last_x=llround((point.x+.5/grid)*1e9)+1;
+            auto first=edge_points.lower_bound({first_x,INT64_MIN,INT64_MIN});
+            for(auto it=first;it!=edge_points.end()&&it->first[0]<=last_x;++it){
+                const auto candidate=it->second;
+                auto delta=candidate-point;
                 if(delta.dot(delta)>.25/(grid*grid))continue;
                 auto q=canonical(candidate);
                 if(std::tie(q.x,q.y,q.z)<std::tie(result.x,result.y,result.z))result=q;
             }
             projection_cache.emplace(identity,result);return result;
         };
+        // Every edge of this cell uses the same ordered candidates. Project
+        // them once, preserving insertion order for coincident subdivisions.
+        std::vector<C::Point> projected_points;
+        projected_points.reserve(edge_points.size());
+        for(const auto &[key,raw]:edge_points)projected_points.push_back(project(raw));
         for(const auto &boundary:cell.boundary){
                     if(!include_contacts&&buried(p,boundary))continue;
                     auto polygon=boundary.polygon;auto plane=boundary.plane;
@@ -2115,7 +2140,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                     for(size_t edge=0;edge<polygon.size();++edge){
                         auto a=polygon[edge],b=polygon[(edge+1)%polygon.size()],d=b-a;double norm=d.dot(d);
                         std::map<double,C::Point> along;along.emplace(0,a);
-                        if(norm>0)for(const auto &[key,raw]:edge_points){auto v=project(raw);double t=(v-a).dot(d)/norm;
+                        if(norm>0)for(const auto &v:projected_points){double t=(v-a).dot(d)/norm;
                             if(t>0&&t<1){auto cross=(v-a).cross(d);if(cross.dot(cross)==0)along.emplace(t,v);}}
                         for(const auto &[t,v]:along)if(conforming.empty()||(conforming.back()-v).dot(conforming.back()-v)>0)conforming.push_back(v);
                     }
@@ -2338,10 +2363,13 @@ void NativeWaterMeshJob::prepare(){
             uint64_t(surface.query_vertices.size())*sizeof(Vector3)+
             uint64_t(surface.query_indices.size())*sizeof(int32_t)+surface.owners.size()*sizeof(uint16_t)+surface.reconstructed.size()*sizeof(NativeRegionalWater::ReconstructedCell);
     };
-    if(!cancelled.load()&&frozen.is_valid()&&owners.size()>=8&&reserved_bytes>retained+24*1024*1024){
-        // Two native pool lanes share immutable input and disjoint output slots.
-        // Keep scratch inside the existing reservation; no new OS threads or
-        // expanded memory budget. Publication remains one ordered transaction.
+    // Each lane owns clipping scratch. Leave CPU capacity for rendering,
+    // terrain and physics, and deduct scratch from this job's reservation.
+    constexpr uint64_t lane_bytes=12*1024*1024;
+    const int cpu_lanes=std::clamp(OS::get_singleton()->get_processor_count()/3,1,4);
+    const int memory_lanes=reserved_bytes>retained?int((reserved_bytes-retained-1)/lane_bytes):0;
+    const int lanes=std::min({cpu_lanes,memory_lanes,owners.size()>=32?4:2});
+    if(!cancelled.load()&&frozen.is_valid()&&owners.size()>=8&&lanes>=2){
         struct Group {
             NativeWaterMeshJob *job;
             std::atomic<uint64_t> retained;
@@ -2349,7 +2377,7 @@ void NativeWaterMeshJob::prepare(){
             uint64_t limit;
             decltype(surface_bytes) *bytes;
             std::atomic<size_t> next_owner{0};
-        } group{this,retained,owners.size(),reserved_bytes-24*1024*1024,&surface_bytes};
+        } group{this,retained,owners.size(),reserved_bytes-lanes*lane_bytes,&surface_bytes};
         results.resize(owners.size());
         auto task=[](void *context,uint32_t){
             auto &g=*static_cast<Group*>(context);auto &job=*g.job;
@@ -2372,9 +2400,9 @@ void NativeWaterMeshJob::prepare(){
             }
         };
         auto *pool=WorkerThreadPool::get_singleton();
-        auto id=pool->add_native_group_task(task,&group,2,2,false,"Water boundary owners");
+        auto id=pool->add_native_group_task(task,&group,lanes,lanes,false,"Water boundary owners");
         if(id>=0)pool->wait_for_group_task_completion(id);
-        else for(uint32_t i=0;i<2;++i)task(&group,i);
+        else task(&group,0);
         if(group.first_overflow.load()==0&&!cancelled.load()){
             // Faster later owners may consume the group allowance before owner
             // zero finishes. Retry that owner alone under the original budget;

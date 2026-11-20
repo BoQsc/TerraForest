@@ -9,26 +9,32 @@ func publication_fixture():
  water.brush(Vector3(41.75,41.501,41.75),0.0,99000)
  return water
 
-func grouped_fixture():
+func grouped_fixture(count:int=9,edited:bool=false):
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
- var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+9*6160);bytes.fill(0)
- bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,9);bytes.encode_u64(16,900000)
+ var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+count*6160);bytes.fill(0)
+ bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,count);bytes.encode_u64(16,count*100000)
  for i in catalog.size():bytes[32+i]=catalog[i]
- for n in 9:
+ for n in count:
   var base:int=32+catalog.size()+n*6160
   bytes.encode_u64(base,((10+n)<<24)|(10<<12)|10);bytes.encode_u32(base+8,1);base+=16
   for i in 512:bytes.encode_u16(base+i*12+2,500)
   bytes.encode_u64(base+(3+8*3+64*3)*12+4,100000)
  var water=ClassDB.instantiate("NativeRegionalWater")
  if not water.restore_snapshot(bytes):return null
+ if edited:
+  for n in count:
+   var p:=Vector3((10+n)*4+1.75,41.75,41.75)
+   if water.brush(p,0,-1000)!=1000:return null
  return water
-func check_grouped_owners(dispatch_indexed:=false)->void:
- var reference=grouped_fixture();var expected:Dictionary={}
+func check_grouped_owners(dispatch_indexed:=false,edited:=false)->void:
+ var count:=70 if edited else 9
+ var reference=grouped_fixture(count,edited);var expected:Dictionary={}
+ if reference==null:check(false,"Grouped mesh fixture accepts all edits");return
  for n in 100:
   var packet:Dictionary=reference.next_mesh()
   if packet.is_empty():break
   expected[packet.coordinate]=packet.arrays
- var water=grouped_fixture();var actual:Dictionary={};var jobs:=0;var committed:=false
+ var water=grouped_fixture(count,edited);var actual:Dictionary={};var jobs:=0;var committed:=false
  for n in 100:
   var packet:Dictionary=water.next_mesh_batch(true,dispatch_indexed and jobs==0)
   if packet.is_empty():break
@@ -40,7 +46,7 @@ func check_grouped_owners(dispatch_indexed:=false)->void:
   if packet.has("coordinate"):actual[packet.coordinate]=packet.arrays
   if packet.complete:committed=water.commit_mesh_batch(packet.batch);break
  print("GROUPED_OWNERS jobs=",jobs," committed=",committed," expected=",expected.size()," actual=",actual.size()," equal=",actual==expected)
- check(jobs==1 and committed and expected.size()==9 and actual==expected,"Parallel owner group exactly matches serial geometry in stable owner order")
+ check(jobs==1 and committed and expected.size()==count and actual==expected,"Parallel owner group exactly matches serial geometry in stable owner order")
  check(water.statistics().mesh_worker_reserved_bytes==0,"Parallel owner group releases its shared memory reservation")
 func run_worker_checks() -> void:
  for arg:String in OS.get_cmdline_user_args():
@@ -64,6 +70,7 @@ func run_worker_checks() -> void:
  check(dry.raycast_surface(dry_point+Vector3.UP,dry_point-Vector3.UP).hit,"The newly wet owner publishes its pickable surface")
  await check_grouped_owners()
  await check_grouped_owners(true)
+ await check_grouped_owners(false,true)
  var reference=publication_fixture();var expected:Dictionary={}
  for n in 100:
   var packet:Dictionary=reference.next_mesh()

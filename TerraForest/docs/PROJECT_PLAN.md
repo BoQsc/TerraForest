@@ -3,6 +3,11 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
+Installed run `20261120T143633262102Z` processed the 132 urgent lake mesh
+owners in one job. The first water update took 340 ms after the terrain
+edit. This remains above the interaction budget. The [foundation status](WORLD_FOUNDATION_STATUS.md)
+records both fixed-angle gameplay captures, geometry comparisons and bucket timings.
+
 The subsequent exact mesh dependency update reduced the tested crater from
 140 urgent owners to 132. Packaged run `20261120T142220024763Z` still spent
 385 ms publishing the local lake edit. See the [foundation status](WORLD_FOUNDATION_STATUS.md)

@@ -1,3 +1,32 @@
+## November 20 shoreline mesh worker and publication
+
+The native mesh builder rejects out-of-cell subdivision candidates before
+quantization. It bounds the representative-point search by the possible
+x range and reuses each projected edge candidate across the cell's faces.
+Large jobs use up to four Godot pool lanes with 12 MiB of scratch charged
+per lane inside the existing 128 MiB reservation. On the pinned crater the
+median of four builds fell from 113.8 ms to 86.1 ms. Four lanes alone still
+left a second job between the first lake commit and draw.
+
+Urgent jobs can now take up to 128 owners if the halo and output fit.
+Only newly encountered regions are copied into the immutable snapshot.
+Background jobs retain their 64-owner cap. The 70-owner serial/parallel
+comparison, cancellation and release checks passed (`20261120T143908241770Z`).
+Surface continuity passed (`20261120T143908238653Z`), all 66 live ray
+samples matched (`20261120T143908259612Z`), and the rendered-array digest
+matched on four replays (`20261120T143908307836Z`).
+
+Installed capture-free run `20261120T143633262102Z` shows one worker job
+between the local lake commit and publication. Terrain-to-water latency
+was 158 ms at sea, 340 ms at the lake and 185 ms for mining. Action to draw
+took 1276, 759 and 221 ms. Frame interval p99 was 26.3, 23.1 and 18.7 ms.
+In the visual run the four bucket transfers took 47–84 ms. Lake edits
+still miss the 250 ms regression and the two-frame target. The worker
+was active from the 517 ms sample until completion observed at 678 ms.
+The prior valid surface remained visible until replacement. Retain the
+two-angle contact checks and the [water issue](../issues/explosive-combat/water-plan.md)
+when changing how the local boundary is reconstructed.
+
 ## November 20 mesh dependencies after local edits
 
 Windows debug/release water libraries now invalidate mesh owners using the
