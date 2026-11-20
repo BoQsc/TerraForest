@@ -31,6 +31,7 @@ const RESOURCES: Dictionary=ItemCatalog.RESOURCES
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7,212:8}
 var ground_tools_enabled:=false
 var inventory: RefCounted
+var equipping_inventory:=false
 var reward_inbox: RefCounted
 var progression: RefCounted
 const Progression=preload("res://addons/player_runtime/progression_rules.gd")
@@ -270,6 +271,7 @@ func _ready() -> void:
 
 func refresh() -> void:
 	deliver_mining_rewards()
+	if equipping_inventory:return
 	if action_hint!=null:
 		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Repair hammer | Left mouse: attack | Right mouse: repair",4:"Assembly tool | Right mouse: place | Left mouse: attack | Hold Alt: tool settings",5:"Shovel | Hold left mouse: dig / attack | G drop",6:"Wooden torch | Hold left mouse: attack | Lights while held | G drop",7:"Carbine | Left mouse: fire | Right mouse: aim | R reload",9:"PX9 Eclipse | Hold left mouse: fire | Right mouse: aim | R reload | I inspect | G drop",8:"Ranger AR | Hold left mouse: automatic fire | Right mouse: aim | R reload",222:"Explosive barrel | Right mouse: place | H grid/free | R rotate | G drop | Shoot to detonate"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | H grid/free | R rotate | G drop" if ItemCatalog.Objects.ITEMS.has(active_item) else " | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS or active_item in [202,203,211,501] or ItemCatalog.Objects.ITEMS.has(active_item) else " | G drop | E interact"))
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · M map · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
@@ -395,7 +397,7 @@ func equip_inventory(slot: int) -> void:
 	if (not enabled and not inventory_open) or inventory==null or slot<0 or slot>=32:return
 	state=inventory.snapshot()
 	if slot<10 and int(state.slots[slot].count)==0:
-		active_slot=-1;active_item=0;selected_slot=slot;belt_cursor=slot;tool_requested.emit(0);refresh();return
+		active_slot=-1;active_item=0;selected_slot=slot;belt_cursor=slot;publish_equipment(0);return
 	if slot>=10:
 		# Equip from the backpack by moving/swapping into an actual belt slot.
 		var destination: int=active_slot if active_slot>=0 and active_slot<10 else 0
@@ -406,11 +408,20 @@ func equip_inventory(slot: int) -> void:
 			if not result.ok:message.text="Cannot equip that stack; inventory refreshed";refresh();return
 			inventory_changed.emit();state=inventory.snapshot()
 		else:
-			active_slot=-1;active_item=0;tool_requested.emit(0);refresh();return
+			active_slot=-1;active_item=0;publish_equipment(0);return
 		slot=destination
 	active_slot=slot;active_item=int(state.slots[slot].item)
 	selected_slot=-1;belt_cursor=slot
-	tool_requested.emit(active_item);refresh()
+	publish_equipment(active_item)
+
+func publish_equipment(item:int)->void:
+	# The world synchronously updates mode, the tool model and hints. Draw
+	# the belt and inventory once with all of those listener changes applied.
+	var outer_equip:=equipping_inventory
+	equipping_inventory=true
+	tool_requested.emit(item)
+	equipping_inventory=outer_equip
+	refresh()
 
 func equip_item(item: int) -> bool:
 	state=inventory.snapshot()

@@ -1,3 +1,8 @@
+The current [shoreline decision and measurements](../issues/explosive-combat/water-plan.md)
+track the dependency set between a committed edit and its first visible water
+surface. Pack `8bc1a4d21ff7` still took 352 ms at the lake. The Windows
+gameplay route remains the acceptance test for that handoff.
+
 ## November 20 dedicated loadout and bucket targeting
 
 Windows pack `3f6598610b0a`, run `20261120T163411140862Z`, loaded a

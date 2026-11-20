@@ -1,5 +1,24 @@
 # Continuous volumetric water replacement
 
+**Current decision, November 20.** Keep the finite-volume model. Use the
+resident Cedar Vale shoreline edit as the unit of work for the authority and
+renderer. Measure how many regions the first visible crater actually depends
+on, then separate those dependencies from the wider settling batch. Preserve
+mass, seam contact, revision ordering and the previous visible surface at the
+handoff. Repeat the same gameplay action on differently sized connected bodies
+before concluding its cost is local.
+
+In packaged run `20261120T171200227511Z` (pack `8bc1a4d21ff7`), the lake
+worker examined 15,222 cells in a 122-region snapshot and took 18.9 ms.
+The terrain-to-water draw took 352 ms. The sea took 148 ms and mining took
+170 ms. Both shorelines passed contact probes and have before/after captures
+from two angles. Repeated bucket transfers passed. Relative to the prior
+matched run, lake publication moved from 353 to 352 ms. Coalescing redundant
+HUD refreshes verified a single-presentation upper bound on equip but yielded
+no meaningful lake response gain. Keep the lake failure and the two-frame
+target open. The per-action p99 figures exclude explicitly tagged test work;
+the raw frame series summaries remain in each report.
+
 The November 20 two-angle Cedar Vale run `20261120T170148951946Z` on
 release water DLL `c35d972efdd2` passed the immediate and settled contact
 probes at both shores and repeated the interrupted bucket collection and

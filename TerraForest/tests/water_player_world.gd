@@ -57,6 +57,7 @@ var failures:=0
 var evidence:=""
 var slot:="Amber_Pines"
 func check_lake_region_seams(center:Vector3,level:float,label:String)->void:
+ timing_diagnostic("mesh seam probes")
  var sampled:=0
  var largest_step:=0.0
  for axis:int in [0,2]:
@@ -76,6 +77,7 @@ func check_lake_region_seams(center:Vector3,level:float,label:String)->void:
  print("LAKE_REGION_SEAMS ",label," wet_pairs=",sampled," max_step_m=",largest_step)
  check(sampled>=10 and largest_step<=.0015,label+" adjacent lake regions meet across the open water surface")
 func check_crater_coverage(center:Vector3,level:float,label:String)->void:
+ timing_diagnostic("shore contact probes")
  var sampled:=0;var missing:Array=[]
  for x in range(-5,6):
   for z in range(-5,6):
@@ -141,6 +143,12 @@ func measure_local_draw()->void:
   local_draw_us=Time.get_ticks_usec()
 var timing_previous:=0
 var timing_frames:Array[float]=[]
+var timing_play_frames:Array[float]=[]
+var timing_diagnostics:PackedStringArray=[]
+var timing_capture_end:=0
+var timing_worst_play:Dictionary={}
+func timing_diagnostic(label:String)->void:
+ if not timing_phase.is_empty() and not timing_diagnostics.has(label):timing_diagnostics.append(label)
 var timing_water:Array[float]=[]
 var timing_stages:Dictionary={}
 var timing_worst:Array[Dictionary]=[]
@@ -163,6 +171,7 @@ func start_timing(label:String)->void:
   RenderingServer.frame_post_draw.connect(measure_local_draw)
  if not game.terrain.region_changed.is_connected(terrain_published):game.terrain.region_changed.connect(terrain_published)
  timing_phase=label;timing_local_ms=-1;timing_frames.clear();timing_water.clear();timing_previous=Time.get_ticks_usec()
+ timing_play_frames.clear();timing_diagnostics.clear();timing_worst_play={}
  timing_stages.clear();timing_worst.clear();timing_totals.clear();timing_water_worst.clear()
  timing_pipeline_draw=Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_DRAW)
  timing_pipeline_specialization=Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SPECIALIZATION)
@@ -197,6 +206,13 @@ func sample_timing()->void:
   blast_last_state=signature;state.ms=(Time.get_ticks_usec()-blast_started)/1000.0
   blast_timeline.append(state)
  timing_worst.back().publication=game.lakes.last_publication_work.duplicate()
+ if not capture_phase.is_empty() or timing_capture_end>timing_previous:timing_diagnostic("image capture")
+ var frame:Dictionary=timing_worst.back()
+ frame.diagnostics=timing_diagnostics.duplicate()
+ if timing_diagnostics.is_empty():
+  timing_play_frames.append(frame.frame_ms)
+  if frame.frame_ms>timing_worst_play.get("frame_ms",0):timing_worst_play=frame
+ timing_diagnostics.clear()
  if game.lakes.last_process_us>timing_water_worst.get("water_main_us",0):timing_water_worst=timing_worst.back().duplicate(true)
  timing_worst.sort_custom(func(a:Dictionary,b:Dictionary)->bool:return a.frame_ms>b.frame_ms)
  if timing_worst.size()>5:timing_worst.resize(5)
@@ -206,6 +222,7 @@ func finish_timing()->void:
  blast_metrics[timing_phase]={"frames":timing_frames.size(),"frame_p95_ms":percentile(timing_frames,.95),"frame_p99_ms":percentile(timing_frames,.99),"frame_max_ms":timing_frames.back() if not timing_frames.is_empty() else 0,"water_main_p95_us":percentile(timing_water,.95),"water_main_max_us":timing_water.back() if not timing_water.is_empty() else 0}
  blast_metrics[timing_phase].water_after_terrain_ms=(Time.get_ticks_usec()-terrain_published_us)/1000.0 if terrain_published_us else -1
  blast_metrics[timing_phase].timeline=blast_timeline.duplicate(true)
+ blast_metrics[timing_phase].outside_diagnostics={"frames":timing_play_frames.size(),"p99_ms":percentile(timing_play_frames,.99),"worst":timing_worst_play}
  blast_metrics[timing_phase].local_response_ms=timing_local_ms
  blast_metrics[timing_phase].action_to_local_draw_ms=(local_draw_us-action_started_us)/1000.0 if local_draw_us else -1
  if terrain_admitted_us and terrain_published_us and local_draw_us:
@@ -222,6 +239,7 @@ func local_response(point:Vector3,label:String)->void:
  while Time.get_ticks_msec()<deadline:
   if terrain_published_us>0 and game.lakes._local_response_started_us>=blast_started and not game.lakes._local_response_pending and not game.lakes._local_publication_pending:
    var latency:float=game.lakes._local_response_us/1000.0
+   timing_diagnostic("first publication probes")
    timing_local_ms=latency
    print("LOCAL_WATER_RESPONSE ",label," ms=",latency," wider_pending=",game.lakes.water.runtime_state().settling_regions)
    print("LOCAL_WATER_SOLVE ",label," ",JSON.stringify(game.lakes.statistics().get("equilibrium_result",{})))
@@ -335,12 +353,14 @@ func capture(label:String,center:Vector3,level:float,underwater:bool=false)->voi
  # Encode only after both angles have been captured. PNG compression must not
  # become a fake low-FPS sample between the two views of the frozen state.
  for entry:Array in captures:entry[0].save_png(entry[1])
+ timing_capture_end=Time.get_ticks_usec()
  if route_started:
   # The interval containing PNG encoding ends on the next frame.
   await process_frame
  capture_phase=""
 func _initialize()->void:run.call_deferred()
 func owned_amount()->int:
+ timing_diagnostic("quantity snapshot")
  # Pristine ocean residency can retire after travel; it is not owned lake mass.
  # Use the production save snapshot's non-regenerable quantity, outside timing.
  var measure:bool=not timing_phase.is_empty() and frame_phases.usage!=null
@@ -381,9 +401,14 @@ func gameplay_barrel(point:Vector3)->int:
  return id
 func shoot_barrel(id:int)->void:
  if id<=0:return
+ var presentations:=[0]
+ var on_equipment:=func(_slots:Array):presentations[0]+=1
+ game.player_hud.character_panel.equipment_presented.connect(on_equipment)
  var equip_started:=Time.get_ticks_usec()
  check(game.player_hud.equip_item(9),"Handgun equipped for barrel ignition")
  timing_stage("handgun equip",(Time.get_ticks_usec()-equip_started)/1000.0)
+ game.player_hud.character_panel.equipment_presented.disconnect(on_equipment)
+ check(presentations[0]<=1 and game.player_hud.active_item==9 and game.equipped_tool==9,"Equipping updates the active handgun with at most one equipment presentation")
  print("EQUIP_STAGES ",game.tool_view.human.get("last_equip_stages"))
  game.camera.look_at(game.combat.barrel_position(id)+Vector3.UP*.5)
  var deadline:=Time.get_ticks_msec()+10000
