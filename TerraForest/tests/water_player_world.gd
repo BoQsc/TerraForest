@@ -5,12 +5,30 @@ class BrushProfileBackend extends "res://addons/volumetric_terrain/terrain_backe
  var tiles_profiled:=0
  var measuring:=false
  var light_start:=PackedByteArray()
+ var handoff:Dictionary={}
+ var staging_frames:Array[Dictionary]=[]
+ var worker_done_us:=0
+ func poll()->Array[Dictionary]:
+  var results_batch:=super.poll()
+  var received:=Time.get_ticks_usec()
+  for result in results_batch:
+   match result.kind:
+    "edit_begin":
+     handoff.clear()
+     staging_frames.clear()
+     worker_done_us=0
+    "edit_chunk":
+     handoff[result.key]={"worker_us":result.profile_ready_us,"received_us":received}
+    "edit_done":worker_done_us=result.worker_finished_us
+  return results_batch
  func _push(result:Dictionary)->void:
   if result.kind=="edit_begin":
    stages.fill(0.0)
    tiles_profiled=0
    measuring=true
    light_start=_call(Codec.command(15))
+  elif result.kind=="edit_chunk":
+   result.profile_ready_us=Time.get_ticks_usec()
   elif result.kind=="edit_done":
    var light:=_call(Codec.command(15))
    var counts:={}
@@ -820,6 +838,13 @@ func check_authoring_brush()->void:
   if audit:
    exploration_terrain_stages.clear()
    game.terrain.stage_measured.connect(record_exploration_stage)
+  var profiling:=game.terrain.backend is BrushProfileBackend and not coastal
+  var draw_record:Dictionary={}
+  var observe_draw:=func(row:Dictionary)->void:
+   if row.ticket==ticket+1 and row.has("draw_us"):draw_record.merge(row)
+  if profiling:
+   game.terrain.stage_measured.connect(record_brush_staging)
+   game.terrain.edit_measured.connect(observe_draw)
   var click:=InputEventMouseButton.new()
   click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
   var started:=Time.get_ticks_usec()
@@ -852,6 +877,27 @@ func check_authoring_brush()->void:
    var now:=Time.get_ticks_usec()
    worst_us=maxi(worst_us,now-previous);previous=now;frames+=1
   check(game.terrain.published_revision>revision,"Authoring brush publishes a changed terrain revision")
+  if profiling:
+   game.terrain.stage_measured.disconnect(record_brush_staging)
+   var draw_deadline:=Time.get_ticks_usec()+500000
+   while draw_record.is_empty() and Time.get_ticks_usec()<draw_deadline:await process_frame
+   game.terrain.edit_measured.disconnect(observe_draw)
+   check(not draw_record.is_empty(),"First terrain post-draw receipt belongs to this brush ticket")
+   if not draw_record.is_empty():
+    print("AUTHORING_FIRST_DRAW ",JSON.stringify({"ticket":draw_record.ticket,"input_to_commit_ms":(draw_record.publish_us-started)/1000.0,"input_to_draw_ms":(draw_record.draw_us-started)/1000.0,"commit_to_draw_ms":(draw_record.draw_us-draw_record.publish_us)/1000.0}))
+   var events:Dictionary=game.terrain.backend.handoff
+   var waits:Array[float]=[]
+   var staging:Array[float]=[]
+   var still_pending:=0
+   for event:Dictionary in events.values():
+    if not event.has("staged_us"):continue
+    waits.append((event.received_us-event.worker_us)/1000.0)
+    staging.append((event.staged_us-event.received_us)/1000.0)
+    if event.staged_us>game.terrain.backend.worker_done_us:still_pending+=1
+   check(not waits.is_empty() and waits.size()==events.size(),"Every worker tile was observed in main-thread staging")
+   if not waits.is_empty():
+    var timeline:Array=game.terrain.backend.staging_frames
+    print("AUTHORING_HANDOFF ",JSON.stringify({"tiles":events.size(),"poll_wait_p50_ms":percentile(waits,.5),"poll_wait_max_ms":waits.max(),"received_to_staged_p50_ms":percentile(staging,.5),"received_to_staged_max_ms":staging.max(),"staged_after_worker_done":still_pending,"frames":timeline}))
   if coastal:
    for frame in 5:await physics_frame
    check(game.terrain.edit_ticket==ticket+1 and game.terrain.published_revision==revision+1 and game.preparing_stroke.is_empty(),"Released coastal brush applies exactly once")
@@ -868,6 +914,17 @@ func check_authoring_brush()->void:
    if i==1 and "--authoring-collision-reuse" in OS.get_cmdline_user_args():
     await physics_frame
     record_brush_contacts(center)
+
+func record_brush_staging(stage:String,ms:float)->void:
+ # Observe completed tiles at the end of each slice and immediately before
+ # the atomic swap clears staged_batch. Times are upper bounds within a slice.
+ if stage not in ["staging frame","vegetation edit publish"]:return
+ var events:Dictionary=game.terrain.backend.handoff
+ var now:=Time.get_ticks_usec()
+ for key in game.terrain.staged_batch:
+  if events.has(key) and not events[key].has("staged_us"):events[key].staged_us=now
+ if stage=="staging frame" and not events.is_empty() and game.terrain.pending_edit:
+  game.terrain.backend.staging_frames.append({"received":events.size(),"staged":game.terrain.staged_batch.size(),"worker_done":game.terrain.edit_worker_done,"staging_ms":ms})
 
 func record_brush_contacts(center:Vector3)->void:
  var hits:Array=[]

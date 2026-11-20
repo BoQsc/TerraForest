@@ -1,3 +1,19 @@
+## Terrain edit latency decision (2026-11-20)
+
+In isolated packaged Cedar Vale run `20261120T191239652271Z`, input to the
+first engine post-draw after the matching edit commit took 28.479 ms for the
+4 m brush and 244.267 ms for the 64 m cut. The large edit committed at
+230.692 ms. All 36 replacement meshes changed and were inside the frustum.
+Worker mesh builds took 123.189 ms, including 72.818 ms shading. The main
+thread staged tiles while the worker built later ones. The median completed
+tile waited 8.144 ms for collection and another 2.697 ms for staging.
+The rendering digest matched the prior run. Physical presentation was unmeasured.
+
+Keep shoreline tuning parked. Revisit the large edit with an architectural
+experiment that reduces work required for the first correct local surface.
+Compare action to draw, geometry, contact and frame intervals on the same cut.
+The measurements above establish a baseline and do not close the latency gate.
+
 ## Active client baseline — trader traversal
 
 Two more packaged runs compared VSync on and off on the same 1080p trader
