@@ -19,8 +19,15 @@ class NativeGeneratedRegion : public godot::RefCounted {
  struct Road {godot::Vector3 a,b;float width;};
  std::vector<Road> corridors;
  std::map<std::pair<int,int>,std::vector<int>> bins;
- void index_roads(){
-  corridors.clear();bins.clear();auto plan=decode(snapshot);godot::Array roads=plan["roads"];
+ std::map<int64_t,godot::Vector3> place_positions;
+ void index_plan(const godot::Dictionary &plan){
+  place_positions.clear();
+  godot::Array places=plan["places"];
+  for(int i=0;i<places.size();i++){
+   const godot::Dictionary place=places[i];
+   place_positions.emplace(int64_t(place["id"]),godot::Vector3(place["position"]));
+  }
+  corridors.clear();bins.clear();godot::Array roads=plan["roads"];
   for(int i=0;i<roads.size();i++){
    godot::Dictionary item=roads[i];Road road{item["a"],item["b"],float(double(item["width"]))};
    corridors.push_back(road);float radius=road.width*.5f+4.f;
@@ -72,6 +79,8 @@ protected:
   using namespace godot;
   ClassDB::bind_method(D_METHOD("placement_mask","poses","margin"),&NativeGeneratedRegion::placement_mask);
   ClassDB::bind_method(D_METHOD("set_plan","seed","generator","places","roads"),&NativeGeneratedRegion::set_plan);
+  ClassDB::bind_method(D_METHOD("get_place_position","id"),&NativeGeneratedRegion::get_place_position);
+  ADD_SIGNAL(MethodInfo("plan_changed",PropertyInfo(Variant::INT,"revision")));
   ClassDB::bind_method(D_METHOD("get_plan"),&NativeGeneratedRegion::get_plan);
   ClassDB::bind_method(D_METHOD("get_revision"),&NativeGeneratedRegion::get_revision);
   ClassDB::bind_method(D_METHOD("capture_snapshot"),&NativeGeneratedRegion::capture_snapshot);
@@ -120,7 +129,19 @@ public:
   return result;
  }
  bool validate_snapshot(const godot::PackedByteArray &in)const{return bool(decode(in)["ok"]);}
- bool restore_snapshot(const godot::PackedByteArray &in){if(!validate_snapshot(in))return false;snapshot=in;index_roads();revision++;return true;}
+ bool restore_snapshot(const godot::PackedByteArray &in){
+  const godot::Dictionary plan=decode(in);
+  if(!bool(plan["ok"]))return false;
+  snapshot=in;
+  index_plan(plan);
+  ++revision;
+  emit_signal("plan_changed",revision);
+  return true;
+ }
+ godot::Vector3 get_place_position(int64_t id)const{
+  const auto it=place_positions.find(id);
+  return it==place_positions.end()?godot::Vector3(INFINITY,INFINITY,INFINITY):it->second;
+ }
  godot::PackedByteArray capture_snapshot()const{return snapshot;}
  godot::Dictionary get_plan()const{return decode(snapshot);}
  int64_t get_revision()const{return revision;}

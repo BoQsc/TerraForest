@@ -2,6 +2,10 @@
 
 The [world systems design](WORLD_SYSTEMS_DESIGN.md#current-priority-one-world-for-dedicated-hosting-and-continuous-zoom) records the authority, plugin, zoom and scale milestones. The first native place query and publication event serve the trader today. The next integration gate is the same terrain and water edit from local gameplay and a separate simulation-only host, including save and restart. Dedicated hosting, zoom continuity and hundreds of concurrent players remain unqualified.
 
+Packaged headless verification `20261120T100915069525Z` covers index invalidation, rejected input, event ordering relative to publication and exact snapshot roundtrip. With 1,024 road records the 64 full-plan reads took 45,308 microseconds total versus 12 microseconds for the indexed query. This benchmark measures local metadata reads only.
+
+The installed Cedar Vale trader route (`20261120T100935793737Z`) passed exit, re-entry, visible outfit, animation and unchanged-save checks. Per-lap p99 was 27.84 / 22.12 ms and maximum was 36.74 / 32.39 ms. The client still misses its 16.67 ms budget.
+
 ## November 20 frame pacing
 
 An extended Cedar Vale walk now measures ordinary terrain and the trader district.

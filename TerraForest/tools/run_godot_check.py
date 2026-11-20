@@ -35,7 +35,7 @@ BOUNDED_WATER_REPORTS = {
 # Export's audited contract suite emits small logs, except eight 1536x1536
 # RGB material sheets (under 64 MiB even before PNG compression).
 BOUNDED_CONTRACT_REPORTS = {
-    "terrain_block_contract", "terrain_block_catalog", "building_expansion",
+    "generated_region", "terrain_block_contract", "terrain_block_catalog", "building_expansion",
     "building_expansion_pack", "production_building_catalog", "door_dimensions",
 }
 

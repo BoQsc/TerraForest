@@ -12,7 +12,6 @@ var human:Node3D
 var prepared_human:Node3D
 var ride:=preload("res://addons/player_runtime/trader_ride.gd").new()
 var anchor:=Vector3.INF
-var seen_revision:=-1
 var remaining:=0.0
 var prior_mouse:=Input.MOUSE_MODE_CAPTURED
 
@@ -25,6 +24,8 @@ func _ready()->void:
 	add_child(ui)
 	ui.closed.connect(_closed)
 	ui.traded.connect(func():game.terrain.changed_since_save=true;game.player_hud.refresh())
+	game.generated_region.store.plan_changed.connect(_update_anchor)
+	_update_anchor(game.generated_region.revision())
 	_prepare_appearance()
 
 func _prepare_appearance()->void:
@@ -67,15 +68,13 @@ func _closed()->void:
 	game.player_hud.inventory_open=false;game.player_hud.enabled=true;game.player_hud.refresh()
 	game._clear_motion();Mouse.set_mode(game,prior_mouse)
 
+func _update_anchor(_revision:int)->void:
+	anchor=game.generated_region.store.get_place_position(PLACE)
+
 func _process(delta:float)->void:
 	remaining-=delta
 	if remaining>0:return
 	remaining=.25
-	var revision:int=game.generated_region.revision()
-	if revision!=seen_revision:
-		seen_revision=revision;anchor=Vector3.INF
-		for place:Dictionary in game.generated_region.store.get_plan().get("places",[]):
-			if place.id==PLACE:anchor=place.position;break
 	var at:Vector3=ride.spawn_position()
 	var resident:bool=anchor.is_finite() and game.terrain.world_ready and not game.terrain.pending_edit and not game.loading_active and not game.shutdown_requested
 	if resident and not ride.active():resident=game.player.global_position.distance_squared_to(at)<72*72 and game._actor_collision_ready(AABB(at-Vector3(.4,.3,.4),Vector3(.8,2.2,.8)))
