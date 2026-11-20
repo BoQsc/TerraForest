@@ -1,3 +1,28 @@
+## November 20 wet terrain deposition
+
+The local game scene failed when adding a two-metre solid sphere inside a
+water-filled excavation spanning a region boundary. Separate receiver
+searches for displaced cells exhausted four million cell visits in source
+run `20261120T154254413664Z`. Connected donors now share a search. The
+47-check equilibrium scope run `20261120T155226906743Z` includes a sealed
+donor that must keep its own water. Source run `20261120T154518556772Z`
+matched the additive brush between gameplay and a dedicated process through
+restart. This addresses wet deposition. The Cedar Vale barrel latency and
+presentation gates remain open.
+
+Installed pack `be9b96fd2076` passed the dedicated comparison
+(`20261120T160059285624Z`). Both edited probes were solid and dry, with
+36,032,293,119 ml retained. The host used one receiver search, 169,671 cell
+visits and 342.3 ms total. In the isolated Cedar Vale gameplay run
+`20261120T160157595319Z` the sea and lake barrel craters both contained
+water in the two-angle captures. Terrain-to-water publication took 136.3 ms
+at sea and 312.6 ms at the lake. Action-to-draw took 1187.2 ms and 655.6 ms
+respectively. Frame p99 in those windows was 47.3 ms and 57.7 ms. Mining
+took 178.9 ms from terrain to water. The lake exceeded the 250 ms regression
+check. The ocean equilibrium unit check passed from source
+(`20261120T160307273542Z`); its external script could not load its test-only
+base class in pack mode (`20261120T160140390790Z`).
+
 ## November 20 first local commit for enclosed basins
 
 Lake authoring and equilibrium now test the same shared face for a wet

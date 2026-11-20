@@ -1,5 +1,13 @@
 # Continuous volumetric water replacement
 
+**Wet deposition, November 20.** Filling a wet cross-boundary crater with
+solid terrain could exhaust the displacement work limit. The local game and
+dedicated host now conserve the finite water in that case. Keep this edit
+in the authority parity check. For shoreline latency, compare time spent
+in local commit, geometry publication and presentation on the same packaged
+barrel route before selecting another optimization. See the
+[foundation status](../../docs/WORLD_FOUNDATION_STATUS.md).
+
 **Enclosed basin first commit, November 20.** An entirely sampled connected
 basin can now publish a common level on its first local edit across a region
 boundary. Cedar Vale's large lake still takes the bounded donor path. At
