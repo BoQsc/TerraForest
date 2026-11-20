@@ -14,7 +14,7 @@ func run()->void:
 		game.teleport(Vector3(240,40,224))
 		check(await ready("authority_shore"),"Lake is resident")
 	if "--bucket-checkpoint" in OS.get_cmdline_user_args():
-		if failures==0:save_bucket_checkpoint(path)
+		if failures==0:await save_bucket_checkpoint(path)
 		check(FileAccess.get_sha256(path)==original,"Bucket checkpoint preserves the gameplay input")
 		game.terrain.shutdown();game.free()
 		await process_frame
@@ -54,7 +54,13 @@ func save_bucket_checkpoint(input_path:String)->void:
 	var checkpoint:PackedByteArray=archive.encode(original.sections)
 	check(not checkpoint.is_empty() and checkpoint.size()<=limit and archive.publish(output,checkpoint)==OK,"Publish matching gameplay inventory and water within the capture reservation")
 	archive.release()
-	print("GAME_BUCKET ",JSON.stringify({"slot":slot,"water_ml":game.lakes.water.total_water_ml()}))
+	var filled_quantity:int=game.lakes.water.total_water_ml()
+	if not await ready("gameplay_scoop"):check(false,"Gameplay publishes the scooped surface");return
+	var pour:Dictionary=game.lakes.bucket(Vector3(256.25,38,224.25),Vector3(256.25,33,224.25),true,inventory,slot,inventory.snapshot().revision)
+	if not pour.ok or not await ready("gameplay_pour"):check(false,"Gameplay publishes the poured surface");return
+	var after:Dictionary=game.lakes.water.raycast_surface(Vector3(256.25,38,224.25),Vector3(256.25,33,224.25))
+	check(after.hit and game.lakes.water.total_water_ml()==before and inventory.snapshot().slots==state.slots,"Gameplay pour restores quantity and slot contents")
+	if after.hit:print("GAME_BUCKET ",JSON.stringify({"slot":slot,"water_ml":filled_quantity,"poured_y":after.point.y,"poured_cell":[after.cell.x,after.cell.y,after.cell.z]}))
 
 func sample_commit()->void:
 	var token:int=preload("res://addons/volumetric_terrain/surface_tokens.gd").allocate()

@@ -13,12 +13,19 @@ var catalog:PackedByteArray
 var path:String
 var healthy:=false
 var last_edit_profile:Dictionary={}
+var occupancy_patch:RefCounted
+var occupancy_coordinate:=Vector3i.ZERO
+var occupancy_revision:=-1
+var occupancy_epoch:=-1
 # Requests are ordered. A bounded reply history covers delayed retries and
 # is checkpointed with terrain and water. Older IDs can never execute again.
 const RECEIPT_WINDOW:=32
 var operator_receipts:Array[PackedByteArray]=[]
 const RECEIPT_SECTION:="operator_receipt"
 const RECEIPT_SIZE:=36
+const SCOOP:=2
+const POUR:=258
+const BUCKET_RECEIPT_SIZE:=80
 
 func open(slot:String)->bool:
 	if not slot.is_valid_identifier() or slot.length()>64:return false
@@ -108,13 +115,16 @@ func sample_points(points:PackedVector3Array)->Dictionary:
 
 signal edit_committed(revision:int,bounds:AABB)
 
-func water_surface(origin:Vector3,end:Vector3)->Dictionary:
-	if not healthy:return {"ok":false,"reason":"World unavailable"}
+static func valid_bucket_ray(origin:Vector3,end:Vector3)->bool:
 	var extent:=Vector3(2000,256,2000)
 	for point:Vector3 in [origin,end]:
-		if not point.is_finite() or point!=point.clamp(Vector3.ZERO,extent):return {"ok":false,"reason":"Outside world"}
+		if not point.is_finite() or point!=point.clamp(Vector3.ZERO,extent):return false
 	var distance_squared:=origin.distance_squared_to(end)
-	if distance_squared<1e-12 or distance_squared>25:return {"ok":false,"reason":"Invalid bucket reach"}
+	return distance_squared>=1e-12 and distance_squared<=25
+
+func water_surface(origin:Vector3,end:Vector3)->Dictionary:
+	if not healthy:return {"ok":false,"reason":"World unavailable"}
+	if not valid_bucket_ray(origin,end):return {"ok":false,"reason":"Invalid bucket reach"}
 	var surface:Dictionary=water.raycast_surface(origin,end)
 	var reply:={"ok":true,"version":1,"revision":revision(),"hit":surface.hit}
 	if surface.hit:
@@ -130,34 +140,103 @@ func last_request_id()->int:
 	return 0 if operator_receipts.is_empty() else operator_receipts[-1].decode_u32(4)
 
 func restore_receipts(data:PackedByteArray)->bool:
-	if data.is_empty() or data.size()%RECEIPT_SIZE!=0 or data.size()>RECEIPT_WINDOW*RECEIPT_SIZE:return false
+	if data.is_empty() or data.size()>RECEIPT_WINDOW*BUCKET_RECEIPT_SIZE:return false
 	var restored:Array[PackedByteArray]=[]
 	var previous_id:=0
 	var previous_revision:=0
 	var saved_revision:=revision()
-	for offset in range(0,data.size(),RECEIPT_SIZE):
-		var receipt:=data.slice(offset,offset+RECEIPT_SIZE)
+	var offset:=0
+	while offset<data.size():
+		if data.size()-offset<4 or restored.size()>=RECEIPT_WINDOW:return false
+		var tag:=data.decode_u32(offset)
+		var is_bucket:=tag==SCOOP or tag==POUR
+		var length:=BUCKET_RECEIPT_SIZE if is_bucket else RECEIPT_SIZE
+		if data.size()-offset<length:return false
+		var receipt:=data.slice(offset,offset+length)
+		offset+=length
 		var id:=receipt.decode_u32(4)
 		var before:=receipt.decode_u32(8)
 		var after:=receipt.decode_u32(12)
-		if receipt.decode_u32(0) not in [brush_tag(0),brush_tag(1),brush_tag(2),brush_tag(3)] or id==0 or (previous_id!=0 and id!=previous_id+1):return false
+		if id==0 or (previous_id!=0 and id!=previous_id+1):return false
 		if before<previous_revision or after<before or after>before+1 or after>saved_revision:return false
-		if not valid_brush(receipt_point(receipt),receipt.decode_double(28)):return false
+		if is_bucket:
+			var amount:=receipt.decode_u32(76)
+			if after!=before or receipt.decode_u32(40)>=32 or amount<1 or amount>1000000:return false
+			if not valid_bucket_ray(receipt_point(receipt),receipt_point(receipt,28)):return false
+		else:
+			if tag not in [brush_tag(0),brush_tag(1),brush_tag(2),brush_tag(3)]:return false
+			if not valid_brush(receipt_point(receipt),receipt.decode_double(28)):return false
 		restored.append(receipt)
 		previous_id=id
 		previous_revision=after
 	operator_receipts=restored
 	return true
 
-static func receipt_point(receipt:PackedByteArray)->Vector3:
-	return Vector3(receipt.decode_float(16),receipt.decode_float(20),receipt.decode_float(24))
+static func receipt_point(receipt:PackedByteArray,offset:int=16)->Vector3:
+	return Vector3(receipt.decode_float(offset),receipt.decode_float(offset+4),receipt.decode_float(offset+8))
 
 static func valid_brush(point:Vector3,radius:float)->bool:
 	if not point.is_finite() or not is_finite(radius) or radius<=0 or radius>8:return false
 	return AABB(Vector3.ZERO,Vector3(2000,256,2000)).encloses(AABB(point-Vector3.ONE*radius,Vector3.ONE*radius*2))
 
 static func receipt_reply(receipt:PackedByteArray)->Dictionary:
-	return {"ok":true,"version":1,"request_id":receipt.decode_u32(4),"revision":receipt.decode_u32(12),"changed":receipt.decode_u32(8)!=receipt.decode_u32(12)}
+	var reply:={"ok":true,"version":1,"request_id":receipt.decode_u32(4),"revision":receipt.decode_u32(12),"changed":receipt.decode_u32(8)!=receipt.decode_u32(12)}
+	if receipt.size()==BUCKET_RECEIPT_SIZE:
+		reply.changed=true
+		reply.water_ml=receipt.decode_u32(76)
+	return reply
+
+func inventory_digest()->PackedByteArray:
+	var hash:=HashingContext.new()
+	hash.start(HashingContext.HASH_SHA256)
+	hash.update(inventory.capture_storage_snapshot())
+	return hash.finish()
+
+func remember(receipt:PackedByteArray)->void:
+	if operator_receipts.size()==RECEIPT_WINDOW:operator_receipts.pop_front()
+	operator_receipts.append(receipt)
+
+signal bucket_committed(request_id:int,slot:int,poured:bool,water_ml:int)
+
+func transfer_bucket(id:int,pour:bool,origin:Vector3,end:Vector3,slot:int,expected:int,loadout:String)->Dictionary:
+	if not healthy:return {"ok":false,"reason":"World unavailable"}
+	if not valid_bucket_ray(origin,end) or slot<0 or slot>=32 or id<1 or id>0xffffffff or expected<0 or expected>0xffffffff:
+		return {"ok":false,"reason":"Invalid bucket request"}
+	if loadout.length()!=64 or not loadout.is_valid_hex_number(false) or loadout[0] in ["-","+"]:return {"ok":false,"reason":"Invalid loadout digest"}
+	var digest:=loadout.hex_decode()
+	var receipt:=PackedByteArray()
+	receipt.resize(BUCKET_RECEIPT_SIZE)
+	receipt.encode_u32(0,POUR if pour else SCOOP)
+	receipt.encode_u32(4,id)
+	receipt.encode_u32(8,expected)
+	receipt.encode_u32(12,expected)
+	for axis in 3:
+		receipt.encode_float(16+4*axis,origin[axis])
+		receipt.encode_float(28+4*axis,end[axis])
+	receipt.encode_u32(40,slot)
+	for index in digest.size():receipt[44+index]=digest[index]
+	var last:=last_request_id()
+	if id<=last:
+		var index:=operator_receipts.size()-1-(last-id)
+		if index<0:return {"ok":false,"reason":"Receipt expired","last_request_id":last}
+		var prior:=operator_receipts[index]
+		if prior.slice(0,76)==receipt.slice(0,76):return receipt_reply(prior)
+		return {"ok":false,"reason":"Request ID already committed with different arguments"}
+	if id!=last+1:return {"ok":false,"reason":"Unexpected request ID"}
+	if expected!=revision() or inventory_digest()!=digest:return {"ok":false,"reason":"Stale terrain or inventory"}
+	var inventory_revision:int=inventory.snapshot().revision
+	var result:Dictionary=water.transfer_bucket(origin,end,pour,inventory,slot,inventory_revision)
+	if result.get("pending",false):
+		var request:Dictionary=water.next_request()
+		if not request.is_empty():
+			var status:=advance_water_patch(request.coordinate,expected,epoch(),64)
+			if status<0:return {"ok":false,"reason":"Water occupancy preparation failed"}
+			if status==1:result=water.transfer_bucket(origin,end,pour,inventory,slot,inventory_revision)
+	if not result.ok:return result
+	receipt.encode_u32(76,result.water_ml)
+	remember(receipt)
+	bucket_committed.emit(id,slot,pour,result.water_ml)
+	return receipt_reply(receipt)
 
 # The low byte is the record format. Material zero denotes excavation.
 static func brush_tag(deposit_material:int)->int:return 1 | (deposit_material << 8)
@@ -209,13 +288,27 @@ func _edit_brush(point:Vector3,radius:float,expected:int,request_id:int,deposit_
 		operator_receipt.encode_float(20,point.y)
 		operator_receipt.encode_float(24,point.z)
 		operator_receipt.encode_double(28,radius)
-		if operator_receipts.size()==RECEIPT_WINDOW:operator_receipts.pop_front()
-		operator_receipts.append(operator_receipt)
+		remember(operator_receipt)
 	var response:=receipt_reply(operator_receipts[-1]) if request_id!=0 else sample(point)
 	last_edit_profile.total_us=Time.get_ticks_usec()-began
 	if edit.changed[0]:
 		edit_committed.emit(revision(),bounds)
 	return response
+
+func advance_water_patch(coordinate:Vector3i,rev:int,generation:int,budget:int)->int:
+	if occupancy_patch==null or coordinate!=occupancy_coordinate or rev!=occupancy_revision or generation!=occupancy_epoch:
+		occupancy_patch=ClassDB.instantiate("NativeWaterTerrainPatch")
+		if not occupancy_patch.configure(coordinate):
+			occupancy_patch=null
+			return -1
+		occupancy_coordinate=coordinate
+		occupancy_revision=rev
+		occupancy_epoch=generation
+	var status:int=occupancy_patch.sample_terrain(core,budget,rev,generation)
+	if status==0:return 0
+	var accepted:bool=status==1 and water.accept_patch(occupancy_patch)
+	occupancy_patch=null
+	return 1 if accepted else -1
 
 func _resolve_water()->bool:
 	var deadline:=Time.get_ticks_msec()+30000
@@ -225,14 +318,10 @@ func _resolve_water()->bool:
 		var request:Dictionary=water.next_request()
 		if not request.is_empty():
 			var started:=Time.get_ticks_usec()
-			var patch:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
-			if not patch.configure(request.coordinate):return false
-			var status:=0
-			while status==0 and Time.get_ticks_msec()<deadline:
-				status=patch.sample_terrain(core,2048,rev,generation)
-			if status!=1 or not water.accept_patch(patch):return false
+			var status:=advance_water_patch(request.coordinate,rev,generation,2048)
+			if status<0:return false
 			last_edit_profile.patch_us+=Time.get_ticks_usec()-started
-			last_edit_profile.patches+=1
+			if status==1:last_edit_profile.patches+=1
 		elif water.runtime_state().settling_regions==0:
 			return true
 		else:

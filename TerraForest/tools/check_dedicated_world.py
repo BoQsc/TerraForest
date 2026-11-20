@@ -67,6 +67,34 @@ def check_query_burst(owner, lines):
                               for mode, times in timings.items()}}
 
 
+def measure_bucket_transfers(owner, lines):
+    def request(command):
+        owner.stdin.write(command+"\n")
+        owner.stdin.flush()
+        return lines.get(timeout=10)
+
+    inventory = request("v1 inventory")
+    slot = next(i for i,row in enumerate(inventory["slots"]) if row["item"]==401)
+    before = request(samples()[2])
+    digest_before = inventory["digest"]
+    timings = {"scoop": [], "pour": []}
+    request_id = 2
+    for _ in range(32):
+        for action in timings:
+            command = f"v1 {request_id} {action} 256.25 38 224.25 256.25 33 224.25 {slot} 1 {digest_before}"
+            started = time.perf_counter_ns()
+            ack = request(command)
+            timings[action].append((time.perf_counter_ns()-started)/1000)
+            assert ack.get("water_ml")==1_000_000 and ack["request_id"]==request_id, ack
+            state = request("v1 inventory")
+            assert state["slots"][slot]["water_ml"]==(1_000_000 if action=="scoop" else 0)
+            digest_before = state["digest"]
+            request_id += 1
+    assert digest_before==inventory["digest"] and request(samples()[2])["water_ml"]==before["water_ml"]
+    return {"samples_per_action":32, "operator_round_trip_us":{
+        action:{"first":values[0],"median":median(values),"maximum":max(values)} for action,values in timings.items()}}
+
+
 def run(engine, packaged, report, expected_archive=None):
     with tempfile.TemporaryDirectory(prefix="terraforest-authority-") as temp:
         env = dict(os.environ, APPDATA=temp)
@@ -127,6 +155,7 @@ def run(engine, packaged, report, expected_archive=None):
                     assert lines.get(timeout=10) == edit_reply
                     report["idle_working_set_bytes"] = idle_metrics["working_set_bytes"]
                     report["peak_working_set_after_edit_bytes"] = with_metrics.sample()["peak_working_set_bytes"]
+                    report["resident_bucket_transfers"] = measure_bucket_transfers(owner,lines)
                     # Windows permits reading and copying the canonical archive
                     # through this handle but denies the final replacement.
                     with archive.open("rb") as pinned:
@@ -251,12 +280,41 @@ def run(engine, packaged, report, expected_archive=None):
         live_bytes = sum(p.stat().st_size for p in Path(temp).rglob("*") if p.is_file())
         admit(ROOT, report_bytes=65536, scratch_bytes=16 << 20, world_bytes=live_bytes+2*checkpoint_path.stat().st_size)
         bucket_host = host[:-1]+["--authority-slot=BucketCheck"]
-        for commands in (["v1 inventory",*samples(),"save","quit"], ["v1 inventory",*samples(),"quit"]):
-            reopened = invoke(bucket_host,commands,"AUTHORITY ")
-            contents = reopened[1]["slots"][bucket["slot"]]
-            assert contents["count"] == 1 and contents["water_ml"] == 1_000_000
-            assert reopened[2]["water_ml"] == bucket["water_ml"] == original[1]["water_ml"]-1_000_000
-            if "save" in commands:assert reopened[-1]["ok"]
+        imported = invoke(bucket_host, ["v1 inventory",samples()[0],"quit"], "AUTHORITY ")
+        slot = bucket["slot"]
+        assert imported[1]["slots"][slot]["water_ml"] == 1_000_000
+        assert imported[2]["water_ml"] == bucket["water_ml"] == original[1]["water_ml"]-1_000_000
+        segment = "256.25 38 224.25 256.25 33 224.25"
+        full = imported[1]["digest"]
+        empty = original[-2]["digest"]
+        pour = f"v1 1 pour {segment} {slot} 0 {full}"
+        scoop = f"v1 2 scoop {segment} {slot} 0 {empty}"
+        noop = "v1 3 excavate 240 230 224 1 0"
+        transfers = invoke(bucket_host, [
+            pour.replace(full,empty),pour,pour,"v1 inventory",samples()[0],
+            "v1 water-surface "+segment,scoop.replace(empty,full),scoop,scoop,noop,"v1 inventory",samples()[0],"save","quit"], "AUTHORITY ")
+        (_, stale_pour, poured, pour_retry, empty_inventory, full_lake, poured_surface,
+         stale_scoop, scooped, scoop_retry, following_edit, full_inventory, scooped_lake, saved) = transfers
+        assert not stale_pour["ok"] and not stale_scoop["ok"]
+        assert poured==pour_retry and poured.get("water_ml")==1_000_000, poured
+        assert empty_inventory["digest"]==empty and full_lake["water_ml"]==original[1]["water_ml"]
+        assert poured_surface["cell"]==bucket["poured_cell"] and math.isclose(poured_surface["point"][1],bucket["poured_y"],abs_tol=1e-4), (poured_surface,bucket)
+        assert scooped==scoop_retry and scooped.get("water_ml")==1_000_000 and following_edit["ok"], scooped
+        assert full_inventory["digest"]==full and scooped_lake["water_ml"]==bucket["water_ml"] and saved["ok"]
+        reopened = invoke(bucket_host,[pour,scoop,noop,pour.replace(" pour "," scoop "),"v1 inventory",samples()[0],"quit"], "AUTHORITY ")
+        assert reopened[0]["last_request_id"]==3 and reopened[1:4]==[poured,scooped,following_edit]
+        assert not reopened[4]["ok"] and reopened[5]["slots"]==imported[1]["slots"] and reopened[6]==imported[2]
+        report["bucket_commands"] = dict(pour=poured,scoop=scooped,poured_surface=poured_surface,reloaded=True)
+        dry, = invoke(bucket_host,["sample 1030.25 80 1030.25","quit"],"AUTHORITY ")[1:]
+        y = dry["height"] + 0.5
+        cold = f"v1 4 pour 1030.25 {y+3} 1030.25 1030.25 {y} 1030.25 {slot} 0 {full}"
+        cold_run = invoke(bucket_host,[cold,"v1 inventory",samples()[0],*([cold]*256),"v1 inventory",samples()[0],"quit"],"AUTHORITY ")
+        assert cold_run[1].get("pending") and cold_run[2]["digest"]==full and cold_run[3]["water_ml"]==bucket["water_ml"]
+        attempts = cold_run[4:-2]
+        success = next(i for i,row in enumerate(attempts) if row["ok"])
+        assert all(row.get("pending") for row in attempts[:success]) and all(row==attempts[success] for row in attempts[success:])
+        assert cold_run[-2]["digest"]==empty and cold_run[-1]["water_ml"]==original[1]["water_ml"]
+        report["cold_bucket"] = dict(pending_replies=success+1, transferred_ml=attempts[success]["water_ml"])
         report["bucket_save_reload"] = bucket
         report.update(before=original[1:4], after=changed, reloaded=reloaded, gameplay=game,
                       initial_archive_sha256=original_digest.hex(), passed=True)

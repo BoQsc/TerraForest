@@ -34,7 +34,13 @@ func command(args:PackedStringArray)->Dictionary:
 	if args==PackedStringArray(["edit-profile"]):return {"ok":true,"profile":world.last_edit_profile}
 	if args==PackedStringArray(["v1","inventory"]):
 		var state:Dictionary=world.inventory.snapshot()
-		return {"ok":true,"version":1,"slots":state.slots,"session_revision":state.revision}
+		return {"ok":true,"version":1,"slots":state.slots,"session_revision":state.revision,"digest":world.inventory_digest().hex_encode()}
+	if args.size()==12 and args[0]=="v1" and args[2] in ["scoop","pour"]:
+		for index in [1,9,10]:
+			if not args[index].is_valid_int():return {"ok":false,"reason":"Invalid bucket request"}
+		for index in range(3,9):
+			if not args[index].is_valid_float():return {"ok":false,"reason":"Invalid position"}
+		return world.transfer_bucket(int(args[1]),args[2]=="pour",Vector3(float(args[3]),float(args[4]),float(args[5])),Vector3(float(args[6]),float(args[7]),float(args[8])),int(args[9]),int(args[10]),args[11])
 	if args.size()==8 and args[0]=="v1" and args[1]=="water-surface":
 		for index in range(2,8):
 			if not args[index].is_valid_float():return {"ok":false,"reason":"Invalid position"}

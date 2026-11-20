@@ -20,6 +20,8 @@ lakes. Saving is explicit. A closed input pipe or `quit` releases the lease.
 | `v1 sample X Y Z [X Y Z ...]` | Read one to eight world positions in order, returning one terrain revision and one total water quantity for the set |
 | `v1 water-surface X Y Z END_X END_Y END_Z` | Cast a bucket-length segment against the resident water surface. A hit returns world position, normal and owning cell as numeric triples, alongside the terrain revision. |
 | `v1 inventory` | Read the trusted local operator's 32 gameplay slots, including bucket contents and durability. The native inventory revision is scoped to the current process. |
+| `v1 ID scoop X Y Z END_X END_Y END_Z SLOT REV DIGEST` | Collect water into the selected bucket. Pass the terrain revision and the loadout digest from the inventory query. |
+| `v1 ID pour X Y Z END_X END_Y END_Z SLOT REV DIGEST` | Place water using the same five-metre segment and inventory preconditions. |
 | `excavate X Y Z R REV` | Excavate a sphere against the specified revision and return the sample after water settles |
 | `v1 ID excavate X Y Z R REV` | Commit an ordered operator request and return its ID, resulting revision and changed flag |
 | `v1 ID deposit X Y Z R MATERIAL REV` | Add solid terrain, reconcile displaced water and commit under the same request stream. Material IDs 1 through 3 are accepted. |
@@ -32,10 +34,16 @@ One trusted operator owns the ordered stream for a slot. Start at
 A retry of any of the last 32 committed IDs with identical arguments
 returns its original acknowledgement. Different arguments or skipped IDs
 are rejected. An expired ID returns the high-water mark so the caller can
-resynchronize. A successful explicit save publishes these 36-byte records
-with terrain and water, using at most 1,152 bytes of receipt payload. A
+resynchronize. A successful explicit save publishes receipts with terrain,
+water and inventory. Brush records take 36 bytes and bucket records take 80.
+The combined history uses at most 2,560 bytes of receipt payload. A
 legacy single receipt seeds the window. Two-section archives start at ID
 zero. After an unsaved exit resume at the high-water mark in the reopened slot.
+
+Bucket commands use the SHA-256 digest of the native loadout snapshot, which
+survives restart. The response reports the actual transferred millilitres.
+A pending occupancy request consumes no command ID. The caller can retry it.
+The bucket commit signal fires after inventory, water and receipt agree.
 
 The current format accepts inline terrain, native volumetric water, the
 gameplay `player_loadout` and the optional operator receipt. On opening a
