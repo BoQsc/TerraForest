@@ -1,5 +1,11 @@
 # Continuous volumetric water replacement
 
+Installed brush-admission build `2edffbb6`, run `20261120T120625031936Z`,
+reproduced the four first-publication failures. The sea centre ray missed.
+At the lake, immediate depth, bank contact and the 250 ms deadline failed.
+Sea/lake/mining times from terrain publication were 201.207/318.864/195.116 ms.
+The coastal click-retention fix does not close the barrel or contact gates.
+
 **First-publication regression, November 20.** The Cedar Vale packaged route
 `20261120T104316302094Z` captures each blast from both sides before broader
 relaxation. In `player_lake_after_reverse.png` a straight edge crosses the
