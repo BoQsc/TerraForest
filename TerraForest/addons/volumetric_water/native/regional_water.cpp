@@ -376,6 +376,10 @@ int NativeRegionalWater::prepare_ocean_edit_status(const AABB &bounds){
     Vector3i lo=Vector3i((area.position/4.0).floor()).max(Vector3i(0,7,0));
     Vector3i hi=Vector3i(((area.position+area.size)/4.0).floor()).min(Vector3i(499,10,499));
     if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return OK;
+    // The ocean presentation switches one XZ column at a time. A cut at the
+    // waterline needs the complete four-layer collar used by that switch.
+    if(bounds.position.y<=40.0 && bounds.position.y+bounds.size.y>=40.0 &&
+       (hi.x-lo.x+1)*(hi.z-lo.z+1)<=512/4){lo.y=7;hi.y=10;}
     std::vector<Key> keys;
     for(int z=lo.z;z<=hi.z;++z)for(int x=lo.x;x<=hi.x;++x){
         if(std::min({x,z,499-x,499-z})>=35)continue;
@@ -758,6 +762,21 @@ void NativeRegionalWater::settle_after_edit(const AABB &bounds){
     if(hi.x<lo.x||hi.y<lo.y||hi.z<lo.z)return;
     lo=position(region_key(lo));hi=position(region_key(hi));
     if(int64_t(hi.x-lo.x+1)*(hi.y-lo.y+1)*(hi.z-lo.z+1)>512)return;
+    // A resident shoreline also depends on the published ocean mask. Include
+    // its unpublished reconstruction collar in this edit's priority queue,
+    // even when a collar region did not change its own quantity or surface.
+    if(surrounding_ocean && bounds.position.y<=40.0 && bounds.position.y+bounds.size.y>=40.0){
+        for(int z=std::max(0,lo.z-1);z<=std::min(499,hi.z+1);++z)
+        for(int x=std::max(0,lo.x-1);x<=std::min(499,hi.x+1);++x){
+            if(std::min({x,z,499-x,499-z})>=35)continue;
+            for(int y=7;y<=10;++y){
+                Key k=key(Vector3i(x,y,z));
+                if(!regions.count(k)||published_regions.count(k))continue;
+                urgent_meshes.insert(k);
+                if(mesh_set.insert(k).second)meshes.push_back(k);
+            }
+        }
+    }
     // A shoreline cut can expose terrain on the dry side of the last stored
     // water region. Sample those receivers up to the highest nearby wet layer.
     // The connected-face solve decides whether any of them may actually fill.

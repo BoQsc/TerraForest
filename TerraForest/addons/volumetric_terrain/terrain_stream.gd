@@ -1099,6 +1099,12 @@ func _stage_contact(key:Vector3i,entry:Dictionary,data:Dictionary)->void:
 
 func _activate_contact()->void:
 	if joint_edit_pending() or not _contact_checked or _contact_visible or _contact_accepted_ticket!=edit_ticket:return
+	# An exact owner can arrive ahead of its temporary contact surface.
+	# Never let a late preview cover a replacement that is already live.
+	for id:Vector3i in _contact_entries:
+		if staged_batch.get(id,{}).get("local_active",false):
+			_retire_contact()
+			return
 	for id:Vector3i in _contact_entries:
 		_set_active(tiles[id],false)
 		_set_active(_contact_entries[id],true)

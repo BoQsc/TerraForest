@@ -3,6 +3,8 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
+The [packaged cut and ocean contact results](WORLD_FOUNDATION_STATUS.md#packaged-cut-and-detailed-ocean-contact) record the field speedup, detailed sea handoff and failed section-sizing trial. The two-frame gate remains open.
+
 The [changed-triangle qualification](WORLD_FOUNDATION_STATUS.md#changed-terrain-triangles-and-the-two-frame-edit-gate) records the complete 36-tile comparison and the remaining publication delay.
 
 The [packaged resident geometry trial](WORLD_FOUNDATION_STATUS.md#resident-terrain-geometry-and-shoreline-contact) reduced the full cut to 134 ms. Both barrel routes still miss the two-frame gate.

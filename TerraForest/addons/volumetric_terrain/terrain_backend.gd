@@ -1616,7 +1616,6 @@ func _run() -> void:
 				var surface:=_resident_edit_surface(job,after_stats.decode_u32(12))
 				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],"resident_surface":surface,
 					"count": job["tiles"].size(), "contact_ms":contact_ms, "contact_parallel":contact_task>=0, "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
-				if contact_task>=0:WorkerThreadPool.wait_for_task_completion(contact_task)
 				# Stream finished patches to main-thread staging immediately. Worker
 				# builds and resource preparation OVERLAP instead of running in series.
 				var build_total: float = 0.0
@@ -1681,6 +1680,9 @@ func _run() -> void:
 							support[index]["survivors"]=helper.filter_ground(snapshot.rows,prepared.ids)
 							support[index]["retired"]=helper.filter_ground(snapshot.rows,prepared.ids,true)
 				support_ms+=(Time.get_ticks_usec()-support_started)/1000.0
+				# The resident preview owns a private snapshot. Join only before closing
+				# the ticket so exact owners can be built while it is in flight.
+				if contact_task>=0:WorkerThreadPool.wait_for_task_completion(contact_task)
 				_push({"kind": "edit_done", "epoch": job["epoch"], "ticket": job["ticket"],
 					"stats": after_stats, "build_total_ms": build_total,"support":support,"support_ms":support_ms, "worker_finished_us": Time.get_ticks_usec()})
 		elif kind == "relight":

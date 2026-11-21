@@ -593,12 +593,36 @@ float World::sample(int x,int y,int z,u8*mat)const{
 static bool generate_page(const World &w,int px,int py,int pz,Page &page){
  page.key=page_key(px,py,pz);page.d=(i16*)tr_alloc(PAGE_SAMPLES*sizeof(i16));page.mat=(u8*)tr_alloc(PAGE_SAMPLES);
  if(!page.d||!page.mat){if(page.d)tr_free(page.d);if(page.mat)tr_free(page.mat);page.d=nullptr;page.mat=nullptr;tr_oom=true;return false;}
- zero_bytes(page.mat,PAGE_SAMPLES);
+ // A page is contained in one 32 m geological cell. Outside the bounded
+ // vein and the two authored mine deposits the original material is zero,
+ // apart from asphalt at the surface. Resolve these bounds once per page.
+ const int x0=px*16,y0=py*16,z0=pz*16;
+ const auto vein=geological_vein(px/2,py/2,pz/2,u32(w.seed));
+ const float reach=vein.radius+.75f;
+ bool mine=false;
+ if(w.generator_id>=RESOURCE_MINE_GENERATOR_ID&&w.caves.n>=7){
+  for(int i:{2,4}){
+   V3 c=w.caves[i].a+V3{-6.f,-1.f,0};
+   if(x0<=c.x+6&&x0+15>=c.x-6&&y0<=c.y+3&&y0+15>=c.y-3&&z0<=c.z+3&&z0+15>=c.z-3)mine=true;
+  }
+ }
+ const bool cave_free=w.indexed_caves==w.caves.n&&x0+15<2048&&z0+15<2048
+     &&w.cave_columns[(x0>>6)+32*(z0>>6)]==0;
+ const bool empty_field=w.generator_id==MATERIAL_FIELD_GENERATOR_ID;
  for(int z=0;z<16;z++)for(int x=0;x<16;x++){
-  float wx=float(px*16+x),wz=float(pz*16+z),h=w.edit_height(px*16+x,pz*16+z);
+  int wx=x0+x,wz=z0+z;float h=w.edit_height(wx,wz);
+  bool asphalt=y0<=h+1.f&&y0+15>=h-1.5f&&w.regional_asphalt(wx,wz);
+  bool ore=w.has_geology()&&(mine||(wx>=vein.start.x-reach&&wx<=vein.end.x+reach
+      &&wz>=vein.start.z-reach&&wz<=vein.end.z+reach&&y0<=vein.end.y+reach&&y0+15>=vein.start.y-reach));
+  float side=mx(mx(-float(wx),float(wx-WORLD)),mx(-float(wz),float(wz-WORLD)));
   for(int y=0;y<16;y++){
-   int index=x+16*(z+16*y);V3 point={wx,float(py*16+y),wz};page.d[index]=quant(w.base(point,h));
-   page.mat[index]=w.base_material(point,h);
+   int index=x+16*(z+16*y);float wy=float(y0+y);V3 point={float(wx),wy,float(wz)};
+   float density=empty_field?SDF_BAND:(cave_free?mx(mx(wy-h,1.f-wy),mx(wy-255.f,side)):w.base(point,h));
+   page.d[index]=quant(density);
+   u8 id=0;
+   if(asphalt&&wy>=h-1.5f&&wy<=h+1.f)id=4;
+   else if(ore){float weight=w.ore_weight(point,h);id=weight>.5f?8:(weight<-.5f?9:0);}
+   page.mat[index]=id;
   }
  }
  return true;

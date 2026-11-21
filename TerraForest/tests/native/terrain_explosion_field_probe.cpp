@@ -75,8 +75,42 @@ static bool contact_packet_matches_probes(){
  w.release();return ok&&live_allocations==0;
 }
 
+// Compare bulk page initialization against the original scalar generator,
+// including cave/mine descriptors, a road, and the sealed world boundaries.
+static bool generated_pages_match_scalar(){
+ for(int generator:{1,3,5,6,12,31}){
+  World w;w.init(1703,generator);
+  bool ok=true;
+  auto check=[&](int px,int py,int pz){
+   Page *page=w.ensure(px,py,pz);
+   if(!page)return false;
+   for(int z=0;z<16;z++)for(int x=0;x<16;x++){
+    float wx=float(px*16+x),wz=float(pz*16+z),h=w.edit_height(int(wx),int(wz));
+    for(int y=0;y<16;y++){
+     V3 p{wx,float(py*16+y),wz};int at=x+16*(z+16*y);
+     float density=clampf(w.base(p,h),-SDF_BAND,SDF_BAND)*SDF_SCALE;
+     if(page->d[at]!=i16(density>=0?density+.5f:density-.5f)||page->mat[at]!=w.base_material(p,h))return false;
+    }
+   }
+   return true;
+  };
+  ok=check(0,0,0)&&check(WORLD/16,15,WORLD/16)&&check(62,1,62);
+  for(int i=0;ok&&i<w.caves.n;i++){
+   V3 c=w.caves[i].a;
+   ok=check(int(c.x)/16,int(c.y)/16,int(c.z)/16);
+  }
+  if(ok&&w.regional_roads&&w.site_count>1){
+   V3 p=w.sites[0].position;ok=check(int(p.x)/16,int(w.height(p.x,p.z))/16,int(p.z)/16);
+  }
+  w.release();if(!ok||live_allocations)return false;
+ }
+ return true;
+}
+
 int main(int argc,char **argv){
  int failures=common_edit_checks();
+ bool pages_ok=generated_pages_match_scalar();failures+=!pages_ok;
+ printf("{\"case\":\"bulk_page_scalar_parity\",\"passed\":%s}\n",pages_ok?"true":"false");
  failures+=!rejected_cut_preserves_world();
  bool capacity_ok=full_world_edit()&&live_allocations==0;
  printf("{\"case\":\"full_world_edit\",\"passed\":%s}\n",capacity_ok?"true":"false");

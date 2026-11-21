@@ -441,6 +441,7 @@ func finish_timing()->void:
   blast_metrics[timing_phase].first_target_draw=target
   check(target.matched,timing_phase+" first crater contact matches the rendered surface and lowered collider")
   if "--two-frame-edits" in OS.get_cmdline_user_args():
+   check(detailed.matched and detailed.floor_to_water_frames==0,timing_phase+" publishes detailed water with the first changed collider")
    check(detailed.matched and detailed.frames<=2 and detailed.ms<=33.334,timing_phase+" draws the detailed water mesh and matching terrain within two frames")
    check(target.matched and target.floor_to_water_frames==0,timing_phase+" publishes crater collision and water on the same draw")
    check(target.matched and target.frames<=2 and target.ms<=33.334,timing_phase+" first matching collider and rendered water meet the two-frame deadline")
@@ -458,6 +459,10 @@ func local_response(point:Vector3,label:String)->void:
  while Time.get_ticks_msec()<deadline:
   if terrain_published_us>0 and game.lakes._local_response_started_us>=blast_started and not game.lakes._local_response_pending and not game.lakes._local_publication_pending:
    var latency:float=game.lakes._local_response_us/1000.0
+   # Let the accepted scene reach its first draw before running dozens of
+   # synchronous waterline rays. Keep checking that first rendered revision.
+   if not shore_draw.is_empty() and DisplayServer.get_name()!="headless":
+    await RenderingServer.frame_post_draw
    timing_diagnostic("first publication probes")
    if "--water-owner-audit" in OS.get_cmdline_user_args():
     audit_meshes_after=resident_render_meshes()
@@ -1240,6 +1245,10 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
  var after:=brush_mesh_owners(view,center,radius)
  var counts:={"replaced":0,"identical":0,"attributes_only":0,"changed_in_frustum":0,"changed_outside":0,"retained":0,"tiles_with_replacements":0,"resident_nodes_reused":0}
  var collision:={"old_triangles":0,"new_triangles":0,"unchanged_triangles":0,"changed_axis_aligned":0,"old_shapes":0,"new_shapes":0,"shared_shapes":0,"stable_cell_triangles":{}}
+ var verify_sections:bool=radius>=32 and game.terrain.backend.region_terrain
+ var verified_sections:=0
+ var section_mismatches:=0
+ var inactive_stale_sections:=0
  var keys:=before.keys()
  for key in after:
   if not before.has(key):keys.append(key)
@@ -1258,6 +1267,28 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
   for id in ids:
    var a:Dictionary=old.get(id,{})
    var b:Dictionary=current.get(id,{})
+   if verify_sections and key.z<=32 and not b.is_empty():
+    const SectionCodec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
+    var native:RefCounted=game.terrain.backend.native
+    var section_epoch:int=native.execute(SectionCodec.command(13)).decode_u32(12)
+    var bottom:=int(id)%256
+    var packet:PackedByteArray=native.build_owned_region(key.x,key.y,key.z,1,bottom,bottom+32,section_epoch)
+    var expected:Dictionary=SectionCodec.decode_mesh(packet)
+    if expected.get("arrays")!=b.arrays:
+     var tile:Dictionary=game.terrain.tiles[key]
+     var child:Dictionary=tile.bricks[id]
+     var body:StaticBody3D=child.body
+     # Inactive LOD tiles may retain the previous revision until requested.
+     # A stale copy is safe here only if neither rendering nor physics uses it.
+     if not tile.active and tile.dirty and tile.stamp!=game.terrain.stamps[key] and not child.node.is_visible_in_tree() and (body==null or body.collision_layer==0):
+      inactive_stale_sections+=1
+     else:
+      section_mismatches+=1
+      var differing:Array[int]=[]
+      for slot in Mesh.ARRAY_MAX:
+       if not expected.has("arrays") or expected.arrays[slot]!=b.arrays[slot]:differing.append(slot)
+      print("AUTHORING_SECTION_DIFFERENCE ",key," bottom=",bottom," channels=",differing)
+    verified_sections+=1
    if a.get("node",0)==b.get("node",0):
     if a.get("mesh",0)==b.get("mesh",0):
      counts.retained+=1
@@ -1302,6 +1333,9 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
   if replacements>0:counts.tiles_with_replacements+=1
  check(counts.changed_in_frustum>0,"Brush changes installed mesh arrays inside the camera frustum")
  counts.render_sha256=render_hash.finish().hex_encode()
+ if verify_sections:
+  print("AUTHORING_SECTION_PARITY ",JSON.stringify({"checked":verified_sections,"inactive_stale":inactive_stale_sections,"mismatches":section_mismatches}))
+  check(verified_sections>0 and section_mismatches==0,"All published fine sections match independent reconstruction and stale copies are inactive")
  print("AUTHORING_DEPENDENCIES ",JSON.stringify(counts))
  if "--authoring-collision-reuse" in OS.get_cmdline_user_args():
   check(collision.old_triangles>0 and collision.new_triangles>0,"Compared installed physics triangles across publication")
@@ -1427,13 +1461,17 @@ func run()->void:
  if original.is_empty() or (not expected_source.is_empty() and original!=expected_source):
   check(false,"Player source matches the pinned water workload");quit(1);return
  ProjectSettings.set_setting("terraforest/offscreen_session",true)
- preload("res://addons/world_runtime/session_options.gd").set_arguments(PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors"]),true)
+ var session_args:=PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors"])
+ var region_trial:=OS.get_cmdline_user_args().has("--region-terrain")
+ if region_trial:session_args.append("--region-terrain")
+ preload("res://addons/world_runtime/session_options.gd").set_arguments(session_args,true)
  route_scene_start=Time.get_ticks_usec()
  game=load("res://demo/world.tscn").instantiate()
  if "--authoring-native-profile" in OS.get_cmdline_user_args():
   game.terrain.backend=BrushProfileBackend.new()
   game.terrain.backend.profile_regions=true
  game.temporary_world=true;root.add_child(game)
+ if region_trial:check(game.terrain.backend.region_terrain,"Packaged route enabled separate terrain sections")
  var qualification:bool="--qualification-route" in OS.get_cmdline_user_args()
  if qualification:begin_route_capture()
  check(await ready("initial"),"Actual player world loads read-only")
