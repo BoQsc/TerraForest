@@ -206,6 +206,7 @@ var last_collision_match_ms: float = 0.0
 var last_mesh_upload_ms: float = 0.0
 var last_commit_ms: float = 0.0
 var last_density_tiles: int = 0
+var last_untouched_surface_tiles:int=0
 var last_relight_tiles: int = 0
 var slowest_stage: String = "none"
 var slowest_stage_ms: float = 0.0
@@ -614,6 +615,7 @@ func _receive(result: Dictionary) -> void:
 			result.triangles=triangles
 			result.retain_geometry=changed.is_empty()
 		if result.get("retain_geometry",false):
+			if result.get("untouched_surface",false):last_untouched_surface_tiles+=1
 			staged_batch[result.key]={"retain_geometry":true,"stamp":result.stamp}
 			batch_remaining-=1
 			if batch_remaining==0 and edit_worker_done: _commit_batch()
@@ -1398,7 +1400,7 @@ func _edit_measurement(changed: bool) -> Dictionary:
 		"build_ms": last_total_build_ms, "after_worker_ms": last_prepare_latency_ms,
 		"publish_ms": float(Time.get_ticks_usec() - edit_started_us) / 1000.0,
 		"upload_last_piece_ms": last_mesh_upload_ms, "collision_last_piece_ms": last_collision_piece_ms,
-		"geometry_patches": last_density_tiles, "descriptor": latest_edit_descriptor.duplicate(),
+		"geometry_patches": last_density_tiles,"untouched_surface_tiles":last_untouched_surface_tiles, "descriptor": latest_edit_descriptor.duplicate(),
 		"accepted_us": edit_accepted_us, "members": latest_edit_members.duplicate(true),
 		"member_changed": latest_member_changes.duplicate(),
 		"collision_pieces_reused_total": collision_pieces_reused,
@@ -1743,6 +1745,12 @@ func _invalidate() -> Array[Dictionary]:
 		if visible_cut.has(key):
 			last_density_tiles += 1
 			affected.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
+			if backend.qualify_surface_owners and was_clean and key.z in [16,32] and tiles[key].step==1 and not tiles[key].has("bricks") and not lighting_dirty.has(key):
+				affected[-1]["retain_if_untouched"]=true
+				for light:Vector2 in tiles[key].arrays[Mesh.ARRAY_TEX_UV]:
+					if light.x<1.0 or light.y<1.0:
+						affected[-1]["retain_if_untouched"]=false
+						break
 			_select_dirty_owners(affected[-1],tile_members[key])
 		elif key.z == 16 and requested_keys.has(key):
 			# Repeated edits must not invalidate the same requested fine
@@ -1884,6 +1892,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	edit_started_us = captured_us if captured_us > 0 else accepted_us
 	last_capture_wait_ms = float(accepted_us - edit_started_us) / 1000.0
 	last_density_tiles = 0
+	last_untouched_surface_tiles=0
 	last_relight_tiles = 0
 	latest_edit_members.clear()
 	latest_member_changes.clear()

@@ -21,6 +21,7 @@ var collision_recipes: RefCounted
 var _collision_piece_triangles := 1024
 var snapshot_terrain: bool = "--snapshot-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var triangle_page_terrain:bool = "--triangle-page-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+var qualify_surface_owners:bool = "--qualify-surface-owners" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var brick_terrain: bool = "--brick-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var region_terrain: bool = "--region-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var local_terrain: bool = not "--whole-patch-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
@@ -635,18 +636,30 @@ func _resident_edit_surface(job:Dictionary,revision:int)->Dictionary:
 	if core==null:return {}
 	return {"core":core,"bounds":bounds,"ticket":job.ticket,"epoch":job.epoch}
 
-func _dispatch_resident_groups(job:Dictionary,revision:int,scheduled:Dictionary,surface:Dictionary)->Array:
+static func _surface_unchanged(item:Dictionary,masks:Array)->bool:
+	if not item.get("retain_if_untouched",false) or item.has("brick_bottoms") or masks.is_empty():return false
+	var key:Vector3i=item.key
+	for mask:PackedByteArray in masks:
+		if mask.size()!=2048:return false
+		for z in range(key.y/16,(key.y+key.z)/16):
+			for x in range(key.x/16,(key.x+key.z)/16):
+				var bit:=z*128+x
+				if (mask[bit>>3] & (1<<(bit&7)))!=0:return false
+	return true
+
+func _dispatch_resident_groups(job:Dictionary,revision:int,scheduled:Dictionary,surface:Dictionary,items_to_build:Array)->Array:
 	var tasks:Array=[]
+	if items_to_build.is_empty():return tasks
 	if not surface.is_empty():
 		var completed:Dictionary={}
-		var task:=WorkerThreadPool.add_task(_build_resident_group.bind(surface.core,job.tiles,job,completed,true),true,"Shared terrain edit surface")
+		var task:=WorkerThreadPool.add_task(_build_resident_group.bind(surface.core,items_to_build,job,completed,true),true,"Shared terrain edit surface")
 		if task>=0:
-			tasks.append({"task":task,"completed":completed,"items":job.tiles})
-			for item:Dictionary in job.tiles:scheduled[item.key]=true
+			tasks.append({"task":task,"completed":completed,"items":items_to_build})
+			for item:Dictionary in items_to_build:scheduled[item.key]=true
 			return tasks
 	if job.tiles.size()<8 or region_terrain or brick_terrain or snapshot_terrain:return tasks
 	var groups:Dictionary={}
-	for item:Dictionary in job.tiles:
+	for item:Dictionary in items_to_build:
 		var key:Vector3i=item.key
 		if key.z not in [16,32] or item.has("brick_bottoms"):continue
 		var group:=Vector2i(key.x/64,key.y/64)*64
@@ -667,7 +680,7 @@ func _dispatch_resident_groups(job:Dictionary,revision:int,scheduled:Dictionary,
 	return tasks
 
 func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
-	return EditCommands.execute(native,commands,revision_before)
+	return EditCommands.execute(native,commands,revision_before,qualify_surface_owners)
 
 func _recoverable_edit_rejection(commands:Array,reply:PackedByteArray,before:PackedByteArray,after:PackedByteArray)->bool:
 	if reply.size()<12 or reply.decode_u32(0)!=Codec.REPLY_MAGIC or reply.decode_u32(4) not in [2,3,28,38,41] or reply.decode_u32(8) not in [1,2,3]:return false
@@ -1685,8 +1698,15 @@ func _run() -> void:
 				# builds and resource preparation OVERLAP instead of running in series.
 				var build_total: float = 0.0
 				var scheduled:Dictionary={}
-				var groups:=_dispatch_resident_groups(job,after_stats.decode_u32(12),scheduled,surface)
-				for item: Dictionary in job["tiles"]:
+				var items_to_build:Array=job.tiles
+				if qualify_surface_owners:
+					items_to_build=[]
+					for item:Dictionary in job.tiles:
+						if _surface_unchanged(item,execution.surface_owners):
+							_push({"kind":"edit_chunk","epoch":job.epoch,"ticket":job.ticket,"key":item.key,"stamp":item.stamp,"retain_geometry":true,"untouched_surface":true})
+						else:items_to_build.append(item)
+				var groups:=_dispatch_resident_groups(job,after_stats.decode_u32(12),scheduled,surface,items_to_build)
+				for item: Dictionary in items_to_build:
 					if scheduled.has(item.key):continue
 					var selected: Array=item.get("brick_bottoms",[])
 					var retain_geometry:bool=item.has("brick_bottoms") and selected.is_empty()

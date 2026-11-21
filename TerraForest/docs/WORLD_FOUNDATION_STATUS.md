@@ -9204,3 +9204,27 @@ draw took 142.088 ms from input. The worker reported 36 geometry tiles and
 is generating and retiring render and collider triangles from the changed
 cells and sharing that boundary with water. The joint publication and fixed
 60 Hz presentation gates remain open. [Cut timing and footprint checks](../reports/checks/20261121T111337877369Z/engine.log)
+
+### Whole-tile retention experiment, 21 November 2026
+
+The native journal can produce a 2 KiB mask of affected fine surface owners.
+The experiment keeps clean, fully lit step-one tiles whose geometry lies
+outside every command's mask, including the first-page and normal halos.
+Retained neighbouring meshes and collider packets matched fresh extraction
+byte for byte through two seam edits. The field regression passed 150 checks.
+[Field and contact evidence](../reports/checks/20261121T112357809714Z/engine.log)
+
+In the 64 m cut the experiment retained zero of 36 tiles. Zero of nine probes
+matched on draw two and the first post-commit draw arrived at 146.945 ms.
+The two fixed camera pairs in the run directory show the final surface.
+They do not establish draw-two contact. The ordinary game therefore keeps
+this optimization disabled. Use `--qualify-surface-owners` to reproduce it.
+[Cut timings and camera captures](../reports/checks/20261121T112051800339Z/engine.log)
+
+On the isolated Cedar Vale shoreline route, terrain admission to publication
+took 89.543 ms at sea and 194.671 ms at the lake. Worst recorded frames were
+56.265 ms and 101.308 ms respectively. Both 2 cm shoreline contact checks
+passed. Both joint publication deadlines failed. The next proof must replace
+changed triangles within an affected owner and show that the old collision
+support disappears on the same draw as the new terrain and water.
+[Shoreline timings](../reports/checks/20261121T112426495341Z/normal_gameplay_blast_performance.json)

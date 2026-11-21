@@ -1148,6 +1148,7 @@ func check_authoring_brush()->void:
   # Link player latency to the native edit and the terrain publication work.
   var terrain_stages:={"worker_queue_ms":game.terrain.last_queue_ms,"field_ms":game.terrain.last_edit_ms,
    "mesh_build_ms":game.terrain.last_total_build_ms,"geometry_tiles":game.terrain.last_density_tiles,
+   "untouched_surface_tiles":game.terrain.last_untouched_surface_tiles,
    "commit_ms":game.terrain.last_commit_ms,"after_worker_ms":game.terrain.last_prepare_latency_ms,
    "support_worker_ms":game.terrain.last_support_worker_ms,"support_publish_ms":game.terrain.last_support_publish_ms}
   print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"preparing":preparing,"feedback_us":feedback_us,"admission_us":game.terrain.edit_accepted_us-started if game.terrain.edit_ticket>ticket else null,"publication_us":previous-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us,"terrain_stages":terrain_stages}))

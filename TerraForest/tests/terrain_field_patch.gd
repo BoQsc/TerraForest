@@ -107,11 +107,27 @@ func run()->void:
 		for z in [976,992,1008]:
 			check(Codec.reply_ok(core.execute(Codec.command(44,[x,z,16,1,build_epoch]))),"resident triangle baseline populates")
 	for brush_center in [Vector3(1007,40,1008),Vector3(1009,41,1007)]:
+		var candidates:Dictionary={}
+		for x in [960,976,992,1008,1024]:
+			for z in [976,992,1008,1024]:
+				var key:=Vector3i(x,z,16)
+				candidates[key]=core.execute(Codec.command(1,[x,z,16,1,build_epoch]))
 		var before:Dictionary=core.field_patch_state()
-		var receipt:Dictionary=core.execute_edit_with_writes(Codec.brush(brush_center,brush_center,3,0,false,0))
+		var receipt:Dictionary=core.execute_edit_with_writes(Codec.brush(brush_center,brush_center,3,0,false,0),true)
 		check(Codec.reply_ok(receipt.reply),"seam excavation accepted")
 		var writes:PackedByteArray=receipt.get("writes",PackedByteArray())
 		check(writes.size()>12 and writes.decode_u32(0)==1 and writes.decode_u32(4)==before.revision and writes.decode_u32(8)==receipt.reply.decode_u32(12),"seam repair receives actual writes for the committed revision")
+		var retained:=0
+		var rebuilt:=0
+		for key:Vector3i in candidates:
+			var item:={"key":key,"retain_if_untouched":true}
+			if preload("res://addons/volumetric_terrain/terrain_backend.gd")._surface_unchanged(item,[receipt.surface_owners]):
+				var after:PackedByteArray=core.execute(Codec.command(1,[key.x,key.y,key.z,1,build_epoch]))
+				var prior:PackedByteArray=candidates[key]
+				check(Codec.reply_ok(after) and Codec.reply_ok(prior) and after.slice(16)==prior.slice(16),"retained owner matches a fresh render and collision packet "+str(key))
+				retained+=1
+			else:rebuilt+=1
+		check(retained>0 and rebuilt>0,"seam edit retains neighbours and rebuilds touched owners")
 	state=core.field_patch_state()
 	var updated:RefCounted=core.capture_contact_core(bounds,state.revision,build_epoch)
 	check(updated!=null,"changed triangle reader captures resident geometry")
