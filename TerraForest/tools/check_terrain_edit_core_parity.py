@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 """Compare current terrain edits with HEAD using the same native harness/compiler."""
 import hashlib
+import io
+import zipfile
 import argparse
 import json
 import os
@@ -29,13 +31,24 @@ def main():
     report = {'baseline_commit': baseline_commit, 'admission': admission, 'scope': 'Exact serialized fields and edit receipts, 64 m box cut, replay and overlapping sphere, four-generator semantic matrix and 256 ordered edits plus four complete mesh packets on generators 1/31; allocation failure rollback and balance. Field and mesh timings are separate; physics/publication/rendering excluded.', 'runs': {}}
     # Receipt-owned temporary compiler products retire after both processes exit.
     with tempfile.TemporaryDirectory(prefix='edit_core_parity_', dir=ROOT/'.build') as temporary:
+        # Compile the baseline against headers from the same commit. The layout
+        # of World and inline meshing code are part of the measured binary.
+        include_root = Path(temporary)/'baseline_headers'
+        source_root = 'TerraForest/addons/volumetric_terrain/native/'
+        archived = subprocess.check_output(['git','archive','--format=zip',baseline_commit,source_root],cwd=ROOT.parent)
+        with zipfile.ZipFile(io.BytesIO(archived)) as archive:
+            for entry in archive.namelist():
+                if entry.startswith(source_root) and entry.endswith(('.h','.hpp')):
+                    destination = include_root/entry[len(source_root):]
+                    destination.parent.mkdir(parents=True,exist_ok=True)
+                    destination.write_bytes(archive.read(entry))
         for name, source in [('baseline', baseline), ('candidate', candidate), ('baseline_repeat', baseline)]:
             folder = Path(temporary)/name
             folder.mkdir()
             core = folder/'core.cpp'
             core.write_bytes(source)
             exe = folder/'probe.exe'
-            command = [info['zig'], 'c++', '-target', 'x86_64-windows-gnu', '-std=c++17', '-O2', '-fno-exceptions', '-fno-sanitize=undefined', '-ffp-contract=off', '-DTERRAFOREST_TYPED_BRIDGE', '-I', str(native), str(harness), str(core), '-o', str(exe)]
+            command = [info['zig'], 'c++', '-target', 'x86_64-windows-gnu', '-std=c++17', '-O2', '-fno-exceptions', '-fno-sanitize=undefined', '-ffp-contract=off', '-DTERRAFOREST_TYPED_BRIDGE', '-I', str(native if name == 'candidate' else include_root), str(harness), str(core), '-o', str(exe)]
             built = subprocess.run(command, capture_output=True, text=True, env=env, timeout=120)
             if built.returncode:
                 raise RuntimeError(built.stdout+built.stderr)

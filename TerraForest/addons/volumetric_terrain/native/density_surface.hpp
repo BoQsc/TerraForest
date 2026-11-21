@@ -119,8 +119,11 @@ inline void surface_split_quad(int a,int b,int c,int d,bool reverse,const int *m
  for(int i=0;i<n;i++){int u=polygon[i],v=polygon[(i+1)%n];if(reverse)emit(hub,u,v);else emit(hub,v,u);}
 }
 // Select neighbours by crossing edge, and subdivide only ambiguous dual edges.
-template<class Cells,class Lookup,class FaceAllowed,class Split,class Emit>
-inline void connect_material_surface(int count,SurfaceOwnership owned,Cells cell,Lookup lookup,FaceAllowed allowed,Split split,Emit emit){
+struct UncachedSurfaceFaces {
+ bool operator()(int,int,int,int,int,bool,bool)const{return false;}
+};
+template<class Cells,class Lookup,class FaceAllowed,class Split,class Emit,class CachedFace=UncachedSurfaceFaces>
+inline void connect_material_surface(int count,SurfaceOwnership owned,Cells cell,Lookup lookup,FaceAllowed allowed,Split split,Emit emit,CachedFace cached_face={}){
  static constexpr int offsets[3][3][3]={{{0,-1,-1},{0,0,-1},{0,-1,0}},{{-1,0,-1},{-1,0,0},{0,0,-1}},{{-1,-1,0},{0,-1,0},{-1,0,0}}};
  static constexpr int faces[6][4]={{0,2,6,4},{1,3,7,5},{0,1,5,4},{2,3,7,6},{0,1,3,2},{4,5,7,6}};
  for(int j=0;j<count;++j){
@@ -133,6 +136,7 @@ inline void connect_material_surface(int count,SurfaceOwnership owned,Cells cell
    int b=lookup(x+o[1][0],y+o[1][1],z+o[1][2],x,y,z,axis);
    int d=lookup(x+o[2][0],y+o[2][1],z+o[2][2],x,y,z,axis);
    if(a<0||b<0||d<0)continue;
+   if(cached_face(j,axis,a,b,d,(v.mask&1)==0,false))continue;
    int ids[4]={a,b,j,d},middle[4]={-1,-1,-1,-1};
    for(int k=0;k<4;k++){
     const auto left=cell(ids[k]),right=cell(ids[(k+1)&3]);
@@ -143,6 +147,7 @@ inline void connect_material_surface(int count,SurfaceOwnership owned,Cells cell
     if(face!=5&&face!=10)continue;
     middle[k]=split(imx(low[0],high[0]),imx(low[1],high[1]),imx(low[2],high[2]),normal_axis,x,y,z,axis,ids[k],ids[(k+1)&3]);
    }
+   if(middle[0]<0&&middle[1]<0&&middle[2]<0&&middle[3]<0&&cached_face(j,axis,a,b,d,(v.mask&1)==0,true))continue;
    emit(a,b,j,d,(v.mask&1)==0,middle);
   }
  }

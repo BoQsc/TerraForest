@@ -1326,7 +1326,7 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 		data = FileAccess.get_file_as_bytes(path)
 		cached = data.size() >= 36 and data.decode_u32(4) == 5
 	if not snapshot_build and not cached:
-		var reply: PackedByteArray = _call(Codec.command(1, [key.x, key.y, key.z, step, expected_build_epoch]))
+		var reply: PackedByteArray = _call(Codec.command(44 if key.z<=32 else 1, [key.x, key.y, key.z, step, expected_build_epoch]))
 		if not Codec.reply_ok(reply):
 			if reply.size() >= 12 and reply.decode_u32(8) == 4:
 				return {"cancelled": true}

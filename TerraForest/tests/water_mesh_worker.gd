@@ -55,10 +55,34 @@ func check_grouped_owners(dispatch_indexed:=false,edited:=false,stream_indexed:=
  print("GROUPED_OWNERS jobs=",jobs," committed=",committed," expected=",expected.size()," actual=",actual.size()," equal=",actual==expected)
  check(jobs==1 and committed and expected.size()==count and actual==expected,"Parallel owner group exactly matches serial geometry in stable owner order")
  check(water.statistics().mesh_worker_reserved_bytes==0,"Parallel owner group releases its shared memory reservation")
+func check_level_sheet_triangles(amount:int)->void:
+ var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ var bytes:=PackedByteArray();bytes.resize(32+catalog.size()+6160)
+ bytes.encode_u32(0,0x31575256);bytes.encode_u32(4,1);bytes.encode_u32(8,catalog.size());bytes.encode_u32(12,1)
+ bytes.encode_u64(16,64*(125000+amount))
+ for i in catalog.size():bytes[32+i]=catalog[i]
+ var base:=32+catalog.size()
+ bytes.encode_u64(base,(10<<24)|(10<<12)|10);bytes.encode_u32(base+8,1);base+=16
+ for i in 512:
+  bytes.encode_u16(base+i*12+2,500)
+  var layer:=(i>>3)&7
+  if layer==2 or layer==3:bytes.encode_u64(base+i*12+4,125000 if layer==2 else amount)
+ var results:Array=[]
+ for indexed:bool in [false,true]:
+  var store:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+  check(store.restore_snapshot(bytes),"level sheet restores")
+  for step in 100:
+   var packet:Dictionary=store.next_mesh_batch(false,indexed)
+   if packet.is_empty():break
+   if packet.get("coordinate")==Vector3i(10,10,10):results.append(var_to_bytes(packet.render_arrays))
+   if packet.complete:check(store.commit_mesh_batch(packet.batch),"level sheet publishes")
+ check(results.size()==2 and results[0]==results[1],"level sheet triangle positions, winding, normals and UV match exact clipping at "+str(amount)+" ml")
+
 func run_worker_checks() -> void:
  for arg:String in OS.get_cmdline_user_args():
   if arg.begins_with("--water-mesh-replay="):
    replay_meshes(arg.trim_prefix("--water-mesh-replay="));return
+ for amount:int in [12000,67000,124999]:check_level_sheet_triangles(amount)
  var dry=fixture(3,0,false,Vector3i(10,10,10),3,0)
  var dry_commit:=false;var dry_jobs:=0
  for step in 100:

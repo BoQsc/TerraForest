@@ -114,6 +114,7 @@ struct World {
  bool profile_mesh=false;
  bool cache_mesh_heights=false; // Qualification-only, scoped exact shader inputs.
  mutable float mesh_stage_ms[4]={}; // extraction, simplification, blocks, shading
+ mutable u64 replayed_triangles=0;
  mutable GeometryCache *geometry_cache=nullptr;
  // Worker-owned immutable generator samples for the current reconstruction column.
  mutable List<float> owned_heights;
@@ -142,16 +143,17 @@ struct World {
  bool material_box(const World &solid,V3 minimum,V3 maximum,bool add,V3 &lo,V3 &hi,int &changes);
  void serialize(Bytes &out,bool fast_checksum=false)const;bool deserialize(const u8*p,int n);
 };
-struct Vertex {V3 p,n;float material=0; i32 cx=0,cy=0,cz=0;u32 mask=0; V3 blend{};float substrate=0,sky=1,sun=1,ore=0,asphalt=0;};
+struct Vertex {V3 p,n;float material=0; u32 face_splits=0,geometry_revision=0,face_revision=0; i32 cx=0,cy=0,cz=0;u32 mask=0; V3 blend{};float substrate=0,sky=1,sun=1,ore=0,asphalt=0;};
 struct Mesh {List<Vertex> v; List<u32> i;void release(){v.release();i.release();}};
 // Cancellation state is outside World: save/load cannot race a main-thread request.
 u32 terrain_build_epoch(const World *world=nullptr);
 u32 terrain_cancel_builds(const World *world=nullptr);
-bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch=0xffffffffu,bool region_cache=false);
+bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch=0xffffffffu,bool region_cache=false,bool retain_cells=false);
 bool build_owned_region(const World&w,int ox,int oz,int size,int step,int y_begin,int y_end,Mesh&m,u32 epoch);
 bool build_owned_column(const World&world,int origin_x,int origin_z,int size,int step,Mesh&mesh,u32 epoch);
 // Bounded full-detail material geometry integral; physical volume only when closed.
 bool measure_material_surface(const World&w,int x,int z,int size,int y_begin,int y_end,double &integral,int &triangles,bool &closed);
+bool copy_surface_columns(const World&source,World&dest,int ox,int oz,int width,int depth);
 void release_geometry_cache(const World&w);
 void invalidate_geometry_cache(const World&w,V3 lo,V3 hi);
 void geometry_cache_stats(const World&w,Bytes&out);

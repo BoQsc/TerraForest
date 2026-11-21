@@ -655,6 +655,7 @@ public:
             for(int i=0;i<column.n;++i)
                 if(!dst.set_block(column[i],world_.blocks.get(column[i]))||tr_oom)return {};
         }
+        if(!copy_surface_columns(world_,dst,bounds.position.x,bounds.position.y,bounds.size.x,bounds.size.y))return {};
         return copy;
     }
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) {

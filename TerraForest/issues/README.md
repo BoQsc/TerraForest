@@ -1,5 +1,7 @@
 # Visual issue tracker
 
+The [changed-triangle gameplay test](../docs/WORLD_FOUNDATION_STATUS.md#changed-terrain-triangles-and-the-two-frame-edit-gate) still misses the two-frame requirement.
+
 Shoreline latency is parked for the [regional basin architecture](explosive-combat/water-plan.md).
 The [resident geometry trial](../docs/WORLD_FOUNDATION_STATUS.md#resident-terrain-geometry-and-shoreline-contact) measured 224–274 ms at the lake and 108–127 ms at sea.
 

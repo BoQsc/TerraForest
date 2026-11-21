@@ -3,6 +3,8 @@
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
+The [changed-triangle qualification](WORLD_FOUNDATION_STATUS.md#changed-terrain-triangles-and-the-two-frame-edit-gate) records the complete 36-tile comparison and the remaining publication delay.
+
 The [packaged resident geometry trial](WORLD_FOUNDATION_STATUS.md#resident-terrain-geometry-and-shoreline-contact) reduced the full cut to 134 ms. Both barrel routes still miss the two-frame gate.
 
 Water is the first terrain-and-authority integration case. Use the basin

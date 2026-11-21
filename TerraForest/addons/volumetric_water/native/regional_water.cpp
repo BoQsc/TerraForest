@@ -2139,6 +2139,20 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
             for(auto d:directions){if(!buried_cell)break;const auto &n=at(p+d);buried_cell=!n.reconstructed&&n.amount>=n.shape.capacity();}
             if(buried_cell)continue;
         }
+        // The interior of a level sheet has the same two triangles after a
+        // change of level. Only the exposed height changes. Prove that every
+        // edge still meets that sheet before using its fixed connectivity.
+        bool level_sheet=indexed_only&&!query_only&&!include_contacts&&cell.rectangular&&cell.bottom==0&&cell.top<.5;
+        for(int dz=-1;dz<=1&&level_sheet;++dz)for(int dx=-1;dx<=1&&level_sheet;++dx){
+            auto q=p+Vector3i(dx,0,dz);
+            const auto &n=at(q),&above=at(q+Vector3i(0,1,0));
+            level_sheet=n.rectangular&&n.bottom==0&&n.top==cell.top&&full(at(q-Vector3i(0,1,0)))&&!above.amount&&!above.reconstructed;
+        }
+        if(level_sheet&&!cell.boundary_built){
+            const double h=cell.top;
+            cell.boundary.push_back({{{0,h,0},{0,h,.5},{.5,h,.5},{.5,h,0}},{{0,1,0},h}});
+            cell.boundary_built=true;
+        }
         if(!prepare_boundary(p)){output.valid=false;return output;}
         // Contact polygons remain available to neighbouring edge subdivision,
         // but a runtime render/picking surface never consumes buried triangles.
@@ -2253,7 +2267,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                     C::Point cross;for(size_t i=0;i<polygon.size();++i)cross=cross+(polygon[i]-center).cross(polygon[(i+1)%polygon.size()]-center);
                     // Godot's front faces use clockwise winding.
                     if(cross.dot(plane.normal)>0)std::reverse(polygon.begin(),polygon.end());
-                    bool triangulated=B::triangulate(polygon,[&](C::Point a,C::Point b,C::Point c){
+                    auto emit_triangle=[&](C::Point a,C::Point b,C::Point c){
                         a=canonical(a);b=canonical(b);c=canonical(c);
                         if((b-a).cross(c-a).dot((b-a).cross(c-a))==0)return;
                         auto shaded=(c-a).cross(b-a);double shaded_length=B::length(shaded);
@@ -2289,7 +2303,12 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
                             else id=found->second;buffers.render_indices.push_back(id);
                         }
                         output.owners.push_back(uint16_t(index(p)|(contact?0x8000:0)));if(normal.y>.001)++tops;else if(normal.y<-.001)++bottoms;else ++sides;
-                    });
+                    };
+                    bool triangulated=true;
+                    if(level_sheet&&flat_interior&&polygon.size()==4){
+                        emit_triangle(polygon[3],polygon[0],polygon[1]);
+                        emit_triangle(polygon[1],polygon[2],polygon[3]);
+                    }else triangulated=B::triangulate(polygon,emit_triangle);
                     if(!triangulated){output.valid=false;output.faces["failure"]="non-convex rounded boundary at "+String(p);return output;}
         }
     }

@@ -1,3 +1,35 @@
+## Changed terrain triangles and the two-frame edit gate
+
+Resident terrain cells retain the connectivity of ordinary quads. For the next revision the native worker remaps unchanged triangles to current vertex indices and reconstructs dirty cells and ambiguous faces. Rendering, collision and water contact generation use that reconstruction. A level water sheet reuses its two-triangle pattern when the surrounding cells certify an unobstructed sheet. Water against irregular ground still uses the clipped boundary.
+
+The first packaged trial missed 13 to 221 basal vertices on each of 16 outer terrain tiles. Its sampled collision grid still passed. A first write to a terrain page admits an entire lattice band, extending past the brush. Invalidating that band and the cells that depend on it restored byte-identical final render arrays on all 36 tiles. The package also reproduced the previous 3,750 collision probes byte for byte.
+
+Broad invalidation initially discarded usable connectivity across newly admitted pages. The revised cache checks all four cell representatives before reusing a quad. On the full cut, worker snapshots replayed 6,518 triangles and the authority replayed 4,708. [Profiled cut](../reports/checks/20261121T001410257172Z/engine.log)
+
+Native checks covered two overlapping edits at an owner seam, the first write to a page, and water mesh, collision and contact agreement. The standalone baseline now compiles against headers from the comparison commit. All 16 serialized field, receipt and mesh artifacts matched across three executions. [114 field checks](../reports/checks/20261121T001009743183Z/engine.log) · [Flat-sheet and mesh worker checks](../reports/checks/20261120T234320199264Z/engine.log) · [Native parity results](../reports/checks/20261121T001615765444Z_terrain_edit_core_parity.json)
+
+The installed Windows package ran on the RTX 4050 Laptop at 1920 × 1080 with a read-only Cedar Vale input. Resource pack SHA-256 `0efea82e47fc6ffce60f283525a5a0c729b5cc8c674527519b4538ca004b275f`. The release terrain DLL begins `6c28511912d2e641` and the release water DLL begins `62c6c38a4c018b03`. Each receipt records the full native hashes. The two barrel timing runs disabled screenshots. Barrel times start at edit admission. The cut time starts at brush input. These are engine draw intervals.
+
+| Workload | First matching draw | Frame intervals |
+|---|---|---|
+| Full 64 m cut | 138.21 ms. At draw two (32.51 ms), 0 of 9 collision probes matched. The center matched on draw five at 61.20 ms. | Worst 35.99 ms |
+| Sea barrel | Ocean proxy on draw 5 in both runs (76.15 and 102.58 ms). Detailed mesh measured separately on the repeat at 289.87 ms, draw 17. | Excluding marked diagnostic frames, p99 25.36 and 37.85 ms, worst 54.14 and 46.34 ms |
+| Lake barrel | 245.11 and 207.46 ms, draws 15 and 13, with detailed water | Excluding marked diagnostic frames, p99 24.35 and 18.39 ms, worst 27.01 and 25.52 ms |
+
+The full cut took 26.75 ms to change the field and 19.08 ms in final publication, including 8.52 ms for vegetation. For comparison, the preceding build completed the cut in 134.15 ms. On the first shoreline timing run the shared terrain snapshot replayed 4,808 triangles at sea and 4,508 at the lake. The lake floor and water agreed on the same draw. At sea the repeat recorded 12 more draws between the updated floor and detailed water. The rendered floor differed from physics by 0.027 mm at the two barrel probes, and all 23 sea and 26 lake immediate waterline samples found contact within 2 cm. The finite lake conserved water. Across the two timing runs, buckets took 44.73 to 76.21 ms to show a transfer, including interruptions. Mining took 145.40 and 131.42 ms from input to local draw. The submerged cube excluded water inside, had contact within 1 cm on four sides, and removal restored the boundary. The first lake solve captured 122 regions. It still waited for the local batch to reach the scene.
+
+[Full cut and 36 mesh comparisons](../reports/checks/20261121T001026944599Z/engine.log) · [First barrel timing](../reports/checks/20261121T001115415628Z/normal_gameplay_blast_performance.json) · [Repeat timing](../reports/checks/20261121T001453697787Z/normal_gameplay_blast_performance.json) · [Cube contact](../reports/checks/20261121T001302337176Z/engine.log)
+
+| Workload | First camera before / after | Second camera before / after | Submerged |
+|---|---|---|---|
+| 64 m cut | [Before](../reports/checks/20261121T001026944599Z/cut_before_angle_1.png) / [After](../reports/checks/20261121T001026944599Z/cut_after_angle_1.png) | [Before](../reports/checks/20261121T001026944599Z/cut_before_angle_2.png) / [After](../reports/checks/20261121T001026944599Z/cut_after_angle_2.png) | Inland |
+| Sea barrel | [Before](../reports/checks/20261121T001207263050Z/player_shore_before.png) / [After](../reports/checks/20261121T001207263050Z/player_shore_after.png) | [Before](../reports/checks/20261121T001207263050Z/player_shore_before_reverse.png) / [After](../reports/checks/20261121T001207263050Z/player_shore_after_reverse.png) | [Contact](../reports/checks/20261121T001207263050Z/player_shore_underwater.png) |
+| Lake barrel | [Before](../reports/checks/20261121T001207263050Z/player_lake_before.png) / [After](../reports/checks/20261121T001207263050Z/player_lake_after.png) | [Before](../reports/checks/20261121T001207263050Z/player_lake_before_reverse.png) / [After](../reports/checks/20261121T001207263050Z/player_lake_after_reverse.png) | [Contact](../reports/checks/20261121T001207263050Z/player_lake_underwater.png) |
+
+Cube contact [above](../reports/checks/20261121T001302337176Z/object_contact_above.png) and [below](../reports/checks/20261121T001302337176Z/object_contact_underwater.png) the waterline.
+
+The two-frame gate is open. Tile mesh uploads and collision shapes still publish at owner granularity, and a wet edit waits for the local water mesh batch. Reusing triangle connectivity has not qualified either handoff. Keep this performance milestone open until a resident edit can publish the changed draw and collision ranges and the adjacent water independently of the rest of that batch. The whole cut, both barrel targets, water conservation and submerged contact must pass at the deadline.
+
 ## Resident terrain geometry and shoreline contact
 
 The packaged local edit reuses an accepted terrain snapshot across terrain, collision and water contact extraction. Ordinary single-shape owners can keep their registered physics and render nodes through publication. The 64 m cut reused all 36 nodes. The first matching shoreline draw now checks the visible terrain triangles against the physics floor. Publication latency remains a release blocker.

@@ -8,6 +8,16 @@ class BrushProfileBackend extends "res://addons/volumetric_terrain/terrain_backe
  var handoff:Dictionary={}
  var staging_frames:Array[Dictionary]=[]
  var worker_done_us:=0
+ var resident_triangles:=0
+ var initial_authority_replays:=0
+ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,share_contacts:bool=false)->void:
+  super._build_resident_group(source,items,job,completed,share_contacts)
+  var counters:PackedByteArray=source.execute(Codec.command(45))
+  if counters.size()==20:
+   mutex.lock()
+   resident_triangles+=counters.decode_u64(12)
+   mutex.unlock()
+
  func poll()->Array[Dictionary]:
   var results_batch:=super.poll()
   var received:=Time.get_ticks_usec()
@@ -25,6 +35,8 @@ class BrushProfileBackend extends "res://addons/volumetric_terrain/terrain_backe
   if result.kind=="edit_begin":
    stages.fill(0.0)
    tiles_profiled=0
+   resident_triangles=0
+   initial_authority_replays=_call(Codec.command(45)).decode_u64(12)
    measuring=true
    light_start=_call(Codec.command(15))
   elif result.kind=="edit_chunk":
@@ -34,6 +46,8 @@ class BrushProfileBackend extends "res://addons/volumetric_terrain/terrain_backe
    var counts:={}
    var labels:=["rays","ray_steps","unresolved","probe_hits"]
    for i in labels.size():counts[labels[i]]=(light.decode_u32(12+4*i)-light_start.decode_u32(12+4*i)) & 0xffffffff
+   var live_triangles:=_call(Codec.command(45)).decode_u64(12)-initial_authority_replays
+   print("AUTHORING_TRIANGLE_REPLAY ",JSON.stringify({"workers":resident_triangles,"authority":live_triangles}))
    print("AUTHORING_NATIVE_MS ",JSON.stringify({"tiles":tiles_profiled,"extraction":stages[0],"simplification":stages[1],"blocks":stages[2],"shading":stages[3],"build":result.build_total_ms,"lighting":counts}))
    measuring=false
   super._push(result)
@@ -182,8 +196,14 @@ func shore_admitted(_bounds:AABB)->void:
  shore_draw.admit_us=game.terrain.edit_accepted_us
 
 func measure_shore_target()->void:
- if not shore_draw.has("admit_frame") or shore_draw.has("draw_us"):return
+ if not shore_draw.has("admit_frame") or shore_draw.has("detail"):return
  var point:Vector3=shore_draw.point
+ var column:=Vector2i(floori(point.x/4),floori(point.z/4))
+ var proxy:=false
+ if timing_phase=="sea_shore_blast":
+  var coverage:PackedByteArray=game.lakes._surrounding_ocean.last_coverage
+  proxy=coverage.size()==250000 and coverage[column.x+500*column.y]==0
+ if proxy and shore_draw.has("draw_us"):return
  var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(shore_draw.ray)
  if floor_hit.is_empty() or floor_hit.position.y>minf(point.y-.6,shore_draw.old_floor-.5):return
  if not shore_draw.has("floor_draw_frame"):
@@ -192,11 +212,6 @@ func measure_shore_target()->void:
  if game.lakes.depth_at(point-Vector3.UP*.5)<.2:return
  var hit:Dictionary=game.lakes.water.raycast_surface(point+Vector3.UP,point-Vector3.UP)
  if not hit.get("hit",false):return
- var column:=Vector2i(floori(point.x/4),floori(point.z/4))
- var proxy:=false
- if timing_phase=="sea_shore_blast":
-  var coverage:PackedByteArray=game.lakes._surrounding_ocean.last_coverage
-  proxy=coverage.size()==250000 and coverage[column.x+500*column.y]==0
  var meshes:Array=[]
  for layer in range(floori((point.y-1)/4),floori((point.y+1)/4)+1):
   var node:MeshInstance3D=game.lakes._meshes.get(Vector3i(column.x,layer,column.y))
@@ -204,37 +219,43 @@ func measure_shore_target()->void:
  if not proxy and meshes.is_empty():return
  # Freeze the actual renderer and transform behind the sampled collider.
  # Read triangles after timing so mesh readback cannot stall the measured draw.
+ var sample:={"draw_us":Time.get_ticks_usec(),"frame":Engine.get_frames_drawn(),"query_y":hit.point.y,"floor_y":floor_hit.position.y,"proxy":proxy,"meshes":meshes}
  var terrain_node:=floor_hit.collider.get_parent() as MeshInstance3D
  if terrain_node!=null and terrain_node.is_visible_in_tree():
-  shore_draw.terrain_mesh=terrain_node.mesh
-  shore_draw.terrain_transform=terrain_node.global_transform
- shore_draw.merge({"draw_us":Time.get_ticks_usec(),"frame":Engine.get_frames_drawn(),"query_y":hit.point.y,"floor_y":floor_hit.position.y,"proxy":proxy,"meshes":meshes})
+  sample.terrain_mesh=terrain_node.mesh
+  sample.terrain_transform=terrain_node.global_transform
+ if not shore_draw.has("draw_us"):shore_draw.merge(sample)
+ if not proxy:
+  var detailed:=shore_draw.duplicate()
+  detailed.merge(sample,true)
+  shore_draw.detail=detailed
 
-func verify_shore_target()->Dictionary:
- if not shore_draw.has("draw_us"):return {"matched":false}
- var point:Vector3=shore_draw.point
- var matched:bool=shore_draw.proxy and absf(shore_draw.query_y-40)<.025
- if not shore_draw.proxy:
-  for owner:Array in shore_draw.meshes:
+func verify_shore_target(draw:Dictionary)->Dictionary:
+ if not draw.has("draw_us"):return {"matched":false}
+ var point:Vector3=draw.point
+ var matched:bool=draw.proxy and absf(draw.query_y-40)<.025
+ if not draw.proxy:
+  for owner:Array in draw.meshes:
    var faces:PackedVector3Array=owner[0].get_faces()
    var transform:Transform3D=owner[1]
    var origin:=transform.affine_inverse()*(point+Vector3.UP)
    var end:=transform.affine_inverse()*(point-Vector3.UP)
    for i in range(0,faces.size(),3):
     var hit=Geometry3D.segment_intersects_triangle(origin,end,faces[i],faces[i+1],faces[i+2])
-    if hit!=null and absf((transform*Vector3(hit)).y-shore_draw.query_y)<.025:matched=true;break
+    if hit!=null and absf((transform*Vector3(hit)).y-draw.query_y)<.025:matched=true;break
    if matched:break
  var terrain_error:=INF
- if shore_draw.has("terrain_mesh"):
-  var transform:Transform3D=shore_draw.terrain_transform
-  var floor_point:=Vector3(point.x,shore_draw.floor_y,point.z)
+ if draw.has("terrain_mesh"):
+  var transform:Transform3D=draw.terrain_transform
+  var floor_point:=Vector3(point.x,draw.floor_y,point.z)
   var start:=transform.affine_inverse()*(floor_point+Vector3.UP*.1)
   var end:=transform.affine_inverse()*(floor_point-Vector3.UP*.1)
-  var faces:PackedVector3Array=shore_draw.terrain_mesh.get_faces()
+  var faces:PackedVector3Array=draw.terrain_mesh.get_faces()
   for i in range(0,faces.size(),3):
    var floor_hit=Geometry3D.segment_intersects_triangle(start,end,faces[i],faces[i+1],faces[i+2])
    if floor_hit!=null:terrain_error=minf(terrain_error,absf((transform*Vector3(floor_hit)).y-floor_point.y))
- return {"matched":matched and terrain_error<=.001,"terrain_collision_error_m":terrain_error if is_finite(terrain_error) else -1.0,"floor_frames":1+shore_draw.floor_draw_frame-shore_draw.admit_frame,"floor_ms":(shore_draw.floor_draw_us-shore_draw.admit_us)/1000.0,"floor_to_water_frames":shore_draw.frame-shore_draw.floor_draw_frame,"frames":1+shore_draw.frame-shore_draw.admit_frame,"ms":(shore_draw.draw_us-shore_draw.admit_us)/1000.0,"proxy":shore_draw.proxy,"floor_before":shore_draw.old_floor,"floor_after":shore_draw.floor_y,"surface_y":shore_draw.query_y}
+ return {"matched":matched and terrain_error<=.001,"terrain_collision_error_m":terrain_error if is_finite(terrain_error) else -1.0,"floor_frames":1+draw.floor_draw_frame-draw.admit_frame,"floor_ms":(draw.floor_draw_us-draw.admit_us)/1000.0,"floor_to_water_frames":draw.frame-draw.floor_draw_frame,"frames":1+draw.frame-draw.admit_frame,"ms":(draw.draw_us-draw.admit_us)/1000.0,"proxy":draw.proxy,"floor_before":draw.old_floor,"floor_after":draw.floor_y,"surface_y":draw.query_y}
+var timing_resident_surface:RefCounted
 var terrain_admitted_us:=0
 var blast_timeline:Array[Dictionary]=[]
 var blast_started:=0
@@ -338,6 +359,7 @@ func start_timing(label:String,target:Vector3=Vector3.INF)->void:
   game.max_fps=0;game.background_fps=0;Engine.max_fps=0
   if DisplayServer.get_name()!="headless":DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
  game.structures.blocks.set_process_profiling_enabled(true)
+ timing_resident_surface=null
  terrain_published_us=0;terrain_admitted_us=0;action_started_us=0;local_draw_us=0;blast_started=Time.get_ticks_usec();blast_timeline.clear();blast_last_state=""
  if DisplayServer.get_name()!="headless" and not RenderingServer.frame_post_draw.is_connected(measure_local_draw):
   RenderingServer.frame_post_draw.connect(measure_local_draw)
@@ -352,6 +374,8 @@ func start_timing(label:String,target:Vector3=Vector3.INF)->void:
  if not process_frame.is_connected(sample_timing):process_frame.connect(sample_timing)
 func sample_timing()->void:
  if timing_phase.is_empty():return
+ if not timing_resident_surface and action_started_us and game.terrain.edit_accepted_us>=action_started_us:
+  timing_resident_surface=game.terrain.resident_edit_surface.get("core")
  var now:=Time.get_ticks_usec()
  var pipelines:=Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_DRAW)
  var specializations:=Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SPECIALIZATION)
@@ -395,6 +419,12 @@ func finish_timing()->void:
  blast_metrics[timing_phase].water_after_terrain_ms=(Time.get_ticks_usec()-terrain_published_us)/1000.0 if terrain_published_us else -1
  blast_metrics[timing_phase].timeline=blast_timeline.duplicate(true)
  blast_metrics[timing_phase].outside_diagnostics={"frames":timing_play_frames.size(),"p99_ms":percentile(timing_play_frames,.99),"worst":timing_worst_play}
+ # Read the completed edit snapshot after timing so the query cannot delay
+ # the draw under test. The count includes triangles reused by water contacts.
+ if timing_resident_surface:
+  var counter:PackedByteArray=timing_resident_surface.execute(PackedInt32Array([45]).to_byte_array())
+  if counter.size()==20:blast_metrics[timing_phase].resident_replayed_triangles=counter.decode_u64(12)
+  timing_resident_surface=null
  blast_metrics[timing_phase].local_response_ms=timing_local_ms
  blast_metrics[timing_phase].action_to_local_draw_ms=(local_draw_us-action_started_us)/1000.0 if local_draw_us else -1
  if terrain_admitted_us and terrain_published_us and local_draw_us:
@@ -405,10 +435,13 @@ func finish_timing()->void:
  if "--two-frame-edits" in OS.get_cmdline_user_args():
   check(local_draw_us>0 and water_draw_frames<=2 and local_draw_us-terrain_admitted_us<=33334,timing_phase+" draws the changed water within two frames of the terrain edit")
  if not shore_draw.is_empty():
-  var target:=verify_shore_target()
+  var target:=verify_shore_target(shore_draw)
+  var detailed:=verify_shore_target(shore_draw.get("detail",{}))
+  blast_metrics[timing_phase].first_detailed_draw=detailed
   blast_metrics[timing_phase].first_target_draw=target
   check(target.matched,timing_phase+" first crater contact matches the rendered surface and lowered collider")
   if "--two-frame-edits" in OS.get_cmdline_user_args():
+   check(detailed.matched and detailed.frames<=2 and detailed.ms<=33.334,timing_phase+" draws the detailed water mesh and matching terrain within two frames")
    check(target.matched and target.floor_to_water_frames==0,timing_phase+" publishes crater collision and water on the same draw")
    check(target.matched and target.frames<=2 and target.ms<=33.334,timing_phase+" first matching collider and rendered water meet the two-frame deadline")
   shore_draw.clear()
@@ -1235,6 +1268,27 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
     compare_brush_collision(a.get("shapes",[]),b.get("shapes",[]),collision)
    var old_arrays:Array=a.get("arrays",[])
    var new_arrays:Array=b.get("arrays",[])
+   if radius>=32 and key.z<=32 and "--authoring-exact-mesh" in OS.get_cmdline_user_args():
+    const MeshCodec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
+    var authority:RefCounted=game.terrain.backend.native
+    var epoch:int=authority.execute(MeshCodec.command(13)).decode_u32(12)
+    var reply:PackedByteArray=authority.execute(MeshCodec.command(1,[key.x,key.y,key.z,1,epoch]))
+    var canonical:Dictionary=MeshCodec.decode_mesh(reply.slice(16)) if MeshCodec.reply_ok(reply) else {}
+    var mismatch:Array[int]=[]
+    for slot in Mesh.ARRAY_MAX:
+     if not canonical.has("arrays") or canonical.arrays[slot]!=new_arrays[slot]:mismatch.append(slot)
+    if not mismatch.is_empty() and canonical.has("arrays"):
+     var expected:PackedVector3Array=canonical.arrays[Mesh.ARRAY_VERTEX]
+     var actual:PackedVector3Array=new_arrays[Mesh.ARRAY_VERTEX]
+     var first:=0
+     while first<mini(expected.size(),actual.size()) and actual[first]==expected[first]:first+=1
+     var missing:=0
+     var lookup:Dictionary={}
+     for vertex:Vector3 in actual:lookup[vertex]=true
+     for vertex:Vector3 in expected:
+      if not lookup.has(vertex):missing+=1
+     print("AUTHORING_TRIANGLE_DIFFERENCE ",key," vertices ",actual.size(),"/",expected.size()," missing ",missing," first ",first," actual ",actual[first] if first<actual.size() else null," expected ",expected[first] if first<expected.size() else null)
+    check(mismatch.is_empty(),"Full cut owner matches fresh field reconstruction "+str(key)+" differing channels "+str(mismatch))
    render_hash.update(var_to_bytes([key,id,new_arrays]))
    if old_arrays==new_arrays:
     counts.identical+=1

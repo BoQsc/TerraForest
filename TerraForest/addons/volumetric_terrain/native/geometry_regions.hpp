@@ -6,6 +6,8 @@ constexpr u64 GEOMETRY_BUDGET=32u*1024u*1024u;
 struct GeometryRegion {
  List<Vertex> vertices;
  int x=0,z=0;
+ int dirty_xz[4]={};
+ int dirty_y0=0,dirty_y1=0;
  u64 used=0;
  bool present=false,dirty=false;
 };
@@ -38,7 +40,22 @@ void invalidate_geometry_cache(const World&w,V3 lo,V3 hi){
  if(!w.geometry_cache)return;
  // A region owns cells [x,x+15], whose reconstruction reads samples [x,x+16].
  // Full vertical columns are cached; no assumptions about a heightfield here.
- for(auto&r:w.geometry_cache->regions)if(r.present&&!r.dirty&&r.x<=hi.x&&r.x+16>=lo.x&&r.z<=hi.z&&r.z+16>=lo.z){r.dirty=true;w.geometry_cache->invalidations++;}
+ for(auto&r:w.geometry_cache->regions){
+  // An owned quad references cell representatives one cell to its negative side.
+  if(!r.present||r.x>hi.x+1||r.x+16<lo.x||r.z>hi.z+1||r.z+16<lo.z)continue;
+  const int bounds[]={imx(r.x,fl(lo.x)-1),imx(r.z,fl(lo.z)-1),imn(r.x+15,fl(hi.x)+1),imn(r.z+15,fl(hi.z)+1)};
+  const int bottom=imx(0,fl(lo.y)-1),top=imn(WORLD_Y-1,fl(hi.y)+1);
+  if(!r.dirty){
+   copy_bytes(r.dirty_xz,bounds,sizeof(bounds));r.dirty_y0=bottom;r.dirty_y1=top;
+   r.dirty=true;w.geometry_cache->invalidations++;
+  }else{
+   for(int axis=0;axis<2;++axis){
+    r.dirty_xz[axis]=imn(r.dirty_xz[axis],bounds[axis]);
+    r.dirty_xz[axis+2]=imx(r.dirty_xz[axis+2],bounds[axis+2]);
+   }
+   r.dirty_y0=imn(r.dirty_y0,bottom);r.dirty_y1=imx(r.dirty_y1,top);
+  }
+ }
 }
 void geometry_cache_stats(const World&w,Bytes&out){
  const GeometryCache*c=w.geometry_cache;
@@ -67,6 +84,30 @@ static void order_vertices(Vertex*p,int lo,int hi){
   if(j-lo<hi-i){if(lo<j)order_vertices(p,lo,j);lo=i;}else{if(i<hi)order_vertices(p,i,hi);hi=j;}
  }
 }
+// Merge in extraction order. An unchanged crossing has exactly the same
+// representative and component mask, even when first page admission expanded
+// the search band. Newly discovered crossings keep the current revision.
+static void inherit_face_recipes(const GeometryRegion&old,List<Vertex>&vertices){
+ int at=0;
+ for(int i=0;i<vertices.n&&at<old.vertices.n;++i){
+  auto&v=vertices[i];
+  if(v.cx<old.x||v.cx>=old.x+16||v.cz<old.z||v.cz>=old.z+16)continue;
+  while(at<old.vertices.n&&vertex_before(old.vertices[at],v))++at;
+  if(at==old.vertices.n)break;
+  const auto&u=old.vertices[at];
+  if(u.cx!=v.cx||u.cy!=v.cy||u.cz!=v.cz||u.mask!=v.mask||
+     u.p.x!=v.p.x||u.p.y!=v.p.y||u.p.z!=v.p.z||
+     u.n.x!=v.n.x||u.n.y!=v.n.y||u.n.z!=v.n.z||u.material!=v.material)continue;
+  v.geometry_revision=u.geometry_revision;v.face_revision=u.face_revision;v.face_splits=u.face_splits;
+ }
+}
+static void inherit_available_recipes(const World&w,int ox,int oz,int size,Mesh&m){
+ const auto*c=w.geometry_cache;if(!c)return;
+ for(int z=fl(float(oz-1)/16)*16;z<oz+size;z+=16)for(int x=fl(float(ox-1)/16)*16;x<ox+size;x+=16){
+  int slot=int(c->index[geometry_key(x,z)])-1;
+  if(slot>=0)inherit_face_recipes(c->regions[slot],m.v);
+ }
+}
 // Transfer a complete 16 m column, preserving the ordinary cache budget.
 static const List<Vertex>* retain_geometry_column(GeometryCache&c,int x,int z,List<Vertex>&vertices){
  int key=geometry_key(x,z),slot=int(c.index[key])-1;
@@ -89,19 +130,19 @@ static bool remember_surface_columns(const World&w,int ox,int oz,int size,const 
   List<Vertex> column;
   for(int i=0;i<m.v.n;i++){
    const auto&v=m.v[i];
-   if(v.cx>=x&&v.cx<x+16&&v.cz>=z&&v.cz<z+16)column.push(v);
+   if(v.mask&&v.cx>=x&&v.cx<x+16&&v.cz>=z&&v.cz<z+16)column.push(v);
   }
   if(tr_oom){column.release();return false;}
   retain_geometry_column(*c,x,z,column);column.release();
  }
  return true;
 }
-static bool has_surface_columns(const World&w,int ox,int oz,int size){
+static bool has_surface_columns(const World&w,int ox,int oz,int size,bool allow_dirty=false){
  const auto*c=w.geometry_cache;if(!c)return false;
  for(int z=fl(float(oz-1)/16)*16;z<oz+size&&z<=WORLD;z+=16)
   for(int x=fl(float(ox-1)/16)*16;x<ox+size&&x<=WORLD;x+=16){
    int slot=int(c->index[geometry_key(x,z)])-1;
-   if(slot<0||c->regions[slot].dirty)return false;
+   if(slot<0||(!allow_dirty&&c->regions[slot].dirty))return false;
   }
  return true;
 }
@@ -116,7 +157,17 @@ static bool cached_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoc
   if(slot>=0&&!c.regions[slot].dirty){c.hits++;selected=&c.regions[slot].vertices;c.regions[slot].used=++c.clock;}
   else{
    c.misses++;
-   if(!extract_vertices(w,x,z,16,temporary,epoch)){temporary.release();return false;}
+   if(slot>=0){
+    const auto&r=c.regions[slot];
+    if(!extract_vertices(w,x,z,16,temporary,epoch,r.dirty_y0+1,r.dirty_y1+1,nullptr,nullptr,r.dirty_xz)){temporary.release();return false;}
+    inherit_face_recipes(r,temporary.v);
+    for(int i=0;i<r.vertices.n;++i){
+     const auto&v=r.vertices[i];
+     if(v.cx<r.dirty_xz[0]||v.cx>r.dirty_xz[2]||v.cz<r.dirty_xz[1]||v.cz>r.dirty_xz[3]||v.cy<r.dirty_y0||v.cy>r.dirty_y1)temporary.v.push(v);
+    }
+    if(tr_oom){temporary.release();return false;}
+    if(temporary.v.n>1)order_vertices(temporary.v.p,0,temporary.v.n-1);
+   }else if(!extract_vertices(w,x,z,16,temporary,epoch)){temporary.release();return false;}
    // Drop halo representatives: every cached cell has exactly one owner.
    int count=0;for(int i=0;i<temporary.v.n;i++){const Vertex&v=temporary.v[i];if(v.cx>=x&&v.cx<x+16&&v.cz>=z&&v.cz<z+16)temporary.v[count++]=v;}temporary.v.n=count;
    selected=retain_geometry_column(c,x,z,temporary.v);
@@ -128,4 +179,24 @@ static bool cached_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoc
  // shading decisions. Reuse does not silently alter topology or material output.
  if(m.v.n>1)order_vertices(m.v.p,0,m.v.n-1);
  return !cancelled(w,epoch);
+}
+
+// The worker can repair just the invalidated cells on its immutable field.
+// Copy only columns read by this group, under the existing per-core budget.
+bool copy_surface_columns(const World&source,World&dest,int ox,int oz,int width,int depth){
+ if(!source.geometry_cache)return true;
+ for(const auto&r:source.geometry_cache->regions){
+  if(!r.present||r.x+16<ox||r.z+16<oz||r.x>=ox+width||r.z>=oz+depth)continue;
+  auto*c=ensure_geometry_cache(dest);if(!c)return false;
+  List<Vertex> vertices;vertices.resize(r.vertices.n);
+  if(tr_oom){vertices.release();return false;}
+  if(r.vertices.n)copy_bytes(vertices.p,r.vertices.p,sizeof(Vertex)*r.vertices.n);
+  retain_geometry_column(*c,r.x,r.z,vertices);vertices.release();
+  const int slot=int(c->index[geometry_key(r.x,r.z)])-1;
+  if(slot>=0&&r.dirty){
+   auto&copy=c->regions[slot];copy.dirty=true;copy.dirty_y0=r.dirty_y0;copy.dirty_y1=r.dirty_y1;
+   copy_bytes(copy.dirty_xz,r.dirty_xz,sizeof(r.dirty_xz));
+  }
+ }
+ return !tr_oom;
 }

@@ -603,11 +603,18 @@ static bool generate_page(const World &w,int px,int py,int pz,Page &page){
  }
  return true;
 }
+// First authoring a page also admits its procedural lattice band to the
+// extractor, including the sealed world floor. The entire page footprint
+// can acquire triangles even where the edit left every density unchanged.
+static void invalidate_new_surface_page(const World&w,int x,int y,int z){
+ invalidate_geometry_cache(w,{float(x*16),float(y*16-1),float(z*16)},
+                           {float(x*16+15),float(y*16+17),float(z*16+15)});
+}
 Page* World::ensure(int px,int py,int pz){
  u32 key=page_key(px,py,pz);int at=pages_by_key.get(key);if(at>=0)return resident_page(at)?&pages[at]:nullptr;
  if(pages.n>=(page_access?MAX_AUTHORED_PAGES:MAX_PAGES)||(page_access&&!page_access->admit(*this)))return nullptr;
  Page page;if(!generate_page(*this,px,py,pz,page))return nullptr;
- int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);if(page_access)page_access->inserted(*this,idx);return &pages[idx];
+ int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);if(page_access)page_access->inserted(*this,idx);invalidate_new_surface_page(*this,px,py,pz);return &pages[idx];
 }
 static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,ab(p.z-c.z)-r};return length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);}
 // Large excavations keep one replacement per touched page. Sampling, inventory
@@ -669,6 +676,7 @@ struct CutPages {
    if(r.source>=original_pages){
     int x,y,z;decode_page(live.key,x,y,z);
     world.pages_by_key.put(live.key,r.source);world.edit_columns[x+NP*z]|=1u<<y;
+    invalidate_new_surface_page(world,x,y,z);
    }
    auto *old_density=live.d;auto *old_material=live.mat;
    live.d=r.data.d;live.mat=r.data.mat;r.data.d=old_density;r.data.mat=old_material;
@@ -1124,7 +1132,7 @@ static void mask_uniform_cells(const World&w,int gx,int gz,u32 pages,u32 (&rows)
   rows[py/2]&=~((candidates&~crossing)<<shift);
  }
 }
-static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y,const float*cached_heights=nullptr,const LocalCut*cut=nullptr){
+static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y,const float*cached_heights=nullptr,const LocalCut*cut=nullptr,const int*dirty_xz=nullptr){
  const int hn=size+2;List<float> heights;
  if(!cached_heights){heights.resize(hn*hn);
  for(int z=-1;z<=size;z++){
@@ -1138,7 +1146,9 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
   if(cancelled(w,epoch))break;
   zero_bytes(cache.p+((z+1)&1)*plane_size,size_t(plane_size)*sizeof(CachedSample));
   for(int x=-1;x<size;x++){
-  int gx=ox+x,gz=oz+z;if(gx<-1||gx>WORLD||gz<-1||gz>WORLD)continue;
+  int gx=ox+x,gz=oz+z;
+  if(dirty_xz&&(gx<dirty_xz[0]||gx>dirty_xz[2]||gz<dirty_xz[1]||gz>dirty_xz[3]))continue;
+  if(gx<-1||gx>WORLD||gz<-1||gz>WORLD)continue;
   float h[4]={height_values[(x+1)+hn*(z+1)],height_values[(x+2)+hn*(z+1)],height_values[(x+1)+hn*(z+2)],height_values[(x+2)+hn*(z+2)]};
   float low=mn(mn(h[0],h[1]),mn(h[2],h[3]))-2,high=mx(mx(h[0],h[1]),mx(h[2],h[3]))+1;
   u32 ybits[8]={};mark_y(ybits,fl(low),fl(high)+1);
@@ -1178,7 +1188,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
    bool refine=false;if(w.surface_style==1)for(int k=0;k<8;k++)if(mats[k])refine=true;
    terraforest::extract_density_components(d,signs,refine,[&](const terraforest::DensitySurfaceVertex &geometry,unsigned component){
    V3 p=geometry.position;
-   Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=geometry.normal;v.cx=gx;v.cy=y;v.cz=gz;v.mask=component;
+   Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=geometry.normal;v.cx=gx;v.cy=y;v.cz=gz;v.mask=component;v.geometry_revision=u32(w.revision);
    // Material classification does not affect the field or topology.
    float best=1e30f;for(int k=0;k<8;k++)if(mats[k]&&mats[k]<5&&ab(d[k])<best){best=ab(d[k]);v.material=float(mats[k]);} // Natural ore IDs are shaded separately from edit materials.
    m.v.push(v);
@@ -1191,6 +1201,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
 }
 
 static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y,const LocalCut*cut=nullptr){
+ const int representatives=m.v.n;
  Map ids,face_vertices;
  for(int j=0;j<m.v.n;j++){const Vertex&v=m.v[j];u32 k=cell_key(v.cx-ox,v.cy,v.cz-oz,size);if(ids.get(k)<0)ids.put(k,j);}
  terraforest::connect_material_surface(m.v.n,{ox,ox+size,y_begin,y_end,oz,oz+size},
@@ -1211,7 +1222,33 @@ static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begi
    terraforest::surface_split_quad(a,b,c,d,reverse,middle,[&](int i){return m.v[i].p;},
     [&](int a,int b,int c,int d){Vertex v=m.v[a];v.p=(m.v[a].p+m.v[b].p+m.v[c].p+m.v[d].p)*.25f;
      v.n=normal(m.v[a].n+m.v[b].n+m.v[c].n+m.v[d].n);v.mask=0;return m.v.push(v);},
-    [&](int a,int b,int c){m.i.push(a);m.i.push(b);m.i.push(c);});});
+    [&](int a,int b,int c){m.i.push(a);m.i.push(b);m.i.push(c);});},
+  [&](int j,int axis,int a,int b,int d,bool reverse,bool ordinary){
+   // Cell identities are stable, packed mesh indices are revision-local.
+   // Retain the diagonal of ordinary faces and remap their four live vertices.
+   unsigned split=(m.v[j].face_splits>>(2*axis))&3;
+   // A page can become authored without changing these representatives.
+   // Only replay the old diagonal when all four inputs have stayed the same
+   // since that face was built. The lookup already identifies the crossing.
+   const auto previous=m.v[j].face_revision;
+   if(m.v[a].geometry_revision>previous||m.v[b].geometry_revision>previous||
+      m.v[d].geometry_revision>previous||m.v[j].geometry_revision>previous)split=0;
+   if(!split){
+    if(!ordinary)return false;
+    const auto ac=m.v[a].p-m.v[j].p,bd=m.v[b].p-m.v[d].p;
+    split=dot(ac,ac)<=dot(bd,bd)?1:2;
+   }else w.replayed_triangles+=2;
+   m.v[j].face_splits|=split<<(8+2*axis);
+   if(reverse){int swap=b;b=d;d=swap;}
+   auto triangle=[&](int i,int k,int l){m.i.push(i);m.i.push(k);m.i.push(l);};
+   if(split==1){triangle(a,j,b);triangle(a,d,j);}
+   else{triangle(a,d,b);triangle(b,d,j);}
+   return true;
+  });
+ // A missing or newly ambiguous face earns no reusable recipe.
+ for(int i=0;i<representatives;++i){
+  m.v[i].face_splits>>=8;m.v[i].face_revision=u32(w.revision);
+ }
  ids.release();face_vertices.release();
 }
 
@@ -1242,16 +1279,19 @@ bool measure_material_surface(const World&w,int x,int z,int size,int y_begin,int
 
 #include "geometry_regions.hpp"
 
-bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch,bool region_cache){
+bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch,bool region_cache,bool retain_cells){
  double mark=w.profile_mesh?mesh_clock_ms():0;
  if(w.profile_mesh)zero_bytes(w.mesh_stage_ms,sizeof(w.mesh_stage_ms));
  const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
  if(cancelled(w,epoch))return false;
- bool remember=region_cache&&w.contact_snapshot&&size<=32&&ox%16==0&&oz%16==0&&ox+size<=WORLD&&oz+size<=WORLD;
- bool ok=region_cache&&!remember?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch);
- if(ok&&remember)ok=remember_surface_columns(w,ox,oz,size,m);
+ const bool aligned=(size==16||size==32)&&ox%16==0&&oz%16==0&&ox+size<=WORLD&&oz+size<=WORLD;
+ const bool resident=aligned&&(w.contact_snapshot||retain_cells);
+ const bool reuse=resident&&has_surface_columns(w,ox,oz,size,true);
+ bool ok=(reuse||(region_cache&&!(resident&&w.contact_snapshot)))?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch);
  if(!ok){m.release();return false;}
+ if(resident&&!reuse)inherit_available_recipes(w,ox,oz,size,m);
  connect_patch(w,ox,oz,size,m);
+ if(resident&&!remember_surface_columns(w,ox,oz,size,m)){m.release();return false;}
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
  simplify(w,m,ox,oz,size,step,epoch);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[1]=float(now-mark);mark=now;}
@@ -1715,13 +1755,13 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  Reader r{data,n};u32 cmd=r.u();if(!out.reserve(fixed_edit_reply(cmd)?EDIT_REPLY_CAPACITY:12))return;out.u(REPLY_MAGIC);out.u(cmd);out.u(0);
  if(!r.good){out.p[8]=1;return;}
  if(cmd==0){out.u(w.revision);out.u(w.edits);out.u(w.pages.n);out.u(w.blocks.n);out.u(u32(w.changed_samples));out.u(w.seed);}
- else if(cmd==1||cmd==20){
+ else if(cmd==1||cmd==20||cmd==44){
   int ox=int(r.u()),oz=int(r.u()),size=int(r.u()),step=int(r.u());
   u32 epoch=r.at+4<=r.n?r.u():terrain_build_epoch(&w);
   if(!r.good||ox<0||oz<0||ox>=2048||oz>=2048||(size!=16&&size!=32&&size!=64&&size!=128&&size!=256)||(step!=1&&step!=2&&step!=4&&step!=8)){out.p[8]=1;return;}
   Mesh m;
   if(w.contact_snapshot)w.contact_outside=false;
-  if(!build_patch(w,ox,oz,size,step,m,epoch,cmd==20)){out.p[8]=4;return;}
+  if(!build_patch(w,ox,oz,size,step,m,epoch,cmd==20,cmd==44)){out.p[8]=4;return;}
   if(w.contact_snapshot&&w.contact_outside){m.release();out.p[8]=4;return;}
   out.u(w.revision);encode_mesh(m,ox,oz,size,step,out);m.release();
  }
@@ -1986,6 +2026,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(n!=4){out.p[8]=1;return;}
   for(float value:w.mesh_stage_ms)out.f(value);
  }
+ else if(cmd==45){if(n!=4){out.p[8]=1;return;}out.raw(&w.replayed_triangles,sizeof(w.replayed_triangles));}
  else if(cmd==21){if(n!=4){out.p[8]=1;return;}geometry_cache_stats(w,out);}
  else if(cmd==22){u32 budget=r.u();if(!r.good||n!=8||!configure_geometry_cache(w,budget)){out.p[8]=1;return;}}
  else if(cmd==23||cmd==24){
