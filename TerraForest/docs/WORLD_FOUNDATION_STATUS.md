@@ -1,3 +1,29 @@
+## Joint publication on the packaged shoreline route
+
+On Cedar Vale at 1920 × 1080, detailed water and terrain first matched the changed physics surface on the same draw at both shores. The two-frame deadline still fails. Measurements below use the installed PCK `5e1b972205702db74a367314c4acf2d359bffaae0982d391cef9a91ce6ecb9ed` and matching external DLLs on the RTX 4050 Laptop. The camera run includes image readback, so use the separate timing run for frame intervals.
+
+| Gameplay edit | First complete draw | Frame interval on the timing route |
+|---|---:|---:|
+| Full 64 m cut | 123.67 ms from input | 20.52 ms worst during edit |
+| Sea barrel | Draw 7 at 109.97 ms from terrain admission | 27.18 ms p99, 72.24 ms worst outside marked diagnostics |
+| Lake barrel | Draw 10 at 164.94 ms from terrain admission | 19.12 ms p99, 20.18 ms worst outside marked diagnostics |
+
+In a repeat with camera capture disabled, the cut center first drew at 40.54 ms and the full cut at 102.53 ms. The worst interval was 33.88 ms. Zero of nine changed probes matched on draw two at 31.13 ms. [Repeat cut trace](../reports/checks/20261121T011935846249Z/engine.log)
+
+The cut center in the two-angle run first drew at 49.03 ms. At draw two (32.65 ms), none of nine changed footprint rays matched their final heights. All 36 final mesh owners matched independent reconstruction. The 3,750 final collision samples retained SHA-256 `7dc3e40586d22445ea73b03be2089d26eccdcb44bdac14bb45380ed94bfac725`. The brush receipt attributes 8.71 ms to the density edit and 106.07 ms of **summed worker work** to mesh building. Some of that work overlaps. [Cut trace](../reports/checks/20261121T011613680089Z/engine.log) · [Cut collision samples](../reports/checks/20261121T011613680089Z/brush_contacts.json)
+
+The camera run observed sea contact on draw 6 at 96.03 ms and lake contact on draw 10 at 163.71 ms. The first accepted floor and detailed water reached the screen together on both runs. The sampled ground triangles and physics agreed within 0.027 mm. The immediate waterline checks found no gaps beyond 2 cm at 23 sea and 26 lake samples. The constructed cube excluded water inside and had water within 1 cm of all four walls. Both camera pairs show the new inlet. The underwater views show the excavated bank. Lake mining also missed its two-frame assertion. [Timing and command-stage trace](../reports/checks/20261121T011517656506Z/normal_gameplay_blast_performance.json) · [Contact and mining](../reports/checks/20261121T011701032355Z/engine.log) · [Object contact](../reports/checks/20261121T011759512031Z/engine.log)
+
+| Scene | First angle before and after | Second angle before and after |
+|---|---|---|
+| Cut | [Before](../reports/checks/20261121T011613680089Z/cut_before_angle_1.png) · [After](../reports/checks/20261121T011613680089Z/cut_after_angle_1.png) | [Before](../reports/checks/20261121T011613680089Z/cut_before_angle_2.png) · [After](../reports/checks/20261121T011613680089Z/cut_after_angle_2.png) |
+| Sea | [Before](../reports/checks/20261121T011701032355Z/player_shore_before.png) · [After](../reports/checks/20261121T011701032355Z/player_shore_after.png) | [Before](../reports/checks/20261121T011701032355Z/player_shore_before_reverse.png) · [After](../reports/checks/20261121T011701032355Z/player_shore_after_reverse.png) |
+| Lake | [Before](../reports/checks/20261121T011701032355Z/player_lake_before.png) · [After](../reports/checks/20261121T011701032355Z/player_lake_after.png) | [Before](../reports/checks/20261121T011701032355Z/player_lake_before_reverse.png) · [After](../reports/checks/20261121T011701032355Z/player_lake_after_reverse.png) |
+
+Terrain workers now notify the main thread when accepted fields and mesh packets become available. Local water workers notify it on completion. Both handoffs share their existing per-frame work allowance with normal polling. A ready terrain group can replace a temporary cut when it covers the preview and the required neighbours. Matching collider counts permit reuse of the registered body. Water completion is recognized even when ocean admission resumes between worker callbacks. An earlier packaged trial exposed that stalled completion. Native meshing now shares the vertex height between material and visibility evaluation and reserves each encoded packet once. [Native byte comparisons](../reports/checks/20261121T010609990667Z_terrain_edit_core_parity.json) · [Headless publication checks](../reports/terrain_publication_probe.json)
+
+The measurements support keeping the two-frame and 60 Hz gates open. The cut still produces 16,892 output collision triangles, including 10,831 found in the old mesh, even with all 36 scene nodes reused. Removing the notification wait alone cannot cover that work. Before further scheduler tuning, measure a resident representation that changes only the affected triangle and collider ranges against the same 36-owner and 3,750-ray references. At the shores, measure preparation of the detailed water boundary from the accepted terrain revision separately from node upload and the final swap.
+
 ## Packaged cut and detailed ocean contact
 
 On the pinned 1080p RTX 4050 Laptop Cedar Vale route, the 64 m cut took **121.10 ms** from input to the complete draw, down from 138.21 ms. Its field update took 10.65 ms, down from 26.75 ms. On draw two at 30.69 ms, **0 of 9** changed collision probes matched. The center first matched on draw five. Worst frame interval was 35.70 ms. All 36 installed terrain tiles matched fresh reconstruction across every mesh channel. The 3,750 post-edit collision samples were byte-identical to the prior fixture. [Cut trace](../reports/checks/20261121T002846250447Z/engine.log) · [Collision samples](../reports/checks/20261121T002846250447Z/brush_contacts.json)

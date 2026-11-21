@@ -155,6 +155,7 @@ func _ready() -> void:
  _material.shader=preload("res://addons/volumetric_water/water.gdshader")
  _material.set_shader_parameter("ripple_normal",preload("res://addons/volumetric_water/textures/water_ripples_normal.png"))
  terrain.lake_slice_ready.connect(_slice_ready);terrain.region_invalidated.connect(_invalidate)
+ terrain.edit_field_ready.connect(_field_ready)
  terrain.edit_region_installed.connect(_terrain_region_installed)
  terrain.edit_geometry_installed.connect(_terrain_geometry_installed)
  terrain.region_changed.connect(_settle_committed_edit)
@@ -291,9 +292,54 @@ func _invalidate(bounds:AABB) -> void:
 var last_process_us:int=0
 var last_process_work:Dictionary={}
 var _process_deadline:=0
+var _work_frame:=-1
+var _work_spent_us:=0
+
+func _remaining_frame_work()->int:
+ var frame:=Engine.get_process_frames()
+ if frame!=_work_frame:
+  _work_frame=frame
+  _work_spent_us=0
+ return maxi(0,850-_work_spent_us)
+
+func _field_ready(ticket:int)->void:
+ if not terrain.joint_edit_pending():return
+ _continue_joint_edit.call_deferred(ticket,terrain.epoch)
+
+func _continue_joint_edit(ticket:int,epoch:int)->void:
+ if not is_inside_tree() or not is_processing() or not can_process() or not terrain.world_ready or terrain.epoch!=epoch or terrain.edit_ticket!=ticket or not terrain.joint_edit_pending():return
+ var allowance:=_remaining_frame_work()
+ if allowance<=0:return
+ var began:=Time.get_ticks_usec()
+ _process_deadline=began+allowance
+ if _settlement_ticket!=ticket and terrain.water_sampling_revision()>=0:_begin_terrain_settlement(ticket)
+ _poll_edit_patches()
+ if _settlement_ticket==ticket and not _busy and _edit_patch_attempt!=ticket:
+  _edit_patch_attempt=ticket
+  _start_edit_patches(terrain.water_sampling_revision())
+ if _filling_id==0 and _local_response_pending and _edit_patch_task<0 and Time.get_ticks_usec()<_process_deadline:_advance_equilibrium()
+ if _local_publication_pending and Time.get_ticks_usec()<_process_deadline:_publish_meshes()
+ _finish_local_publication()
+ _process_deadline=0
+ _work_spent_us+=Time.get_ticks_usec()-began
+
+func _finish_local_publication()->void:
+ if _local_publication_pending:
+  var publication_state:Dictionary=water.runtime_state()
+  if publication_state.urgent_meshes==0 and not publication_state.urgent_batch:
+   # An accepted recut can leave every water quantity and surface unchanged.
+   if terrain.joint_edit_pending():
+    terrain.publish_joint_edit(terrain.edit_ticket,func()->bool:return true)
+   if not terrain.joint_edit_pending():
+    _local_publication_pending=false;_local_response_us=Time.get_ticks_usec()-_local_response_started_us
+
+func _prepare_water_job(job:RefCounted,ticket:int,epoch:int)->void:
+ job.prepare()
+ _continue_joint_edit.call_deferred(ticket,epoch)
+
 func _process(delta:float) -> void:
  var measured_begin:=Time.get_ticks_usec()
- _process_deadline=measured_begin+850
+ _process_deadline=measured_begin+_remaining_frame_work()
  last_process_work.clear()
  _measured_step(delta)
  # Retirement uses the unused portion of this frame, not an additional budget.
@@ -304,6 +350,7 @@ func _process(delta:float) -> void:
   _retired_mesh_nodes.pop_back().queue_free();retired_count+=1
  last_process_work.retirement=Time.get_ticks_usec()-retired_begin
  last_process_us=Time.get_ticks_usec()-measured_begin
+ _work_spent_us+=last_process_us
  _process_deadline=0
 
 func _measured_step(delta:float)->void:
@@ -378,14 +425,7 @@ func _measured_step(delta:float)->void:
   var prior_task:=_mesh_task
   var began:=Time.get_ticks_usec();_publish_meshes();last_process_work.publication=Time.get_ticks_usec()-began
   if solving_local and _mesh_task>=0 and _mesh_task!=prior_task:last_process_work.local_mesh_dispatched=true
-  if _local_publication_pending:
-   var publication_state:Dictionary=water.runtime_state()
-   if publication_state.urgent_meshes==0 and not publication_state.urgent_batch:
-    # An accepted recut can leave every water quantity and surface unchanged.
-    if terrain.joint_edit_pending():
-     terrain.publish_joint_edit(terrain.edit_ticket,func()->bool:return true)
-    if not terrain.joint_edit_pending():
-     _local_publication_pending=false;_local_response_us=Time.get_ticks_usec()-_local_response_started_us
+ _finish_local_publication()
  # Authored filling and blast-woken settling have separate native budgets.
  if _filling_id!=0:water.advance(2048,delta)
  # A restored unfinished transaction must settle during loading: the loading
@@ -484,7 +524,10 @@ func _advance_equilibrium()->void:
  if capture_started>=_process_deadline:return
  _equilibrium_job=water.begin_equilibrium(mini(350,_process_deadline-capture_started),_local_response_pending)
  last_process_work.equilibrium_capture=Time.get_ticks_usec()-capture_started
- if _equilibrium_job!=null:_equilibrium_task=WorkerThreadPool.add_task(_equilibrium_job.prepare,false,"Water connected-body equilibrium")
+ if _equilibrium_job!=null:
+  var local:bool=_local_response_pending and terrain.joint_edit_pending()
+  var work:Callable=_prepare_water_job.bind(_equilibrium_job,terrain.edit_ticket,terrain.epoch) if local else _equilibrium_job.prepare
+  _equilibrium_task=WorkerThreadPool.add_task(work,local,"Water connected-body equilibrium")
 var _replacement_faces:Dictionary={}
 var _staged_over_capacity_delta_ml:=0
 var _replacement_removals:Array[Vector3i]=[]
@@ -505,7 +548,9 @@ func _clear_staged_meshes()->void:
 
 func _start_mesh_job(job:RefCounted)->void:
  _mesh_job=job
- _mesh_task=WorkerThreadPool.add_task(_mesh_job.prepare,false,"Water boundary mesh")
+ var local:bool=terrain.joint_edit_pending()
+ var work:Callable=_prepare_water_job.bind(job,terrain.edit_ticket,terrain.epoch) if local else job.prepare
+ _mesh_task=WorkerThreadPool.add_task(work,local,"Water boundary mesh")
  if _mesh_task<0:
   # Preserve progress if dispatch is unavailable; the job stays owned throughout.
   _mesh_job.prepare();_mesh_job=null
@@ -697,6 +742,7 @@ func _prepare_edit_patches(core:Object,job:Dictionary)->void:
   while status==0:status=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
   if status!=1:return
  job.ready=true
+ _continue_joint_edit.call_deferred(job.ticket,job.epoch)
 
 var _shared_contact_patches:=0
 var _edit_patch_attempt:=-1

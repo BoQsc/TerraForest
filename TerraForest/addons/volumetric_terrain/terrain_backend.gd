@@ -7,6 +7,8 @@ var thread := Thread.new()
 var mutex := Mutex.new()
 var semaphore := Semaphore.new()
 var jobs: Array[Dictionary] = []
+signal edit_results_ready
+var _edit_notice_pending:=false
 var results: Array[Dictionary] = []
 var _material_pending: int = 0 # One mutation reservation through result consumption.
 var _density_pending: int = 0 # Accepted queries, including unconsumed results.
@@ -493,6 +495,7 @@ func status() -> String:
 func poll() -> Array[Dictionary]:
 	mutex.lock()
 	var ready: Array[Dictionary] = results
+	_edit_notice_pending=false
 	for result: Dictionary in ready:
 		if result.get("kind","")=="material_edit": _material_pending-=1
 		if result.get("kind","")=="density_batch": _site_pending-=1
@@ -523,7 +526,10 @@ func stop() -> void:
 func _push(result: Dictionary) -> void:
 	mutex.lock()
 	results.push_back(result)
+	var notify:bool=not _edit_notice_pending and result.get("kind","") in ["edit_begin","edit_chunk","edit_done"]
+	if notify:_edit_notice_pending=true
 	mutex.unlock()
+	if notify:edit_results_ready.emit()
 
 func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)

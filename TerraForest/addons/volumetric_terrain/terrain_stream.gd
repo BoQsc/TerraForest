@@ -150,6 +150,7 @@ func publish_joint_edit(ticket:int,install_water:Callable)->bool:
 	_install_ready_edit_group(owners.keys())
 	return true
 
+signal edit_field_ready(ticket:int)
 signal edit_geometry_installed(ticket:int)
 signal edit_region_installed(ticket:int,keys:Array)
 # The frozen visible cut can contain several tile sizes along one brush edge.
@@ -242,6 +243,7 @@ func start(terrain_material: Material, temporary_world: bool) -> Error:
 		push_error("Terrain requires the current native planner build; the legacy terrain binary is not supported.")
 		return ERR_UNAVAILABLE
 	planner = ClassDB.instantiate("NativeTerrainPlanner")
+	backend.edit_results_ready.connect(_receive_edit_notice,CONNECT_DEFERRED)
 	material = terrain_material
 	# Receive completed work before the parent consumes the next pending sample.
 	# Does not change physics ordering or increase the per-frame upload budget.
@@ -317,6 +319,31 @@ func _exit_tree() -> void:
 		backend.disable_snapshot_writes("scene removed before graceful shutdown; previous checkpoint retained")
 	shutdown()
 
+# Worker completions can arrive after the normal process turn. Share one
+# publication allowance across all opportunities in the same process frame.
+var _staging_frame:=-1
+var _staging_spent_us:=0
+
+func _receive_edit_notice()->void:
+	if stopping or not pending_edit or not is_inside_tree() or not is_processing() or not can_process():return
+	var ready:Array[Dictionary]=backend.poll()
+	if ready.is_empty():return
+	_dispatch_results(ready,false)
+	if pending_edit:_stage_with_frame_budget()
+
+func _stage_with_frame_budget()->void:
+	var frame:=Engine.get_process_frames()
+	if frame!=_staging_frame:
+		_staging_frame=frame
+		_staging_spent_us=0
+	var remaining:=main_build_budget_us-_staging_spent_us
+	if remaining<=0:
+		last_publish_frame_ms=0
+		return
+	var started:=Time.get_ticks_usec()
+	_drain_staging(remaining)
+	_staging_spent_us+=Time.get_ticks_usec()-started
+
 func _process(delta: float) -> void:
 	if stopping:
 		return
@@ -326,7 +353,7 @@ func _process(delta: float) -> void:
 	_dispatch_results(ready_results)
 	last_receive_ms = float(Time.get_ticks_usec() - receive_begin) / 1000.0
 	_record_stage("receive", last_receive_ms)
-	_drain_staging()
+	_stage_with_frame_budget()
 	_record_stage("staging frame", last_publish_frame_ms)
 	_retire_some()
 	if closing: return # Drain publication, but admit no new background work.
@@ -370,10 +397,11 @@ func _receive_measured(result: Dictionary) -> void:
 	_receive(result)
 	_record_stage("receive "+str(result.get("kind","unknown")),(Time.get_ticks_usec()-began)/1000.0)
 
-func _dispatch_results(ready: Array[Dictionary]) -> void:
+func _dispatch_results(ready: Array[Dictionary],drain_surfaces:bool=true) -> void:
 	for result: Dictionary in ready:
 		if result.get("kind","")=="surface_batch":_surface_replies.append(result)
 		else:_receive_measured(result)
+	if not drain_surfaces:return
 	var began:=Time.get_ticks_usec()
 	var budget_us:=maxi(main_build_budget_us,SURFACE_RECEIVE_BUDGET_US) if initial_loading else SURFACE_RECEIVE_BUDGET_US
 	while not _surface_replies.is_empty():
@@ -551,6 +579,7 @@ func _receive(result: Dictionary) -> void:
 		batch_remaining = int(result["count"])
 		staged_batch.clear()
 		edit_worker_done = false
+		edit_field_ready.emit(edit_ticket)
 	elif kind == "edit_chunk":
 		if int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
 			return
@@ -667,15 +696,20 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 	var key: Vector3i = data["key"]
 	var arrays: Array = data["arrays"]
 	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-	# Keep the registered instance and body for ordinary one-shape owners.
+	# Keep the registered instance and body for owners with the same collider count.
 	# Only the replacement resources are private during staging.
 	var slot:Dictionary={}
 	var old:Dictionary=tiles.get(key,{})
-	if data.get("kind","")=="batch" and not data.has("contact_count") and not data.has("brick_bottom") and not indices.is_empty() and data.collision_pieces.size()==1:
+	if data.get("kind","")=="batch" and not data.has("contact_count") and not data.has("brick_bottom") and not indices.is_empty() and not data.collision_pieces.is_empty():
 		var previous_body:StaticBody3D=old.get("body")
-		if old.get("node") is MeshInstance3D and is_instance_valid(previous_body) and previous_body.get_child_count()==1:
-			var collider:=previous_body.get_child(0) as CollisionShape3D
-			if collider!=null:slot={"collider":collider,"old_shape":collider.shape,"old_mesh":old.node.mesh,"applied":false}
+		if old.get("node") is MeshInstance3D and is_instance_valid(previous_body) and previous_body.get_child_count()==data.collision_pieces.size():
+			var colliders:=previous_body.get_children()
+			var old_shapes:Array[Shape3D]=[]
+			for child:Node in colliders:
+				if not child is CollisionShape3D:break
+				old_shapes.append((child as CollisionShape3D).shape)
+			if old_shapes.size()==colliders.size():
+				slot={"colliders":colliders,"old_shapes":old_shapes,"shapes":[],"old_mesh":old.node.mesh,"applied":false}
 	var mesh_node:Node3D
 	var body:StaticBody3D
 	if slot.is_empty():
@@ -724,7 +758,10 @@ func _apply_resident_swap(entry:Dictionary,active:bool)->void:
 	var slot:Dictionary=entry.resident_swap
 	if slot.applied==active:return
 	var started:=Time.get_ticks_usec()
-	slot.collider.shape=slot.shape if active else slot.old_shape
+	var shapes:Array=slot.shapes if active else slot.old_shapes
+	for index in shapes.size():
+		var collider:CollisionShape3D=slot.colliders[index]
+		if collider.shape!=shapes[index]:collider.shape=shapes[index]
 	entry.node.mesh=slot.mesh if active else slot.old_mesh
 	slot.applied=active
 	_record_stage("resident resource swap",(Time.get_ticks_usec()-started)/1000.0)
@@ -777,7 +814,7 @@ func _prepare_piece() -> bool:
 			collision_pieces_built += 1
 		var attach_begin: int = Time.get_ticks_usec()
 		if entry.has("resident_swap"):
-			entry.resident_swap.shape=prepared.shape
+			entry.resident_swap.shapes.append(prepared.shape)
 		else:
 			var collision:=CollisionShape3D.new()
 			collision.shape=prepared.shape
@@ -823,7 +860,8 @@ func _select_preparation_work() -> void:
 	elif not paused_preparations.is_empty():
 		preparation=paused_preparations.pop_front()
 
-func _drain_staging() -> void:
+func _drain_staging(allowance_us:int=-1) -> void:
+	if allowance_us<0:allowance_us=main_build_budget_us
 	var begin: int = Time.get_ticks_usec()
 	# A multi-region background upload must yield between bounded pieces rather
 	# than keep a ready edit waiting for the entire coarse container.
@@ -834,7 +872,7 @@ func _drain_staging() -> void:
 		if not lighting_upload.is_empty():
 			last_publish_frame_ms = float(Time.get_ticks_usec() - begin) / 1000.0
 			return
-	while Time.get_ticks_usec() - begin < main_build_budget_us:
+	while Time.get_ticks_usec() - begin < allowance_us:
 		var unit_begin: int = Time.get_ticks_usec()
 		# Atomic publication is its own indivisible unit. A final collision piece
 		# may already have exhausted this slice; keep the old complete surface
@@ -1133,7 +1171,13 @@ func _ready_edit_group(seed:Vector3i)->Array[Vector3i]:
 	while at<group.size():
 		var key:=group[at]
 		at+=1
-		if _contact_visible and _contact_entries.has(key):return []
+		if _contact_visible and _contact_entries.has(key):
+			# The preview spans a single seam-checked region. Replace its
+			# owners together as soon as their exact neighbours are ready.
+			for preview_key:Vector3i in _contact_entries:
+				if not visited.has(preview_key):
+					visited[preview_key]=true
+					group.append(preview_key)
 		var entry:Dictionary=staged_batch.get(key,{})
 		if entry.is_empty():return []
 		if entry.get("local_active",false) or entry.get("retain_geometry",false):continue
@@ -1169,6 +1213,11 @@ func _publish_ready_region(seed:Vector3i)->void:
 	_install_ready_edit_group(group)
 
 func _install_ready_edit_group(group:Array)->void:
+	if _contact_visible:
+		for key:Vector3i in group:
+			if _contact_entries.has(key):
+				_retire_contact()
+				break
 	var installed:Array[Vector3i]=[]
 	for key in group:
 		var entry:Dictionary=staged_batch[key]

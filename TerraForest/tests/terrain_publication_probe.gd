@@ -75,6 +75,7 @@ func run() -> void:
 	core = ClassDB.instantiate("TerrainCore")
 	recipes = ClassDB.instantiate("NativeTerrainCollision")
 	world = BudgetedCut.new()
+	world.backend.collision_recipes=recipes
 	root.add_child(world)
 	world.set_process(false)
 	world.material = StandardMaterial3D.new()
@@ -119,6 +120,10 @@ func run() -> void:
 	world.batch_remaining = 4
 	world.geometry_lo = point-Vector3.ONE*9
 	world.geometry_hi = point+Vector3.ONE*9
+	for owner:Vector3i in world.visible_cut:
+		world._edit_visible_owners[owner]=true
+		world._edit_owner_cells[Vector2i(owner.x,owner.y)]=owner
+	world.reserve_joint_edit(3,[AABB(point-Vector3.ONE*9,Vector3.ONE*18)])
 	var changed := 0
 	for key in world.visible_cut:
 		world.stamps[key] = 3
@@ -129,7 +134,11 @@ func run() -> void:
 		world._receive(data)
 		drain()
 		var prepared_body:StaticBody3D=world.staged_batch[key].body
-		check(prepared_body.collision_layer==0 and PhysicsServer3D.body_get_space(prepared_body.get_rid()).is_valid(),"replacement compound prepares incrementally on collision layer zero")
+		if world.staged_batch[key].has("resident_swap"):
+			var slot:Dictionary=world.staged_batch[key].resident_swap
+			check(not slot.applied and prepared_body==originals[key].body and prepared_body.collision_layer==1,"resident body keeps its old shapes during preparation")
+		else:
+			check(prepared_body.collision_layer==0 and PhysicsServer3D.body_get_space(prepared_body.get_rid()).is_valid(),"replacement compound prepares incrementally on collision layer zero")
 		var untouched := true
 		for old_key in originals:
 			untouched = untouched and world.tiles[old_key]==originals[old_key] and originals[old_key].node.visible and originals[old_key].body.collision_layer==1
@@ -141,19 +150,25 @@ func run() -> void:
 	world._receive({"kind":"edit_done","epoch":world.epoch,"ticket":2})
 	check(world.pending_edit and world.staged_batch.size()==4,"obsolete completion cannot publish batch")
 	world._receive({"kind":"edit_done","epoch":world.epoch,"ticket":3,"build_total_ms":0.0,"worker_finished_us":Time.get_ticks_usec()})
+	check(world.pending_edit and world.joint_edit_pending(),"terrain completion waits for joint water readiness")
+	check(not world.publish_joint_edit(3,func()->bool:return false),"failed water handoff retains the prior revision")
+	check(world.publish_joint_edit(3,func()->bool:return true),"matching water and terrain hand off together")
+	world._drain_staging()
 	check(not world.pending_edit and world.published_revision==1 and world.staged_batch.is_empty(),"matching completion publishes once")
 	for old_key in originals:
-		check(not PhysicsServer3D.body_get_space(originals[old_key].body.get_rid()).is_valid() and PhysicsServer3D.body_get_space(world.tiles[old_key].body.get_rid()).is_valid(),"publication replaces physics ownership without a ghost compound")
+		check((originals[old_key].body==world.tiles[old_key].body or not PhysicsServer3D.body_get_space(originals[old_key].body.get_rid()).is_valid()) and PhysicsServer3D.body_get_space(world.tiles[old_key].body.get_rid()).is_valid(),"publication replaces physics ownership without a ghost compound")
 	world._receive({"kind":"edit_done","epoch":world.epoch,"ticket":3,"build_total_ms":0.0,"worker_finished_us":Time.get_ticks_usec()})
 	check(world.published_revision==1,"duplicate completion cannot republish the finished transaction")
 	for key in world.visible_cut:
 		var current: Dictionary = world.tiles[key]
-		check(current.stamp==3 and current.node.visible and current.body.collision_layer==1 and not originals[key].node.visible and originals[key].body.collision_layer==0,"visual and collision activation switch together %s" % key)
+		check(current.stamp==3 and current.node.visible and current.body.collision_layer==1 and (originals[key].node==current.node or (not originals[key].node.visible and originals[key].body.collision_layer==0)),"visual and collision activation switch together %s" % key)
 	var new_heights: Array[float] = await physics_hits(world.tiles,"physics ray sees replacement collider")
 	var lower_hits := 0
 	for i in range(4):
 		if new_heights[i]<old_heights[i]-0.01: lower_hits += 1
 	check(lower_hits==4,"all four physics rays observe the excavated surface")
+	world._edit_visible_owners.clear()
+	world._edit_owner_cells.clear()
 	await check_publication_budget(point)
 	world.shutdown()
 	world.free()

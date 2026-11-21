@@ -1,5 +1,8 @@
 # Visual issue tracker
 
+The [joint publication measurements](../docs/WORLD_FOUNDATION_STATUS.md#joint-publication-on-the-packaged-shoreline-route) cover the full cut, both shoreline camera pairs and the outstanding two-frame deadline.
+
+
 The [changed-triangle gameplay test](../docs/WORLD_FOUNDATION_STATUS.md#changed-terrain-triangles-and-the-two-frame-edit-gate) still misses the two-frame requirement.
 
 Shoreline latency is parked for the [regional basin architecture](explosive-combat/water-plan.md).

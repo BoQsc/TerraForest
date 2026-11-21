@@ -1543,12 +1543,13 @@ struct PaintStencil {
   return true;
  }
 };
+static void shade_vertex_visibility(const World&,RoofCache&,Vertex&,float,u32);
 static void shade_mesh_impl(const World&w,Mesh&m,u32 expected_epoch,EditHeightCache *cache){
  const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
  if(cancelled(w,epoch))return;
- PaintStencil stencil;
+ PaintStencil stencil;RoofCache roof(w);
  for(int i=0;i<m.v.n;i++){
-  if((i&31)==0&&cancelled(w,epoch))return;
+  if((i&7)==0&&cancelled(w,epoch))return;
   Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
   v.ore=w.has_geology()&&v.material<5?w.ore_weight(v.p,h):0;
   v.substrate=eased(.15f,.65f,h-v.p.y);v.blend={};v.asphalt=0;
@@ -1580,8 +1581,8 @@ static void shade_mesh_impl(const World&w,Mesh&m,u32 expected_epoch,EditHeightCa
    if(solid>1e-6f&&paved>0){float coverage=clampf(paved/solid,0,1);
     v.blend=v.blend*(1-coverage);v.asphalt=v.asphalt*(1-coverage)+coverage;}
   }
+  shade_vertex_visibility(w,roof,v,h,epoch);
  }
- if(!cancelled(w,epoch))shade_visibility(w,m,epoch);
 }
 void shade_mesh(const World&w,Mesh&m,u32 expected_epoch){
  if(w.cache_mesh_heights){EditHeightCache cache;shade_mesh_impl(w,m,expected_epoch,&cache);}
@@ -1705,20 +1706,16 @@ static float diffuse_sky_visibility(const World &world,RoofCache &roof,V3 origin
  }
  return value;
 }
-void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
- const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
+static void shade_vertex_visibility(const World &w,RoofCache &roof,Vertex &v,float h,u32 epoch){
  const V3 toward_sun={-0.3141378f,0.7431448f,0.5908073f};
- RoofCache roof(w);Map &probe_ids=w.light_probe_ids;List<SkyProbe>&probes=w.light_probes;
- for(int i=0;i<m.v.n;i++){
-  if((i&7)==0&&cancelled(w,epoch))break;
-  Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
+ Map &probe_ids=w.light_probe_ids;List<SkyProbe>&probes=w.light_probes;
   v.sky=1;v.sun=1;
-  if(!has_cover_candidates(w,v.p,h))continue;
+  if(!has_cover_candidates(w,v.p,h))return;
   V3 start=visibility_origin(roof,v);
   bool open_above=start.y>=roof.top_at(start.x,start.z)-.002f;
   // An unobstructed vertical column is the cheap exterior fast path. Shadow
   // maps resolve exterior sunlight; no stale baked mask multiplies it twice.
-  if(open_above)continue;
+  if(open_above)return;
   int nx=fl(clampf(start.x,0,1999.9f)*.5f),ny=fl(clampf(start.y,0,255.f)*.5f),nz=fl(clampf(start.z,0,1999.9f)*.5f);
   int axis=ab(v.n.x)>ab(v.n.y)?(ab(v.n.x)>ab(v.n.z)?0:2):(ab(v.n.y)>ab(v.n.z)?1:2);
   float component=axis==0?v.n.x:(axis==1?v.n.y:v.n.z);
@@ -1754,25 +1751,42 @@ void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
   // Keep directional shadowing per-vertex: a shared sky probe must not move
   // the edge of a small direct-sun shaft.
   v.sun=dot(v.n,toward_sun)>0.001f?(trace_occluded(w,start,toward_sun,&roof)?0.f:1.f):0.f;
+}
+void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
+ const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
+ RoofCache roof(w);
+ for(int i=0;i<m.v.n;i++){
+  if((i&7)==0&&cancelled(w,epoch))return;
+  Vertex &v=m.v[i];
+  shade_vertex_visibility(w,roof,v,w.height(v.p.x,v.p.z),epoch);
  }
- // Revision-local memoization is retained for neighboring patches, not replayed edits.
 }
 
 void encode_mesh(const Mesh&m,int ox,int oz,int size,int step,Bytes&out){
- out.u(MESH_MAGIC);out.u(5);out.u(ox);out.u(oz);out.u(size);out.u(step);out.u(m.v.n);out.u(m.i.n);
- int face_count=size<=32&&step==1?m.i.n:0;out.u(face_count);
- // Planar channels make GDScript's PackedByteArray.to_float32_array conversion cheap.
- for(int i=0;i<m.v.n;i++)out.vec(m.v[i].p);
- for(int i=0;i<m.v.n;i++)out.vec(m.v[i].n);
- // Packet v3: UV carries cached sky/sun transmission; UV2 identifies exact
- // blocks/LOD only. COLOR is continuous material weights + geological exposure.
- for(int i=0;i<m.v.n;i++){out.f(m.v[i].sky);out.f(m.v[i].sun);}
- // Integer LOD step plus continuous asphalt weight in the fractional quarter.
- // Step is constant within a surface, so interpolation preserves both channels.
- for(int i=0;i<m.v.n;i++){out.f(m.v[i].material>=5?m.v[i].material:m.v[i].ore);out.f(float(step)+clampf(m.v[i].asphalt,0,1)*.25f);}
- for(int i=0;i<m.v.n;i++){out.vec(m.v[i].blend);out.f(m.v[i].substrate);}
- if(m.i.n)out.raw(m.i.p,m.i.n*4);
- for(int i=0;i<face_count;i++)out.vec(m.v[m.i[i]].p);
+ const int faces=size<=32&&step==1?m.i.n:0;
+ const i64 bytes=36+i64(m.v.n)*56+i64(m.i.n)*4+i64(faces)*12;
+ // The wire packet and optional reply prefix share a single allocation.
+ // Publish its length only after every channel has been written.
+ if(bytes+out.n>0x40000000){tr_oom=true;return;}
+ if(!out.reserve(out.n+int(bytes)))return;
+ u8 *header=out.p+out.n;
+ const u32 fields[]={MESH_MAGIC,5,u32(ox),u32(oz),u32(size),u32(step),u32(m.v.n),u32(m.i.n),u32(faces)};
+ copy_bytes(header,fields,sizeof(fields));
+ u8 *positions=header+sizeof(fields),*normals=positions+12*m.v.n;
+ u8 *uv=normals+12*m.v.n,*uv2=uv+8*m.v.n,*colors=uv2+8*m.v.n;
+ u8 *indices=colors+16*m.v.n,*collision=indices+4*m.i.n;
+ static_assert(sizeof(V3)==12);
+ for(int i=0;i<m.v.n;++i){
+  const Vertex &v=m.v[i];
+  const float light[]={v.sky,v.sun};
+  const float surface[]={v.material>=5?v.material:v.ore,float(step)+clampf(v.asphalt,0,1)*.25f};
+  const float color[]={v.blend.x,v.blend.y,v.blend.z,v.substrate};
+  copy_bytes(positions+12*i,&v.p,12);copy_bytes(normals+12*i,&v.n,12);
+  copy_bytes(uv+8*i,light,8);copy_bytes(uv2+8*i,surface,8);copy_bytes(colors+16*i,color,16);
+ }
+ if(m.i.n)copy_bytes(indices,m.i.p,size_t(m.i.n)*4);
+ for(int i=0;i<faces;++i)copy_bytes(collision+12*i,&m.v[m.i[i]].p,12);
+ out.n+=int(bytes);
 }
 #include "experimental/density_ray.hpp"
 void process_request(World&w,const u8*data,int n,Bytes&out){

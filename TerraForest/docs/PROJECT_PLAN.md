@@ -1,5 +1,8 @@
 ## World authority and qualification milestones (November 20)
 
+The [joint publication measurements](WORLD_FOUNDATION_STATUS.md#joint-publication-on-the-packaged-shoreline-route) cover the full cut, both shoreline camera pairs and the outstanding two-frame deadline.
+
+
 The following gates track the Windows-first hosting and strategy-to-first-person
 work. An engineering check closes only the behaviour it exercises.
 
