@@ -913,6 +913,27 @@ func measure_grounded_route(filename:String="grounded_pacing.json")->void:
  game.session_menu.developer_hud.mouse_access=prior_access
  FileAccess.open(evidence.path_join(filename),FileAccess.WRITE).store_string(JSON.stringify(rows,"  "))
 
+# Read gameplay immersion just above each physical floor, then intersect the
+# rendered water boundary near the reported head. The native ray is limited
+# to five metres, even when the excavation is much deeper.
+func sample_lake_cut_water(floors:PackedVector3Array)->Array:
+ var rows:Array=[]
+ for floor_point:Vector3 in floors:
+  var row:={"wet":false,"contact":false}
+  if floor_point.is_finite():
+   var probe:=floor_point+Vector3.UP*.05
+   var depth:float=game.lakes.depth_at(probe)
+   row.floor_y=floor_point.y
+   row.depth=depth
+   if depth>0:
+    row.wet=true
+    var head:=probe+Vector3.UP*depth
+    var surface:Dictionary=game.lakes.water.raycast_surface(head+Vector3.UP*.2,head-Vector3.UP*.2)
+    row.contact=surface.get("hit",false) and absf(surface.point.y-head.y)<=.025
+    row.head_y=head.y
+  rows.append(row)
+ return rows
+
 func capture_cut_angles(center:Vector3,phase:String)->void:
  var previous:=root.get_camera_3d()
  var camera:=Camera3D.new()
@@ -1005,7 +1026,17 @@ func check_authoring_brush()->void:
   # Keep the large-cut regression observable after a small-brush timing miss.
   if i==2 or game.terrain.pending_edit or not game.terrain.latest_error.is_empty():continue
   var cut_angles:=i==1 and "--authoring-cut-angles" in OS.get_cmdline_user_args() and DisplayServer.get_name()!="headless"
-  if cut_angles:await capture_cut_angles(center,"before")
+  if cut_angles:
+   var edit_pose:=view.global_transform
+   await capture_cut_angles(center,"before")
+   view.make_current()
+   view.global_transform=edit_pose
+   game.app_focused=true
+   Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+   game._update_edit(0)
+   var restored:bool=root.get_camera_3d()==view and not game.latest_hit.is_empty() and game.pointer.position.is_equal_approx(center)
+   check(restored,"Returned from both camera views to the same editable brush target")
+   if not restored:return
   var revision:int=game.terrain.published_revision
   var initial_volume:=owned_amount() if lake_cut else 0
   if lake_cut:
@@ -1051,6 +1082,7 @@ func check_authoring_brush()->void:
    await RenderingServer.frame_post_draw
    footprint.draw_us=Time.get_ticks_usec()
    footprint.samples=sample_patch.call(footprint_spacing)
+   if lake_cut:footprint.water=sample_lake_cut_water(footprint.samples)
   if check_footprint:footprint.before=sample_patch.call(footprint_spacing)
   var old_contact:Vector3=sample_center.call() if verify_draw else Vector3.INF
   var gameplay_bodies:Array[RigidBody3D]=[]
@@ -1156,6 +1188,22 @@ func check_authoring_brush()->void:
      if footprint.has("samples") and final_samples[index].is_equal_approx(footprint.samples[index]):matched+=1
     print("AUTHORING_SECOND_DRAW_FOOTPRINT ",JSON.stringify({"spacing_m":footprint_spacing,"input_to_second_draw_ms":(footprint.draw_us-started)/1000.0,"changed":changed,"matched":matched}))
     check(changed>0 and matched==changed,"Changed collision probes across the brush footprint match the finished edit on draw two")
+    if lake_cut:
+     var final_water:=sample_lake_cut_water(final_samples)
+     var wet:=0
+     var contacts:=0
+     var joint:=0
+     for n in final_water.size():
+      var row:Dictionary=final_water[n]
+      if not row.wet or not final_samples[n].is_finite() or final_samples[n].is_equal_approx(footprint.before[n]):continue
+      wet+=1
+      if row.contact:contacts+=1
+      if not footprint.has("water"):continue
+      var early:Dictionary=footprint.water[n]
+      if row.contact and early.contact and final_samples[n].is_equal_approx(footprint.samples[n]) and absf(row.head_y-early.head_y)<=.025:joint+=1
+     print("WIDE_LAKE_FLOOR_CONTACT ",JSON.stringify({"final":final_water,"second_draw":footprint.get("water",[]),"changed_wet":wet,"matching_surfaces":contacts,"matching_draw_two":joint}))
+     check(final_water[4].wet and wet>0 and contacts==wet,"Excavated lake centre contains water and wet floor probes agree with rendered surface")
+     check(wet>0 and joint==wet,"Wet floor collision, immersion and detailed surface match together on draw two")
    check(geometry_draw.has("draw_us"),"Contact geometry has a matched post-draw receipt")
    if geometry_draw.has("draw_us"):
     var frames_to_draw:int=1+geometry_draw.frame-input_frame
@@ -1192,7 +1240,7 @@ func check_authoring_brush()->void:
   if coastal:
    for frame in 5:await physics_frame
    check(game.terrain.edit_ticket==ticket+1 and game.terrain.published_revision==revision+1 and game.preparing_stroke.is_empty(),"Released coastal brush applies exactly once")
-  if cut_angles:await capture_cut_angles(center,"after")
+  if cut_angles and game.terrain.published_revision>revision:await capture_cut_angles(center,"after")
   # Link player latency to the native edit and the terrain publication work.
   var terrain_stages:={"worker_queue_ms":game.terrain.last_queue_ms,"field_ms":game.terrain.last_edit_ms,
    "mesh_build_ms":game.terrain.last_total_build_ms,"geometry_tiles":game.terrain.last_density_tiles,

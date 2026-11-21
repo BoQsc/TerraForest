@@ -1,5 +1,7 @@
 # Visual issue tracker
 
+The [Windows release water checks](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#windows-release-qualification) record the full wet cut and both shoreline barrels, with two views per edit. All three miss the two-frame deadline.
+
 [Hidden Coast crater backlog](explosive-combat/README.md#hidden-coast-crater-backlog) records the 37 outstanding edits, their saved water footprint, and the changes to live capacity, persistence and firing during terrain updates.
 
 The [shoreline mining fix](explosive-combat/README.md#shoreline-mining-in-normal-gameplay) connects deferred tool hits to the normal gameplay tick. In-game confirmation remains open.

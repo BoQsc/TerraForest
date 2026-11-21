@@ -705,7 +705,7 @@ func _resident_edit_surface(job:Dictionary,revision:int)->Dictionary:
 		var tile:=Rect2i(key.x,key.y,key.z,key.z)
 		bounds=tile if not bounds.has_area() else bounds.merge(tile)
 		var region:=Vector2i(key.x/64,key.y/64)*64
-		regions[region]=int(regions.get(region,0))+1
+		regions[region]=Rect2i(regions[region]).merge(tile) if regions.has(region) else tile
 	var surface:={"ticket":job.ticket,"epoch":job.epoch,"revision":revision,"groups":[]}
 	if compact and bounds.size.x<=64 and bounds.size.y<=64:
 		var source:Object=native.capture_contact_core(bounds,revision,job.build_epoch)
@@ -714,14 +714,20 @@ func _resident_edit_surface(job:Dictionary,revision:int)->Dictionary:
 			surface.bounds=bounds
 			surface.groups.append({"core":source,"bounds":bounds})
 			return surface
-	if job.tiles.size()<8:return {}
+	# Cover the actual owners, including a cut straddling four region corners.
+	# Bound both copied area and reader count for much larger authoring commands.
+	var remaining_area:=3*128*128
+	var remaining_readers:=9
 	for region:Vector2i in regions:
-		if regions[region]<2:continue
-		var domain:=Rect2i(region,Vector2i(64,64))
+		var domain:Rect2i=regions[region]
+		if remaining_readers==0:break
+		var capture_area:=domain.grow(32).get_area()
+		if capture_area>remaining_area:continue
 		var source:Object=native.capture_contact_core(domain,revision,job.build_epoch)
 		if source==null:continue
 		surface.groups.append({"core":source,"bounds":domain})
-		if surface.groups.size()==3:break
+		remaining_area-=capture_area
+		remaining_readers-=1
 	return {} if surface.groups.is_empty() else surface
 
 static func _surface_unchanged(item:Dictionary,masks:Array)->bool:

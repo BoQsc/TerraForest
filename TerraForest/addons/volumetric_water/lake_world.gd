@@ -803,32 +803,40 @@ func _start_edit_patches(revision:int)->bool:
  _edit_patch_job={"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":revision,
   "structures":_structure_revision,"field":terrain.density_revision,"cancel":terrain.backend.build_epoch,
   "patches":patches,"groups":_contact_groups(coords,patches,bounds,fields),"ready":false}
- _edit_patch_task=WorkerThreadPool.add_task(_prepare_edit_patches.bind(terrain.backend.native,_edit_patch_job),true,"Local edited water contacts")
+ var groups:Array=_edit_patch_job.groups
+ _edit_patch_task=WorkerThreadPool.add_group_task(_sample_contact_group.bind(terrain.backend.native,_edit_patch_job),groups.size(),mini(groups.size(),4),true,"Local edited water contacts")
  if _edit_patch_task>=0:_edit_patch_attempt=terrain.edit_ticket
  return _edit_patch_task>=0
 
-func _prepare_edit_patches(core:Object,job:Dictionary)->void:
- # Keep one captured field at a time. Every group must match the same
- # revision and epoch before the main thread can consume any of the patches.
+func _sample_contact_group(index:int,core:Object,job:Dictionary)->void:
+ var group:Dictionary=job.groups[index]
+ group.ready=false
+ var snapshot:Object=group.get("core")
+ if snapshot==null:snapshot=core.capture_contact_core(group.bounds,job.field,job.cancel)
+ if snapshot==null:return
+ for patch:RefCounted in group.patches:
+  var status:int=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
+  while status==0:status=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
+  if status!=1:
+   group.failure=patch.statistics()
+   return
+ group.ready=true
+
+func _finish_contact_groups(job:Dictionary)->void:
+ job.ready=false
  for group:Dictionary in job.groups:
-  var snapshot:Object=group.get("core")
-  if snapshot==null:snapshot=core.capture_contact_core(group.bounds,job.field,job.cancel)
-  if snapshot==null:return
-  for patch:RefCounted in group.patches:
-   var status:int=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
-   while status==0:status=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
-   if status!=1:
-    job.failure=patch.statistics()
-    return
+  if not group.get("ready",false):
+   job.failure=group.get("failure",{})
+   return
  job.ready=true
- _continue_joint_edit.call_deferred(job.ticket,job.epoch)
 
 var _shared_contact_patches:=0
 var _edit_patch_attempt:=-1
 func _poll_edit_patches()->void:
- if _edit_patch_task<0 or not WorkerThreadPool.is_task_completed(_edit_patch_task):return
- WorkerThreadPool.wait_for_task_completion(_edit_patch_task)
+ if _edit_patch_task<0 or not WorkerThreadPool.is_group_task_completed(_edit_patch_task):return
+ WorkerThreadPool.wait_for_group_task_completion(_edit_patch_task)
  var job:=_edit_patch_job
+ _finish_contact_groups(job)
  _edit_patch_task=-1;_edit_patch_job={}
  if job.ticket!=terrain.edit_ticket or job.epoch!=terrain.epoch or not terrain.joint_edit_pending():return
  if job.structures!=_structure_revision or job.cancel!=terrain.backend.build_epoch or job.revision!=terrain.water_sampling_revision():
@@ -866,7 +874,7 @@ func _poll_cached_task() -> void:
  cached_preparation_profiled.emit(info.cached_worker_us/1000.0,maxi(0,info.cached_started_us-job.submitted_us)/1000.0,info.status)
  _slice_ready(job.token,info.status,job.epoch,job.revision)
 func _exit_tree() -> void:
- if _edit_patch_task>=0:WorkerThreadPool.wait_for_task_completion(_edit_patch_task)
+ if _edit_patch_task>=0:WorkerThreadPool.wait_for_group_task_completion(_edit_patch_task)
  if _equilibrium_task>=0:
   _equilibrium_job.cancel();WorkerThreadPool.wait_for_task_completion(_equilibrium_task);_equilibrium_task=-1
  if _mesh_task>=0:

@@ -31,12 +31,26 @@ def candidates(root=ROOT, keep_ready=2):
         if run.get('result', {}).get('exit_code') is None:
             continue
         command = run.get('command', [])
-        if '--script' not in command:
+        if '--script' in command:
+            script = command[command.index('--script') + 1]
+        elif '--water-qualification-driver=res://qualification/water_player_world.gd' in command:
+            script = str(manifest.parent / 'water_player_world.gd')
+        else:
             continue
-        script = command[command.index('--script') + 1]
         family = Path(script).stem
-        if family not in ready or script not in ('res://tests/' + family + '.gd', str(root / 'tests' / (family + '.gd'))):
+        if family not in ready:
             continue
+        if script not in ('res://tests/' + family + '.gd', str(root / 'tests' / (family + '.gd'))):
+            driver = manifest.parent / (family + '.gd')
+            packaged = '--main-pack' in command
+            receipt = Path(run.get('release_receipt', ''))
+            if receipt.name == 'candidate.json' and receipt.parent.parent == root / 'reports/checks' and receipt.is_file():
+                candidate = json.loads(receipt.read_text(encoding='utf-8'))
+                packaged |= (candidate.get('released') is True and str(manifest.parent) in candidate.get('runs', {}).values()
+                             and candidate.get('pack_sha256') == run.get('pack_sha256'))
+            if (not packaged or script != str(driver) or not driver.is_file()
+                    or not run.get('pack_sha256') or run.get('driver_sha256') != digest(driver)):
+                continue
         if family == 'water_player_world' and '--authoring-captures' in command and '--water-load-only' in command:
             family = 'authoring_brush'
         if family == 'water_player_world' and '--authoring-cut-angles' in command and '--water-load-only' in command:

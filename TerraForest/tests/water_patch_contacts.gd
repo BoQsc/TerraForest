@@ -81,11 +81,11 @@ func check_wide_contact(core:RefCounted)->void:
 	var token:Dictionary=core.field_patch_state()
 	var build_epoch:PackedByteArray=core.execute(Codec.command(13))
 	var job:={"groups":groups,"field":token.revision,"cancel":build_epoch.decode_u32(12),"ready":false,"ticket":1,"epoch":0}
-	lake._prepare_edit_patches(core,job)
+	await run_contact_groups(lake,core,job)
 	check(groups.size()==3 and job.ready,"72 m contact footprint completes on one authoritative revision")
 	job.ready=false
 	job.field+=1
-	lake._prepare_edit_patches(core,job)
+	await run_contact_groups(lake,core,job)
 	check(not job.ready,"stale wide contact cannot reach publication")
 	var backend:=preload("res://addons/volumetric_terrain/terrain_backend.gd").new()
 	backend.native=core
@@ -104,12 +104,29 @@ func check_wide_contact(core:RefCounted)->void:
 	job.groups=shared
 	job.field=token.revision
 	job.ready=false
-	lake._prepare_edit_patches(null,job)
+	await run_contact_groups(lake,null,job)
 	check(job.ready,"production water sampling completes from the committed field readers without the live terrain owner")
 	var mixed:Array=lake._contact_groups(coords,patches,Rect2i(60,100,72,4),view.groups.slice(0,2))
 	check(mixed.size()==3 and not mixed.back().has("core") and mixed.back().patches==[patches[2]],"only uncovered water contacts request a separate snapshot")
+	tiles.clear()
+	for z in range(32,112,16):
+		for x in range(32,112,16):tiles.append({"key":Vector3i(x,z,16)})
+	var corner:Dictionary=backend._resident_edit_surface({"tiles":tiles,"ticket":2,"epoch":0,"build_epoch":job.cancel},token.revision)
+	var covered:=0
+	for item:Dictionary in tiles:
+		var key:Vector3i=item.key
+		var tile:=Rect2i(key.x,key.y,key.z,key.z)
+		for group:Dictionary in corner.get("groups",[]):
+			if Rect2i(group.bounds).encloses(tile):covered+=1
+	check(corner.get("groups",[]).size()==4 and covered==tiles.size(),"all four sides of a region junction have exactly one shared field reader per tile")
 	await process_frame
 	lake.free()
+
+func run_contact_groups(lake:Node,core:RefCounted,job:Dictionary)->void:
+	var task:=WorkerThreadPool.add_group_task(lake._sample_contact_group.bind(core,job),job.groups.size())
+	while not WorkerThreadPool.is_group_task_completed(task):await process_frame
+	WorkerThreadPool.wait_for_group_task_completion(task)
+	lake._finish_contact_groups(job)
 
 func check_wide_settlement(core:RefCounted,source:PackedByteArray,barrier:bool,deep:bool=false)->void:
 	var store:RefCounted=ClassDB.instantiate("NativeRegionalWater")

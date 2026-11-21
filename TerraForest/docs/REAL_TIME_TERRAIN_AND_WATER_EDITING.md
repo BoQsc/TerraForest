@@ -6,6 +6,24 @@ A player should be able to break ground, place terrain, empty a bucket or detona
 
 **Current verdict.** Small resident edits can meet the deadline in individual runs. The full 64 m cut and both shoreline barrels still miss it. In the packaged cut, none of the nine changed collision probes matched on draw two. At the shores, water eventually occupied the craters, but eventual contact does not establish when they became playable. A separate lake authoring run also exhausted a bounded water transaction. These are two distinct implementation blockers. The design below gives each an owner and a packaged acceptance test.
 
+## Windows release qualification
+
+The release executable ran with an adjacent PCK, the staged release GDExtensions, a read-only Cedar Vale input and an isolated desktop. Only the qualification export replaces the startup menu with the input driver. The driver loads the ordinary world scene and uses its gameplay commands. The first attempt with an external script opened the menu. Its output is excluded from these measurements. Reproduce from the checkout with `python TerraForest/tools/check_release_water_edits.py`. The driver records each game's command, binary hashes, save hash and exit status. [Release build receipt](../reports/checks/20261121T142100913029Z/candidate.json)
+
+| Workload | First matching result | Worst observed frame interval |
+|---|---|---|
+| 64 m wet cut | 8,659 ms until publication. Zero of nine changed collision and water probes matched at draw two. All nine matched the finished wet floor. | 27.429 ms |
+| Sea barrel | Seven draws and 127.048 ms from terrain admission to matching crater collision and detailed water. | 69.434 ms |
+| Lake barrel | Eight draws and 162.524 ms from terrain admission to matching crater collision and detailed water. | 29.181 ms |
+
+Water discovery and the final solve still hold local terrain publication. The final equilibrium worker took 3,575 ms on the release cut. All 27,698,261,603 ml were conserved. The squared excavation exposes steep walls and a much lower pool. Floor probes confirm that pool is wet at all nine sampled positions. The two-angle views and post-publication contacts establish the eventual result. Milestone 5 remains open for local authority, two-frame joint publication, the interrupted-bucket and submerged-object regression, and client frame pacing. [Cut trace](../reports/checks/20261121T142122404239Z/console.log) · [Blast frame times](../reports/checks/20261121T142222067532Z/normal_gameplay_blast_performance.json)
+
+| Release captures | First view | Reverse view |
+|---|---|---|
+| Wet cut | [Before](../reports/checks/20261121T142317870163Z/cut_before_angle_1.png) / [after](../reports/checks/20261121T142317870163Z/cut_after_angle_1.png) | [Before](../reports/checks/20261121T142317870163Z/cut_before_angle_2.png) / [after](../reports/checks/20261121T142317870163Z/cut_after_angle_2.png) |
+| Sea barrel | [Before](../reports/checks/20261121T142415790712Z/player_shore_before.png) / [after](../reports/checks/20261121T142415790712Z/player_shore_after.png) | [Before](../reports/checks/20261121T142415790712Z/player_shore_before_reverse.png) / [after](../reports/checks/20261121T142415790712Z/player_shore_after_reverse.png) |
+| Lake barrel | [Before](../reports/checks/20261121T142415790712Z/player_lake_before.png) / [after](../reports/checks/20261121T142415790712Z/player_lake_after.png) | [Before](../reports/checks/20261121T142415790712Z/player_lake_before_reverse.png) / [after](../reports/checks/20261121T142415790712Z/player_lake_after_reverse.png) |
+
 ## Current evidence and decision
 
 | Workload | Observation | Consequence for the design |
@@ -24,6 +42,38 @@ A player should be able to break ground, place terrain, empty a bucket or detona
 **Incremental discovery result.** The native worker now follows verified open faces across newly sampled regions. It checks the complete reachable body before assigning water. In one paired packaged cut, the 15 discovery rounds requested the same 3,060 regions and worker time for those rounds fell from 5,648 ms to 78 ms. The final solve still took 3,560 ms and changed the same 1,102 regions. Publication fell from 14.053 to 8.580 seconds. All 27,698,261,603 ml were retained. Draw two still matched zero of nine changed floor probes and the worst frame interval was 32.126 ms. The remaining deadline requires a playable revision before the final equilibrium solve and its detailed mesh batch. This run did not qualify sea or lake barrel timing or visual contact. [Packaged result](../reports/checks/20261121T134209692190Z/lake_cut/engine.log) · [Contact and barrier regressions](../reports/checks/20261121T134209673308Z/engine.log)
 
 **Decision for implementation.** Make the local editable surface a resident resource with stable ownership of its triangles and physics support. Use actual sample writes to identify what to retire and replace. Give detailed water the same solid boundary and maintain connected volume and outlet information as regions change. Install all three products under one revision. Keep the existing reconstruction path as the comparison oracle and for deferred work. Whether exact triangle replacement fits the dense-cut budget remains an engineering question with a defined exit test below.
+
+## Implementation contract for parallel resident edits
+
+A player command owns one terrain revision and a bounded set of changed samples. Terrain rendering, physics and detailed water must consume the same field. The local publication barrier covers only dependencies needed to play the edited footprint. A distant simulation job, a full-lake equilibrium job, archive I/O or GPU readback cannot be a prerequisite for this barrier.
+
+| Owner | Required change | Exit evidence |
+|---|---|---|
+| Resident terrain field | Partition the complete visible edit footprint into bounded, revision-checked native readers. Share each reader between its terrain and water consumers. Keep cancellation, memory limits and the ordinary reconstruction path. | Test a brush that crosses both horizontal region boundaries, including its fourth corner. Stale readers must be rejected. |
+| Water contact construction | Build disjoint contact groups independently. Each group owns its patches and records its result. Join once and revalidate terrain, structures, ticket and world epoch before installing. | Compare sampled geometry and quantity with the normal path, including obstructions and an interrupted edit. |
+| Local water authority | Maintain connected capacity and outlets in resident regions before input. Resolve an excavation, displacement or finite transfer against the changed boundary and its affected outlets. Account for every millilitre. Defer wider equilibrium until after the playable revision. | Measure matched edits with the same footprint in differently sized lakes and require bounded local work. Check the newly excavated floor, immersion and rendered surface at the deadline. |
+| Render and collision | Use the changed field and exact affected surface ownership for GPU surface generation and CPU support. Bound dirty buffer uploads, retire superseded triangles, preserve materials, normals, shadows and ordinary body contacts. A dedicated host must prepare the same contact without a GPU. | Compare CPU reference and rendered geometry at shared edges, empty cells, overhangs and chunk boundaries. Record CPU, GPU and presentation intervals, including first use. |
+| Joint publication | Expose matching local terrain, collision and water under one revision. Check supersession before handoff. Persist the authority result and notify listeners after commit. | On the packaged 64 m cut and both shoreline barrels require matching local contact on draw two within 33.33 ms. Compare both camera angles and verify published water depth against the collision floor. |
+
+Keep a CPU reference for correctness. Introduce GPU compute on the client once its input, owner mapping and output can be checked against that reference. Report timing runs independently from captures. Each implementation commit should include a substantial vertical change, its regressions and the measured workload. Keep unsuccessful gates visible.
+
+### Packaged resource run on the parallel contact implementation
+
+The implementation now captures clipped tile groups around a region junction and shares their field readers with terrain rendering, physics preparation and water sampling. Independent water groups run concurrently. Completion still requires all contributing groups and a matching edit ticket, epoch, density and structure revision. The four-corner test covered each visible tile exactly once. All 42 contact tests passed. The GPU surface producer and the local capacity and outlet authority remain open. [Native contact regression](../reports/checks/20261121T135650863382Z/engine.log)
+
+| Captures disabled, 1080p | First observed matching result | Worst recorded frame interval |
+|---|---|---|
+| Cedar Vale 64 m cut | Publication took 8.032 s. Draw two matched zero of nine changed floor and water probes. At completion all nine had water 5 cm above the floor and an upper boundary within 2.5 cm of the head inferred from immersion. Finite volume remained 27,698,261,603 ml. | 36.637 ms |
+| Sea barrel | The first matching detailed water mesh and crater collider appeared 97.184 ms after terrain admission, on draw six. | 68.431 ms |
+| Lake barrel | The matching mesh and collider appeared 181.581 ms after admission, on draw eleven. | 30.401 ms |
+
+The two blast runs sampled 81 excavated air points each. All sampled points were wet and the sampled bank contacts passed after publication. These tests do not cover every possible shoreline or the circled submerged-object defect. The cut's first camera pass lost the input target and failed to apply the edit. The corrected driver restores the editing camera and verifies the target before pressing the brush. Only the corrected images are linked below. These runs used exported game resources with the development engine executable. [Cut timings](../reports/checks/20261121T135929879962Z/engine.log) · [Shore timings](../reports/checks/20261121T140018737002Z/normal_gameplay_blast_performance.json) · [Shore contact checks](../reports/checks/20261121T140018737002Z/engine.log)
+
+| Fixed views | Angle one | Angle two |
+|---|---|---|
+| Wet 64 m cut | [Before](../reports/checks/20261121T141105720189Z/cut_before_angle_1.png) / [after](../reports/checks/20261121T141105720189Z/cut_after_angle_1.png) | [Before](../reports/checks/20261121T141105720189Z/cut_before_angle_2.png) / [after](../reports/checks/20261121T141105720189Z/cut_after_angle_2.png) |
+| Sea barrel | [Before](../reports/checks/20261121T140151340037Z/player_shore_before.png) / [after](../reports/checks/20261121T140151340037Z/player_shore_after.png) | [Before](../reports/checks/20261121T140151340037Z/player_shore_before_reverse.png) / [after](../reports/checks/20261121T140151340037Z/player_shore_after_reverse.png) |
+| Lake barrel | [Before](../reports/checks/20261121T140151340037Z/player_lake_before.png) / [after](../reports/checks/20261121T140151340037Z/player_lake_after.png) | [Before](../reports/checks/20261121T140151340037Z/player_lake_before_reverse.png) / [after](../reports/checks/20261121T140151340037Z/player_lake_after_reverse.png) |
 
 ## What counts as instant
 

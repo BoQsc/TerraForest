@@ -1,5 +1,7 @@
 # First firearm and volumetric explosive destruction
 
+The [Windows release water checks](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#windows-release-qualification) record the full wet cut and both shoreline barrels, with two views per edit. All three miss the two-frame deadline.
+
 ## Hidden Coast crater backlog
 
 The November 21 session still logged status 6 for crater edits and ended with
