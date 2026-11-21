@@ -652,7 +652,7 @@ Development save is poi_access_20261018; normal launchers remain unchanged.
 
 Continue larger-world coverage next: substantial lakes using accepted static water,
 distinct destinations and combined loading/travel. Do not remain on mine decoration.
-Existing water has a 4,096-region residency limit; inspect actual lake capacity and
+Existing water has an 8,192-region residency limit; inspect actual lake capacity and
 cache behavior before increasing basin sizes. Do not claim world-scale performance
 from the access check. Water flow/mechanics remain out of scope.
 
@@ -1743,7 +1743,7 @@ Statuses below distinguish **integrated partial** (usable but coverage gates rem
 | New combined project and independently usable addons | Integrated partial: terrain, forest and companion addons; source projects preserved | Verify documented dependencies, addon isolation and supported Windows build/install paths; retain a full support matrix |
 | Volumetric terrain, large caves and mountains | Integrated partial: editable terrain and seeded generation paths | Generate and traverse representative above/below-ground regions; mine nearby and after travel with visual and collision correctness, save and reload |
 | Underground materials and veins | Integrated partial: seeded geology and excavation accounting | Demonstrate discoverable material variation, correct appearance/rewards and reproducibility after reload in the playable world |
-| Volumetric water and lakes | Integrated partial: native static volumes, whole-unit buckets, mining contact, compound persistence and cached occupancy; see [water gameplay](WATER_GAMEPLAY.md) | Qualify regional paging, structure occupancy, shoreline quality and combined endurance; automatic flow/spillage are deferred; current 0.5 m / 4,096-resident-region limits are explicit |
+| Volumetric water and lakes | Integrated partial: native static volumes, whole-unit buckets, mining contact, compound persistence and cached occupancy; see [water gameplay](WATER_GAMEPLAY.md) | Qualify regional paging, structure occupancy, shoreline quality and combined endurance; automatic flow/spillage are deferred; current 0.5 m / 8,192-resident-region limits are explicit |
 | Asphalt roads | Integrated partial: native grading/paving and connected street authoring | Drive connected roads across loaded region boundaries, edit/save/reload them, and verify terrain, buildings and vegetation remain consistent |
 | Block shapes, prefabs and static model objects | Integrated partial: cubes, slabs, stairs, slopes, posts, spheres, placement/transforms/history and persistence | Author a usable building with interior objects and access features; verify selection, collisions, undo where supported, and persistence through travel |
 | Large buildings, towns and cities | Integrated partial: house/tower examples and native connected multi-street settlement authoring | Implement a reproducible settlement generation/authoring workflow with connected roads, supported buildings and usable interiors; measure representative detailed structures, not just empty shells |

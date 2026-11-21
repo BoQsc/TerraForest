@@ -2,6 +2,15 @@
 
 ## Hidden Coast crater backlog
 
+The November 21 session still logged status 6 for crater edits and ended with
+a compound-save error. The retained canonical save contains 37 crater records.
+Its saved water and the union of those shoreline preparation footprints span
+4,761 regions. The indexed water packets total 59.25 MiB uncompressed.
+The live region limit is now 8,192 and the generated-water pack writer and
+reader accept up to 160 MiB of expanded water. The compound archive continues
+to store the index reference. Firearm input now remains available while the
+terrain worker is editing. Both changes await in-game confirmation.
+
 The subsequent Hidden Coast save still contains 37 crater records. Its water
 index contains 3,443 regions, including 600 ocean regions marked for settling.
 Applying the background solver's neighbor bounds to those saved coordinates

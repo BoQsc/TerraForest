@@ -175,7 +175,7 @@ func set_integrity(enabled:bool)->void:
 func active()->bool:
 	return game!=null and game.terrain.world_ready and not game.loading_active and not game.shutdown_requested and game.app_focused and not game.session_menu.visible_ui() and not game.player_hud.inventory_open and not game.storage.opened and not game.benchmark_enabled
 func can_use()->bool:
-	return active() and not game.session_menu.developer and not game.world_vehicle.driving and not game.player_view.entry.blocks_actions() and action_input_owned.is_valid() and action_input_owned.call() and game._model_edit_available()
+	return active() and not game.session_menu.developer and not game.world_vehicle.driving and not game.player_view.entry.blocks_actions() and action_input_owned.is_valid() and action_input_owned.call() and game._model_edit_available(true)
 func handle_input(event:InputEvent)->bool:
 	if game.equipped_tool in WEAPONS:
 		if game.equipped_tool==9 and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_I:

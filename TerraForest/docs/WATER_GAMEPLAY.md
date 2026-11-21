@@ -149,7 +149,7 @@ quantity as visually correct.
 
 These are specific checks, not blanket visual acceptance. Arbitrary terrain
 contact, unwanted fragments, repeated edits and human review remain acceptance
-concerns. The resident store is capped at 4,096 regions; wet-region disk paging
+concerns. The resident store is capped at 8,192 regions; wet-region disk paging
 and large-ocean support are unfinished. Structure occupancy, combined endurance,
 thermal sustainability and large multiplayer qualification are also unfinished.
 No automatic flow or long-range liquid transport is required in this phase.

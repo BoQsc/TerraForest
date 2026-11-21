@@ -154,7 +154,13 @@ class NativeRegionalWater : public godot::RefCounted {
     static bool joined_vertical(const WaterCellProfile &a,uint64_t av,const WaterCellProfile &b,uint64_t bv){
         return av&&bv&&a.ceiling==500&&b.open_bottom&&WaterCellProfile::vertical_overlap(a,a.head(av),b,b.head(bv));
     }
-    static constexpr size_t MAX_REGIONS=4096;
+    // The saved ocean, local settlement and remote excavations share this store.
+    static constexpr size_t MAX_REGIONS=8192;
+    static constexpr uint32_t MAGIC=0x31575256;
+    // Expanded worker data, including region records and serialized contacts.
+    // The compound archive stores the small content-addressed pack index.
+    static constexpr int64_t MAX_EXPANDED_BYTES=160*1024*1024;
+    static constexpr uint64_t MAX_FROZEN_BYTES=256*1024*1024;
     static constexpr uint64_t MAX_TOTAL=uint64_t(1)<<52;
     struct ReconstructedCell {uint16_t index;std::array<double,4> heights;};
     struct QuerySurface {

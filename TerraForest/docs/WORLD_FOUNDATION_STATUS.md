@@ -1,6 +1,6 @@
 ## Distant barrel chains in saved worlds
 
-The [Hidden Coast crater backlog](../issues/explosive-combat/README.md#hidden-coast-crater-backlog) includes 37 saved edits competing with background water settlement. The source fix gives those edits priority for water regions. Stationary gameplay confirmation remains open.
+The [Hidden Coast crater backlog](../issues/explosive-combat/README.md#hidden-coast-crater-backlog) includes 37 saved edits competing with background water settlement. The live store now supports 8,192 regions and generated-water packs support 160 MiB of decoded records. Stationary gameplay and save/reload confirmation remain open.
 
 [Shoreline mining in normal gameplay](../issues/explosive-combat/README.md#shoreline-mining-in-normal-gameplay) tracks a separate source fix for tool strikes that stopped while waiting for water or a crater edit. Gameplay verification remains open.
 

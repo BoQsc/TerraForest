@@ -2535,7 +2535,7 @@ Dictionary NativeRegionalWater::statistics() const {
 // Occupancy is valid only for the terrain captured in the SAME world archive.
 // Accepted edits invalidate it before capture. Invalid regions are re-sampled on
 // reopen. All data has strict bounds; the outer world archive supplies checksums.
-static constexpr uint32_t MAGIC=0x31575256,OLD_REGION_BYTES=16+512*12,REGION_BYTES=OLD_REGION_BYTES+729*4;
+static constexpr uint32_t OLD_REGION_BYTES=16+512*12,REGION_BYTES=OLD_REGION_BYTES+729*4;
 
 std::atomic<uint64_t> NativeWaterMeshJob::pending_bytes{0};
 void NativeWaterMeshJob::_bind_methods(){
@@ -2669,7 +2669,7 @@ Variant NativeRegionalWater::capture_storage_snapshot(const PackedByteArray &cat
         if(region.structures)bytes+=region.structures->bytes;
     }
     uint64_t previous=NativeWaterSnapshot::pending_bytes.load();
-    do{if(bytes>128*1024*1024||previous>128*1024*1024-bytes)return PackedByteArray();}
+    do{if(bytes>MAX_FROZEN_BYTES||previous>MAX_FROZEN_BYTES-bytes)return PackedByteArray();}
     while(!NativeWaterSnapshot::pending_bytes.compare_exchange_weak(previous,previous+bytes));
     Ref<NativeWaterSnapshot> snapshot;snapshot.instantiate();snapshot->reserved_bytes=bytes;
     snapshot->catalog=catalog;snapshot->frozen.instantiate();
@@ -2826,7 +2826,7 @@ void NativeWaterMapIdentity::_bind_methods(){
 }
 void NativeWaterMapIdentity::retire(){if(consumed)decoded.unref();}
 Ref<NativeWaterMapIdentity> NativeWaterMapIdentity::prepare(const PackedByteArray &data) const {
- if(data.is_empty()||data.size()>64*1024*1024)return {};
+ if(data.is_empty()||data.size()>NativeRegionalWater::MAX_EXPANDED_BYTES)return {};
  Ref<NativeWaterMapIdentity> result;result.instantiate();result->bytes=data;
  result->decoded.instantiate();
  if(!result->decoded->decode(data,true))return {};

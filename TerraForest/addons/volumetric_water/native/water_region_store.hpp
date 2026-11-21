@@ -95,7 +95,7 @@ public:
  // Existing edited-ocean APIs and their strict packet contract are unchanged.
  Bytes pack_generated_snapshot(const Bytes &snapshot){
   std::lock_guard<std::mutex> lock(mutex);
-  if(lease==INVALID_HANDLE_VALUE||snapshot.size()>64*1024*1024)return {};
+  if(lease==INVALID_HANDLE_VALUE||snapshot.size()>NativeRegionalWater::MAX_EXPANDED_BYTES)return {};
   godot::Ref<NativeRegionalWater> water;water.instantiate();
   if(!water->decode(snapshot,true,false)||water->regions.size()>NativeRegionalWater::MAX_REGIONS)return {};
   auto catalog=snapshot.slice(32,32+snapshot.decode_u32(8));
@@ -114,7 +114,7 @@ public:
   for(const auto &[k,r]:water->regions){
    godot::Ref<NativeRegionalWater> single;single.instantiate();single->regions.emplace(k,r);
    for(auto amount:r.water)single->total+=amount;
-   auto raw=single->capture_snapshot(region_catalog);if(raw.is_empty()||raw.size()>REGION_LIMIT||decoded_bytes+raw.size()>64*1024*1024)return {};
+   auto raw=single->capture_snapshot(region_catalog);if(raw.is_empty()||raw.size()>REGION_LIMIT||decoded_bytes+raw.size()>NativeRegionalWater::MAX_EXPANDED_BYTES)return {};
    decoded_bytes+=raw.size();
    auto compressed=raw.compress(godot::FileAccess::COMPRESSION_ZSTD);
    if(compressed.is_empty()||compressed.size()>16*1024*1024)return {};
@@ -144,7 +144,7 @@ public:
    Bytes id=index.slice(at+8,at+40);
    if(id!=cached_id){if(!read(id,".wpack",16*1024*1024,pack))return {};cached_id=id;}
    uint64_t offset=index.decode_u32(at+40),length=index.decode_u32(at+44),size=index.decode_u32(at+48);
-   if(!length||size<32||size>REGION_LIMIT||offset+length>uint64_t(pack.size())||decoded_bytes+int64_t(size)>64*1024*1024)return {};
+   if(!length||size<32||size>REGION_LIMIT||offset+length>uint64_t(pack.size())||decoded_bytes+int64_t(size)>NativeRegionalWater::MAX_EXPANDED_BYTES)return {};
    decoded_bytes+=size;
    auto raw=pack.slice(offset,offset+length).decompress(size,godot::FileAccess::COMPRESSION_ZSTD);
    if(raw.size()!=int64_t(size)||hash(raw)!=index.slice(at+52,at+84))return {};
@@ -233,6 +233,8 @@ public:
  }
  // Save-worker adapter. No live water references; no selected checkpoint mutation.
  Bytes publish_water_snapshot(const Bytes &snapshot){
+  if(snapshot.size()>64*1024*1024&&snapshot.decode_u32(0)==NativeRegionalWater::MAGIC)
+   return pack_generated_snapshot(snapshot);
   if(snapshot.size()<4||snapshot.decode_u32(0)!=0x54574654)return merge_water_snapshot(snapshot,Bytes());
   godot::Ref<NativeRegionalWater> validator;validator.instantiate();auto inspected=validator->inspect_streaming_snapshot(snapshot);
   if(!bool(inspected["ok"]))return {};godot::PackedInt32Array keys=inspected["coordinates"];Bytes packed=inspected["digests"];
