@@ -1,5 +1,7 @@
 ## World authority and qualification milestones (November 20)
 
+The [standalone terrain and water editing document](REAL_TIME_TERRAIN_AND_WATER_EDITING.md) brings together the measured player routes, proposed architecture and qualification gates.
+
 The [real-time editing design](WORLD_SYSTEMS_DESIGN.md#real-time-terrain-and-water-editing) defines the shared publication contract for player mining, construction, water, large authoring operations and world management. Milestone 5 remains open.
 
 The [full-cut physics and timing decision](WORLD_FOUNDATION_STATUS.md#full-cut-physics-and-timing-decision) records the resting-body correction, two-angle shoreline evidence and the outstanding full-footprint publication deadline.
