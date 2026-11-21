@@ -34,6 +34,7 @@ func run()->void:
 		if status!=0:break
 	check(status==1 and water.accept_patch(terrain_patch),"real density/contact sampling publishes restored region")
 	check_wide_settlement(core,patch,false)
+	check_wide_settlement(core,patch,false,true)
 	var divided:RefCounted=ClassDB.instantiate("TerrainCore")
 	divided.execute(Codec.command(6,[1703,3]))
 	check(Codec.reply_ok(divided.execute(Codec.brush(Vector3(108,200,96),Vector3(108,200,132),2,0,true,1))),"finite-water test builds a terrain barrier across the brush")
@@ -110,11 +111,12 @@ func check_wide_contact(core:RefCounted)->void:
 	await process_frame
 	lake.free()
 
-func check_wide_settlement(core:RefCounted,source:PackedByteArray,barrier:bool)->void:
+func check_wide_settlement(core:RefCounted,source:PackedByteArray,barrier:bool,deep:bool=false)->void:
 	var store:RefCounted=ClassDB.instantiate("NativeRegionalWater")
 	var token:Dictionary=store.water_patch_state()
 	check(store.restore_water_patch(source,token.revision,token.owner).ok,"wide settlement restores a single finite donor")
 	var bounds:=AABB(Vector3(100.6,200.6,100.6),Vector3(32,52,24))
+	if deep:bounds.position-=Vector3(8,4,8)
 	store.settle_after_edit(bounds)
 	check(store.pending_edit_patches().size()==1 and store.statistics().regions==1,"882-region edit starts at its sole resident donor")
 	var requested:=0
@@ -136,6 +138,7 @@ func check_wide_settlement(core:RefCounted,source:PackedByteArray,barrier:bool)-
 		job.prepare()
 		var result:Dictionary=store.finish_equilibrium(job)
 		if result.ok:
+			if deep:check(result.get("wide_spans",0)>0 and result.wide_spans<result.wide_cells,"deep wide edit installs water from compressed open columns")
 			done=true
 			break
 		if not result.get("pending",false):
@@ -146,6 +149,11 @@ func check_wide_settlement(core:RefCounted,source:PackedByteArray,barrier:bool)-
 	print("WIDE_SETTLEMENT barrier=",barrier," requested=",requested," resident=",info.regions," furthest_x=",furthest_x," water_ml=",info.water_ml)
 	check(done and requested>0 and info.regions<882,"wide local solve discovers receivers and finishes without allocating the entire brush")
 	check(info.water_ml==125000,"wide local publication preserves all finite water")
+	if deep:
+		var donor:Dictionary=store.cell_geometry(Vector3(100.25,200.25,100.25))
+		var floor_a:Dictionary=store.cell_geometry(Vector3(100.25,196.25,100.25))
+		var floor_b:Dictionary=store.cell_geometry(Vector3(104.25,196.25,104.25))
+		check(is_equal_approx(donor.head,donor.bottom) and floor_a.head>floor_a.bottom and floor_b.head>floor_b.bottom and absf(floor_a.head-floor_b.head)<0.00001,"source drained into a level pool across multiple lower regions")
 	if barrier:check(furthest_x<28,"a terrain wall keeps regions on the disconnected side out of settlement")
 
 func finish()->void:

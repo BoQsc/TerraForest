@@ -14,7 +14,7 @@ int main(){
  float wall[8],ceiling[8];for(int i=0;i<8;++i){wall[i]=(i&1)?.25f:-.25f;ceiling[i]=(i&2)?-.25f:.25f;}
  C::Pieces density_air;terraforest::WaterSolidProfile density_cache;
  check(terraforest::water_density_air(wall,density_air)&&near(C::volume(density_air),.0625),"General density wall preserves its half-cell air volume");
- check(density_cache.prepare(density_air),"General density wall prepares cached 3D occupancy");
+ check(density_air.size()==1&&density_cache.prepare(density_air),"Planar density wall uses one exact convex contact");
  double bottom=0,top=0;
  check(density_cache.interval({.4,.25,.25},.5,bottom,top)&&!density_cache.interval({.1,.25,.25},.5,bottom,top),"Vertical terrain wall excludes solid without a floor approximation");
  check(terraforest::water_density_air(ceiling,density_air)&&near(C::volume(density_air),.0625)&&density_cache.prepare(density_air),"Ceiling density retains the lower cavity volume");

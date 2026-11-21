@@ -321,7 +321,6 @@ func _continue_joint_edit(ticket:int,epoch:int)->void:
  if _settlement_ticket!=ticket and terrain.water_sampling_revision()>=0:_begin_terrain_settlement(ticket)
  _poll_edit_patches()
  if _settlement_ticket==ticket and not _busy and _edit_patch_task<0 and _edit_patch_attempt!=ticket:
-  _edit_patch_attempt=ticket
   _start_edit_patches(terrain.water_sampling_revision())
  if _filling_id==0 and _local_response_pending and _edit_patch_task<0 and Time.get_ticks_usec()<_process_deadline:_advance_equilibrium()
  if _local_publication_pending and Time.get_ticks_usec()<_process_deadline:_publish_meshes()
@@ -370,16 +369,15 @@ func _measured_step(delta:float)->void:
  # the corresponding terrain geometry and collision are ready.
  if terrain.pending_edit and _settlement_ticket!=terrain.edit_ticket and terrain.water_sampling_revision()>=0:
   _begin_terrain_settlement(terrain.edit_ticket)
+ if blocks!=null:blocks.set_occupancy_interest(PackedVector3Array())
  _poll_edit_patches()
  if terrain.joint_edit_pending() and _settlement_ticket==terrain.edit_ticket and not _busy and _edit_patch_task<0 and _edit_patch_attempt!=terrain.edit_ticket:
-  _edit_patch_attempt=terrain.edit_ticket
   _start_edit_patches(terrain.water_sampling_revision())
  var geometry_ready:bool=not terrain.pending_edit or _installed_edit_ticket==terrain.edit_ticket
  if not _prepared_slice.is_empty() and (geometry_ready or _settlement_ticket==terrain.edit_ticket):
   var prepared:=_prepared_slice
   _prepared_slice={}
   _slice_ready(prepared.token,1,prepared.epoch,prepared.revision)
- if blocks!=null:blocks.set_occupancy_interest(PackedVector3Array())
  water.set_western_ocean(terrain.backend.world_generator==18)
  water.set_surrounding_ocean(terrain.backend.world_generator in [19,21,23,25,27,29,31])
  if terrain.backend.world_generator in [19,21,23,25,27,29,31] and _surrounding_ocean==null:
@@ -761,7 +759,9 @@ static func _contact_groups(coords:Array,patches:Array,bounds:Rect2i,fields:Arra
 func _start_edit_patches(revision:int)->bool:
  if _edit_patch_task>=0 or _busy or not terrain.joint_edit_pending():return false
  var coords:Array=water.pending_edit_patches()
- if coords.is_empty():return false
+ if coords.is_empty():
+  _edit_patch_attempt=terrain.edit_ticket
+  return false
  var first:Vector3i=coords[0]
  var bounds:=Rect2i(first.x*4,first.z*4,4,4)
  var patches:Array[RefCounted]=[]
@@ -781,6 +781,7 @@ func _start_edit_patches(revision:int)->bool:
   "structures":_structure_revision,"field":terrain.density_revision,"cancel":terrain.backend.build_epoch,
   "patches":patches,"groups":_contact_groups(coords,patches,bounds,fields),"ready":false}
  _edit_patch_task=WorkerThreadPool.add_task(_prepare_edit_patches.bind(terrain.backend.native,_edit_patch_job),true,"Local edited water contacts")
+ if _edit_patch_task>=0:_edit_patch_attempt=terrain.edit_ticket
  return _edit_patch_task>=0
 
 func _prepare_edit_patches(core:Object,job:Dictionary)->void:
@@ -793,7 +794,9 @@ func _prepare_edit_patches(core:Object,job:Dictionary)->void:
   for patch:RefCounted in group.patches:
    var status:int=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
    while status==0:status=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
-   if status!=1:return
+   if status!=1:
+    job.failure=patch.statistics()
+    return
  job.ready=true
  _continue_joint_edit.call_deferred(job.ticket,job.epoch)
 
@@ -804,7 +807,18 @@ func _poll_edit_patches()->void:
  WorkerThreadPool.wait_for_task_completion(_edit_patch_task)
  var job:=_edit_patch_job
  _edit_patch_task=-1;_edit_patch_job={}
- if not job.ready or job.ticket!=terrain.edit_ticket or job.epoch!=terrain.epoch or job.structures!=_structure_revision or job.cancel!=terrain.backend.build_epoch or job.revision!=terrain.water_sampling_revision() or not terrain.joint_edit_pending():return
+ if job.ticket!=terrain.edit_ticket or job.epoch!=terrain.epoch or not terrain.joint_edit_pending():return
+ if job.structures!=_structure_revision or job.cancel!=terrain.backend.build_epoch or job.revision!=terrain.water_sampling_revision():
+  _edit_patch_attempt=-1
+  return
+ if not job.ready:
+  _slice_failure=job.get("failure",{})
+  if _slice_failure.get("status",-4)==-4:
+   _edit_patch_attempt=-1
+  else:
+   _occupancy_failure="Local water occupancy preparation failed at %s (status %s)"%[_slice_failure.coordinate,_slice_failure.status]
+   terrain.message_changed.emit(_occupancy_failure)
+  return
  for patch:RefCounted in job.patches:
   if not water.accept_patch(patch):
    _occupancy_failure="Local water occupancy cache budget reached"

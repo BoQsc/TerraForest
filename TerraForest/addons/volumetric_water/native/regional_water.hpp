@@ -71,6 +71,8 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     uint64_t cached_started_us=0,cached_worker_us=0;
     bool terrain_prepared=false,structure_only=false,general_terrain=false;
     godot::AABB structure_edit_bounds;
+    // Exact cell-local density samples identify identical terrain-only hulls.
+    std::map<std::array<uint32_t,8>,std::shared_ptr<const WaterSolidProfile>> density_profiles;
     int structure_cursor=0;
     int64_t prepare_structures();
     int cursor=0,status=-1;
@@ -419,6 +421,10 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     std::shared_ptr<EquilibriumCaptureState> capture_selection;
     godot::String reason;
     bool success=false,consumed=false,local_response=false;
+    enum class SpanResult { fallback, dependencies, settled };
+    SpanResult settle_wide_spans();
+    size_t wide_spans=0,wide_cells=0;
+    const char *wide_fallback=nullptr;
     std::atomic<bool> started{false},ready{false},cancelled{false};
 protected: static void _bind_methods();
 public:

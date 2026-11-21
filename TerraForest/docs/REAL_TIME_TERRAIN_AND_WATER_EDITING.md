@@ -17,6 +17,8 @@ A player should be able to break ground, place terrain, empty a bucket or detona
 
 [Packaged cut](../reports/checks/20261121T123004783055Z/cut/engine.log) · [Packaged shore timings](../reports/checks/20261121T123004783055Z/shores/normal_gameplay_blast_performance.json) · [Finite donor and wall checks](../reports/checks/20261121T124220985787Z/engine.log) · [Lake transaction failure](../reports/checks/20261121T125409116853Z/lake_cut/engine.log)
 
+**Latest wet-cut checkpoint.** Native vertical spans now solve and publish a connected finite basin in the regression. The packaged 64 m cut reached the end of occupancy sampling with 1,376,469 reachable cells across 3,564 captured regions. The proposed final water occupied separate pools. Its scalar fallback exceeded the graph budget and the game kept the old publication. The remaining solver work is to calculate spill and retained volume between basins on the compact graph. The two-frame deadline remains open. [Checkpoint evidence](WORLD_FOUNDATION_STATUS.md#compact-finite-water-columns-and-terrain-contact-storage-21-november-2026)
+
 **Decision for implementation.** Make the local editable surface a resident resource with stable ownership of its triangles and physics support. Use actual sample writes to identify what to retire and replace. Give detailed water the same solid boundary and maintain connected volume and outlet information as regions change. Install all three products under one revision. Keep the existing reconstruction path as the comparison oracle and for deferred work. Whether exact triangle replacement fits the dense-cut budget remains an engineering question with a defined exit test below.
 
 ## What counts as instant

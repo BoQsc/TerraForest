@@ -7,6 +7,20 @@ namespace terraforest {
 // terrain-owned triangle shortcut. Only edit-time preparation clips geometry.
 inline bool water_density_air(const float *density,WaterSolidClip::Pieces &out){
     using C=WaterSolidClip;C::Pieces pieces;
+    // If all eight samples lie on one affine field, every tetrahedron
+    // induces exactly the same half-space. Clip the cell once so internal
+    // tetrahedral faces do not consume contact and snapshot memory.
+    const double origin=density[0];
+    C::Point gradient{double(density[1])-origin,double(density[2])-origin,double(density[4])-origin};
+    bool planar=true;
+    for(int i=0;i<8;++i)if(origin+(i&1)*gradient.x+((i>>1)&1)*gradient.y+((i>>2)&1)*gradient.z!=density[i]){planar=false;break;}
+    C::Plane plane{gradient*(-2.),origin};
+    if(planar&&C::valid(plane)){
+        auto cell=C::box({0,0,0},{.5,.5,.5});C::Polyhedron clipped;
+        if(!C::clip(cell,plane,clipped))return false;
+        if(C::volume(clipped)>1e-12)pieces.push_back(std::move(clipped));
+        out=std::move(pieces);return true;
+    }
     constexpr int tetrahedra[6][4]={{0,1,3,7},{0,1,5,7},{0,2,3,7},{0,2,6,7},{0,4,5,7},{0,4,6,7}};
     for(const auto &indices:tetrahedra){
         C::Point p[4];bool air=false,solid=false;

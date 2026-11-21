@@ -13,9 +13,13 @@ func _initialize():
  check(water.depth_at(Vector3(796.5,47.5,1292.5))==0,"Saved sphere interior stays dry")
  check(water.depth_at(Vector3(796.9,47.9,1292.9))>0,"Saved sphere empty corner retains water")
  var encoded:PackedByteArray=water.capture_snapshot(water.snapshot_catalog(data))
- check(encoded==data,"Cached world snapshot round-trips byte-exactly")
+ # The V8 fixture contains an over-capacity cell. Restoring it preserves
+ # its ml and writes the pending settlement flag in V11.
+ var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256);hash.update(encoded)
+ check(encoded.decode_u32(4)==11 and water.runtime_state().settling_regions==1 and hash.finish().hex_encode()=="14644cafc79f7d7016bc9a22d4e90c14eb13cc37833aa1e629cce51d0950962a","V8 occupancy migrates byte-exactly to its recorded pending V11 snapshot")
+ check(water.restore_snapshot(encoded) and water.capture_snapshot(water.snapshot_catalog(encoded))==encoded,"Migrated cached occupancy round-trips byte-exactly")
  var invalid:PackedByteArray=data.duplicate();invalid.append(0)
- check(not water.restore_snapshot(invalid) and water.capture_snapshot(water.snapshot_catalog(data))==data,"Invalid snapshot cannot partially replace state")
+ check(not water.restore_snapshot(invalid) and water.capture_snapshot(water.snapshot_catalog(data))==encoded,"Invalid snapshot cannot partially replace state")
  water.invalidate_buildings(AABB(Vector3(796,47,1292),Vector3.ONE))
  check(water.statistics().pending_regions==1,"Boundary-aligned building invalidates only its occupied region")
  water.restore_snapshot(data)

@@ -1119,7 +1119,17 @@ func check_authoring_brush()->void:
    check(game.preparing_stroke.is_empty() and game.terrain.edit_ticket==ticket+1 and game.terrain.published_revision==revision+1,"A prepared brush cannot overwrite a newer terrain revision")
    return
   var frames:=0;var worst_us:=0;var previous:=started
-  while admitted and game.terrain.published_revision==revision and Time.get_ticks_usec()-started<60000000:
+  var publication_deadline:=180000000 if lake_cut else 60000000
+  var last_progress:=started
+  while admitted and game.terrain.published_revision==revision and Time.get_ticks_usec()-started<publication_deadline:
+   if lake_cut and Time.get_ticks_usec()-last_progress>=10000000:
+    var current:Dictionary=game.lakes.water.runtime_state()
+    print("WIDE_LAKE_PROGRESS ",JSON.stringify({"elapsed_us":Time.get_ticks_usec()-started,"pending_regions":current.pending_regions,
+     "edit_requests":game.lakes.water.pending_edit_patches().size(),"slice_failure":game.lakes._slice_failure,
+     "occupancy_failure":game.lakes._occupancy_failure,"busy":game.lakes._busy,"contact_task":game.lakes._edit_patch_task,
+     "equilibrium_task":game.lakes._equilibrium_task,"result":game.lakes._equilibrium_last_result}))
+    last_progress=Time.get_ticks_usec()
+    if not game.lakes._occupancy_failure.is_empty() or not game.lakes._equilibrium_failure.is_empty():break
    await process_frame
    var now:=Time.get_ticks_usec()
    worst_us=maxi(worst_us,now-previous);previous=now;frames+=1

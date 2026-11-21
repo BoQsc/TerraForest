@@ -129,7 +129,7 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
     }
     if(!local_response)for(Key k:equilibrium_dependencies){
         auto found=regions.find(k);
-        if(found==regions.end()||!found->second.valid){get(position(k)*8,true);return {};}
+        if(found==regions.end()||!found->second.valid){get((position(k)*8).max(Vector3i(0,2,0)),true);return {};}
     }
     Ref<NativeWaterEquilibriumJob> job;job.instantiate();job->revision=map_revision;job->local_response=local_response;
     if(local_response)job->wide_edit_bounds=wide_edit_bounds;
@@ -200,6 +200,8 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     out["worker_us"]=int64_t(job->elapsed_us);out["cells"]=int64_t(job->visited_cells);
     out["displacement_visits"]=int64_t(job->displacement_visits);out["displacement_searches"]=int64_t(job->displacement_searches);
     out["local_response"]=job->local_response;
+    out["wide_spans"]=int64_t(job->wide_spans);out["wide_cells"]=int64_t(job->wide_cells);
+    if(job->wide_fallback)out["wide_fallback"]=job->wide_fallback;
     out["blocked_ml"]=int64_t(job->blocked_ml);out["reserved_bytes"]=int64_t(job->reserved_bytes);
     out["graph_cell_limit"]=int64_t(job->cell_limit);
     out["hierarchy_cell_limit"]=int64_t(job->hierarchy_cell_limit);
@@ -218,7 +220,7 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
                coordinate.y>=7&&coordinate.y<=10&&std::min({coordinate.x,coordinate.z,499-coordinate.x,499-coordinate.z})<35){
                 if(!restore_ocean_cache(k)&&regions.size()<MAX_REGIONS){Region r;r.ocean_state=1;regions.emplace(k,std::move(r));request(k);}
             }
-            get(coordinate*8,true);auto found=regions.find(k);
+            get((coordinate*8).max(Vector3i(0,2,0)),true);auto found=regions.find(k);
             if(found==regions.end()){out["reason"]="Water receiving region capacity exhausted";return out;}
             if(job->local_response){
                 local_edit_regions.insert(k);
@@ -299,6 +301,12 @@ void NativeWaterEquilibriumJob::prepare(){
         for(const auto &[k,r]:store.regions)if(r.settle_pending&&r.valid){
             const auto base=W::position(k)*8;
             for(int i=0;i<512;++i)if(r.water[i]&&r.water[i]>W::profile(r,i).capacity())displaced.push_back(base+Vector3i(i%8,(i/8)%8,i/64));
+        }
+        if(local_response&&!wide_edit_bounds.empty()&&displaced.empty()){
+            const auto result=settle_wide_spans();
+            if(result!=SpanResult::fallback)return result==SpanResult::settled;
+            wide_spans=0; // No compact solution was used for this transaction.
+            if(cancelled.load()){reason="Cancelled";return false;}
         }
         // Replacement of solid geometry can push owned quantity out of a cell.
         // This is one conservative displacement pass, not an iterative flow

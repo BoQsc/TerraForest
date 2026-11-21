@@ -88,7 +88,9 @@ int64_t NativeWaterTerrainPatch::prepare_structures(){
         if(structure_only){
             Vector3 origin=Vector3(coord)*4+Vector3(x,y,z)*.5;
             if(!AABB(origin,Vector3(.5,.5,.5)).intersects(structure_edit_bounds))continue;
-            if(structures->cells[i]){structures->bytes-=structures->cells[i]->bytes();structures->cells[i].reset();}
+            auto removed=std::move(structures->cells[i]);
+            if(removed&&std::find(structures->cells.begin(),structures->cells.end(),removed)==structures->cells.end())
+                structures->bytes-=removed->bytes();
         }
         if(floor[i]==ceiling[i])continue;
         float d[8];for(int c=0;c<8;++c)d[c]=density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
@@ -105,6 +107,13 @@ int64_t NativeWaterTerrainPatch::prepare_structures(){
             if(!outside)solids.push_back(std::move(local));
         }
         if(general||!solids.empty()){
+            const bool terrain_only=general&&solids.empty();
+            std::array<uint32_t,8> identity;
+            if(terrain_only){
+                std::memcpy(identity.data(),d,sizeof(d));
+                auto found=density_profiles.find(identity);
+                if(found!=density_profiles.end()){structures->cells[i]=found->second;continue;}
+            }
             WaterSolidClip::Pieces pieces;
             if(general){
                 if(!water_density_air(d,pieces))return status=-2;
@@ -113,11 +122,12 @@ int64_t NativeWaterTerrainPatch::prepare_structures(){
             if(general||std::abs(WaterSolidClip::volume(pieces)*1000000-base.volume(500))>.001){
                 auto cache=std::make_shared<WaterSolidProfile>();if(!cache->prepare(pieces))return status=-2;
                 structures->bytes+=cache->bytes();if(structures->bytes>4*1024*1024)return status=-2;structures->cells[i]=cache;
+                if(terrain_only)density_profiles.emplace(identity,cache);
             }
         }
         if(Time::get_singleton()->get_ticks_usec()-start>=1000)return 0;
     }
-    structure_hulls.clear();return status=1;
+    structure_hulls.clear();density_profiles.clear();return status=1;
 }
 int64_t NativeWaterTerrainPatch::sample_terrain(Object *core,int64_t budget,int64_t rev,int64_t cancel){
     if(status!=0||!core||budget<1||budget>2048)return status;
@@ -138,6 +148,22 @@ int64_t NativeWaterTerrainPatch::sample_terrain(Object *core,int64_t budget,int6
         const int at=boundary.size()-64-729*4;
         for(int i=0;i<729;++i){density[i]=boundary.decode_float(at+i*4);if(!std::isfinite(density[i]))return status=-2;}
         cursor=729;
+        // One sign across the pinned lattice and no boundary triangles
+        // certify the whole patch. Explicit cubes and structure hulls still
+        // clip open cells, including at the world's vertical limits.
+        if(boundary.decode_u32(24)==0){
+            const bool air=std::all_of(density.begin(),density.end(),[](float v){return v>0;});
+            const bool solid=!air&&std::all_of(density.begin(),density.end(),[](float v){return v<=0;});
+            if(air||solid){
+                floor.fill(solid?500:0);ceiling.fill(500);
+                if(air)for(int i=0;i<512;++i){
+                    const int x=(i%8)/2,y=(i/8)%8,z=i/64,cell_y=coord.y*8+y;
+                    if(cell_y<2||cell_y>=509||boundary[at+729*4+x+4*(y/2)+16*(z/2)])floor[i]=500;
+                }
+                boundary=PackedByteArray();terrain_prepared=true;
+                return prepare_structures();
+            }
+        }
     }else{
         // The backend pins the terrain revision and cancel epoch around every call.
         // One native interpolated batch (<=256 points), rather than a script call per sample.
@@ -2842,9 +2868,25 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install,bool p
     if(data.decode_u32(4)>=8)for(auto &[k,r]:staged){
         if(offset+4>data.size())return false;uint32_t count=data.decode_u32(offset);offset+=4;if(count>512)return false;
         if(!count)continue;auto contacts=std::make_shared<StructureWaterContacts>();int previous=-1;
+        // V8+ stores each profile inline. Reuse exact duplicate payloads
+        // on reload, including in old saves, before charging region memory.
+        std::unordered_multimap<uint64_t,std::pair<int64_t,int>> decoded_profiles;
         for(uint32_t n=0;n<count;++n){
             if(offset+8>data.size())return false;uint32_t index=data.decode_u32(offset),size=data.decode_u32(offset+4);offset+=8;
             if(index>=512||int(index)<=previous||size<5||size>131072||offset+int64_t(size)*8>data.size())return false;previous=int(index);
+            const int64_t start=offset;
+            const uint8_t *raw=data.ptr()+offset;
+            uint64_t hash=14695981039346656037ULL;
+            for(size_t j=0;j<size_t(size)*8;++j)hash=(hash^raw[j])*1099511628211ULL;
+            auto range=decoded_profiles.equal_range(hash);
+            for(auto it=range.first;it!=range.second;++it){
+                const auto [pos,cell]=it->second;
+                if(data.decode_u32(pos-4)==size&&std::memcmp(data.ptr()+pos,raw,size_t(size)*8)==0){
+                    contacts->cells[index]=contacts->cells[cell];break;
+                }
+            }
+            if(contacts->cells[index]){offset+=int64_t(size)*8;continue;}
+            decoded_profiles.emplace(hash,std::make_pair(start,int(index)));
             std::vector<double> values;values.reserve(size);for(uint32_t j=0;j<size;++j){values.push_back(data.decode_double(offset));offset+=8;}
             auto cell=std::make_shared<WaterSolidProfile>();if(!cell->decode(values))return false;
             contacts->bytes+=cell->bytes();if(contacts->bytes>4*1024*1024)return false;contacts->cells[index]=cell;

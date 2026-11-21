@@ -23,7 +23,7 @@ from development_storage import admit, register_worlds
 # evidence remains in the owning run directory; they do not allocate exports.
 # This declares planned growth, not a change to any storage category limit.
 BOUNDED_WATER_REPORTS = {
-    "px9_handgun", "water_patch", "water_patch_contacts", "water_static_editing", "water_region_io",
+    "px9_handgun", "water_patch", "water_patch_contacts", "water_structure_cache", "water_static_editing", "water_region_io",
     "water_region_retirement", "water_map_identity", "ocean_residency", "water_snapshot_cost",
     "water_player_world", "water_publication_scale", "water_local_surface", "water_equilibrium_scope", "water_ocean_equilibrium",
     "water_region_store", "water_region_transfer", "water_storage_snapshot", "water_streaming_save",
