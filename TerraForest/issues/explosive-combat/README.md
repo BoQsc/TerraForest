@@ -1,5 +1,10 @@
 # First firearm and volumetric explosive destruction
 
+The “Destruction blocked” inventory warning came from the finishing tool hit.
+At the shoreline a terrain stroke can wait for water preparation before the
+terrain marks an edit pending. The tool now recognizes that queued stroke and
+reports the wait. This change was reviewed in source only.
+
 ## Saved barrels beyond the player
 
 **Follow-up on standard chain reactions.** Standard mode previously waited for

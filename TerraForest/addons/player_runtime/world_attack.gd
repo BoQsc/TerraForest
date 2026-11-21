@@ -226,20 +226,24 @@ func apply_target(t: Dictionary) -> bool:
 	var accepted:=true
 	if result.destroyed:accepted=destroy(t)
 	if not accepted:
+		if result.applied>0 and (t.kind=="terrain" or not harvest.is_empty()):
+			durability.repair(t.key,t.health,result.applied)
 		if not harvest.is_empty():
-			if result.applied>0:durability.repair(t.key,t.health,result.applied)
 			if result.reward_count>0 and not hud.inventory.restore(before,hud.inventory.snapshot().revision).ok:push_error("Harvest reward rollback failed")
-		game._show_lake_notice(rejection_reason if not rejection_reason.is_empty() else "Destruction blocked; make inventory room or wait for the world");return false
+		game._show_lake_notice(rejection_reason if not rejection_reason.is_empty() else "Could not remove %s." % t.name);return false
 	if not harvest.is_empty() and result.applied>0:
 		hud.award_experience(mini(12,int(result.reward_count)*2)+(8 if result.destroyed else 0))
 	# Every landed hit sounds, not only the one that destroys the target.
 	if accepted and (result.destroyed or int(result.get("applied", 0)) > 0): break_sound(t)
 	if t.kind=="cover" and t.get("large",false) and not result.destroyed:game.ground_cover.damage_boulder(t.id,game.camera.global_position)
 	hud.show_target_damage(t.name,int(result.remaining),int(result.maximum))
-	t["destroyed"]=result.destroyed
+	t["destroyed"]=result.destroyed and not t.has("queued_notice")
 	if result.destroyed:durability.forget(t.key)
 	var wear: Dictionary=hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision) if item!=0 else {}
 	hud.refresh()
+	if t.has("queued_notice"):
+		game._show_lake_notice(t.queued_notice)
+		return true
 	game._show_lake_notice((hud.CATALOG.get(item,"Tool")+" broke · Tab → Crafting to make a replacement") if wear.get("broken",false) else (t.name+" destroyed" if result.destroyed else "%s: %d / %d durability"%[t.name,result.remaining,result.maximum]))
 	if locked and result.get("opened",false):game._show_lake_notice("Lock broken · E open chest")
 	if door_lock!=null and result.get("opened",false):game._show_lake_notice("Reinforcement broken · E open door")
@@ -289,14 +293,31 @@ func destroy(t: Dictionary) -> bool:
 	match t.kind:
 		"block":return game.combat.demolish(t.cell,game.structures.blocks.get_cell(t.cell),game.camera.global_position,2.0)
 		"tree":return game.ecosystem.harvest_root(t.id,game.player_hud.inventory,-game.camera.global_basis.z).ok
-		"model":return game._remove_inventory_model(game.model_tool.history,t.collection,t.id)
+		"model":
+			var removed:bool=game._remove_inventory_model(game.model_tool.history,t.collection,t.id)
+			if not removed:rejection_reason=game.model_tool.placement_failure
+			return removed
 		"cover":
 			var collected: Dictionary=game.ground_interaction.collect(game.camera.global_position,t.end,game.player_hud.inventory,true,null,t.id)
 			rejection_reason=collected.reason;return collected.ok
 		"terrain":
 			var center: Vector3=t.position-t.normal*0.35
-			if not game.stroke_buffer.push_sweep(t.position,center,0.65,game.Codec.CONTACT_MINING_SHAPE,false,game.material_id,false):return false
-			game._consume_stroke();return game.terrain.pending_edit
+			if not game.stroke_buffer.push_sweep(t.position,center,0.65,game.Codec.CONTACT_MINING_SHAPE,false,game.material_id,false):
+				rejection_reason="The terrain edit queue is full."
+				return false
+			var sample:Dictionary=game.stroke_buffer.samples.back()
+			game._consume_stroke()
+			if game.stroke_buffer.samples.has(sample):
+				t.queued_notice="Terrain strike queued."
+				return true
+			for work:Dictionary in game.preparing_stroke:
+				if work.sample==sample:
+					t.queued_notice="Preparing water around the brush…"
+					return true
+			if game.terrain.pending_edit:return true
+			rejection_reason=game.last_stroke_rejection
+			if rejection_reason.is_empty():rejection_reason="Terrain could not accept the digging stroke."
+			return false
 		"actor":
 			return game._remove_actor(t.id)
 		"vehicle":

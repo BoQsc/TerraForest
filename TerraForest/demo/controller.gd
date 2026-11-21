@@ -94,6 +94,7 @@ var shutdown_requested: bool = false
 var max_fps: int = 60
 var latest_hit: Dictionary = {}
 var placement_rejections: int = 0
+var last_stroke_rejection := ""
 var placement_message_us: int = 0
 var terrain_material := ShaderMaterial.new()
 var start_ms: int = 0
@@ -455,6 +456,7 @@ var preparing_water_revision:=-1
 var renew_preparation_us:=0
 
 func _consume_stroke() -> void:
+	last_stroke_rejection = ""
 	if loading_active or shutdown_requested or terrain.pending_edit or not terrain.world_ready:
 		return
 	if not preparing_stroke.is_empty() and (terrain.epoch!=preparing_epoch or terrain.density_revision!=preparing_revision):
@@ -497,7 +499,10 @@ func _consume_stroke() -> void:
 		hi = hi.max(work["hi"])
 	if commands.is_empty():
 		return
-	if not terrain.edit(commands[0], lo, hi, int(members[0]["captured_us"]), commands, members):
+	terrain.message_changed.connect(_record_stroke_message)
+	var submitted:bool=terrain.edit(commands[0], lo, hi, int(members[0]["captured_us"]), commands, members)
+	terrain.message_changed.disconnect(_record_stroke_message)
+	if not submitted:
 		match terrain.water_edit_status:
 			ERR_BUSY:
 				preparing_stroke=group
@@ -511,14 +516,18 @@ func _consume_stroke() -> void:
 			ERR_OUT_OF_MEMORY:_reject_placement("The water region store is full. This edit could not be applied.")
 			ERR_CANT_CREATE:_reject_placement("Water occupancy preparation failed. The terrain edit was not applied.")
 			_:
-				if not terrain.latest_error.is_empty():_message("Brush not submitted: " + terrain.latest_error)
+				if not terrain.latest_error.is_empty():_reject_placement("Brush not submitted: " + terrain.latest_error)
 	elif contains_addition:
 		_terrain_placement_feedback()
 
 func _terrain_placement_feedback() -> void:
 	pass # Presentation hook; the accepted native edit remains the sole world owner.
 
+func _record_stroke_message(text:String)->void:
+	last_stroke_rejection=text
+
 func _reject_placement(reason: String) -> void:
+	last_stroke_rejection = reason
 	placement_rejections += 1
 	# Do not flood the console at physics frequency during a blocked held brush.
 	var now: int = Time.get_ticks_usec()
