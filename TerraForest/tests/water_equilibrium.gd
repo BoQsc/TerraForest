@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/water_blast_settling.gd"
 func _initialize()->void:run_equilibrium.call_deferred()
-func solve(water:RefCounted)->Dictionary:
- var job:RefCounted=water.begin_equilibrium()
+func solve(water:RefCounted,local_response:bool=false)->Dictionary:
+ var job:RefCounted=water.begin_equilibrium(0,local_response)
  if job==null:return {"ok":false,"reason":"No equilibrium job"}
  var task:=WorkerThreadPool.add_task(job.prepare,false,"Equilibrium regression")
  while not WorkerThreadPool.is_task_completed(task):await process_frame
@@ -92,5 +92,16 @@ func run_equilibrium()->void:
  water.settle_after_edit(AABB(Vector3(left)*.5,Vector3.ONE*.5));result=await solve(water)
  retained=amounts(water)
  check(result.ok and absi(int(retained.get(left,0))-58333)<=1 and absi(int(retained.get(right,0))-58333)<=1 and absi(int(retained.get(sill,0))-8333)<=1 and not retained.has(far_pool) and not retained.has(upper_sill) and water.statistics().water_ml==125000,"Overflow levels the lower merged basins without crossing a second higher sill: "+str(result))
+ var wide:=AABB(Vector3(25,25,25),Vector3.ONE*40)
+ var pocket_cells:Dictionary={left-Vector3i.RIGHT:[0,500,100000],left:[0,500,100000],sill:[300,500,0],right:[0,500,0]}
+ water=fixture(pocket_cells)
+ water.settle_after_edit(AABB(Vector3(sill)*.5,Vector3.ONE*.5))
+ result=await solve(water)
+ var reference:=amounts(water)
+ check(result.ok and reference[left]==75000 and reference[right]==50000,"Scalar reference retains upstream water to the spill elevation")
+ water=fixture(pocket_cells)
+ water.settle_after_edit(wide)
+ result=await solve(water,true)
+ check(result.ok and result.get("wide_basin_leaves",0)==3 and amounts(water)==reference,"Wide compact spill with a merged two-column pool matches scalar quantities cell by cell: "+str(result))
  print("WATER_EQUILIBRIUM checks=",checks," failures=",failures)
  quit(failures)

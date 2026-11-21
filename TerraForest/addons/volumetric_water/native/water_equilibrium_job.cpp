@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "regional_water.hpp"
 #include "water_volume_query.hpp"
+#include "water_spill_hierarchy.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <algorithm>
@@ -201,6 +202,7 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     out["displacement_visits"]=int64_t(job->displacement_visits);out["displacement_searches"]=int64_t(job->displacement_searches);
     out["local_response"]=job->local_response;
     out["wide_spans"]=int64_t(job->wide_spans);out["wide_cells"]=int64_t(job->wide_cells);
+    out["wide_basin_leaves"]=int64_t(job->wide_basin_leaves);
     if(job->wide_fallback)out["wide_fallback"]=job->wide_fallback;
     out["blocked_ml"]=int64_t(job->blocked_ml);out["reserved_bytes"]=int64_t(job->reserved_bytes);
     out["graph_cell_limit"]=int64_t(job->cell_limit);
@@ -788,10 +790,7 @@ void NativeWaterEquilibriumJob::prepare(){
                 // The uniform result crosses a dry sill. Build a bounded merge
                 // hierarchy of communicating basins, retaining each child's
                 // water below its spill elevation before passing excess up.
-                struct Edge {int a,b;double level;};
-                struct Basin {int left=-1,right=-1,parent=-1,begin=0,end=0;double level=0;uint64_t capacity=0,quantity=0,excess=0,extra=0;bool outlet=false;};
-                static_assert(sizeof(Basin)<=80,"Update the hierarchy memory charge when basin layout grows");
-                std::vector<Edge> edges;edges.reserve(cells.size()*3);
+                std::vector<WaterSpillEdge> edges;edges.reserve(cells.size()*3);
                 for(size_t i=0;i<cells.size();++i)for(int d=0;d<6;++d){
                     int j=cells[i].adjacent[d];if(j<=int(i)||!connected(cells[i],cells[j],d,upper))continue;
                     edges.push_back({int(i),j,spill(int(i),j,d)});
@@ -799,100 +798,12 @@ void NativeWaterEquilibriumJob::prepare(){
                 const int sink=outlets.empty()?-1:int(cells.size());
                 for(const auto &outlet:outlets)edges.push_back({outlet.cell,sink,outlet.level});
                 mark(5);
-                std::stable_sort(edges.begin(),edges.end(),[](const Edge &a,const Edge &b){return a.level<b.level;});
-                const size_t leaves=cells.size()+(sink>=0?1:0);
-                std::vector<Basin> tree(leaves);tree.reserve(leaves*2);
-                if(sink>=0)tree[sink].outlet=true;
-                std::vector<int> roots(leaves);std::iota(roots.begin(),roots.end(),0);
-                auto root=[&](int i){int r=i;while(roots[r]!=r)r=roots[r];while(roots[i]!=i){int next=roots[i];roots[i]=r;i=next;}return r;};
-                for(const auto &edge:edges){
-                    int a=root(edge.a),b=root(edge.b);if(a==b)continue;
-                    int id=int(tree.size());tree.push_back({a,b,-1,0,0,edge.level});
-                    tree[id].outlet=tree[a].outlet||tree[b].outlet;
-                    tree[a].parent=id;tree[b].parent=id;roots.push_back(id);roots[a]=roots[b]=id;
-                }
-                const int trunk=root(0);
-                for(size_t i=1;i<cells.size();++i)if(root(i)!=trunk){reason="Unavailable basin connection";return false;}
-                // Store one leaf ordering, not a copied cell list at every
-                // hierarchy node. Work is separately bounded for steep trees.
-                std::vector<int> order,stack{trunk};order.reserve(cells.size());
-                while(!stack.empty()){int id=stack.back();stack.pop_back();
-                    if(id<0){id=-id-1;tree[id].end=int(order.size());continue;}
-                    tree[id].begin=int(order.size());
-                    if(tree[id].left<0){if(id!=sink)order.push_back(id);tree[id].end=int(order.size());}
-                    else{stack.push_back(-id-1);stack.push_back(tree[id].right);stack.push_back(tree[id].left);}
-                }
-                uint64_t work=0;
-                // Retire saturated leaves from ancestor capacity evaluations.
-                // Deep interior cells then contribute a cached integer volume,
-                // rather than being rescanned at every shoreline spill height.
-                std::vector<std::vector<int>> active(tree.size());
-                std::vector<uint64_t> saturated(tree.size());
-                for(size_t id=0;id<tree.size();++id){
-                    auto &node=tree[id];double top=node.parent<0?upper:tree[node.parent].level;
-                    if(node.outlet){node.capacity=node.left<0?0:tree[node.left].capacity+tree[node.right].capacity;continue;}
-                    if(node.left<0)active[id].push_back(int(id));
-                    else{
-                        saturated[id]=saturated[node.left]+saturated[node.right];
-                        int a=node.left,b=node.right;
-                        if(active[a].size()<active[b].size())std::swap(a,b);
-                        active[id]=std::move(active[a]);
-                        active[id].insert(active[id].end(),active[b].begin(),active[b].end());
-                        std::vector<int>().swap(active[b]);
-                        if(top==node.level){node.capacity=tree[node.left].capacity+tree[node.right].capacity;continue;}
-                    }
-                    uint64_t partial=0;size_t retained=0;
-                    for(int i:active[id]){
-                        if(++work>4000000||cancelled.load()){reason="Basin hierarchy work budget exceeded";return false;}
-                        uint64_t volume=std::min(queries[i].capacity(),uint64_t(std::max(0.,std::floor(queries[i].volume((top-cells[i].p.y*.5)*1000.)))));
-                        if(volume==queries[i].capacity())saturated[id]+=volume;
-                        else{partial+=volume;active[id][retained++]=i;}
-                    }
-                    active[id].resize(retained);node.capacity=saturated[id]+partial;
-                }
-                mark(6);
-                // Record incoming overflow once per node. Descendant routing
-                // is deferred to the final top-down pass, avoiding quadratic
-                // repeated descent through a long shoreline merge tree.
-                for(size_t id=0;id<tree.size();++id){
-                    auto &node=tree[id];uint64_t incoming=0;
-                    if(node.left<0)incoming=int(id)==sink?0:cells[id].before;
-                    else{node.quantity=tree[node.left].quantity+tree[node.right].quantity;incoming=tree[node.left].excess+tree[node.right].excess;}
-                    if(node.quantity>node.capacity){reason="Inconsistent basin capacity";return false;}
-                    uint64_t retained=node.outlet?0:std::min(incoming,node.capacity-node.quantity);node.excess=incoming-retained;
-                    node.quantity+=retained;if(node.left>=0)node.extra=retained;
-                    if(node.outlet&&node.excess){ocean_exchange_ml-=int64_t(node.excess);store.total-=node.excess;quantity-=node.excess;node.excess=0;}
-                }
-                if(tree[trunk].excess||tree[trunk].quantity!=quantity){reason="Basin exceeds available receiving space";return false;}
-                mark(7);
-                stack={trunk};
-                while(!stack.empty()){
-                    int id=stack.back();stack.pop_back();auto &node=tree[id];
-                    if(node.left<0){if(id!=sink)cells[id].after=node.quantity;continue;}
-                    auto &left=tree[node.left];auto &right=tree[node.right];
-                    if(node.outlet){stack.push_back(node.right);stack.push_back(node.left);continue;}
-                    if(node.quantity<left.capacity+right.capacity){
-                        uint64_t a=std::min(node.extra,left.capacity-left.quantity);
-                        uint64_t b=node.extra-a;
-                        if(b>right.capacity-right.quantity){reason="Basin overflow routing exceeds capacity";return false;}
-                        left.quantity+=a;left.extra+=a;right.quantity+=b;right.extra+=b;
-                        stack.push_back(node.right);stack.push_back(node.left);continue;
-                    }
-                    double a=node.level,b=node.parent<0?upper:tree[node.parent].level;
-                    for(int iteration=0;iteration<32;++iteration){double m=(a+b)*.5,volume=0;
-                        for(int at=node.begin;at<node.end;++at){int i=order[at];volume+=std::min(double(queries[i].capacity()),queries[i].volume((m-cells[i].p.y*.5)*1000.));}
-                        if(volume<double(node.quantity))a=m;else b=m;
-                    }
-                    uint64_t filled=0;std::vector<int> fractions;
-                    for(int at=node.begin;at<node.end;++at){int i=order[at];auto &c=cells[i];double v=std::min(double(queries[i].capacity()),queries[i].volume((b-c.p.y*.5)*1000.));
-                        c.after=uint64_t(std::max(0.,std::floor(v)));c.fraction=v-c.after;filled+=c.after;fractions.push_back(i);}
-                    // Node capacity is the sum of integer leaf capacities. At a
-                    // sill, remove rounding surplus without changing the total.
-                    std::stable_sort(fractions.begin(),fractions.end(),[&](int a,int b){return cells[a].fraction>cells[b].fraction;});
-                    if(filled>node.quantity){for(auto at=fractions.rbegin();at!=fractions.rend()&&filled>node.quantity;++at)if(cells[*at].after){--cells[*at].after;--filled;}}
-                    else for(int i:fractions)if(filled<node.quantity&&cells[i].after<queries[i].capacity()){++cells[i].after;++filled;}
-                    if(filled!=node.quantity){reason="Basin remainder exceeds bounded rounding";return false;}
-                }
+                auto capacity=[&](int i){return queries[i].capacity();};
+                auto volume=[&](int i,double h){return std::min(double(capacity(i)),queries[i].volume((h-cells[i].p.y*.5)*1000.));};
+                auto integer_volume=[&](int i,double h){return uint64_t(std::max(0.,std::floor(volume(i,h))));};
+                uint64_t initial_quantity=quantity;
+                if(!distribute_basin_water(cells,edges,sink,upper,quantity,ocean_exchange_ml,volume,capacity,integer_volume,cancelled,mark,reason))return false;
+                store.total-=initial_quantity-quantity;
             }
             if(local_response&&!complete_neighbourhood&&!needs_hierarchy&&!reservoir_graph){
                 // A local response is a transient, not a smaller sealed lake.

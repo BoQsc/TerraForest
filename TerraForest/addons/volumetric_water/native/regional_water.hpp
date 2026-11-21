@@ -423,7 +423,7 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     bool success=false,consumed=false,local_response=false;
     enum class SpanResult { fallback, dependencies, settled };
     SpanResult settle_wide_spans();
-    size_t wide_spans=0,wide_cells=0;
+    size_t wide_spans=0,wide_cells=0,wide_basin_leaves=0;
     const char *wide_fallback=nullptr;
     std::atomic<bool> started{false},ready{false},cancelled{false};
 protected: static void _bind_methods();

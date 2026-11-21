@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "regional_water.hpp"
+#include "water_spill_hierarchy.hpp"
+#include "water_volume_query.hpp"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -261,14 +263,121 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
     if(first==body.end())return SpanResult::fallback;
     std::vector<unsigned char> wet(spans.size());
     auto receivers=flood({*first},Passage::wet,wet);
-    bool needs_drain=false;
+    bool separate_pools=false,needs_drain=false;
     for(int i:body){
-        if(spans[i].after&&!wet[i])return fallback("separate occupied pools at final levels");
+        if(spans[i].after&&!wet[i])separate_pools=true;
         if(spans[i].before&&!wet[i])needs_drain=true;
     }
-    if(needs_drain){
+    if(!separate_pools&&needs_drain){
         flood(std::move(receivers),Passage::drain,wet);
-        for(int i:body)if(spans[i].before&&!wet[i])return fallback("donor retains volume below its spill");
+        separate_pools=std::any_of(body.begin(),body.end(),[&](int i){return spans[i].before&&!wet[i];});
+    }
+    if(separate_pools){
+        // At every elevation, horizontally adjacent clear columns with the
+        // same bottom and top have one communicating storage volume. Collapse
+        // those faces before allocating the spill tree. Shaped cells stay
+        // independent leaves, even when their capacities happen to match.
+        struct Pool {
+            int first,count=0;
+            uint64_t before=0,after=0;
+            double fraction=0;
+        };
+        std::vector<Pool> pools;
+        std::vector<int> owner(spans.size(),-1),next(spans.size(),-1),pending;
+        auto find_span=[&](const Vector3i &p){
+            if(!W::in_domain(p))return -1;
+            auto block=blocks.find(W::region_key(p));
+            return block==blocks.end()?-1:block->second.ids[W::index(p)];
+        };
+        for(int seed:body){
+            if(owner[seed]>=0)continue;
+            if(pools.size()>=hierarchy_cell_limit)return fallback("compact basin leaf budget");
+            int id=int(pools.size());
+            pools.push_back({-1});
+            auto &pool=pools.back();
+            pending={seed};owner[seed]=id;
+            for(size_t at=0;at<pending.size();++at){
+                int i=pending[at];const auto &s=spans[i];
+                next[i]=pool.first;pool.first=i;++pool.count;pool.before+=s.before;
+                if(!s.air)continue;
+                for(int d=1;d<=4;++d){
+                    int j=find_span(s.base+directions[d]);
+                    if(j<0||!reached[j]||owner[j]>=0)continue;
+                    const auto &n=spans[j];
+                    if(n.air&&n.base.y==s.base.y&&n.length==s.length){owner[j]=id;pending.push_back(j);}
+                }
+            }
+        }
+        wide_basin_leaves=pools.size();
+        std::vector<WaterCellProfile> shapes;shapes.reserve(pools.size());
+        for(const auto &pool:pools){
+            const auto &s=spans[pool.first];
+            shapes.push_back(shape_at(s,blocks.at(W::region_key(s.base))));
+        }
+        std::vector<WaterVolumeQuery> queries;queries.reserve(shapes.size());
+        for(const auto &shape:shapes)queries.emplace_back(shape);
+        std::vector<WaterSpillEdge> edges;
+        std::vector<int> touched;
+        std::vector<double> least(pools.size(),std::numeric_limits<double>::infinity());
+        for(int id=0;id<int(pools.size());++id){
+            if(cancelled.load())return SpanResult::fallback;
+            for(int i=pools[id].first;i>=0;i=next[i]){
+                const auto &s=spans[i];const auto &a=shapes[id];
+                for(int d=0;d<6;++d){
+                    int y=d==5?int(s.length)-1:0,end=d==0?1:int(s.length);
+                    while(y<end){
+                        auto p=s.base+Vector3i(0,y++,0),q=p+directions[d];
+                        int j=find_span(q);
+                        if(j<0)continue;
+                        const auto &other=spans[j];
+                        if(d>=1&&d<=4)y=std::min(end,int(other.base.y+other.length)-s.base.y);
+                        int neighbor=owner[j];if(neighbor<=id)continue;
+                        const auto &c=shapes[neighbor];
+                        double ah=std::clamp((upper-p.y*.5)*1000.,0.,500.),bh=std::clamp((upper-q.y*.5)*1000.,0.,500.);
+                        if(!WaterCellProfile::connected(a,ah,c,bh,d))continue;
+                        double spill=std::max(p.y,q.y)*.5;
+                        if(d>=1&&d<=4&&(!s.air||!other.air)){
+                            int axis=d<=2?0:2,side=d==1||d==3?1:0;
+                            spill+=(a.solid||c.solid?WaterCellProfile::clipped_spill_height(a,c,axis,side):
+                                WaterCellProfile::floor_spill_height(a,c,axis,side))*.001;
+                        }
+                        if(!std::isfinite(least[neighbor]))touched.push_back(neighbor);
+                        least[neighbor]=std::min(least[neighbor],std::min(upper,spill+2e-9));
+                    }
+                }
+            }
+            if(edges.size()+touched.size()>6*hierarchy_cell_limit)return fallback("compact spill edge budget");
+            for(int neighbor:touched){
+                edges.push_back({id,neighbor,least[neighbor]});
+                least[neighbor]=std::numeric_limits<double>::infinity();
+            }
+            touched.clear();
+        }
+        auto capacity=[&](int i)->uint64_t{
+            auto &s=spans[pools[i].first];
+            return s.air?uint64_t(125000)*s.length*pools[i].count:queries[i].capacity();
+        };
+        auto stored=[&](int i,double h){
+            auto &s=spans[pools[i].first];
+            double depth=(h-s.base.y*.5)*1000.;
+            if(s.air)return std::clamp(depth*250.,0.,125000.*s.length)*pools[i].count;
+            return std::clamp(queries[i].volume(depth),0.,double(capacity(i)));
+        };
+        auto integral=[&](int i,double h){return uint64_t(std::floor(stored(i,h)));};
+        int64_t exchange=0;
+        // One wide pool can hold thousands of columns at the same level.
+        // Resolve its common head down to double precision before integer allocation.
+        const char *failure=nullptr;
+        if(!distribute_basin_water(pools,edges,-1,upper,quantity,exchange,stored,capacity,integral,cancelled,[](int){},failure,56)){
+            return fallback(failure);
+        }
+        for(const auto &pool:pools){
+            uint64_t each=pool.after/pool.count,remainder=pool.after%pool.count;
+            for(int i=pool.first;i>=0;i=next[i]){
+                spans[i].after=each+(remainder>0);
+                if(remainder)--remainder;
+            }
+        }
     }
     if(cancelled.load())return SpanResult::fallback;
     std::unordered_set<Key> dirty;
