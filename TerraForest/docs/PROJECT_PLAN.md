@@ -1,5 +1,7 @@
 ## World authority and qualification milestones (November 20)
 
+The [full-cut physics and timing decision](WORLD_FOUNDATION_STATUS.md#full-cut-physics-and-timing-decision) records the resting-body correction, two-angle shoreline evidence and the outstanding full-footprint publication deadline.
+
 Milestone 5 follows the [architecture choices and ordered integration gates](WORLD_SYSTEMS_DESIGN.md#architecture-choices-for-interactive-world-edits). Resolve real body contact and perimeter ownership before selecting a rendering backend.
 
 The [changed-triangle comparison](WORLD_FOUNDATION_STATUS.md#changed-triangle-publication-trial) records the rejected 8 m page trial and actual packaged timings. The two-frame edit milestone remains open.

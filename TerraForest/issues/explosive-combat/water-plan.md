@@ -1,4 +1,6 @@
 
+
+The [full-cut physics and timing decision](../../docs/WORLD_FOUNDATION_STATUS.md#full-cut-physics-and-timing-decision) records the resting-body correction, two-angle shoreline evidence and the outstanding full-footprint publication deadline.
 The [changed-triangle comparison](../../docs/WORLD_FOUNDATION_STATUS.md#changed-triangle-publication-trial) records the rejected 8 m page trial and actual packaged timings. The two-frame edit milestone remains open.
 
 The [joint publication measurements](../../docs/WORLD_FOUNDATION_STATUS.md#joint-publication-on-the-packaged-shoreline-route) cover the full cut, both shoreline camera pairs and the outstanding two-frame deadline.
