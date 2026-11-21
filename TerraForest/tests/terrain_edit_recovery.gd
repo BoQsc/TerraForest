@@ -59,6 +59,16 @@ func check_planar_collision()->void:
 	var expected:=quad.duplicate()
 	for i in expected.size():expected[i].x*=2
 	check(recipes.merge_planar_faces(adjacent)==expected,"Adjacent coplanar faces merge with exact bounds and winding")
+	var panel:=adjacent.duplicate()
+	for vertex in adjacent:panel.append(vertex+Vector3.UP)
+	var panel_expected:=expected.duplicate()
+	for i in panel_expected.size():panel_expected[i].y*=2
+	check(recipes.merge_planar_faces(panel)==panel_expected,"A two-dimensional planar collider reduces to two exact triangles")
+	var corner:=adjacent.duplicate()
+	for vertex in quad:corner.append(vertex+Vector3.UP)
+	var corner_expected:=expected.duplicate()
+	for vertex in quad:corner_expected.append(vertex+Vector3.UP)
+	check(recipes.merge_planar_faces(corner)==corner_expected,"An L-shaped support keeps the missing corner open")
 	for offset in [Vector3(2,0,0),Vector3(1,0,.0001)]:
 		var separate:=quad.duplicate()
 		for vertex in quad:separate.append(vertex+offset)

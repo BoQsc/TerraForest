@@ -795,6 +795,8 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 		"triangles": int(data["triangles"]), "bytes": int(data["bytes"]),
 		"used": Time.get_ticks_msec(), "key": key, "active": false, "cavity_visibility": bool(data.get("cavity_visibility", true))}
 
+	if data.has("compared_stamp") and old.get("stamp",-1)==data.compared_stamp and old.get("node")==mesh_node:
+		result.rims=data.rims
 	if not slot.is_empty():result.resident_swap=slot
 	return result
 
@@ -1771,6 +1773,11 @@ func _invalidate() -> Array[Dictionary]:
 		if visible_cut.has(key):
 			last_density_tiles += 1
 			affected.push_back({"key": key, "stamp": stamps[key], "lighting_only": false})
+			if key.z in [16,32] and tiles[key].step==1 and tiles[key].has("arrays"):
+				# Packed arrays retain the exact prior geometry by reference until
+				# the worker has compared the two sides of this publication.
+				affected[-1].previous_rim=[tiles[key].arrays[Mesh.ARRAY_VERTEX],tiles[key].arrays[Mesh.ARRAY_INDEX]]
+				affected[-1].previous_stamp=tiles[key].stamp
 			if backend.qualify_surface_owners and was_clean and key.z in [16,32] and tiles[key].step==1 and not tiles[key].has("bricks") and not lighting_dirty.has(key):
 				affected[-1]["retain_if_untouched"]=true
 				for light:Vector2 in tiles[key].arrays[Mesh.ARRAY_TEX_UV]:

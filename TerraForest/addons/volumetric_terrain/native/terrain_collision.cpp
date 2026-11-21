@@ -132,19 +132,47 @@ PackedVector3Array merge_planar_faces(const PackedVector3Array &faces) {
     PackedVector3Array result=faces;
     std::vector<bool> omit(count/3);
     bool changed=false;
+    size_t rows=0;
     for(size_t at=0;at<rects.size();) {
-        const Rectangle &r=rects[at++];
+        Rectangle r=rects[at++];
         float right=r.right;
         while(at<rects.size() && rects[at].row()==r.row() && rects[at].left==right) {
             const auto &next=rects[at++];
             omit[next.first/3]=omit[next.first/3+1]=true;
             right=next.right;
         }
-        if(right==r.right)continue;
+        if(right!=r.right){
+            changed=true;
+            const int axis=(r.axis+1)%3;
+            auto *vertices=result.ptrw();
+            for(int j=r.first;j<r.first+6;++j)
+                if(p[j][axis]==r.right)vertices[j][axis]=right;
+            r.right=right;
+        }
+        rects[rows++]=r;
+    }
+    // Join strips only across a complete common edge. A narrower strip
+    // beside a hole must keep its own collider, even on the same plane.
+    rects.resize(rows);
+    auto column=[](const Rectangle &r){return std::tie(r.axis,r.winding,r.plane,r.left,r.right);};
+    std::sort(rects.begin(),rects.end(),[&](const Rectangle &a,const Rectangle &b){
+        if(column(a)!=column(b))return column(a)<column(b);
+        return std::tie(a.bottom,a.first)<std::tie(b.bottom,b.first);
+    });
+    for(size_t at=0;at<rects.size();) {
+        const Rectangle &r=rects[at++];
+        float top=r.top;
+        while(at<rects.size() && column(rects[at])==column(r) && rects[at].bottom==top){
+            const auto &next=rects[at++];
+            omit[next.first/3]=omit[next.first/3+1]=true;
+            top=next.top;
+        }
+        if(top==r.top)continue;
         changed=true;
-        const int axis=(r.axis+1)%3;
+        const int axis=(r.axis+2)%3;
+        auto *vertices=result.ptrw();
         for(int j=r.first;j<r.first+6;++j)
-            if(p[j][axis]==r.right)result.ptrw()[j][axis]=right;
+            if(p[j][axis]==r.top)vertices[j][axis]=top;
     }
     if(!changed)return faces;
     auto *out=result.ptrw();

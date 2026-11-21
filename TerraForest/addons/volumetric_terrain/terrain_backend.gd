@@ -675,6 +675,9 @@ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Di
 		if triangle_page_terrain:
 			if not _prepare_triangle_pages(chunk,key,item.get("previous_pages",{})):continue
 		else:
+			if item.has("previous_rim"):
+				chunk.rims=collision_recipes.changed_rims(key,item.previous_rim[0],item.previous_rim[1],chunk.arrays[Mesh.ARRAY_VERTEX],chunk.arrays[Mesh.ARRAY_INDEX])
+				chunk.compared_stamp=item.previous_stamp
 			var faces:PackedVector3Array=collision_recipes.merge_planar_faces(chunk.faces)
 			var recipes:Dictionary=collision_recipes.prepare(faces,_collision_piece_triangles)
 			if not recipes.ok:continue
@@ -755,6 +758,28 @@ func _recoverable_edit_rejection(commands:Array,reply:PackedByteArray,before:Pac
 		if command.size()<4 or command.decode_u32(0) not in [2,3,28,38,41]:return false
 	var residency:Dictionary=native.residency_stats()
 	return not residency.get("active",false) or residency.get("storage_failures",1)==0
+
+# The ordered writer stays on this revision until it joins the task. Sampling
+# uses bounded native queries and the worker only writes its private result.
+func _prepare_edit_support(job:Dictionary,support_points:Array,support_before:Array,revision:int,output:Dictionary)->void:
+	var started:=Time.get_ticks_usec()
+	var support_after:=_edit_support_samples(support_points,revision)
+	var support:Array=[]
+	if support_before.size()==support_points.size() and support_after.size()==support_points.size():
+		for index in support_points.size():support.append({"before":support_before[index],"after":support_after[index]})
+	var support_snapshots:Array=job.get("support_snapshots",[])
+	if support.size()==support_snapshots.size() and not support.is_empty() and ClassDB.class_exists("NativeVegetationSupport"):
+		var helper:RefCounted=ClassDB.instantiate("NativeVegetationSupport")
+		for index in support.size():
+			var snapshot:Dictionary=support_snapshots[index]
+			if not snapshot.has("offsets"):continue
+			var prepared:Dictionary=helper.lost_roots(snapshot,support_before[index],support_after[index])
+			support[index]["verdict"]=prepared
+			if prepared.ok and not prepared.ids.is_empty() and snapshot.has("rows"):
+				support[index]["survivors"]=helper.filter_ground(snapshot.rows,prepared.ids)
+				support[index]["retired"]=helper.filter_ground(snapshot.rows,prepared.ids,true)
+	output["support"]=support
+	output["ms"]=(Time.get_ticks_usec()-started)/1000.0
 
 func _edit_support_samples(groups:Array,revision:int)->Array:
 	var output:Array=[]
@@ -1776,6 +1801,12 @@ func _run() -> void:
 							_push({"kind":"edit_chunk","epoch":job.epoch,"ticket":job.ticket,"key":item.key,"stamp":item.stamp,"retain_geometry":true,"untouched_surface":true})
 						else:items_to_build.append(item)
 				var groups:=_dispatch_resident_groups(job,after_stats.decode_u32(12),scheduled,surface,items_to_build)
+				var support_output:Dictionary={}
+				var support_task:=-1
+				if not support_points.is_empty():
+					var prepare_support:=_prepare_edit_support.bind(job,support_points,support_before,after_stats.decode_u32(12),support_output)
+					support_task=WorkerThreadPool.add_task(prepare_support,true,"Terrain vegetation support")
+					if support_task<0:prepare_support.call()
 				for item: Dictionary in items_to_build:
 					if scheduled.has(item.key):continue
 					var selected: Array=item.get("brick_bottoms",[])
@@ -1820,23 +1851,9 @@ func _run() -> void:
 						if chunk.get("cancelled",false):chunk={"error":"Edit build cancelled; reload before further editing"}
 						chunk.merge({"stamp":item.stamp,"key":item.key,"epoch":job.epoch,"ticket":job.ticket,"kind":"edit_chunk"})
 						_push(chunk)
-				support_started=Time.get_ticks_usec()
-				var support_after:=_edit_support_samples(support_points,after_stats.decode_u32(12))
-				var support:Array=[]
-				if support_before.size()==support_points.size() and support_after.size()==support_points.size():
-					for index in support_points.size():support.append({"before":support_before[index],"after":support_after[index]})
-				var support_snapshots:Array=job.get("support_snapshots",[])
-				if support.size()==support_snapshots.size() and not support.is_empty() and ClassDB.class_exists("NativeVegetationSupport"):
-					var helper:RefCounted=ClassDB.instantiate("NativeVegetationSupport")
-					for index in support.size():
-						var snapshot:Dictionary=support_snapshots[index]
-						if not snapshot.has("offsets"):continue
-						var prepared:Dictionary=helper.lost_roots(snapshot,support_before[index],support_after[index])
-						support[index]["verdict"]=prepared
-						if prepared.ok and not prepared.ids.is_empty() and snapshot.has("rows"):
-							support[index]["survivors"]=helper.filter_ground(snapshot.rows,prepared.ids)
-							support[index]["retired"]=helper.filter_ground(snapshot.rows,prepared.ids,true)
-				support_ms+=(Time.get_ticks_usec()-support_started)/1000.0
+				if support_task>=0:WorkerThreadPool.wait_for_task_completion(support_task)
+				var support:Array=support_output.get("support",[])
+				support_ms+=float(support_output.get("ms",0.0))
 				# The resident preview owns a private snapshot. Join only before closing
 				# the ticket so exact owners can be built while it is in flight.
 				if contact_task>=0:WorkerThreadPool.wait_for_task_completion(contact_task)
