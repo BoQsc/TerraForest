@@ -163,12 +163,26 @@ func run()->void:
 	var sealed:RefCounted=core.capture_edit_field(bounds,state.revision,build_epoch)
 	var lane:RefCounted=sealed.capture_contact_core(bounds,state.revision,build_epoch)
 	var neighbor:RefCounted=sealed.capture_contact_core(Rect2i(1008,992,16,16),state.revision,build_epoch)
+	var roots:=PackedVector3Array()
+	for i in 512:
+		roots.append(point+Vector3((i%13)*.17-1.0,((i/13)%8)*.19-.6,(i%19)*.23-1.8))
+	var support:=Codec.command(40,[state.revision,roots.size()])
+	support.append_array(roots.to_byte_array())
+	var retained_support:PackedByteArray=core.execute(support)
+	var reference_density:=Codec.command(31,[state.revision,roots.size()])
+	reference_density.append_array(roots.to_byte_array())
+	check(Codec.reply_ok(retained_support) and retained_support==sealed.execute(support) and retained_support.slice(20,20+4*roots.size())==core.execute(reference_density).slice(20),"Sealed root queries preserve the uncached density interpolation order and authoritative paving")
+	var remote:=Codec.command(40,[state.revision,1])
+	remote.append_array(PackedVector3Array([Vector3(800,40,800)]).to_byte_array())
+	check(not Codec.reply_ok(lane.execute(remote)),"A sealed support reader rejects probes outside its captured pages")
 	check(lane!=null and neighbor!=null and sealed.capture_contact_core(Rect2i(864,864,32,32),state.revision,build_epoch)==null,"worker views share only the captured extent")
 	check(not Codec.reply_ok(sealed.execute(Codec.brush(point,point,4,0,false,0))) and not Codec.reply_ok(lane.execute(Codec.command(12))) and not lane.has_method("restore_field_patch"),"readers reject writes, reset and cancellation of another reader")
 	sealed=null
 	var contact_packet:=Codec.command(43,[state.revision,build_epoch,1008,40,1008])
 	var pinned_boundary:PackedByteArray=core.execute(contact_packet)
 	check(lane.execute(owner)==shared_mesh and neighbor.execute(contact_packet)==pinned_boundary,"borrowed pages retain exact terrain, physics and water across release of the parent view")
+	var counters:Dictionary=neighbor.surface_column_stats()
+	check(counters.columns>0 and counters.meshes==1 and counters.contacts==1 and counters.bytes<=4*1024*1024 and lane.surface_column_stats()==counters,"renderer, collider and adjacent water share one bounded set of extracted surface columns")
 	check(not Codec.reply_ok(neighbor.execute(Codec.command(43,[state.revision,build_epoch,872,40,872]))),"an out-of-bounds water contact cannot synthesize missing terrain")
 	for coord in [Vector3i(1008,40,1008),Vector3i(1004,36,1004),Vector3i(992,40,992)]:
 		var contact:=Codec.command(43,[state.revision,build_epoch,coord.x,coord.y,coord.z])
@@ -178,6 +192,7 @@ func run()->void:
 	# invalidate overlapping prisms on either side of the cell-owner seam.
 	check(Codec.reply_ok(core.execute(Codec.brush(point,point,9,0,true,2))),"author both sides of the resident seam before the local cuts")
 	check(neighbor.execute(contact_packet)==pinned_boundary and lane.execute(owner)==shared_mesh,"advancing the live density revision leaves both sealed workers on their original geometry")
+	check(lane.execute(support)==retained_support and not Codec.reply_ok(core.execute(support)),"Support retains the pre-edit field while the authority applies the next revision")
 	for x in [976,992,1008]:
 		for z in [976,992,1008]:
 			check(Codec.reply_ok(core.execute(Codec.command(44,[x,z,16,1,build_epoch]))),"resident triangle baseline populates")

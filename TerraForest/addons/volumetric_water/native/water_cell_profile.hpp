@@ -17,7 +17,16 @@ struct WaterCellProfile {
     const WaterSolidProfile *solid=nullptr; // Immutable prepared building occupancy.
     struct Point { double x,z,y; };
     using Triangle=std::array<Point,3>;
-    const std::vector<Triangle> *contact=nullptr; // Immutable terrain-owned floor fragments.
+    struct FloorStorage {
+        double minimum,maximum,mean,zero;
+        uint64_t capacity;
+        std::array<double,4> corners;
+    };
+    struct Bed {
+        std::vector<Triangle> triangles;
+        const FloorStorage *storage=nullptr;
+    };
+    const Bed *contact=nullptr; // Immutable terrain-owned floor fragments and capacity data.
     struct Shape { double area=0,x=0,z=0; };
     std::array<double,4> floor{}; // 00, 10, 01, 11
     double ceiling=500;
@@ -42,16 +51,16 @@ struct WaterCellProfile {
         p.floor=crossings;p.ceiling=500;p.open_bottom=open;p.cut=true;return p;
     }
     template<class Emit> void floor_triangles(Emit emit)const {
-        if(contact){for(const auto &t:*contact)emit(t);return;}
+        if(contact){for(const auto &t:contact->triangles)emit(t);return;}
         const Point v[4]={{0,0,floor[0]},{1,0,floor[1]},{0,1,floor[2]},{1,1,floor[3]}};
         emit(Triangle{v[0],v[1],v[3]});emit(Triangle{v[0],v[3],v[2]});
     }
-    double minimum()const{double v=1e30;floor_triangles([&](const Triangle&t){for(auto p:t)v=std::min(v,p.y);});return v;}
-    double maximum()const{double v=-1e30;floor_triangles([&](const Triangle&t){for(auto p:t)v=std::max(v,p.y);});return v;}
-    double mean()const{double v=0;floor_triangles([&](const Triangle&t){auto a=t[0],b=t[1],c=t[2];double area=std::abs((b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x))*0.5;v+=area*(a.y+b.y+c.y)/3;});return v;}
+    double minimum()const{if(contact&&contact->storage)return contact->storage->minimum;double v=1e30;floor_triangles([&](const Triangle&t){for(auto p:t)v=std::min(v,p.y);});return v;}
+    double maximum()const{if(contact&&contact->storage)return contact->storage->maximum;double v=-1e30;floor_triangles([&](const Triangle&t){for(auto p:t)v=std::max(v,p.y);});return v;}
+    double mean()const{if(contact&&contact->storage)return contact->storage->mean;double v=0;floor_triangles([&](const Triangle&t){auto a=t[0],b=t[1],c=t[2];double area=std::abs((b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x))*0.5;v+=area*(a.y+b.y+c.y)/3;});return v;}
     double raw_bottom(double x,double z)const {
         x=std::clamp(x,0.0,1.0);z=std::clamp(z,0.0,1.0);
-        if(contact)for(const auto&t:*contact){auto a=t[0],b=t[1],c=t[2];double det=(b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x);if(std::abs(det)<1e-12)continue;
+        if(contact)for(const auto&t:contact->triangles){auto a=t[0],b=t[1],c=t[2];double det=(b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x);if(std::abs(det)<1e-12)continue;
             double u=((x-a.x)*(c.z-a.z)-(z-a.z)*(c.x-a.x))/det,v=((b.x-a.x)*(z-a.z)-(b.z-a.z)*(x-a.x))/det;
             if(u>=-1e-7&&v>=-1e-7&&u+v<=1+1e-7)return a.y+u*(b.y-a.y)+v*(c.y-a.y);}
         return x>=z ? floor[0]*(1-x)+floor[1]*(x-z)+floor[3]*z : floor[0]*(1-z)+floor[2]*(z-x)+floor[3]*x;
@@ -77,7 +86,13 @@ struct WaterCellProfile {
         const double top=std::clamp(head,0.0,ceiling)*.001;
         if(!ok||solids.size()>C::MAX_PIECES)return false;
         if(top<=0){out.clear();return true;}
-        floor_triangles([&](const Triangle &t){
+        // A uniform bed occupies the whole footprint. One rectangular air
+        // interval preserves its exact volume and avoids introducing a
+        // diagonal internal face into every object cut from open water.
+        if(!contact&&std::all_of(floor.begin()+1,floor.end(),[&](double h){return h==floor[0];})){
+            const double bottom=std::max(0.,floor[0]*.001);
+            if(bottom<top)pieces.push_back(C::box({0,bottom,0},{.5,top,.5}));
+        }else floor_triangles([&](const Triangle &t){
             if(!ok)return;
             C::Point a{t[0].x*.5,0,t[0].z*.5},b{t[1].x*.5,0,t[1].z*.5},c{t[2].x*.5,0,t[2].z*.5};
             C::Point u{0,top,0};
@@ -104,20 +119,46 @@ struct WaterCellProfile {
         for(const auto &solid:solids){C::Pieces next;if(!C::subtract(pieces,solid,next))return false;pieces=std::move(next);}
         out=std::move(pieces);return true;
     }
+    double partial_volume(double h)const {
+        // The submerged area of a planar triangle grows quadratically
+        // between its vertex heights. Integrate that area directly. Anchor
+        // the upper interval at the middle vertex to avoid subtracting nearly
+        // equal volumes at the foot of a shallow or degenerate slope.
+        double result=0;
+        floor_triangles([&](const Triangle &triangle){
+            double a=triangle[0].y,b=triangle[1].y,c=triangle[2].y;
+            if(a>b)std::swap(a,b);
+            if(b>c)std::swap(b,c);
+            if(a>b)std::swap(a,b);
+            if(h<=a)return;
+            const auto &u=triangle[0],&v=triangle[1],&w=triangle[2];
+            const double area=std::abs((v.x-u.x)*(w.z-u.z)-(v.z-u.z)*(w.x-u.x))*.5;
+            double depth;
+            if(h>=c)depth=((h-a)+(h-b)+(h-c))/3.;
+            else if(h<=b){
+                const double rise=h-a;
+                depth=rise/3.*(rise/(b-a))*(rise/(c-a));
+            }else{
+                const double middle=b-a,rise=h-b,range=c-a;
+                depth=(middle/3.)*(middle/range)+rise*(middle/range+(rise/range)*(1.-rise/(3.*(c-b))));
+            }
+            result+=area*depth*250.;
+        });
+        return std::max(0.0,result);
+    }
     double raw_volume(double h)const {
         h=std::min(h,ceiling);if(h<=minimum())return 0;
         if(h>=maximum())return (h-mean())*250;
-        double result=0;
-        polygons(h,[&](double area,Point a,Point b,Point c){result+=area*(h-(a.y+b.y+c.y)/3.0)*250;});
-        return std::max(0.0,result);
+        return partial_volume(h);
     }
     double flat_volume(double h)const {
         if(h<=0)return 0;
         if(!contact&&floor[0]==floor[1]&&floor[0]==floor[2]&&floor[0]==floor[3])
             return std::max(0.0,std::min(h,ceiling)-std::max(0.0,floor[0]))*250;
-        return std::max(0.0,raw_volume(h)-(minimum()<0?raw_volume(0):0));
+        const double zero=contact&&contact->storage?contact->storage->zero:(minimum()<0?raw_volume(0):0);
+        return std::max(0.0,raw_volume(h)-zero);
     }
-    uint64_t capacity()const{if(solid)return uint64_t(std::floor(solid->capacity()*1000000+1e-7));return uint64_t(std::floor(flat_volume(ceiling)+1e-7));}
+    uint64_t capacity()const{if(solid)return uint64_t(std::floor(solid->capacity()*1000000+1e-7));if(contact&&contact->storage&&ceiling==500)return contact->storage->capacity;return uint64_t(std::floor(flat_volume(ceiling)+1e-7));}
     // Static occupancy has a horizontal top; only its cached terrain floor varies.
     double surface(double h,double,double)const{return std::min(ceiling,h);}
     double volume(double h)const{return solid?solid->volume(h*.001)*1000000:flat_volume(h);}
@@ -126,12 +167,10 @@ struct WaterCellProfile {
         if(!ml)return std::max(0.0,minimum());
         if(!contact&&floor[0]==floor[1]&&floor[0]==floor[2]&&floor[0]==floor[3])
             return std::min(ceiling,std::max(0.0,floor[0])+double(ml)/250);
-            if(!ml)return std::max(0.0,minimum());
-            if(ml>=capacity())return ceiling;
-            if(ml>=flat_volume(maximum()))return std::min(ceiling,mean()+(ml+(minimum()<0?raw_volume(0):0))/250.0);
+        if(ml>=capacity())return ceiling;
+        if(ml>=flat_volume(maximum()))return std::min(ceiling,mean()+(ml+(contact&&contact->storage?contact->storage->zero:(minimum()<0?raw_volume(0):0)))/250.0);
         double lo=1e30,hi=ceiling;
         for(int i=0;i<4;++i)lo=std::min(lo,floor[i]);
-        if(!ml)return lo;
         for(int n=0;n<26;++n){double mid=(lo+hi)*0.5;if(volume(mid)<ml)lo=mid;else hi=mid;}
         return (lo+hi)*0.5;
     }
@@ -189,7 +228,7 @@ struct WaterCellProfile {
         if(a.solid||b.solid)return clipped_face_overlap(a,ah,b,bh,axis,side);
         std::array<double,770> breaks;size_t count=2;breaks[0]=0;breaks[1]=1;
         auto split=[&](const WaterCellProfile &shape,int face){if(!shape.contact)return;
-            for(const auto&t:*shape.contact)for(auto p:t)if(std::abs((axis==0?p.x:p.z)-face)<1e-7)breaks[count++]=std::clamp(axis==0?p.z:p.x,0.0,1.0);};
+            for(const auto&t:shape.contact->triangles)for(auto p:t)if(std::abs((axis==0?p.x:p.z)-face)<1e-7)breaks[count++]=std::clamp(axis==0?p.z:p.x,0.0,1.0);};
         split(a,side);split(b,1-side);std::sort(breaks.begin(),breaks.begin()+count);
         for(size_t segment=1;segment<count;++segment){
             if(breaks[segment]-breaks[segment-1]<1e-9)continue;
@@ -225,7 +264,7 @@ struct WaterCellProfile {
         }
         std::array<double,770> breaks;size_t count=2;breaks[0]=0;breaks[1]=1;
         auto split=[&](const WaterCellProfile &shape,int face){if(shape.contact)
-            for(const auto &t:*shape.contact)for(auto p:t)if(std::abs((axis==0?p.x:p.z)-face)<1e-7)breaks[count++]=std::clamp(axis==0?p.z:p.x,0.0,1.0);};
+            for(const auto &t:shape.contact->triangles)for(auto p:t)if(std::abs((axis==0?p.x:p.z)-face)<1e-7)breaks[count++]=std::clamp(axis==0?p.z:p.x,0.0,1.0);};
         split(a,side);split(b,1-side);std::sort(breaks.begin(),breaks.begin()+count);
         double height=1e30;
         for(size_t segment=1;segment<count;++segment){

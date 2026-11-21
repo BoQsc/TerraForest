@@ -795,9 +795,11 @@ func _recoverable_edit_rejection(commands:Array,reply:PackedByteArray,before:Pac
 
 # The ordered writer stays on this revision until it joins the task. Sampling
 # uses bounded native queries and the worker only writes its private result.
-func _prepare_edit_support(job:Dictionary,support_points:Array,support_before:Array,revision:int,output:Dictionary)->void:
+func _prepare_edit_support(job:Dictionary,support_points:Array,prior:Dictionary,revision:int,output:Dictionary)->void:
 	var started:=Time.get_ticks_usec()
 	var support_after:=_edit_support_samples(support_points,revision)
+	if prior.task>=0:WorkerThreadPool.wait_for_task_completion(prior.task)
+	var support_before:Array=prior.samples.values_before
 	var support:Array=[]
 	if support_before.size()==support_points.size() and support_after.size()==support_points.size():
 		for index in support_points.size():support.append({"before":support_before[index],"after":support_after[index]})
@@ -815,14 +817,39 @@ func _prepare_edit_support(job:Dictionary,support_points:Array,support_before:Ar
 	output["support"]=support
 	output["ms"]=(Time.get_ticks_usec()-started)/1000.0
 
-func _edit_support_samples(groups:Array,revision:int)->Array:
+func _start_support_before(groups:Array,revision:int,epoch:int)->Dictionary:
+	var samples:={"values_before":[]}
+	var prior:={"task":-1,"samples":samples}
+	var count:=0
+	for points:PackedVector3Array in groups:count+=points.size()
+	if count>=512 and native.has_method("capture_edit_field"):
+		var minimum:=Vector2i(2000,2000)
+		var maximum:=Vector2i.ZERO
+		for points:PackedVector3Array in groups:
+			for point:Vector3 in points:
+				var column:=Vector2i(floori(point.x),floori(point.z))
+				minimum=minimum.min(column);maximum=maximum.max(column)
+		# The field pins 32 m beyond its owner. Every probe reads its eight
+		# lattice corners and the explicit block at the point.
+		var size:Vector2i=(maximum-minimum+Vector2i.ONE).clamp(Vector2i.ONE,Vector2i(64,64))
+		var origin:Vector2i=((minimum+maximum+Vector2i.ONE-size)/2).clamp(Vector2i.ZERO,Vector2i(2000,2000)-size)
+		if minimum.x>=0 and minimum.y>=0 and maximum.x<2000 and maximum.y<2000 and Rect2i(origin,size).grow(32).encloses(Rect2i(minimum,maximum-minimum+Vector2i.ONE)):
+			var field:Object=native.capture_edit_field(Rect2i(origin,size),revision,epoch)
+			if field!=null:
+				var sample:=func()->void:samples.values_before=_edit_support_samples(groups,revision,field)
+				prior.task=WorkerThreadPool.add_task(sample,true,"Terrain support before edit")
+				if prior.task>=0:return prior
+	samples.values_before=_edit_support_samples(groups,revision)
+	return prior
+
+func _edit_support_samples(groups:Array,revision:int,field:Object=null)->Array:
 	var output:Array=[]
 	for points:PackedVector3Array in groups:
 		var values:=PackedFloat32Array();var paved:=PackedFloat32Array()
 		for offset in range(0,points.size(),512):
 			var page:=points.slice(offset,mini(offset+512,points.size()))
 			var packet:=Codec.command(40,[revision,page.size()]);packet.append_array(page.to_byte_array())
-			var reply:=_call(packet)
+			var reply:PackedByteArray=field.execute(packet) if field!=null else _call(packet)
 			if not Codec.reply_ok(reply) or reply.size()!=20+page.size()*8:return []
 			values.append_array(reply.slice(20,20+page.size()*4).to_float32_array())
 			paved.append_array(reply.slice(20+page.size()*4).to_float32_array())
@@ -1791,7 +1818,7 @@ func _run() -> void:
 			var contact_ms:=float(Time.get_ticks_usec()-begin)/1000.0
 			var support_started:=Time.get_ticks_usec()
 			var support_points:Array=job.get("support_points",[])
-			var support_before:=_edit_support_samples(support_points,before_stats.decode_u32(12))
+			var support_before:=_start_support_before(support_points,before_stats.decode_u32(12),job.build_epoch)
 			var support_ms:float=(Time.get_ticks_usec()-support_started)/1000.0
 			begin=Time.get_ticks_usec()
 			var execution:=_execute_edit_commands(commands,before_stats.decode_u32(12))
@@ -1808,6 +1835,7 @@ func _run() -> void:
 					cache_valid=false
 			var no_change: bool = Codec.reply_ok(reply) and before_stats.decode_u32(12) == after_stats.decode_u32(12)
 			if not Codec.reply_ok(reply) or no_change:
+				if support_before.task>=0:WorkerThreadPool.wait_for_task_completion(support_before.task)
 				if contact_task>=0:WorkerThreadPool.wait_for_task_completion(contact_task)
 				_push({"kind": "edit", "chunks": [], "reply": reply, "epoch": job["epoch"],
 					"ticket": job["ticket"], "edit_ms": edit_ms, "stats": after_stats,

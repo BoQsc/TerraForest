@@ -5,9 +5,32 @@ import tempfile
 import unittest
 
 from maintain_water_captures import candidates
+from retained_artifacts import digest
 
 
 class WaterCaptureOwnershipTests(unittest.TestCase):
+    def test_legacy_release_requires_both_packaged_driver_and_overlay_identity(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            folders = []
+            for number in range(5):
+                folder = root / 'reports/checks' / str(number)
+                folder.mkdir(parents=True)
+                folders.append(folder)
+                overlay = folder / 'terrain_contact.zip'
+                overlay.write_bytes(b'original terrain overlay')
+                driver = folder / 'water_player_world.gd'
+                driver.write_bytes(b'packaged gameplay driver')
+                command = ['game', '--main-pack', 'game.pck', '--script', str(driver),
+                           '--check-evidence-dir=' + str(folder)]
+                run = dict(command=command, result={'exit_code': 1}, pack_sha256='f' * 64,
+                           patch_sha256=digest(overlay), test_sha256=digest(driver))
+                (folder / 'run.json').write_text(json.dumps(run))
+                (folder / 'player_shore_before.png').write_bytes(b'capture')
+            (folders[1] / 'terrain_contact.zip').write_bytes(b'changed overlay')
+            (folders[2] / 'water_player_world.gd').write_bytes(b'different driver')
+            self.assertEqual(candidates(root, 1), [folders[0], folders[3]])
+
     def test_only_completed_declared_unpinned_runs_and_keep_two(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

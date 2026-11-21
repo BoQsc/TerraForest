@@ -8,6 +8,9 @@
 #include <array>
 #if defined(TERRAFOREST_TYPED_BRIDGE)
 #include <chrono>
+#include <algorithm>
+#include <memory>
+#include <vector>
 #endif
 static double mesh_clock_ms(){
 #if defined(TERRAFOREST_TYPED_BRIDGE)
@@ -590,7 +593,11 @@ float World::sample(int x,int y,int z,u8*mat)const{
  if(mat)*mat=base_material(point,h);
  return base(point,h);
 }
-static bool generate_page(const World &w,int px,int py,int pz,Page &page){
+struct CutHeights {
+ const float *data=nullptr;int x=0,z=0,stride=0;
+ float at(const World &w,int wx,int wz)const{return data?data[wx-x+stride*(wz-z)]:w.edit_height(wx,wz);}
+};
+static bool generate_page(const World &w,int px,int py,int pz,Page &page,CutHeights heights={}){
  page.key=page_key(px,py,pz);page.d=(i16*)tr_alloc(PAGE_SAMPLES*sizeof(i16));page.mat=(u8*)tr_alloc(PAGE_SAMPLES);
  if(!page.d||!page.mat){if(page.d)tr_free(page.d);if(page.mat)tr_free(page.mat);page.d=nullptr;page.mat=nullptr;tr_oom=true;return false;}
  // A page is contained in one 32 m geological cell. Outside the bounded
@@ -610,7 +617,7 @@ static bool generate_page(const World &w,int px,int py,int pz,Page &page){
      &&w.cave_columns[(x0>>6)+32*(z0>>6)]==0;
  const bool empty_field=w.generator_id==MATERIAL_FIELD_GENERATOR_ID;
  for(int z=0;z<16;z++)for(int x=0;x<16;x++){
-  int wx=x0+x,wz=z0+z;float h=w.edit_height(wx,wz);
+  int wx=x0+x,wz=z0+z;float h=heights.at(w,wx,wz);
   bool asphalt=y0<=h+1.f&&y0+15>=h-1.5f&&w.regional_asphalt(wx,wz);
   bool ore=w.has_geology()&&(mine||(wx>=vein.start.x-reach&&wx<=vein.end.x+reach
       &&wz>=vein.start.z-reach&&wz<=vein.end.z+reach&&y0<=vein.end.y+reach&&y0+15>=vein.start.y-reach));
@@ -645,23 +652,25 @@ static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,a
 // accounting and generation happen on private buffers. The live indices and
 // their revisions change only once all pages have passed resident admission.
 struct CutPages {
- struct Replacement {Page data;int source;};
+ struct Replacement {Page data;int source;u32 order;};
  World &world;
  List<Replacement> replacements;
  Map by_key;
  int added=0,changed=0;
  u32 removed[16]{};
+ CutHeights heights;
  explicit CutPages(World &w):world(w){}
  ~CutPages(){
   for(int i=0;i<replacements.n;i++){tr_free(replacements[i].data.d);tr_free(replacements[i].data.mat);}
   replacements.release();by_key.release();
  }
- Page *write_page(u32 key,int source,int px,int py,int pz){
-  int at=replacements.push({{},source});if(tr_oom)return nullptr;
+ Page *write_page(u32 key,int source,int x,int y,int z){
+  const int px=x>>4,py=y>>4,pz=z>>4;
+  int at=replacements.push({{},source,u32(z<<20|x<<9|y)});if(tr_oom)return nullptr;
   Page &page=replacements[at].data;page.key=key;
   if(source<0){
    if(world.pages.n+added>=(world.page_access?MAX_AUTHORED_PAGES:MAX_PAGES))return nullptr;
-   if(!generate_page(world,px,py,pz,page))return nullptr;
+   if(!generate_page(world,px,py,pz,page,heights))return nullptr;
    ++added;
   }else{
    const Page &original=world.pages[source];
@@ -711,10 +720,10 @@ struct CutPages {
  }
 };
 static void invalidate_written_samples(const World&,const TerrainEditWrites&);
-static bool stage_point_cut(World &w,V3 center,float radius,int shape,u8 material,V3 lo,V3 hi,int &changes,u32 *removed){
- CutPages txn(w);
+static bool cut_columns(CutPages &txn,V3 center,float radius,int shape,u8 material,V3 lo,V3 hi,bool count_removed,TerrainEditWrites *writes){
+ auto &w=txn.world;
  for(int z=fl(lo.z);z<=fl(hi.z);z++)for(int x=fl(lo.x);x<=fl(hi.x);x++){
-  float height=w.edit_height(x,z);
+  float height=txn.heights.at(w,x,z);
   int source=-1,last_py=-1;u32 key=0;Page *replacement=nullptr;
   for(int y=fl(lo.y);y<=fl(hi.y);y++){
    V3 p={float(x),float(y),float(z)};
@@ -732,19 +741,96 @@ static bool stage_point_cut(World &w,V3 center,float radius,int shape,u8 materia
    if(x==0||x==WORLD||z==0||z==WORLD||y<=1||y>=255)value=imx(value,0);
    if(value==old)continue;
    if(!replacement){
-    replacement=txn.write_page(key,source,x>>4,py,z>>4);
+    replacement=txn.write_page(key,source,x,y,z);
     if(!replacement)return false;
    }
-   if(removed&&old<0&&value>=0){
+   if(count_removed&&old<0&&value>=0){
     u8 id=replacement->mat[j];if(id==0&&float(y)>=height-2.f)id=10;
     if(id<16)++txn.removed[id];
    }
    replacement->d[j]=value;if(!w.has_geology())replacement->mat[j]=material;
-   if(w.edit_writes)w.edit_writes->sample(x,y,z);
+   if(writes)writes->sample(x,y,z);
    ++txn.changed;
   }
  }
- if(!txn.commit())return false;
+ return true;
+}
+#if defined(TERRAFOREST_TYPED_BRIDGE)
+static bool cut_parallel_columns(CutPages &txn,V3 center,float radius,int shape,u8 material,V3 lo,V3 hi,bool count_removed){
+ auto &world=txn.world;
+ const int x0=fl(lo.x)&~15,z0=fl(lo.z)&~15;
+ const int cols=((fl(hi.x)-x0)>>4)+1,rows=((fl(hi.z)-z0)>>4)+1;
+ const int width=cols*16;
+ // edit_height has a writer-owned memo. Pin immutable input once per X/Z
+ // lattice point, including the complete footprint of every admitted page.
+ std::vector<float> samples(size_t(width)*rows*16);
+ for(int z=0;z<rows*16;++z)for(int x=0;x<width;++x)
+  samples[x+width*z]=world.edit_height(x0+x,z0+z);
+ struct Lane {
+  CutPages pages;TerrainEditWrites writes;bool ok=false;
+  explicit Lane(World &w):pages(w){}
+ };
+ struct Work {
+  V3 center,lo,hi;float radius;int shape,cols,x0,z0;u8 material;bool removed,journal;
+  std::vector<std::unique_ptr<Lane>> lanes;
+ } work{center,lo,hi,radius,shape,cols,x0,z0,material,count_removed,world.edit_writes!=nullptr,{}};
+ for(int i=0;i<cols*rows;++i){
+  auto lane=std::make_unique<Lane>(world);
+  lane->pages.heights={samples.data(),x0,z0,width};work.lanes.push_back(std::move(lane));
+ }
+ auto prepare=[](void *context,u32 index){
+  auto &job=*static_cast<Work*>(context);auto &lane=*job.lanes[index];
+  const int x=job.x0+16*int(index%job.cols),z=job.z0+16*int(index/job.cols);
+  auto low=job.lo,high=job.hi;
+  low.x=mx(x,low.x);low.z=mx(z,low.z);high.x=mn(x+15,high.x);high.z=mn(z+15,high.z);
+  tr_oom=false;
+  lane.ok=cut_columns(lane.pages,job.center,job.radius,job.shape,job.material,low,high,
+                      job.removed,job.journal?&lane.writes:nullptr)&&!tr_oom;
+ };
+ world.build_control->parallel_edit(prepare,&work,cols*rows);
+ for(const auto &lane:work.lanes){
+  if(!lane->ok)return false;
+  txn.added+=lane->pages.added;txn.changed+=lane->pages.changed;
+  for(int i=0;i<16;++i)txn.removed[i]+=lane->pages.removed[i];
+ }
+ if(world.pages.n+txn.added>(world.page_access?MAX_AUTHORED_PAGES:MAX_PAGES))return false;
+ for(auto &lane:work.lanes){
+  auto &local=lane->pages.replacements;
+  for(int i=0;i<local.n;++i){
+   txn.replacements.push(local[i]);if(tr_oom)return false;
+   local[i].data.d=nullptr;local[i].data.mat=nullptr;
+  }
+ }
+ // Preserve serial first-write page order, including save and LRU identities.
+ if(txn.replacements.n>1)std::sort(txn.replacements.p,txn.replacements.p+txn.replacements.n,
+  [](const auto &a,const auto &b){return a.order<b.order;});
+ if(auto *writes=world.edit_writes){
+  const int begin=writes->records.n;
+  for(const auto &lane:work.lanes){
+   if(!lane->writes.complete){writes->complete=false;break;}
+   for(int i=0;i<lane->writes.records.n;++i){
+    const auto &r=lane->writes.records[i];writes->append(r.address,r.detail);
+   }
+  }
+  if(writes->complete&&writes->records.n>begin+1)std::sort(writes->records.p+begin,writes->records.p+writes->records.n,
+   [](const auto &a,const auto &b){
+    auto ca=a.address&0x3fffffu,cb=b.address&0x3fffffu;
+    return ca==cb?a.address<b.address:ca<cb;
+   });
+ }
+ return true;
+}
+#endif
+static bool stage_point_cut(World &w,V3 center,float radius,int shape,u8 material,V3 lo,V3 hi,int &changes,u32 *removed){
+ CutPages txn(w);
+ bool ok;
+#if defined(TERRAFOREST_TYPED_BRIDGE)
+ if(w.build_control&&w.build_control->parallel_edit&&hi.x-lo.x>=32&&hi.z-lo.z>=32)
+  ok=cut_parallel_columns(txn,center,radius,shape,material,lo,hi,removed!=nullptr);
+ else
+#endif
+  ok=cut_columns(txn,center,radius,shape,material,lo,hi,removed!=nullptr,w.edit_writes);
+ if(!ok||!txn.commit())return false;
  changes=txn.changed;if(removed)copy_bytes(removed,txn.removed,sizeof(txn.removed));return true;
 }
 static bool contact_brush_center(World &world,V3 contact,V3 &center,float radius,bool &found){
@@ -1336,9 +1422,10 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
  const bool aligned=(size==16||size==32)&&ox%16==0&&oz%16==0&&ox+size<=WORLD&&oz+size<=WORLD;
  const bool resident=aligned&&(w.contact_snapshot||retain_cells);
  const bool reuse=resident&&has_surface_columns(w,ox,oz,size,true);
- bool ok=(reuse||(region_cache&&!(resident&&w.contact_snapshot)))?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch);
+ const bool shared=resident&&w.surface_columns&&w.surface_columns->read(w,ox,oz,size,0,WORLD_Y,epoch,m.v);
+ bool ok=shared||((reuse||(region_cache&&!(resident&&w.contact_snapshot)))?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch));
  if(!ok){m.release();return false;}
- if(resident&&!reuse)inherit_available_recipes(w,ox,oz,size,m);
+ if(resident&&!reuse&&!shared)inherit_available_recipes(w,ox,oz,size,m);
  connect_patch(w,ox,oz,size,m);
  if(resident&&!remember_surface_columns(w,ox,oz,size,m)){m.release();return false;}
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
@@ -2336,7 +2423,8 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   // One-cell ownership halo retains faces crossing the requested region.
   // Frozen edit readers share reconstructed density cells with their renderer
   // and collider. Connectivity keeps the original ownership and vertical halo.
-  bool extracted=w.contact_snapshot&&has_surface_columns(w,ox,oz,6)
+  bool extracted=w.surface_columns&&w.surface_columns->read(w,ox,oz,6,yb,ye,epoch,m.v);
+  if(!extracted)extracted=w.contact_snapshot&&has_surface_columns(w,ox,oz,6)
    ?cached_vertices(w,ox,oz,6,m,epoch,yb,ye):extract_vertices(w,ox,oz,6,m,epoch,yb,ye);
   if(!extracted){m.release();out.p[8]=4;return;}
   connect_patch(w,ox,oz,6,m,yb,ye);
@@ -2363,6 +2451,11 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(revision!=w.revision){out.p[8]=4;return;}
   out.u(w.revision);out.u(count);
   float paving[512]{};
+  // Root below/above probes and neighbouring plants often read the same
+  // eight samples. Keep density and material together for this read-only
+  // revision and packet. A collision simply replaces the cached corner.
+  u32 support_keys[1024];float support_density[1024];u8 support_material[1024];
+  if(cmd==40)zero_bytes(support_keys,sizeof(support_keys));
   for(u32 i=0;i<count;i++){
    const V3 &p=points[i];float value=0;bool paved=false;
    if(cmd==33){value=w.blocks.get(block_key(fl(p.x),fl(p.y),fl(p.z)))>0?1.f:0.f;}
@@ -2373,7 +2466,17 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
     for(int k=0;k<8;k++){
      float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
      if(weight>0){
-      u8 material=0;float sample=w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1),cmd==40?&material:nullptr);
+      int sx=x+(k&1),sy=y+((k>>1)&1),sz=z+((k>>2)&1);
+      u8 material=0;float sample;
+      if(cmd==40){
+       u32 key=1u+u32(sx)+(u32(sz)<<11)+(u32(sy)<<22);
+       u32 slot=(key*2654435761u)>>22;
+       if(support_keys[slot]!=key){
+        support_keys[slot]=key;
+        support_density[slot]=w.sample(sx,sy,sz,&support_material[slot]);
+       }
+       sample=support_density[slot];material=support_material[slot];
+      }else sample=w.sample(sx,sy,sz);
       if(cmd==40&&sample<0&&material==4)paved=true;
       value+=weight*sample;
      }

@@ -19,6 +19,7 @@ private:
     std::vector<Segment> curve;
     std::vector<Hull> hulls;
     std::vector<C::Plane> plane_table;
+    bool orthogonal=true;
     using PlaneMap=std::map<std::array<uint64_t,4>,uint16_t>;
     bool append_plane(Hull &h,const C::Plane &p,PlaneMap &known){
         // Bitwise identity preserves even signed zero in existing snapshots.
@@ -27,6 +28,7 @@ private:
         auto found=known.find(bits);
         if(found!=known.end()){h.planes.push_back(found->second);return true;}
         if(plane_table.size()>=MAX_VERTICES)return false;
+        if((p.normal.x!=0)+(p.normal.y!=0)+(p.normal.z!=0)!=1)orthogonal=false;
         auto index=uint16_t(plane_table.size());plane_table.push_back(p);known.emplace(bits,index);h.planes.push_back(index);return true;
     }
     double full=0,low=0,high=0;
@@ -49,6 +51,28 @@ private:
         for(auto &face:faces){face.shrink_to_fit();for(auto &p:face)p.shrink_to_fit();}
     }
 public:
+    bool is_orthogonal()const{return orthogonal;}
+    // Cross-section of the prepared air hulls at the free surface. Hulls
+    // have disjoint interiors. At a horizontal split only a hull with wet
+    // interior immediately below the slicing plane can own the cap.
+    template<class Emit> bool visit_water_cap(double head,Emit emit)const{
+        if(head<=0||head>=.5)return true;
+        for(const auto &h:hulls){
+            auto polygon=WaterFaceClip::square();
+            for(auto index:h.planes){
+                const auto &p=plane_table[index];
+                double nx=p.normal.x,nz=p.normal.z,offset=p.offset-p.normal.y*head;
+                if(nx==0&&nz==0){
+                    if(offset<0||(offset==0&&p.normal.y<0)){polygon.count=0;break;}
+                    continue;
+                }
+                if(!WaterFaceClip::clip(polygon,nx,nz,offset))return false;
+                if(polygon.count<3)break;
+            }
+            if(polygon.count>=3&&WaterFaceClip::area(polygon)>1e-16)emit(polygon);
+        }
+        return true;
+    }
     bool occupied_pieces(double head,C::Pieces &out)const{
         C::Pieces result;size_t vertices=0;
         for(const auto &h:hulls){

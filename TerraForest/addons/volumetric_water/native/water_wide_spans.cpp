@@ -67,6 +67,8 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
     using W=NativeRegionalWater;
     auto &store=*frozen.ptr();
     if(store.regions.size()>=128){
+        auto columns=settle_column_portals();
+        if(columns!=SpanResult::fallback||cancelled.load())return columns;
         auto compact=settle_wide_prisms();
         if(compact!=SpanResult::fallback||cancelled.load())return compact;
     }

@@ -1,6 +1,6 @@
 
 
-The sea and lake craters passed the 2 cm shoreline checks in the packaged build with shared immutable terrain. In the run without captures, the sea first showed matching water and collision at 45.651 ms and the lake at 112.925 ms. The complete 64 m cut first matched at 420.700 ms. All three exceed the two-frame limit. [Cedar Vale release results and camera pairs](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale) · [Resting-body correction](../../docs/WORLD_FOUNDATION_STATUS.md#full-cut-physics-and-timing-decision)
+Both shoreline blasts passed the 2 cm contact tests in the packaged game. The sea reached draw two at 28.509 ms. Lake took four draws at 62.992 ms. The full cut took 346.721 ms and still showed the old collider on draw two. Both cut views and both submerged shoreline views were inspected. [Cedar Vale measurements](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale)
 The [changed-triangle comparison](../../docs/WORLD_FOUNDATION_STATUS.md#changed-triangle-publication-trial) records the rejected 8 m page trial and actual packaged timings. The two-frame edit milestone remains open.
 
 The [joint publication measurements](../../docs/WORLD_FOUNDATION_STATUS.md#joint-publication-on-the-packaged-shoreline-route) cover the full cut, both shoreline camera pairs and the outstanding two-frame deadline.

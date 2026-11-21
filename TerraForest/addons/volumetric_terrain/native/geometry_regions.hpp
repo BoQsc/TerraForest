@@ -162,32 +162,49 @@ static bool has_surface_columns(const World&w,int ox,int oz,int size,bool allow_
   }
  return true;
 }
+static const List<Vertex>* geometry_column(const World&w,GeometryCache &c,int x,int z,u32 epoch,Mesh &temporary){
+  int key=geometry_key(x,z),slot=int(c.index[key])-1;
+  const List<Vertex>*selected=nullptr;
+  if(slot>=0&&!c.regions[slot].dirty){c.hits++;selected=&c.regions[slot].vertices;c.regions[slot].used=++c.clock;}
+  else{
+   c.misses++;
+   if(slot>=0){
+    const auto&r=c.regions[slot];
+    if(!extract_vertices(w,x,z,16,temporary,epoch,r.dirty_y0+1,r.dirty_y1+1,nullptr,nullptr,r.dirty_xz))return nullptr;
+    inherit_face_recipes(r,temporary.v);
+    for(int i=0;i<r.vertices.n;++i){
+     const auto&v=r.vertices[i];
+     if(v.cx<r.dirty_xz[0]||v.cx>r.dirty_xz[2]||v.cz<r.dirty_xz[1]||v.cz>r.dirty_xz[3]||v.cy<r.dirty_y0||v.cy>r.dirty_y1)temporary.v.push(v);
+    }
+    if(tr_oom)return nullptr;
+    if(temporary.v.n>1)order_vertices(temporary.v.p,0,temporary.v.n-1);
+   }else if(!extract_vertices(w,x,z,16,temporary,epoch))return nullptr;
+   // Drop halo representatives: every cached cell has exactly one owner.
+   int count=0;for(int i=0;i<temporary.v.n;i++){const Vertex&v=temporary.v[i];if(v.cx>=x&&v.cx<x+16&&v.cz>=z&&v.cz<z+16)temporary.v[count++]=v;}temporary.v.n=count;
+   selected=retain_geometry_column(c,x,z,temporary.v);
+  }
+  return selected;
+}
+bool extract_surface_column(const World&w,int x,int z,u32 epoch,List<Vertex> &out){
+ if(!ensure_geometry_cache(w)||cancelled(w,epoch))return false;
+ Mesh temporary;
+ const auto *column=geometry_column(w,*w.geometry_cache,x,z,epoch,temporary);
+ if(column){
+  out.resize(column->n);
+  if(!tr_oom&&out.n)copy_bytes(out.p,column->p,sizeof(Vertex)*out.n);
+ }
+ temporary.release();
+ return column&&!tr_oom&&!cancelled(w,epoch);
+}
 static bool cached_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y){
  if(!ensure_geometry_cache(w))return false;
  auto&c=*w.geometry_cache;
  const int first_x=fl(float(ox-1)/16)*16,first_z=fl(float(oz-1)/16)*16;
  for(int z=first_z;z<oz+size&&z<=WORLD;z+=16)for(int x=first_x;x<ox+size&&x<=WORLD;x+=16){
   if(cancelled(w,epoch))return false;
-  int key=geometry_key(x,z),slot=int(c.index[key])-1;
-  Mesh temporary;const List<Vertex>*selected=nullptr;
-  if(slot>=0&&!c.regions[slot].dirty){c.hits++;selected=&c.regions[slot].vertices;c.regions[slot].used=++c.clock;}
-  else{
-   c.misses++;
-   if(slot>=0){
-    const auto&r=c.regions[slot];
-    if(!extract_vertices(w,x,z,16,temporary,epoch,r.dirty_y0+1,r.dirty_y1+1,nullptr,nullptr,r.dirty_xz)){temporary.release();return false;}
-    inherit_face_recipes(r,temporary.v);
-    for(int i=0;i<r.vertices.n;++i){
-     const auto&v=r.vertices[i];
-     if(v.cx<r.dirty_xz[0]||v.cx>r.dirty_xz[2]||v.cz<r.dirty_xz[1]||v.cz>r.dirty_xz[3]||v.cy<r.dirty_y0||v.cy>r.dirty_y1)temporary.v.push(v);
-    }
-    if(tr_oom){temporary.release();return false;}
-    if(temporary.v.n>1)order_vertices(temporary.v.p,0,temporary.v.n-1);
-   }else if(!extract_vertices(w,x,z,16,temporary,epoch)){temporary.release();return false;}
-   // Drop halo representatives: every cached cell has exactly one owner.
-   int count=0;for(int i=0;i<temporary.v.n;i++){const Vertex&v=temporary.v[i];if(v.cx>=x&&v.cx<x+16&&v.cz>=z&&v.cz<z+16)temporary.v[count++]=v;}temporary.v.n=count;
-   selected=retain_geometry_column(c,x,z,temporary.v);
-  }
+  Mesh temporary;
+  const auto *selected=geometry_column(w,c,x,z,epoch,temporary);
+  if(!selected){temporary.release();return false;}
   for(int i=0;i<selected->n;i++){const Vertex&v=(*selected)[i];if(v.cx>=ox-1&&v.cx<ox+size&&v.cz>=oz-1&&v.cz<oz+size&&v.cy>=y_begin-1&&v.cy<y_end)m.v.push(v);}
   temporary.release();if(tr_oom)return false;
  }

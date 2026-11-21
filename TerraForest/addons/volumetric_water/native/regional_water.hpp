@@ -20,6 +20,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "water_cell_profile.hpp"
+#include "water_terrain_contacts.hpp"
 #include "snapshot_array.hpp"
 
 namespace terraforest {
@@ -55,7 +56,6 @@ class NativeWaterEquilibriumJob;
 class NativeWaterLocalEdit;
 struct EquilibriumCaptureState;
 enum class WaterBrickGeometry : uint8_t { mixed,air,solid };
-struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
 struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const WaterSolidProfile>)*512;std::array<std::shared_ptr<const WaterSolidProfile>,512> cells;};
 // Immutable hand-off: only the terrain worker writes this object. No scene,
 // inventory or live water state is touched by the worker.
@@ -154,10 +154,7 @@ class NativeRegionalWater : public godot::RefCounted {
         float d[8];int x=i%8,y=(i/8)%8,z=i/64;
         for(int c=0;c<8;++c)d[c]=r.density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
         auto result=WaterCellProfile::make(d,r.has_density,r.floor[i],r.ceiling[i]);
-        if(r.contacts&&!r.contacts->floors[i].empty()){
-            result.contact=&r.contacts->floors[i];result.cut=true;result.ceiling=500;result.open_bottom=result.minimum()<0;
-            for(int n=0;n<4;++n)result.floor[n]=result.raw_bottom(n&1,n>>1);
-        }
+        if(r.contacts)r.contacts->attach(result,i);
         if(r.structures&&r.structures->cells[i])result.solid=r.structures->cells[i].get();
         return result;
     }
@@ -465,6 +462,13 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     using LayerSignature=std::array<int16_t,9>;
     std::map<LayerSignature,NativeRegionalWater::Region> layered_receivers;
     size_t reused_layered_receivers=0;
+    // Classification is private to one sealed edit. Only receivers reached
+    // through an actual submerged opening enter the persisted region ledger.
+    using ReceiverClass=std::array<uint8_t,17>;
+    std::unordered_map<uint64_t,ReceiverClass> receiver_classes;
+    bool survey_attempted=false;
+    size_t air_frontier_receivers=0;
+    void expand_air_frontier();
     bool prepare_receivers();
     size_t capture_cursor=0;
     std::shared_ptr<EquilibriumCaptureState> capture_selection;
@@ -475,6 +479,10 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     bool advance_wet_frontier();
     SpanResult settle_wide_spans();
     SpanResult settle_wide_prisms();
+    SpanResult settle_column_portals();
+    size_t column_rooms=0,column_portals=0,column_tiers=0;
+    uint64_t column_us=0;
+    const char *column_fallback=nullptr;
     size_t prism_nodes=0,prism_edges=0;
     std::array<uint64_t,5> prism_us{};
     uint64_t receiver_us=0;

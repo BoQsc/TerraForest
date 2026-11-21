@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "../../addons/volumetric_water/native/water_cell_profile.hpp"
 #include "../../addons/volumetric_water/native/water_volume_query.hpp"
+#include "../../addons/volumetric_water/native/water_terrain_contacts.hpp"
 #include <cstdio>
 #include <cstdlib>
 using terraforest::WaterCellProfile;
@@ -61,12 +62,13 @@ int main(){
     auto upper=bottom_cut;
     require(WaterCellProfile::vertical_overlap(lower,504,upper,4),"static volumes connect through a narrow partial vertical opening");
     require(!WaterCellProfile::vertical_overlap(lower,504,upper,-10),"a dry vertical gap stays disconnected");
-    uint32_t random=1703;int queries=0,passages=0;bool parity=true,face_parity=true;
+    uint32_t random=1703;int queries=0,passages=0;bool parity=true,face_parity=true,integrals=true,stored=true;
     for(int trial=0;trial<256;++trial){
         WaterCellProfile shape;
         for(double &height:shape.floor){random=random*1664525u+1013904223u;height=(int(random%900001)-200000)*.001;}
         shape.ceiling=100+(trial%401);
-        std::vector<WaterCellProfile::Triangle> contacts;
+        WaterCellProfile::Bed bed;
+        auto &contacts=bed.triangles;
         if(trial%2){
             // Real terrain contacts may contain many floor fragments, not
             // merely the four corner heights used by legacy cell fixtures.
@@ -75,7 +77,7 @@ int main(){
                 contacts.push_back({point(x,z),point(x+1,z),point(x+1,z+1)});
                 contacts.push_back({point(x,z),point(x+1,z+1),point(x,z+1)});
             }
-            shape.contact=&contacts;
+            shape.contact=&bed;
         }
         // Compare the compiled sill to the independent interval intersection
         // on both axes and orientations, including touching and clipped faces.
@@ -90,13 +92,32 @@ int main(){
             }
         }
         terraforest::WaterVolumeQuery cached(shape);
+        terraforest::TerrainWaterContacts brick;
+        WaterCellProfile resident=shape;
+        if(!contacts.empty()){
+            brick.add(317,contacts);brick.seal();brick.attach(resident,317);
+            resident.ceiling=shape.ceiling;
+            stored&=resident.contact->storage&&brick.floor(316)==nullptr&&resident.capacity()==shape.capacity();
+        }
         parity&=cached.capacity()==shape.capacity();
+        auto clipped_volume=[&](double h){
+            double ml=0;
+            shape.polygons(h,[&](double a,WaterCellProfile::Point p,WaterCellProfile::Point q,WaterCellProfile::Point r){
+                ml+=a*(h-(p.y+q.y+r.y)/3.)*250.;
+            });
+            return ml;
+        };
         for(int step=0;step<=32;++step){double h=-10+step*17.123;
+            const double reference=h<=0?0:clipped_volume(std::min(h,shape.ceiling))-clipped_volume(0);
+            integrals&=std::abs(shape.volume(h)-reference)<1e-6;
+            stored&=resident.volume(h)==shape.volume(h);
             parity&=cached.volume(h)==shape.volume(h);++queries;
             uint64_t ml=shape.capacity()*step/32;
             parity&=cached.head(ml)==shape.head(ml);++queries;}
     }
     require(parity,"cached floor moments preserve exact volumes and inverse heads across clipped slopes");
+    require(integrals,"analytic storage agrees with independent polygon clipping to one millionth of a millilitre");
+    require(stored,"sparse resident beds retain the exact capacities and volumes of their source triangles");
     require(face_parity,"shared sill thresholds preserve contact, direction and ceiling in the interval oracle");
     std::printf("WATER_SPILL_FACE exact_queries=%d\n",passages);
     std::printf("WATER_VOLUME_QUERY exact_queries=%d\n",queries);

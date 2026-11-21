@@ -14,9 +14,7 @@ class WaterVolumeQuery {
     double raw(double h) const {
         h=std::min(h,shape.ceiling);if(h<=minimum)return 0;
         if(h>=maximum)return (h-mean)*250;
-        double result=0;
-        shape.polygons(h,[&](double area,WaterCellProfile::Point a,WaterCellProfile::Point b,WaterCellProfile::Point c){result+=area*(h-(a.y+b.y+c.y)/3.0)*250;});
-        return std::max(0.0,result);
+        return shape.partial_volume(h);
     }
 public:
     explicit WaterVolumeQuery(const WaterCellProfile &source):shape(source){

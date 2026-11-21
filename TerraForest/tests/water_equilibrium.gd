@@ -20,7 +20,8 @@ func check_regional_prisms()->void:
  var stored:=amounts(water)
  var uniform:=stored.size()==cells.size()
  for amount:int in stored.values():uniform=uniform and amount==62500
- check(result.ok and result.get("prism_nodes",0)==132 and not result.has("prism_fallback") and uniform,
+ check(result.ok and result.snapshot_regions==132 and result.wide_cells==cells.size() and
+  result.get("prism_nodes",0)==132 and not result.has("prism_fallback") and uniform,
   "132 connected region prisms agree with the analytical water head in every cell: "+str(result))
 
 func check_level_section()->void:
@@ -46,7 +47,30 @@ func check_level_section()->void:
   else:contact=contact and hit.hit and absf(hit.get("point",Vector3.ZERO).y-41.75)<.00001 and water.depth_at(start-Vector3.UP*.26)>0
  check(sections==1 and contact,"A level volume reaches all four sides of an obstacle within 2 cm and leaves its solid interior dry")
 
-func check_open_sheet()->void:
+func check_deep_column_portals()->void:
+ var cells:Dictionary={}
+ for z in range(81,127):
+  for x in range(81,143):
+   for y in range(66,84):
+    var bottom:=100+100*(x%2) if y==66 else 0
+    cells[Vector3i(x,y,z)]=[bottom,500,62483 if y==83 else 1]
+   # A dry gallery in the same persistence regions has an intact roof at 65.
+   # Its full capacity must never enter the connected water volume above it.
+   if x>=92 and x<108 and z>=97 and z<109:cells[Vector3i(x,64,z)]=[0,500,0]
+ var water:=fixture(cells)
+ water.settle_after_edit(AABB(Vector3(36,30,36),Vector3(44,16,36)))
+ var result:=await solve(water,true)
+ var stored:=amounts(water)
+ var exact:=stored.size()==62*46
+ for p:Vector3i in stored:
+  exact=exact and p.y==66 and stored[p]==(75000 if p.x%2==0 else 50000)
+ check(result.ok and result.get("column_rooms",0)==62*46 and result.wide_cells==62*46*18 and exact,
+  "Vertical portals settle 18 tiers to the analytical head over alternating beds in 144 storage regions: "+str(result))
+ var reopened:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+ check(reopened.restore_snapshot(snapshot(water)) and amounts(reopened)==stored,
+  "The sealed gallery stays dry and exact per-cell quantities survive save and reload")
+
+func check_open_sheet(with_bed:bool=false)->void:
  var cells:Dictionary={}
  for z in range(9,12):
   for y in range(9,12):
@@ -56,26 +80,40 @@ func check_open_sheet()->void:
    cells[Vector3i(x,82,z)]=[0,500,125000]
    cells[Vector3i(x,83,z)]=[0,500,54000+1800*maxi(0,x-85)+int((x+z)%2)]
    cells[Vector3i(x,84,z)]=[0,500,0]
+   if with_bed:
+    if z<80+(x%4):
+     cells[Vector3i(x,82,z)]=[500,500,0]
+     cells[Vector3i(x,83,z)]=[500,500,0]
+    else:
+     cells[Vector3i(x,83,z)][0]=80+3*((x+z)%7)
  var stores:Array=[]
- var open_owners:=0
+ var open_owners:=0;var clipped_cells:=0
  for indexed:bool in [false,true]:
   var water:=fixture(cells)
   for step in 256:
    var packet:Dictionary=water.next_mesh_batch(false,indexed)
    if packet.is_empty():break
-   if packet.has("coordinate") and packet.faces.get("open_sheet",false):open_owners+=1
+   if packet.has("coordinate"):
+    if packet.faces.get("open_sheet",false):open_owners+=1
+    clipped_cells+=int(packet.faces.get("monotone_cells",0))
    if packet.complete:water.commit_mesh_batch(packet.batch)
   stores.append(water)
  var matching:=true
+ var wet:=0;var dry:=0
  for iz in 15:
   for ix in 34:
    var point:=Vector3(40.05+ix*.232,42.3,40.06+iz*.257)
    var a:Dictionary=stores[0].raycast_surface(point,point-Vector3.UP)
    var b:Dictionary=stores[1].raycast_surface(point,point-Vector3.UP)
-   matching=matching and a.hit and b.hit and absf(a.get("point",Vector3.ZERO).y-b.get("point",Vector3.ZERO).y)<.00002
+   if a.hit:wet+=1
+   else:dry+=1
+   matching=matching and a.hit==b.hit and absf(a.get("point",Vector3.ZERO).y-b.get("point",Vector3.ZERO).y)<.00002
    if a.hit and b.hit:
     matching=matching and stores[1].depth_at(b.point-Vector3.UP*.001)>0 and stores[1].depth_at(b.point+Vector3.UP*.001)==0
- check(open_owners>=2 and matching,"Two open lake tiles share the clipped reference head, immersion and seam for both a one-millilitre step and a graded surface")
+ if with_bed:
+  check(clipped_cells>0 and wet>200 and dry>0 and matching,"Graded shoreline cells match the reference rays, wet and dry cells, immersion and region seam")
+ else:
+  check(open_owners>=2 and wet==510 and matching,"Two open lake tiles share the clipped reference head, immersion and seam for both a one-millilitre step and a graded surface")
 
 func check_inclined_faces()->void:
  var cells:Dictionary={}
@@ -116,11 +154,84 @@ func check_inclined_faces()->void:
    agreeing=false
  check(optimized>0 and hits>200 and agreeing,"Inclined sides, underside, tier and obstacle contacts agree with the volume boundary to 0.1 mm across a region seam")
 
+func check_saved_structure_sections(post:bool)->void:
+ var data:=FileAccess.get_file_as_bytes("res://docs/evidence/water_structure_replacement/cached_water.bin.gz").decompress_dynamic(16*1024*1024,FileAccess.COMPRESSION_GZIP)
+ # The recorded sphere was completely submerged. Lower the fixture's ledger
+ # through its equator, retaining every saved hull and terrain contact.
+ var offset:=32+data.decode_u32(8)
+ var quantity:=0
+ for region in data.decode_u32(12):
+  var bottom:=int((data.decode_u64(offset)>>12)&4095)*8
+  for cell in 512:
+   var pos:=offset+20+12*cell
+   var amount:=data.decode_u64(pos)
+   var y:=bottom+(cell/8)%8
+   if y>95:amount=0
+   elif y==95:amount=amount/3
+   data.encode_u64(pos,amount)
+   quantity+=amount
+  offset+=9076
+ data.encode_u64(16,quantity)
+ var stores:Array[RefCounted]=[]
+ var sections:=0
+ var oblique:=0
+ for indexed:bool in [false,true]:
+  var water:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+  if not water.restore_snapshot(data):
+   check(false,"Saved structure geometry restores for cross-section comparison");return
+  if post:
+   # A narrow post crossing the actual free surface exercises both the
+   # specialized horizontal section and the four walls of its opening.
+   var hull:=PackedFloat64Array([-1,0,0,-796.29,1,0,0,796.71,0,-1,0,-47.02,0,1,0,47.98,0,0,-1,-1292.31,0,0,1,1292.73])
+   water.invalidate_buildings(AABB(Vector3(796,47,1292),Vector3.ONE))
+   for n in 100:
+    var request:Dictionary=water.next_request()
+    if request.is_empty():break
+    var patch:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
+    if not patch.configure(request.coordinate) or not patch.set_structure_hulls([hull]) or not water.reuse_building_occupancy(patch):
+     check(false,"Saved terrain contacts can be reused for the intersecting post");return
+    patch.prepare_cached()
+    if not water.accept_patch(patch):
+     check(false,"Rebuilt post is accepted into the finite water store");return
+  for step in 2048:
+   var packet:Dictionary=water.next_mesh_batch(false,indexed)
+   if packet.is_empty():break
+   if packet.has("failure"):
+    check(false,"Saved structure boundary builds: "+str(packet.failure));return
+   if packet.has("coordinate") and indexed:
+    sections+=int(packet.faces.get("solid_sections",0))
+    oblique+=int(packet.faces.get("oblique_cells",0))
+   if packet.get("complete",false):water.commit_mesh_batch(packet.batch)
+  stores.append(water)
+ var rays:=0
+ var hits:=0
+ var mismatches:=0
+ var centre:=Vector3(796.5,47.5,1292.5)
+ for axis:Vector3 in [Vector3.DOWN,Vector3.RIGHT,Vector3.BACK]:
+  var u:=Vector3.RIGHT if axis==Vector3.DOWN else Vector3.UP
+  var v:=axis.cross(u)
+  for i in range(-12,13):
+   for j in range(-12,13):
+    var p:=centre+u*(i*.107+.013)+v*(j*.103+.017)
+    var a:Dictionary=stores[0].raycast_surface(p-axis*2,p+axis*2)
+    var b:Dictionary=stores[1].raycast_surface(p-axis*2,p+axis*2)
+    rays+=1
+    if a.hit:hits+=1
+    if a.hit!=b.hit or (a.hit and Vector3(a.point).distance_to(b.point)>.0002):
+     if mismatches==0:print("Saved structure ray differs ",p," ",axis," ",a," ",b)
+     mismatches+=1
+ var shape:="rectangular post" if post else "sphere"
+ check((sections>0 if post else oblique>0) and hits>100 and mismatches==0,"Water around %s matches convex geometry to 0.2 mm across three ray directions: oblique=%d sections=%d hits=%d/%d mismatches=%d"%[shape,oblique,sections,hits,rays,mismatches])
+
 func run_equilibrium()->void:
+ check_saved_structure_sections(false)
+ check_saved_structure_sections(true)
  await check_regional_prisms()
+ await check_deep_column_portals()
  check_level_section()
  check_inclined_faces()
  check_open_sheet()
+ check_open_sheet(true)
  var high:=Vector3i(83,83,83);var low:=high+Vector3i.DOWN
  # Old full coastal cells could round up by one ml without a pending flag.
  var legacy_surplus:=fixture({high:[0,500,125001],low:[0,500,0]})

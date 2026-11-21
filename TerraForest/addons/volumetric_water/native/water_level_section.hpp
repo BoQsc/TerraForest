@@ -121,6 +121,16 @@ template<class Emit> void water_open_horizontal(const WaterCellProfile &cell,con
         };
         if(!restrict(h,elevation,false,!top)||!restrict(neighbor,top?0.:.5,true,!top))continue;
         auto opening=[&](const WaterCellProfile &shape,bool lower,auto visit){
+            if(shape.solid){
+                // The stored Y-face axes are Z,X. The cap polygons here
+                // use X,Z. Swapping axes requires reversing the winding.
+                shape.solid->visit_face(1,lower?1:0,.5,[&](const F::Polygon &face){
+                    F::Polygon xz;
+                    for(size_t i=face.count;i>0;--i)xz.append({face[i-1].y,face[i-1].x});
+                    visit(xz);return false;
+                });
+                return;
+            }
             if((lower&&shape.ceiling<500)||shape.ceiling<=0)return;
             if(shape.is_full_air()){visit(F::square());return;}
             shape.floor_triangles([&](const WaterCellProfile::Triangle &t){

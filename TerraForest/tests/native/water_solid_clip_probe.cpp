@@ -66,12 +66,24 @@ int main(){
  plain.solid=&cache;
  check(plain.field(.25,.25,.25,500)>0&&plain.field(.25,.25,.25,500)<=.25&&plain.field(.05,.25,.05,500)<0,"Runtime field keeps post dry with finite interpolation");
  check(plain.wet_interval(.05,.25,.05,500,bottom,top)&&near(top,.5),"Runtime interval includes surrounding water");
+ auto cap_area=[&](double h){
+     double area=0;
+     if(!cache.visit_water_cap(h,[&](const auto &polygon){area+=terraforest::WaterFaceClip::area(polygon);}))return -1.;
+     return area;
+ };
+ check(near(cap_area(.25),.25-.25*.25),"The exact free surface of a submerged post excludes its footprint");
  auto encoded=cache.encode();terraforest::WaterSolidProfile loaded;
  check(loaded.decode(encoded)&&near(loaded.capacity(),cache.capacity())&&near(loaded.volume(.31),cache.volume(.31)),"Prepared occupancy codec preserves exact values");
  auto bad=encoded;bad[0]=1;check(!loaded.decode(bad)&&near(loaded.capacity(),cache.capacity()),"Bad occupancy cache fails atomically");
  bad=encoded;bad.push_back(0);check(!loaded.decode(bad),"Occupancy codec rejects trailing data");
  auto slope=box({0,0,0},{.5,.5,.5});slope.push_back({{0,1,-1},0});
  plain.solid=nullptr;check(plain.solid_remainder(500,{slope},actual)&&cache.prepare(actual),"Prepare slope face fixture");plain.solid=&cache;
+ bool matching_slices=true;
+ for(int n=1;n<100;++n){
+     const double h=n*.005;
+     matching_slices&=std::abs(cap_area(h)-(cache.volume(h+1e-6)-cache.volume(h-1e-6))/2e-6)<1e-7;
+ }
+ check(matching_slices,"Inclined solid cross-sections match independent stored-volume derivatives at 99 heights");
  auto neighbour=terraforest::WaterCellProfile::make(nullptr,false,0,500);
  check(!terraforest::WaterCellProfile::face_overlap(plain,500,neighbour,500,2,1),"Solid end of slope is not a water connection");
  check(terraforest::WaterCellProfile::face_overlap(plain,500,neighbour,500,2,0),"Open end of slope remains connected");

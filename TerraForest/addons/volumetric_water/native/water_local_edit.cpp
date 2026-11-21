@@ -69,7 +69,7 @@ Ref<NativeWaterLocalEdit> NativeRegionalWater::capture_local_edit(bool wide) con
 }
 
 bool NativeWaterLocalEdit::set_field(const Array &groups,const AABB &bounds,const Dictionary &solids,int64_t rev,int64_t epoch){
-    if(started.load()||store.is_null()||store->wide_edit_bounds.empty()||groups.is_empty()||groups.size()>9||
+    if(started.load()||store.is_null()||groups.is_empty()||groups.size()>9||
        !bounds.has_volume()||!bounds.position.is_finite()||!bounds.size.is_finite()||rev<0||epoch<0)return false;
     for(int i=0;i<groups.size();++i){
         if(groups[i].get_type()!=Variant::DICTIONARY)return false;
@@ -84,13 +84,24 @@ bool NativeWaterLocalEdit::set_field(const Array &groups,const AABB &bounds,cons
 // Capture pins the sparse owner metadata and the terrain revision once. The
 // game thread never constructs a patch or polls a frame per group of 64.
 bool NativeWaterLocalEdit::sample_edit_occupancy(Array &patches){
-    struct Input {Vector3i coordinate;Ref<RefCounted> core;Array hulls;Ref<NativeWaterTerrainPatch> patch;};
+    struct Input {
+        Vector3i coordinate;Ref<RefCounted> core;Array hulls;Ref<NativeWaterTerrainPatch> patch;
+        uint8_t uniform=0;int representative=-1;
+    };
     std::vector<Input> inputs;
-    for(auto k:store->requests){
+    const bool compact=store->wide_edit_bounds.empty();
+    std::vector<uint64_t> selected;
+    if(compact){
+        // Include the same reconstruction collar as the live shoreline
+        // operation. Leave unrelated streaming requests with their owner.
+        Array coordinates=store->pending_edit_patches();
+        for(int i=0;i<coordinates.size();++i)selected.push_back(store->key(coordinates[i]));
+    }else selected.assign(store->requests.begin(),store->requests.end());
+    for(auto k:selected){
         const auto coord=store->position(k);
         const Rect2i area(coord.x*4,coord.z*4,4,4);
         const AABB region(Vector3(coord)*4,Vector3(4,4,4));
-        if(!field_bounds.encloses(region))continue;
+        if(!field_bounds.encloses(region)){if(compact)return false;continue;}
         if(solid_hulls.has(coord)&&solid_hulls[coord].get_type()!=Variant::ARRAY)return false;
         Ref<RefCounted> reader;
         for(int margin:{0,29}){
@@ -100,9 +111,37 @@ bool NativeWaterLocalEdit::sample_edit_occupancy(Array &patches){
             }
             if(reader.is_valid())break;
         }
-        if(reader.is_null())continue;
+        if(reader.is_null()){if(compact)return false;continue;}
         if(inputs.size()>=2048)return false;
         inputs.push_back({coord,reader,solid_hulls.get(coord,Array()),{}});
+    }
+    // A changed brick and a newly reached receiver read the same sealed field.
+    // Only share geometry proved identical throughout the extraction stencil.
+    // Each owner keeps its own quantity, old revision and changed-face mask.
+    int uniform_count=0,layer_count=0;
+    for(int group=0;group<field_groups.size();++group){
+        Dictionary entry=field_groups[group];Ref<RefCounted> reader=entry["core"];
+        if(!reader->has_method("classify_water_bricks"))continue;
+        PackedInt32Array origins;std::vector<int> rows;
+        for(size_t i=0;i<inputs.size();++i)if(inputs[i].core==reader&&inputs[i].hulls.is_empty()){
+            rows.push_back(int(i));
+            for(int axis=0;axis<3;++axis)origins.push_back(inputs[i].coordinate[axis]*4);
+        }
+        if(rows.empty())continue;
+        PackedByteArray certificates=reader->call("classify_water_bricks",origins,field_revision,field_epoch,true);
+        if(certificates.size()!=17*int64_t(rows.size()))return false;
+        std::map<std::array<int16_t,9>,int> representatives;
+        for(size_t n=0;n<rows.size();++n){
+            const auto *record=certificates.ptr()+17*n;
+            auto &input=inputs[rows[n]];
+            if(record[0]==0)continue;
+            if(record[0]<=2){input.uniform=record[0];++uniform_count;continue;}
+            if(record[0]!=3)return false;
+            std::array<int16_t,9> key;key[0]=int16_t(input.coordinate.y);
+            for(int j=0;j<8;++j)key[j+1]=int16_t(uint16_t(record[1+2*j])|(uint16_t(record[2+2*j])<<8));
+            auto [it,first]=representatives.emplace(key,rows[n]);
+            if(!first){input.representative=it->second;++layer_count;}
+        }
     }
     struct Sampling{
         std::vector<Input> &inputs;
@@ -117,6 +156,16 @@ bool NativeWaterLocalEdit::sample_edit_occupancy(Array &patches){
         if(!entry.patch->configure(entry.coordinate)||(!entry.hulls.is_empty()&&!entry.patch->set_structure_hulls(entry.hulls))){
             work.failed.store(true);return;
         }
+        if(entry.representative>=0)return;
+        if(entry.uniform){
+            auto &p=*entry.patch.ptr();
+            const bool clear=entry.uniform==1;
+            p.floor.fill(clear?0:500);p.ceiling.fill(500);p.density.fill(clear?1.f:-1.f);
+            p.brick_geometry=clear?WaterBrickGeometry::air:WaterBrickGeometry::solid;
+            p.revision=edit.field_revision;p.epoch=edit.field_epoch;p.status=1;
+            if(work.bytes.fetch_add(sizeof(p))+sizeof(p)>48*1024*1024)work.failed.store(true);
+            return;
+        }
         int64_t status=0;
         while(status==0&&!edit.cancelled.load()&&!work.failed.load())
             status=entry.patch->sample_terrain(entry.core.ptr(),2048,edit.field_revision,edit.field_epoch);
@@ -129,7 +178,20 @@ bool NativeWaterLocalEdit::sample_edit_occupancy(Array &patches){
     if(task>=0)pool->wait_for_group_task_completion(task);
     else for(size_t i=0;i<inputs.size()&&!sampling.failed.load();++i)run(&sampling,i);
     if(sampling.failed.load()||cancelled.load())return false;
-    for(const auto &input:inputs)patches.push_back(input.patch);
+    for(const auto &input:inputs){
+        if(input.representative>=0){
+            auto &p=*input.patch.ptr();
+            const auto &model=*inputs[input.representative].patch.ptr();
+            const size_t charge=sizeof(p)+(model.contacts?model.contacts->bytes:0)+(model.structures?model.structures->bytes:0);
+            if(model.status!=1||sampling.bytes.fetch_add(charge)+charge>48*1024*1024)return false;
+            p.floor=model.floor;p.ceiling=model.ceiling;p.density=model.density;
+            p.contacts=model.contacts;p.structures=model.structures;p.brick_geometry=model.brick_geometry;
+            p.revision=field_revision;p.epoch=field_epoch;p.status=1;
+        }
+        patches.push_back(input.patch);
+    }
+    result["uniform_edit_patches"]=uniform_count;
+    result["shared_layer_edit_patches"]=layer_count;
     return true;
 }
 
@@ -139,6 +201,7 @@ void NativeWaterLocalEdit::prepare(const Array &patches,bool prepare_render){
     auto build=[&](){
         if(store.is_null())return false;
         auto &s=*store.ptr();
+        const uint64_t start=Time::get_singleton()->get_ticks_usec();
         Array occupancy=patches;
         if(!field_groups.is_empty()){
             occupancy=Array();
@@ -157,10 +220,11 @@ void NativeWaterLocalEdit::prepare(const Array &patches,bool prepare_render){
                 result["fallback"]="unfinished edit occupancy";return false;
             }
         }
+        const uint64_t sampled_us=Time::get_singleton()->get_ticks_usec()-start;
         if(!s.settling.empty()){
             auto job=s.begin_equilibrium(0,true);
             if(job.is_null()){result["fallback"]="outstanding occupancy";return false;}
-            if(!field_groups.is_empty()){
+            if(!field_groups.is_empty()&&!s.wide_edit_bounds.empty()){
                 if(!job->set_edit_field(field_groups,field_bounds,solid_hulls,field_revision,field_epoch)){
                     result["fallback"]="immutable field unavailable";return false;
                 }
@@ -170,12 +234,16 @@ void NativeWaterLocalEdit::prepare(const Array &patches,bool prepare_render){
             if(cancelled.load()||!job->success||!job->required.empty()){result["fallback"]=job->required.empty()?job->reason:String("receiving region required");return false;}
             new_receivers=job->prepared_receivers;
             changed_regions.insert(job->changed_regions.begin(),job->changed_regions.end());
-            result=s.finish_equilibrium(job);
+            result.merge(s.finish_equilibrium(job),true);
             if(!bool(result.get("ok",false)))return false;
         }else{result["ok"]=true;result["local_response"]=true;}
+        result["occupancy_sample_us"]=int64_t(sampled_us);
+        result["occupancy_regions"]=occupancy.size();
         if(s.urgent_meshes.empty())return true;
         const uint64_t began=Time::get_singleton()->get_ticks_usec();
         uint64_t packet_bytes=0,upload_us=0,mesh_us=0;
+        uint64_t reconstruction_us=0,boundary_us=0,topology_us=0;
+        int open_sheets=0,level_sections=0,monotone_cells=0,oblique_cells=0,general_packets=0;
         while(!s.publish_pending){
             if(cancelled.load())return false;
             Dictionary next=s.next_mesh_batch(true,true,false,true);
@@ -186,6 +254,12 @@ void NativeWaterLocalEdit::prepare(const Array &patches,bool prepare_render){
                 mesh_us+=Time::get_singleton()->get_ticks_usec()-start;
             }else if(bool(next.get("pending",false))){result["fallback"]="mesh reservation";return false;}
             if(next.has("coordinate")){
+                const Dictionary faces=next["faces"];
+                open_sheets+=bool(faces.get("open_sheet",false));level_sections+=bool(faces.get("level_section",false));
+                general_packets+=faces.has("boundary_us");
+                reconstruction_us+=int64_t(faces.get("reconstruct_us",0));
+                boundary_us+=int64_t(faces.get("boundary_us",0));topology_us+=int64_t(faces.get("topology_pack_us",0));
+                monotone_cells+=int(faces.get("monotone_cells",0));oblique_cells+=int(faces.get("oblique_cells",0));
                 const Array arrays=next["render_arrays"];
                 const PackedVector3Array vertices=arrays[Mesh::ARRAY_VERTEX];
                 const PackedInt32Array indices=arrays[Mesh::ARRAY_INDEX];
@@ -194,7 +268,6 @@ void NativeWaterLocalEdit::prepare(const Array &patches,bool prepare_render){
                 if(prepare_render&&!indices.is_empty()){
                     const Vector3i coordinate=next["coordinate"];
                     const auto old=s.published_surfaces.find(s.key(coordinate));
-                    const Dictionary faces=next["faces"];
                     const PackedByteArray digest=faces.get("render_digest",PackedByteArray());
                     if(digest.is_empty()||old==s.published_surfaces.end()||old->second.render_digest!=digest){
                         auto start=Time::get_singleton()->get_ticks_usec();
@@ -211,6 +284,20 @@ void NativeWaterLocalEdit::prepare(const Array &patches,bool prepare_render){
         result["detail_prepare_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-began);
         result["detail_build_us"]=int64_t(mesh_us);result["render_upload_us"]=int64_t(upload_us);
         result["render_packet_bytes"]=int64_t(packet_bytes);result["render_packets"]=packets.size();
+        // Summed CPU work for published packets; detail_build_us is elapsed wall time.
+        result["detailed_cpu_us"]=Vector3i(reconstruction_us,boundary_us,topology_us);
+        result["sheet_level_general_packets"]=Vector3i(open_sheets,level_sections,general_packets);
+        result["monotone_cells"]=monotone_cells;result["oblique_cells"]=oblique_cells;
+        int64_t extracted=0,bytes=0,contacts=0,meshes=0;
+        for(int i=0;i<field_groups.size();++i){
+            Dictionary group=field_groups[i];Ref<RefCounted> core=group["core"];
+            if(!core->has_method("surface_column_stats"))continue;
+            Dictionary stats=core->call("surface_column_stats");
+            extracted+=int64_t(stats.get("columns",0));bytes+=int64_t(stats.get("bytes",0));
+            contacts+=int64_t(stats.get("contacts",0));meshes+=int64_t(stats.get("meshes",0));
+        }
+        result["shared_surface_columns"]=extracted;result["shared_surface_bytes"]=bytes;
+        result["shared_contact_reads"]=contacts;result["shared_mesh_reads"]=meshes;
         return true;
     };
     complete=build();ready.store(true,std::memory_order_release);

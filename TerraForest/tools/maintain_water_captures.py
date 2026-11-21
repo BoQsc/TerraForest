@@ -53,8 +53,15 @@ def candidates(root=ROOT, keep_ready=2, families=None):
                 packaged |= (closed and folder_name in candidate.get('runs', {}).values()
                              and candidate.get('pack_sha256') == run.get('pack_sha256')
                              and candidate.get('driver_sha256') == run.get('driver_sha256'))
+            driver_hash = run.get('driver_sha256')
+            if not driver_hash and '--main-pack' in command and run.get('test_sha256'):
+                # The earlier packaged contact driver recorded the same source
+                # hash under test_sha256, alongside its frozen terrain overlay.
+                overlay = manifest.parent / 'terrain_contact.zip'
+                if overlay.is_file() and run.get('patch_sha256') == digest(overlay):
+                    driver_hash = run['test_sha256']
             if (not packaged or script != str(driver) or not driver.is_file()
-                    or not run.get('pack_sha256') or run.get('driver_sha256') != digest(driver)):
+                    or not run.get('pack_sha256') or driver_hash != digest(driver)):
                 continue
         if family == 'water_player_world' and '--authoring-captures' in command and '--water-load-only' in command:
             family = 'authoring_brush'

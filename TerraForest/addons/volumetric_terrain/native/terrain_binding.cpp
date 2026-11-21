@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "core.h"
+#include "resident_surface_columns.hpp"
 #include "survey_map.hpp"
 #include "terrain_planner.hpp"
 #include "road_profile.hpp"
@@ -19,6 +20,7 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/file_access.hpp>
+#include <godot_cpp/classes/worker_thread_pool.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
@@ -54,12 +56,14 @@ protected:
 public:
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) const;
     godot::PackedByteArray classify_water_bricks(const godot::PackedInt32Array &origins,int64_t revision,int64_t epoch,bool layers=false) const;
+    godot::Dictionary surface_column_stats() const;
     godot::Ref<TerrainFieldReader> capture_contact_core(godot::Rect2i bounds,int64_t revision,int64_t epoch) const;
 };
 class TerrainCore : public godot::RefCounted {
     GDCLASS(TerrainCore, godot::RefCounted)
     friend class TerrainFieldReader;
     godot::Ref<godot::RefCounted> page_owner_;
+    std::shared_ptr<SealedSurfaceColumns> surface_columns_;
     BuildControl control_;
     World world_;
     std::unique_ptr<TerrainResidency> residency_;
@@ -298,7 +302,15 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);
         tr_oom=false;auto result=terraforest::geometry_content_key(world_,int(x),int(z),int(size),int(step));return tr_oom?godot::Dictionary():result;
     }
-    TerrainCore() {world_.build_control=&control_; tr_oom=false; world_.init();}
+    TerrainCore() {
+        control_.parallel_edit=[](void (*work)(void*,u32),void *context,int count){
+            auto *pool=godot::WorkerThreadPool::get_singleton();
+            auto task=pool?pool->add_native_group_task(work,context,count,4,true,"Terrain edit pages"):-1;
+            if(task>=0)pool->wait_for_group_task_completion(task);
+            else for(int i=0;i<count;++i)work(context,u32(i));
+        };
+        world_.build_control=&control_;tr_oom=false;world_.init();
+    }
     ~TerrainCore() {
         snapshot_worker_.reset();
         if(page_owner_.is_valid())for(int i=0;i<world_.pages.n;++i){
@@ -640,6 +652,9 @@ private:
     godot::Ref<TerrainFieldReader> make_reader(godot::Rect2i bounds,int64_t revision,int64_t epoch,bool borrow){
         auto field=copy_contact_field(bounds,revision,epoch,borrow);
         if(field.is_null())return {};
+        field->surface_columns_=borrow?surface_columns_:std::make_shared<SealedSurfaceColumns>(
+            bounds.position.x,bounds.position.y,bounds.size.x,bounds.size.y);
+        field->world_.surface_columns=field->surface_columns_.get();
         godot::Ref<TerrainFieldReader> reader;reader.instantiate();
         reader->field_=field;return reader;
     }
@@ -845,8 +860,19 @@ private:
 };
 void TerrainFieldReader::_bind_methods(){
     godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"),&TerrainFieldReader::execute);
+    godot::ClassDB::bind_method(godot::D_METHOD("surface_column_stats"),&TerrainFieldReader::surface_column_stats);
     godot::ClassDB::bind_method(godot::D_METHOD("classify_water_bricks","origins","revision","epoch","include_layers"),&TerrainFieldReader::classify_water_bricks,false);
     godot::ClassDB::bind_method(godot::D_METHOD("capture_contact_core","bounds","revision","epoch"),&TerrainFieldReader::capture_contact_core);
+}
+godot::Dictionary TerrainFieldReader::surface_column_stats() const{
+    const auto *field=godot::Object::cast_to<TerrainCore>(field_.ptr());
+    godot::Dictionary out;
+    if(field&&field->surface_columns_){
+        const auto &columns=*field->surface_columns_;
+        out["columns"]=int64_t(columns.built.load());out["bytes"]=int64_t(columns.retained.load());
+        out["meshes"]=int64_t(columns.mesh_reads.load());out["contacts"]=int64_t(columns.contact_reads.load());
+    }
+    return out;
 }
 godot::PackedByteArray TerrainFieldReader::classify_water_bricks(const godot::PackedInt32Array &origins,int64_t revision,int64_t epoch,bool layers) const{
     const auto *field=godot::Object::cast_to<TerrainCore>(field_.ptr());
@@ -900,7 +926,7 @@ godot::PackedByteArray TerrainFieldReader::execute(const godot::PackedByteArray 
             bytes.release();return result;
         }
     }
-    if(command==31&&packet.size()>=12){
+    if((command==31||command==40)&&packet.size()>=12){
         const auto count=packet.decode_u32(8);
         allowed=count>=1&&count<=512&&packet.size()==12+12*int(count);
         for(uint32_t i=0;allowed&&i<count;++i){

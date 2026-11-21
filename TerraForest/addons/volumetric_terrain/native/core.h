@@ -55,11 +55,16 @@ struct RegionalSite {V3 position;float radius;};
 struct SkyProbe {V3 p,n;float sky;};
 struct ExactSkyProbe {V3 origin;u32 sky_bits=0;};
 // Stable owner storage outside World, so reset/load cannot reset cancellation.
-struct BuildControl {u32 epoch=0;};
+struct BuildControl {
+ u32 epoch=0;
+ // Join before returning. Each index owns disjoint private edit pages.
+ void (*parallel_edit)(void (*work)(void*,u32),void *context,int count)=nullptr;
+};
 struct GeometryCache;
 // Derived from immutable authored samples on first use by a surface reader.
 struct SurfaceSignPage { u16 columns[256]; u32 valid[8]; };
 struct World;
+struct ResidentSurfaceColumns;
 struct PageAccess {
  virtual bool load(World&,int)=0;
  virtual bool admit(World&)=0;
@@ -170,6 +175,7 @@ struct World {
  mutable float mesh_stage_ms[4]={}; // extraction, simplification, blocks, shading
  mutable u64 replayed_triangles=0;
  mutable GeometryCache *geometry_cache=nullptr;
+ ResidentSurfaceColumns *surface_columns=nullptr; // Non-owning, sealed revision only.
  // Worker-owned immutable generator samples for the current reconstruction column.
  mutable List<float> owned_heights;
  mutable int owned_height_x=-1,owned_height_z=-1,owned_height_size=0,owned_height_seed=0;
@@ -199,6 +205,10 @@ struct World {
 };
 struct Vertex {V3 p,n;float material=0; u32 face_splits=0,geometry_revision=0,face_revision=0; i32 cx=0,cy=0,cz=0;u32 mask=0; V3 blend{};float substrate=0,sky=1,sun=1,ore=0,asphalt=0;};
 struct Mesh {List<Vertex> v; List<u32> i;void release(){v.release();i.release();}};
+struct ResidentSurfaceColumns {
+ virtual bool read(const World &world,int x,int z,int size,int bottom,int top,u32 epoch,List<Vertex> &out)=0;
+};
+bool extract_surface_column(const World &world,int x,int z,u32 epoch,List<Vertex> &out);
 // Cancellation state is outside World: save/load cannot race a main-thread request.
 u32 terrain_build_epoch(const World *world=nullptr);
 u32 terrain_cancel_builds(const World *world=nullptr);

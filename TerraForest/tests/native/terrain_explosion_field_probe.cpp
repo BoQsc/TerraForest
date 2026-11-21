@@ -3,6 +3,19 @@
 #include "terrain_edit_atomicity_probe.cpp"
 #undef main
 #include <chrono>
+#ifdef TERRAFOREST_TEST_PARALLEL_CUT
+#include <thread>
+static void reverse_pages(void (*work)(void*,u32),void *context,int count){
+ for(int i=count;i-->0;)work(context,u32(i));
+}
+static void parallel_pages(void (*work)(void*,u32),void *context,int count){
+ std::thread lanes[4];
+ for(int lane=0;lane<4;++lane)lanes[lane]=std::thread([=]{
+  for(int i=count-1-lane;i>=0;i-=4)work(context,u32(i));
+ });
+ for(auto &lane:lanes)lane.join();
+}
+#endif
 
 // Reject the second new page after an existing page was staged as well.
 static bool rejected_cut_preserves_world(){
@@ -15,6 +28,9 @@ static bool rejected_cut_preserves_world(){
   void removed(World&,int)override{--slots;}
  } access;
  World w;w.init(1703,31);V3 p{1010,28,995},lo,hi;
+#ifdef TERRAFOREST_TEST_PARALLEL_CUT
+ BuildControl control{0,reverse_pages};w.build_control=&control;
+#endif
  w.ensure(63,1,62);Bytes before,after;w.serialize(before,true);
  const u64 serial=w.storage_serial;
  w.page_access=&access;int changes=0;u32 removed[16]{};
@@ -28,6 +44,9 @@ static bool rejected_cut_preserves_world(){
 static bool rejected_cut_allocation_is_atomic(){
  for(bool grow:{false,true})for(int fault:{1,2,3,5,8,16}){
   World w;w.init(1703,31);V3 center{1010,28,995},lo,hi;
+#ifdef TERRAFOREST_TEST_PARALLEL_CUT
+  BuildControl control{0,reverse_pages};w.build_control=&control;
+#endif
   w.ensure(63,1,62);Bytes before,after;w.serialize(before,true);
   int changes=0;u32 removed[16]{};
   allocation=0;deny=fault;deny_reallocation=grow;tr_oom=false;
@@ -116,13 +135,24 @@ int main(int argc,char **argv){
  printf("{\"case\":\"full_world_edit\",\"passed\":%s}\n",capacity_ok?"true":"false");
  if(argc>1 && !std::strcmp(argv[1],"--require-full-world-edit")){failures+=!capacity_ok;failures+=!rejected_cut_allocation_is_atomic();bool contact=contact_packet_matches_probes();printf("{\"case\":\"contact_packet_parity\",\"passed\":%s}\n",contact?"true":"false");failures+=!contact;}
  {
-  World world;world.init(1703,31);Bytes receipts;V3 lo,hi;int changes;
+#ifdef TERRAFOREST_TEST_PARALLEL_CUT
+  // Fault injection uses a deterministic scheduler above. Use the real
+  // thread-safe CRT allocator for the four concurrent lanes in this replay.
+  tr_alloc=std::malloc;tr_realloc=std::realloc;tr_free=std::free;
+#endif
+  World world;world.init(1703,31);Bytes receipts,journal;V3 lo,hi;int changes;
+#ifdef TERRAFOREST_TEST_PARALLEL_CUT
+  BuildControl control{0,parallel_pages};world.build_control=&control;
+#endif
   EditHeightCache cache;world.edit_height_cache=&cache;
   V3 center{1010,28,995};
   for(int pass=0;pass<3;pass++){
    V3 p=pass==2?center+V3{29,0,4}:center;
+   TerrainEditWrites writes;world.edit_writes=&writes;
    u32 removed[16]{};auto start=std::chrono::steady_clock::now();
    bool accepted=world.edit(p,p,pass==2?14:32,pass==2?0:1,false,0,lo,hi,changes,1,0,0,removed);
+   world.edit_writes=nullptr;journal.u(writes.complete);journal.u(writes.records.n);
+   if(writes.records.n)journal.raw(writes.records.p,writes.records.n*sizeof(TerrainEditWrites::Record));
    auto us=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-start).count();
    printf("{\"case\":\"full_cut\",\"pass\":%d,\"elapsed_us\":%lld,\"changes\":%d}\n",pass,(long long)us,changes);
    receipts.u(accepted);receipts.u(changes);receipts.u(world.revision);receipts.raw(removed,sizeof(removed));
@@ -130,7 +160,11 @@ int main(int argc,char **argv){
   }
   Bytes field;world.serialize(field,true);
   failures+=!write_file("large_cut_field.bin",field)||!write_file("large_cut_receipts.bin",receipts);
-  field.release();receipts.release();world.release();failures+=live_allocations!=0;
+  failures+=!write_file("large_cut_journal.bin",journal);
+  field.release();receipts.release();journal.release();world.release();failures+=live_allocations!=0;
+#ifdef TERRAFOREST_TEST_PARALLEL_CUT
+  tr_alloc=allocate;tr_realloc=reallocate;tr_free=release;
+#endif
  }
  for(int generator:{1,31})for(int repeat=0;repeat<5;repeat++){
   World world;world.init(1703,generator);float height=world.height(1296,1296);

@@ -29,6 +29,7 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
     const uint64_t start=Time::get_singleton()->get_ticks_usec();
     auto defer=[&](const char *reason){receiver_fallback=reason;return false;};
     if(required.empty()||field_readers.empty()||cancelled.load())return defer(field_readers.empty()?"no field reader":"receiver admission");
+    expand_air_frontier();
     // Read-only preflight for the whole wave. In particular, a dry receiver
     // may bring another resident donor into the next capture's one-face halo.
     const Vector3i steps[]={{0,-1,0},{0,1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1}};
@@ -80,15 +81,29 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
             if(input.core!=field.core.ptr()||!input.hulls.is_empty())continue;
             indices.push_back(int(i));
         }
-        if(indices.empty()||indices.size()>2048)continue;
-        if(origins.resize(3*indices.size())!=OK)return false;
-        auto *p=origins.ptrw();
-        for(int i:indices)for(int axis=0;axis<3;++axis)*p++=wave[i].coord[axis]*4;
-        PackedByteArray result=field.core->call("classify_water_bricks",origins,field_revision,field_epoch,true);
-        if(result.size()!=17*int64_t(indices.size()))return defer("changed receiver field");
-        const uint8_t *data=result.ptr();
+        if(indices.empty())continue;
+        std::vector<ReceiverClass> classes(indices.size());
+        std::vector<size_t> missing;
         for(size_t j=0;j<indices.size();++j){
-            const auto *record=data+17*j;
+            auto cached=receiver_classes.find(wave[indices[j]].key);
+            if(cached!=receiver_classes.end())classes[j]=cached->second;
+            else missing.push_back(j);
+        }
+        for(size_t start=0;start<missing.size();start+=2048){
+            const int count=int(std::min<size_t>(2048,missing.size()-start));
+            if(origins.resize(3*count)!=OK)return false;
+            auto *p=origins.ptrw();
+            for(int i=0;i<count;++i){
+                const auto &coord=wave[indices[missing[start+i]]].coord;
+                for(int axis=0;axis<3;++axis)*p++=coord[axis]*4;
+            }
+            PackedByteArray result=field.core->call("classify_water_bricks",origins,field_revision,field_epoch,true);
+            if(result.size()!=17*count)return defer("changed receiver field");
+            const uint8_t *data=result.ptr();
+            for(int i=0;i<count;++i)std::memcpy(classes[missing[start+i]].data(),data+17*i,17);
+        }
+        for(size_t j=0;j<indices.size();++j){
+            const auto *record=classes[j].data();
             auto &input=wave[indices[j]];uint8_t type=record[0];
             if(!type)continue;
             if(type==3){

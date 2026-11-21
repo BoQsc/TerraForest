@@ -245,6 +245,11 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     out["wide_spans"]=int64_t(job->wide_spans);out["wide_cells"]=int64_t(job->wide_cells);
     out["wide_basin_leaves"]=int64_t(job->wide_basin_leaves);
     out["prism_nodes"]=int64_t(job->prism_nodes);out["prism_edges"]=int64_t(job->prism_edges);
+    out["column_rooms"]=int64_t(job->column_rooms);out["column_portals"]=int64_t(job->column_portals);
+    out["column_tiers"]=int64_t(job->column_tiers);out["column_us"]=int64_t(job->column_us);
+    out["survey_classes"]=int64_t(job->receiver_classes.size());
+    out["air_frontier_receivers"]=int64_t(job->air_frontier_receivers);
+    if(job->column_fallback)out["column_fallback"]=job->column_fallback;
     PackedInt64Array prism_times;for(auto t:job->prism_us)prism_times.push_back(t);
     out["prism_us"]=prism_times;out["receiver_us"]=int64_t(job->receiver_us);
     if(job->prism_fallback)out["prism_fallback"]=job->prism_fallback;
