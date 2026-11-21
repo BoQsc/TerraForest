@@ -446,6 +446,9 @@ func step_detonations(delta:float=1.0/60.0)->void:
 
 func _submit_next_crater()->void:
 	if craters.pending.is_empty() or craters.ticket>=0 or game.terrain.pending_edit:return
+	# A crater changes the density revision and cancels a shoreline strike
+	# waiting for water. Reserve the next edit for that strike.
+	if game.has_method("has_waiting_mining_strike") and game.has_waiting_mining_strike():return
 	var crater:Dictionary=craters.pending[0]
 	if game.mining_rewards.excavate_blast(crater.point,3.5):
 		craters.ticket=game.terrain.edit_ticket

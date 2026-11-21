@@ -41,6 +41,7 @@ var _equilibrium_last_result:Dictionary={}
 var _equilibrium_failure:=""
 var _ocean_exchange_ml:int=0
 var _equilibrium_failed_revision:int=-1
+var _equilibrium_retry_us:=0
 var _equilibrium_phases:PackedInt64Array=PackedInt64Array()
 var _equilibrium_worker_us:int=0
 var _equilibrium_cells:int=0
@@ -506,7 +507,11 @@ func _advance_equilibrium()->void:
   if result.get("ok",false):_ocean_exchange_ml+=int(result.get("ocean_exchange_ml",0))
   _equilibrium_phases=result.get("phase_us",PackedInt64Array())
   _equilibrium_worker_us=int(result.get("worker_us",0));_equilibrium_cells=int(result.get("cells",0))
-  if result.get("ok",false) or result.get("pending",false) or result.get("stale",false):
+  if result.get("reason","")=="Water equilibrium memory reservation unavailable":
+   # Interrupted workers release their reservations without changing the water
+   # revision. Retry on the clock so a joint terrain edit can finish in place.
+   _equilibrium_retry_us=Time.get_ticks_usec()+50000
+  elif result.get("ok",false) or result.get("pending",false) or result.get("stale",false):
    _equilibrium_failure="";_equilibrium_failed_revision=-1
   else:
    _equilibrium_failure=str(result.get("reason","Water equilibrium failed"))
@@ -514,6 +519,7 @@ func _advance_equilibrium()->void:
    terrain.message_changed.emit(_equilibrium_failure)
   return
  if _equilibrium_failed_revision==water.survey_revision_id():return
+ if Time.get_ticks_usec()<_equilibrium_retry_us:return
  if _local_publication_pending:return
  var state:Dictionary=water.runtime_state()
  if _local_response_pending and state.settling_regions==0:

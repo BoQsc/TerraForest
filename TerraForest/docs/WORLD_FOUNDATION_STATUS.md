@@ -1,5 +1,7 @@
 ## Distant barrel chains in saved worlds
 
+[Shoreline mining in normal gameplay](../issues/explosive-combat/README.md#shoreline-mining-in-normal-gameplay) tracks a separate source fix for tool strikes that stopped while waiting for water or a crater edit. Gameplay verification remains open.
+
 The previous remote check covered resident barrels 160 m from the player.
 The Windows package now includes the fix for unloaded barrels. Saved chains completed about 1.3 km from a stationary player in the installed-pack check. [Saved-page investigation and release checks](../issues/explosive-combat/README.md#saved-barrels-beyond-the-player)
 

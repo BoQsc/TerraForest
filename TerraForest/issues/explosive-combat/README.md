@@ -1,5 +1,15 @@
 # First firearm and volumetric explosive destruction
 
+## Shoreline mining in normal gameplay
+
+A finishing tool strike that queued behind another terrain edit or waited for
+coastal water had no regular retry in gameplay. Only the developer brush loop
+drained the queue. Gameplay now retries the captured mining strike on physics
+ticks after the button is released. Queued barrel craters yield the next edit
+to that strike. Water settlement also retries a temporary worker reservation
+failure on the same revision. Source review only. The reported saved-world
+case remains unverified in game.
+
 The “Destruction blocked” inventory warning came from the finishing tool hit.
 At the shoreline a terrain stroke can wait for water preparation before the
 terrain marks an edit pending. The tool now recognizes that queued stroke and

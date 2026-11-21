@@ -1205,6 +1205,9 @@ func _update_edit(delta: float) -> void:
 	if not session_menu.developer:
 		if input_vector!=Vector3.ZERO:terrain.note_interaction()
 		pointer.hide();terrain.set_brush_active(false)
+		# Tool hits can wait for coastal water or an earlier terrain edit.
+		# Gameplay returns before the developer brush loop drains its queue.
+		if has_waiting_mining_strike():_consume_stroke()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):world_attack.attack()
 		elif equipped_tool==3 and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):world_attack.attack(true)
 		terrain.set_attack_active(tool_view.attack_identity!=0)

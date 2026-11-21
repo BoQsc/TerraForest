@@ -455,6 +455,15 @@ var preparing_revision:=-1
 var preparing_water_revision:=-1
 var renew_preparation_us:=0
 
+func has_waiting_mining_strike() -> bool:
+	for work: Dictionary in preparing_stroke:
+		if work.sample.get("shape", -1) == Codec.CONTACT_MINING_SHAPE:
+			return true
+	for sample: Dictionary in stroke_buffer.samples:
+		if sample.get("shape", -1) == Codec.CONTACT_MINING_SHAPE:
+			return true
+	return false
+
 func _consume_stroke() -> void:
 	last_stroke_rejection = ""
 	if loading_active or shutdown_requested or terrain.pending_edit or not terrain.world_ready:
