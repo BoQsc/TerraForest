@@ -178,7 +178,7 @@ struct WaterCellProfile {
             b.visit_face(axis,1-side,500,[&](const WaterFaceClip::Polygon &bp){
                 auto common=ap;
                 if(WaterFaceClip::intersect(common,bp))for(size_t i=0;i<common.count;++i)
-                    height=std::min(height,(axis==0?common.points[i].x:common.points[i].y)*1000.);
+                    height=std::min(height,(axis==0?common[i].x:common[i].y)*1000.);
                 return false; // Visit every disconnected opening, not only the first.
             });return false;
         });return height;

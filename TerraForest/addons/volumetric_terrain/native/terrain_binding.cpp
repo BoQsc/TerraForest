@@ -609,10 +609,16 @@ public:
     godot::Dictionary residency_stats(){std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary d;if(residency_)d=residency_->stats(world_);else{d["active"]=false;d["catalog_pages"]=world_.pages.n;d["resident_pages"]=world_.pages.n;d["resident_limit"]=MAX_PAGES;}d["generator"]=world_.generator_id;d["seed"]=world_.seed;return d;}
     godot::Ref<TerrainCore> capture_contact_core(godot::Rect2i bounds,int64_t revision,int64_t epoch){
         std::lock_guard<std::mutex> lock(mutex_);
-        if(world_.contact_snapshot||revision!=world_.revision||epoch!=terrain_build_epoch(&world_)||
+        if(revision!=world_.revision||epoch!=terrain_build_epoch(&world_)||
            bounds.size.x<=0||bounds.size.y<=0||bounds.size.x>64||bounds.size.y>64||
            bounds.position.x<0||bounds.position.y<0||bounds.position.x>WORLD-bounds.size.x||
            bounds.position.y>WORLD-bounds.size.y)return {};
+        const int x0=imx(0,bounds.position.x-32),z0=imx(0,bounds.position.y-32);
+        const int x1=imn(WORLD,bounds.get_end().x+32),z1=imn(WORLD,bounds.get_end().y+32);
+        // A worker lane can fork a smaller reader from an already pinned
+        // surface. It must never synthesize an omitted authored page or cave.
+        if(world_.contact_snapshot&&(x0<world_.contact_x0||z0<world_.contact_z0||
+           x1>world_.contact_x1||z1>world_.contact_z1))return {};
         godot::Ref<TerrainCore> copy;copy.instantiate();
         if(copy.is_null()||tr_oom)return {};
         World &dst=copy->world_;
@@ -627,8 +633,6 @@ public:
         dst.caves.resize(world_.caves.n);if(tr_oom)return {};
         copy_bytes(dst.caves.p,world_.caves.p,sizeof(Cave)*dst.caves.n);
         dst.index_cave_columns();copy->control_.epoch=u32(epoch);
-        const int x0=imx(0,bounds.position.x-32),z0=imx(0,bounds.position.y-32);
-        const int x1=imn(WORLD,bounds.get_end().x+32),z1=imn(WORLD,bounds.get_end().y+32);
         dst.contact_x0=x0;dst.contact_z0=z0;dst.contact_x1=x1;dst.contact_z1=z1;
         for(int z=z0/16;z<=z1/16;++z)for(int x=x0/16;x<=x1/16;++x){
             u32 mask=world_.edit_columns[x+WORLD_PAGE_COLUMNS*z];

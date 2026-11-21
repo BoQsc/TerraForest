@@ -39,7 +39,7 @@ private:
             for(auto index:h.planes){const auto &plane=plane_table[index];if(!WaterFaceClip::project(polygon,plane,axis,side))return false;if(polygon.count<3)break;}
             if(polygon.count<3||WaterFaceClip::area(polygon)<=1e-12)continue;
             total+=polygon.count;if(total>MAX_VERTICES)return false;
-            faces[axis*2+side].emplace_back(polygon.points.begin(),polygon.points.begin()+polygon.count);
+            faces[axis*2+side].emplace_back(polygon.data(),polygon.data()+polygon.count);
         }
         return true;
     }
@@ -195,7 +195,7 @@ public:
         return false;
     }
     template<class Emit> bool visit_face(int axis,int side,double head,Emit emit)const{
-        for(const auto &points:faces[axis*2+side]){WaterFaceClip::Polygon p;p.count=points.size();std::copy(points.begin(),points.end(),p.points.begin());
+        for(const auto &points:faces[axis*2+side]){WaterFaceClip::Polygon p;p.assign(points.data(),points.size());
             if(!WaterFaceClip::wet(p,axis,side,head))continue;
             if(p.count>=3&&WaterFaceClip::area(p)>1e-12&&emit(p))return true;}
         return false;

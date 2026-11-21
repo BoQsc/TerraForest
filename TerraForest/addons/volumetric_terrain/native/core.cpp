@@ -1863,6 +1863,34 @@ static bool build_triangle_pages(const World&w,int x,int z,int size,u32 selected
  remap.release();mesh.release();
  return !tr_oom&&!cancelled(w,epoch);
 }
+// Certify a constant water brick using the same authored nodes as the field
+// extractor. Its entire cell/face halo must agree, including across pages.
+// A procedural, nonresident or boundary page always takes the full path.
+static bool constant_water_brick(const World &w,int x,int y,int z,float &density){
+ if(x<2||z<2||y<2||x+5>WORLD||z+5>WORLD||y+5>WORLD_Y)return false;
+ bool first=true;i16 value=0;
+ for(int py=(y-2)>>4;py<=(y+5)>>4;++py)
+ for(int pz=(z-2)>>4;pz<=(z+5)>>4;++pz)
+ for(int px=(x-2)>>4;px<=(x+5)>>4;++px){
+  const int index=w.pages_by_key.get(page_key(px,py,pz));
+  if(index<0||!w.pages[index].d)return false;
+  const i16 *data=w.pages[index].d;
+  const int x0=imx(0,x-2-px*16),x1=imn(15,x+5-px*16);
+  for(int sy=imx(0,y-2-py*16);sy<=imn(15,y+5-py*16);++sy)
+  for(int sz=imx(0,z-2-pz*16);sz<=imn(15,z+5-pz*16);++sz){
+   const i16 *row=data+256*sy+16*sz;
+   if(first){value=row[x0];first=false;}
+   for(int sx=x0;sx<=x1;++sx)if(row[sx]!=value)return false;
+  }
+ }
+ density=float(value)/SDF_SCALE;return true;
+}
+static void water_block_mask(const World &w,int x,int y,int z,Bytes &out){
+ u8 solids[64]{};
+ if(w.blocks.n)for(int dz=0;dz<4;++dz)for(int dy=0;dy<4;++dy)for(int dx=0;dx<4;++dx)
+  solids[dx+4*dy+16*dz]=w.blocks.get(block_key(x+dx,y+dy,z+dz))>0;
+ out.raw(solids,sizeof(solids));
+}
 void process_request(World&w,const u8*data,int n,Bytes&out){
  Reader r{data,n};u32 cmd=r.u();if(!out.reserve(fixed_edit_reply(cmd)?EDIT_REPLY_CAPACITY:12))return;out.u(REPLY_MAGIC);out.u(cmd);out.u(0);
  if(!r.good){out.p[8]=1;return;}
@@ -2220,13 +2248,21 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
   out.u(material);out.f(density);out.f(w.has_geology()?w.ore_weight(point,w.height(point.x,point.z)):0);
  }
- else if(cmd==32||cmd==43){
+ else if(cmd==32||cmd==43||cmd==48){
   // Worker-owned boundary packet for material integration. Reuse the exact
   // full-detail terrain extractor/connectivity, without lighting or LOD.
   // Request: revision, cancellation epoch, aligned 4 m region origin (x,y,z).
   u32 revision=r.u(),epoch=r.u();int x=int(r.u()),y=int(r.u()),z=int(r.u());
   if(!r.good||n!=24||x<0||z<0||x>=WORLD||z>=WORLD||y<0||y>=WORLD_Y||x%4||y%4||z%4){out.p[8]=1;return;}
   if(revision!=w.revision||cancelled(w,epoch)){out.p[8]=4;return;}
+  if(cmd==48){
+   float density;
+   if(constant_water_brick(w,x,y,z,density)){
+    out.u(w.revision);out.u(epoch);out.u(0);out.u(0);out.f(density);
+    water_block_mask(w,x,y,z,out);return;
+   }
+   cmd=43;out.p[4]=43;
+  }
   Mesh m;int ox=imx(0,x-1),oz=imx(0,z-1),yb=imx(0,y-1),ye=imn(WORLD_Y,y+5);
   // One-cell ownership halo retains faces crossing the requested region.
   // Frozen edit readers share reconstructed density cells with their renderer
@@ -2256,10 +2292,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
     }
     out.f(value);
    }
-   u8 solids[64]{};
-   for(int dz=0;dz<4;++dz)for(int dy=0;dy<4;++dy)for(int dx=0;dx<4;++dx)
-    solids[dx+4*dy+16*dz]=w.blocks.get(block_key(x+dx,y+dy,z+dz))>0;
-   out.raw(solids,sizeof(solids));
+   water_block_mask(w,x,y,z,out);
   }
   m.release();
  }

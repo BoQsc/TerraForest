@@ -11,11 +11,18 @@ namespace terraforest {
 // the existing frame/worker boundary. The shared payload becomes immutable.
 template<class T,size_t N> class SnapshotArray {
     using Values=std::array<T,N>;
-    std::shared_ptr<Values> values=std::make_shared<Values>();
+    // Empty regions and dry frontier receivers share a single immutable zero
+    // payload. The permanent reference forces a detach on the first write.
+    static const std::shared_ptr<Values> &empty(){
+        static const auto initial=std::make_shared<Values>();
+        return initial;
+    }
+    std::shared_ptr<Values> values=empty();
     Values &write(){if(!values.unique())values=std::make_shared<Values>(*values);return *values;}
 public:
     static constexpr size_t retained_bytes=sizeof(Values)+2*sizeof(void*);
     SnapshotArray()=default;
+    bool is_initial_zero() const{return values==empty();}
     SnapshotArray(const SnapshotArray &)=default;
     SnapshotArray &operator=(const SnapshotArray &)=default;
     SnapshotArray &operator=(const Values &source){write()=source;return *this;}

@@ -52,6 +52,7 @@ public:
 class NativeWaterSnapshot;
 class NativeWaterMeshJob;
 class NativeWaterEquilibriumJob;
+class NativeWaterLocalEdit;
 struct EquilibriumCaptureState;
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
 struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const WaterSolidProfile>)*512;std::array<std::shared_ptr<const WaterSolidProfile>,512> cells;};
@@ -60,6 +61,8 @@ struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const Water
 class NativeWaterTerrainPatch : public godot::RefCounted {
     GDCLASS(NativeWaterTerrainPatch,godot::RefCounted)
     friend class NativeRegionalWater;
+    friend class NativeWaterEquilibriumJob;
+    friend class NativeWaterLocalEdit;
     godot::Vector3i coord;
     godot::PackedByteArray boundary;
     std::shared_ptr<const TerrainWaterContacts> contacts;
@@ -75,6 +78,7 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     std::map<std::array<uint32_t,8>,std::shared_ptr<const WaterSolidProfile>> density_profiles;
     int structure_cursor=0;
     int64_t prepare_structures();
+    int64_t sample_boundary(godot::Object *core,int64_t budget,int64_t rev,int64_t cancel,const godot::PackedByteArray *packet);
     int cursor=0,status=-1;
     int64_t revision=-1,epoch=-1;
 protected: static void _bind_methods();
@@ -108,6 +112,7 @@ class NativeRegionalWater : public godot::RefCounted {
     friend class NativeWaterSnapshot;
     friend class NativeWaterMeshJob;
     friend class NativeWaterEquilibriumJob;
+    friend class NativeWaterLocalEdit;
     friend class NativeWaterMapIdentity;
     friend class NativeWaterRegionStore;
     friend class NativeGeneratedLakeBake;
@@ -328,11 +333,15 @@ class NativeRegionalWater : public godot::RefCounted {
     bool surface_ready(Key owner,bool snapshot=false) const;
     bool dry_surface_owner(Key owner,bool snapshot) const;
     enum class SurfaceStreams { All, Indexed, Query };
+    bool build_level_surface(Key owner,const std::array<const Region*,27> &halo,SurfaceMesh &output) const;
+    static void identify_render_surface(SurfaceMesh &surface);
     SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false,const std::atomic<bool> *cancel=nullptr,WaterSurfaceProfileCache *profiles=nullptr,SurfaceStreams streams=SurfaceStreams::All) const;
     bool decode(const godot::PackedByteArray &data,bool install,bool prepare_render=true);
 protected: static void _bind_methods();
 public:
     godot::Array pending_edit_patches() const;
+    godot::Ref<NativeWaterLocalEdit> capture_local_edit() const;
+    godot::Dictionary accept_local_edit(const godot::Ref<NativeWaterLocalEdit> &edit);
     int64_t interrupt_relaxation();
     void settle_after_edit(const godot::AABB &bounds);
     godot::Ref<NativeWaterEquilibriumJob> begin_equilibrium(int64_t budget_usec=0,bool local_response=false);
@@ -411,6 +420,7 @@ public:
 class NativeWaterEquilibriumJob : public godot::RefCounted {
     GDCLASS(NativeWaterEquilibriumJob,godot::RefCounted)
     friend class NativeRegionalWater;
+    friend class NativeWaterLocalEdit;
     godot::Ref<NativeRegionalWater> frozen;
     uint64_t revision=0,elapsed_us=0,visited_cells=0,blocked_ml=0;
     uint64_t displacement_visits=0,displacement_searches=0;
@@ -424,6 +434,26 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     std::vector<uint64_t> required,changed_regions,capture_keys;
     std::unordered_set<uint64_t> local_donors;
     std::vector<NativeRegionalWater::EditRegionBox> wide_edit_bounds;
+    // An immutable terrain reader and a known-empty structure bound let the
+    // worker follow newly opened faces without round trips through the scene.
+    struct FieldReader { godot::Rect2i bounds; godot::Ref<godot::RefCounted> core; };
+    std::vector<FieldReader> field_readers;
+    godot::AABB clear_structure_bounds;
+    godot::Dictionary structure_hulls;
+    int64_t field_revision=-1,field_epoch=-1;
+    size_t receiver_slots=0;
+    uint64_t receiver_bytes=0,receiver_solid_bytes=0,receiver_solid_limit=0,private_rounds=0;
+    const char *receiver_fallback=nullptr;
+    std::unordered_set<uint64_t> existing_outside;
+    std::map<uint64_t,NativeRegionalWater::Region> receiver_neighbours;
+    std::vector<uint64_t> prepared_receivers;
+    // Identical region-local extraction inputs can share exact contact
+    // geometry across receiver waves. Keys include the vertical domain edge.
+    struct ReceiverTemplate { godot::PackedByteArray input; NativeRegionalWater::Region region; };
+    std::mutex template_mutex;
+    std::unordered_multimap<uint64_t,ReceiverTemplate> receiver_templates;
+    size_t template_bytes=0,template_hits=0;
+    bool prepare_receivers();
     size_t capture_cursor=0;
     std::shared_ptr<EquilibriumCaptureState> capture_selection;
     godot::String reason;
@@ -432,6 +462,9 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     NativeRegionalWater::WetFrontier wet_frontier;
     bool advance_wet_frontier();
     SpanResult settle_wide_spans();
+    SpanResult settle_wide_prisms();
+    size_t prism_nodes=0,prism_edges=0;
+    const char *prism_fallback=nullptr;
     size_t wide_spans=0,wide_cells=0,wide_basin_leaves=0;
     const char *wide_fallback=nullptr;
     std::atomic<bool> started{false},ready{false},cancelled{false};
@@ -439,8 +472,28 @@ protected: static void _bind_methods();
 public:
     ~NativeWaterEquilibriumJob();
     void prepare();
+    bool set_edit_field(const godot::Array &groups,const godot::AABB &bounds,const godot::Dictionary &solids,int64_t revision,int64_t epoch);
     void cancel(){cancelled.store(true);}
     bool is_ready()const{return ready.load(std::memory_order_acquire);}
+};
+
+// One worker owns the occupancy update, equilibrium and detailed mesh for a
+// resident edit. Its isolated store shares immutable region payloads with the
+// authority. Only the main thread can adopt the finished delta and show it.
+class NativeWaterLocalEdit : public godot::RefCounted {
+    GDCLASS(NativeWaterLocalEdit,godot::RefCounted)
+    friend class NativeRegionalWater;
+    godot::Ref<NativeRegionalWater> store;
+    uint64_t owner=0,revision=0,survey=0,publication=0;
+    std::vector<uint64_t> sampled_regions;
+    std::unordered_set<uint64_t> changed_regions;
+    godot::Array packets;
+    godot::Dictionary result;
+    std::atomic<bool> started{false},ready{false};
+    bool complete=false,consumed=false;
+protected: static void _bind_methods();
+public:
+    void prepare(const godot::Array &patches);
 };
 
 // Worker owns an immutable local halo, never the live water store or scene.
@@ -454,7 +507,7 @@ class NativeWaterMeshJob : public godot::RefCounted {
     std::map<size_t,NativeRegionalWater::SurfaceMesh> deliverable;
     std::vector<uint64_t> owners;
     size_t consumed=0;
-    bool indexed_only=false;
+    bool indexed_only=false,foreground=false;
     uint64_t batch=0,elapsed_us=0,reserved_bytes=0;
     static std::atomic<uint64_t> pending_bytes;
     std::atomic<bool> started{false},ready{false},cancelled{false};

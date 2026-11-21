@@ -8,7 +8,47 @@ func solve(water:RefCounted,local_response:bool=false)->Dictionary:
  while not WorkerThreadPool.is_task_completed(task):await process_frame
  WorkerThreadPool.wait_for_task_completion(task)
  return water.finish_equilibrium(job)
+
+func check_regional_prisms()->void:
+ var cells:Dictionary={}
+ for z in range(81,167):
+  for x in range(81,175):
+   cells[Vector3i(x,83,z)]=[0,500,60000 if x%2 else 65000]
+ var water:=fixture(cells)
+ water.settle_after_edit(AABB(Vector3(36,35,36),Vector3(56,20,52)))
+ var result:=await solve(water,true)
+ var stored:=amounts(water)
+ var uniform:=stored.size()==cells.size()
+ for amount:int in stored.values():uniform=uniform and amount==62500
+ check(result.ok and result.get("prism_nodes",0)==132 and not result.has("prism_fallback") and uniform,
+  "132 connected region prisms agree with the analytical water head in every cell: "+str(result))
+
+func check_level_section()->void:
+ var cells:Dictionary={}
+ for z in range(9,12):
+  for y in range(9,12):
+   for x in range(9,12):cells[Vector3i(x,y,z)*8]=[500,500,0]
+ for z in range(80,88):
+  for x in range(80,88):cells[Vector3i(x,83,z)]=[0,500,62500]
+ cells[Vector3i(83,83,83)]=[500,500,0]
+ var water:=fixture(cells)
+ var sections:=0
+ for step in 64:
+  var packet:Dictionary=water.next_mesh_batch(false,true)
+  if packet.is_empty():break
+  if packet.get("coordinate")==Vector3i(10,10,10) and packet.faces.get("level_section",false):sections+=1
+  if packet.complete:water.commit_mesh_batch(packet.batch)
+ var contact:=true
+ for offset:Vector2 in [Vector2(-.27,0),Vector2(.27,0),Vector2(0,-.27),Vector2(0,.27),Vector2.ZERO]:
+  var start:=Vector3(41.75+offset.x,42.0,41.75+offset.y)
+  var hit:Dictionary=water.raycast_surface(start,start-Vector3.UP)
+  if offset==Vector2.ZERO:contact=contact and not hit.hit
+  else:contact=contact and hit.hit and absf(hit.get("point",Vector3.ZERO).y-41.75)<.00001 and water.depth_at(start-Vector3.UP*.26)>0
+ check(sections==1 and contact,"A level volume reaches all four sides of an obstacle within 2 cm and leaves its solid interior dry")
+
 func run_equilibrium()->void:
+ await check_regional_prisms()
+ check_level_section()
  var high:=Vector3i(83,83,83);var low:=high+Vector3i.DOWN
  # Old full coastal cells could round up by one ml without a pending flag.
  var legacy_surplus:=fixture({high:[0,500,125001],low:[0,500,0]})
@@ -103,5 +143,32 @@ func run_equilibrium()->void:
  water.settle_after_edit(wide)
  result=await solve(water,true)
  check(result.ok and result.get("wide_basin_leaves",0)==3 and amounts(water)==reference,"Wide compact spill with a merged two-column pool matches scalar quantities cell by cell: "+str(result))
+ var upper_left:=Vector3i(83,88,83)
+ var upper_right:=upper_left+Vector3i.RIGHT*2
+ var cross_region:Dictionary={upper_left:[0,500,100000],upper_left+Vector3i.DOWN:[0,500,125000],
+  upper_left+Vector3i.RIGHT:[300,500,0],upper_right:[0,500,0],upper_right+Vector3i.DOWN:[0,500,0]}
+ water=fixture(cross_region)
+ water.settle_after_edit(AABB(Vector3(upper_left)*.5,Vector3.ONE*.5))
+ result=await solve(water)
+ reference=amounts(water)
+ check(result.ok and reference.get(upper_left)==75000 and reference.get(upper_right+Vector3i.DOWN)==25000,"Scalar spill across a region tier retains the water below the sill")
+ water=fixture(cross_region);water.settle_after_edit(wide);result=await solve(water,true)
+ check(result.ok and result.get("wide_basin_leaves",0)==3 and amounts(water)==reference,"Vertical column spill matches the scalar result above and below a region seam")
+ var editable:=fixture({high:[0,500,125000],low:[0,500,0]})
+ for attempt in 64:
+  var packet:Dictionary=editable.next_mesh_batch()
+  if packet.is_empty():break
+  if packet.get("complete",false):check(editable.commit_mesh_batch(packet.batch),"Initial picking geometry published")
+ editable.settle_after_edit(AABB(Vector3(low)*.5,Vector3.ONE*.5))
+ var transaction:RefCounted=editable.capture_local_edit()
+ var superseded:RefCounted=editable.capture_local_edit()
+ if transaction!=null and superseded!=null:
+  transaction.prepare([]);superseded.prepare([])
+  check(amounts(editable)=={high:125000},"Preparing a complete resident edit leaves live quantities intact")
+  var published:Dictionary=editable.accept_local_edit(transaction)
+  check(published.get("resident_transaction",false) and amounts(editable)=={low:125000},"Accepting a resident edit transfers exactly the settled quantities")
+  check(editable.accept_local_edit(transaction).is_empty() and editable.accept_local_edit(superseded).is_empty(),"Replayed or superseded resident edits leave the accepted state intact")
+  check(published.has("batch") and editable.commit_mesh_batch(published.batch),"The same resident transaction supplies a publishable detailed picking surface")
+ else:check(false,"Resident transaction acquired the bounded edit")
  print("WATER_EQUILIBRIUM checks=",checks," failures=",failures)
  quit(failures)

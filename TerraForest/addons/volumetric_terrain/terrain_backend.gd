@@ -743,19 +743,37 @@ static func _surface_unchanged(item:Dictionary,masks:Array)->bool:
 
 func _dispatch_resident_groups(job:Dictionary,scheduled:Dictionary,surface:Dictionary,items_to_build:Array)->Array:
 	var tasks:Array=[]
-	for group:Dictionary in surface.get("groups",[]):
+	var fields:Array=surface.get("groups",[])
+	# Each reader has mutable extraction caches behind a lock. Give render
+	# lanes private caches so a whole tile cannot block the water contact read.
+	var lanes_per_field:=clampi(OS.get_processor_count()/2/maxi(1,fields.size()),1,4)
+	for group:Dictionary in fields:
 		var items:Array=[]
 		for item:Dictionary in items_to_build:
 			var key:Vector3i=item.key
 			if key.z in [16,32] and not item.has("brick_bottoms") and Rect2i(group.bounds).encloses(Rect2i(key.x,key.y,key.z,key.z)):
 				items.append(item)
 		if items.is_empty():continue
-		var completed:Dictionary={}
-		var task:=WorkerThreadPool.add_task(_build_resident_group.bind(group.core,items,job,completed,true),true,"Shared terrain edit surface")
-		if task<0:continue
-		tasks.append({"task":task,"completed":completed,"items":items})
-		for item:Dictionary in items:scheduled[item.key]=true
+		var count:=mini(lanes_per_field,items.size())
+		# Adjacent owners share their source pages and the lighting halo.
+		items.sort_custom(func(a:Dictionary,b:Dictionary)->bool:return a.key<b.key)
+		for lane in count:
+			var slice:=items.slice(lane*items.size()/count,(lane+1)*items.size()/count)
+			var completed:Dictionary={}
+			var task:=WorkerThreadPool.add_task(_build_resident_lane.bind(group.core,surface.revision,slice,job,completed),true,"Resident terrain triangles and collision")
+			if task<0:continue
+			tasks.append({"task":task,"completed":completed,"items":slice})
+			for item:Dictionary in slice:scheduled[item.key]=true
 	return tasks
+
+func _build_resident_lane(field:Object,revision:int,items:Array,job:Dictionary,completed:Dictionary)->void:
+	var bounds:=Rect2i()
+	for item:Dictionary in items:
+		var key:Vector3i=item.key
+		var tile:=Rect2i(key.x,key.y,key.z,key.z)
+		bounds=bounds.merge(tile) if bounds.has_area() else tile
+	var reader:Object=field.capture_contact_core(bounds,revision,job.build_epoch)
+	_build_resident_group(reader if reader!=null else field,items,job,completed,true)
 
 func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
 	return EditCommands.execute(native,commands,revision_before,qualify_surface_owners or triangle_page_terrain)

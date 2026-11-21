@@ -16,6 +16,7 @@ std::atomic<uint64_t> NativeWaterEquilibriumJob::pending_bytes{0};
 NativeWaterEquilibriumJob::~NativeWaterEquilibriumJob(){if(reserved_bytes)pending_bytes.fetch_sub(reserved_bytes);}
 void NativeWaterEquilibriumJob::_bind_methods(){
     ClassDB::bind_method(D_METHOD("prepare"),&NativeWaterEquilibriumJob::prepare);
+    ClassDB::bind_method(D_METHOD("set_edit_field","groups","bounds","solids","revision","epoch"),&NativeWaterEquilibriumJob::set_edit_field);
     ClassDB::bind_method(D_METHOD("cancel"),&NativeWaterEquilibriumJob::cancel);
     ClassDB::bind_method(D_METHOD("is_ready"),&NativeWaterEquilibriumJob::is_ready);
 }
@@ -104,6 +105,38 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::continue_equilibrium_capture
         for(auto ml:r.water)job->frozen->total+=ml;
         if(r.settle_pending){auto old=published_occupancy.find(k);if(old!=published_occupancy.end())job->frozen->published_occupancy.emplace(k,old->second);}
         if(expired()&&job->capture_cursor<job->capture_keys.size())return {};
+    }
+    if(!job->wide_edit_bounds.empty()){
+        job->receiver_slots=regions.size()<MAX_REGIONS?MAX_REGIONS-regions.size():0;
+        job->receiver_solid_limit=64*1024*1024-solid_cache_bytes;
+        auto remember=[&](const auto &entries){
+            for(const auto &entry:entries){
+                if(job->frozen->regions.count(entry.first))continue;
+                auto p=position(entry.first);
+                for(const auto &[lo,hi]:job->wide_edit_bounds){
+                    const Vector3i halo(1,1,1);
+                    if(p==p.clamp(lo-halo,hi+halo)){job->existing_outside.insert(entry.first);break;}
+                }
+            }
+        };
+        remember(regions);remember(deferred_regions);remember(ocean_cache);
+        // A newly discovered receiver also admits its six resident face
+        // neighbours. Freeze these once, admitting their water only if the
+        // frontier actually reaches them. This keeps remote donors separate.
+        size_t fringe_allowance=job->hierarchy_cell_limit/8;
+        for(auto k:job->existing_outside){
+            auto found=regions.find(k);
+            if(found==regions.end()||!found->second.valid||found->second.ocean_state)continue;
+            const auto &r=found->second;
+            const size_t cost=sizeof(Region)+Region::payload_bytes+sizeof(Vector3i)*512+
+                (r.contacts?r.contacts->bytes:0)+(r.structures?r.structures->bytes:0)+r.vacancies.size()*sizeof(uint32_t);
+            const size_t units=(cost+1023)/1024;
+            if(units>fringe_allowance)continue;
+            fringe_allowance-=units;
+            job->hierarchy_cell_limit-=units;
+            job->cell_limit=std::min(job->cell_limit,4*job->hierarchy_cell_limit);
+            job->receiver_neighbours.emplace(k,r);
+        }
     }
     job->capture_keys.clear();equilibrium_capture.unref();return job;
 }
@@ -202,8 +235,15 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     out["worker_us"]=int64_t(job->elapsed_us);out["cells"]=int64_t(job->visited_cells);
     out["displacement_visits"]=int64_t(job->displacement_visits);out["displacement_searches"]=int64_t(job->displacement_searches);
     out["local_response"]=job->local_response;
+    out["private_receiver_regions"]=int64_t(job->prepared_receivers.size());
+    out["reused_receiver_shapes"]=int64_t(job->template_hits);
+    out["private_discovery_rounds"]=int64_t(job->private_rounds);
+    out["field_readers"]=int64_t(job->field_readers.size());
+    if(job->receiver_fallback)out["receiver_fallback"]=job->receiver_fallback;
     out["wide_spans"]=int64_t(job->wide_spans);out["wide_cells"]=int64_t(job->wide_cells);
     out["wide_basin_leaves"]=int64_t(job->wide_basin_leaves);
+    out["prism_nodes"]=int64_t(job->prism_nodes);out["prism_edges"]=int64_t(job->prism_edges);
+    if(job->prism_fallback)out["prism_fallback"]=job->prism_fallback;
     if(job->wide_fallback)out["wide_fallback"]=job->wide_fallback;
     out["blocked_ml"]=int64_t(job->blocked_ml);out["reserved_bytes"]=int64_t(job->reserved_bytes);
     out["graph_cell_limit"]=int64_t(job->cell_limit);
@@ -211,6 +251,24 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     out["snapshot_regions"]=job->frozen.is_valid()?int64_t(job->frozen->regions.size()):0;
     out["ocean_exchange_ml"]=job->ocean_exchange_ml;
     if(job->revision!=map_revision||job->cancelled.load()){out["stale"]=true;return out;}
+    if(!job->prepared_receivers.empty()&&(job->success||!job->required.empty())){
+        if(regions.size()+job->prepared_receivers.size()>MAX_REGIONS ||
+           solid_cache_bytes+job->receiver_solid_bytes>64*1024*1024){out["stale"]=true;return out;}
+        for(Key k:job->prepared_receivers){
+            if(regions.count(k)||deferred_regions.count(k)||ocean_cache.count(k)){out["stale"]=true;return out;}
+        }
+        const SnapshotArray<uint64_t,512> empty;
+        for(Key k:job->prepared_receivers){
+            preserve_mesh_region(k);
+            const auto &source=job->frozen->regions.at(k);
+            auto &live=regions.emplace(k,source).first->second;
+            live.water=empty;
+            live.settle_pending=!job->success||std::any_of(source.water.begin(),source.water.end(),[](uint64_t ml){return ml!=0;});
+            if(!job->success){local_edit_regions.insert(k);local_receiver_regions.insert(k);}
+            sampled+=729;
+        }
+        solid_cache_bytes+=job->receiver_solid_bytes;
+    }
     if(!job->required.empty()){
         // Dry frontier regions are dependencies too: do not repeatedly solve
         // the same body while their terrain samples are still in flight.
@@ -301,14 +359,22 @@ void NativeWaterEquilibriumJob::prepare(){
         auto &store=*frozen.ptr();
         const size_t MAX_CELLS=cell_limit;
         const Vector3i steps[6]={{0,-1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1},{0,1,0}};
-        if(!wet_frontier.entries.empty()&&advance_wet_frontier())return false;
+        while(!wet_frontier.entries.empty()&&advance_wet_frontier()){
+            if(!prepare_receivers())return false;
+        }
         std::vector<Vector3i> displaced;
         for(const auto &[k,r]:store.regions)if(r.settle_pending&&r.valid){
             const auto base=W::position(k)*8;
             for(int i=0;i<512;++i)if(r.water[i]&&r.water[i]>W::profile(r,i).capacity())displaced.push_back(base+Vector3i(i%8,(i/8)%8,i/64));
         }
         if(local_response&&!wide_edit_bounds.empty()&&displaced.empty()){
-            const auto result=settle_wide_spans();
+            auto result=settle_wide_spans();
+            while(result==SpanResult::dependencies&&prepare_receivers()){
+                while(!wet_frontier.entries.empty()&&advance_wet_frontier()){
+                    if(!prepare_receivers())return false;
+                }
+                result=settle_wide_spans();
+            }
             if(result!=SpanResult::fallback)return result==SpanResult::settled;
             wide_spans=0; // No compact solution was used for this transaction.
             if(cancelled.load()){reason="Cancelled";return false;}

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 """Exercise the real Windows release executable and adjacent candidate PCK on an isolated desktop."""
+import argparse
 import datetime
 import hashlib
 import json
@@ -33,7 +34,7 @@ def run_route(engine, pack_hash, label, flags, index, frozen_driver):
     options = [
         "--water-source-slot=Cedar_Vale",
         "--water-source-sha256=988048ed6ae59676c66d8692e51cf5eb7636a94a686f4787bf42fa1fe269ba44",
-        "--two-frame-edits", "--packed-terrain-upload", "--isolated-render", *flags,
+        "--two-frame-edits", "--isolated-render", *flags,
     ]
     command, cache = command_for(engine, driver.stem, folder, options, headless=False)
     # The production export discovers its adjacent pack. It rejects --path and --main-pack.
@@ -53,11 +54,13 @@ def run_route(engine, pack_hash, label, flags, index, frozen_driver):
     return folder, record["result"]
 
 
-def main():
+def main(timing_only=False):
     template = ROOT / "dist/TerraForest.exe"
     native = sorted((ROOT / "addons").glob("*/bin/*.windows.template_release.x86_64.dll"))
     pack_limit = (ROOT / "dist/TerraForest.pck").stat().st_size + 16 * 2**20
-    admission = admit(ROOT, report_bytes=50 * 2**20, scratch_bytes=pack_limit + template.stat().st_size
+    # The export writes a receipt, driver and export log. Each subsequent
+    # route admits its own logs and images in execute() before game launch.
+    admission = admit(ROOT, report_bytes=2 * 2**20, scratch_bytes=pack_limit + template.stat().st_size
                       + sum(path.stat().st_size for path in native))
     tag = stamp()
     output = ROOT / "reports/checks" / tag
@@ -95,8 +98,10 @@ def main():
         cut = ["--water-load-only", "--authoring-brush", "--authoring-lake-cut"]
         shores = ["--water-immediate-contact", "--water-edit-response", "--blast-only-timing"]
         passed = True
-        for label, flags in [("cut", cut), ("shores", shores + ["--water-no-captures"]),
-                             ("cut_angles", cut + ["--authoring-cut-angles"]), ("shore_angles", shores)]:
+        routes=[("cut", cut), ("shores", shores + ["--water-no-captures"])]
+        if not timing_only:
+            routes.extend([("cut_angles", cut + ["--authoring-cut-angles"]), ("shore_angles", shores)])
+        for label, flags in routes:
             folder, result = run_route(engine, record["pack_sha256"], label, flags, index, frozen_driver)
             record["runs"][label] = str(folder)
             save(index, record)
@@ -104,7 +109,7 @@ def main():
             log = folder / "console.log"
             if result.get("launch_error") or not log.exists() or "WATER_GAMEPLAY_INPUT " not in log.read_text(errors="replace"):
                 break
-        return 0 if passed and len(record["runs"]) == 4 else 1
+        return 0 if passed and len(record["runs"]) == len(routes) else 1
     finally:
         for path in [pack, *(target for _, target in copies)]:
             if not path.resolve().is_relative_to(stage.resolve()):
@@ -121,4 +126,6 @@ def main():
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--timing-only",action="store_true",help="Run both deadline routes without allocating a camera-capture pass.")
+    raise SystemExit(main(parser.parse_args().timing_only))

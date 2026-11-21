@@ -336,14 +336,14 @@ var _staging_spent_us:=0
 func _receive_edit_notice()->void:
 	if stopping or (not pending_edit and _density_requests.is_empty()) or not is_inside_tree() or not is_processing() or not can_process():return
 	var ready:Array[Dictionary]=backend.poll()
-	if ready.is_empty():return
-	_dispatch_results(ready,false)
+	if not ready.is_empty():_dispatch_results(ready,false)
 	if pending_edit:_stage_with_frame_budget()
 
 # Consume an already-finished local edit before the renderer takes this frame.
 # The usual deferred notification and process pump also serve headless worlds.
 func _before_draw()->void:
-	if _hand_edit and pending_edit and OS.get_thread_caller_id()==OS.get_main_thread_id():_receive_edit_notice()
+	if pending_edit and (_hand_edit or joint_edit_pending()) and OS.get_thread_caller_id()==OS.get_main_thread_id():
+		_receive_edit_notice()
 
 func _stage_with_frame_budget()->void:
 	var frame:=Engine.get_process_frames()

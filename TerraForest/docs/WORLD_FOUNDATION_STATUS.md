@@ -1,3 +1,7 @@
+## Local water edit qualification
+
+The [Cedar Vale release measurements](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale) cover the complete wet cut, both shoreline explosions, their two camera views, detailed water, collision, and frame intervals. The finite cut completes with conserved quantities and zero main-thread receiver retries. Milestone 5 remains open for joint publication within two draws and 33.33 ms across the full footprint, including shoreline contact.
+
 ## Distant barrel chains in saved worlds
 
 The [Hidden Coast crater backlog](../issues/explosive-combat/README.md#hidden-coast-crater-backlog) includes 37 saved edits competing with background water settlement. The live store now supports 8,192 regions and generated-water packs support 160 MiB of decoded records. Stationary gameplay and save/reload confirmation remain open.

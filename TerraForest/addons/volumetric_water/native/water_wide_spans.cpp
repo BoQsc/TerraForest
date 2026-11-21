@@ -2,6 +2,8 @@
 #include "regional_water.hpp"
 #include "water_spill_hierarchy.hpp"
 #include "water_volume_query.hpp"
+#include "water_spill_columns.hpp"
+#include <godot_cpp/classes/time.hpp>
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -64,6 +66,12 @@ bool NativeWaterEquilibriumJob::advance_wet_frontier(){
 NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spans(){
     using W=NativeRegionalWater;
     auto &store=*frozen.ptr();
+    if(store.regions.size()>=128){
+        auto compact=settle_wide_prisms();
+        if(compact!=SpanResult::fallback||cancelled.load())return compact;
+    }
+    uint64_t began=Time::get_singleton()->get_ticks_usec();
+    auto mark=[&](int phase){uint64_t now=Time::get_singleton()->get_ticks_usec();phase_us[phase]+=now-began;began=now;};
     auto fallback=[&](const char *why){wide_fallback=why;return SpanResult::fallback;};
     using Key=uint64_t;
     struct Block {
@@ -83,6 +91,7 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
     double upper=-1;
     for(const auto &[k,r]:store.regions){
         if(r.ocean_state||!r.valid)return fallback("reservoir or unknown occupancy");
+        if(r.water.is_initial_zero())continue;
         const auto base=W::position(k)*8;
         for(int i=0;i<512;++i)if(r.water[i]){
             auto shape=W::profile(r,i);
@@ -118,6 +127,7 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
         }
     }
     const Vector3i directions[]={{0,-1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1},{0,1,0}};
+    mark(0);
     const WaterCellProfile air;
     auto shape_at=[&](const Span &s,const Block &b){return s.air?air:W::profile(*b.region,W::index(s.base));};
     std::unordered_set<Key> missing;
@@ -195,6 +205,7 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
     if(source_id<0)return SpanResult::fallback;
     std::vector<unsigned char> reached(spans.size());
     auto body=flood({source_id},Passage::upper,reached);
+    mark(1);
     if(cancelled.load())return SpanResult::fallback;
     wide_spans=body.size();wide_cells=0;
     for(int i:body)wide_cells+=spans[i].length;
@@ -310,6 +321,7 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
         return W::key(spans[a].base)<W::key(spans[b].base);
     });
     for(size_t j=0;j<quantity-assigned;++j)++spans[fractions[j]].after;
+    mark(2);
     auto first=std::find_if(body.begin(),body.end(),[&](int i){return spans[i].after>0;});
     if(first==body.end())return SpanResult::fallback;
     std::vector<unsigned char> wet(spans.size());
@@ -322,6 +334,30 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
     if(!separate_pools&&needs_drain){
         flood(std::move(receivers),Passage::drain,wet);
         separate_pools=std::any_of(body.begin(),body.end(),[&](int i){return spans[i].before&&!wet[i];});
+    }
+    mark(3);
+    if(separate_pools){
+        Vector3i lo(500,64,500),hi;
+        for(const auto &entry:blocks){
+            const auto p=W::position(entry.first);lo=lo.min(p);hi=hi.max(p);
+        }
+        const auto extent=hi-lo+Vector3i(1,1,1);
+        const size_t slots=size_t(extent.x)*extent.y*extent.z;
+        // Dense pointers over a compact edit give each neighbour one indexed
+        // lookup. Distant or disjoint selections keep the sparse path below.
+        if(slots<=blocks.size()*4){
+            std::vector<const Block*> grid(slots);
+            auto index=[&](Vector3i p){auto q=p-lo;return q.x+extent.x*(q.y+extent.y*q.z);};
+            for(const auto &[k,block]:blocks)grid[index(W::position(k))]=&block;
+            auto find_span=[&](const Vector3i &p){
+                if(!W::in_domain(p))return -1;
+                const Vector3i coord(p.x>>3,p.y>>3,p.z>>3);
+                if(coord!=coord.clamp(lo,hi))return -1;
+                auto *block=grid[index(coord)];return block?block->ids[W::index(p)]:-1;
+            };
+            auto get_shape=[&](const Span &s){return W::profile(*blocks.at(W::region_key(s.base)).region,W::index(s.base));};
+            separate_pools=!settle_spill_columns(spans,body,reached,find_span,get_shape,upper,quantity,hierarchy_cell_limit,cancelled,wide_basin_leaves);
+        }
     }
     if(separate_pools){
         // At every elevation, horizontally adjacent clear columns with the
@@ -431,6 +467,7 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
         }
     }
     if(cancelled.load())return SpanResult::fallback;
+    mark(4);
     std::unordered_set<Key> dirty;
     for(int i:body){
         const auto &s=spans[i];const auto k=W::region_key(s.base);
@@ -445,6 +482,7 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
     for(auto &[k,r]:store.regions)r.settle_pending=false;
     if(!open_boundary){closed_basins=1;closed_basin_ml=quantity;}
     visited_cells=wide_cells;
+    mark(5);
     return SpanResult::settled;
 }
 }
