@@ -46,9 +46,81 @@ func check_level_section()->void:
   else:contact=contact and hit.hit and absf(hit.get("point",Vector3.ZERO).y-41.75)<.00001 and water.depth_at(start-Vector3.UP*.26)>0
  check(sections==1 and contact,"A level volume reaches all four sides of an obstacle within 2 cm and leaves its solid interior dry")
 
+func check_open_sheet()->void:
+ var cells:Dictionary={}
+ for z in range(9,12):
+  for y in range(9,12):
+   for x in range(9,13):cells[Vector3i(x,y,z)*8]=[500,500,0]
+ for z in range(77,91):
+  for x in range(77,99):
+   cells[Vector3i(x,82,z)]=[0,500,125000]
+   cells[Vector3i(x,83,z)]=[0,500,54000+1800*maxi(0,x-85)+int((x+z)%2)]
+   cells[Vector3i(x,84,z)]=[0,500,0]
+ var stores:Array=[]
+ var open_owners:=0
+ for indexed:bool in [false,true]:
+  var water:=fixture(cells)
+  for step in 256:
+   var packet:Dictionary=water.next_mesh_batch(false,indexed)
+   if packet.is_empty():break
+   if packet.has("coordinate") and packet.faces.get("open_sheet",false):open_owners+=1
+   if packet.complete:water.commit_mesh_batch(packet.batch)
+  stores.append(water)
+ var matching:=true
+ for iz in 15:
+  for ix in 34:
+   var point:=Vector3(40.05+ix*.232,42.3,40.06+iz*.257)
+   var a:Dictionary=stores[0].raycast_surface(point,point-Vector3.UP)
+   var b:Dictionary=stores[1].raycast_surface(point,point-Vector3.UP)
+   matching=matching and a.hit and b.hit and absf(a.get("point",Vector3.ZERO).y-b.get("point",Vector3.ZERO).y)<.00002
+   if a.hit and b.hit:
+    matching=matching and stores[1].depth_at(b.point-Vector3.UP*.001)>0 and stores[1].depth_at(b.point+Vector3.UP*.001)==0
+ check(open_owners>=2 and matching,"Two open lake tiles share the clipped reference head, immersion and seam for both a one-millilitre step and a graded surface")
+
+func check_inclined_faces()->void:
+ var cells:Dictionary={}
+ for z in range(81,86):
+  for x in range(83,92):
+   cells[Vector3i(x,82,z)]=[0,500,0]
+   cells[Vector3i(x,83,z)]=[0,500,125000 if x>=88 else 30000+14000*(x-83)]
+   cells[Vector3i(x,84,z)]=[0,500,12000*(x-87) if x>=88 else 0]
+ # Leave a hole through both tiers and a dry opening below the suspended sheet.
+ for y in range(83,85):cells[Vector3i(87,y,83)]=[500,500,0]
+ var stores:Array[RefCounted]=[]
+ var optimized:=0
+ for indexed:bool in [false,true]:
+  var water:=fixture(cells)
+  for step in 128:
+   var packet:Dictionary=water.next_mesh_batch(false,indexed)
+   if packet.is_empty():break
+   if packet.has("coordinate") and indexed:optimized+=int(packet.faces.get("monotone_cells",0))
+   if packet.complete:water.commit_mesh_batch(packet.batch)
+  stores.append(water)
+ var agreeing:=true
+ var hits:=0
+ var rays:Array=[]
+ for iz in 15:
+  for ix in 29:
+   var p:=Vector3(41.57+.147*ix,42.9,40.57+.143*iz)
+   rays.append([p,p-Vector3.UP*2]);rays.append([p-Vector3.UP*2,p])
+ for iy in 11:
+  for ix in 17:
+   var p:=Vector3(41.69+ix*.239,41.43+.066*iy,40.27)
+   rays.append([p,p+Vector3.BACK*3])
+ for ray:Array in rays:
+  var a:Dictionary=stores[0].raycast_surface(ray[0],ray[1])
+  var b:Dictionary=stores[1].raycast_surface(ray[0],ray[1])
+  if a.hit:hits+=1
+  if a.hit!=b.hit or (a.hit and Vector3(a.point).distance_to(b.point)>.0001):
+   if agreeing:print("Inclined face mismatch ",ray," ",a," ",b)
+   agreeing=false
+ check(optimized>0 and hits>200 and agreeing,"Inclined sides, underside, tier and obstacle contacts agree with the volume boundary to 0.1 mm across a region seam")
+
 func run_equilibrium()->void:
  await check_regional_prisms()
  check_level_section()
+ check_inclined_faces()
+ check_open_sheet()
  var high:=Vector3i(83,83,83);var low:=high+Vector3i.DOWN
  # Old full coastal cells could round up by one ml without a pending flag.
  var legacy_surplus:=fixture({high:[0,500,125001],low:[0,500,0]})
@@ -170,5 +242,23 @@ func run_equilibrium()->void:
   check(editable.accept_local_edit(transaction).is_empty() and editable.accept_local_edit(superseded).is_empty(),"Replayed or superseded resident edits leave the accepted state intact")
   check(published.has("batch") and editable.commit_mesh_batch(published.batch),"The same resident transaction supplies a publishable detailed picking surface")
  else:check(false,"Resident transaction acquired the bounded edit")
+ editable=fixture(cross_region)
+ for attempt in 64:
+  var packet:Dictionary=editable.next_mesh_batch()
+  if packet.is_empty():break
+  if packet.complete:editable.commit_mesh_batch(packet.batch)
+ editable.settle_after_edit(wide)
+ transaction=editable.capture_local_edit(true)
+ superseded=editable.capture_local_edit(true)
+ if transaction!=null and superseded!=null:
+  superseded.cancel();superseded.prepare([])
+  check(editable.accept_local_edit(superseded).is_empty(),"Cancelled wide preparation preserves the old revision")
+  transaction.prepare([])
+  var published:Dictionary=editable.accept_local_edit(transaction)
+  check(published.get("resident_transaction",false) and amounts(editable)==reference,"Wide local publication agrees with scalar spill on both sides of the region seam")
+  check(published.has("batch") and editable.commit_mesh_batch(published.batch),"Wide edit supplies picking, immersion and the detailed render batch together")
+  reopened=ClassDB.instantiate("NativeRegionalWater")
+  check(reopened.restore_snapshot(snapshot(editable)) and amounts(reopened)==reference,"Wide local quantities persist across restart")
+ else:check(false,"Wide field transaction captured the resident region seam")
  print("WATER_EQUILIBRIUM checks=",checks," failures=",failures)
  quit(failures)

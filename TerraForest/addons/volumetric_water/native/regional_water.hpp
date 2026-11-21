@@ -54,6 +54,7 @@ class NativeWaterMeshJob;
 class NativeWaterEquilibriumJob;
 class NativeWaterLocalEdit;
 struct EquilibriumCaptureState;
+enum class WaterBrickGeometry : uint8_t { mixed,air,solid };
 struct TerrainWaterContacts {uint64_t bytes=0;std::array<std::vector<WaterCellProfile::Triangle>,512> floors;};
 struct StructureWaterContacts {uint64_t bytes=sizeof(std::shared_ptr<const WaterSolidProfile>)*512;std::array<std::shared_ptr<const WaterSolidProfile>,512> cells;};
 // Immutable hand-off: only the terrain worker writes this object. No scene,
@@ -73,6 +74,8 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     std::atomic<bool> cached_cancelled{false};
     uint64_t cached_started_us=0,cached_worker_us=0;
     bool terrain_prepared=false,structure_only=false,general_terrain=false;
+    WaterBrickGeometry brick_geometry=WaterBrickGeometry::mixed;
+    void classify_uniform_terrain();
     godot::AABB structure_edit_bounds;
     // Exact cell-local density samples identify identical terrain-only hulls.
     std::map<std::array<uint32_t,8>,std::shared_ptr<const WaterSolidProfile>> density_profiles;
@@ -127,6 +130,7 @@ class NativeRegionalWater : public godot::RefCounted {
         std::shared_ptr<const TerrainWaterContacts> contacts;
         std::shared_ptr<const StructureWaterContacts> structures;
         bool valid=false,has_density=false,replace_water=false;
+        WaterBrickGeometry brick_geometry=WaterBrickGeometry::mixed;
         // Event-driven settling; the pending flag survives snapshots. The
         // cursor is disposable: replaying a scan never replays a transfer.
         bool settle_pending=false;
@@ -145,6 +149,7 @@ class NativeRegionalWater : public godot::RefCounted {
         uint32_t encoded_vacancies() const;
     };
     static WaterCellProfile profile(const Region &r,int i) {
+        if(r.brick_geometry==WaterBrickGeometry::air){WaterCellProfile clear;clear.cut=true;return clear;}
         if(r.floor[i]==r.ceiling[i])return WaterCellProfile::make(nullptr,false,r.floor[i],r.ceiling[i]);
         float d[8];int x=i%8,y=(i/8)%8,z=i/64;
         for(int c=0;c<8;++c)d[c]=r.density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
@@ -180,7 +185,8 @@ class NativeRegionalWater : public godot::RefCounted {
         godot::PackedInt32Array indices;
         std::vector<uint16_t> owners;
         std::vector<ReconstructedCell> reconstructed;
-        uint64_t bytes() const {return uint64_t(vertices.size())*sizeof(godot::Vector3)+uint64_t(indices.size())*sizeof(int32_t)+owners.size()*sizeof(uint16_t)+reconstructed.size()*sizeof(ReconstructedCell);}
+        godot::PackedByteArray render_digest;
+        uint64_t bytes() const {return uint64_t(vertices.size())*sizeof(godot::Vector3)+uint64_t(indices.size())*sizeof(int32_t)+owners.size()*sizeof(uint16_t)+reconstructed.size()*sizeof(ReconstructedCell)+render_digest.size();}
         godot::Vector3 vertex(int index) const {return vertices[indices[index]];}
         // While the ocean proxy is visible, only a resident free surface
         // coincident with that plane can supply a visible interaction owner.
@@ -335,12 +341,13 @@ class NativeRegionalWater : public godot::RefCounted {
     enum class SurfaceStreams { All, Indexed, Query };
     bool build_level_surface(Key owner,const std::array<const Region*,27> &halo,SurfaceMesh &output) const;
     static void identify_render_surface(SurfaceMesh &surface);
+    bool build_open_sheet(Key owner,const std::array<const Region*,27> &halo,SurfaceMesh &surface) const;
     SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false,const std::atomic<bool> *cancel=nullptr,WaterSurfaceProfileCache *profiles=nullptr,SurfaceStreams streams=SurfaceStreams::All) const;
     bool decode(const godot::PackedByteArray &data,bool install,bool prepare_render=true);
 protected: static void _bind_methods();
 public:
     godot::Array pending_edit_patches() const;
-    godot::Ref<NativeWaterLocalEdit> capture_local_edit() const;
+    godot::Ref<NativeWaterLocalEdit> capture_local_edit(bool wide=false) const;
     godot::Dictionary accept_local_edit(const godot::Ref<NativeWaterLocalEdit> &edit);
     int64_t interrupt_relaxation();
     void settle_after_edit(const godot::AABB &bounds);
@@ -453,6 +460,11 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     std::mutex template_mutex;
     std::unordered_multimap<uint64_t,ReceiverTemplate> receiver_templates;
     size_t template_bytes=0,template_hits=0;
+    std::array<NativeRegionalWater::Region,2> homogeneous_receivers;
+    size_t classified_receivers=0;
+    using LayerSignature=std::array<int16_t,9>;
+    std::map<LayerSignature,NativeRegionalWater::Region> layered_receivers;
+    size_t reused_layered_receivers=0;
     bool prepare_receivers();
     size_t capture_cursor=0;
     std::shared_ptr<EquilibriumCaptureState> capture_selection;
@@ -464,6 +476,8 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     SpanResult settle_wide_spans();
     SpanResult settle_wide_prisms();
     size_t prism_nodes=0,prism_edges=0;
+    std::array<uint64_t,5> prism_us{};
+    uint64_t receiver_us=0;
     const char *prism_fallback=nullptr;
     size_t wide_spans=0,wide_cells=0,wide_basin_leaves=0;
     const char *wide_fallback=nullptr;
@@ -485,15 +499,24 @@ class NativeWaterLocalEdit : public godot::RefCounted {
     friend class NativeRegionalWater;
     godot::Ref<NativeRegionalWater> store;
     uint64_t owner=0,revision=0,survey=0,publication=0;
+    size_t receiver_slots=0;
+    std::vector<uint64_t> new_receivers;
+    godot::Array field_groups;
+    godot::AABB field_bounds;
+    godot::Dictionary solid_hulls;
+    int64_t field_revision=-1,field_epoch=-1;
+    bool sample_edit_occupancy(godot::Array &patches);
     std::vector<uint64_t> sampled_regions;
     std::unordered_set<uint64_t> changed_regions;
     godot::Array packets;
     godot::Dictionary result;
-    std::atomic<bool> started{false},ready{false};
+    std::atomic<bool> started{false},ready{false},cancelled{false};
     bool complete=false,consumed=false;
 protected: static void _bind_methods();
 public:
-    void prepare(const godot::Array &patches);
+    bool set_field(const godot::Array &groups,const godot::AABB &bounds,const godot::Dictionary &solids,int64_t rev,int64_t epoch);
+    void cancel(){cancelled.store(true);}
+    void prepare(const godot::Array &patches,bool prepare_render=false);
 };
 
 // Worker owns an immutable local halo, never the live water store or scene.

@@ -1,6 +1,6 @@
 
 
-The [Cedar Vale release results](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale) record the worker-owned finite receiver transaction, sea and lake contact, the camera pairs and the remaining two-frame failure. The [full-cut physics and timing decision](../../docs/WORLD_FOUNDATION_STATUS.md#full-cut-physics-and-timing-decision) records the resting-body correction.
+The sea and lake craters passed the 2 cm shoreline checks in the packaged build with shared immutable terrain. In the run without captures, the sea first showed matching water and collision at 45.651 ms and the lake at 112.925 ms. The complete 64 m cut first matched at 420.700 ms. All three exceed the two-frame limit. [Cedar Vale release results and camera pairs](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale) · [Resting-body correction](../../docs/WORLD_FOUNDATION_STATUS.md#full-cut-physics-and-timing-decision)
 The [changed-triangle comparison](../../docs/WORLD_FOUNDATION_STATUS.md#changed-triangle-publication-trial) records the rejected 8 m page trial and actual packaged timings. The two-frame edit milestone remains open.
 
 The [joint publication measurements](../../docs/WORLD_FOUNDATION_STATUS.md#joint-publication-on-the-packaged-shoreline-route) cover the full cut, both shoreline camera pairs and the outstanding two-frame deadline.

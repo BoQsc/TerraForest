@@ -10,6 +10,7 @@ import shutil
 import subprocess
 
 from development_storage import ROOT, admit
+from maintain_water_captures import maintain
 from run_godot_check import command_for, execute
 
 
@@ -54,7 +55,7 @@ def run_route(engine, pack_hash, label, flags, index, frozen_driver):
     return folder, record["result"]
 
 
-def main(timing_only=False):
+def main(timing_only=False, selected_routes=None):
     template = ROOT / "dist/TerraForest.exe"
     native = sorted((ROOT / "addons").glob("*/bin/*.windows.template_release.x86_64.dll"))
     pack_limit = (ROOT / "dist/TerraForest.pck").stat().st_size + 16 * 2**20
@@ -98,17 +99,30 @@ def main(timing_only=False):
         cut = ["--water-load-only", "--authoring-brush", "--authoring-lake-cut"]
         shores = ["--water-immediate-contact", "--water-edit-response", "--blast-only-timing"]
         passed = True
-        routes=[("cut", cut), ("shores", shores + ["--water-no-captures"])]
-        if not timing_only:
-            routes.extend([("cut_angles", cut + ["--authoring-cut-angles"]), ("shore_angles", shores)])
-        for label, flags in routes:
-            folder, result = run_route(engine, record["pack_sha256"], label, flags, index, frozen_driver)
+        workloads = {"cut": cut, "shores": shores + ["--water-no-captures"],
+                     "cut_angles": cut + ["--authoring-cut-angles"], "shore_angles": shores}
+        routes = selected_routes or (["cut", "shores"] if timing_only else list(workloads))
+        for label in routes:
+            folder, result = run_route(engine, record["pack_sha256"], label, workloads[label], index, frozen_driver)
             record["runs"][label] = str(folder)
+            if result.get("exit_code") is not None:
+                record.setdefault("closed_runs", {})[str(folder)] = digest(folder / "run.json")
             save(index, record)
             passed &= result["passed"]
             log = folder / "console.log"
             if result.get("launch_error") or not log.exists() or "WATER_GAMEPLAY_INPUT " not in log.read_text(errors="replace"):
                 break
+            expected = 4 if label == "cut_angles" else 10 if label == "shore_angles" else 0
+            if expected and len(list(folder.glob("*.png"))) == expected and result.get("exit_code") is not None:
+                family = "authoring_cut_angles" if label == "cut_angles" else "water_player_world"
+                try:
+                    receipt = maintain(True, ROOT, 1, {family})
+                    record.setdefault("capture_archives", {})[label] = receipt["manifests"]
+                except OSError as error:
+                    # An active game or build keeps its ownership. The following
+                    # route still goes through its ordinary output admission.
+                    record.setdefault("retention_wait", {})[label] = str(error)
+                save(index, record)
         return 0 if passed and len(record["runs"]) == len(routes) else 1
     finally:
         for path in [pack, *(target for _, target in copies)]:
@@ -127,5 +141,9 @@ def main(timing_only=False):
 
 if __name__ == "__main__":
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--timing-only",action="store_true",help="Run both deadline routes without allocating a camera-capture pass.")
-    raise SystemExit(main(parser.parse_args().timing_only))
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--timing-only",action="store_true",help="Run both deadline routes without allocating a camera-capture pass.")
+    selection.add_argument("--route", choices=["cut", "shores", "cut_angles", "shore_angles"], action="append",
+                           help="Run a named packaged route. Repeat to share the same staged build across routes.")
+    args = parser.parse_args()
+    raise SystemExit(main(args.timing_only, list(dict.fromkeys(args.route)) if args.route else None))

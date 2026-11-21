@@ -159,6 +159,17 @@ func run()->void:
 	var canonical:PackedByteArray=core.execute(Codec.command(1,[992,992,32,1,build_epoch]))
 	var shared_mesh:PackedByteArray=frozen.execute(owner)
 	check(Codec.reply_ok(shared_mesh) and shared_mesh.slice(12)==canonical.slice(12),"resident cells reproduce the rendered mesh and collision packet")
+	check_compact_brick_survey()
+	var sealed:RefCounted=core.capture_edit_field(bounds,state.revision,build_epoch)
+	var lane:RefCounted=sealed.capture_contact_core(bounds,state.revision,build_epoch)
+	var neighbor:RefCounted=sealed.capture_contact_core(Rect2i(1008,992,16,16),state.revision,build_epoch)
+	check(lane!=null and neighbor!=null and sealed.capture_contact_core(Rect2i(864,864,32,32),state.revision,build_epoch)==null,"worker views share only the captured extent")
+	check(not Codec.reply_ok(sealed.execute(Codec.brush(point,point,4,0,false,0))) and not Codec.reply_ok(lane.execute(Codec.command(12))) and not lane.has_method("restore_field_patch"),"readers reject writes, reset and cancellation of another reader")
+	sealed=null
+	var contact_packet:=Codec.command(43,[state.revision,build_epoch,1008,40,1008])
+	var pinned_boundary:PackedByteArray=core.execute(contact_packet)
+	check(lane.execute(owner)==shared_mesh and neighbor.execute(contact_packet)==pinned_boundary,"borrowed pages retain exact terrain, physics and water across release of the parent view")
+	check(not Codec.reply_ok(neighbor.execute(Codec.command(43,[state.revision,build_epoch,872,40,872]))),"an out-of-bounds water contact cannot synthesize missing terrain")
 	for coord in [Vector3i(1008,40,1008),Vector3i(1004,36,1004),Vector3i(992,40,992)]:
 		var contact:=Codec.command(43,[state.revision,build_epoch,coord.x,coord.y,coord.z])
 		var actual:PackedByteArray=frozen.execute(contact)
@@ -166,6 +177,7 @@ func run()->void:
 	# Seed a four-owner rim at a regional shoreline. Two outstanding edits
 	# invalidate overlapping prisms on either side of the cell-owner seam.
 	check(Codec.reply_ok(core.execute(Codec.brush(point,point,9,0,true,2))),"author both sides of the resident seam before the local cuts")
+	check(neighbor.execute(contact_packet)==pinned_boundary and lane.execute(owner)==shared_mesh,"advancing the live density revision leaves both sealed workers on their original geometry")
 	for x in [976,992,1008]:
 		for z in [976,992,1008]:
 			check(Codec.reply_ok(core.execute(Codec.command(44,[x,z,16,1,build_epoch]))),"resident triangle baseline populates")
@@ -256,3 +268,37 @@ func run()->void:
 	store.close()
 	print("TERRAIN_FIELD_PATCH checks=%d failures=%d"%[checks,failures])
 	quit(1 if failures else 0)
+
+func check_compact_brick_survey()->void:
+	var authority:RefCounted=ClassDB.instantiate("TerrainCore")
+	var p:=Vector3(112,200,112)
+	authority.execute(Codec.command(6,[1703,3]))
+	authority.execute(Codec.brush(p,p,32,1,true,2))
+	authority.execute(Codec.brush(p,p,16,1,false,0))
+	var revision:int=authority.field_patch_state().revision
+	var epoch:int=authority.execute(Codec.command(13)).decode_u32(12)
+	var reader:RefCounted=authority.capture_edit_field(Rect2i(96,96,32,32),revision,epoch)
+	var origins:=PackedInt32Array([112,200,112,88,200,112,96,200,112,12,200,12])
+	var classes:PackedByteArray=reader.classify_water_bricks(origins,revision,epoch)
+	check(classes==PackedByteArray([1,2,0,0]) and reader.classify_water_bricks(origins,revision+1,epoch).is_empty(),"a sealed field distinguishes air, solid, crossing and unsurveyed water receivers on its exact revision")
+	for i in 3:
+		var command:=Codec.command(43,[revision,epoch,origins[3*i],200,112])
+		var raw:PackedByteArray=authority.execute(command)
+		var exact:PackedByteArray=reader.execute(command)
+		check(exact==raw and Codec.reply_ok(exact) and ((exact.decode_u32(24)>0)==(i==2)),"receiver classification agrees with the authoritative clipped triangle packet")
+	var planes:=PackedInt32Array([108,184,108,112,184,112])
+	var survey:PackedByteArray=reader.classify_water_bricks(planes,revision,epoch,true)
+	var reference:=PackedByteArray()
+	var identical:=survey.size()==34 and survey[0]==3 and survey.slice(0,17)==survey.slice(17,34)
+	for i in 2:
+		var x:=planes[3*i]
+		var z:=planes[3*i+2]
+		var packet:PackedByteArray=authority.execute(Codec.command(43,[revision,epoch,x,184,z]))
+		identical=identical and Codec.reply_ok(packet) and packet.decode_u32(24)>0
+		for v in packet.decode_u32(20):
+			var offset:=28+12*v
+			packet.encode_float(offset,packet.decode_float(offset)-x)
+			packet.encode_float(offset+8,packet.decode_float(offset+8)-z)
+		if i==0:reference=packet
+		else:identical=identical and reference==packet
+	check(identical,"horizontal receiver strata reproduce every extracted triangle, interpolated density and solid mask under translation")

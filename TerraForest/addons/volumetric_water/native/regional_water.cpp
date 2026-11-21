@@ -133,6 +133,11 @@ int64_t NativeWaterTerrainPatch::prepare_structures(){
 int64_t NativeWaterTerrainPatch::sample_terrain(Object *core,int64_t budget,int64_t rev,int64_t cancel){
     return sample_boundary(core,budget,rev,cancel,nullptr);
 }
+void NativeWaterTerrainPatch::classify_uniform_terrain(){
+    if(!structure_hulls.empty()||structure_only||contacts||structures)return;
+    if(std::all_of(floor.begin(),floor.end(),[](auto h){return h==0;}))brick_geometry=WaterBrickGeometry::air;
+    else if(std::all_of(floor.begin(),floor.end(),[](auto h){return h==500;}))brick_geometry=WaterBrickGeometry::solid;
+}
 int64_t NativeWaterTerrainPatch::sample_boundary(Object *core,int64_t budget,int64_t rev,int64_t cancel,const PackedByteArray *packet){
     if(status!=0||!core||budget<1||budget>2048)return status;
     if(revision<0){revision=rev;epoch=cancel;}
@@ -141,7 +146,8 @@ int64_t NativeWaterTerrainPatch::sample_boundary(Object *core,int64_t budget,int
     if(boundary.is_empty()){
         if(packet)boundary=*packet;
         else{
-            PackedByteArray query;query.resize(24);query.encode_u32(0,budget>=729&&core->is_class("TerrainCore")?48:32);query.encode_u32(4,rev);query.encode_u32(8,cancel);
+            const bool native_field=core->is_class("TerrainFieldReader")||core->is_class("TerrainCore");
+            PackedByteArray query;query.resize(24);query.encode_u32(0,budget>=729&&native_field?48:32);query.encode_u32(4,rev);query.encode_u32(8,cancel);
             query.encode_u32(12,coord.x*4);query.encode_u32(16,coord.y*4);query.encode_u32(20,coord.z*4);
             boundary=core->call("execute",query);
         }
@@ -156,7 +162,7 @@ int64_t NativeWaterTerrainPatch::sample_boundary(Object *core,int64_t budget,int
                 const int x=i%8,y=(i/8)%8,z=i/64;
                 if(coord.y*8+y<2||coord.y*8+y>=509||boundary[32+x/2+4*(y/2)+16*(z/2)])floor[i]=500;
             }
-            boundary=PackedByteArray();terrain_prepared=true;return prepare_structures();
+            classify_uniform_terrain();boundary=PackedByteArray();terrain_prepared=true;return prepare_structures();
         }
         if(vertices>4096||indices>24576||indices%3||boundary.size()!=28+int64_t(vertices)*12+int64_t(indices)*4+(boundary.decode_u32(4)==43?729*4+64:0))return status=-2;
         for(uint32_t i=0;i<indices;++i)if(boundary.decode_u32(28+vertices*12+i*4)>=vertices)return status=-2;
@@ -178,7 +184,7 @@ int64_t NativeWaterTerrainPatch::sample_boundary(Object *core,int64_t budget,int
                     const int x=(i%8)/2,y=(i/8)%8,z=i/64,cell_y=coord.y*8+y;
                     if(cell_y<2||cell_y>=509||boundary[at+729*4+x+4*(y/2)+16*(z/2)])floor[i]=500;
                 }
-                boundary=PackedByteArray();terrain_prepared=true;
+                classify_uniform_terrain();boundary=PackedByteArray();terrain_prepared=true;
                 return prepare_structures();
             }
         }
@@ -332,7 +338,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("cell_geometry","point"),&NativeRegionalWater::cell_geometry);
     ClassDB::bind_method(D_METHOD("next_requests","limit","ocean_only"),&NativeRegionalWater::next_requests,DEFVAL(true));
     ClassDB::bind_method(D_METHOD("pending_edit_patches"),&NativeRegionalWater::pending_edit_patches);
-    ClassDB::bind_method(D_METHOD("capture_local_edit"),&NativeRegionalWater::capture_local_edit);
+    ClassDB::bind_method(D_METHOD("capture_local_edit","wide"),&NativeRegionalWater::capture_local_edit,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("accept_local_edit","edit"),&NativeRegionalWater::accept_local_edit);
     ClassDB::bind_method(D_METHOD("next_request"),&NativeRegionalWater::next_request);
     ClassDB::bind_method(D_METHOD("accept_patch","patch"),&NativeRegionalWater::accept_patch);
@@ -751,6 +757,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
     // cells until conservative displacement can find receiving capacity.
     solid_cache_bytes=solid_cache_bytes-old_bytes+new_bytes;it->second.structures=patch->structures;
     it->second.density=patch->density;it->second.has_density=true;it->second.occupancy_version=13;it->second.contacts=patch->contacts;
+    it->second.brick_geometry=patch->brick_geometry;
     if(mesh_set.insert(k).second)meshes.push_back(k);
     it->second.floor=patch->floor;it->second.ceiling=patch->ceiling;it->second.valid=true;sampled+=patch->structure_only?0:729;
     request_set.erase(k);requests.erase(std::remove(requests.begin(),requests.end(),k),requests.end());
@@ -1916,7 +1923,8 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
             mesh=build_surface(k,true,false,nullptr,nullptr,indexed_only?SurfaceStreams::Indexed:SurfaceStreams::All);
         }
         if(!mesh.valid){cancel_mesh_batch();surface_budget_failed=true;result["failure"]="Water boundary preparation failed at "+String(position(k))+": "+String(mesh.faces.get("failure","unspecified geometry failure"));return result;}
-        const uint64_t bytes=uint64_t(mesh.query_vertices.size())*sizeof(Vector3)+uint64_t(mesh.query_indices.size())*sizeof(int32_t)+mesh.owners.size()*sizeof(uint16_t)+mesh.reconstructed.size()*sizeof(ReconstructedCell);
+        const PackedByteArray digest=mesh.faces.get("render_digest",PackedByteArray());
+        const uint64_t bytes=uint64_t(mesh.query_vertices.size())*sizeof(Vector3)+uint64_t(mesh.query_indices.size())*sizeof(int32_t)+mesh.owners.size()*sizeof(uint16_t)+mesh.reconstructed.size()*sizeof(ReconstructedCell)+digest.size();
         const auto old=published_surfaces.find(k);
         const uint64_t old_bytes=old==published_surfaces.end()?0:old->second.bytes();
         const int64_t projected=int64_t(query_cache_bytes)+staged_surface_delta+int64_t(bytes)-int64_t(old_bytes);
@@ -1930,7 +1938,7 @@ Dictionary NativeRegionalWater::next_mesh_batch(bool background,bool indexed_onl
         if(mesh.query_vertices.is_empty()&&!published_surfaces.count(k))continue;
         Array arrays;arrays.resize(Mesh::ARRAY_MAX);
         arrays[Mesh::ARRAY_VERTEX]=mesh.vertices;arrays[Mesh::ARRAY_NORMAL]=mesh.normals;arrays[Mesh::ARRAY_TEX_UV]=mesh.uv;arrays[Mesh::ARRAY_COLOR]=mesh.colors;
-        staged_surfaces[k]={mesh.query_vertices,mesh.query_indices,std::move(mesh.owners),std::move(mesh.reconstructed)};
+        staged_surfaces[k]={mesh.query_vertices,mesh.query_indices,std::move(mesh.owners),std::move(mesh.reconstructed),digest};
         Array compact;compact.resize(Mesh::ARRAY_MAX);
         compact[Mesh::ARRAY_VERTEX]=mesh.render_vertices;compact[Mesh::ARRAY_NORMAL]=mesh.render_normals;compact[Mesh::ARRAY_TEX_UV]=mesh.render_uv;compact[Mesh::ARRAY_COLOR]=mesh.render_colors;compact[Mesh::ARRAY_INDEX]=mesh.render_indices;
         result["render_arrays"]=compact;result["coordinate"]=position(k);result["origin"]=Vector3(position(k))*4;result["faces"]=mesh.faces;result["arrays"]=indexed_only?compact:arrays;result["vertices"]=mesh.render_indices.size();break;
@@ -2103,7 +2111,8 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     for(int z=-1;z<=1;++z)for(int y=-1;y<=1;++y)for(int x=-1;x<=1;++x){auto q=owner_coordinate+Vector3i(x,y,z);
         if(q.x>=0&&q.x<500&&q.y>=0&&q.y<64&&q.z>=0&&q.z<500)region_halo[x+1+3*(y+1+3*(z+1))]=surface_region(key(q),snapshot);
     }
-    if(streams==SurfaceStreams::Indexed&&!include_contacts&&build_level_surface(k,region_halo,output)){
+    if(streams==SurfaceStreams::Indexed&&!include_contacts&&
+       (build_open_sheet(k,region_halo,output)||build_level_surface(k,region_halo,output))){
         identify_render_surface(output);
         return output;
     }
@@ -2266,7 +2275,11 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
             auto &sample=corner_samples[x+2+dx+13*(y+2+12*(z+2+dz))];
             if(sample.reference!=reference)sample={reference,corner_height(p,{dx*.5,reference-p.y*.5,dz*.5},reference)};
             c.heights[corner]=sample.height;
-            c.reconstructed|=std::abs(std::clamp(c.heights[corner],0.,.5)-c.head*.001)>.00001;
+            // An open column on the free surface shares the same four corner
+            // heights with its neighbours even if their ledgers differ by a
+            // single millilitre. Stacked/clipped cells keep the contact tolerance.
+            const double tolerance=c.amount&&c.head<500&&c.shape.is_full_air()?1e-12:.00001;
+            c.reconstructed|=std::abs(std::clamp(c.heights[corner],0.,.5)-c.head*.001)>tolerance;
         }
         if(c.reconstructed){c.rectangular=false;c.full=false;
             if(x>=0&&x<8&&y>=0&&y<8&&z>=0&&z<8)output.reconstructed.push_back({uint16_t(index(p)),c.heights});}
@@ -2288,42 +2301,41 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     };
     // Cache the clipped boundary, including vertices introduced by polygon
     // subtraction. Original solid vertices alone miss T-junctions at contacts.
-    auto cap_only=[&](Vector3i p,CellBoundary &cell){
+    int monotone_cells=0;
+    auto exposed_monotone_faces=[&](Vector3i p,CellBoundary &cell){
         if(streams!=SurfaceStreams::Indexed||include_contacts||!cell.has_head||cell.shape.solid||
            cell.shape.ceiling!=500||(!cell.reconstructed&&!cell.shape.contact))return false;
-        std::array<double,4> heights=cell.heights;
-        if(!cell.reconstructed)heights.fill(cell.head*.001);
-        for(double v:heights)if(v<=0||v>=.5)return false;
-        // The underside must be supported by solid ground or entirely wet
-        // through the opening into the cell below. A suspended volume needs
-        // the general extractor to expose its bottom.
-        auto &below=at(p-Vector3i(0,1,0));
-        if(!full(below)&&WaterCellProfile::connected(cell.shape,500,below.shape,500,0)){
-            if(below.reconstructed||!below.amount||below.head<500||below.amount<below.shape.capacity())return false;
+        for(auto d:directions)if(at(p+d).shape.solid)return false;
+        ++monotone_cells;
+        auto levels=[](const CellBoundary &c){
+            auto h=c.heights;
+            if(!c.reconstructed)h.fill(c.amount?std::min(c.shape.ceiling,c.head)*.001:0.);
+            return h;
+        };
+        const auto heights=levels(cell);
+        auto face=[&](C::Face f,C::Plane plane){cell.boundary.push_back({std::move(f),plane});};
+        water_cap_sections(cell.shape,heights,face);
+        for(int top=0;top<=1;++top){
+            const auto &n=at(p+Vector3i(0,top?1:-1,0));
+            if(n.shape.floor[0]==n.shape.ceiling&&!n.shape.cut&&!n.shape.contact)continue;
+            water_open_horizontal(cell.shape,n.shape,heights,levels(n),top,face);
         }
         const int pairs[4][4]={{1,3,0,2},{0,2,1,3},{2,3,0,1},{0,1,2,3}};
         const Vector3i sides[]={{1,0,0},{-1,0,0},{0,0,1},{0,0,-1}};
         for(int side=0;side<4;++side){
             auto &n=at(p+sides[side]);const auto &edge=pairs[side];
-            if(n.shape.solid)return false;
-            if(n.amount||n.reconstructed){
-                const double h0=n.reconstructed?n.heights[edge[2]]:n.head*.001;
-                const double h1=n.reconstructed?n.heights[edge[3]]:n.head*.001;
-                if(h0==heights[edge[0]]&&h1==heights[edge[1]])continue;
-            }
-            double limit=1000.*std::max(heights[edge[0]],heights[edge[1]]);
-            if(WaterCellProfile::connected(cell.shape,limit,n.shape,limit,side+1))return false;
+            if(n.shape.floor[0]==n.shape.ceiling&&!n.shape.cut&&!n.shape.contact)continue;
+            auto h=levels(n);
+            water_open_side(cell.shape,n.shape,side<2?0:2,!(side&1),heights[edge[0]],heights[edge[1]],
+                            h[edge[2]],h[edge[3]],face);
         }
-        water_cap_sections(cell.shape,heights,[&](C::Face f,C::Plane plane){
-            cell.boundary.push_back({std::move(f),plane});
-        });
         return true;
     };
     auto prepare_boundary=[&](Vector3i p){
         auto &cell=at(p);if(cell.boundary_built)return true;cell.boundary_built=true;
         if(!cell.amount&&!cell.reconstructed)return true;
         bool internal=full(cell);for(auto d:directions)internal&=full(at(p+d));if(internal)return true;
-        if(cap_only(p,cell))return true;
+        if(exposed_monotone_faces(p,cell))return true;
         if(!build(cell)){output.faces["failure"]="occupied-cell clipping at "+String(p);return false;}
         for(size_t piece_index=0;piece_index<cell.pieces.size();++piece_index){
             const auto &piece=cell.pieces[piece_index];
@@ -2717,6 +2729,7 @@ NativeRegionalWater::SurfaceMesh NativeRegionalWater::build_surface(Key k,bool s
     if(streams==SurfaceStreams::Indexed)identify_render_surface(output);
     output.faces["top"]=tops;output.faces["bottom"]=bottoms;output.faces["side"]=sides;
     output.faces["triangles"]=tops+bottoms+sides;output.faces["exact_cut_cell_boundary"]=true;
+    output.faces["monotone_cells"]=monotone_cells;
     return output;
 }
 void NativeRegionalWater::identify_render_surface(SurfaceMesh &output){

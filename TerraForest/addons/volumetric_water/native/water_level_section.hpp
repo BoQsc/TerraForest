@@ -40,10 +40,14 @@ template<class Emit> void water_cap_sections(const WaterCellProfile &bed,const s
     const C::Point corners[]={{0,h[0],0},{.5,h[1],0},{0,h[2],.5},{.5,h[3],.5}};
     for(auto ids:{std::array<int,3>{0,1,3},std::array<int,3>{0,3,2}}){
         const auto a=corners[ids[0]],b=corners[ids[1]],c=corners[ids[2]];
+        if(std::max({a.y,b.y,c.y})<=0||std::min({a.y,b.y,c.y})>=.5)continue;
         auto normal=(c-a).cross(b-a);normal=normal*(1./std::sqrt(normal.dot(normal)));
         C::Plane cap{normal,normal.dot(a)};
         F::Polygon triangle;
         for(auto p:{a,b,c})triangle.append({p.x,p.z});
+        // The adjoining vertical owner emits the rest of this same plane.
+        if(!F::clip(triangle,normal.x,normal.z,cap.offset)||
+           !F::clip(triangle,-normal.x,-normal.z,.5*normal.y-cap.offset)||triangle.count<3)continue;
         bed.floor_triangles([&](const WaterCellProfile::Triangle &floor){
             C::Point v[3];
             for(int i=0;i<3;++i)v[i]={floor[i].x*.5,floor[i].y*.001,floor[i].z*.5};
@@ -66,6 +70,72 @@ template<class Emit> void water_cap_sections(const WaterCellProfile &bed,const s
                 auto p=wet[i];face.push_back({p.x,(cap.offset-normal.x*p.x-normal.z*p.y)/normal.y,p.y});
             }
             emit(std::move(face),cap);
+        });
+    }
+}
+
+// A shared vertical face renders the part with water on this side and
+// reachable air on the other. Intersect the two actual terrain openings
+// before subtracting the neighbouring liquid, all in the face's own plane.
+template<class Emit> void water_open_side(const WaterCellProfile &a,const WaterCellProfile &b,
+        int axis,int side,double a0,double a1,double b0,double b1,Emit emit){
+    using F=WaterFaceClip;using C=WaterSolidClip;
+    if((a0<=b0&&a1<=b1)||std::max(a0,a1)<=0||std::min(b0,b1)>=.5)return;
+    const C::Point upper=axis==0?C::Point{0,1,-2*(a1-a0)}:C::Point{-2*(a1-a0),1,0};
+    const C::Point lower=axis==0?C::Point{0,-1,2*(b1-b0)}:C::Point{2*(b1-b0),-1,0};
+    const double x=side*.5,d=side?1.:-1.;
+    C::Plane plane{axis==0?C::Point{d,0,0}:C::Point{0,0,d},d*x};
+    a.visit_face(axis,side,500.,[&](F::Polygon wet){
+        if(!F::project(wet,{upper,a0},axis,side)||!F::project(wet,{lower,-b0},axis,side)||wet.count<3)return false;
+        b.visit_face(axis,1-side,500.,[&](const F::Polygon &opening){
+            auto exposed=wet;
+            if(!F::intersect(exposed,opening))return false;
+            C::Face face;face.reserve(exposed.count);
+            for(size_t i=0;i<exposed.count;++i){
+                auto p=exposed[i];face.push_back(axis==0?C::Point{x,p.x,p.y}:C::Point{p.x,p.y,x});
+            }
+            emit(std::move(face),plane);return false;
+        });
+        return false;
+    });
+}
+
+template<class Emit> void water_open_horizontal(const WaterCellProfile &cell,const WaterCellProfile &other,
+        const std::array<double,4> &h,const std::array<double,4> &neighbor,bool top,Emit emit){
+    using F=WaterFaceClip;using C=WaterSolidClip;
+    if(top&&(*std::max_element(h.begin(),h.end())<.5||*std::min_element(neighbor.begin(),neighbor.end())>0))return;
+    if(!top&&(*std::max_element(h.begin(),h.end())<=0||*std::min_element(neighbor.begin(),neighbor.end())>=.5))return;
+    const C::Point normal{0,top?1.:-1.,0};
+    const double elevation=top?.5:0.;
+    for(auto ids:{std::array<int,3>{0,1,3},std::array<int,3>{0,3,2}}){
+        F::Polygon wet;
+        for(int i:ids)wet.append({(i&1)*.5,(i>>1)*.5});
+        // A shared triangle provides an affine extension of each column
+        // head all the way to the ownership face, including dry corners.
+        auto restrict=[&](const std::array<double,4> &heights,double plane,bool below,bool strict){
+            if(strict&&heights[ids[0]]==plane&&heights[ids[1]]==plane&&heights[ids[2]]==plane)return false;
+            const double dx=2*(ids[1]==1?heights[1]-heights[0]:heights[3]-heights[2]);
+            const double dz=2*(ids[1]==1?heights[3]-heights[1]:heights[2]-heights[0]);
+            const double direction=below?1.:-1.;
+            return F::clip(wet,direction*dx,direction*dz,direction*(plane-heights[0]))&&wet.count>=3;
+        };
+        if(!restrict(h,elevation,false,!top)||!restrict(neighbor,top?0.:.5,true,!top))continue;
+        auto opening=[&](const WaterCellProfile &shape,bool lower,auto visit){
+            if((lower&&shape.ceiling<500)||shape.ceiling<=0)return;
+            if(shape.is_full_air()){visit(F::square());return;}
+            shape.floor_triangles([&](const WaterCellProfile::Triangle &t){
+                auto air=water_floor_section(t,lower?500.:0.,!lower);
+                if(air.count>=3&&F::area(air)>1e-12)visit(air);
+            });
+        };
+        opening(cell,top,[&](const F::Polygon &here){
+            auto occupied=wet;if(!F::intersect(occupied,here))return;
+            opening(other,!top,[&](const F::Polygon &there){
+                auto exposed=occupied;if(!F::intersect(exposed,there))return;
+                C::Face face;face.reserve(exposed.count);
+                for(size_t i=0;i<exposed.count;++i)face.push_back({exposed[i].x,elevation,exposed[i].y});
+                emit(std::move(face),C::Plane{normal,top?.5:0.});
+            });
         });
     }
 }

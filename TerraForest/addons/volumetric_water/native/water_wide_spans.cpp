@@ -105,6 +105,20 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
         if(cancelled.load())return SpanResult::fallback;
         auto &block=blocks[k];block.region=&r;block.ids.fill(-1);
         const auto base=W::position(k)*8;
+        const int layers=std::clamp(int(std::ceil(upper*2.))-base.y,0,8);
+        if(!layers||r.brick_geometry==WaterBrickGeometry::solid)continue;
+        if(r.brick_geometry==WaterBrickGeometry::air){
+            if(spans.size()+64>cell_limit)return fallback("span memory budget");
+            for(int z=0;z<8;++z)for(int x=0;x<8;++x){
+                const int id=int(spans.size());uint64_t amount=0;
+                for(int y=0;y<layers;++y){
+                    const int cell=x+8*y+64*z;block.ids[cell]=id;
+                    amount+=r.water[cell];
+                }
+                spans.push_back({base+Vector3i(x,0,z),unsigned(layers),true,amount,0});
+            }
+            continue;
+        }
         for(int z=0;z<8;++z)for(int x=0;x<8;++x){
             int previous=-1;
             for(int y=0;y<8;++y){

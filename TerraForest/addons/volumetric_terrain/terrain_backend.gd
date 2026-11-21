@@ -539,9 +539,16 @@ func stop() -> void:
 		snapshot_codec.release()
 
 func _push(result: Dictionary) -> void:
-	if packed_terrain_upload and result.get("kind","")=="edit_chunk" and result.has("arrays") and not result.has("bricks"):
-		var packed:Dictionary=collision_recipes.pack_terrain_surface(result.arrays)
-		if not packed.is_empty():result.render_surface=packed
+	if result.get("kind","")=="edit_chunk" and result.has("arrays") and not result.has("bricks"):
+		if packed_terrain_upload:
+			var packed:Dictionary=collision_recipes.pack_terrain_surface(result.arrays)
+			if not packed.is_empty():result.render_surface=packed
+		elif DisplayServer.get_name()!="headless" and result.key.z in [16,32] and not result.arrays[Mesh.ARRAY_INDEX].is_empty():
+			# This worker exclusively owns the resource until its ticket is queued.
+			# Material and node installation stay on the scene thread alongside physics.
+			var surface:=ArrayMesh.new()
+			surface.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,result.arrays,[],{},Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE)
+			if surface.get_surface_count()==1:result.prepared_mesh=surface
 	mutex.lock()
 	results.push_back(result)
 	var notify:bool=not _edit_notice_pending and result.get("kind","") in ["edit_begin","edit_chunk","edit_done","placement_target"]
@@ -708,7 +715,7 @@ func _resident_edit_surface(job:Dictionary,revision:int)->Dictionary:
 		regions[region]=Rect2i(regions[region]).merge(tile) if regions.has(region) else tile
 	var surface:={"ticket":job.ticket,"epoch":job.epoch,"revision":revision,"groups":[]}
 	if compact and bounds.size.x<=64 and bounds.size.y<=64:
-		var source:Object=native.capture_contact_core(bounds,revision,job.build_epoch)
+		var source:Object=native.capture_edit_field(bounds,revision,job.build_epoch)
 		if source!=null:
 			surface.core=source
 			surface.bounds=bounds
@@ -723,7 +730,7 @@ func _resident_edit_surface(job:Dictionary,revision:int)->Dictionary:
 		if remaining_readers==0:break
 		var capture_area:=domain.grow(32).get_area()
 		if capture_area>remaining_area:continue
-		var source:Object=native.capture_contact_core(domain,revision,job.build_epoch)
+		var source:Object=native.capture_edit_field(domain,revision,job.build_epoch)
 		if source==null:continue
 		surface.groups.append({"core":source,"bounds":domain})
 		remaining_area-=capture_area

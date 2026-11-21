@@ -211,6 +211,18 @@ struct WaterCellProfile {
     // 3D profiles use clipped faces instead. The max of two lines has its
     // minimum at a segment endpoint or their intersection.
     static double floor_spill_height(const WaterCellProfile &a,const WaterCellProfile &b,int axis,int side){
+        // Without clipped triangles each edge is one line. The two lines
+        // meet first at an endpoint or where their order reverses.
+        if(!a.contact&&!b.contact){
+            const int a0=axis==0?side:2*side,step=axis==0?2:1,b0=axis==0?1-side:2*(1-side);
+            const double l=a.floor[a0],r=a.floor[a0+step],s=b.floor[b0],t=b.floor[b0+step];
+            double height=std::min(std::max(l,s),std::max(r,t));
+            if((l<s&&r>t)||(l>s&&r<t)){
+                const double difference=(r-l)-(t-s);
+                if(std::abs(difference)>1e-12)height=std::min(height,l+(s-l)/difference*(r-l));
+            }
+            return std::max(0.,height);
+        }
         std::array<double,770> breaks;size_t count=2;breaks[0]=0;breaks[1]=1;
         auto split=[&](const WaterCellProfile &shape,int face){if(shape.contact)
             for(const auto &t:*shape.contact)for(auto p:t)if(std::abs((axis==0?p.x:p.z)-face)<1e-7)breaks[count++]=std::clamp(axis==0?p.z:p.x,0.0,1.0);};
@@ -230,6 +242,18 @@ struct WaterCellProfile {
             }
         }
         return height;
+    }
+    // An open height-field face has a vertical interval above its first
+    // common sill. The same threshold supplies both connectivity and spill
+    // height. At contact tolerance use the interval test, which also retains
+    // its endpoint and near-horizontal rounding rules.
+    static bool floor_passage(const WaterCellProfile &a,double ah,const WaterCellProfile &b,double bh,
+            int axis,int side,double &sill){
+        sill=floor_spill_height(a,b,axis,side);
+        const double level=std::min({ah,bh,a.ceiling,b.ceiling});
+        if(level>sill+1.1e-5)return true;
+        if(level<sill-1e-5)return false;
+        return face_overlap(a,ah,b,bh,axis,side);
     }
     static bool vertical_overlap(const WaterCellProfile &low,double lh,const WaterCellProfile &high,double hh){
         if(low.solid||high.solid)return clipped_face_overlap(low,lh,high,hh,1,1);

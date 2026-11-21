@@ -764,7 +764,8 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 		# Empty owners retain their logical identity without a rendering instance.
 		# Two-sided shadows preserve thin roofs.
 		mesh_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
-		var mesh := ArrayMesh.new()
+		var mesh:ArrayMesh=data.get("prepared_mesh")
+		if mesh==null:mesh=ArrayMesh.new()
 		if data.has("render_surface"):
 			mesh.set("_surfaces",[data.render_surface])
 			if mesh.get_surface_count()==1:last_worker_packed_surfaces+=1

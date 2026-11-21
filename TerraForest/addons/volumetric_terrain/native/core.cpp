@@ -1863,12 +1863,12 @@ static bool build_triangle_pages(const World&w,int x,int z,int size,u32 selected
  remap.release();mesh.release();
  return !tr_oom&&!cancelled(w,epoch);
 }
-// Certify a constant water brick using the same authored nodes as the field
-// extractor. Its entire cell/face halo must agree, including across pages.
-// A procedural, nonresident or boundary page always takes the full path.
-static bool constant_water_brick(const World &w,int x,int y,int z,float &density){
+// Inspect the exact extraction stencil, including both sides of a page seam.
+// A non-constant single-sign field has no triangles, but its original density
+// samples still belong in occupancy snapshots used by later structure edits.
+static bool homogeneous_water_brick(const World &w,int x,int y,int z,float &density,bool &constant){
  if(x<2||z<2||y<2||x+5>WORLD||z+5>WORLD||y+5>WORLD_Y)return false;
- bool first=true;i16 value=0;
+ bool first=true;i16 minimum=32767,maximum=-32768;
  for(int py=(y-2)>>4;py<=(y+5)>>4;++py)
  for(int pz=(z-2)>>4;pz<=(z+5)>>4;++pz)
  for(int px=(x-2)>>4;px<=(x+5)>>4;++px){
@@ -1879,17 +1879,90 @@ static bool constant_water_brick(const World &w,int x,int y,int z,float &density
   for(int sy=imx(0,y-2-py*16);sy<=imn(15,y+5-py*16);++sy)
   for(int sz=imx(0,z-2-pz*16);sz<=imn(15,z+5-pz*16);++sz){
    const i16 *row=data+256*sy+16*sz;
-   if(first){value=row[x0];first=false;}
-   for(int sx=x0;sx<=x1;++sx)if(row[sx]!=value)return false;
+   for(int sx=x0;sx<=x1;++sx){
+    minimum=imn(minimum,row[sx]);maximum=imx(maximum,row[sx]);
+   }
+   if(minimum<0&&maximum>=0)return false;
+   first=false;
   }
  }
- density=float(value)/SDF_SCALE;return true;
+ constant=minimum==maximum;
+ density=float(minimum)/SDF_SCALE;return !first&&(constant||minimum>0||maximum<0);
 }
 static void water_block_mask(const World &w,int x,int y,int z,Bytes &out){
  u8 solids[64]{};
  if(w.blocks.n)for(int dz=0;dz<4;++dz)for(int dy=0;dy<4;++dy)for(int dx=0;dx<4;++dx)
   solids[dx+4*dy+16*dz]=w.blocks.get(block_key(x+dx,y+dy,z+dz))>0;
  out.raw(solids,sizeof(solids));
+}
+int water_brick_occupancy(const World &w,int x,int y,int z){
+ // Coordinates are region-aligned. The caller owns a sealed authored field.
+ // Leave the two world-boundary layers and mixed construction to exact clipping.
+ if(x<0||z<0||x>WORLD-4||z>WORLD-4||y<4||y>WORLD_Y-8||x%4||y%4||z%4)return 0;
+ float density;bool constant;
+ if(!homogeneous_water_brick(w,x,y,z,density,constant))return 0;
+ if(density<=0)return 2;
+ if(w.blocks.n&&w.block_columns[(x>>5)+64*(z>>5)].n)
+  for(int dz=0;dz<4;++dz)for(int dy=0;dy<4;++dy)for(int dx=0;dx<4;++dx)
+   if(w.blocks.get(block_key(x+dx,y+dy,z+dz))>0)return 0;
+ return 1;
+}
+// A horizontally invariant lattice produces horizontal terrain intersections.
+// Their X/Z half-grid coordinates translate exactly throughout the world. Pin
+// absolute Y and all eight authored density layers, including the face halo.
+bool water_layer_signature(const World &w,int x,int y,int z,i16 *samples){
+ if(x<2||z<2||x>WORLD-5||z>WORLD-5||y<0||y>WORLD_Y-8||x%4||y%4||z%4)return false;
+ if(w.blocks.n&&w.block_columns[(x>>5)+64*(z>>5)].n)
+  for(int dz=0;dz<4;++dz)for(int dy=0;dy<4;++dy)for(int dx=0;dx<4;++dx)
+   if(w.blocks.get(block_key(x+dx,y+dy,z+dz))>0)return false;
+ for(int dy=-2;dy<=5;++dy){
+  int yy=y+dy;
+  if(yy<0){samples[dy+2]=0;continue;}
+  const int initial=w.pages_by_key.get(page_key((x-2)>>4,yy>>4,(z-2)>>4));
+  if(initial<0||!w.pages[initial].d)return false;
+  const i16 value=w.pages[initial].d[((x-2)&15)+16*((z-2)&15)+256*(yy&15)];
+  for(int pz=(z-2)>>4;pz<=(z+5)>>4;++pz)for(int px=(x-2)>>4;px<=(x+5)>>4;++px){
+   int id=w.pages_by_key.get(page_key(px,yy>>4,pz));
+   if(id<0||!w.pages[id].d)return false;
+   const i16 *plane=w.pages[id].d+256*(yy&15);
+   for(int zz=imx(0,z-2-16*pz);zz<=imn(15,z+5-16*pz);++zz)
+    for(int xx=imx(0,x-2-16*px);xx<=imn(15,x+5-16*px);++xx)
+     if(plane[xx+16*zz]!=value)return false;
+  }
+  samples[dy+2]=value;
+ }
+ return true;
+}
+static void water_density_lattice(const World &w,int x,int y,int z,Bytes &out){
+ // Water contact consumes one revision of triangles, interpolated density
+ // and construction occupancy. A 4 m region spans just 125 terrain nodes.
+ float lattice[125];
+ for(int dz=0;dz<5;++dz)for(int dy=0;dy<5;++dy)for(int dx=0;dx<5;++dx)
+  lattice[dx+5*dy+25*dz]=w.sample(x+dx,imn(y+dy,255),z+dz);
+ for(int hz=0;hz<9;++hz)for(int hy=0;hy<9;++hy)for(int hx=0;hx<9;++hx){
+  V3 p={mn(x+hx*.5f,__builtin_nextafterf(float(WORLD),0.f)),clampf(y+hy*.5f,1.f,255.f),
+        mn(z+hz*.5f,__builtin_nextafterf(float(WORLD),0.f))};
+  int ix=fl(p.x)-x,iy=fl(p.y)-y,iz=fl(p.z)-z;
+  float dx=p.x-fl(p.x),dy=p.y-fl(p.y),dz=p.z-fl(p.z),value=0;
+  for(int k=0;k<8;++k){
+   float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
+   if(weight>0)value+=weight*lattice[(ix+(k&1))+5*(iy+((k>>1)&1))+25*(iz+((k>>2)&1))];
+  }
+  out.f(value);
+ }
+}
+// On a sealed reader this branch is reentrant. It touches neither procedural
+// heights nor mutable geometry caches. Mixed or unresident bricks delegate to
+// the ordinary revision-checked extractor under its cache lock.
+bool read_homogeneous_water(const World &w,int x,int y,int z,u32 revision,u32 epoch,Bytes &out){
+ if(revision!=u32(w.revision)||cancelled(w,epoch)||x<0||x>=WORLD||z<0||z>=WORLD||
+    y<0||y>=WORLD_Y||x%4||y%4||z%4)return false;
+ float density;bool constant;
+ if(!homogeneous_water_brick(w,x,y,z,density,constant))return false;
+ out.n=0;
+ out.u(REPLY_MAGIC);out.u(constant?48:43);out.u(0);out.u(revision);out.u(epoch);out.u(0);out.u(0);
+ if(constant)out.f(density);else water_density_lattice(w,x,y,z,out);
+ water_block_mask(w,x,y,z,out);return true;
 }
 void process_request(World&w,const u8*data,int n,Bytes&out){
  Reader r{data,n};u32 cmd=r.u();if(!out.reserve(fixed_edit_reply(cmd)?EDIT_REPLY_CAPACITY:12))return;out.u(REPLY_MAGIC);out.u(cmd);out.u(0);
@@ -2256,11 +2329,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(!r.good||n!=24||x<0||z<0||x>=WORLD||z>=WORLD||y<0||y>=WORLD_Y||x%4||y%4||z%4){out.p[8]=1;return;}
   if(revision!=w.revision||cancelled(w,epoch)){out.p[8]=4;return;}
   if(cmd==48){
-   float density;
-   if(constant_water_brick(w,x,y,z,density)){
-    out.u(w.revision);out.u(epoch);out.u(0);out.u(0);out.f(density);
-    water_block_mask(w,x,y,z,out);return;
-   }
+   if(read_homogeneous_water(w,x,y,z,revision,epoch,out))return;
    cmd=43;out.p[4]=43;
   }
   Mesh m;int ox=imx(0,x-1),oz=imx(0,z-1),yb=imx(0,y-1),ye=imn(WORLD_Y,y+5);
@@ -2276,22 +2345,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   for(int i=0;i<m.v.n;i++)out.vec(m.v[i].p);
   for(int i=0;i<m.i.n;i++)out.u(m.i[i]);
   if(cmd==43){
-   // Water contact consumes one revision of triangles, interpolated density
-   // and construction occupancy. A 4 m region spans just 125 terrain nodes.
-   float lattice[125];
-   for(int dz=0;dz<5;++dz)for(int dy=0;dy<5;++dy)for(int dx=0;dx<5;++dx)
-    lattice[dx+5*dy+25*dz]=w.sample(x+dx,imn(y+dy,255),z+dz);
-   for(int hz=0;hz<9;++hz)for(int hy=0;hy<9;++hy)for(int hx=0;hx<9;++hx){
-    V3 p={mn(x+hx*.5f,__builtin_nextafterf(float(WORLD),0.f)),clampf(y+hy*.5f,1.f,255.f),
-          mn(z+hz*.5f,__builtin_nextafterf(float(WORLD),0.f))};
-    int ix=fl(p.x)-x,iy=fl(p.y)-y,iz=fl(p.z)-z;
-    float dx=p.x-fl(p.x),dy=p.y-fl(p.y),dz=p.z-fl(p.z),value=0;
-    for(int k=0;k<8;++k){
-     float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
-     if(weight>0)value+=weight*lattice[(ix+(k&1))+5*(iy+((k>>1)&1))+25*(iz+((k>>2)&1))];
-    }
-    out.f(value);
-   }
+   water_density_lattice(w,x,y,z,out);
    water_block_mask(w,x,y,z,out);
   }
   m.release();

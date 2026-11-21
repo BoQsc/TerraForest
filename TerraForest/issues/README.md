@@ -1,6 +1,6 @@
 # Visual issue tracker
 
-The [Cedar Vale release checks](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale) record the full wet cut and both shoreline barrels, with two views per edit and timing separated from screenshots. All three still miss the two-frame deadline.
+The latest full packaged camera suite showed the cut on draw 25, the sea blast on draw three and the lake blast on draw seven in its separate timing pass. Both craters filled to the tested shoreline tolerance. All three still miss the two-frame deadline. [Cedar Vale release checks and two views per edit](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale)
 
 [Hidden Coast crater backlog](explosive-combat/README.md#hidden-coast-crater-backlog) records the 37 outstanding edits, their saved water footprint, and the changes to live capacity, persistence and firing during terrain updates.
 

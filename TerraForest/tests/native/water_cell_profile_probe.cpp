@@ -61,7 +61,7 @@ int main(){
     auto upper=bottom_cut;
     require(WaterCellProfile::vertical_overlap(lower,504,upper,4),"static volumes connect through a narrow partial vertical opening");
     require(!WaterCellProfile::vertical_overlap(lower,504,upper,-10),"a dry vertical gap stays disconnected");
-    uint32_t random=1703;int queries=0;bool parity=true;
+    uint32_t random=1703;int queries=0,passages=0;bool parity=true,face_parity=true;
     for(int trial=0;trial<256;++trial){
         WaterCellProfile shape;
         for(double &height:shape.floor){random=random*1664525u+1013904223u;height=(int(random%900001)-200000)*.001;}
@@ -77,6 +77,18 @@ int main(){
             }
             shape.contact=&contacts;
         }
+        // Compare the compiled sill to the independent interval intersection
+        // on both axes and orientations, including touching and clipped faces.
+        for(int axis:{0,2})for(int side:{0,1}){
+            const double threshold=WaterCellProfile::floor_spill_height(shape,bank_a,axis,side);
+            for(double head:{.1,350.,500.,threshold-1e-6,threshold,threshold+1e-6,threshold+1e-4}){
+                if(head<=0)continue;
+                double sill;
+                const bool connected=WaterCellProfile::floor_passage(shape,head,bank_a,head+.5,axis,side,sill);
+                face_parity&=sill==threshold&&connected==WaterCellProfile::face_overlap(shape,head,bank_a,head+.5,axis,side);
+                ++passages;
+            }
+        }
         terraforest::WaterVolumeQuery cached(shape);
         parity&=cached.capacity()==shape.capacity();
         for(int step=0;step<=32;++step){double h=-10+step*17.123;
@@ -85,6 +97,8 @@ int main(){
             parity&=cached.head(ml)==shape.head(ml);++queries;}
     }
     require(parity,"cached floor moments preserve exact volumes and inverse heads across clipped slopes");
+    require(face_parity,"shared sill thresholds preserve contact, direction and ceiling in the interval oracle");
+    std::printf("WATER_SPILL_FACE exact_queries=%d\n",passages);
     std::printf("WATER_VOLUME_QUERY exact_queries=%d\n",queries);
     std::puts("WATER_CELL_PROFILE failures=0");
 }

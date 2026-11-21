@@ -237,12 +237,16 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     out["local_response"]=job->local_response;
     out["private_receiver_regions"]=int64_t(job->prepared_receivers.size());
     out["reused_receiver_shapes"]=int64_t(job->template_hits);
+    out["classified_receivers"]=int64_t(job->classified_receivers);
+    out["reused_layered_receivers"]=int64_t(job->reused_layered_receivers);
     out["private_discovery_rounds"]=int64_t(job->private_rounds);
     out["field_readers"]=int64_t(job->field_readers.size());
     if(job->receiver_fallback)out["receiver_fallback"]=job->receiver_fallback;
     out["wide_spans"]=int64_t(job->wide_spans);out["wide_cells"]=int64_t(job->wide_cells);
     out["wide_basin_leaves"]=int64_t(job->wide_basin_leaves);
     out["prism_nodes"]=int64_t(job->prism_nodes);out["prism_edges"]=int64_t(job->prism_edges);
+    PackedInt64Array prism_times;for(auto t:job->prism_us)prism_times.push_back(t);
+    out["prism_us"]=prism_times;out["receiver_us"]=int64_t(job->receiver_us);
     if(job->prism_fallback)out["prism_fallback"]=job->prism_fallback;
     if(job->wide_fallback)out["wide_fallback"]=job->wide_fallback;
     out["blocked_ml"]=int64_t(job->blocked_ml);out["reserved_bytes"]=int64_t(job->reserved_bytes);

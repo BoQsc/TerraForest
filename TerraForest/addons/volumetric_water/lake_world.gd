@@ -287,6 +287,7 @@ func _interrupt_equilibrium()->void:
   _equilibrium_task=-1;_equilibrium_job=null
  _equilibrium_failure="";_equilibrium_failed_revision=-1
 func _interrupt_edit_work()->void:
+ if _edit_patch_task>=0 and _edit_patch_job.has("transaction"):_edit_patch_job.transaction.cancel()
  _interrupt_equilibrium()
  _ocean_exchange_ml+=water.interrupt_relaxation()
  if _mesh_task>=0:
@@ -322,7 +323,7 @@ func _remaining_frame_work()->int:
 
 func _field_ready(ticket:int)->void:
  if not terrain.joint_edit_pending():return
- _continue_joint_edit.call_deferred(ticket,terrain.epoch)
+ _continue_joint_edit(ticket,terrain.epoch)
 
 func _before_water_draw()->void:
  if OS.get_thread_caller_id()==OS.get_main_thread_id() and is_instance_valid(terrain) and terrain.joint_edit_pending():
@@ -330,8 +331,17 @@ func _before_water_draw()->void:
 
 func _continue_joint_edit(ticket:int,epoch:int)->void:
  if not is_inside_tree() or not is_processing() or not can_process() or not terrain.world_ready or terrain.epoch!=epoch or terrain.edit_ticket!=ticket or not terrain.joint_edit_pending():return
+ if _resident_batch_ready>=0:
+  terrain.publish_joint_edit(ticket,_commit_prepared_water.bind(_resident_batch_ready))
+  _finish_local_publication()
+  return
  var allowance:=_remaining_frame_work()
- if allowance<=0:return
+ # Receiving an accepted field and handing off an already prepared local
+ # revision are event work. Background occupancy and equilibrium can consume
+ # their allowance before either event arrives in this same rendered frame.
+ var dispatch:bool=_settlement_ticket!=ticket and terrain.water_sampling_revision()>=0
+ var completed:bool=_edit_patch_task>=0 and WorkerThreadPool.is_group_task_completed(_edit_patch_task)
+ if allowance<=0 and not dispatch and not completed:return
  var began:=Time.get_ticks_usec()
  _process_deadline=began+allowance
  if _settlement_ticket!=ticket and terrain.water_sampling_revision()>=0:_begin_terrain_settlement(ticket)
@@ -583,11 +593,13 @@ var _replacement_removals:Array[Vector3i]=[]
 var _replacement_hidden:Array[MeshInstance3D]=[]
 var _replacement_visible:Array[MeshInstance3D]=[]
 var _resident_water_meshes:Dictionary[Vector3i,ArrayMesh]={}
+var _resident_batch_ready:=-1
 func _clear_replacement_bookkeeping()->void:
  _replacement_faces.clear();_replacement_removals.clear()
  _staged_over_capacity_delta_ml=0
  _replacement_hidden.clear();_replacement_visible.clear();_resident_water_meshes.clear()
 func _clear_staged_meshes()->void:
+ _resident_batch_ready=-1
  _waiting_mesh_commit=-1
  for coordinate:Vector3i in _staged_meshes:
   var node:MeshInstance3D=_staged_meshes[coordinate]
@@ -625,8 +637,10 @@ func _stage_render_owner(update:Dictionary)->void:
   _replacement_removals.append(coord)
   _staged_meshes[coord]=null
   return
- var geometry:=ArrayMesh.new()
- geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.render_arrays)
+ var geometry:ArrayMesh=update.get("render_mesh")
+ if geometry==null:
+  geometry=ArrayMesh.new()
+  geometry.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,update.render_arrays)
  if previous!=null and terrain.joint_edit_pending():
   _staged_meshes[coord]=previous
   _resident_water_meshes[coord]=geometry
@@ -686,6 +700,7 @@ func _publish_meshes() -> void:
   if Time.get_ticks_usec()-mesh_started>=budget_us:break
  _mesh_publish_us=Time.get_ticks_usec()-mesh_started;_mesh_max_publish_us=maxi(_mesh_max_publish_us,_mesh_publish_us)
 func _commit_prepared_water(batch:int)->bool:
+ _resident_batch_ready=-1
  _waiting_mesh_commit=-1
  var commit_started:=Time.get_ticks_usec()
  var native_started:=Time.get_ticks_usec()
@@ -834,6 +849,23 @@ static func _contact_groups(coords:Array,patches:Array,bounds:Rect2i,fields:Arra
 
 func _start_edit_patches(revision:int)->bool:
  if _edit_patch_task>=0 or _busy or not terrain.joint_edit_pending():return false
+ var surface:Dictionary=terrain.resident_edit_surface
+ var fields:Array=[]
+ if surface.get("ticket",-1)==terrain.edit_ticket and surface.epoch==terrain.epoch and surface.revision==terrain.density_revision:
+  fields=surface.groups
+ if not fields.is_empty() and _resident_edit_fallback.is_empty():
+  var wide:RefCounted=water.capture_local_edit(true)
+  if wide!=null:
+   var area:AABB=terrain.water_occupancy_edit_bounds(AABB(terrain.edit_lo,terrain.edit_hi-terrain.edit_lo)).grow(6)
+   var survey:=_edit_structure_survey(area)
+   if not survey.is_empty() and wide.set_field(fields,survey.bounds,survey.solids,surface.revision,terrain.backend.build_epoch):
+    _edit_patch_job={"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":revision,
+     "structures":_structure_revision,"field":surface.revision,"cancel":terrain.backend.build_epoch,
+     "transaction":wide,"wide":true,"patches":[],"groups":[],"ready":false}
+    _edit_patch_task=WorkerThreadPool.add_group_task(_prepare_resident_water.bind(terrain.backend.native,_edit_patch_job),1,1,true,"Resident wide water edit")
+    if _edit_patch_task>=0:
+     _edit_patch_attempt=terrain.edit_ticket
+     return true
  var coords:Array=water.pending_edit_patches()
  if coords.is_empty():
   _edit_patch_attempt=terrain.edit_ticket
@@ -849,10 +881,6 @@ func _start_edit_patches(revision:int)->bool:
    var solids:Dictionary=_structure_hulls(AABB(Vector3(coord)*4,Vector3(4,4,4)))
    if not solids.ok or not patch.set_structure_hulls(solids.hulls):return false
   patches.append(patch)
- var surface:Dictionary=terrain.resident_edit_surface
- var fields:Array=[]
- if surface.get("ticket",-1)==terrain.edit_ticket and surface.epoch==terrain.epoch and surface.revision==terrain.density_revision:
-  fields=surface.groups
  _edit_patch_job={"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":revision,
   "structures":_structure_revision,"field":terrain.density_revision,"cancel":terrain.backend.build_epoch,
   "patches":patches,"groups":_contact_groups(coords,patches,bounds,fields),"ready":false}
@@ -885,11 +913,11 @@ func _prepare_resident_water(_index:int,core:Object,job:Dictionary)->void:
  var groups:Array=job.groups
  if groups.size()==1:
   _sample_contact_group(0,core,job)
- else:
+ elif groups.size()>1:
   var sampling:=WorkerThreadPool.add_group_task(_sample_contact_group.bind(core,job),groups.size(),mini(groups.size(),4),true,"Resident water contacts")
   if sampling>=0:WorkerThreadPool.wait_for_group_task_completion(sampling)
  _finish_contact_groups(job)
- if job.ready:job.transaction.prepare(job.patches)
+ if job.ready:job.transaction.prepare(job.patches,DisplayServer.get_name()!="headless")
  _continue_joint_edit.call_deferred(job.ticket,job.epoch)
 
 func _finish_contact_groups(job:Dictionary)->void:
@@ -935,9 +963,15 @@ func _poll_edit_patches()->void:
    _equilibrium_phases=result.get("phase_us",PackedInt64Array());_equilibrium_cells=int(result.get("cells",0))
    _equilibrium_blocked_ml=int(result.get("blocked_ml",0));_ocean_exchange_ml+=int(result.get("ocean_exchange_ml",0))
    _local_response_pending=false;_local_publication_pending=true
+   if result.prepared_publication:
+    _resident_batch_ready=result.batch
+    terrain.publish_joint_edit(job.ticket,_commit_prepared_water.bind(_resident_batch_ready))
    terrain.water_preparation_revision+=1
    return
   _resident_edit_fallback=result.get("fallback","superseded water revision")
+  if job.get("wide",false):
+   _edit_patch_attempt=-1
+   return
  for patch:RefCounted in job.patches:
   if not water.accept_patch(patch):
    _occupancy_failure="Local water occupancy cache budget reached"

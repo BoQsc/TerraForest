@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "regional_water.hpp"
 #include <godot_cpp/classes/worker_thread_pool.hpp>
+#include <godot_cpp/classes/time.hpp>
 #include <algorithm>
 #include <cstring>
 
@@ -15,7 +16,8 @@ bool NativeWaterEquilibriumJob::set_edit_field(const Array &groups,const AABB &b
         Dictionary group=groups[i];
         if(!group.has("core")||!group.has("bounds")||group["bounds"].get_type()!=Variant::RECT2I)return false;
         FieldReader reader{group["bounds"],group["core"]};
-        if(reader.core.is_null()||!reader.core->is_class("TerrainCore")||!reader.bounds.has_area())return false;
+        if(reader.core.is_null()||(!reader.core->is_class("TerrainFieldReader")&&!reader.core->is_class("TerrainCore"))||
+           !reader.bounds.has_area())return false;
         readers.push_back(reader);
     }
     clear_structure_bounds=bounds;structure_hulls=solids;field_revision=rev;field_epoch=epoch;field_readers=std::move(readers);
@@ -24,12 +26,16 @@ bool NativeWaterEquilibriumJob::set_edit_field(const Array &groups,const AABB &b
 
 bool NativeWaterEquilibriumJob::prepare_receivers(){
     using W=NativeRegionalWater;
+    const uint64_t start=Time::get_singleton()->get_ticks_usec();
     auto defer=[&](const char *reason){receiver_fallback=reason;return false;};
     if(required.empty()||field_readers.empty()||cancelled.load())return defer(field_readers.empty()?"no field reader":"receiver admission");
     // Read-only preflight for the whole wave. In particular, a dry receiver
     // may bring another resident donor into the next capture's one-face halo.
     const Vector3i steps[]={{0,-1,0},{0,1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1}};
-    struct Input {uint64_t key;Vector3i coord;Object *core;Array hulls;W::Region region;};
+    struct Input {
+        uint64_t key;Vector3i coord;Object *core;Array hulls;W::Region region;
+        bool resolved=false;int representative=-1;
+    };
     std::vector<Input> wave;wave.reserve(required.size());
     std::unordered_set<uint64_t> neighbours;
     for(uint64_t key:required){
@@ -60,10 +66,59 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
     }
     const size_t fixed=sizeof(W::Region)+W::Region::payload_bytes+512*sizeof(Vector3i)+128;
     if(wave.size()+prepared_receivers.size()>receiver_slots||wave.size()*fixed>=hierarchy_cell_limit*1024)return false;
+    // One call per pinned field classifies a wave of previously absent receivers.
+    // Both uniform regions retain the exact same water profile at every corner
+    // and face. Mixed bricks and placed objects keep their actual terrain data.
+    // No template contains quantity, and later edits detach their own ledger.
+    std::map<LayerSignature,int> new_layers;
+    for(const auto &field:field_readers){
+        if(!field.core->has_method("classify_water_bricks"))continue;
+        std::vector<int> indices;
+        PackedInt32Array origins;
+        for(size_t i=0;i<wave.size();++i){
+            const auto &input=wave[i];
+            if(input.core!=field.core.ptr()||!input.hulls.is_empty())continue;
+            indices.push_back(int(i));
+        }
+        if(indices.empty()||indices.size()>2048)continue;
+        if(origins.resize(3*indices.size())!=OK)return false;
+        auto *p=origins.ptrw();
+        for(int i:indices)for(int axis=0;axis<3;++axis)*p++=wave[i].coord[axis]*4;
+        PackedByteArray result=field.core->call("classify_water_bricks",origins,field_revision,field_epoch,true);
+        if(result.size()!=17*int64_t(indices.size()))return defer("changed receiver field");
+        const uint8_t *data=result.ptr();
+        for(size_t j=0;j<indices.size();++j){
+            const auto *record=data+17*j;
+            auto &input=wave[indices[j]];uint8_t type=record[0];
+            if(!type)continue;
+            if(type==3){
+                LayerSignature signature;signature[0]=int16_t(input.coord.y);
+                for(int n=0;n<8;++n)signature[n+1]=int16_t(uint16_t(record[1+2*n])|(uint16_t(record[2+2*n])<<8));
+                if(auto old=layered_receivers.find(signature);old!=layered_receivers.end()){
+                    input.region=old->second;input.resolved=true;++reused_layered_receivers;
+                }else if(new_layers.size()+layered_receivers.size()<512){
+                    auto [entry,first]=new_layers.emplace(signature,indices[j]);
+                    if(!first){input.representative=entry->second;++reused_layered_receivers;}
+                }
+                continue;
+            }
+            if(type>2)return defer("invalid receiver class");
+            auto &model=homogeneous_receivers[type-1];
+            if(!model.valid){
+                std::array<uint16_t,512> floor,ceiling;std::array<float,729> density;
+                floor.fill(type==1?0:500);ceiling.fill(500);density.fill(type==1?1.f:-1.f);
+                model.floor=floor;model.ceiling=ceiling;model.density=density;
+                model.has_density=true;model.valid=true;model.settle_pending=true;
+                model.brick_geometry=type==1?WaterBrickGeometry::air:WaterBrickGeometry::solid;
+            }
+            input.resolved=true;input.region=model;++classified_receivers;
+        }
+    }
     // Prepare privately. Only validated geometry can be handed to the final
     // solve. A failed wave leaves the original dependency request intact.
     std::map<uint64_t,W::Region> staged;
     auto sample=[&](Input &input){
+        if(input.resolved||input.representative>=0)return true;
         PackedByteArray request;request.resize(24);request.encode_u32(0,48);
         request.encode_u32(4,field_revision);request.encode_u32(8,field_epoch);
         for(int axis=0;axis<3;++axis)request.encode_u32(12+4*axis,input.coord[axis]*4);
@@ -107,6 +162,7 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
         region.floor=patch->floor;region.ceiling=patch->ceiling;region.density=patch->density;
         region.contacts=patch->contacts;region.structures=patch->structures;
         region.has_density=true;region.valid=true;region.settle_pending=true;
+        region.brick_geometry=patch->brick_geometry;
         if(!identity.is_empty()){
             std::lock_guard<std::mutex> lock(template_mutex);
             const size_t bytes=identity.size()+sizeof(ReceiverTemplate)+64;
@@ -139,6 +195,10 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
     if(task>=0)pool->wait_for_group_task_completion(task);
     else for(size_t i=0;i<wave.size()&&!work.failed.load();++i)run(&work,i);
     if(work.failed.load()||cancelled.load())return false;
+    // The first brick of each stratum went through the full extractor, taking
+    // its actual triangle intersections, contact ledger and density samples.
+    // Identical inputs share only geometry. Their finite quantities are private.
+    for(auto &input:wave)if(input.representative>=0)input.region=wave[input.representative].region;
     uint64_t extra=0,solid=0;
     for(auto &input:wave){
         const auto &r=input.region;
@@ -150,6 +210,7 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
     receiver_bytes+=extra;receiver_solid_bytes+=solid;
     hierarchy_cell_limit-=(extra+1023)/1024;
     cell_limit=std::min(cell_limit,4*hierarchy_cell_limit);
+    for(const auto &[signature,index]:new_layers)layered_receivers.emplace(signature,staged.at(wave[index].key));
     frozen->regions.merge(staged);
     for(auto k:neighbours){
         auto node=receiver_neighbours.extract(k);
@@ -159,6 +220,7 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
     }
     for(const auto &input:wave)prepared_receivers.push_back(input.key);
     required.clear();++private_rounds;
+    receiver_us+=Time::get_singleton()->get_ticks_usec()-start;
     return true;
 }
 }

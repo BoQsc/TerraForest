@@ -42,8 +42,24 @@ godot::Dictionary normalize_generated_roads(const World &,const godot::Array &,c
 godot::Dictionary fit_generated_lakes(const World &,const godot::Array &);
 godot::Dictionary survey_generated_lake_surfaces(const World &,const godot::Array &);
 godot::Dictionary plan_lake_crossings(const World &);
+class TerrainCore;
+// Only this read-only interface owns a shareable field. The mutable TerrainCore
+// returned by the legacy snapshot API always has independent page storage.
+class TerrainFieldReader : public godot::RefCounted {
+    GDCLASS(TerrainFieldReader,godot::RefCounted)
+    friend class TerrainCore;
+    godot::Ref<godot::RefCounted> field_;
+protected:
+    static void _bind_methods();
+public:
+    godot::PackedByteArray execute(const godot::PackedByteArray &packet) const;
+    godot::PackedByteArray classify_water_bricks(const godot::PackedInt32Array &origins,int64_t revision,int64_t epoch,bool layers=false) const;
+    godot::Ref<TerrainFieldReader> capture_contact_core(godot::Rect2i bounds,int64_t revision,int64_t epoch) const;
+};
 class TerrainCore : public godot::RefCounted {
     GDCLASS(TerrainCore, godot::RefCounted)
+    friend class TerrainFieldReader;
+    godot::Ref<godot::RefCounted> page_owner_;
     BuildControl control_;
     World world_;
     std::unique_ptr<TerrainResidency> residency_;
@@ -76,6 +92,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("execute_edit_with_writes","packet","include_surface_owners"), &TerrainCore::execute_edit_with_writes, false);
         godot::ClassDB::bind_method(godot::D_METHOD("try_placement_target","packet"),&TerrainCore::try_placement_target);
         godot::ClassDB::bind_method(godot::D_METHOD("capture_contact_core","bounds","revision","epoch"),&TerrainCore::capture_contact_core);
+        godot::ClassDB::bind_method(godot::D_METHOD("capture_edit_field","bounds","revision","epoch"),&TerrainCore::capture_edit_field);
         godot::ClassDB::bind_method(godot::D_METHOD("execute_explosion_cohort","commands"), &TerrainCore::execute_explosion_cohort);
         godot::ClassDB::bind_method(godot::D_METHOD("configure_mesh_height_cache","enabled"), &TerrainCore::configure_mesh_height_cache);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_material_deposits","earthworks"), &TerrainCore::material_deposits);
@@ -282,7 +299,13 @@ public:
         tr_oom=false;auto result=terraforest::geometry_content_key(world_,int(x),int(z),int(size),int(step));return tr_oom?godot::Dictionary():result;
     }
     TerrainCore() {world_.build_control=&control_; tr_oom=false; world_.init();}
-    ~TerrainCore() {snapshot_worker_.reset();world_.release();}
+    ~TerrainCore() {
+        snapshot_worker_.reset();
+        if(page_owner_.is_valid())for(int i=0;i<world_.pages.n;++i){
+            world_.pages[i].d=nullptr;world_.pages[i].mat=nullptr;
+        }
+        world_.release();
+    }
     godot::Dictionary experimental_partition_mesh_budgeted(const godot::PackedByteArray&packet,int64_t workspace,int64_t output,int64_t expected){
         godot::Dictionary result;result["packets"]=godot::Array();result["workspace_peak"]=0;result["denied"]=0;result["cancelled"]=false;
         if(workspace<1||workspace>128*1024*1024||output<1||output>128*1024*1024||expected<0||expected>0xffffffffLL)return result;
@@ -608,6 +631,19 @@ public:
     }
     godot::Dictionary residency_stats(){std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary d;if(residency_)d=residency_->stats(world_);else{d["active"]=false;d["catalog_pages"]=world_.pages.n;d["resident_pages"]=world_.pages.n;d["resident_limit"]=MAX_PAGES;}d["generator"]=world_.generator_id;d["seed"]=world_.seed;return d;}
     godot::Ref<TerrainCore> capture_contact_core(godot::Rect2i bounds,int64_t revision,int64_t epoch){
+        return copy_contact_field(bounds,revision,epoch,false);
+    }
+    godot::Ref<TerrainFieldReader> capture_edit_field(godot::Rect2i bounds,int64_t revision,int64_t epoch){
+        return make_reader(bounds,revision,epoch,false);
+    }
+private:
+    godot::Ref<TerrainFieldReader> make_reader(godot::Rect2i bounds,int64_t revision,int64_t epoch,bool borrow){
+        auto field=copy_contact_field(bounds,revision,epoch,borrow);
+        if(field.is_null())return {};
+        godot::Ref<TerrainFieldReader> reader;reader.instantiate();
+        reader->field_=field;return reader;
+    }
+    godot::Ref<TerrainCore> copy_contact_field(godot::Rect2i bounds,int64_t revision,int64_t epoch,bool borrow){
         std::lock_guard<std::mutex> lock(mutex_);
         if(revision!=world_.revision||epoch!=terrain_build_epoch(&world_)||
            bounds.size.x<=0||bounds.size.y<=0||bounds.size.x>64||bounds.size.y>64||
@@ -621,6 +657,10 @@ public:
            x1>world_.contact_x1||z1>world_.contact_z1))return {};
         godot::Ref<TerrainCore> copy;copy.instantiate();
         if(copy.is_null()||tr_oom)return {};
+        // The sealed parent survives workers and may be released by the scene
+        // or superseded by a gameplay edit at any time. Grandchildren pin the
+        // same root, without retaining intermediate geometry caches.
+        if(borrow)copy->page_owner_=page_owner_.is_valid()?page_owner_:godot::Ref<godot::RefCounted>(this);
         World &dst=copy->world_;
         dst.contact_snapshot=true;dst.seed=world_.seed;dst.generator_id=world_.generator_id;
         dst.revision=world_.revision;dst.contact_revision=dst.revision;dst.surface_style=world_.surface_style;dst.cache_mesh_heights=true;
@@ -647,11 +687,15 @@ public:
                 if(!source.d||!source.mat)return {};
                 int at=dst.pages.push(Page{});if(tr_oom)return {};
                 Page &page=dst.pages[at];page.key=key;
-                page.d=static_cast<i16*>(tr_alloc(PAGE_SAMPLES*sizeof(i16)));
-                page.mat=static_cast<u8*>(tr_alloc(PAGE_SAMPLES));
-                if(!page.d||!page.mat)return {};
-                copy_bytes(page.d,source.d,PAGE_SAMPLES*sizeof(i16));
-                copy_bytes(page.mat,source.mat,PAGE_SAMPLES);
+                if(borrow){
+                    page.d=source.d;page.mat=source.mat;
+                }else{
+                    page.d=static_cast<i16*>(tr_alloc(PAGE_SAMPLES*sizeof(i16)));
+                    page.mat=static_cast<u8*>(tr_alloc(PAGE_SAMPLES));
+                    if(!page.d||!page.mat)return {};
+                    copy_bytes(page.d,source.d,PAGE_SAMPLES*sizeof(i16));
+                    copy_bytes(page.mat,source.mat,PAGE_SAMPLES);
+                }
                 dst.pages_by_key.put(key,at);if(tr_oom)return {};
             }
         }
@@ -664,6 +708,7 @@ public:
         if(!copy_surface_columns(world_,dst,bounds.position.x,bounds.position.y,bounds.size.x,bounds.size.y))return {};
         return copy;
     }
+public:
     // The click path may read one 5x5x5 mask. Contended locks and paged-out
     // samples fall back to the ordered worker without blocking the render thread.
     godot::PackedByteArray try_placement_target(const godot::PackedByteArray &packet) {
@@ -798,6 +843,73 @@ private:
         return result;
     }
 };
+void TerrainFieldReader::_bind_methods(){
+    godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"),&TerrainFieldReader::execute);
+    godot::ClassDB::bind_method(godot::D_METHOD("classify_water_bricks","origins","revision","epoch","include_layers"),&TerrainFieldReader::classify_water_bricks,false);
+    godot::ClassDB::bind_method(godot::D_METHOD("capture_contact_core","bounds","revision","epoch"),&TerrainFieldReader::capture_contact_core);
+}
+godot::PackedByteArray TerrainFieldReader::classify_water_bricks(const godot::PackedInt32Array &origins,int64_t revision,int64_t epoch,bool layers) const{
+    const auto *field=godot::Object::cast_to<TerrainCore>(field_.ptr());
+    if(!field||origins.size()%3||origins.size()>3*2048)return {};
+    const auto &world=field->world_;
+    if(revision!=world.revision||epoch!=terrain_build_epoch(&world))return {};
+    const int stride=layers?17:1;
+    godot::PackedByteArray result;if(result.resize(origins.size()/3*stride)!=godot::OK)return {};
+    auto *out=result.ptrw();const auto *p=origins.ptr();
+    for(int64_t i=0;i<origins.size()/3;++i,p+=3,out+=stride){
+        int x=p[0],y=p[1],z=p[2];
+        zero_bytes(out,stride);
+        if(x<world.contact_x0+2||x>world.contact_x1-5||z<world.contact_z0+2||z>world.contact_z1-5)continue;
+        out[0]=water_brick_occupancy(world,x,y,z);
+        i16 signature[8];
+        if(layers&&!out[0]&&water_layer_signature(world,x,y,z,signature)){
+            out[0]=3;
+            for(int j=0;j<8;++j){out[1+2*j]=u16(signature[j])&255;out[2+2*j]=u16(signature[j])>>8;}
+        }
+    }
+    return result;
+}
+godot::Ref<TerrainFieldReader> TerrainFieldReader::capture_contact_core(godot::Rect2i bounds,int64_t revision,int64_t epoch) const{
+    auto *field=godot::Object::cast_to<TerrainCore>(field_.ptr());
+    return field?field->make_reader(bounds,revision,epoch,true):godot::Ref<TerrainFieldReader>();
+}
+godot::PackedByteArray TerrainFieldReader::execute(const godot::PackedByteArray &packet) const{
+    auto *field=godot::Object::cast_to<TerrainCore>(field_.ptr());
+    if(!field||packet.size()<4)return {};
+    const auto command=packet.decode_u32(0);
+    const auto &world=field->world_;
+    auto inside=[&](int x,int z,int extent,int halo){
+        return x>=0&&z>=0&&x<=WORLD-extent&&z<=WORLD-extent&&
+            imx(0,x-halo)>=world.contact_x0&&imx(0,z-halo)>=world.contact_z0&&
+            imn(WORLD,x+extent+halo)<=world.contact_x1&&imn(WORLD,z+extent+halo)<=world.contact_z1;
+    };
+    bool allowed=false;
+    if(command==0||command==13)allowed=packet.size()==4;
+    if((command==1||command==20||command==47)&&packet.size()>=20){
+        const int size=int(packet.decode_u32(12));
+        allowed=(size==16||size==32||size==64)&&inside(packet.decode_u32(4),packet.decode_u32(8),size,2);
+    }
+    if((command==32||command==43||command==48)&&packet.size()==24)
+        allowed=inside(packet.decode_u32(12),packet.decode_u32(20),4,2);
+    if(command==48&&allowed){
+        tr_oom=false;Bytes bytes;
+        if(read_homogeneous_water(world,packet.decode_u32(12),packet.decode_u32(16),packet.decode_u32(20),
+                                  packet.decode_u32(4),packet.decode_u32(8),bytes)){
+            godot::PackedByteArray result;
+            if(!tr_oom&&result.resize(bytes.n)==godot::OK)copy_bytes(result.ptrw(),bytes.p,bytes.n);
+            bytes.release();return result;
+        }
+    }
+    if(command==31&&packet.size()>=12){
+        const auto count=packet.decode_u32(8);
+        allowed=count>=1&&count<=512&&packet.size()==12+12*int(count);
+        for(uint32_t i=0;allowed&&i<count;++i){
+            const float x=packet.decode_float(12+i*12),z=packet.decode_float(20+i*12);
+            allowed=x>=world.contact_x0&&z>=world.contact_z0&&x<world.contact_x1&&z<world.contact_z1;
+        }
+    }
+    return allowed?field->execute(packet):TerrainCore::reply(command,1);
+}
 }
 
 static void initialize(godot::ModuleInitializationLevel level) {
@@ -805,6 +917,7 @@ static void initialize(godot::ModuleInitializationLevel level) {
     // Installed once before any instance exists; thereafter immutable across workers.
     tr_alloc=std::malloc; tr_realloc=std::realloc; tr_free=std::free;
     GDREGISTER_CLASS(terraforest::NativeTerrainCapture);
+    GDREGISTER_CLASS(terraforest::TerrainFieldReader);
     GDREGISTER_CLASS(terraforest::TerrainCore);
     GDREGISTER_CLASS(terraforest::NativeTerrainRegionStore);
     GDREGISTER_CLASS(terraforest::NativeTerrainPlanner);

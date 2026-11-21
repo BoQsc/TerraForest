@@ -22,7 +22,7 @@ NAMES.update(("authoring_brush_0.png","authoring_brush_1.png"))
 NAMES.update(f"cut_{phase}_angle_{angle}.png" for phase in ("before","after") for angle in (1,2))
 
 
-def candidates(root=ROOT, keep_ready=2):
+def candidates(root=ROOT, keep_ready=2, families=None):
     if keep_ready not in (1, 2):
         raise ValueError('Keep one or two ready runs; archived evidence remains restorable')
     ready = {'water_barrel_world': [], 'water_player_world': [], 'authoring_brush': [], 'authoring_cut_angles': []}
@@ -46,8 +46,13 @@ def candidates(root=ROOT, keep_ready=2):
             receipt = Path(run.get('release_receipt', ''))
             if receipt.name == 'candidate.json' and receipt.parent.parent == root / 'reports/checks' and receipt.is_file():
                 candidate = json.loads(receipt.read_text(encoding='utf-8'))
-                packaged |= (candidate.get('released') is True and str(manifest.parent) in candidate.get('runs', {}).values()
-                             and candidate.get('pack_sha256') == run.get('pack_sha256'))
+                folder_name = str(manifest.parent)
+                closed = candidate.get('released') is True or (
+                    folder_name in candidate.get('closed_runs', {}) and
+                    candidate['closed_runs'][folder_name] == digest(manifest))
+                packaged |= (closed and folder_name in candidate.get('runs', {}).values()
+                             and candidate.get('pack_sha256') == run.get('pack_sha256')
+                             and candidate.get('driver_sha256') == run.get('driver_sha256'))
             if (not packaged or script != str(driver) or not driver.is_file()
                     or not run.get('pack_sha256') or run.get('driver_sha256') != digest(driver)):
                 continue
@@ -55,6 +60,8 @@ def candidates(root=ROOT, keep_ready=2):
             family = 'authoring_brush'
         if family == 'water_player_world' and '--authoring-cut-angles' in command and '--water-load-only' in command:
             family = 'authoring_cut_angles'
+        if families is not None and family not in families:
+            continue
         folder = confined(manifest.parent, root / 'reports/checks')
         if '--check-evidence-dir=' + str(folder) not in command:
             continue
@@ -69,8 +76,8 @@ def candidates(root=ROOT, keep_ready=2):
     return [folder for family in ready.values() for folder in family[:-keep_ready]]
 
 
-def maintain(apply=False, root=ROOT, keep_ready=2):
-    selected = candidates(root, keep_ready)
+def maintain(apply=False, root=ROOT, keep_ready=2, families=None):
+    selected = candidates(root, keep_ready, families)
     result = dict(keep_ready=keep_ready, candidates=[str(p) for p in selected], reclaimed_bytes=0, manifests=[])
     if not apply or not selected:
         return result

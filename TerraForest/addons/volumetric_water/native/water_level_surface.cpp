@@ -5,6 +5,68 @@
 
 using namespace godot;
 namespace terraforest {
+// An unobstructed patch of a lake needs one vertex per shared free-surface
+// corner. Prove that every lower cell is saturated or solid and every upper
+// cell is dry, including the collar used for normals and edge reconstruction.
+// The surrounding shoreline, roofs, secondary pockets and waterfalls continue
+// through the same clipped volumetric extractor as before.
+bool NativeRegionalWater::build_open_sheet(Key k,const std::array<const Region*,27> &halo,SurfaceMesh &out) const{
+    const Region *owner=halo[13];
+    if(!owner||!owner->valid)return false;
+    const auto base=position(k)*8;
+    const auto partial=[](uint64_t ml){return ml>0&&ml<125000;};
+    int tier=7;
+    while(tier>=0&&!partial(owner->water[tier*8]))--tier;
+    if(tier<0)return false;
+    std::array<double,100> heads;
+    const auto at=[&](int x,int y,int z){return halo[((x+8)>>3)+3*(((y+8)>>3)+3*((z+8)>>3))];};
+    for(int z=-1;z<=8;++z)for(int x=-1;x<=8;++x){
+        for(int y=-1;y<=8;++y){
+            const Region *r=at(x,y,z);
+            const auto p=base+Vector3i(x,y,z);
+            if(!in_domain(p)||!r||!r->valid)return false;
+            const int i=index(p);
+            const auto amount=r->water[i];
+            if(y>tier){if(amount)return false;continue;}
+            if(y==tier){
+                if(!partial(amount)||!profile(*r,i).is_full_air())return false;
+                heads[x+1+10*(z+1)]=amount/250000.;
+            }else if(amount!=125000){
+                if(y==tier-1||amount!=profile(*r,i).capacity())return false;
+            }
+        }
+    }
+    constexpr double grid=4194304.;
+    std::array<double,81> height;
+    std::array<Vector3,81> normal;
+    for(int z=0;z<=8;++z)for(int x=0;x<=8;++x){
+        const auto *h=heads.data()+x+10*z;
+        height[x+9*z]=.25*(h[0]+h[1]+h[10]+h[11]);
+        normal[x+9*z]=Vector3(-(h[1]+h[11]-h[0]-h[10]),1,-(h[10]+h[11]-h[0]-h[1])).normalized();
+    }
+    out.render_vertices.resize(81);out.render_normals.resize(81);out.render_uv.resize(81);
+    out.render_colors.resize(81);out.render_colors.fill({1,1,1,1});out.render_indices.resize(384);
+    auto *v=out.render_vertices.ptrw(),*n=out.render_normals.ptrw();auto *uv=out.render_uv.ptrw();
+    auto *triangles=out.render_indices.ptrw();
+    for(int z=0;z<=8;++z)for(int x=0;x<=8;++x){
+        int i=x+9*z;
+        v[i]={float(x*.5),float(tier*.5+std::round(height[i]*grid)/grid),float(z*.5)};
+        n[i]=normal[i];uv[i]={float((base.x+x)*.5),float((base.z+z)*.5)};
+    }
+    out.owners.reserve(128);
+    for(int z=0;z<8;++z)for(int x=0;x<8;++x){
+        int i=x+9*z,cell=x+8*tier+64*z;
+        for(int vertex:{i,i+1,i+10,i,i+10,i+9})*triangles++=vertex;
+        out.owners.push_back(cell);out.owners.push_back(cell);
+        std::array<double,4> corners{height[i],height[i+1],height[i+9],height[i+10]};
+        const double head=heads[x+1+10*(z+1)];
+        if(std::any_of(corners.begin(),corners.end(),[&](double h){return std::abs(h-head)>1e-12;}))
+            out.reconstructed.push_back({uint16_t(cell),corners});
+    }
+    out.query_vertices=out.render_vertices;out.query_indices=out.render_indices;
+    out.faces["top"]=out.faces["triangles"]=128;out.faces["open_sheet"]=true;
+    return true;
+}
 // Intersect the free surface with the terrain triangles directly when the
 // occupied volumes and their reconstruction halo prove one hydrostatic head.
 // Disconnected dry cavities, non-level surfaces and structural contacts use

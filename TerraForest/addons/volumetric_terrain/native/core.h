@@ -219,3 +219,6 @@ void shade_mesh(const World&w,Mesh&m,u32 expected_epoch=0xffffffffu);
 void add_blocks(const World&w,int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y);
 void encode_mesh(const Mesh&m,int ox,int oz,int size,int step,Bytes&out);
 void process_request(World&w,const u8*data,int length,Bytes&out);
+bool read_homogeneous_water(const World &w,int x,int y,int z,u32 revision,u32 epoch,Bytes &out);
+int water_brick_occupancy(const World &w,int x,int y,int z);
+bool water_layer_signature(const World &w,int x,int y,int z,i16 *samples);

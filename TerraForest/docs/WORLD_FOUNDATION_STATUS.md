@@ -1,5 +1,7 @@
 ## Local water edit qualification
 
+The 1080p Cedar Vale release with shared immutable terrain and receiver classification reached the full cut on draw 25 at 420.700 ms, the sea blast on draw three at 45.651 ms, and the lake blast on draw seven at 112.925 ms. Both shorelines passed the 2 cm contact check on first publication. Independent timings and the fixed-camera before/after runs share one build receipt. All three deadlines remain open. [Packaged evidence](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale)
+
 The [Cedar Vale release measurements](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale) cover the complete wet cut, both shoreline explosions, their two camera views, detailed water, collision, and frame intervals. The finite cut completes with conserved quantities and zero main-thread receiver retries. Milestone 5 remains open for joint publication within two draws and 33.33 ms across the full footprint, including shoreline contact.
 
 ## Distant barrel chains in saved worlds
