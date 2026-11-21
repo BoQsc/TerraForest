@@ -5,6 +5,7 @@ var cached_sizes:Dictionary={}
 var cache_loaded:=false
 var scan_polling:=false
 var terrain_source:Variant
+var water_source:Node
 var folder_refresh:Dictionary={}
 var recorded_rows:Dictionary={}
 var snapshot_dirty:=false
@@ -63,12 +64,13 @@ func resolve_paths(host:Node)->void:
 func build(host:Node)->void:
 	set_process(false);add_theme_constant_override("separation",10)
 	terrain_source=host.terrain
+	water_source=host.get("lakes")
 	var parsed:Variant=JSON.parse_string(FileAccess.get_file_as_string(POLICY))
 	if parsed is Dictionary:budgets=parsed
 	resolve_paths(host)
 	text("Usage",24)
-	text("Live measurements while this page is open. Targets flag regressions; they are not allocator caps or certified minimum specifications.",14)
-	for key:String in ["ram","gpu","free"]:
+	text("Live measurements while this page is open. RAM and GPU targets flag regressions. Water meters show the current world's engine limits.",14)
+	for key:String in ["ram","gpu","free","water_regions","water_save"]:
 		var line:=Label.new();line.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;add_child(line)
 		var bar:=ProgressBar.new();bar.show_percentage=false;bar.custom_minimum_size.y=7;bar.max_value=1;add_child(bar)
 		meters[key]={"label":line,"bar":bar}
@@ -147,6 +149,20 @@ func meter(key:String,title:String,value:int,limit:int,warning:int,peak:int=-1,d
 	label.modulate=colour;bar.modulate=colour;bar.value=clampf(float(value)/maxi(1,limit),0,1) if value>=0 and limit>0 else 0.0
 
 func refresh_live()->void:
+	var water:Dictionary=water_source.capacity_usage() if is_instance_valid(water_source) else {}
+	var regions:int=water.get("regions",-1)
+	var region_limit:int=water.get("region_limit",0)
+	var expanded:int=water.get("expanded_bytes",-1)
+	var expanded_limit:int=water.get("expanded_limit",0)
+	var resident:Dictionary=meters.water_regions
+	resident.label.text="Live water regions · %d / %d regions"%[regions,region_limit] if region_limit>0 else "Live water regions · Unavailable"
+	resident.label.tooltip_text="Water regions currently in the live store, including generated ocean."
+	resident.bar.value=float(regions)/region_limit if region_limit>0 else 0.0
+	var packed:Dictionary=meters.water_save
+	var used_text:="Unavailable" if expanded<0 else ("%.2f MiB"%(expanded/1048576.0) if expanded>=1048576 else size_text(expanded))
+	packed.label.text="Expanded water save · %s / %s"%[used_text,size_text(expanded_limit)] if expanded_limit>0 else "Expanded water save · Unavailable"
+	packed.label.tooltip_text="Uncompressed water data for the current world, including unsaved edits."
+	packed.bar.value=float(expanded)/expanded_limit if expanded>=0 and expanded_limit>0 else 0.0
 	if probe==null or budgets.is_empty():live_note.text="Native process measurements are unavailable in this build.";return
 	live=probe.sample(paths.data);live_samples+=1
 	meter("ram","RAM · private commit",int(live.get("private_bytes",-1)),int(budgets.ram_limit_bytes),int(budgets.ram_warning_bytes),int(live.get("private_peak_bytes",-1)))

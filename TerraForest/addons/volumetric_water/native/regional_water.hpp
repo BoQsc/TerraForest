@@ -134,6 +134,8 @@ class NativeRegionalWater : public godot::RefCounted {
         // Conservative charge per retained owner, even when payload is shared.
         static constexpr uint64_t payload_bytes=2*SnapshotArray<uint16_t,512>::retained_bytes+
             SnapshotArray<uint64_t,512>::retained_bytes+SnapshotArray<float,729>::retained_bytes;
+        uint64_t encoded_contacts_bytes() const;
+        uint32_t encoded_vacancies() const;
     };
     static WaterCellProfile profile(const Region &r,int i) {
         if(r.floor[i]==r.ceiling[i])return WaterCellProfile::make(nullptr,false,r.floor[i],r.ceiling[i]);
@@ -227,6 +229,8 @@ class NativeRegionalWater : public godot::RefCounted {
     void invalidate_snapshot(bool map_changed=true) const;
     mutable uint64_t map_revision=0;
     mutable uint64_t survey_revision=0;
+    mutable uint64_t usage_revision=UINT64_MAX;
+    mutable int64_t packed_region_bytes=0, packed_region_count=0;
     mutable godot::String survey_saved_identity;
     uint64_t survey_identity_hash_us=0,survey_identity_scene_hash_us=0;
 
@@ -379,6 +383,7 @@ public:
     // Runtime publication and picking use the same closed material boundary.
     godot::Dictionary next_mesh(bool include_contacts=false);
     godot::Dictionary runtime_state() const;
+    godot::Dictionary capacity_usage(int64_t catalog_bytes,int64_t empty_catalog_bytes) const;
     godot::Dictionary statistics() const;
     godot::PackedByteArray capture_streaming_snapshot(const godot::PackedByteArray &catalog) const;
     godot::Dictionary inspect_streaming_snapshot(const godot::PackedByteArray &data) const;

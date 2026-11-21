@@ -112,13 +112,18 @@ func capture_snapshot() -> PackedByteArray:
  return _capture(false)
 func capture_storage_snapshot() -> Variant:
  return _capture(true)
+func _save_catalog()->PackedByteArray:
+ var records:Array=[]
+ for item:Dictionary in _lakes.values():records.append({"id":item.id,"origin":item.origin,"cells":item.cells,"spacing":item.spacing,"level":item.level,"seed":item.seed})
+ return _catalog.encode(records,_next_id)
+func capacity_usage()->Dictionary:
+ if water==null or _catalog==null:return {}
+ return water.capacity_usage(_save_catalog().size(),_catalog.encode([]).size())
 func _capture(deferred:bool) -> Variant:
  # Do not silently save a partially authored/generated lake as a completed one.
  for item:Dictionary in _lakes.values():
   if item.dirty:print("WATER_CAPTURE_REJECTED unfinished_lake=",item.id);return PackedByteArray()
- var records:Array=[]
- for item:Dictionary in _lakes.values():records.append({"id":item.id,"origin":item.origin,"cells":item.cells,"spacing":item.spacing,"level":item.level,"seed":item.seed})
- var catalog:PackedByteArray=_catalog.encode(records,_next_id)
+ var catalog:=_save_catalog()
  var captured:Variant=water.capture_storage_snapshot(catalog) if deferred else water.capture_streaming_snapshot(catalog)
  if captured is PackedByteArray and captured.is_empty():print("WATER_CAPTURE_REJECTED catalog_bytes=",catalog.size()," state=",JSON.stringify(water.statistics()))
  return captured

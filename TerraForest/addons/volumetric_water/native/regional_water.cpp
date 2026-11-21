@@ -324,6 +324,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("statistics"),&NativeRegionalWater::statistics);
     ClassDB::bind_method(D_METHOD("total_water_ml"),&NativeRegionalWater::total_water_ml);
     ClassDB::bind_method(D_METHOD("runtime_state"),&NativeRegionalWater::runtime_state);
+    ClassDB::bind_method(D_METHOD("capacity_usage","catalog_bytes","empty_catalog_bytes"),&NativeRegionalWater::capacity_usage);
     ClassDB::bind_method(D_METHOD("capture_snapshot","catalog"),&NativeRegionalWater::capture_snapshot);
     ClassDB::bind_method(D_METHOD("retire_region","receipt","expected_revision"),&NativeRegionalWater::retire_region);
     ClassDB::bind_method(D_METHOD("register_deferred_regions","coordinates","digests"),&NativeRegionalWater::register_deferred_regions);
@@ -2536,6 +2537,43 @@ Dictionary NativeRegionalWater::statistics() const {
 // Accepted edits invalidate it before capture. Invalid regions are re-sampled on
 // reopen. All data has strict bounds; the outer world archive supplies checksums.
 static constexpr uint32_t OLD_REGION_BYTES=16+512*12,REGION_BYTES=OLD_REGION_BYTES+729*4;
+uint64_t NativeRegionalWater::Region::encoded_contacts_bytes() const {
+    uint64_t bytes=8; // Terrain contact presence and structure cell count.
+    if(contacts){
+        bytes+=512*4;
+        for(const auto &cell:contacts->floors)bytes+=cell.size()*36;
+    }
+    if(structures)for(const auto &cell:structures->cells)if(cell)bytes+=8+cell->encoded_size()*8;
+    return bytes;
+}
+uint32_t NativeRegionalWater::Region::encoded_vacancies() const {
+    return std::count_if(vacancies.begin(),vacancies.end(),[](uint32_t amount){return amount!=0;});
+}
+Dictionary NativeRegionalWater::capacity_usage(int64_t catalog_bytes,int64_t empty_catalog_bytes) const {
+    Dictionary usage;
+    usage["regions"]=int64_t(regions.size());
+    usage["region_limit"]=int64_t(MAX_REGIONS);
+    usage["expanded_limit"]=MAX_EXPANDED_BYTES;
+    usage["expanded_bytes"]=int64_t(-1);
+    if(!deferred_regions.empty()||catalog_bytes<=0||catalog_bytes>1100000||empty_catalog_bytes<=0||empty_catalog_bytes>1100000)return usage;
+    if(usage_revision!=survey_revision){
+        // Pack storage writes an empty base and one individually framed
+        // snapshot per retained region. Canonicalization sets a common version.
+        bool upgraded=true;
+        for(const auto &[k,r]:regions)if(r.ocean_state!=1&&r.occupancy_version<12){upgraded=false;break;}
+        packed_region_count=0;packed_region_bytes=0;
+        for(const auto &[k,r]:regions){
+            if(r.ocean_state==1)continue;
+            ++packed_region_count;
+            packed_region_bytes+=32+REGION_BYTES+r.encoded_contacts_bytes();
+            auto vacancies=r.encoded_vacancies();
+            if(upgraded||r.ocean_state||r.settle_pending||vacancies)packed_region_bytes+=4+8*vacancies;
+        }
+        usage_revision=survey_revision;
+    }
+    usage["expanded_bytes"]=32+catalog_bytes+packed_region_bytes+packed_region_count*empty_catalog_bytes;
+    return usage;
+}
 
 std::atomic<uint64_t> NativeWaterMeshJob::pending_bytes{0};
 void NativeWaterMeshJob::_bind_methods(){
@@ -2686,15 +2724,13 @@ PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &cat
     if(snapshot_cached&&catalog==saved_catalog){++snapshot_hits;return saved_snapshot;}
     Ref<NativeLakeCatalog> validator;validator.instantiate();if(!validator->validate_snapshot(catalog))return out;
     ++snapshot_builds;
-    uint64_t contact_bytes=regions.size()*4;
-    for(const auto &[k,r]:regions)if(r.contacts){contact_bytes+=512*4;for(const auto &cell:r.contacts->floors)contact_bytes+=cell.size()*36;}
-    contact_bytes+=regions.size()*4;
-    for(const auto &[k,r]:regions)if(r.structures)for(const auto &cell:r.structures->cells)if(cell)contact_bytes+=8+cell->encoded_size()*8;
+    uint64_t contact_bytes=0;
+    for(const auto &[k,r]:regions)contact_bytes+=r.encoded_contacts_bytes();
     bool ocean=false;for(const auto &[k,r]:regions)ocean|=r.ocean_state!=0;
     bool pending_settle=false;for(const auto &[k,r]:regions)pending_settle|=r.settle_pending;
     bool upgraded=true,prior_upgraded=true;for(const auto &[k,r]:regions){upgraded&=r.occupancy_version>=13;prior_upgraded&=r.occupancy_version>=12;}
     bool vacancies=prior_upgraded||ocean||pending_settle;for(const auto &[k,r]:regions)for(uint32_t missing:r.vacancies)vacancies|=missing!=0;
-    if(vacancies){contact_bytes+=regions.size()*4;for(const auto &[k,r]:regions)for(uint32_t missing:r.vacancies)if(missing)contact_bytes+=8;}
+    if(vacancies){contact_bytes+=regions.size()*4;for(const auto &[k,r]:regions)contact_bytes+=8*r.encoded_vacancies();}
     if(contact_bytes>64*1024*1024)return out;
     if(out.resize(32+catalog.size()+regions.size()*REGION_BYTES+contact_bytes)!=OK)return out;
     // One writable borrow avoids millions of GDExtension calls. Explicit little
