@@ -1180,7 +1180,42 @@ func _activate_contact()->void:
 		_set_active(tiles[id],false)
 		_set_active(_contact_entries[id],true)
 	_contact_visible=true
+	_wake_edited_contacts(_contact_entries.keys())
 	edit_region_installed.emit(edit_ticket,_contact_entries.keys())
+
+# A replaced concave shape updates ray queries immediately. Jolt can still
+# retain a sleeping rigid body's old support until explicitly awakened.
+# Layers 1 and 2 hold static terrain and structures. Gameplay rigid bodies
+# use vehicle, ragdoll, debris or pickup layers. Custom worlds may opt in more.
+@export_flags_3d_physics var edit_wake_layers:int=0xfffffffc
+
+func _wake_edited_contacts(keys:Array)->void:
+	if keys.is_empty():return
+	var space:=get_world_3d().direct_space_state
+	var shape:=BoxShape3D.new()
+	var query:=PhysicsShapeQueryParameters3D.new()
+	query.shape=shape
+	query.collision_mask=edit_wake_layers
+	for brush in edit_geometry_bounds:
+		var region:=AABB()
+		for key:Vector3i in keys:
+			var tile:=AABB(Vector3(key.x,brush.position.y,key.y),Vector3(key.z,brush.size.y,key.z))
+			var part:=brush.intersection(tile)
+			if part.has_volume():region=part if not region.has_volume() else region.merge(part)
+		if not region.has_volume():continue
+		shape.size=region.size
+		query.transform=Transform3D(Basis.IDENTITY,region.get_center())
+		var excluded:Array[RID]=[]
+		while true:
+			query.exclude=excluded
+			var hits:=space.intersect_shape(query,64)
+			for hit in hits:
+				var rid:RID=hit.rid
+				if rid in excluded:continue
+				excluded.append(rid)
+				if PhysicsServer3D.body_get_mode(rid)>=PhysicsServer3D.BODY_MODE_RIGID and PhysicsServer3D.body_get_state(rid,PhysicsServer3D.BODY_STATE_SLEEPING):
+					PhysicsServer3D.body_set_state(rid,PhysicsServer3D.BODY_STATE_SLEEPING,false)
+			if hits.size()<64:break
 
 func _set_edit_replacement(key:Vector3i, replacement:Dictionary, active:bool)->void:
 	var original:Dictionary=tiles[key]
@@ -1268,7 +1303,9 @@ func _install_ready_edit_group(group:Array)->void:
 		_set_edit_replacement(key,entry,true)
 		entry.local_active=true
 		installed.append(key)
-	if not installed.is_empty():edit_region_installed.emit(edit_ticket,installed)
+	if not installed.is_empty():
+		_wake_edited_contacts(installed)
+		edit_region_installed.emit(edit_ticket,installed)
 
 func edit_geometry_ready_in(bounds:AABB)->bool:
 	if not pending_edit or _edit_visible_owners.is_empty():return false
@@ -1286,11 +1323,15 @@ func _install_edit_geometry()->void:
 	# Change every adjacent surface and its collider in the same main-thread
 	# turn. Support sampling can finish independently on the terrain worker.
 	_record_stage("geometry ready",0.0)
+	var installed:Array[Vector3i]=[]
 	for key: Vector3i in staged_batch:
 		if staged_batch[key].get("retain_geometry",false):
 			tiles[key].stamp=staged_batch[key].stamp
 			tiles[key].dirty=false
-		else: _install(key, staged_batch[key])
+		else:
+			if not staged_batch[key].get("local_active",false):installed.append(key)
+			_install(key, staged_batch[key])
+	_wake_edited_contacts(installed)
 	staged_batch.clear()
 	edit_geometry_installed.emit(edit_ticket)
 

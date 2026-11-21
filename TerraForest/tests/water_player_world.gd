@@ -981,6 +981,8 @@ func check_authoring_brush()->void:
   var revision:int=game.terrain.published_revision
   var ticket:int=game.terrain.edit_ticket
   var audit:="--authoring-dependencies" in OS.get_cmdline_user_args() and (i==1 or "--authoring-collision-reuse" in OS.get_cmdline_user_args())
+  var replay:bool=i==1 and "--authoring-swap-bound" in OS.get_cmdline_user_args()
+  var resident_before:=resident_payloads() if replay else {}
   var owners_before:=brush_mesh_owners(view,center,game.radius) if audit else {}
   var stamps_before:Dictionary=game.terrain.stamps.duplicate() if audit else {}
   if audit:
@@ -1016,6 +1018,15 @@ func check_authoring_brush()->void:
    footprint.samples=sample_patch.call(footprint_spacing)
   if check_footprint:footprint.before=sample_patch.call(footprint_spacing)
   var old_contact:Vector3=sample_center.call() if verify_draw else Vector3.INF
+  var gameplay_bodies:Array[RigidBody3D]=[]
+  if replay:
+   var perimeter:PackedVector3Array=sample_patch.call(40.0)
+   if old_contact.is_finite() and perimeter[5].is_finite():
+    gameplay_bodies=[contact_body_at(old_contact),contact_body_at(perimeter[5])]
+    for tick in 120:
+     await physics_frame
+     if gameplay_bodies[0].sleeping and gameplay_bodies[1].sleeping:break
+   check(gameplay_bodies.size()==2 and gameplay_bodies.all(func(body):return body.sleeping and body.get_contact_count()>0),"Gameplay cut starts with supported sleeping bodies")
   var observe_geometry:=func(installed:int)->void:
    if installed!=ticket+1 or geometry_draw.has("installed_us"):return
    geometry_draw.installed_us=Time.get_ticks_usec()
@@ -1147,6 +1158,101 @@ func check_authoring_brush()->void:
    if i==1 and "--authoring-collision-reuse" in OS.get_cmdline_user_args():
     await physics_frame
     record_brush_contacts(center)
+  if replay:
+   if gameplay_bodies.size()==2:
+    await physics_frame
+    await process_frame
+    check(gameplay_bodies[0].linear_velocity.y<-.01 and gameplay_bodies[1].sleeping,"Gameplay cut releases the unsupported body and preserves outside support")
+   for body in gameplay_bodies:body.queue_free()
+   await process_frame
+   await check_resident_swap(resident_before,center,sample_patch)
+
+# Isolate the installation cost from construction. This diagnostic runs only
+# after the ordinary edit in the disposable world. It cannot qualify latency.
+func resident_payloads()->Dictionary:
+ var result:={}
+ for key:Vector3i in game.terrain.visible_cut:
+  var entry:Dictionary=game.terrain.tiles[key]
+  if key.z>32 or not entry.node is MeshInstance3D or not is_instance_valid(entry.body):continue
+  var shapes:Array=[]
+  for collider:CollisionShape3D in entry.body.get_children():shapes.append(collider.shape)
+  result[key]={"node":entry.node.get_instance_id(),"mesh":entry.node.mesh,"shapes":shapes}
+ return result
+
+func contact_body_at(point:Vector3)->RigidBody3D:
+ var body:=RigidBody3D.new()
+ body.collision_layer=1<<20 # Gameplay debris layer. Terrain probes use layer one.
+ body.collision_mask=1
+ body.lock_rotation=true
+ body.contact_monitor=true
+ body.max_contacts_reported=4
+ var collider:=CollisionShape3D.new()
+ var box:=BoxShape3D.new()
+ box.size=Vector3.ONE*.5
+ collider.shape=box
+ body.add_child(collider)
+ game.add_child(body)
+ body.global_position=point+Vector3.UP*.3
+ return body
+
+func check_resident_swap(before:Dictionary,center:Vector3,sample:Callable)->void:
+ var after:=resident_payloads()
+ var entries:Array[Dictionary]=[]
+ for key:Vector3i in before:
+  if not after.has(key) or before[key].mesh==after[key].mesh:continue
+  var tile:Dictionary=game.terrain.tiles[key]
+  if before[key].node!=after[key].node or before[key].shapes.size()!=after[key].shapes.size():
+   check(false,"All changed owners support the resident resource swap");return
+  entries.append({"key":key,"node":tile.node,"resident_swap":{"colliders":tile.body.get_children(),"old_shapes":before[key].shapes,"shapes":after[key].shapes,"old_mesh":before[key].mesh,"mesh":after[key].mesh,"applied":true}})
+ check(entries.size()==36,"Prepared replay covers all 36 reference owners")
+ if entries.size()!=36:return
+ var final_hits:PackedVector3Array=sample.call(24.0)
+ var previous_pause:bool=game.terrain.diagnostics_pause_streaming
+ game.terrain.diagnostics_pause_streaming=true
+ for item in entries:game.terrain._apply_resident_swap(item,false)
+ await physics_frame
+ await process_frame
+ var original:PackedVector3Array=sample.call(24.0)
+ var outside:PackedVector3Array=sample.call(40.0)
+ if not original[4].is_finite() or not outside[5].is_finite():
+  for item in entries:game.terrain._apply_resident_swap(item,true)
+  game.terrain.diagnostics_pause_streaming=previous_pause
+  check(false,"Prepared replay has valid body support points");return
+ var body:=contact_body_at(original[4])
+ var control:=contact_body_at(outside[5])
+ for tick in 120:
+  await physics_frame
+  if body.sleeping and control.sleeping:break
+ var resting:bool=body.sleeping and control.sleeping and body.get_contact_count()>0 and control.get_contact_count()>0
+ check(resting,"Inside and outside rigid bodies rest on the original surface")
+ var start_y:=body.global_position.y
+ var control_y:=control.global_position.y
+ await process_frame
+ var began:=Time.get_ticks_usec()
+ for item in entries:game.terrain._apply_resident_swap(item,true)
+ var keys:Array[Vector3i]=[]
+ for item in entries:keys.append(item.key)
+ if game.terrain.has_method("_wake_edited_contacts"):game.terrain._wake_edited_contacts(keys)
+ var swap_us:=Time.get_ticks_usec()-began
+ var draws:Array=[]
+ var first_tick:=Engine.get_physics_frames()
+ for draw in 8:
+  await RenderingServer.frame_post_draw
+  var elapsed:=Time.get_ticks_usec()-began
+  var current:PackedVector3Array=sample.call(24.0)
+  var perimeter:PackedVector3Array=sample.call(40.0)
+  var matched:=0
+  var edge_ok:=true
+  for j in current.size():
+   if final_hits[j].is_finite() and original[j].is_finite() and not original[j].is_equal_approx(final_hits[j]) and current[j].is_equal_approx(final_hits[j]):matched+=1
+   if j!=4 and (not outside[j].is_finite() or not perimeter[j].is_equal_approx(outside[j])):edge_ok=false
+  draws.append({"draw":draw+1,"physics_ticks":Engine.get_physics_frames()-first_tick,"sleeping":body.sleeping,"physics_vy":PhysicsServer3D.body_get_state(body.get_rid(),PhysicsServer3D.BODY_STATE_LINEAR_VELOCITY).y,"elapsed_ms":elapsed/1000.0,"matches":matched,"perimeter":edge_ok,"body_vy":body.linear_velocity.y,"body_drop_m":start_y-body.global_position.y,"outside_drift_m":absf(control_y-control.global_position.y)})
+ var second:Dictionary=draws[1]
+ print("RESIDENT_SWAP_BOUND ",JSON.stringify({"owners":entries.size(),"swap_ms":swap_us/1000.0,"resting_before":resting,"draws":draws,"center":str(center)}))
+ check(second.matches==9 and second.perimeter and second.elapsed_ms<=33.334,"Prebuilt resources reach all footprint probes within two frames")
+ check(second.body_vy<-.01 and second.outside_drift_m<.01,"Ordinary physics releases the inside body and preserves outside support on draw two")
+ body.queue_free();control.queue_free()
+ game.terrain.diagnostics_pause_streaming=previous_pause
 
 func record_brush_staging(stage:String,ms:float)->void:
  # Observe completed tiles at the end of each slice and immediately before
