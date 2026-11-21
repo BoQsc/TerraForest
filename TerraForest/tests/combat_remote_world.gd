@@ -8,6 +8,8 @@ func check(ok:bool,label:String)->void:
 	print("PASS " if ok else "FAIL ",label)
 func _initialize()->void:run.call_deferred()
 func run()->void:
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--barrel-source-slot="):slot=arg.trim_prefix("--barrel-source-slot=")
 	var save:="user://worlds/"+slot+".trw"
 	if not FileAccess.file_exists(save):check(false,"existing default-world fixture exists");quit(1);return
 	var hash:=FileAccess.get_sha256(save)
@@ -25,6 +27,23 @@ func run()->void:
 		await process_frame
 	check(not game.loading_active and game.terrain.backend.readonly_snapshot,"existing default world loads read-only")
 	if failures:await finish();return
+	if "--saved-barrel-chain" in OS.get_cmdline_user_args():
+		game.player_view.entry.finish();game._clear_motion();game.app_focused=true
+		game.session_menu.set_open(false)
+		var ids:PackedInt64Array=game.combat.barrels.get_ids()
+		var start:Vector3=game.player.position
+		var before:int=game.combat.explosions
+		check(ids.size()==2,"saved shoreline pair loaded")
+		if ids.size()==2:
+			check(game.combat.damage_barrel(ids[0],50),"only the first barrel ignites")
+			var limit:=Time.get_ticks_msec()+3000
+			while game.combat.explosions-before<2 and Time.get_ticks_msec()<limit:await physics_frame
+			check(game.combat.explosions-before==2 and game.combat.barrels.get_ids().is_empty(),"neighbor detonates in normal gameplay while shoreline terrain is busy")
+			check(Vector2(game.player.position.x-start.x,game.player.position.z-start.z).length()<.1,"player stays in the original position")
+		check(FileAccess.get_sha256(save)==hash,"saved pair fixture preserved")
+		game.set_process(false);game.set_physics_process(false)
+		await physics_frame;await physics_frame
+		await finish();return
 	game.set_process(false);game.set_physics_process(false);game.combat.set_physics_process(false)
 	check(game.combat.blast_water_settling,"terrain-reactive water is enabled in normal gameplay")
 	if OS.get_cmdline_user_args().has("--verify-water-settling"):game.combat.blast_water_settling=true
@@ -43,10 +62,10 @@ func run()->void:
 	while Time.get_ticks_msec()<deadline:
 		game.combat.step_blasts()
 		game.combat.step_detonations()
-		if game.combat.explosions-before==3 and not game.terrain.pending_edit and game.combat.blast_jobs.is_empty():break
+		if game.combat.explosions-before==3 and game.combat.craters.pending.is_empty() and not game.terrain.pending_edit and game.combat.blast_jobs.is_empty():break
 		await process_frame
 	check(game.combat.explosions-before==3,"three actual-world barrels detonate without following them")
-	check(not game.terrain.pending_edit and game.combat.blast_jobs.is_empty(),"terrain and building publication finish")
+	check(game.combat.craters.pending.is_empty() and not game.terrain.pending_edit and game.combat.blast_jobs.is_empty(),"terrain and building publication finish")
 	check(game.player.global_position==player_before,"player stays at original location")
 	var chains:CheckButton=game.session_menu.pages.Player.get_node("FastBarrelChains")
 	var distance_slider:HSlider=game.session_menu.pages.Player.get_node("BarrelSimulationDistance")

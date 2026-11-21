@@ -53,13 +53,17 @@ func run()->void:
 		ids.append(combat.barrels.insert_instance(PackedFloat32Array([1,0,0,x,0,1,0,60,0,0,1,800]),AABB()))
 	check(combat.damage_barrel(ids[0],50),"remote barrel ignites in authoritative store")
 	host.mining_rewards.accepted=false
-	check(not combat.detonate(ids[0]) and not combat.barrels.get_instance(ids[0]).is_empty() and combat.explosions==0,"rejected terrain admission retains ignited barrel and damage")
-	host.mining_rewards.accepted=true
 	for id in ids:
 		check(id in combat.detonations,"chain ignition reaches remote barrel")
 		check(combat.detonate(id),"blast proceeds without player-relative actor collision readiness")
 		combat.detonations.erase(id)
 	check(combat.barrels.get_ids().is_empty() and combat.explosions==3,"entire remote chain detonates once with stationary distant player")
+	check(combat.craters.pending.size()==3 and host.mining_rewards.accepted_points.is_empty(),"standard chain propagates while terrain refuses all three craters")
+	host.mining_rewards.accepted=true
+	for i in ids.size():
+		combat.step_detonations()
+		combat._crater_resolved({"epoch":1,"ticket":42,"status":"unchanged"})
+	check(combat.craters.pending.is_empty() and host.mining_rewards.accepted_points.size()==3,"all three deferred craters complete after terrain becomes available")
 	check(combat.detonate(ids[0]) and combat.explosions==3,"retry cannot replay consumed blast")
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--check-evidence-dir="):combat.chain_settings_path=arg.trim_prefix("--check-evidence-dir=").path_join("barrel_test.cfg")
@@ -174,7 +178,8 @@ func check_saved_pages(host:Host,combat:Combat)->void:
 		world.step_region_paging(host.player.global_position)
 		combat.step_detonations()
 		combat.step_blasts()
-		if combat.explosions==initial+3 and combat.blast_jobs.is_empty():break
+		if combat.craters.ticket>=0:combat._crater_resolved({"epoch":1,"ticket":42,"status":"unchanged"})
+		if combat.explosions==initial+3 and combat.blast_jobs.is_empty() and combat.craters.pending.is_empty():break
 		await process_frame
 	check(combat.explosions==initial+3 and combat.barrels.get_ids().is_empty() and host.mining_rewards.calls==calls+3,"chain crosses saved pages over a kilometre away with one crater submission per barrel")
 	check(combat.destroyed_blocks==1 and world.blocks.get_cell(cell)==0,"remote explosion loads and damages the saved building")

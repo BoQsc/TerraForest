@@ -26,6 +26,7 @@ var projectiles:Array[Dictionary]=[]
 var detonations:Array[int]=[]
 var craters:=Barrel.CraterQueue.new()
 var fast_chains:=false
+var standard_chain_delay:=0.0
 var barrel_distance:=WORLD_BARREL_DISTANCE
 var warming_chain:=false
 var chain_settings_path:="user://barrel_chains.cfg"
@@ -374,7 +375,7 @@ func _detonate(id:int)->bool:
 	# The terrain edit and block transactions retain their own publication and
 	# water admission checks; no collision streaming radius is enlarged here.
 	if barrels.is_removal_protected(id):return true
-	if blast_jobs.size()>=32 or (fast_chains and craters.pending.size()>=craters.LIMIT):return false
+	if blast_jobs.size()>=32 or craters.pending.size()>=craters.LIMIT:return false
 	# get_ids() only sees resident placements. Wait before consuming the source
 	# so a chain crossing a cold page can still discover the next barrel.
 	if not barrels.placement_neighborhood_ready(base,6.0):
@@ -388,19 +389,16 @@ func _detonate(id:int)->bool:
 	# as mining. The environmental admission does not pay mining rewards.
 	var measured:=Time.get_ticks_usec()
 	var crater_point:=base+Vector3.UP*.2
-	if not fast_chains:
-		var admitted:bool=game.mining_rewards.excavate_blast(crater_point,3.5)
-		game.terrain._record_stage("blast terrain admission",(Time.get_ticks_usec()-measured)/1000.0)
-		if not admitted:return false
+	if not barrels.remove_instances(PackedInt64Array([id])):return false
+	craters.pending.append({"id":id,"point":crater_point})
+	if not fast_chains and craters.pending.size()==1:_submit_next_crater()
+	game.terrain._record_stage("blast terrain admission",(Time.get_ticks_usec()-measured)/1000.0)
 	measured=Time.get_ticks_usec()
 	# Water wake-up belongs to the shared committed terrain-edit listener.
 	# Mining and explosions therefore use the same revision and pause rules.
 	var trace_identity:=""
 	if destruction_trace.enabled:
 		trace_identity=destruction_trace.trigger(game.terrain.epoch,id,Engine.get_physics_frames(),Time.get_ticks_usec())
-		if not fast_chains:destruction_trace.admitted(trace_identity,game.terrain.edit_ticket,Engine.get_physics_frames(),Time.get_ticks_usec())
-	if not barrels.remove_instances(PackedInt64Array([id])):return false
-	if fast_chains:craters.pending.append({"id":id,"point":crater_point})
 	game.model_tool.history.clear_history();game.world_attack.durability.forget("model:%s:%d"%[Barrel.KEY,id])
 	var records:PackedInt32Array=state.blast_cells(prefab.get_records(),origin,center,5.0)
 	if not records.is_empty():
@@ -433,17 +431,20 @@ func _warm_chain_pages()->void:
 	warming_chain=true
 	_apply_barrel_distance()
 
-func step_detonations()->void:
+func step_detonations(delta:float=1.0/60.0)->void:
+	standard_chain_delay=maxf(0,standard_chain_delay-delta)
 	for index in (FAST_DETONATIONS_PER_TICK if fast_chains else 1):
 		if detonations.is_empty():break
-		if not fast_chains and (game.terrain.pending_edit or not craters.pending.is_empty()):break
+		if not fast_chains and standard_chain_delay>0:break
 		if not detonate(detonations[0]):break
 		detonations.pop_front()
+		if not fast_chains:standard_chain_delay=.12
 	if warming_chain and detonations.is_empty():
 		warming_chain=false
 		_apply_barrel_distance()
-	# Previously consumed barrels still need their craters if the player turns
-	# fast chains off or opens the save with different preferences.
+	_submit_next_crater()
+
+func _submit_next_crater()->void:
 	if craters.pending.is_empty() or craters.ticket>=0 or game.terrain.pending_edit:return
 	var crater:Dictionary=craters.pending[0]
 	if game.mining_rewards.excavate_blast(crater.point,3.5):
@@ -522,6 +523,7 @@ func _trace_terrain_publication(measurement:Dictionary)->void:
 		destruction_trace.terrain_complete(int(measurement.ticket),Engine.get_physics_frames(),Time.get_ticks_usec(),measurement)
 
 func clear_transients()->void:
+	standard_chain_delay=0
 	warming_chain=false
 	_apply_barrel_distance()
 	if is_instance_valid(effects.blocks):
@@ -550,7 +552,7 @@ func _physics_process(delta:float)->void:
 		restored_support_pending=false
 		if state.integrity_enabled():integrity.changed(AABB(game.player.global_position-Vector3.ONE,Vector3.ONE*2))
 	timer+=delta;step_projectiles(minf(delta,.05));step_blasts()
-	step_detonations()
+	step_detonations(delta)
 	if blast_jobs.is_empty():integrity.step()
 	# Reconstruct ignited barrels after save/load from their native durability.
 	if int(timer)!=int(timer-delta):

@@ -2,6 +2,14 @@
 
 ## Saved barrels beyond the player
 
+**Follow-up on standard chain reactions.** Standard mode previously waited for
+the crater edit before igniting the next barrel. Shoreline water preparation
+could hold that edit while the player stood still. Both modes now save pending
+craters and propagate ignition independently. In a read-only Hidden Coast run,
+only the first saved barrel was ignited. Its neighbor detonated during ordinary
+physics ticks with the player at the saved position, about 80 m away.
+[Stationary chain](../../reports/checks/20261121T105922689074Z/console.log) · [Chain with all crater requests initially refused](../../reports/checks/20261121T105957859723Z/console.log)
+
 The player could have to follow an ignited chain in a saved world. Ordinary
 model paging loaded records within 384 m of the player and could retire them
 beyond 512 m. Combat searched only resident barrels. At a page boundary it

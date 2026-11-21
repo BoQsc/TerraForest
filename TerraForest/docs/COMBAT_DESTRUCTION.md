@@ -29,7 +29,8 @@ recipes. The existing starter loadout and saved inventories are preserved.
   in that same tick, and independently ignited groups can explode together.
   Flashes, sound and actor damage happen at detonation. Craters are excavated
   in order as terrain becomes available. The option defaults off and is saved
-  as a player preference. Standard pacing waits for terrain between barrels.
+  as a player preference. Standard chains allow 0.12 seconds between detonations.
+  Both modes propagate ignition while terrain and water prepare the craters.
 - **Esc → Player → Barrel simulation distance** sets how far from the player
   saved barrels are kept ready and how far blast sounds carry. The slider
   ranges from 384 m to 3,072 m and defaults to whole-world coverage. An
