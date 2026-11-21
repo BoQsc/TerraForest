@@ -390,6 +390,12 @@ bool NativeRegionalWater::prepare_ocean_edit(const AABB &bounds){
 }
 static constexpr size_t MAX_OCEAN_EDIT_REGIONS=512;
 int NativeRegionalWater::prepare_ocean_edit_status(const AABB &bounds){
+    int status=prepare_ocean_regions(bounds,false);
+    if(status==ERR_BUSY||status==ERR_OUT_OF_MEMORY)
+        ocean_edit_retry_until=Time::get_singleton()->get_ticks_usec()+2000000;
+    return status;
+}
+int NativeRegionalWater::prepare_ocean_regions(const AABB &bounds,bool background){
     ocean_edit_remaining=0;
     if(!surrounding_ocean)return OK;
     if(!bounds.position.is_finite()||!bounds.size.is_finite())return ERR_INVALID_PARAMETER;
@@ -409,38 +415,49 @@ int NativeRegionalWater::prepare_ocean_edit_status(const AABB &bounds){
     const uint64_t now=Time::get_singleton()->get_ticks_usec();
     const uint64_t until=now+2000000;
     size_t missing=0;
+    auto &interests=background?ocean_settlement_interests:ocean_edit_interests;
     for(Key k:keys){
         if(deferred_regions.count(k))return ERR_UNAVAILABLE;
-        ocean_edit_interests[k]=until;
+        interests[k]=until;
         if(!regions.count(k))++missing;
     }
-    const size_t wanted=std::min<size_t>(16,missing);
+    size_t wanted=std::min<size_t>(16,missing);
     if(wanted && regions.size()+wanted>MAX_REGIONS){
         // Camera residency and older craters may already occupy the reserved
         // slots. Reclaim only reproducible ocean outside current edit leases.
         if(fill.running)return ERR_BUSY;
-        const size_t needed=regions.size()+wanted-MAX_REGIONS;
+        size_t needed=regions.size()+wanted-MAX_REGIONS;
         std::vector<Key> candidates;
         for(const auto &[k,r]:regions){
             if(r.ocean_state!=1||!r.valid||r.settle_pending||request_set.count(k)||
                local_edit_regions.count(k)||local_receiver_regions.count(k)||local_occupancy_regions.count(k)||
                equilibrium_dependencies.count(k)||relaxation_before.count(k)||urgent_meshes.count(k))continue;
             auto lease=ocean_edit_interests.find(k);
-            if(lease==ocean_edit_interests.end()||lease->second<=now)candidates.push_back(k);
+            if(lease!=ocean_edit_interests.end()&&lease->second>now)continue;
+            // A background solve keeps its own reconstruction collar together.
+            // Foreground edits may reuse pristine pages from that collar.
+            auto settlement=ocean_settlement_interests.find(k);
+            if(background&&settlement!=ocean_settlement_interests.end()&&settlement->second>now)continue;
+            candidates.push_back(k);
         }
-        if(candidates.size()<needed){limit=true;return ERR_OUT_OF_MEMORY;}
+        if(candidates.size()<needed){
+            const size_t shortage=needed-candidates.size();
+            if(shortage>=wanted){limit=true;return ERR_OUT_OF_MEMORY;}
+            wanted-=shortage;
+            needed=candidates.size();
+        }
         const Vector3i center=(lo+hi)/2;
         std::partial_sort(candidates.begin(),candidates.begin()+needed,candidates.end(),[&](Key a,Key b){
             return position(a).distance_squared_to(center)>position(b).distance_squared_to(center);
         });
         // In-flight solves must recapture their membership after displacement.
-        invalidate_snapshot();
+        if(needed)invalidate_snapshot();
         for(size_t i=0;i<needed;++i)retire_pristine_ocean(candidates[i]);
     }
     bool ready=true;int admitted=0;
     for(Key k:keys){
         if(!regions.count(k)){
-            if(admitted>=16){ready=false;++ocean_edit_remaining;continue;}
+            if(size_t(admitted)>=wanted){ready=false;++ocean_edit_remaining;continue;}
             ++admitted;
             if(!restore_ocean_cache(k)){
                 trim_ocean_cache();
@@ -468,6 +485,7 @@ Dictionary NativeRegionalWater::update_ocean_residency(const Vector3 &center,int
     int retired=0,admitted=0;
     const uint64_t now=Time::get_singleton()->get_ticks_usec();
     for(auto it=ocean_edit_interests.begin();it!=ocean_edit_interests.end();)if(it->second<now)it=ocean_edit_interests.erase(it);else ++it;
+    for(auto it=ocean_settlement_interests.begin();it!=ocean_settlement_interests.end();)if(it->second<now)it=ocean_settlement_interests.erase(it);else ++it;
     std::unordered_set<Key> pinned_columns;
     for(const auto &[k,r]:regions)if(r.ocean_state==2){auto p=position(k);
         for(int z=-2;z<=2;++z)for(int x=-2;x<=2;++x){
@@ -481,7 +499,7 @@ Dictionary NativeRegionalWater::update_ocean_residency(const Vector3 &center,int
         const auto coordinate=position(it->first);auto &r=it->second;
         if(r.ocean_state!=1||(std::abs(coordinate.x-cx)<=8&&std::abs(coordinate.z-cz)<=8)){++it;continue;}
         if(pinned_columns.count(key(Vector3i(coordinate.x,0,coordinate.z)))){++it;continue;}
-        if(ocean_edit_interests.count(it->first)||equilibrium_dependencies.count(it->first)){++it;continue;}
+        if(ocean_edit_interests.count(it->first)||ocean_settlement_interests.count(it->first)||equilibrium_dependencies.count(it->first)){++it;continue;}
         retire_pristine_ocean((it++)->first);++retired;
     }
     // Center-out admission gives the target/feet priority, bounded per call.
@@ -2770,6 +2788,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install,bool p
     }
     if(offset!=data.size())return false;
     if(sum!=expected)return false;if(!install)return true;
+    ocean_edit_interests.clear();ocean_settlement_interests.clear();ocean_edit_retry_until=0;
     surface_budget_failed=false;equilibrium_dependencies.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();relaxation_before.clear();relaxation_dirty_before.clear();urgent_meshes.clear();batch_urgent=false;deferred_regions.clear();settling.clear();settling_set.clear();settle_steps=settle_transfers=settle_us=0;
     ocean_cache.clear();ocean_cache_bytes=0;ocean_cache_hits=0;invalidate_snapshot();cancel_mesh_batch();published_regions.clear();published_occupancy.clear();staged_occupancy.clear();staged_ready.clear();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);solid_cache_bytes=structure_bytes;restored_cache.clear();cache_rebuilds=0;requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
     // Storage intermediates need validated records, not meshing/query admission.
@@ -2829,6 +2848,7 @@ bool NativeRegionalWater::restore_prepared(const Ref<NativeWaterMapIdentity> &pr
  std::swap(frozen_catalog,source.frozen_catalog);std::swap(saved_frozen,source.saved_frozen);
  invalidate_snapshot();
  ocean_cache.clear();ocean_cache_bytes=0;ocean_cache_hits=0;
+ ocean_edit_interests.clear();ocean_settlement_interests.clear();ocean_edit_retry_until=0;
  published_regions.clear();published_occupancy.swap(source.published_occupancy);staged_occupancy.swap(source.staged_occupancy);staged_ready.clear();
  published_surfaces.swap(source.published_surfaces);staged_surfaces.swap(source.staged_surfaces);
  mesh_snapshot.swap(source.mesh_snapshot);mesh_snapshot_absent.swap(source.mesh_snapshot_absent);

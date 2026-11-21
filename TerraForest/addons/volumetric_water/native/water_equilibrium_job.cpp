@@ -113,9 +113,10 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
     if(equilibrium_capture.is_valid())return continue_equilibrium_capture(deadline);
     // Restore sea boundaries for persisted edits outside player residency too.
     if(surrounding_ocean&&!local_response){
+        if(Time::get_singleton()->get_ticks_usec()<ocean_edit_retry_until)return {};
         std::vector<Key> pending_ocean;
         for(const auto &[k,r]:regions)if(r.settle_pending&&r.ocean_state&&r.has_density)pending_ocean.push_back(k);
-        for(Key k:pending_ocean)if(!prepare_ocean_edit(AABB(Vector3(position(k))*4,Vector3(4,4,4))))return {};
+        for(Key k:pending_ocean)if(prepare_ocean_regions(AABB(Vector3(position(k))*4,Vector3(4,4,4)),true)!=OK)return {};
     }
     const bool bounded_edit=local_response&&!local_edit_regions.empty();
     if(bounded_edit){

@@ -1,6 +1,6 @@
 # Visual issue tracker
 
-[Hidden Coast crater backlog](explosive-combat/README.md#hidden-coast-crater-backlog) records the saved explosion queue and the change to coastal excavation scheduling.
+[Hidden Coast crater backlog](explosive-combat/README.md#hidden-coast-crater-backlog) records the 37 outstanding edits, the water footprint calculated from the save, and the fix for competing background settlement.
 
 The [shoreline mining fix](explosive-combat/README.md#shoreline-mining-in-normal-gameplay) connects deferred tool hits to the normal gameplay tick. In-game confirmation remains open.
 

@@ -2,6 +2,21 @@
 
 ## Hidden Coast crater backlog
 
+The subsequent Hidden Coast save still contains 37 crater records. Its water
+index contains 3,443 regions, including 600 ocean regions marked for settling.
+Applying the background solver's neighbor bounds to those saved coordinates
+requires another 1,392 distinct regions. Before running a background solve,
+the code tried to prepare the whole set using the same leases as crater edits.
+That can exhaust the 4,096 live slots and prevent the crater from reclaiming
+pristine ocean. The existing gameplay log again records status 6.
+
+Background settlement now yields while a foreground edit waits for water.
+An edit can reclaim pristine regions reserved for background sampling, and
+admission uses available slots even when fewer than 16 can be freed at once.
+World restoration clears both sets of leases. The saved backlog was inspected
+read-only. Completion of the craters while stationary remains unverified in
+game.
+
 The November 21 gameplay log recorded water status 6 at 13 crater locations.
 The Godot SDK maps 6 to `ERR_OUT_OF_MEMORY`. Coastal terrain admission returned
 it when adding a missing region at the 4,096-region live limit. Trimming the

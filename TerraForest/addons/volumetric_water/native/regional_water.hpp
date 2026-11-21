@@ -204,6 +204,9 @@ class NativeRegionalWater : public godot::RefCounted {
     std::map<Key,OceanCached> ocean_cache;
     uint64_t ocean_cache_bytes=0,ocean_cache_clock=0,ocean_cache_hits=0;
     std::unordered_map<Key,uint64_t> ocean_edit_interests;
+    std::unordered_map<Key,uint64_t> ocean_settlement_interests;
+    uint64_t ocean_edit_retry_until=0;
+    int prepare_ocean_regions(const godot::AABB &bounds,bool background);
     void trim_ocean_cache(uint64_t incoming=0);
     bool restore_ocean_cache(Key k);
     void retire_pristine_ocean(Key k);
