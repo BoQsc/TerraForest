@@ -73,6 +73,7 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("execute_edit_with_writes","packet"), &TerrainCore::execute_edit_with_writes);
         godot::ClassDB::bind_method(godot::D_METHOD("try_placement_target","packet"),&TerrainCore::try_placement_target);
         godot::ClassDB::bind_method(godot::D_METHOD("capture_contact_core","bounds","revision","epoch"),&TerrainCore::capture_contact_core);
         godot::ClassDB::bind_method(godot::D_METHOD("execute_explosion_cohort","commands"), &TerrainCore::execute_explosion_cohort);
@@ -675,6 +676,26 @@ public:
                     if(page>=0 && !world_.pages[page].d)return {};
                 }
         return execute_locked(packet);
+    }
+    godot::Dictionary execute_edit_with_writes(const godot::PackedByteArray &packet) {
+        godot::Dictionary result;
+        if(packet.size()<4||packet.size()>512LL*1024*1024||!fixed_edit_reply(packet.decode_u32(0)))return result;
+        std::lock_guard<std::mutex> lock(mutex_);
+        const uint32_t prior=world_.revision;
+        TerrainEditWrites writes;
+        world_.edit_writes=&writes;
+        godot::PackedByteArray reply=execute_locked(packet);
+        world_.edit_writes=nullptr;
+        result["reply"]=reply;
+        if(reply.size()<12||reply.decode_u32(8)!=0||!writes.complete)return result;
+        godot::PackedByteArray packed;
+        const int bytes=writes.records.n*sizeof(TerrainEditWrites::Record);
+        static_assert(sizeof(TerrainEditWrites::Record)==8);
+        if(packed.resize(12+bytes)!=godot::OK)return result;
+        packed.encode_u32(0,1);packed.encode_u32(4,prior);packed.encode_u32(8,world_.revision);
+        if(bytes)copy_bytes(packed.ptrw()+12,writes.records.p,bytes);
+        result["writes"]=packed;
+        return result;
     }
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) {
         if(packet.size()<4 || packet.size()>512LL*1024*1024)return reply(0,1);

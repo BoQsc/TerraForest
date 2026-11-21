@@ -107,7 +107,11 @@ func run()->void:
 		for z in [976,992,1008]:
 			check(Codec.reply_ok(core.execute(Codec.command(44,[x,z,16,1,build_epoch]))),"resident triangle baseline populates")
 	for brush_center in [Vector3(1007,40,1008),Vector3(1009,41,1007)]:
-		check(Codec.reply_ok(core.execute(Codec.brush(brush_center,brush_center,3,0,false,0))),"seam excavation accepted")
+		var before:Dictionary=core.field_patch_state()
+		var receipt:Dictionary=core.execute_edit_with_writes(Codec.brush(brush_center,brush_center,3,0,false,0))
+		check(Codec.reply_ok(receipt.reply),"seam excavation accepted")
+		var writes:PackedByteArray=receipt.get("writes",PackedByteArray())
+		check(writes.size()>12 and writes.decode_u32(0)==1 and writes.decode_u32(4)==before.revision and writes.decode_u32(8)==receipt.reply.decode_u32(12),"seam repair receives actual writes for the committed revision")
 	state=core.field_patch_state()
 	var updated:RefCounted=core.capture_contact_core(bounds,state.revision,build_epoch)
 	check(updated!=null,"changed triangle reader captures resident geometry")

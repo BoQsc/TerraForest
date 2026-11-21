@@ -36,24 +36,40 @@ void release_geometry_cache(const World&w){
  for(auto&r:w.geometry_cache->regions)r.vertices.release();
  tr_free(w.geometry_cache);w.geometry_cache=nullptr;
 }
+static void dirty_reconstruction(GeometryCache &cache,GeometryRegion &r,int x0,int z0,int x1,int z1,int bottom,int top){
+ const int bounds[]={imx(r.x,x0),imx(r.z,z0),imn(r.x+15,x1),imn(r.z+15,z1)};
+ if(!r.dirty){
+  copy_bytes(r.dirty_xz,bounds,sizeof(bounds));r.dirty_y0=bottom;r.dirty_y1=top;
+  r.dirty=true;++cache.invalidations;
+ }else{
+  for(int axis=0;axis<2;++axis){
+   r.dirty_xz[axis]=imn(r.dirty_xz[axis],bounds[axis]);
+   r.dirty_xz[axis+2]=imx(r.dirty_xz[axis+2],bounds[axis+2]);
+  }
+  r.dirty_y0=imn(r.dirty_y0,bottom);r.dirty_y1=imx(r.dirty_y1,top);
+ }
+}
 void invalidate_geometry_cache(const World&w,V3 lo,V3 hi){
  if(!w.geometry_cache)return;
- // A region owns cells [x,x+15], whose reconstruction reads samples [x,x+16].
- // Full vertical columns are cached; no assumptions about a heightfield here.
  for(auto&r:w.geometry_cache->regions){
-  // An owned quad references cell representatives one cell to its negative side.
   if(!r.present||r.x>hi.x+1||r.x+16<lo.x||r.z>hi.z+1||r.z+16<lo.z)continue;
-  const int bounds[]={imx(r.x,fl(lo.x)-1),imx(r.z,fl(lo.z)-1),imn(r.x+15,fl(hi.x)+1),imn(r.z+15,fl(hi.z)+1)};
-  const int bottom=imx(0,fl(lo.y)-1),top=imn(WORLD_Y-1,fl(hi.y)+1);
-  if(!r.dirty){
-   copy_bytes(r.dirty_xz,bounds,sizeof(bounds));r.dirty_y0=bottom;r.dirty_y1=top;
-   r.dirty=true;w.geometry_cache->invalidations++;
-  }else{
-   for(int axis=0;axis<2;++axis){
-    r.dirty_xz[axis]=imn(r.dirty_xz[axis],bounds[axis]);
-    r.dirty_xz[axis+2]=imx(r.dirty_xz[axis+2],bounds[axis+2]);
-   }
-   r.dirty_y0=imn(r.dirty_y0,bottom);r.dirty_y1=imx(r.dirty_y1,top);
+  dirty_reconstruction(*w.geometry_cache,r,fl(lo.x)-1,fl(lo.z)-1,fl(hi.x)+1,fl(hi.z)+1,
+                       imx(0,fl(lo.y)-1),imn(WORLD_Y-1,fl(hi.y)+1));
+ }
+}
+static void invalidate_written_samples(const World &w,const TerrainEditWrites &writes){
+ auto *cache=w.geometry_cache;
+ if(!cache)return;
+ for(int i=0;i<writes.records.n;++i){
+  const auto &record=writes.records[i];
+  // Page admission already invalidates its full procedural extraction band.
+  // Exact cubes are appended downstream of the cached density vertices.
+  if(record.detail>=TerrainEditWrites::PAGE_ADMITTED)continue;
+  const int x=record.address&2047,z=(record.address>>11)&2047;
+  const int bottom=imx(0,int(record.address>>22)-1),top=imn(WORLD_Y-1,int(record.detail)+1);
+  for(int rz=(z-1)>>4;rz<=(z+1)>>4;++rz)for(int rx=(x-1)>>4;rx<=(x+1)>>4;++rx){
+   int slot=int(cache->index[geometry_key(rx*16,rz*16)])-1;
+   if(slot>=0)dirty_reconstruction(*cache,cache->regions[slot],x-1,z-1,x+1,z+1,bottom,top);
   }
  }
 }

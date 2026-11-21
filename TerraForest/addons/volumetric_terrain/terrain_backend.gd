@@ -1679,7 +1679,7 @@ func _run() -> void:
 				latest_packets.clear()
 				latest_packet_bytes = 0
 				var surface:=_resident_edit_surface(job,after_stats.decode_u32(12))
-				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],"resident_surface":surface,
+				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],"resident_surface":surface,"writes":execution.writes,
 					"count": job["tiles"].size(), "contact_ms":contact_ms, "contact_parallel":contact_task>=0, "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
 				# Stream finished patches to main-thread staging immediately. Worker
 				# builds and resource preparation OVERLAP instead of running in series.

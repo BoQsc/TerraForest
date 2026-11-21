@@ -701,6 +701,7 @@ struct CutPages {
     int x,y,z;decode_page(live.key,x,y,z);
     world.pages_by_key.put(live.key,r.source);world.edit_columns[x+NP*z]|=1u<<y;
     invalidate_new_surface_page(world,x,y,z);
+    if(world.edit_writes)world.edit_writes->append(TerrainEditWrites::address(x*16,y*16,z*16),TerrainEditWrites::PAGE_ADMITTED);
    }
    auto *old_density=live.d;auto *old_material=live.mat;
    live.d=r.data.d;live.mat=r.data.mat;r.data.d=old_density;r.data.mat=old_material;
@@ -709,6 +710,7 @@ struct CutPages {
   return true;
  }
 };
+static void invalidate_written_samples(const World&,const TerrainEditWrites&);
 static bool stage_point_cut(World &w,V3 center,float radius,int shape,u8 material,V3 lo,V3 hi,int &changes,u32 *removed){
  CutPages txn(w);
  for(int z=fl(lo.z);z<=fl(hi.z);z++)for(int x=fl(lo.x);x<=fl(hi.x);x++){
@@ -738,6 +740,7 @@ static bool stage_point_cut(World &w,V3 center,float radius,int shape,u8 materia
     if(id<16)++txn.removed[id];
    }
    replacement->d[j]=value;if(!w.has_geology())replacement->mat[j]=material;
+   if(w.edit_writes)w.edit_writes->sample(x,y,z);
    ++txn.changed;
   }
  }
@@ -861,6 +864,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    u8 flags=((add||!has_geology())&&!(graded&&clearance>0&&brush>0))?1:0;
    if(pavement&&!paved_surface){flags&=~1;if(previous>=0&&q<0)flags|=8;}
    if(removed_samples&&!add&&shape<2&&previous<0&&q>=0){flags|=2;if(float(y)>=h-2.f)flags|=4;}
+   if(edit_writes)edit_writes->sample(x,y,z);
    staged.push({reference,u16(j),q,flags});if(tr_oom){discard();return false;}
   }
  }
@@ -875,6 +879,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
   for(int i=0;i<new_keys.n;i++){
    int x,y,z;decode_page(new_keys[i],x,y,z);
    if(!ensure(x,y,z)||tr_oom||pages.n!=original_pages+i+1){allocated=false;break;}
+   if(edit_writes)edit_writes->append(TerrainEditWrites::address(x*16,y*16,z*16),TerrainEditWrites::PAGE_ADMITTED);
   }
   if(!allocated){
    for(int i=pages.n-1;i>=original_pages;i--){auto &page=pages[i];int x,y,z;decode_page(page.key,x,y,z);pages_by_key.erase(page.key);edit_columns[x+NP*z]&=~(1u<<y);if(page_access)page_access->removed(*this,i);tr_free(page.d);tr_free(page.mat);}
@@ -893,9 +898,14 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  // Construction is a separate exact grid. Smooth excavation removes whole intersected cubes,
  // rather than silently rounding them into the smooth density lattice.
  if(!add)for(int cz=fl(lo.z)/32;cz<=fl(hi.z)/32;cz++)for(int cx=fl(lo.x)/32;cx<=fl(hi.x)/32;cx++){
-  auto&column=block_columns[cx+64*cz];int j=0;while(j<column.n){u32 key=column[j];int x,y,z;decode_block(key,x,y,z);V3 p={x+.5f,y+.5f,z+.5f};float d=shape==1?box_distance(p,b,radius):capsule(p,a,b,radius);if(shape==8)d=mx(d,a.y+(b.y-a.y)*clampf(dot(p-a,arch_axis)*arch_inverse,0,1)-depth-p.y);if(d<=0){blocks.erase(key);column[j]=column[column.n-1];column.n--;changes++;}else j++;}
+  auto&column=block_columns[cx+64*cz];int j=0;while(j<column.n){u32 key=column[j];int x,y,z;decode_block(key,x,y,z);V3 p={x+.5f,y+.5f,z+.5f};float d=shape==1?box_distance(p,b,radius):capsule(p,a,b,radius);if(shape==8)d=mx(d,a.y+(b.y-a.y)*clampf(dot(p-a,arch_axis)*arch_inverse,0,1)-depth-p.y);if(d<=0){if(edit_writes)edit_writes->append(key-1,TerrainEditWrites::BLOCK);blocks.erase(key);column[j]=column[column.n-1];column.n--;changes++;}else j++;}
  }
- if(changes){invalidate_geometry_cache(*this,lo,hi);revision++;edits++;changed_samples+=changes;lighting_revision=-1;}return true;
+ if(changes){
+  if(edit_writes&&edit_writes->complete)invalidate_written_samples(*this,*edit_writes);
+  else invalidate_geometry_cache(*this,lo,hi);
+  revision++;edits++;changed_samples+=changes;lighting_revision=-1;
+ }
+ return true;
 }
 // Stage all changed samples before publishing a material edit. Failure leaves
 // density and revision unchanged; newly allocated empty pages are rolled back.
@@ -1970,9 +1980,9 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(!r.good||x<0||x>=WORLD||z<0||z>=WORLD||y<2||y>=255||material<0||material>3){out.p[8]=1;return;}
   u32 key=block_key(x,y,z);int old=w.blocks.get(key);
   if(material==0){
-   if(old>=0){w.erase_block(key);w.revision++;w.edits++;}
+   if(old>=0){w.erase_block(key);if(w.edit_writes)w.edit_writes->append(key-1,TerrainEditWrites::BLOCK);w.revision++;w.edits++;}
    else{V3 c={x+.5f,y+.5f,z+.5f},lo,hi;int changes;if(!w.edit(c,c,.5f,1,false,1,lo,hi,changes)){out.p[8]=2;return;}}
-  }else if(old!=material){if(!w.set_block(key,material)){out.p[8]=2;return;}w.revision++;w.edits++;}
+  }else if(old!=material){if(!w.set_block(key,material)){out.p[8]=2;return;}if(w.edit_writes)w.edit_writes->append(key-1,TerrainEditWrites::BLOCK|u32(material));w.revision++;w.edits++;}
   out.u(w.revision);out.u(w.blocks.n);
  }
  else if(cmd==4){bool fast=n==8&&r.u()==3;if((n!=4&&!fast)||!r.good){out.p[8]=1;return;}w.serialize(out,fast);}

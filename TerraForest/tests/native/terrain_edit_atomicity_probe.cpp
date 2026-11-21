@@ -144,8 +144,69 @@ static int common_edit_checks(){
  return failures?1:0;
 }
 
+// Diff every authored page against its independent pre-edit image. For a
+// newly admitted page the reference is the generator's full page image.
+static bool exact_write_footprints(){
+ World live;live.init(1703,3);
+ const int x=1280,z=1280,y=fl(live.height(x,z));
+ const V3 point={float(x),float(y),float(z)};
+ const u32 cube=1+u32(x|(z<<11)|(y<<22));
+ live.set_block(cube,3);
+ bool ok=true;int checked=0;
+ for(int step=0;step<5;++step){
+  World prior;Bytes save;live.serialize(save,true);
+  ok&=prior.deserialize(save.p,save.n);save.release();
+  TerrainEditWrites writes;live.edit_writes=&writes;
+  V3 lo,hi;int changes=0;
+  const bool paint=step==1;
+  const bool add=step==0||paint;
+  bool accepted=live.edit(point,point,step<2?2.f:16.f,paint?4:1,add,paint?8:1,lo,hi,changes);
+  live.edit_writes=nullptr;
+  ok&=accepted&&writes.complete;
+  List<u8> written,new_pages;
+  written.resize(live.pages.n*PAGE_SAMPLES);new_pages.resize(live.pages.n);
+  int reported=0,blocks=0;
+  for(int i=0;i<writes.records.n;++i){
+   auto r=writes.records[i];
+   int gx=r.address&2047,gz=(r.address>>11)&2047,gy=int(r.address>>22);
+   if(r.detail==TerrainEditWrites::BLOCK){++blocks;ok&=r.address+1==cube;continue;}
+   if(r.detail==TerrainEditWrites::PAGE_ADMITTED){
+    u32 key=1+(gx/16)+WORLD_PAGE_COLUMNS*((gz/16)+WORLD_PAGE_COLUMNS*(gy/16));
+    int id=live.pages_by_key.get(key);
+    if(id<0){ok=false;continue;}
+    ok&=!new_pages[id]&&prior.pages_by_key.get(key)<0;
+    new_pages[id]=1;continue;
+   }
+   for(int yy=gy;yy<=int(r.detail);++yy){
+    u32 key=1+(gx/16)+WORLD_PAGE_COLUMNS*((gz/16)+WORLD_PAGE_COLUMNS*(yy/16));
+    int id=live.pages_by_key.get(key);
+    if(id<0){ok=false;continue;}
+    int at=id*PAGE_SAMPLES+(gx&15)+16*((gz&15)+16*(yy&15));
+    ok&=!written[at];written[at]=1;++reported;
+   }
+  }
+  ok&=reported+blocks==changes;
+  ok&=blocks==int(prior.blocks.get(cube)>=0&&live.blocks.get(cube)<0);
+  for(int i=0;i<live.pages.n;++i){
+   auto &after=live.pages[i];int v=int(after.key)-1;
+   ok&=(prior.pages_by_key.get(after.key)<0)==bool(new_pages[i]);
+   auto *before=prior.ensure(v%WORLD_PAGE_COLUMNS,v/(WORLD_PAGE_COLUMNS*WORLD_PAGE_COLUMNS),(v/WORLD_PAGE_COLUMNS)%WORLD_PAGE_COLUMNS);
+   if(!before){ok=false;break;}
+   for(int j=0;j<PAGE_SAMPLES;++j){
+    bool differs=before->d[j]!=after.d[j]||before->mat[j]!=after.mat[j];
+    ok&=differs==bool(written[i*PAGE_SAMPLES+j]);
+   }
+  }
+  checked+=reported;written.release();new_pages.release();prior.release();
+ }
+ live.release();return ok&&checked>1000;
+}
+
 int main(){
  int failures=common_edit_checks();
+ bool writes_ok=exact_write_footprints();
+ printf("{\"case\":\"exact_native_write_footprints\",\"passed\":%s}\n",writes_ok?"true":"false");
+ failures+=!writes_ok;
  bool capacity_ok=full_world_edit()&&live_allocations==0;
  printf("{\"case\":\"full_world_admits_existing_page_edit_and_noop\",\"passed\":%s}\n",capacity_ok?"true":"false");
  return failures||!capacity_ok;

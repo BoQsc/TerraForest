@@ -75,7 +75,43 @@ struct EditHeightCache {
  Entry entries[1024];
  u32 requests=0,hits=0;
 };
+// Derived output for a single command under the terrain lock. Addresses pack
+// x in bits 0..10, z in 11..21 and y in 22..30. Consecutive writes along
+// one lattice column share a record. A missing receipt requests broad repair.
+struct TerrainEditWrites {
+ struct Record {u32 address,detail;};
+ enum : u32 { SAMPLE=0, PAGE_ADMITTED=1u<<16, BLOCK=2u<<16 };
+ List<Record> records;
+ bool complete=true;
+ ~TerrainEditWrites(){records.release();}
+ static u32 address(int x,int y,int z){return u32(x)|(u32(z)<<11)|(u32(y)<<22);}
+ void append(u32 where,u32 detail){
+  if(!complete)return;
+  // Optional hints must not consume an unbounded allocation or change an
+  // otherwise successful edit into an allocation failure.
+  if(records.n==records.cap){
+   int cap=records.cap?records.cap*2:16;
+   if(cap>262144){complete=false;return;}
+   auto *p=static_cast<Record*>(tr_realloc(records.p,size_t(cap)*sizeof(Record)));
+   if(!p){complete=false;return;}
+   records.p=p;records.cap=cap;
+  }
+  records.p[records.n++]={where,detail};
+ }
+ void sample(int x,int y,int z){
+  if(!complete)return;
+  const u32 where=address(x,y,z);
+  if(records.n){
+   Record &prev=records[records.n-1];
+   if((prev.address&0x3fffffu)==(where&0x3fffffu)&&prev.detail+1==u32(y)){
+    prev.detail=u32(y);return;
+   }
+  }
+  append(where,u32(y));
+ }
+};
 struct World {
+ TerrainEditWrites *edit_writes=nullptr; // Command-scoped, never serialized.
  EditHeightCache *edit_height_cache=nullptr; // Non-owning, never serialized.
  BuildControl *build_control=nullptr;
  Map pages_by_key,blocks; List<Page> pages; List<Cave> caves; List<List<u32>> block_columns;

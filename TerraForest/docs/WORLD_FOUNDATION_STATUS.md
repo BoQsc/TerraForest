@@ -9173,3 +9173,34 @@ reached matching render geometry and collision in 17.425 ms on draw two.
 The breaking pickaxe hit took 18.754 ms from impact. This is a Windows
 checkout game run. Cold arrival before residency, installed-package repeats,
 wet publication and full-footprint authoring remain qualification gates.
+
+### Committed terrain write footprint and first consumer, 21 November 2026
+
+Both brush writers now emit inclusive vertical sample runs, page admissions
+and exact grid changes. The native geometry cache uses the journal to find
+resident columns and invalidate their affected cells. First page admission
+still invalidates the procedural extraction band. Exhaustion of the optional
+journal falls back to the ordinary conservative rebuild. The stream receives
+the footprint under the accepted edit ticket. Water still uses the preflight
+brush areas and visible tiles still require replacement packets.
+
+The native probe independently compared density and material in every
+authored page and checked block removal. All eight generated fields and
+receipts matched a separate build of the preceding master source byte for
+byte. Seven of those eight still differ from the historical fixture at
+`8b756bb8`; that compatibility check remains red. The game field and contact
+test passed 116 checks. [Game field regression](../reports/checks/20261121T111024554201Z/engine.log)
+
+The isolated 1080p Cedar Vale run still missed both blast deadlines and the
+lake mining deadline. Admission to terrain publication took 88.426 ms for sea,
+200.425 ms for lake and 94.743 ms for lake mining. Both shorelines passed the
+2 cm waterline probes. Bucket scoop and pour took 36.441–62.072 ms to become
+visible. [Shoreline measurements](../reports/checks/20261121T111200836982Z/normal_gameplay_blast_performance.json) · [Bucket measurements](../reports/checks/20261121T111200836982Z/bucket_response.json)
+
+The 64 m cut still matched zero of nine footprint probes on draw two.
+Admission took 0.267 ms, field work took 8.389 ms, and the first post-commit
+draw took 142.088 ms from input. The worker reported 36 geometry tiles and
+94.085 ms of mesh work, which can overlap across workers. The next dependency
+is generating and retiring render and collider triangles from the changed
+cells and sharing that boundary with water. The joint publication and fixed
+60 Hz presentation gates remain open. [Cut timing and footprint checks](../reports/checks/20261121T111337877369Z/engine.log)

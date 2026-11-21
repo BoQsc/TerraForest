@@ -152,6 +152,9 @@ func publish_joint_edit(ticket:int,install_water:Callable)->bool:
 	return true
 
 signal edit_field_ready(ticket:int)
+# One binary write footprint per command, in commit order. An empty entry
+# requires conservative reconstruction for that command.
+signal edit_writes_ready(ticket:int,footprints:Array)
 signal edit_geometry_installed(ticket:int)
 signal edit_region_installed(ticket:int,keys:Array)
 # The frozen visible cut can contain several tile sizes along one brush edge.
@@ -587,6 +590,7 @@ func _receive(result: Dictionary) -> void:
 		batch_remaining = int(result["count"])
 		staged_batch.clear()
 		edit_worker_done = false
+		edit_writes_ready.emit(edit_ticket,result.get("writes",[]))
 		edit_field_ready.emit(edit_ticket)
 	elif kind == "edit_chunk":
 		if int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
