@@ -502,6 +502,7 @@ func _advance_equilibrium()->void:
   WorkerThreadPool.wait_for_task_completion(_equilibrium_task);_equilibrium_task=-1
   var started:=Time.get_ticks_usec()
   var result:Dictionary=water.finish_equilibrium(_equilibrium_job)
+  if result.get("local_response",false) and result.get("pending",false):_edit_patch_attempt=-1
   if result.get("ok",false) and result.get("local_response",false):
    _local_response_pending=false;_local_publication_pending=true
   _equilibrium_last_result=result

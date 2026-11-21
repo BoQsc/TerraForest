@@ -939,10 +939,32 @@ func capture_cut_angles(center:Vector3,phase:String)->void:
 func check_authoring_brush()->void:
  game.player_view.entry.finish()
  var coastal:bool="--authoring-preparation" in OS.get_cmdline_user_args()
+ var lake_cut:bool="--authoring-lake-cut" in OS.get_cmdline_user_args()
+ var lake:Dictionary={}
+ var wet_target:=Vector3.INF
  if coastal:
   game.fly=true
   game.teleport(Vector3(20,50,1008),50)
   if not await ready("coastal brush preparation"):check(false,"Coastal authoring destination is resident");return
+ elif lake_cut:
+  if game.lakes._lakes.is_empty():check(false,"Wide cut has a generated lake");return
+  lake=game.lakes._lakes.values()[0]
+  game.teleport(lake.seed)
+  if not await ready("wide lake authoring"):check(false,"Wide lake authoring destination is resident");return
+  for distance in range(0,65,4):
+   for direction in 12:
+    var angle:=TAU*direction/12
+    var above:Vector3=lake.seed+Vector3(cos(angle)*distance,0,sin(angle)*distance)
+    above.y=lake.level+4
+    var below:=above-Vector3.UP*32
+    var water_hit:Dictionary=game.lakes.water.raycast_surface(above-Vector3.UP*2,above-Vector3.UP*6)
+    var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(above,below,1))
+    if water_hit.get("hit",false) and not floor_hit.is_empty() and water_hit.point.y-floor_hit.position.y>.25:
+     wet_target=floor_hit.position
+     break
+   if wet_target.is_finite():break
+  check(wet_target.is_finite(),"Selected authoring target has a rendered lake above its terrain collider")
+  if not wet_target.is_finite():return
  elif "--authoring-at-spawn" not in OS.get_cmdline_user_args():
   game.teleport(Vector3(1000,80,1000))
   if not await ready("inland authoring"):check(false,"Authoring destination is resident");return
@@ -954,14 +976,17 @@ func check_authoring_brush()->void:
   await check_authoring_drag()
   return
  for i in (1 if coastal else 3):
+  if lake_cut and i!=1:continue
   game.radius=2 if i==0 else 32
   if i==1 and "--authoring-at-spawn" not in OS.get_cmdline_user_args():
    game.fly=true
-   game.player.global_position+=Vector3.UP*65
+   if lake_cut:game.player.global_position=wet_target+Vector3(-4,65,4)
+   else:game.player.global_position+=Vector3.UP*65
   game.session_menu.activate_developer_slot(i)
   game.player_view.set_enabled(i==1,false)
   var view:Camera3D=root.get_camera_3d()
   view.look_at(Vector3(66,39.9,1008) if coastal else view.global_position+Vector3(.15,-1,-.1),Vector3.UP)
+  if lake_cut:view.look_at(wet_target,Vector3.UP)
   game._update_edit(0)
   var shape_ok:bool=game.pointer.mesh==[game.sphere_preview,game.box_preview,game.block_preview][i]
   check(game.pointer.visible and shape_ok,"Active camera shows the selected development brush "+str(i))
@@ -982,6 +1007,13 @@ func check_authoring_brush()->void:
   var cut_angles:=i==1 and "--authoring-cut-angles" in OS.get_cmdline_user_args() and DisplayServer.get_name()!="headless"
   if cut_angles:await capture_cut_angles(center,"before")
   var revision:int=game.terrain.published_revision
+  var initial_volume:=owned_amount() if lake_cut else 0
+  if lake_cut:
+   var above:=Vector3(wet_target.x,lake.level+2,wet_target.z)
+   var impacted:Dictionary=game.lakes.water.raycast_surface(above,above-Vector3.UP*4)
+   var intersects:bool=impacted.get("hit",false) and AABB(center-Vector3.ONE*32,Vector3.ONE*64).has_point(impacted.point)
+   check(intersects,"Full authoring cut intersects published lake water")
+   if not intersects:return
   var ticket:int=game.terrain.edit_ticket
   var audit:="--authoring-dependencies" in OS.get_cmdline_user_args() and (i==1 or "--authoring-collision-reuse" in OS.get_cmdline_user_args())
   var replay:bool=i==1 and "--authoring-swap-bound" in OS.get_cmdline_user_args()
@@ -1092,6 +1124,9 @@ func check_authoring_brush()->void:
    var now:=Time.get_ticks_usec()
    worst_us=maxi(worst_us,now-previous);previous=now;frames+=1
   check(game.terrain.published_revision>revision,"Authoring brush publishes a changed terrain revision")
+  if lake_cut:
+   print("WIDE_LAKE_AUTHORING ",JSON.stringify({"center":str(center),"before_ml":initial_volume,"after_ml":owned_amount(),"pending":game.terrain.pending_edit,"water":game.lakes._equilibrium_last_result}))
+   check(owned_amount()==initial_volume,"Full lake authoring cut conserves the finite quantity")
   if profiling:
    game.terrain.stage_measured.disconnect(record_brush_staging)
   if verify_draw:

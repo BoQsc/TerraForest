@@ -132,6 +132,7 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
         if(found==regions.end()||!found->second.valid){get(position(k)*8,true);return {};}
     }
     Ref<NativeWaterEquilibriumJob> job;job.instantiate();job->revision=map_revision;job->local_response=local_response;
+    if(local_response)job->wide_edit_bounds=wide_edit_bounds;
     // Selection, graph and COW payloads share the unchanged bounded reservation.
     constexpr uint64_t charge=256*1024*1024,limit=2*charge;
     uint64_t prior=NativeWaterEquilibriumJob::pending_bytes.load();
@@ -142,11 +143,11 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
     if(!local_response)s.candidate.insert(equilibrium_dependencies.begin(),equilibrium_dependencies.end());
     s.account_keys.assign(s.candidate.begin(),s.candidate.end());
     if(bounded_edit||(local_response&&!local_occupancy_regions.empty())){
-        const bool occupancy_changed=!local_occupancy_regions.empty();
+        const bool occupancy_changed=job->wide_edit_bounds.empty()&&!local_occupancy_regions.empty();
         const auto &keys=occupancy_changed?local_occupancy_regions:local_edit_regions;
         for(Key k:keys){
             auto found=regions.find(k);
-            if(found!=regions.end()&&(occupancy_changed?found->second.valid:found->second.settle_pending))s.seeds.push_back(k);
+            if(found!=regions.end()&&(occupancy_changed?found->second.valid:found->second.settle_pending||(!job->wide_edit_bounds.empty()&&local_receiver_regions.count(k))))s.seeds.push_back(k);
         }
         std::sort(s.seeds.begin(),s.seeds.end());
     }else{
@@ -166,7 +167,10 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
         const bool opened=std::any_of(s.seeds.begin(),s.seeds.end(),[&](Key k){
             return local_receiver_regions.count(k)!=0;
         });
-        if(opened)for(Key k:s.seeds){
+        // Wide discovery already retains its resident wet seeds and follows
+        // reachable faces. A donor belt around every newly sampled receiver
+        // repeatedly expands the snapshot beyond the author's footprint.
+        if(opened&&job->wide_edit_bounds.empty())for(Key k:s.seeds){
             auto p=position(k);
             for(int dz=-3;dz<=3;++dz)for(int dx=-3;dx<=3;++dx){
                 auto q=p+Vector3i(dx,0,dz);
@@ -206,7 +210,7 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
         // Dry frontier regions are dependencies too: do not repeatedly solve
         // the same body while their terrain samples are still in flight.
         for(auto k:job->required){
-            equilibrium_dependencies.insert(k);
+            if(!job->local_response)equilibrium_dependencies.insert(k);
             const auto coordinate=position(k);
             // Missing procedural sea is a streamed reservoir dependency, not
             // an empty finite-water region. Preserve its normal admission kind.
@@ -216,6 +220,10 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
             }
             get(coordinate*8,true);auto found=regions.find(k);
             if(found==regions.end()){out["reason"]="Water receiving region capacity exhausted";return out;}
+            if(job->local_response){
+                local_edit_regions.insert(k);
+                local_receiver_regions.insert(k);
+            }
             if(found->second.ocean_state!=1)found->second.settle_pending=true;
         }
         invalidate_snapshot();
@@ -226,6 +234,7 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     // Otherwise the next player edit inherits every earlier pending region.
     for(const auto &[k,r]:job->frozen->regions){local_edit_regions.erase(k);local_occupancy_regions.erase(k);local_receiver_regions.erase(k);}
     equilibrium_dependencies.clear();
+    wide_edit_bounds.clear();
     total=uint64_t(int64_t(total)+job->ocean_exchange_ml);
     // All quantities install together. Render/query/immersion remain on their
     // previous publication until the matching complete mesh batch is committed.
@@ -277,6 +286,12 @@ void NativeWaterEquilibriumJob::prepare(){
     auto solve=[&]()->bool{
         using W=NativeRegionalWater;
         if(frozen.is_null())return false;
+        auto in_wide_edit=[&](uint64_t k){
+            const auto p=W::position(k);
+            for(const auto &[lo,hi]:wide_edit_bounds)
+                if(p.x>=lo.x&&p.x<=hi.x&&p.y>=lo.y&&p.y<=hi.y&&p.z>=lo.z&&p.z<=hi.z)return true;
+            return false;
+        };
         auto &store=*frozen.ptr();
         const size_t MAX_CELLS=cell_limit;
         const Vector3i steps[6]={{0,-1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1},{0,1,0}};
@@ -358,12 +373,12 @@ void NativeWaterEquilibriumJob::prepare(){
                         direction==5?a.ceiling==500&&b.open_bottom&&WaterCellProfile::vertical_overlap(a,500,b,500):
                         WaterCellProfile::face_overlap(a,500,b,500,direction<=2?0:2,direction==1||direction==3?1:0);
                     if(!open)continue;
-                    if(!known){unavailable.insert(W::region_key(q));continue;}
+                    if(!known){auto k=W::region_key(q);if(!local_response||in_wide_edit(k))unavailable.insert(k);continue;}
                     if(!b.capacity())continue;
                     visited.insert(W::key(q));frontier.push({q.y,W::key(q)});
                 }
             }
-            if(!local_response&&!sources.empty()&&!unavailable.empty()){required.assign(unavailable.begin(),unavailable.end());return false;}
+            if(!sources.empty()&&!unavailable.empty()){required.assign(unavailable.begin(),unavailable.end());return false;}
         }
         std::unordered_map<uint64_t,uint64_t> held;
         for(const auto &[k,r]:store.regions)if(r.settle_pending&&r.valid){
@@ -633,7 +648,7 @@ void NativeWaterEquilibriumJob::prepare(){
                         Cell air;air.p=q;
                         if(connected(cells[cursor],air,direction,upper)){
                             complete_neighbourhood=false;
-                            if(local_response)continue;
+                            if(local_response&&!in_wide_edit(W::region_key(q)))continue;
                             double value=std::max(cost[cursor],connection_height(cells[cursor],air,direction));auto key=W::region_key(q);
                             auto old=unknown_cost.find(key);if(old==unknown_cost.end()||value<old->second)unknown_cost[key]=value;
                         }else if(local_response)head_frontier.insert(int(cursor));

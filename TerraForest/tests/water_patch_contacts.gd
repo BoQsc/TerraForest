@@ -33,6 +33,11 @@ func run()->void:
 		status=terrain_patch.sample_terrain(core,256,0,0)
 		if status!=0:break
 	check(status==1 and water.accept_patch(terrain_patch),"real density/contact sampling publishes restored region")
+	check_wide_settlement(core,patch,false)
+	var divided:RefCounted=ClassDB.instantiate("TerrainCore")
+	divided.execute(Codec.command(6,[1703,3]))
+	check(Codec.reply_ok(divided.execute(Codec.brush(Vector3(108,200,96),Vector3(108,200,132),2,0,true,1))),"finite-water test builds a terrain barrier across the brush")
+	check_wide_settlement(divided,patch,true)
 	token=water.water_patch_state()
 	check(water.capture_water_patch(origin,Vector3i.ONE,token.revision,token.owner)==patch and water.statistics().water_ml==125000,"terrain contact hydration preserves every restored millilitre and vacancy")
 	var batches:=0;var vertices:=0
@@ -104,6 +109,44 @@ func check_wide_contact(core:RefCounted)->void:
 	check(mixed.size()==3 and not mixed.back().has("core") and mixed.back().patches==[patches[2]],"only uncovered water contacts request a separate snapshot")
 	await process_frame
 	lake.free()
+
+func check_wide_settlement(core:RefCounted,source:PackedByteArray,barrier:bool)->void:
+	var store:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+	var token:Dictionary=store.water_patch_state()
+	check(store.restore_water_patch(source,token.revision,token.owner).ok,"wide settlement restores a single finite donor")
+	var bounds:=AABB(Vector3(100.6,200.6,100.6),Vector3(32,52,24))
+	store.settle_after_edit(bounds)
+	check(store.pending_edit_patches().size()==1 and store.statistics().regions==1,"882-region edit starts at its sole resident donor")
+	var requested:=0
+	var furthest_x:=0
+	var revision:int=core.field_patch_state().revision
+	var done:=false
+	for step in 128:
+		for coord:Vector3i in store.pending_edit_patches():
+			furthest_x=maxi(furthest_x,coord.x)
+			var part:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
+			part.configure(coord)
+			var sampled:int=part.sample_terrain(core,2048,revision,0)
+			while sampled==0:sampled=part.sample_terrain(core,2048,revision,0)
+			if sampled!=1 or not store.accept_patch(part):
+				check(false,"wide settlement samples reachable terrain")
+				return
+		var job:RefCounted=store.begin_equilibrium(1000,true)
+		if job==null:continue
+		job.prepare()
+		var result:Dictionary=store.finish_equilibrium(job)
+		if result.ok:
+			done=true
+			break
+		if not result.get("pending",false):
+			print("WIDE_SETTLEMENT_FAILURE ",result)
+			break
+		requested+=int(result.required_regions)
+	var info:Dictionary=store.statistics()
+	print("WIDE_SETTLEMENT barrier=",barrier," requested=",requested," resident=",info.regions," furthest_x=",furthest_x," water_ml=",info.water_ml)
+	check(done and requested>0 and info.regions<882,"wide local solve discovers receivers and finishes without allocating the entire brush")
+	check(info.water_ml==125000,"wide local publication preserves all finite water")
+	if barrier:check(furthest_x<28,"a terrain wall keeps regions on the disconnected side out of settlement")
 
 func finish()->void:
 	print("WATER_PATCH_CONTACTS checks=",checks," failures=",failures)

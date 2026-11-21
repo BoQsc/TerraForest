@@ -829,7 +829,42 @@ void NativeRegionalWater::settle_after_edit(const AABB &bounds){
     lo=lo.max(Vector3i(0,0,0));hi=hi.min(Vector3i(3999,511,3999));
     if(hi.x<lo.x||hi.y<lo.y||hi.z<lo.z)return;
     lo=position(region_key(lo));hi=position(region_key(hi));
-    if(int64_t(hi.x-lo.x+1)*(hi.y-lo.y+1)*(hi.z-lo.z+1)>512)return;
+    const bool wide=int64_t(hi.x-lo.x+1)*(hi.y-lo.y+1)*(hi.z-lo.z+1)>512;
+    if(wide){
+        // Large bounds describe eligibility, not a demand to allocate every
+        // dry voxel. Start with resident owners. The worker requests unknown
+        // neighbours through reachable faces below the available water head.
+        auto inside=[&](Key k){
+            const auto p=position(k);
+            return p.x>=lo.x&&p.x<=hi.x&&p.y>=lo.y&&p.y<=hi.y&&p.z>=lo.z&&p.z<=hi.z;
+        };
+        const Key first=key(Vector3i(lo.x,0,0)),end=key(Vector3i(hi.x+1,0,0));
+        std::vector<Key> cached;
+        for(auto it=ocean_cache.lower_bound(first);it!=ocean_cache.end()&&it->first<end;++it)
+            if(inside(it->first))cached.push_back(it->first);
+        for(Key k:cached)restore_ocean_cache(k);
+        bool wet=false;
+        for(auto it=regions.lower_bound(first);it!=regions.end()&&it->first<end;++it){
+            if(!inside(it->first))continue;
+            wake_settling(it->first);
+            if(it->second.settle_pending){local_edit_regions.insert(it->first);wet=true;}
+        }
+        EditRegionBox box{lo,hi};
+        if(wet&&std::find(wide_edit_bounds.begin(),wide_edit_bounds.end(),box)==wide_edit_bounds.end())
+            wide_edit_bounds.push_back(box);
+        if(surrounding_ocean&&bounds.position.y<=40.0&&bounds.get_end().y>=40.0){
+            const Key collar_first=key(Vector3i(std::max(0,lo.x-1),0,0));
+            const Key collar_end=key(Vector3i(std::min(500,hi.x+2),0,0));
+            for(auto it=regions.lower_bound(collar_first);it!=regions.end()&&it->first<collar_end;++it){
+                const auto p=position(it->first);
+                if(p.y<7||p.y>10||p.z<lo.z-1||p.z>hi.z+1||
+                   std::min({p.x,p.z,499-p.x,499-p.z})>=35||published_regions.count(it->first))continue;
+                urgent_meshes.insert(it->first);
+                if(mesh_set.insert(it->first).second)meshes.push_back(it->first);
+            }
+        }
+        return;
+    }
     // A resident shoreline also depends on the published ocean mask. Include
     // its unpublished reconstruction collar in this edit's priority queue,
     // even when a collar region did not change its own quantity or surface.
@@ -2826,7 +2861,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install,bool p
     if(offset!=data.size())return false;
     if(sum!=expected)return false;if(!install)return true;
     ocean_edit_interests.clear();ocean_settlement_interests.clear();ocean_edit_retry_until=0;
-    surface_budget_failed=false;equilibrium_dependencies.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();relaxation_before.clear();relaxation_dirty_before.clear();urgent_meshes.clear();batch_urgent=false;deferred_regions.clear();settling.clear();settling_set.clear();settle_steps=settle_transfers=settle_us=0;
+    surface_budget_failed=false;equilibrium_dependencies.clear();wide_edit_bounds.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();relaxation_before.clear();relaxation_dirty_before.clear();urgent_meshes.clear();batch_urgent=false;deferred_regions.clear();settling.clear();settling_set.clear();settle_steps=settle_transfers=settle_us=0;
     ocean_cache.clear();ocean_cache_bytes=0;ocean_cache_hits=0;invalidate_snapshot();cancel_mesh_batch();published_regions.clear();published_occupancy.clear();staged_occupancy.clear();staged_ready.clear();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);solid_cache_bytes=structure_bytes;restored_cache.clear();cache_rebuilds=0;requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
     // Storage intermediates need validated records, not meshing/query admission.
     if(!prepare_render)return true;
@@ -2878,7 +2913,7 @@ bool NativeRegionalWater::restore_prepared(const Ref<NativeWaterMapIdentity> &pr
  // Single-owner handoff after the loading worker has joined. No decoding,
  // contact reconstruction, or traversal of incoming regions on this thread.
  auto &source=*prepared->decoded.ptr();prepared->consumed=true;
- local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();urgent_meshes.clear();relaxation_before.swap(source.relaxation_before);relaxation_dirty_before.swap(source.relaxation_dirty_before);batch_urgent=false;
+ wide_edit_bounds.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();urgent_meshes.clear();relaxation_before.swap(source.relaxation_before);relaxation_dirty_before.swap(source.relaxation_dirty_before);batch_urgent=false;
  // Derived buffers belong to the old state too. Transfer ownership instead of
  // destructing every triangle, contact and frozen snapshot during installation.
  std::swap(saved_snapshot,source.saved_snapshot);std::swap(saved_catalog,source.saved_catalog);
