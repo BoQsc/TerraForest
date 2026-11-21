@@ -21,7 +21,70 @@ func restore(core:RefCounted,patch:PackedByteArray)->Dictionary:
 	var state:Dictionary=core.field_patch_state()
 	return core.restore_field_patch(patch,state.revision,state.epoch)
 
+func check_render_upload(arrays:Array)->void:
+	var expected:=ArrayMesh.new()
+	expected.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],{},Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE)
+	var reference:Dictionary=expected.get("_surfaces")[0]
+	var packed:Dictionary=ClassDB.class_call_static("NativeTerrainCollision","pack_terrain_surface",arrays)
+	for field in ["vertex_data","attribute_data","index_data","primitive","format","vertex_count","index_count","aabb"]:
+		check(packed.get(field)==reference.get(field),"worker upload matches engine surface "+field)
+		if packed.get(field) is PackedByteArray and packed[field]!=reference[field]:
+			var a:PackedByteArray=packed[field];var b:PackedByteArray=reference[field]
+			for offset in mini(a.size(),b.size()):
+				if a[offset]!=b[offset]:
+					print("UPLOAD_BYTE_DIFFERENCE ",field," offset=",offset," candidate=",a[offset]," expected=",b[offset]," lengths=",a.size(),"/",b.size())
+					break
+		elif packed.get(field)!=reference.get(field):print("UPLOAD_FIELD_DIFFERENCE ",field," candidate=",packed.get(field)," expected=",reference.get(field))
+	var restored:=ArrayMesh.new()
+	restored.set("_surfaces",[packed])
+	check(restored.get_surface_count()==1 and restored.surface_get_arrays(0)==expected.surface_get_arrays(0),"packed terrain restores every rendered channel")
+
+func check_index_width(count:int)->void:
+	var channels:Array=[];channels.resize(Mesh.ARRAY_MAX)
+	var points:=PackedVector3Array();points.resize(count);points.fill(Vector3(2,0,4))
+	points[0]=Vector3.ZERO;points[1]=Vector3.RIGHT
+	var normals:=PackedVector3Array();normals.resize(count);normals.fill(Vector3.UP)
+	var tex:=PackedVector2Array();tex.resize(count)
+	var colors:=PackedColorArray();colors.resize(count);colors.fill(Color.WHITE)
+	channels[Mesh.ARRAY_VERTEX]=points;channels[Mesh.ARRAY_NORMAL]=normals
+	channels[Mesh.ARRAY_TEX_UV]=tex;channels[Mesh.ARRAY_TEX_UV2]=tex;channels[Mesh.ARRAY_COLOR]=colors
+	channels[Mesh.ARRAY_INDEX]=PackedInt32Array([0,1,count-1])
+	check_render_upload(channels)
+
+func floor_piece(x:float,height:float)->ConcavePolygonShape3D:
+	var shape:=ConcavePolygonShape3D.new()
+	shape.backface_collision=true
+	shape.set_faces(PackedVector3Array([Vector3(x-1,height,-1),Vector3(x+1,height,-1),Vector3(x,height,1)]))
+	return shape
+
+func check_collider_slots()->void:
+	var terrain:=preload("res://addons/volumetric_terrain/terrain_world.gd").new()
+	var node:=MeshInstance3D.new()
+	root.add_child(node)
+	var body:=StaticBody3D.new();node.add_child(body)
+	var first:=CollisionShape3D.new();first.shape=floor_piece(0,2);body.add_child(first)
+	var old:Array=[first.shape]
+	var replacement:Array=[floor_piece(0,0),floor_piece(4,1)]
+	var slot:={"colliders":body.get_children(),"old_shapes":old,"shapes":replacement,"old_mesh":null,"mesh":null,"applied":false}
+	var entry:={"body":body,"node":node,"resident_swap":slot}
+	for state:int in [1,0,2,0]:
+		if state==2:slot.shapes=[]
+		terrain._apply_resident_swap(entry,state!=0)
+		await physics_frame
+		await physics_frame
+		var hits:Array=[]
+		for x:float in [0.0,4.0]:
+			hits.append(node.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(x,4,0),Vector3(x,-2,0),1)))
+		if state==1:check(not hits[0].is_empty() and absf(hits[0].position.y)<.001 and not hits[1].is_empty() and hits[1].collider==body,"growing a resident owner installs both floors on the original body")
+		elif state==2:check(hits[0].is_empty() and hits[1].is_empty(),"empty revision releases all old support")
+		else:check(not hits[0].is_empty() and absf(hits[0].position.y-2)<.001 and hits[1].is_empty(),"rollback restores original floor and clears extra slot")
+	node.free();terrain.free()
+
 func run()->void:
+	if DisplayServer.get_name()!="headless":
+		check_index_width(65536)
+		check_index_width(65537)
+	await check_collider_slots()
 	var core:RefCounted=ClassDB.instantiate("TerrainCore")
 	check(Codec.reply_ok(core.execute(Codec.command(6,[1703,5]))),"empty field initializes")
 	var origin:=Vector3i(1274,58,1274);var size:=Vector3i(13,13,13)
@@ -138,6 +201,7 @@ func run()->void:
 		for page:Dictionary in reference_pages:page_arrays.append(page.arrays)
 		var rim:Array=ClassDB.class_call_static("NativeTerrainCollision","triangle_page_rim",key,page_arrays)
 		var full_arrays:Array=Codec.decode_mesh(full.slice(16)).arrays
+		if DisplayServer.get_name()!="headless":check_render_upload(full_arrays)
 		check(rim.size()==2 and ClassDB.class_call_static("NativeTerrainCollision","matching_cut_boundary",key,15,rim[0],rim[1],full_arrays[Mesh.ARRAY_VERTEX],full_arrays[Mesh.ARRAY_INDEX]),"partial publication preserves the full contact perimeter")
 		var count:=(width/8)*(width/8)
 		check(not Codec.reply_ok(core.execute(Codec.command(47,[key.x,key.y,width,1,state.revision+1,build_epoch]))),"a superseded triangle page read cannot publish")

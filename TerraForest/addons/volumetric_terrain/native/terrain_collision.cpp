@@ -6,9 +6,12 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/classes/mesh.hpp>
+#include <godot_cpp/classes/rendering_server.hpp>
 #include <godot_cpp/variant/packed_color_array.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
 #include <algorithm>
+#include <cmath>
+#include <cstring>
 #include <tuple>
 #include <map>
 #include <vector>
@@ -19,6 +22,62 @@ static Dictionary failure(const char *message) {
     Dictionary out; out["ok"]=false; out["error"]=message; return out;
 }
 namespace {
+// CPU-only upload packet for the terrain renderer's uncompressed format.
+// Device creation, material binding and scene publication stay on the main thread.
+Dictionary pack_terrain_surface(const Array &arrays){
+    if(sizeof(real_t)!=4||arrays.size()!=Mesh::ARRAY_MAX)return {};
+    for(int slot=0;slot<Mesh::ARRAY_MAX;++slot){
+        if(slot==Mesh::ARRAY_VERTEX||slot==Mesh::ARRAY_NORMAL||slot==Mesh::ARRAY_COLOR||
+           slot==Mesh::ARRAY_TEX_UV||slot==Mesh::ARRAY_TEX_UV2||slot==Mesh::ARRAY_INDEX)continue;
+        if(arrays[slot].get_type()!=Variant::NIL)return {};
+    }
+    const PackedVector3Array p=arrays[Mesh::ARRAY_VERTEX],n=arrays[Mesh::ARRAY_NORMAL];
+    const PackedVector2Array uv=arrays[Mesh::ARRAY_TEX_UV],uv2=arrays[Mesh::ARRAY_TEX_UV2];
+    const PackedColorArray colors=arrays[Mesh::ARRAY_COLOR];
+    const PackedInt32Array ix=arrays[Mesh::ARRAY_INDEX];
+    const int64_t count=p.size();
+    if(!count||!ix.size()||ix.size()%3||n.size()!=count||uv.size()!=count||uv2.size()!=count||colors.size()!=count)return {};
+    PackedByteArray vertices,attributes,indices;
+    const int index_bytes=count<=65536?2:4;
+    if(vertices.resize(count*20)!=OK||attributes.resize(count*20)!=OK||indices.resize(ix.size()*index_bytes)!=OK)return {};
+    auto *directions=vertices.ptrw()+12*count,*attrs=attributes.ptrw(),*index_data=indices.ptrw();
+    const Vector3 *positions=p.ptr(),*normals=n.ptr();
+    const Vector2 *tex=uv.ptr(),*tex2=uv2.ptr();
+    const Color *color=colors.ptr();
+    const int32_t *elements=ix.ptr();
+    std::memcpy(vertices.ptrw(),positions,12*count);
+    AABB bounds(positions[0],Vector3(0.00001f,0.00001f,0.00001f));
+    auto unorm16=[](real_t f){return uint16_t(std::clamp(f,real_t(0),real_t(1))*65535);};
+    for(int64_t i=0;i<count;++i){
+        bounds.expand_to(positions[i]);
+        const Vector3 normal=normals[i];
+        if(!positions[i].is_finite()||!normal.is_finite()||normal.length_squared()==0||
+           !tex[i].is_finite()||!tex2[i].is_finite())return {};
+        const Vector2 direction=normal.octahedron_encode();
+        const Vector3 basis(normal.z,-normal.x,normal.y);
+        const Vector2 tangent=basis.cross(normal.normalized()).normalized().octahedron_tangent_encode(1);
+        uint16_t frame[]={unorm16(direction.x),unorm16(direction.y),unorm16(tangent.x),unorm16(tangent.y)};
+        if(frame[2]==0&&frame[3]==65535)frame[2]=65535;
+        std::memcpy(directions+i*8,frame,sizeof(frame));
+        for(int c=0;c<4;++c){
+            if(!std::isfinite(color[i][c]))return {};
+            attrs[i*20+c]=uint8_t(std::clamp(color[i][c],0.f,1.f)*255.f);
+        }
+        std::memcpy(attrs+i*20+4,tex+i,8);
+        std::memcpy(attrs+i*20+12,tex2+i,8);
+    }
+    for(int64_t i=0;i<ix.size();++i){
+        if(elements[i]<0||elements[i]>=count)return {};
+        if(index_bytes==2){uint16_t index=uint16_t(elements[i]);std::memcpy(index_data+2*i,&index,2);}
+    }
+    if(index_bytes==4)std::memcpy(index_data,elements,ix.size()*4);
+    const int64_t format=int64_t(RenderingServer::ARRAY_FLAG_FORMAT_VERSION_2)|Mesh::ARRAY_FLAG_USE_DYNAMIC_UPDATE|
+        Mesh::ARRAY_FORMAT_VERTEX|Mesh::ARRAY_FORMAT_NORMAL|Mesh::ARRAY_FORMAT_TANGENT|Mesh::ARRAY_FORMAT_COLOR|
+        Mesh::ARRAY_FORMAT_TEX_UV|Mesh::ARRAY_FORMAT_TEX_UV2|Mesh::ARRAY_FORMAT_INDEX;
+    Dictionary out;out["format"]=format;out["primitive"]=Mesh::PRIMITIVE_TRIANGLES;out["aabb"]=bounds;
+    out["vertex_count"]=count;out["index_count"]=ix.size();out["vertex_data"]=vertices;
+    out["attribute_data"]=attributes;out["index_data"]=indices;return out;
+}
 struct Rectangle {
     int first, axis, winding;
     float plane, bottom, top, left, right;
@@ -234,6 +293,7 @@ bool matching_cut_boundary(Vector3i key,int sides,const PackedVector3Array &befo
 }
 void NativeTerrainCollision::_bind_methods() {
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("triangle_pages","key","arrays"),&triangle_pages);
+    ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("pack_terrain_surface","arrays"),&pack_terrain_surface);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("triangle_page_rim","key","pages"),&triangle_page_rim);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("matching_cut_boundary","key","sides","old_points","old_indices","points","indices"),&matching_cut_boundary);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("changed_rims","key","old_points","old_indices","points","indices"),&changed_rims);

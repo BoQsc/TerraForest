@@ -21,6 +21,7 @@ var collision_recipes: RefCounted
 var _collision_piece_triangles := 1024
 var snapshot_terrain: bool = "--snapshot-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var triangle_page_terrain:bool = "--triangle-page-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+var packed_terrain_upload:bool = "--packed-terrain-upload" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var qualify_surface_owners:bool = "--qualify-surface-owners" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var brick_terrain: bool = "--brick-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var region_terrain: bool = "--region-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
@@ -538,6 +539,9 @@ func stop() -> void:
 		snapshot_codec.release()
 
 func _push(result: Dictionary) -> void:
+	if packed_terrain_upload and result.get("kind","")=="edit_chunk" and result.has("arrays") and not result.has("bricks"):
+		var packed:Dictionary=collision_recipes.pack_terrain_surface(result.arrays)
+		if not packed.is_empty():result.render_surface=packed
 	mutex.lock()
 	results.push_back(result)
 	var notify:bool=not _edit_notice_pending and result.get("kind","") in ["edit_begin","edit_chunk","edit_done","placement_target"]

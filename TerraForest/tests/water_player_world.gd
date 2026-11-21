@@ -427,6 +427,7 @@ func finish_timing()->void:
   timing_resident_surface=null
  blast_metrics[timing_phase].local_response_ms=timing_local_ms
  blast_metrics[timing_phase].direct_triangle_pages=game.terrain.last_direct_triangle_pages
+ blast_metrics[timing_phase].worker_packed_surfaces=game.terrain.last_worker_packed_surfaces
  blast_metrics[timing_phase].page_selection=game.terrain.last_page_selection
  blast_metrics[timing_phase].action_to_local_draw_ms=(local_draw_us-action_started_us)/1000.0 if local_draw_us else -1
  if terrain_admitted_us and terrain_published_us and local_draw_us:
@@ -1152,6 +1153,7 @@ func check_authoring_brush()->void:
    "mesh_build_ms":game.terrain.last_total_build_ms,"geometry_tiles":game.terrain.last_density_tiles,
    "untouched_surface_tiles":game.terrain.last_untouched_surface_tiles,
    "direct_triangle_pages":game.terrain.last_direct_triangle_pages,
+   "worker_packed_surfaces":game.terrain.last_worker_packed_surfaces,
    "page_selection":game.terrain.last_page_selection,
    "commit_ms":game.terrain.last_commit_ms,"after_worker_ms":game.terrain.last_prepare_latency_ms,
    "support_worker_ms":game.terrain.last_support_worker_ms,"support_publish_ms":game.terrain.last_support_publish_ms}
@@ -1206,9 +1208,9 @@ func check_resident_swap(before:Dictionary,center:Vector3,sample:Callable)->void
  for key:Vector3i in before:
   if not after.has(key) or before[key].mesh==after[key].mesh:continue
   var tile:Dictionary=game.terrain.tiles[key]
-  if before[key].node!=after[key].node or before[key].shapes.size()!=after[key].shapes.size():
+  if before[key].node!=after[key].node:
    check(false,"All changed owners support the resident resource swap");return
-  entries.append({"key":key,"node":tile.node,"resident_swap":{"colliders":tile.body.get_children(),"old_shapes":before[key].shapes,"shapes":after[key].shapes,"old_mesh":before[key].mesh,"mesh":after[key].mesh,"applied":true}})
+  entries.append({"key":key,"node":tile.node,"body":tile.body,"resident_swap":{"colliders":tile.body.get_children(),"old_shapes":before[key].shapes,"shapes":after[key].shapes,"old_mesh":before[key].mesh,"mesh":after[key].mesh,"applied":true}})
  check(entries.size()==36,"Prepared replay covers all 36 reference owners")
  if entries.size()!=36:return
  var final_hits:PackedVector3Array=sample.call(24.0)
@@ -1631,6 +1633,7 @@ func run()->void:
  if region_trial:session_args.append("--region-terrain")
  var page_trial:=OS.get_cmdline_user_args().has("--triangle-page-terrain")
  if page_trial:session_args.append("--triangle-page-terrain")
+ if "--packed-terrain-upload" in OS.get_cmdline_user_args():session_args.append("--packed-terrain-upload")
  preload("res://addons/world_runtime/session_options.gd").set_arguments(session_args,true)
  route_scene_start=Time.get_ticks_usec()
  game=load("res://demo/world.tscn").instantiate()

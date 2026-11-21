@@ -208,6 +208,7 @@ var last_commit_ms: float = 0.0
 var last_density_tiles: int = 0
 var last_untouched_surface_tiles:int=0
 var last_direct_triangle_pages:int=0
+var last_worker_packed_surfaces:int=0
 var last_page_selection:Dictionary={}
 var last_relight_tiles: int = 0
 var slowest_stage: String = "none"
@@ -733,22 +734,22 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 	var key: Vector3i = data["key"]
 	var arrays: Array = data["arrays"]
 	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-	# Keep the registered instance and body for owners with the same collider count.
-	# Only the replacement resources are private during staging.
+	# Keep the registered owner across topology changes. Slots beyond the
+	# committed shape count are empty and can serve the next edit.
 	var slot:Dictionary={}
 	var old:Dictionary=tiles.get(key,{})
 	var page_update:bool=data.get("page_update",false)
 	if page_update:old=old.get("bricks",{}).get(data.brick_bottom,{})
-	if (data.get("kind","")=="batch" or page_update) and not data.has("contact_count") and (not data.has("brick_bottom") or page_update) and not indices.is_empty() and not data.collision_pieces.is_empty():
+	if (data.get("kind","")=="batch" or page_update) and not data.has("contact_count") and (not data.has("brick_bottom") or page_update):
 		var previous_body:StaticBody3D=old.get("body")
-		if old.get("node") is MeshInstance3D and is_instance_valid(previous_body) and previous_body.get_child_count()==data.collision_pieces.size():
+		if old.get("node") is MeshInstance3D and is_instance_valid(previous_body):
 			var colliders:=previous_body.get_children()
 			var old_shapes:Array[Shape3D]=[]
 			for child:Node in colliders:
 				if not child is CollisionShape3D:break
 				old_shapes.append((child as CollisionShape3D).shape)
 			if old_shapes.size()==colliders.size():
-				slot={"colliders":colliders,"old_shapes":old_shapes,"shapes":[],"old_mesh":old.node.mesh,"applied":false}
+				slot={"colliders":colliders,"old_shapes":old_shapes,"shapes":[],"mesh":null,"old_mesh":old.node.mesh,"applied":false}
 	var mesh_node:Node3D
 	var body:StaticBody3D
 	if slot.is_empty():
@@ -764,7 +765,11 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 		# Two-sided shadows preserve thin roofs.
 		mesh_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
 		var mesh := ArrayMesh.new()
-		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays, [], {}, Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE)
+		if data.has("render_surface"):
+			mesh.set("_surfaces",[data.render_surface])
+			if mesh.get_surface_count()==1:last_worker_packed_surfaces+=1
+		if mesh.get_surface_count()==0:
+			mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays, [], {}, Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE)
 		mesh.surface_set_material(0, material)
 		if slot.is_empty():mesh_node.mesh=mesh
 		else:slot.mesh=mesh
@@ -798,9 +803,14 @@ func _apply_resident_swap(entry:Dictionary,active:bool)->void:
 	if slot.applied==active:return
 	var started:=Time.get_ticks_usec()
 	var shapes:Array=slot.shapes if active else slot.old_shapes
-	for index in shapes.size():
+	while slot.colliders.size()<shapes.size():
+		var collider:=CollisionShape3D.new()
+		entry.body.add_child(collider)
+		slot.colliders.append(collider)
+	for index in slot.colliders.size():
 		var collider:CollisionShape3D=slot.colliders[index]
-		if collider.shape!=shapes[index]:collider.shape=shapes[index]
+		var next_shape:Shape3D=shapes[index] if index<shapes.size() else null
+		if collider.shape!=next_shape:collider.shape=next_shape
 	entry.node.mesh=slot.mesh if active else slot.old_mesh
 	slot.applied=active
 	_record_stage("resident resource swap",(Time.get_ticks_usec()-started)/1000.0)
@@ -1911,6 +1921,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	last_density_tiles = 0
 	last_untouched_surface_tiles=0
 	last_direct_triangle_pages=0
+	last_worker_packed_surfaces=0
 	last_relight_tiles = 0
 	latest_edit_members.clear()
 	latest_member_changes.clear()
