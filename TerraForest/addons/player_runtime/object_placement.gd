@@ -76,7 +76,7 @@ func target()->Dictionary:
 		clearance_query.collision_mask=mask
 		if not get_world_3d().direct_space_state.intersect_shape(clearance_query,1).is_empty():
 			result.reason="Object overlaps terrain or another placement";return result
-	if game.equipped_tool==222 and game.combat.barrels.get_ids().size()>=256:result.reason="Barrel limit reached";return result
+	if game.equipped_tool==222 and game.combat.barrels.region_stats().logical_instances>=256:result.reason="Barrel limit reached";return result
 	result.ok=entry.collection.can_insert_instance(game.model_tool.records(result.transform,entry.collection),game.model_tool.protection())
 	result.reason="" if result.ok else "Object overlaps another placement or capacity is reached"
 	return result

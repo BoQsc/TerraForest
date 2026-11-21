@@ -52,7 +52,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("begin_transient_clear"),&NativeStaticBatch::begin_transient_clear);
     ClassDB::bind_method(D_METHOD("advance_transient_clear","max_records","max_usec"),&NativeStaticBatch::advance_transient_clear);
     ClassDB::bind_method(D_METHOD("get_instance","id"),&NativeStaticBatch::get_instance);
-    ClassDB::bind_method(D_METHOD("get_ids"),&NativeStaticBatch::get_ids);
+    ClassDB::bind_method(D_METHOD("get_ids","include_paged_out"),&NativeStaticBatch::get_ids,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("capture_snapshot"),&NativeStaticBatch::capture_snapshot);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeStaticBatch::validate_snapshot);
     ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeStaticBatch::restore_snapshot);
@@ -62,6 +62,9 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure_render_streaming","enabled","radius","batch_limit","byte_limit","uploads_per_tick","bytes_per_tick"),&NativeStaticBatch::configure_render_streaming);
     ClassDB::bind_method(D_METHOD("set_render_focus","focus"),&NativeStaticBatch::set_render_focus);
     ClassDB::bind_method(D_METHOD("set_render_radius","radius"),&NativeStaticBatch::set_render_radius);
+    ClassDB::bind_method(D_METHOD("set_minimum_paging_radius","radius"),&NativeStaticBatch::set_minimum_paging_radius);
+    ClassDB::bind_method(D_METHOD("placement_neighborhood_ready","world_point","radius"),&NativeStaticBatch::placement_neighborhood_ready);
+    ClassDB::bind_method(D_METHOD("is_instance_paged_out","id"),&NativeStaticBatch::is_instance_paged_out);
     ClassDB::bind_method(D_METHOD("render_stats"),&NativeStaticBatch::render_stats);
     ClassDB::bind_method(D_METHOD("render_frame_profile"),&NativeStaticBatch::render_frame_profile);
     ClassDB::bind_method(D_METHOD("is_render_region_ready","world_bounds"),&NativeStaticBatch::is_render_region_ready);
@@ -449,7 +452,15 @@ PackedFloat32Array NativeStaticBatch::get_instance(int64_t id) const {
     PackedFloat32Array result;auto it=placements.find(id);if(it==placements.end()||unloaded_regions.count(group_for(it->second)))return result;
     result.resize(12);std::copy(it->second.begin(),it->second.end(),result.ptrw());return result;
 }
-PackedInt64Array NativeStaticBatch::get_ids() const {PackedInt64Array out;out.resize(placements.size()-hidden_record_count());int i=0;for(auto &e:placements)if(!unloaded_regions.count(group_for(e.second)))out.set(i++,e.first);return out;}
+PackedInt64Array NativeStaticBatch::get_ids(bool include_paged_out) const {
+    PackedInt64Array out;
+    out.resize(include_paged_out?placements.size()+unloaded_ids.size():placements.size()-hidden_record_count());
+    int i=0;
+    for(const auto &entry:placements)
+        if(include_paged_out||!unloaded_regions.count(group_for(entry.second)))out.set(i++,entry.first);
+    if(include_paged_out)for(auto id:unloaded_ids)out.set(i++,id);
+    return out;
+}
 static PackedByteArray checksum(const PackedByteArray &bytes) {Ref<HashingContext> h;h.instantiate();h->start(HashingContext::HASH_SHA256);h->update(bytes);return h->finish();}
 PackedByteArray NativeStaticBatch::capture_snapshot() const {
     if(!unloaded_regions.empty())return {};

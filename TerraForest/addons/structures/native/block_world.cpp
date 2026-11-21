@@ -86,6 +86,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_focus","position"),&NativeBlockWorld::set_focus);
     ClassDB::bind_method(D_METHOD("set_navigation_interest","points"),&NativeBlockWorld::set_navigation_interest);
     ClassDB::bind_method(D_METHOD("set_occupancy_interest","points"),&NativeBlockWorld::set_occupancy_interest);
+    ClassDB::bind_method(D_METHOD("set_blast_region_interest","origin","damage_job","active"),&NativeBlockWorld::set_blast_region_interest);
     ClassDB::bind_method(D_METHOD("configure_streaming","enabled","radius","chunk_limit","mesh_byte_limit","cache_byte_limit"),&NativeBlockWorld::configure_streaming);
     ClassDB::bind_method(D_METHOD("streaming_stats"),&NativeBlockWorld::streaming_stats);
     ClassDB::bind_method(D_METHOD("set_process_profiling_enabled","enabled"),&NativeBlockWorld::set_process_profiling_enabled);

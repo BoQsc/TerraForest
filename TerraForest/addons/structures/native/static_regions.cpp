@@ -84,6 +84,25 @@ bool NativeStaticBatch::is_region_loaded(Vector3i position) const {
     BlockKey key{position.x,position.y,position.z};
     return valid_model_region(key)&&!unloaded_regions.count(key);
 }
+bool NativeStaticBatch::set_minimum_paging_radius(double radius) {
+    if(!std::isfinite(radius)||radius<0||radius>16384)return false;
+    minimum_paging_radius=radius;
+    return true;
+}
+bool NativeStaticBatch::is_instance_paged_out(int64_t id) const {
+    if(unloaded_ids.count(id))return true;
+    auto found=placements.find(id);
+    return found!=placements.end()&&unloaded_regions.count(group_for(found->second));
+}
+bool NativeStaticBatch::placement_neighborhood_ready(Vector3 world_point,double radius) const {
+    if(admission||!world_point.is_finite()||!std::isfinite(radius)||radius<=0)return false;
+    if(unloaded_regions.empty())return true;
+    const auto frame=is_inside_tree()?get_global_transform():get_transform();
+    if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-9)return false;
+    const Vector3 extent(radius,radius,radius);
+    const auto local=frame.affine_inverse().xform(AABB(world_point-extent,extent*2));
+    return !unloaded_bounds.any_intersection(local,[&](BlockKey key){return unloaded_regions.at(key).count!=0;});
+}
 PackedByteArray NativeStaticBatch::capture_region(Vector3i position) const {
     BlockKey key{position.x,position.y,position.z};
     if(!valid_model_region(key)||!valid_asset(asset_id)||unloaded_regions.count(key))return {};

@@ -128,6 +128,7 @@ class NativeStaticBatch : public Node3D {
     uint64_t render_stride_bytes() const { return appearance_fade?64:48; }
     Vector3 render_focus,render_selection_focus;
     double render_radius=384;
+    double minimum_paging_radius=0;
     int render_batch_limit=128,render_upload_limit=2,render_candidates=0,render_blocked=0;
     uint64_t render_byte_limit=4*1024*1024,render_tick_bytes=256*1024;
     uint64_t render_bytes=0,render_evictions=0,render_queries=0,render_uploaded_bytes=0;
@@ -245,6 +246,9 @@ public:
     bool configure_render_streaming(bool enabled,double radius,int64_t batch_limit,int64_t byte_limit,int64_t uploads_per_tick,int64_t bytes_per_tick);
     void set_render_focus(Vector3 focus);
     bool set_render_radius(double radius);
+    bool set_minimum_paging_radius(double radius);
+    bool placement_neighborhood_ready(Vector3 world_point,double radius) const;
+    bool is_instance_paged_out(int64_t id) const;
     Dictionary render_stats() const;
     Dictionary render_frame_profile() const;
     bool is_render_region_ready(const AABB &world_bounds) const;
@@ -270,7 +274,7 @@ public:
     bool begin_transient_clear();
     Dictionary advance_transient_clear(int64_t max_records,int64_t max_usec);
     PackedFloat32Array get_instance(int64_t id) const;
-    PackedInt64Array get_ids() const;
+    PackedInt64Array get_ids(bool include_paged_out=false) const;
     PackedByteArray capture_snapshot() const;
     bool validate_snapshot(const PackedByteArray &bytes) const;
     bool restore_snapshot(const PackedByteArray &bytes);

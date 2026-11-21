@@ -1,5 +1,35 @@
 # First firearm and volumetric explosive destruction
 
+## Saved barrels beyond the player
+
+The player could have to follow an ignited chain in a saved world. Ordinary
+model paging loaded records within 384 m of the player and could retire them
+beyond 512 m. Combat searched only resident barrels. At a page boundary it
+could consume the source before discovering its neighbor. The earlier 160 m
+test used newly placed barrels and never crossed an unloaded saved page.
+
+Esc → Player → **Barrel simulation distance** now defaults to 3,072 m. The
+shared pager applies the larger distance to barrel records. A queued blast
+waits for nearby barrel and building records, and an ignited chain can finish
+at a lower setting. Saved ignition can also recover from a paged-out barrel ID.
+Blast sound uses the selected cutoff. The individual barrel ignition radius
+is 6 m. [Player controls](../../docs/COMBAT_DESTRUCTION.md#play)
+
+**Source verification, November 21.** A stationary player about 1.3 km from
+three saved barrels completed the chain at the 384 m setting. The checkpoint
+first restored only placement metadata and the source barrel's ignition. Its
+neighbor and a building cell came from separate cold pages. All three barrels
+submitted one crater each, the building cell was destroyed, and an unrelated
+prop stayed unloaded. [Saved-page check](../../reports/checks/20261121T095108937104Z/console.log)
+
+The read-only gameplay world passed at 768 m with ordinary and fast chains.
+The check exercised the ESC slider, sound cutoff, terrain publication and
+save-file integrity. The new behavior has been verified headlessly from source.
+An installed-package playtest and listening review are still open.
+[Gameplay check](../../reports/checks/20261121T095245399988Z/console.log)
+
+## Water and earlier combat work
+
 Current water replacement: [continuous volumetric water plan](water-plan.md).
 **November 20.** The packaged Cedar Vale route reproduced the first-visible lake
 cutoff, a missing sea surface query, and delayed publication. Settled checks

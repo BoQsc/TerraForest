@@ -98,9 +98,10 @@ static double focus_distance(const AABB &box,const Vector3 &focus) {
     return focus.distance_squared_to(Vector3(std::clamp(focus.x,box.position.x,end.x),
         std::clamp(focus.y,box.position.y,end.y),std::clamp(focus.z,box.position.z,end.z)));
 }
-Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double load_radius,double unload_radius,int max_scans,int max_usec) {
-    if(busy||stopping||!world_focus.is_finite()||!std::isfinite(load_radius)||!std::isfinite(unload_radius)||
-       load_radius<0||unload_radius<=load_radius||unload_radius>32768||max_scans<1||max_scans>1024||max_usec<1||max_usec>2000)return stats();
+Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double default_load,double default_unload,int max_scans,int max_usec) {
+    if(busy||stopping||!world_focus.is_finite()||!std::isfinite(default_load)||!std::isfinite(default_unload)||
+       default_load<0||default_unload<=default_load||default_unload>32768||max_scans<1||max_scans>1024||max_usec<1||max_usec>2000)return stats();
+    const double hysteresis=default_unload-default_load;
     const auto begin=std::chrono::steady_clock::now(),deadline=begin+std::chrono::microseconds(max_usec);
     selection_scans=selection_requests=0;++selection_tick;
     auto interest_distance=[](const AABB &bounds,const std::vector<Vector3> &points){
@@ -111,6 +112,7 @@ Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double
     for(auto &entry:jobs) {
         auto &job=entry.second;if(job.stage==DONE||job.cancelled)continue;
         auto *collection=resolve(collections.at(job.asset).id);if(!collection)continue;
+        const double unload_radius=std::max(default_load,collection->minimum_paging_radius)+hysteresis;
         const Transform3D transform=collection->is_inside_tree()?collection->get_global_transform():collection->get_transform();
         if(!transform.is_finite()||std::abs(transform.basis.determinant())<1e-12)continue;
         const Vector3 focus=transform.affine_inverse().xform(world_focus);
@@ -128,6 +130,8 @@ Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double
         auto next=collections.upper_bound(selection_asset);if(next==collections.end())next=collections.begin();
         selection_asset=next->first;auto &binding=next->second;++selection_scans;
         auto *collection=resolve(binding.id);if(!collection)continue;
+        const double load_radius=std::max(default_load,collection->minimum_paging_radius);
+        const double unload_radius=load_radius+hysteresis;
         const Transform3D transform=collection->is_inside_tree()?collection->get_global_transform():collection->get_transform();
         if(!transform.is_finite()||std::abs(transform.basis.determinant())<1e-12)continue;
         const Vector3 focus=transform.affine_inverse().xform(world_focus);if(!focus.is_finite())continue;

@@ -30,6 +30,11 @@ recipes. The existing starter loadout and saved inventories are preserved.
   Flashes, sound and actor damage happen at detonation. Craters are excavated
   in order as terrain becomes available. The option defaults off and is saved
   as a player preference. Standard pacing waits for terrain between barrels.
+- **Esc → Player → Barrel simulation distance** sets how far from the player
+  saved barrels are kept ready and how far blast sounds carry. The slider
+  ranges from 384 m to 3,072 m and defaults to whole-world coverage. An
+  ignited chain can wake its next barrel page and the building cells it hits,
+  even at the lowest slider setting. You can stand still as it travels.
 - Esc → Player → **Structural integrity and collapse** enables the optional
   support simulation. It defaults off and is saved with each world. Blast damage
   and flying debris still work while the integrity option is off.

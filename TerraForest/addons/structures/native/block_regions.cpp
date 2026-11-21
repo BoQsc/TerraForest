@@ -39,6 +39,22 @@ bool NativeBlockWorld::unavailable_region(const AABB &bounds) const {
     }
     return false;
 }
+// Each 12-cell blast capture overlaps at most eight data regions. The queue
+// head and the detonation being admitted may be in different parts of the map.
+bool NativeBlockWorld::set_blast_region_interest(Vector3i origin,bool damage_job,bool active) {
+    auto &points=blast_interest[damage_job?1:0];
+    points.clear();
+    if(!active)return true;
+    for(int axis=0;axis<3;++axis)if(origin[axis]<-1048575||origin[axis]>1048564)return false;
+    const Vector3i low((Vector3(origin)/64.0).floor());
+    const Vector3i high(((Vector3(origin)+Vector3(11,11,11))/64.0).floor());
+    bool ready=true;
+    for(int x=low.x;x<=high.x;++x)for(int y=low.y;y<=high.y;++y)for(int z=low.z;z<=high.z;++z){
+        points.emplace_back(x*64+32,y*64+32,z*64+32);
+        if(unloaded_regions.count({x,y,z}))ready=false;
+    }
+    return ready;
+}
 PackedByteArray NativeBlockWorld::capture_region(Vector3i position) const {
     BlockKey region{position.x,position.y,position.z};
     if(!valid_region(region)||unloaded_regions.count(region))return {};

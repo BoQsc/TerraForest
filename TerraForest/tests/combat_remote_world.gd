@@ -31,8 +31,7 @@ func run()->void:
 	game.player_view.entry.finish();game._clear_motion();game.player.set_physics_process(false)
 	game.zombies.population_enabled=false
 	var player_before:Vector3=game.player.global_position
-	var base:Vector3=player_before+Vector3(160,3,0)
-	if base.x>1980:base.x-=320
+	var base:Vector3=player_before+Vector3(768 if player_before.x<1000 else -768,3,0)
 	var ids:Array[int]=[]
 	for n in 3:
 		var p:=base+Vector3(3*n,0,0)
@@ -50,6 +49,14 @@ func run()->void:
 	check(not game.terrain.pending_edit and game.combat.blast_jobs.is_empty(),"terrain and building publication finish")
 	check(game.player.global_position==player_before,"player stays at original location")
 	var chains:CheckButton=game.session_menu.pages.Player.get_node("FastBarrelChains")
+	var distance_slider:HSlider=game.session_menu.pages.Player.get_node("BarrelSimulationDistance")
+	check(distance_slider.value==3072 and game.combat.barrel_distance==3072,"Player menu starts with whole-world barrel simulation")
+	distance_slider.value=1024
+	check(game.combat.barrel_distance==1024,"Player distance slider applies immediately")
+	var blast_voices:=0
+	for voice:AudioStreamPlayer3D in game.combat.audio_pool:
+		if voice.stream==game.combat.blast_audio and voice.max_distance==3072:blast_voices+=1
+	check(blast_voices>0,"remote explosions use the larger spatial sound range")
 	check(not chains.button_pressed,"Player menu defaults to standard barrel pacing")
 	chains.button_pressed=true
 	var burst_start:int=game.combat.explosions

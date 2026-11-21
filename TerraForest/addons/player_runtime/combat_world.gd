@@ -12,6 +12,8 @@ const AMMO:=221
 const WEAPONS={9:{"title":"PX9 ECLIPSE","ammo":228,"capacity":15,"interval":.22,"speed":170.0,"damage":28,"block_damage":10},7:{"title":"CARBINE","ammo":221,"interval":.4,"speed":180.0,"damage":35,"block_damage":18},8:{"title":"RANGER AR","ammo":223,"interval":.10,"speed":240.0,"damage":24,"block_damage":12}}
 const PROJECTILE_LIMIT:=64
 const FAST_DETONATIONS_PER_TICK:=16
+const MIN_BARREL_DISTANCE:=384
+const WORLD_BARREL_DISTANCE:=3072 # Covers the diagonal of the 2 km square world.
 var game:Node
 # Input ownership is supplied by the host, allowing non-mouse controllers and
 # offscreen validation without changing the desktop pointer.
@@ -24,6 +26,8 @@ var projectiles:Array[Dictionary]=[]
 var detonations:Array[int]=[]
 var craters:=Barrel.CraterQueue.new()
 var fast_chains:=false
+var barrel_distance:=WORLD_BARREL_DISTANCE
+var warming_chain:=false
 var chain_settings_path:="user://barrel_chains.cfg"
 var blast_jobs:Array[Dictionary]=[]
 var destruction_trace=preload("res://addons/player_runtime/destruction_trace.gd").new()
@@ -115,19 +119,52 @@ func add_controls(menu:CanvasLayer,parent:Node)->void:
 	chains.button_pressed=fast_chains
 	chains.toggled.connect(set_fast_chains)
 	parent.add_child(chains)
+	var distance_label:Label=menu.label(parent,barrel_distance_label())
+	var distance:=HSlider.new()
+	distance.name="BarrelSimulationDistance"
+	distance.min_value=MIN_BARREL_DISTANCE
+	distance.max_value=WORLD_BARREL_DISTANCE
+	distance.step=128
+	distance.value=barrel_distance
+	distance.tooltip_text="How far from you saved barrels are kept ready and explosions can be heard. An active chain can keep going beyond this distance."
+	distance.accessibility_name="Barrel simulation distance in metres"
+	distance.value_changed.connect(func(metres:float):
+		set_barrel_distance(roundi(metres))
+		distance_label.text=barrel_distance_label())
+	parent.add_child(distance)
 	integrity_toggle=CheckButton.new();integrity_toggle.text="Structural integrity and collapse (optional)"
 	integrity_toggle.tooltip_text="Check nearby blocks after building, mining and explosions. Unsupported blocks fall. Off by default; saved with this world."
 	integrity_toggle.button_pressed=state.integrity_enabled();integrity_toggle.toggled.connect(set_integrity);parent.add_child(integrity_toggle)
 	menu.label(parent,"Firearms: hold left mouse to fire · right mouse aims · R reloads. Craft a PX9 handgun, Carbine or Ranger assault rifle and matching cartridges, or use Dev Bag. Equip a barrel and right-click loaded ground to place it.")
 func load_chain_setting()->void:
 	var config:=ConfigFile.new()
-	fast_chains=not chain_settings_path.is_empty() and config.load(chain_settings_path)==OK and config.get_value("barrels","fast_chains",false)==true
+	if not chain_settings_path.is_empty():config.load(chain_settings_path)
+	fast_chains=config.get_value("barrels","fast_chains",false)==true
+	var stored:Variant=config.get_value("barrels","simulation_metres",WORLD_BARREL_DISTANCE)
+	barrel_distance=clampi(snappedi(stored,128),MIN_BARREL_DISTANCE,WORLD_BARREL_DISTANCE) if stored is int else WORLD_BARREL_DISTANCE
+	_apply_barrel_distance()
+
+func barrel_distance_label()->String:
+	if barrel_distance==WORLD_BARREL_DISTANCE:return "Barrel simulation distance · Whole world (3,072 m)"
+	return "Barrel simulation distance · %d m"%barrel_distance
+
+func _apply_barrel_distance()->void:
+	if is_instance_valid(barrels):barrels.set_minimum_paging_radius(WORLD_BARREL_DISTANCE if warming_chain else barrel_distance)
+
+func set_barrel_distance(metres:int)->void:
+	barrel_distance=clampi(snappedi(metres,128),MIN_BARREL_DISTANCE,WORLD_BARREL_DISTANCE)
+	_apply_barrel_distance()
+	_save_chain_settings()
 
 func set_fast_chains(enabled:bool)->void:
 	fast_chains=enabled
+	_save_chain_settings()
+
+func _save_chain_settings()->void:
 	if chain_settings_path.is_empty():return
 	var config:=ConfigFile.new()
-	config.set_value("barrels","fast_chains",enabled)
+	config.set_value("barrels","fast_chains",fast_chains)
+	config.set_value("barrels","simulation_metres",barrel_distance)
 	var result:=config.save(chain_settings_path)
 	if result!=OK:push_warning("Could not save barrel chain setting: "+error_string(result))
 
@@ -321,12 +358,16 @@ func detonate(id:int)->bool:
 	if destruction_commit_active:return false
 	destruction_commit_active=true
 	var consumed:=_detonate(id)
+	if consumed:game.structures.blocks.set_blast_region_interest(Vector3i.ZERO,false,false)
 	destruction_commit_active=false
 	return consumed
 
 func _detonate(id:int)->bool:
 	var base:=barrel_position(id)
-	if not base.is_finite():return true
+	if not base.is_finite():
+		if not barrels.is_instance_paged_out(id):return true
+		_warm_chain_pages()
+		return false
 	var center:=base+Vector3.UP*.5
 	# Damage and excavation query authoritative stores, not nearby actor bodies.
 	# Actor readiness follows the player and must not pause an ignited chain.
@@ -334,6 +375,15 @@ func _detonate(id:int)->bool:
 	# water admission checks; no collision streaming radius is enlarged here.
 	if barrels.is_removal_protected(id):return true
 	if blast_jobs.size()>=32 or (fast_chains and craters.pending.size()>=craters.LIMIT):return false
+	# get_ids() only sees resident placements. Wait before consuming the source
+	# so a chain crossing a cold page can still discover the next barrel.
+	if not barrels.placement_neighborhood_ready(base,6.0):
+		_warm_chain_pages()
+		return false
+	var origin:=Vector3i((center-Vector3.ONE*5).floor())
+	if not game.structures.blocks.set_blast_region_interest(origin,false,true):return false
+	var prefab:Resource=game.structures.blocks.capture_prefab(origin,Vector3i(12,12,12))
+	if prefab==null:return false
 	# The same native density edit, publication, water, vegetation and save path
 	# as mining. The environmental admission does not pay mining rewards.
 	var measured:=Time.get_ticks_usec()
@@ -352,9 +402,7 @@ func _detonate(id:int)->bool:
 	if not barrels.remove_instances(PackedInt64Array([id])):return false
 	if fast_chains:craters.pending.append({"id":id,"point":crater_point})
 	game.model_tool.history.clear_history();game.world_attack.durability.forget("model:%s:%d"%[Barrel.KEY,id])
-	var origin:=Vector3i((center-Vector3.ONE*5).floor())
-	var prefab:Resource=game.structures.blocks.capture_prefab(origin,Vector3i(12,12,12))
-	var records:PackedInt32Array=state.blast_cells(prefab.get_records(),origin,center,5.0) if prefab!=null else PackedInt32Array()
+	var records:PackedInt32Array=state.blast_cells(prefab.get_records(),origin,center,5.0)
 	if not records.is_empty():
 		var job:Dictionary={"records":records,"offset":0,"center":center}
 		if destruction_trace.enabled:job.trace_identity=trace_identity
@@ -380,12 +428,20 @@ func _detonate(id:int)->bool:
 	game.terrain._record_stage("blast presentation",(Time.get_ticks_usec()-measured)/1000.0)
 	explosions+=1;game.terrain.changed_since_save=true;return true
 
+func _warm_chain_pages()->void:
+	if warming_chain:return
+	warming_chain=true
+	_apply_barrel_distance()
+
 func step_detonations()->void:
 	for index in (FAST_DETONATIONS_PER_TICK if fast_chains else 1):
 		if detonations.is_empty():break
 		if not fast_chains and (game.terrain.pending_edit or not craters.pending.is_empty()):break
 		if not detonate(detonations[0]):break
 		detonations.pop_front()
+	if warming_chain and detonations.is_empty():
+		warming_chain=false
+		_apply_barrel_distance()
 	# Previously consumed barrels still need their craters if the player turns
 	# fast chains off or opens the save with different preferences.
 	if craters.pending.is_empty() or craters.ticket>=0 or game.terrain.pending_edit:return
@@ -404,12 +460,13 @@ func _crater_resolved(outcome:Dictionary)->void:
 		game.terrain.changed_since_save=true
 
 func step_blasts()->void:
-	if destruction_commit_active:return
+	if destruction_commit_active or blast_jobs.is_empty():return
+	var job:Dictionary=blast_jobs[0]
+	var origin:=Vector3i((Vector3(job.center)-Vector3.ONE*5).floor())
+	if not game.structures.blocks.set_blast_region_interest(origin,true,true):return
 	if not native_blast_batches:
 		_step_blasts_legacy();return
-	if blast_jobs.is_empty():return
 	var started:=Time.get_ticks_usec()
-	var job:Dictionary=blast_jobs[0]
 	destruction_commit_active=true
 	var result:Dictionary=destruction_coordinator.execute(game.structures.blocks,game.world_attack.durability,job.records,job.offset,job.center,24)
 	if not result.ok:
@@ -423,6 +480,7 @@ func step_blasts()->void:
 	if job.offset>=job.records.size():
 		if destruction_trace.enabled:destruction_trace.blocks_complete(job.get("trace_identity",""),Engine.get_physics_frames(),Time.get_ticks_usec())
 		blast_jobs.pop_front()
+		game.structures.blocks.set_blast_region_interest(Vector3i.ZERO,true,false)
 	destruction_commit_active=false
 	game.terrain._record_stage("combat native store transaction",float(result.store_us)/1000.0)
 	game.terrain._record_stage("combat blast batch",(Time.get_ticks_usec()-started)/1000.0)
@@ -457,12 +515,18 @@ func _step_blasts_legacy()->void:
 	if job.offset>=records.size():
 		if destruction_trace.enabled:destruction_trace.blocks_complete(job.get("trace_identity",""),Engine.get_physics_frames(),Time.get_ticks_usec())
 		blast_jobs.pop_front()
+		game.structures.blocks.set_blast_region_interest(Vector3i.ZERO,true,false)
 	game.terrain._record_stage("combat blast batch",(Time.get_ticks_usec()-started)/1000.0)
 func _trace_terrain_publication(measurement:Dictionary)->void:
 	if destruction_trace.enabled:
 		destruction_trace.terrain_complete(int(measurement.ticket),Engine.get_physics_frames(),Time.get_ticks_usec(),measurement)
 
 func clear_transients()->void:
+	warming_chain=false
+	_apply_barrel_distance()
+	if is_instance_valid(effects.blocks):
+		effects.blocks.set_blast_region_interest(Vector3i.ZERO,false,false)
+		effects.blocks.set_blast_region_interest(Vector3i.ZERO,true,false)
 	destruction_trace.reset()
 	for bullet in projectiles:bullet.view.queue_free()
 	projectiles.clear();detonations.clear();blast_jobs.clear();effects.clear()
@@ -490,8 +554,7 @@ func _physics_process(delta:float)->void:
 	if blast_jobs.is_empty():integrity.step()
 	# Reconstruct ignited barrels after save/load from their native durability.
 	if int(timer)!=int(timer-delta):
-		for id:int in barrels.get_ids():
-			if game.world_attack.durability.damage("model:%s:%d"%[Barrel.KEY,id],50)>=50 and id not in detonations and detonations.size()<256:detonations.append(id)
+		recover_ignited_barrels()
 	if game.equipped_tool==9:
 		var human:Node=game.tool_view.human
 		human.handgun_empty=state.get_rounds(9)==0
@@ -509,6 +572,10 @@ func _physics_process(delta:float)->void:
 		ammo_label.text="%s  %02d / %d   ·   %d reserve%s"%[WEAPONS.get(game.equipped_tool,WEAPONS[RIFLE]).title,state.get_rounds(game.equipped_tool),int(WEAPONS.get(game.equipped_tool,WEAPONS[RIFLE]).get("capacity",30)),rounds_in_bag(),"   RELOADING" if reload_slot>=0 else ""]
 		ammo_label.size=ammo_label.get_combined_minimum_size()
 		ammo_label.position=Vector2(maxf(24,viewport_size.x-ammo_label.size.x-30),maxf(24,viewport_size.y-210))
+func recover_ignited_barrels()->void:
+	for id:int in barrels.get_ids(true):
+		if game.world_attack.durability.damage("model:%s:%d"%[Barrel.KEY,id],50)>=50 and id not in detonations and detonations.size()<256:detonations.append(id)
+
 func sound(duration:float,frequency:float)->AudioStreamWAV:
 	var stream:=AudioStreamWAV.new();stream.format=AudioStreamWAV.FORMAT_16_BITS;stream.mix_rate=22050
 	var data:=PackedByteArray();data.resize(int(duration*22050)*2);var random:=RandomNumberGenerator.new();random.seed=57
@@ -523,5 +590,6 @@ func play_sound(point:Vector3,stream:AudioStream,gain_db:float=0.0)->void:
 		if not candidate.playing:player=candidate;break
 	if player==null:
 		if audio_pool.size()>=8:return
-		player=AudioStreamPlayer3D.new();player.bus="TerraForestWeapons";player.max_distance=96;add_child(player);audio_pool.append(player)
+		player=AudioStreamPlayer3D.new();player.bus="TerraForestWeapons";add_child(player);audio_pool.append(player)
+	player.max_distance=barrel_distance if stream==blast_audio else 96
 	player.volume_db=gain_db;player.global_position=point;player.stream=stream;player.play()

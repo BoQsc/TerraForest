@@ -120,6 +120,7 @@ class NativeBlockWorld : public Node3D {
     std::vector<Vector3> navigation_interest;
     // Exact read-only occupancy dependencies, separate from actor residency.
     std::vector<Vector3> occupancy_interest;
+    std::array<std::vector<Vector3>,2> blast_interest;
     double collision_radius=48.0;
     bool collisions=true;
     bool collision_work_pending=true;
@@ -239,6 +240,7 @@ public:
     void set_focus(Vector3 p);
     bool set_navigation_interest(const PackedVector3Array &points);
     bool set_occupancy_interest(const PackedVector3Array &points);
+    bool set_blast_region_interest(Vector3i origin,bool damage_job,bool active);
     bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
     Dictionary streaming_stats() const;
     void set_process_profiling_enabled(bool enabled);

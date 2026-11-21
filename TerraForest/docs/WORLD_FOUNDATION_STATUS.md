@@ -1,3 +1,8 @@
+## Distant barrel chains in saved worlds
+
+The previous remote check covered resident barrels 160 m from the player.
+The [saved-page investigation](../issues/explosive-combat/README.md#saved-barrels-beyond-the-player) documents the player-distance dependency, recovery of distant ignition, and the new default for barrel simulation.
+
 ## Full-cut physics and timing decision
 
 The default central preview covers at most four owners. The 64 m cut changes 36. Both the scheduler and native density function limit the preview footprint. The [redesign and calculated budgets](WORLD_SYSTEMS_DESIGN.md#full-cut-decision-from-the-packaged-replay) describe the representation change required to exercise the full footprint. The full two-frame milestone remains open.
