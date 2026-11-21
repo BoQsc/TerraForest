@@ -731,6 +731,32 @@ static func _group_edit_patches(coords:Array,patches:Array,bounds:Rect2i)->Array
   group.patches.append(patches[index])
  return groups.values()
 
+static func _contact_groups(coords:Array,patches:Array,bounds:Rect2i,fields:Array)->Array:
+ if fields.is_empty():return _group_edit_patches(coords,patches,bounds)
+ var groups:Array=[]
+ for field:Dictionary in fields:
+  groups.append({"bounds":field.bounds,"core":field.core,"patches":[]})
+ var remaining_coords:Array=[]
+ var remaining_patches:Array=[]
+ var remaining_bounds:=Rect2i()
+ for index in coords.size():
+  var coord:Vector3i=coords[index]
+  var area:=Rect2i(coord.x*4,coord.z*4,4,4)
+  var covered:=false
+  for group:Dictionary in groups:
+   if Rect2i(group.bounds).encloses(area):
+    group.patches.append(patches[index])
+    covered=true
+    break
+  if covered:continue
+  remaining_coords.append(coord)
+  remaining_patches.append(patches[index])
+  remaining_bounds=remaining_bounds.merge(area) if remaining_bounds.has_area() else area
+ for i in range(groups.size()-1,-1,-1):
+  if groups[i].patches.is_empty():groups.remove_at(i)
+ if not remaining_coords.is_empty():groups.append_array(_group_edit_patches(remaining_coords,remaining_patches,remaining_bounds))
+ return groups
+
 func _start_edit_patches(revision:int)->bool:
  if _edit_patch_task>=0 or _busy or not terrain.joint_edit_pending():return false
  var coords:Array=water.pending_edit_patches()
@@ -747,12 +773,12 @@ func _start_edit_patches(revision:int)->bool:
    if not solids.ok or not patch.set_structure_hulls(solids.hulls):return false
   patches.append(patch)
  var surface:Dictionary=terrain.resident_edit_surface
- var shared:Object=null
- if surface.get("ticket",-1)==terrain.edit_ticket and surface.epoch==terrain.epoch and Rect2i(surface.bounds).encloses(bounds):
-  shared=surface.core
- _edit_patch_job={"shared":shared,"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":revision,
+ var fields:Array=[]
+ if surface.get("ticket",-1)==terrain.edit_ticket and surface.epoch==terrain.epoch and surface.revision==terrain.density_revision:
+  fields=surface.groups
+ _edit_patch_job={"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":revision,
   "structures":_structure_revision,"field":terrain.density_revision,"cancel":terrain.backend.build_epoch,
-  "patches":patches,"groups":_group_edit_patches(coords,patches,bounds),"ready":false}
+  "patches":patches,"groups":_contact_groups(coords,patches,bounds,fields),"ready":false}
  _edit_patch_task=WorkerThreadPool.add_task(_prepare_edit_patches.bind(terrain.backend.native,_edit_patch_job),true,"Local edited water contacts")
  return _edit_patch_task>=0
 
@@ -760,7 +786,7 @@ func _prepare_edit_patches(core:Object,job:Dictionary)->void:
  # Keep one captured field at a time. Every group must match the same
  # revision and epoch before the main thread can consume any of the patches.
  for group:Dictionary in job.groups:
-  var snapshot:Object=job.shared
+  var snapshot:Object=group.get("core")
   if snapshot==null:snapshot=core.capture_contact_core(group.bounds,job.field,job.cancel)
   if snapshot==null:return
   for patch:RefCounted in group.patches:
@@ -783,7 +809,9 @@ func _poll_edit_patches()->void:
    _occupancy_failure="Local water occupancy cache budget reached"
    terrain.message_changed.emit(_occupancy_failure)
    return
- if job.shared!=null:_shared_contact_patches+=job.patches.size()
+ for group:Dictionary in job.groups:
+  if group.has("core"):_shared_contact_patches+=group.patches.size()
+ if job.patches.size()==64:_edit_patch_attempt=-1
  terrain.water_preparation_revision+=1
 
 var _prepared_slice:Dictionary={}

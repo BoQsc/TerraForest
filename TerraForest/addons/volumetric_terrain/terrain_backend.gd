@@ -695,15 +695,34 @@ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Di
 func _resident_edit_surface(job:Dictionary,revision:int)->Dictionary:
 	if region_terrain or brick_terrain or snapshot_terrain or job.tiles.is_empty():return {}
 	var bounds:=Rect2i()
+	var compact:=true
+	var regions:Dictionary={}
 	for item:Dictionary in job.tiles:
 		var key:Vector3i=item.key
-		if key.z not in [16,32] or item.has("brick_bottoms"):return {}
+		if key.z not in [16,32] or item.has("brick_bottoms"):
+			compact=false
+			continue
 		var tile:=Rect2i(key.x,key.y,key.z,key.z)
 		bounds=tile if not bounds.has_area() else bounds.merge(tile)
-		if bounds.size.x>64 or bounds.size.y>64:return {}
-	var core:Object=native.capture_contact_core(bounds,revision,job.build_epoch)
-	if core==null:return {}
-	return {"core":core,"bounds":bounds,"ticket":job.ticket,"epoch":job.epoch}
+		var region:=Vector2i(key.x/64,key.y/64)*64
+		regions[region]=int(regions.get(region,0))+1
+	var surface:={"ticket":job.ticket,"epoch":job.epoch,"revision":revision,"groups":[]}
+	if compact and bounds.size.x<=64 and bounds.size.y<=64:
+		var source:Object=native.capture_contact_core(bounds,revision,job.build_epoch)
+		if source!=null:
+			surface.core=source
+			surface.bounds=bounds
+			surface.groups.append({"core":source,"bounds":bounds})
+			return surface
+	if job.tiles.size()<8:return {}
+	for region:Vector2i in regions:
+		if regions[region]<2:continue
+		var domain:=Rect2i(region,Vector2i(64,64))
+		var source:Object=native.capture_contact_core(domain,revision,job.build_epoch)
+		if source==null:continue
+		surface.groups.append({"core":source,"bounds":domain})
+		if surface.groups.size()==3:break
+	return {} if surface.groups.is_empty() else surface
 
 static func _surface_unchanged(item:Dictionary,masks:Array)->bool:
 	if not item.get("retain_if_untouched",false) or item.has("brick_bottoms") or masks.is_empty():return false
@@ -716,33 +735,17 @@ static func _surface_unchanged(item:Dictionary,masks:Array)->bool:
 				if (mask[bit>>3] & (1<<(bit&7)))!=0:return false
 	return true
 
-func _dispatch_resident_groups(job:Dictionary,revision:int,scheduled:Dictionary,surface:Dictionary,items_to_build:Array)->Array:
+func _dispatch_resident_groups(job:Dictionary,scheduled:Dictionary,surface:Dictionary,items_to_build:Array)->Array:
 	var tasks:Array=[]
-	if items_to_build.is_empty():return tasks
-	if not surface.is_empty():
+	for group:Dictionary in surface.get("groups",[]):
+		var items:Array=[]
+		for item:Dictionary in items_to_build:
+			var key:Vector3i=item.key
+			if key.z in [16,32] and not item.has("brick_bottoms") and Rect2i(group.bounds).encloses(Rect2i(key.x,key.y,key.z,key.z)):
+				items.append(item)
+		if items.is_empty():continue
 		var completed:Dictionary={}
-		var task:=WorkerThreadPool.add_task(_build_resident_group.bind(surface.core,items_to_build,job,completed,true),true,"Shared terrain edit surface")
-		if task>=0:
-			tasks.append({"task":task,"completed":completed,"items":items_to_build})
-			for item:Dictionary in items_to_build:scheduled[item.key]=true
-			return tasks
-	if job.tiles.size()<8 or region_terrain or brick_terrain or snapshot_terrain:return tasks
-	var groups:Dictionary={}
-	for item:Dictionary in items_to_build:
-		var key:Vector3i=item.key
-		if key.z not in [16,32] or item.has("brick_bottoms"):continue
-		var group:=Vector2i(key.x/64,key.y/64)*64
-		if not groups.has(group):groups[group]=[]
-		groups[group].append(item)
-	for group:Vector2i in groups:
-		if tasks.size()>=3:break
-		var items:Array=groups[group]
-		if items.size()<2:continue
-		var bounds:=Rect2i(group,Vector2i(64,64))
-		var source:Object=native.capture_contact_core(bounds,revision,job.build_epoch)
-		if source==null:continue
-		var completed:Dictionary={}
-		var task:=WorkerThreadPool.add_task(_build_resident_group.bind(source,items,job,completed),true,"Committed terrain owners")
+		var task:=WorkerThreadPool.add_task(_build_resident_group.bind(group.core,items,job,completed,true),true,"Shared terrain edit surface")
 		if task<0:continue
 		tasks.append({"task":task,"completed":completed,"items":items})
 		for item:Dictionary in items:scheduled[item.key]=true
@@ -1800,7 +1803,7 @@ func _run() -> void:
 						if _surface_unchanged(item,execution.surface_owners):
 							_push({"kind":"edit_chunk","epoch":job.epoch,"ticket":job.ticket,"key":item.key,"stamp":item.stamp,"retain_geometry":true,"untouched_surface":true})
 						else:items_to_build.append(item)
-				var groups:=_dispatch_resident_groups(job,after_stats.decode_u32(12),scheduled,surface,items_to_build)
+				var groups:=_dispatch_resident_groups(job,scheduled,surface,items_to_build)
 				var support_output:Dictionary={}
 				var support_task:=-1
 				if not support_points.is_empty():

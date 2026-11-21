@@ -617,13 +617,14 @@ Array NativeRegionalWater::next_requests(int64_t limit,bool ocean_only){
 }
 Array NativeRegionalWater::pending_edit_patches() const{
     Array coordinates;
-    // A missing member makes the fast path ineligible. The normal sampler
-    // retains ownership of its reservation and retries at the same revision.
+    // Preserve reservations until acceptance. A wide edit takes bounded
+    // batches from its own footprint ahead of unrelated world requests.
     for(Key k:local_edit_regions){
         auto r=regions.find(k);
         if(r==regions.end()||r->second.valid)continue;
-        if(!request_set.count(k)||coordinates.size()>=64)return {};
+        if(!request_set.count(k))continue;
         coordinates.push_back(position(k));
+        if(coordinates.size()==64)break;
     }
     return coordinates;
 }
