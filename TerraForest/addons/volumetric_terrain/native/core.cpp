@@ -1868,6 +1868,45 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(w.sample(x,y,z)>=0)ok=w.edit(center,center,.75f,0,true,u8(material),lo,hi,changes,1.f,0.f,0.f,nullptr,nullptr,0,0,true);
   if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
  }
+ else if(cmd==46){
+  const u32 revision=r.u(),epoch=r.u();
+  const int ox=int(r.u()),oy=int(r.u()),oz=int(r.u());
+  if(!r.good||n!=24||ox<0||oy<0||oz<0||ox>WORLD-15||oz>WORLD-15||oy>WORLD_Y-15){out.p[8]=1;return;}
+  if(revision!=w.revision||cancelled(w,epoch)){out.p[8]=4;return;}
+  // One bit per writable, empty lattice sample. A read for hand reach
+  // must never page an evicted field back into memory.
+  u8 mask[512]{};
+  for(int z=0;z<16;++z){
+   if(cancelled(w,epoch)){out.p[8]=4;return;}
+   for(int x=0;x<16;++x){
+    const int gx=ox+x,gz=oz+z;
+    if(gx<1||gx>=WORLD||gz<1||gz>=WORLD)continue;
+    float height=0;
+    bool have_height=false;
+    int last_py=-1;
+    const Page *page=nullptr;
+    for(int y=0;y<16;++y){
+     const int gy=oy+y;
+     if(gy<4||gy>=254)continue;
+     if((gy>>4)!=last_py){
+      last_py=gy>>4;
+      const int id=w.pages_by_key.get(page_key(gx>>4,last_py,gz>>4));
+      page=id>=0?&w.pages[id]:nullptr;
+      if(page&&!page->d){out.p[8]=4;return;}
+     }
+     bool empty;
+     if(page)empty=page->d[(gx&15)+16*((gz&15)+16*(gy&15))]>=0;
+     else{
+      if(!have_height){height=w.height(float(gx),float(gz));have_height=true;}
+      empty=w.base({float(gx),float(gy),float(gz)},height)>=0;
+     }
+     const int bit=x+16*(y+16*z);
+     if(empty)mask[bit>>3]|=u8(1u<<(bit&7));
+    }
+   }
+  }
+  out.u(w.revision);out.raw(mask,sizeof(mask));
+ }
  else if(cmd==39){
   u32 revision=r.u(),epoch=r.u();V3 point=r.vec(),direction=r.vec();
   float magnitude=length(direction);

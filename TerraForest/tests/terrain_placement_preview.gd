@@ -87,6 +87,7 @@ func observe_hand_edit(cell:Vector3i,placing:bool)->void:
 			"field_notice_to_install_ms":(clocks.install-clocks.field)/1000.0 if clocks.has("install") and clocks.has("field") else null,
 			"install_to_draw_ms":(draw_us-clocks.install)/1000.0 if clocks.has("install") else null
 		}
+		if placing:timing.target_source=game.terrain_placement.last_click_source
 		print("HAND_EDIT ",JSON.stringify(timing))
 		check(visual,"Drawn mesh and collision match within 1 mm")
 		check(draws<=2 and elapsed<=33.334,"Hand edit reaches matching draw within two frames")
@@ -171,9 +172,27 @@ func run()->void:
 		game.terrain.placement_target_received.disconnect(receive)
 		check(decoded.get("cell")==cell and decoded.get("origin")==reference.get("origin") and decoded.get("empty")==reference.get("empty"),"immediate query agrees with the worker on the paid cell and occupancy mask")
 		check(game.terrain.backend.native.try_placement_target(game.terrain.Codec.command(12)).is_empty(),"immediate target reader refuses mutation and cancellation commands")
-	for field in ["epoch","revision","ticket"]:
-		var stale:Dictionary=game.terrain_placement.cached.duplicate(true);stale[field]-=1
-		check(not game.terrain_placement.matches(stale,game.terrain),"cached mask invalidates on changed "+field)
+	var targeting=game.terrain_placement
+	if game.terrain.planner.has_method("resident_placement_target"):
+		var ready:=await wait_for(func():return targeting.matches(targeting.resident,game.terrain),3)
+		if check(ready,"equipping terrain makes hand reach resident independently of the preview target"):
+			var region:Dictionary=targeting.resident
+			var parity:=true
+			var probes:=0
+			for dz in [-5,0,5]:
+				for dx in [-5,0,5]:
+					for dy in [-5,0,5]:
+						var point:=Vector3(region.origin)+Vector3(8+dx,8+dy,8+dz)
+						for normal in [Vector3.UP,Vector3.DOWN,Vector3.FORWARD]:
+							var packet:PackedByteArray=game.terrain.Codec.terrain_target_command(point,normal,game.terrain.native_revision,game.terrain.backend.build_epoch)
+							var reference:Dictionary=game.terrain.Codec.decode_terrain_target(game.terrain.backend.native.execute(packet))
+							var selected:Dictionary=game.terrain.planner.resident_placement_target(point,normal,region.origin,region.empty)
+							parity=parity and reference.status in ["hit","miss"] and selected.status==reference.status and selected.get("cell")==reference.get("cell")
+							probes+=1
+			check(parity and probes==81,"resident targeting agrees with independent field queries across unpredicted aim positions")
+			for field in ["epoch","revision","ticket"]:
+				var stale:=region.duplicate();stale[field]-=1
+				check(not targeting.matches(stale,game.terrain),"resident field invalidates on changed "+field)
 	var inventory:PackedByteArray=hud.inventory.capture_storage_snapshot();var revision:int=game.terrain.density_revision
 	for i in 10:refresh()
 	check(inventory==hud.inventory.capture_storage_snapshot() and revision==game.terrain.density_revision and not game.terrain.pending_edit,"preview probing never spends material or edits terrain")
@@ -184,7 +203,7 @@ func run()->void:
 	var before:=amount(211)
 	var placement=game.terrain_placement
 	for cancellation in ["focus","slot","aim","timeout","world"]:
-		placement.cached={}
+		placement.cached={};placement.resident={}
 		placement.target(game) # Exercise the pending worker fallback.
 		right_click()
 		check(not placement.queued.is_empty() and amount(211)==before and game.mining_rewards.payment.is_empty(),"cold click buffers once without early payment: "+cancellation)
@@ -198,7 +217,7 @@ func run()->void:
 		placement.update(game)
 		check(placement.queued.is_empty() and amount(211)==before and game.mining_rewards.payment.is_empty(),"changed context cancels the buffered click without spending: "+cancellation)
 		game.app_focused=true;hud.equip_item(211);game.camera.global_basis=camera_basis
-	placement.cached={}
+	placement.cached={};placement.resident={}
 	placement.target(game) # Exercise the pending worker fallback.
 	var submission:={}
 	var observe_submission:=func(_bounds:AABB)->void:

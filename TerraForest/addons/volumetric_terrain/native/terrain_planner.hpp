@@ -14,6 +14,7 @@ class NativeTerrainPlanner : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    godot::Dictionary resident_placement_target(godot::Vector3 point,godot::Vector3 normal,godot::Vector3i origin,const godot::PackedByteArray &empty) const;
     godot::Dictionary placement_target(godot::Vector3 point,godot::Vector3 normal,godot::Vector3i origin,const godot::PackedByteArray &empty) const;
     godot::Dictionary requests_navigation(godot::Vector3 focus,bool collision,godot::Vector3 velocity,godot::Vector3 target,const godot::PackedVector3Array &points,const godot::Dictionary &tiles,const godot::Dictionary &split,const godot::Array &visible,bool include_coverage=false,bool include_eviction=false,godot::Vector3 view=godot::Vector3(INFINITY,INFINITY,INFINITY),double projection_scale=1.0,bool service=false) const;
     godot::Dictionary requests_travel(godot::Vector3 focus,bool collision,godot::Vector3 velocity,const godot::Dictionary &tiles,const godot::Dictionary &split,const godot::Array &visible) const;

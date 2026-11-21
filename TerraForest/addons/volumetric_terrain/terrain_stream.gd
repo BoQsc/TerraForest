@@ -541,6 +541,7 @@ func _receive(result: Dictionary) -> void:
 		_density_requests.erase(serial)
 		var reply := result.duplicate()
 		reply["token"]=request.token
+		if kind=="placement_target":reply["region"]=request.get("region",false)
 		if stopping or not world_ready or pending_edit or request.epoch!=epoch or request.revision!=native_revision or request.ticket!=edit_ticket or int(result.get("epoch",-1))!=request.epoch or int(result.get("requested_revision",-1))!=request.revision:
 			reply["status"]="stale"
 		elif str(reply.get("status","error")) in ["hit","miss","work_limit"] and int(reply.get("revision",-1))!=native_revision:
@@ -1670,11 +1671,11 @@ func try_placement_target(point:Vector3,normal:Vector3)->Dictionary:
 	if stopping or closing or not world_ready or pending_edit:return {}
 	return backend.try_placement_target(point,normal,native_revision)
 
-func request_placement_target(point:Vector3,normal:Vector3,token:int)->bool:
+func request_placement_target(point:Vector3,normal:Vector3,token:int,region:=false)->bool:
 	if stopping or not world_ready or pending_edit or _density_requests.size()>=8 or token<0:return false
 	_density_serial+=1
-	var request:={"kind":"placement_target","token":token,"epoch":epoch,"revision":native_revision,"ticket":edit_ticket}
-	if not backend.submit({"kind":"placement_target","point":point,"normal":normal,"token":_density_serial,"epoch":epoch,"revision":native_revision}):return false
+	var request:={"kind":"placement_target","region":region,"token":token,"epoch":epoch,"revision":native_revision,"ticket":edit_ticket}
+	if not backend.submit({"kind":"placement_target","region":region,"point":point,"normal":normal,"token":_density_serial,"epoch":epoch,"revision":native_revision}):return false
 	_density_requests[_density_serial]=request
 	return true
 
@@ -1683,7 +1684,9 @@ func _cancel_density_requests(status: String) -> void:
 	_density_requests.clear()
 	for request: Dictionary in requests:
 		var reply:={"kind":request.get("kind","density_ray"),"status":status,"token":request.token,"epoch":request.epoch,"requested_revision":request.revision}
-		if reply.kind=="placement_target":placement_target_received.emit(reply)
+		if reply.kind=="placement_target":
+			reply["region"]=request.get("region",false)
+			placement_target_received.emit(reply)
 		else:density_ray_received.emit(reply)
 
 func _select_dirty_owners(job: Dictionary, members: int) -> void:

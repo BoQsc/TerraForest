@@ -376,7 +376,9 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		if not point.is_finite() or not normal.is_finite() or normal.length_squared()<.5:return false
 		for field in ["token","epoch","revision"]:
 			if typeof(job.get(field))!=TYPE_INT or job[field]<0:return false
-		job={"kind":"placement_target","point":point,"normal":normal,"token":job.token,"epoch":job.epoch,"revision":job.revision}
+		var region:Variant=job.get("region",false)
+		if typeof(region)!=TYPE_BOOL:return false
+		job={"kind":"placement_target","region":region,"point":point,"normal":normal,"token":job.token,"epoch":job.epoch,"revision":job.revision}
 		priority=false
 	if job.get("kind","")=="density_ray":
 		if typeof(job.get("from"))!=TYPE_VECTOR3 or typeof(job.get("to"))!=TYPE_VECTOR3:
@@ -464,7 +466,10 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		# A player target may pass background reads, but never an accepted
 		# mutation, save, or an unfamiliar job with ordering requirements.
 		var insertion:=jobs.size()
-		while insertion>0 and jobs[insertion-1].get("kind","") in ["mesh","relight","height","surface_batch","density_ray","density_batch","lake_slice"]:
+		while insertion>0:
+			var previous:Dictionary=jobs[insertion-1]
+			var prefetch:bool=previous.kind=="placement_target" and previous.get("region",false) and not job.get("region",false)
+			if not prefetch and previous.kind not in ["mesh","relight","height","surface_batch","density_ray","density_batch","lake_slice"]:break
 			insertion-=1
 		jobs.insert(insertion,job)
 	else:
@@ -1045,6 +1050,15 @@ func _execute_density_query(job: Dictionary) -> void:
 	var query_started:=Time.get_ticks_usec()
 	var queue_ms: float=(query_started-int(job.get("submitted_us",query_started)))/1000.0
 	if job.kind=="placement_target":
+		if job.get("region",false):
+			var origin:=Vector3i(job.point)
+			var packet:=Codec.command(46,[job.revision,job.build_epoch,origin.x,origin.y,origin.z])
+			var reply:=_call(packet)
+			var ok:bool=Codec.reply_ok(reply) and reply.size()==528 and reply.decode_u32(12)==job.revision
+			_push({"kind":"placement_target","status":"region" if ok else "stale","token":job.token,
+				"epoch":job.epoch,"requested_revision":job.revision,"revision":job.revision,"origin":origin,
+				"empty":reply.slice(16) if ok else PackedByteArray()})
+			return
 		var target:Dictionary=Codec.decode_terrain_target(_call(Codec.terrain_target_command(job.point,job.normal,job.revision,job.build_epoch)))
 		target.merge({"kind":"placement_target","token":job.token,"epoch":job.epoch,"requested_revision":job.revision,"query_ms":(Time.get_ticks_usec()-query_started)/1000.0,"queue_ms":queue_ms})
 		_push(target);return

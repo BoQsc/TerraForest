@@ -9153,3 +9153,23 @@ two-frame milestone remain open.
 |---|---|---|
 | First | [Sea](../reports/checks/20261121T104406426716Z/player_shore_after.png) | [Lake](../reports/checks/20261121T104406426716Z/player_lake_after.png) |
 | Reverse | [Sea](../reports/checks/20261121T104406426716Z/player_shore_after_reverse.png) | [Lake](../reports/checks/20261121T104406426716Z/player_lake_after_reverse.png) |
+
+### Resident terrain targeting checkpoint, 2026-11-21
+
+Equipping terrain material requests a 512-byte occupancy mask covering a
+16 by 16 by 16 lattice region around the camera. The ordered native worker
+builds the region from authored pages and the procedural field, without
+reading evicted pages from storage. The scene thread can then resolve a new
+aim direction using the same native selection rule as a field query. Epoch,
+terrain revision and ticket changes invalidate the mask. Inventory validation
+and terrain mutation remain in the existing authoritative path. During movement
+or a residency miss the direct and queued single-target paths remain available.
+
+The [isolated game regression](../reports/checks/20261121T105927849161Z/engine.log)
+passed 58 checks including 81 independently queried position/normal combinations,
+rapid stacking, cancellation and accounting. In the [timed dry route](../reports/checks/20261121T110037078192Z/engine.log)
+the paid click used the resident mask, reached admission in 0.362 ms and
+reached matching render geometry and collision in 17.425 ms on draw two.
+The breaking pickaxe hit took 18.754 ms from impact. This is a Windows
+checkout game run. Cold arrival before residency, installed-package repeats,
+wet publication and full-footprint authoring remain qualification gates.

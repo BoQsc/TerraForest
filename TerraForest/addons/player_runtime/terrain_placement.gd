@@ -6,6 +6,10 @@ var obstruction:=PhysicsShapeQueryParameters3D.new()
 var queried_terrain:Node
 var pending:Dictionary={}
 var cached:Dictionary={}
+var resident:Dictionary={}
+var region_pending:Dictionary={}
+var region_retry_ms:=0
+var last_click_source:=""
 var sequence:=0
 var queued:Dictionary={}
 var held:=false
@@ -21,12 +25,38 @@ func _init()->void:
 func active(game:Node,allow_pending:bool=false)->bool:
 	return not game.session_menu.developer and game.equipped_tool in game.mining_rewards.TERRAIN_ITEMS and game._model_edit_available(allow_pending) and not game.session_menu.visible_ui() and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 func receive_target(reply:Dictionary,game:Node)->void:
+	if reply.get("region",false):
+		if region_pending.is_empty() or reply.token!=region_pending.token:return
+		if reply.get("status")=="region" and matches(region_pending,game.terrain):
+			resident=region_pending
+			resident.empty=reply.empty
+		region_pending={}
+		return
 	if pending.is_empty() or reply.token!=pending.token:return
 	cached=pending.duplicate();cached.reply=reply;pending={}
 	if reply.get("status") not in ["hit","miss"]:cached={}
 	elif not queued.is_empty():update(game) # The stream delivers this reply on the main thread.
 func matches(query:Dictionary,terrain:Node)->bool:
 	return not query.is_empty() and query.epoch==terrain.epoch and query.revision==terrain.native_revision and query.ticket==terrain.edit_ticket
+func prepare_reach(game:Node)->void:
+	if queried_terrain!=game.terrain:
+		if is_instance_valid(queried_terrain):
+			queried_terrain.placement_target_received.disconnect(receive_target.bind(game))
+		queried_terrain=game.terrain
+		pending={};cached={};resident={};region_pending={};region_retry_ms=0
+		queried_terrain.placement_target_received.connect(receive_target.bind(game))
+	var terrain=game.terrain
+	if terrain.pending_edit or not terrain.planner.has_method("resident_placement_target"):return
+	var eye:=Vector3i(game.camera.global_position.round())
+	var origin:Vector3i=(eye-Vector3i(8,8,8)).clampi(0,1985)
+	origin.y=clampi(eye.y-8,0,241)
+	if matches(resident,terrain) and (Vector3i(resident.origin)-origin).length_squared()<=4:return
+	if not region_pending.is_empty() or Time.get_ticks_msec()<region_retry_ms:return
+	sequence+=1
+	region_retry_ms=Time.get_ticks_msec()+150
+	if terrain.request_placement_target(Vector3(origin),Vector3.UP,sequence,true):
+		region_pending={"token":sequence,"origin":origin,"epoch":terrain.epoch,"revision":terrain.native_revision,"ticket":terrain.edit_ticket}
+
 func update(game:Node)->void:
 	if not active(game,true):cancel();return
 	if held and queued.is_empty() and not game.terrain.pending_edit:
@@ -42,23 +72,28 @@ func update(game:Node)->void:
 	if selected.get("ok",false):submit(game,selected)
 func target(game:Node,on_click:bool=false)->Dictionary:
 	if not active(game,true):return {}
+	prepare_reach(game)
 	var item:int=game.equipped_tool
 	var start:Vector3=game.camera.global_position
 	var hit:Dictionary=game.structures.blocks.raycast_scene(start,start-game.camera.global_basis.z*3.5,7,[game.player.get_rid()])
 	if hit.is_empty() or not hit.has("normal"):return {}
-	if queried_terrain!=game.terrain:
-		queried_terrain=game.terrain;pending={};cached={}
-		queried_terrain.placement_target_received.connect(receive_target.bind(game))
 	var cell:=Vector3i((hit.position+hit.normal*.5).round())
 	var axis:int=hit.normal.abs().max_axis_index()
 	if (Vector3(cell)-hit.position).dot(hit.normal)<.38:cell[axis]+=1 if hit.normal[axis]>0 else -1
 	var selection:Dictionary={}
-	if matches(cached,game.terrain):selection=game.terrain.planner.placement_target(hit.position,hit.normal,cached.reply.origin,cached.reply.empty)
+	if on_click:last_click_source="worker"
+	if matches(resident,game.terrain):
+		selection=game.terrain.planner.resident_placement_target(hit.position,hit.normal,resident.origin,resident.empty)
+		if on_click and selection.get("status") in ["hit","miss"]:last_click_source="resident"
+	if selection.get("status") not in ["hit","miss"] and matches(cached,game.terrain):
+		selection=game.terrain.planner.placement_target(hit.position,hit.normal,cached.reply.origin,cached.reply.empty)
+		if on_click and selection.get("status") in ["hit","miss"]:last_click_source="preview"
 	if on_click and pending.is_empty() and not game.terrain.pending_edit and selection.get("status") not in ["hit","miss"]:
 		var direct:Dictionary=game.terrain.try_placement_target(hit.position,hit.normal)
 		if direct.get("status") in ["hit","miss"]:
 			cached={"reply":direct,"epoch":game.terrain.epoch,"revision":game.terrain.native_revision,"ticket":game.terrain.edit_ticket}
 			selection=direct
+			last_click_source="direct"
 	var resolved:bool=selection.get("status") in ["hit","miss"]
 	if selection.get("status")=="hit":cell=selection.cell
 	if not resolved and pending.is_empty() and not game.terrain.pending_edit:
