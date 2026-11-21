@@ -11,6 +11,7 @@ const RIFLE:=7
 const AMMO:=221
 const WEAPONS={9:{"title":"PX9 ECLIPSE","ammo":228,"capacity":15,"interval":.22,"speed":170.0,"damage":28,"block_damage":10},7:{"title":"CARBINE","ammo":221,"interval":.4,"speed":180.0,"damage":35,"block_damage":18},8:{"title":"RANGER AR","ammo":223,"interval":.10,"speed":240.0,"damage":24,"block_damage":12}}
 const PROJECTILE_LIMIT:=64
+const FAST_DETONATIONS_PER_TICK:=16
 var game:Node
 # Input ownership is supplied by the host, allowing non-mouse controllers and
 # offscreen validation without changing the desktop pointer.
@@ -21,6 +22,9 @@ var effects=preload("res://addons/player_runtime/destruction_effects.gd").new()
 var integrity=preload("res://addons/player_runtime/structural_integrity.gd").new()
 var projectiles:Array[Dictionary]=[]
 var detonations:Array[int]=[]
+var craters:=Barrel.CraterQueue.new()
+var fast_chains:=false
+var chain_settings_path:="user://barrel_chains.cfg"
 var blast_jobs:Array[Dictionary]=[]
 var destruction_trace=preload("res://addons/player_runtime/destruction_trace.gd").new()
 var destruction_coordinator:RefCounted
@@ -51,6 +55,9 @@ var reload_audio:AudioStreamWAV
 var restored_support_pending:=true
 func prepare(host:Node)->bool:
 	game=host;state=ClassDB.instantiate("NativeCombatState")
+	if game.temporary_world or ProjectSettings.get_setting("terraforest/offscreen_session",false):
+		chain_settings_path=""
+	load_chain_setting()
 	pistol_trial.load_settings();sever_random.randomize()
 	pistol_reticle=preload("res://addons/player_runtime/pistol_crosshair.gd").new()
 	game.player_hud.add_child(pistol_reticle)
@@ -59,6 +66,7 @@ func prepare(host:Node)->bool:
 	action_input_owned=func()->bool:return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 	if state==null or destruction_coordinator==null or barrels==null:return false
 	game.terrain.edit_measured.connect(_trace_terrain_publication)
+	game.terrain.edit_resolved.connect(_crater_resolved)
 	game.lakes.settling_enabled=func()->bool:return blast_water_settling
 	game.lakes.settling_active=func()->bool:return blast_water_settling and active()
 	impact_audio=preload("res://addons/player_runtime/firearm_impact_audio.gd").new()
@@ -75,7 +83,11 @@ func prepare(host:Node)->bool:
 	game.tool_view.human.handgun_event.connect(func(event:String,_details:Dictionary):
 		if reload_slot>=0 and pistol_sounds.use_original and event=="magazine_out":pistol_sounds.original_reload(reload_audio,game.camera.global_position))
 	shot_audio=sound(.18,72);blast_audio=sound(.65,38);assault_audio=sound(.13,110);shot_random.randomize()
-	return game.persistence.register_component("combat",capture,restore,state,state.capture_storage_snapshot())
+	var components:Array[Dictionary]=[
+		{"name":"combat","capture":capture,"restore":restore,"validator":state,"empty":state.capture_storage_snapshot()},
+		{"name":"barrel_craters_v1","capture":craters.capture_snapshot,"restore":craters.restore_snapshot,"validator":craters,"empty":PackedByteArray()}
+	]
+	return game.persistence.register_components(components)
 func capture()->PackedByteArray:
 	# A reentrant save must not pair committed damage with the old job cursor.
 	# The persistence coordinator rejects this capture and preserves its checkpoint.
@@ -96,10 +108,29 @@ func add_pistol_controls(menu:CanvasLayer,parent:Node)->void:
 	original_sounds.toggled.connect(pistol_sounds.set_original);parent.add_child(original_sounds)
 	pistol_sounds.mode_changed.connect(func(value:bool):original_sounds.set_pressed_no_signal(value))
 func add_controls(menu:CanvasLayer,parent:Node)->void:
+	var chains:=CheckButton.new()
+	chains.name="FastBarrelChains"
+	chains.text="Fast barrel chain reactions"
+	chains.tooltip_text="Up to 16 barrels can explode in one physics tick, including separate chains. Terrain craters follow. Large chains may lower the frame rate."
+	chains.button_pressed=fast_chains
+	chains.toggled.connect(set_fast_chains)
+	parent.add_child(chains)
 	integrity_toggle=CheckButton.new();integrity_toggle.text="Structural integrity and collapse (optional)"
 	integrity_toggle.tooltip_text="Check nearby blocks after building, mining and explosions. Unsupported blocks fall. Off by default; saved with this world."
 	integrity_toggle.button_pressed=state.integrity_enabled();integrity_toggle.toggled.connect(set_integrity);parent.add_child(integrity_toggle)
 	menu.label(parent,"Firearms: hold left mouse to fire · right mouse aims · R reloads. Craft a PX9 handgun, Carbine or Ranger assault rifle and matching cartridges, or use Dev Bag. Equip a barrel and right-click loaded ground to place it.")
+func load_chain_setting()->void:
+	var config:=ConfigFile.new()
+	fast_chains=not chain_settings_path.is_empty() and config.load(chain_settings_path)==OK and config.get_value("barrels","fast_chains",false)==true
+
+func set_fast_chains(enabled:bool)->void:
+	fast_chains=enabled
+	if chain_settings_path.is_empty():return
+	var config:=ConfigFile.new()
+	config.set_value("barrels","fast_chains",enabled)
+	var result:=config.save(chain_settings_path)
+	if result!=OK:push_warning("Could not save barrel chain setting: "+error_string(result))
+
 func set_integrity(enabled:bool)->void:
 	state.set_integrity_enabled(enabled);integrity.reset();game.terrain.changed_since_save=true
 	if enabled:integrity.changed(AABB(game.player.global_position-Vector3.ONE,Vector3.ONE*2))
@@ -287,7 +318,13 @@ func _demolished(cell:Vector3i,word:int,origin:Vector3,force:float)->void:
 	game.world_attack.durability.forget(game.world_attack.block_key(cell))
 	effects.block(cell,word,origin,force);destroyed_blocks+=1;game.terrain.changed_since_save=true
 func detonate(id:int)->bool:
-	if blast_jobs.size()>=32:return false
+	if destruction_commit_active:return false
+	destruction_commit_active=true
+	var consumed:=_detonate(id)
+	destruction_commit_active=false
+	return consumed
+
+func _detonate(id:int)->bool:
 	var base:=barrel_position(id)
 	if not base.is_finite():return true
 	var center:=base+Vector3.UP*.5
@@ -296,25 +333,30 @@ func detonate(id:int)->bool:
 	# The terrain edit and block transactions retain their own publication and
 	# water admission checks; no collision streaming radius is enlarged here.
 	if barrels.is_removal_protected(id):return true
+	if blast_jobs.size()>=32 or (fast_chains and craters.pending.size()>=craters.LIMIT):return false
 	# The same native density edit, publication, water, vegetation and save path
 	# as mining. The environmental admission does not pay mining rewards.
 	var measured:=Time.get_ticks_usec()
-	var admitted:bool=game.mining_rewards.excavate_blast(base+Vector3.UP*.2,3.5)
-	game.terrain._record_stage("blast terrain admission",(Time.get_ticks_usec()-measured)/1000.0)
-	if not admitted:return false
+	var crater_point:=base+Vector3.UP*.2
+	if not fast_chains:
+		var admitted:bool=game.mining_rewards.excavate_blast(crater_point,3.5)
+		game.terrain._record_stage("blast terrain admission",(Time.get_ticks_usec()-measured)/1000.0)
+		if not admitted:return false
 	measured=Time.get_ticks_usec()
 	# Water wake-up belongs to the shared committed terrain-edit listener.
 	# Mining and explosions therefore use the same revision and pause rules.
 	var trace_identity:=""
 	if destruction_trace.enabled:
 		trace_identity=destruction_trace.trigger(game.terrain.epoch,id,Engine.get_physics_frames(),Time.get_ticks_usec())
-		destruction_trace.admitted(trace_identity,game.terrain.edit_ticket,Engine.get_physics_frames(),Time.get_ticks_usec())
+		if not fast_chains:destruction_trace.admitted(trace_identity,game.terrain.edit_ticket,Engine.get_physics_frames(),Time.get_ticks_usec())
 	if not barrels.remove_instances(PackedInt64Array([id])):return false
+	if fast_chains:craters.pending.append({"id":id,"point":crater_point})
 	game.model_tool.history.clear_history();game.world_attack.durability.forget("model:%s:%d"%[Barrel.KEY,id])
 	var origin:=Vector3i((center-Vector3.ONE*5).floor())
 	var prefab:Resource=game.structures.blocks.capture_prefab(origin,Vector3i(12,12,12))
-	if prefab!=null:
-		var job:Dictionary={"records":state.blast_cells(prefab.get_records(),origin,center,5.0),"offset":0,"center":center}
+	var records:PackedInt32Array=state.blast_cells(prefab.get_records(),origin,center,5.0) if prefab!=null else PackedInt32Array()
+	if not records.is_empty():
+		var job:Dictionary={"records":records,"offset":0,"center":center}
 		if destruction_trace.enabled:job.trace_identity=trace_identity
 		blast_jobs.append(job)
 	elif destruction_trace.enabled:destruction_trace.blocks_complete(trace_identity,Engine.get_physics_frames(),Time.get_ticks_usec())
@@ -337,6 +379,30 @@ func detonate(id:int)->bool:
 	effects.explosion(center);play_sound(center,blast_audio);game.zombies.hear_noise(center,96)
 	game.terrain._record_stage("blast presentation",(Time.get_ticks_usec()-measured)/1000.0)
 	explosions+=1;game.terrain.changed_since_save=true;return true
+
+func step_detonations()->void:
+	for index in (FAST_DETONATIONS_PER_TICK if fast_chains else 1):
+		if detonations.is_empty():break
+		if not fast_chains and (game.terrain.pending_edit or not craters.pending.is_empty()):break
+		if not detonate(detonations[0]):break
+		detonations.pop_front()
+	# Previously consumed barrels still need their craters if the player turns
+	# fast chains off or opens the save with different preferences.
+	if craters.pending.is_empty() or craters.ticket>=0 or game.terrain.pending_edit:return
+	var crater:Dictionary=craters.pending[0]
+	if game.mining_rewards.excavate_blast(crater.point,3.5):
+		craters.ticket=game.terrain.edit_ticket
+		if destruction_trace.enabled:
+			var identity:=destruction_trace.trigger(game.terrain.epoch,crater.id,Engine.get_physics_frames(),Time.get_ticks_usec())
+			destruction_trace.admitted(identity,craters.ticket,Engine.get_physics_frames(),Time.get_ticks_usec())
+
+func _crater_resolved(outcome:Dictionary)->void:
+	if craters.ticket<0 or outcome.ticket!=craters.ticket or outcome.epoch!=game.terrain.epoch:return
+	craters.ticket=-1
+	if outcome.status!="rejected":
+		craters.pending.pop_front()
+		game.terrain.changed_since_save=true
+
 func step_blasts()->void:
 	if destruction_commit_active:return
 	if not native_blast_batches:
@@ -406,6 +472,7 @@ func _physics_process(delta:float)->void:
 	if game==null:return
 	if epoch!=game.terrain.epoch:
 		epoch=game.terrain.epoch;clear_transients();cancel_reload();integrity.reset()
+		craters.restore_snapshot(PackedByteArray())
 		restored_support_pending=true
 	if pistol_reticle!=null and pistol_reticle.baseline==null and game.help.get_parent()!=null:
 		pistol_reticle.baseline=game.help.get_parent().get_node_or_null("Crosshair")
@@ -419,7 +486,7 @@ func _physics_process(delta:float)->void:
 		restored_support_pending=false
 		if state.integrity_enabled():integrity.changed(AABB(game.player.global_position-Vector3.ONE,Vector3.ONE*2))
 	timer+=delta;step_projectiles(minf(delta,.05));step_blasts()
-	if not game.terrain.pending_edit and not detonations.is_empty() and detonate(detonations[0]):detonations.pop_front()
+	step_detonations()
 	if blast_jobs.is_empty():integrity.step()
 	# Reconstruct ignited barrels after save/load from their native durability.
 	if int(timer)!=int(timer-delta):

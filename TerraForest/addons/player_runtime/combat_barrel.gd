@@ -3,6 +3,42 @@ extends RefCounted
 const KEY:="combat/explosive_barrel/v1"
 const ITEM:=222
 const BOUNDS:=AABB(Vector3(-.36,0,-.36),Vector3(.72,1.05,.72))
+
+# Fast chains consume barrels before the terrain worker is free. The world
+# snapshot keeps each outstanding crater with the already-consumed barrel ID.
+class CraterQueue extends RefCounted:
+	const LIMIT:=256
+	const RECORD_BYTES:=20
+	var pending:Array[Dictionary]=[]
+	var ticket:=-1
+
+	func capture_snapshot()->PackedByteArray:
+		var bytes:=PackedByteArray()
+		bytes.resize(pending.size()*RECORD_BYTES)
+		for index in pending.size():
+			var offset:=index*RECORD_BYTES
+			bytes.encode_s64(offset,pending[index].id)
+			var point:Vector3=pending[index].point
+			for axis in 3:bytes.encode_float(offset+8+4*axis,point[axis])
+		return bytes
+
+	func validate_snapshot(bytes:PackedByteArray)->bool:
+		if bytes.size()>LIMIT*RECORD_BYTES or bytes.size()%RECORD_BYTES!=0:return false
+		for offset in range(0,bytes.size(),RECORD_BYTES):
+			if bytes.decode_s64(offset)<=0:return false
+			for axis in 3:
+				if not is_finite(bytes.decode_float(offset+8+4*axis)):return false
+		return true
+
+	func restore_snapshot(bytes:PackedByteArray)->bool:
+		if not validate_snapshot(bytes):return false
+		pending.clear()
+		ticket=-1
+		for offset in range(0,bytes.size(),RECORD_BYTES):
+			var point:=Vector3(bytes.decode_float(offset+8),bytes.decode_float(offset+12),bytes.decode_float(offset+16))
+			pending.append({"id":bytes.decode_s64(offset),"point":point})
+		return true
+
 static func mesh()->ArrayMesh:
 	var result:=ArrayMesh.new()
 	for band in 5:

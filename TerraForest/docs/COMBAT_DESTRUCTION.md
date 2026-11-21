@@ -24,6 +24,12 @@ recipes. The existing starter loadout and saved inventories are preserved.
   carry, aim, reload, equip and holster, with shortened firing recoil.
 - Barrel: equip it, then right-click nearby clear ground to place one. Gunfire or
   melee damage ignites it. Nearby barrels can chain-react.
+- **Esc → Player → Fast barrel chain reactions** lets up to 16 barrels detonate
+  in one physics tick. Neighbors less than 6 m apart can trigger further links
+  in that same tick, and independently ignited groups can explode together.
+  Flashes, sound and actor damage happen at detonation. Craters are excavated
+  in order as terrain becomes available. The option defaults off and is saved
+  as a player preference. Standard pacing waits for terrain between barrels.
 - Esc → Player → **Structural integrity and collapse** enables the optional
   support simulation. It defaults off and is saved with each world. Blast damage
   and flying debris still work while the integrity option is off.
@@ -74,6 +80,8 @@ geometry edits are saved; undo histories cannot resurrect a destroyed object.
 Queued destruction retains its exact cursor in the combat snapshot so a save in
 the middle of a blast can resume remaining cells without damaging processed cells
 again. Pending ignited chain barrels resume through their durability records.
+In fast mode the world also saves outstanding crater positions. They resume
+after loading even when the player has switched back to standard pacing.
 
 Each removed cell can become a shape-matched convex rigid body with an outward
 impulse and spin. Up to 96 debris bodies live for eight seconds, collide with the

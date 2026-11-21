@@ -43,13 +43,31 @@ func run()->void:
 	deadline=Time.get_ticks_msec()+45000
 	while Time.get_ticks_msec()<deadline:
 		game.combat.step_blasts()
-		if not game.terrain.pending_edit and not game.combat.detonations.is_empty():
-			if game.combat.detonate(game.combat.detonations[0]):game.combat.detonations.pop_front()
+		game.combat.step_detonations()
 		if game.combat.explosions-before==3 and not game.terrain.pending_edit and game.combat.blast_jobs.is_empty():break
 		await process_frame
 	check(game.combat.explosions-before==3,"three actual-world barrels detonate without following them")
 	check(not game.terrain.pending_edit and game.combat.blast_jobs.is_empty(),"terrain and building publication finish")
 	check(game.player.global_position==player_before,"player stays at original location")
+	var chains:CheckButton=game.session_menu.pages.Player.get_node("FastBarrelChains")
+	check(not chains.button_pressed,"Player menu defaults to standard barrel pacing")
+	chains.button_pressed=true
+	var burst_start:int=game.combat.explosions
+	for z in [12,30]:
+		for n in 3:
+			var p:=base+Vector3(4*n,0,z)
+			var id:int=game.combat.barrels.insert_instance(PackedFloat32Array([1,0,0,p.x,0,1,0,p.y,0,0,1,p.z]),AABB())
+			if n==0:game.combat.damage_barrel(id,50)
+	game.combat.step_detonations()
+	check(game.combat.explosions==burst_start+6 and game.combat.craters.pending.size()==6,"Player toggle detonates both three-barrel chains in one gameplay step")
+	chains.button_pressed=false
+	deadline=Time.get_ticks_msec()+45000
+	while Time.get_ticks_msec()<deadline:
+		game.combat.step_blasts()
+		game.combat.step_detonations()
+		if game.combat.craters.pending.is_empty() and not game.terrain.pending_edit and game.combat.blast_jobs.is_empty():break
+		await process_frame
+	check(game.combat.craters.pending.is_empty() and not game.terrain.pending_edit and game.combat.blast_jobs.is_empty() and game.combat.explosions==burst_start+6,"all six terrain edits finish after switching back to standard pacing")
 	if OS.get_cmdline_user_args().has("--verify-water-settling"):
 		var lake:Dictionary={};var distance:=INF
 		for candidate:Dictionary in game.lakes._lakes.values():
