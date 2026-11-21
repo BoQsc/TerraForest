@@ -196,6 +196,13 @@ class NativeRegionalWater : public godot::RefCounted {
     std::unordered_set<Key> local_occupancy_regions;
     std::unordered_set<Key> local_receiver_regions;
     // Inclusive 4 m region coordinates for edits that use connected receiver discovery.
+    // One proven, outward-facing cell per unresolved region. Hints only
+    // discover dependencies. The final solve still certifies the whole body.
+    struct WetFrontier {
+        double head=-1;
+        std::unordered_map<Key,std::pair<godot::Vector3i,int>> entries;
+    };
+    WetFrontier wet_frontier;
     using EditRegionBox=std::pair<godot::Vector3i,godot::Vector3i>;
     std::vector<EditRegionBox> wide_edit_bounds;
     // Unpublished relaxation is speculative. A new player edit can discard it
@@ -422,6 +429,8 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     godot::String reason;
     bool success=false,consumed=false,local_response=false;
     enum class SpanResult { fallback, dependencies, settled };
+    NativeRegionalWater::WetFrontier wet_frontier;
+    bool advance_wet_frontier();
     SpanResult settle_wide_spans();
     size_t wide_spans=0,wide_cells=0,wide_basin_leaves=0;
     const char *wide_fallback=nullptr;

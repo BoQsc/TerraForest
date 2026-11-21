@@ -9,6 +9,55 @@
 using namespace godot;
 namespace terraforest {
 
+// A dependency retry has just sampled the other side of a proven wet face.
+// Follow open straight runs through that new region. A bend, a previously
+// sampled neighbour, or a second entrance is left for the full native flood.
+// This phase only requests samples. It never allocates water or certifies a
+// closed basin, so the exact solver remains authoritative at handoff.
+bool NativeWaterEquilibriumJob::advance_wet_frontier(){
+    using W=NativeRegionalWater;
+    auto previous=std::move(wet_frontier.entries);
+    wet_frontier.entries.clear();
+    const auto &regions=frozen->regions;
+    const Vector3i step[]={{0,-1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1},{0,1,0}};
+    const WaterCellProfile air;
+    auto depth=[&](Vector3i p){return std::clamp((wet_frontier.head-p.y*.5)*1000.,0.,500.);};
+    for(const auto &[key,entry]:previous){
+        if(cancelled.load())return false;
+        const auto &[from,side]=entry;
+        const auto start=from+step[side];
+        auto source=regions.find(W::region_key(from)),target=regions.find(key);
+        if(source==regions.end()||target==regions.end()||!source->second.valid||!target->second.valid||
+           source->second.ocean_state||target->second.ocean_state)continue;
+        const auto initial=W::profile(target->second,W::index(start));
+        if(!WaterCellProfile::connected(W::profile(source->second,W::index(from)),depth(from),initial,depth(start),side))continue;
+        for(int d=0;d<6;++d){
+            Vector3i p=start;
+            auto shape=initial;
+            while(true){
+                const auto q=p+step[d];
+                if(!W::in_domain(q)||depth(q)<=0)break;
+                const auto neighbor=W::region_key(q);
+                if(neighbor!=key){
+                    if(regions.count(neighbor)||wet_frontier.entries.count(neighbor))break;
+                    const auto coord=W::position(neighbor);
+                    bool eligible=false;
+                    for(const auto &[lo,hi]:wide_edit_bounds)if(coord==coord.clamp(lo,hi)){eligible=true;break;}
+                    if(eligible&&WaterCellProfile::connected(shape,depth(p),air,depth(q),d)){
+                        wet_frontier.entries.emplace(neighbor,std::make_pair(p,d));
+                        required.push_back(neighbor);
+                    }
+                    break;
+                }
+                auto next=W::profile(target->second,W::index(q));
+                if(!WaterCellProfile::connected(shape,depth(p),next,depth(q),d))break;
+                shape=next;p=q;
+            }
+        }
+    }
+    return !required.empty();
+}
+
 // In a vertical run of unobstructed cells, capacity is a linear function
 // between the bottom and top. Slopes, roofs and structure contacts remain
 // individual cells and use the production profile for both volume and faces.
@@ -103,7 +152,8 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
                         if(it==blocks.end()){
                             if(passage==Passage::upper&&WaterCellProfile::connected(a,depth(s,p.y,a),air,std::clamp((upper-q.y*.5)*1000.,0.,500.),d)){
                                 open_boundary=true;
-                                if(eligible(W::position(neighbor)))missing.insert(neighbor);
+                                if(eligible(W::position(neighbor))&&missing.insert(neighbor).second)
+                                    wet_frontier.entries.emplace(neighbor,std::make_pair(p,d));
                             }
                             continue;
                         }
@@ -149,6 +199,7 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_wide_spa
     wide_spans=body.size();wide_cells=0;
     for(int i:body)wide_cells+=spans[i].length;
     if(!missing.empty()){
+        wet_frontier.head=upper;
         required.assign(missing.begin(),missing.end());return SpanResult::dependencies;
     }
     uint64_t quantity=0;

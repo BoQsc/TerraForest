@@ -737,6 +737,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
     return true;
 }
 void NativeRegionalWater::invalidate(const AABB &bounds,bool replace_water){
+    wet_frontier={};
     if(!bounds.position.is_finite()||!bounds.size.is_finite())return;
     invalidate_regions(bounds.grow(0.5),replace_water);
 }
@@ -848,6 +849,7 @@ void NativeRegionalWater::wake_settling(Key k,int cell_index){
     if(settling_set.insert(k).second)settling.push_back(k);
 }
 void NativeRegionalWater::settle_after_edit(const AABB &bounds){
+    wet_frontier={};
     if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return;
     // A bounded spatial query, not a full lake scan. The halo wakes the water
     // above/beside newly opened cells even if the edited cells were dry.
@@ -2903,7 +2905,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install,bool p
     if(offset!=data.size())return false;
     if(sum!=expected)return false;if(!install)return true;
     ocean_edit_interests.clear();ocean_settlement_interests.clear();ocean_edit_retry_until=0;
-    surface_budget_failed=false;equilibrium_dependencies.clear();wide_edit_bounds.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();relaxation_before.clear();relaxation_dirty_before.clear();urgent_meshes.clear();batch_urgent=false;deferred_regions.clear();settling.clear();settling_set.clear();settle_steps=settle_transfers=settle_us=0;
+    wet_frontier={};surface_budget_failed=false;equilibrium_dependencies.clear();wide_edit_bounds.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();relaxation_before.clear();relaxation_dirty_before.clear();urgent_meshes.clear();batch_urgent=false;deferred_regions.clear();settling.clear();settling_set.clear();settle_steps=settle_transfers=settle_us=0;
     ocean_cache.clear();ocean_cache_bytes=0;ocean_cache_hits=0;invalidate_snapshot();cancel_mesh_batch();published_regions.clear();published_occupancy.clear();staged_occupancy.clear();staged_ready.clear();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);solid_cache_bytes=structure_bytes;restored_cache.clear();cache_rebuilds=0;requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
     // Storage intermediates need validated records, not meshing/query admission.
     if(!prepare_render)return true;
@@ -2955,7 +2957,7 @@ bool NativeRegionalWater::restore_prepared(const Ref<NativeWaterMapIdentity> &pr
  // Single-owner handoff after the loading worker has joined. No decoding,
  // contact reconstruction, or traversal of incoming regions on this thread.
  auto &source=*prepared->decoded.ptr();prepared->consumed=true;
- wide_edit_bounds.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();urgent_meshes.clear();relaxation_before.swap(source.relaxation_before);relaxation_dirty_before.swap(source.relaxation_dirty_before);batch_urgent=false;
+ wet_frontier={};wide_edit_bounds.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();urgent_meshes.clear();relaxation_before.swap(source.relaxation_before);relaxation_dirty_before.swap(source.relaxation_dirty_before);batch_urgent=false;
  // Derived buffers belong to the old state too. Transfer ownership instead of
  // destructing every triangle, contact and frozen snapshot during installation.
  std::swap(saved_snapshot,source.saved_snapshot);std::swap(saved_catalog,source.saved_catalog);

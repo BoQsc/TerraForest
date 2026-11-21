@@ -183,6 +183,7 @@ Ref<NativeWaterEquilibriumJob> NativeRegionalWater::begin_equilibrium(int64_t bu
         }
         s.seeds.clear();s.account_keys.assign(s.candidate.begin(),s.candidate.end());
     }
+    if(!job->wide_edit_bounds.empty())job->wet_frontier=std::move(wet_frontier);
     equilibrium_capture=job;
     if(deadline&&Time::get_singleton()->get_ticks_usec()>=deadline)return {};
     return continue_equilibrium_capture(deadline);
@@ -230,6 +231,7 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
             }
             if(found->second.ocean_state!=1)found->second.settle_pending=true;
         }
+        wet_frontier=std::move(job->wet_frontier);
         invalidate_snapshot();
         out["detail"]=job->reason;out["pending"]=true;out["required_regions"]=int64_t(job->required.size());return out;
     }
@@ -299,6 +301,7 @@ void NativeWaterEquilibriumJob::prepare(){
         auto &store=*frozen.ptr();
         const size_t MAX_CELLS=cell_limit;
         const Vector3i steps[6]={{0,-1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1},{0,1,0}};
+        if(!wet_frontier.entries.empty()&&advance_wet_frontier())return false;
         std::vector<Vector3i> displaced;
         for(const auto &[k,r]:store.regions)if(r.settle_pending&&r.valid){
             const auto base=W::position(k)*8;
