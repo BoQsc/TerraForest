@@ -116,6 +116,7 @@ var staging_versions: Dictionary = {}
 var staged_batch: Dictionary = {}
 # Main-thread publication partner for a wet edit. Both halves keep the last
 # published scene while their revision-owned replacements are prepared.
+var _hand_edit:bool=false
 var resident_edit_surface:Dictionary={}
 var _joint_ticket:=-1
 var _joint_epoch:=-1
@@ -244,6 +245,7 @@ func start(terrain_material: Material, temporary_world: bool) -> Error:
 		return ERR_UNAVAILABLE
 	planner = ClassDB.instantiate("NativeTerrainPlanner")
 	backend.edit_results_ready.connect(_receive_edit_notice,CONNECT_DEFERRED)
+	if not RenderingServer.frame_pre_draw.is_connected(_before_draw):RenderingServer.frame_pre_draw.connect(_before_draw)
 	material = terrain_material
 	# Receive completed work before the parent consumes the next pending sample.
 	# Does not change physics ordering or increase the per-frame upload budget.
@@ -325,11 +327,16 @@ var _staging_frame:=-1
 var _staging_spent_us:=0
 
 func _receive_edit_notice()->void:
-	if stopping or not pending_edit or not is_inside_tree() or not is_processing() or not can_process():return
+	if stopping or (not pending_edit and _density_requests.is_empty()) or not is_inside_tree() or not is_processing() or not can_process():return
 	var ready:Array[Dictionary]=backend.poll()
 	if ready.is_empty():return
 	_dispatch_results(ready,false)
 	if pending_edit:_stage_with_frame_budget()
+
+# Consume an already-finished local edit before the renderer takes this frame.
+# The usual deferred notification and process pump also serve headless worlds.
+func _before_draw()->void:
+	if _hand_edit and pending_edit and OS.get_thread_caller_id()==OS.get_main_thread_id():_receive_edit_notice()
 
 func _stage_with_frame_budget()->void:
 	var frame:=Engine.get_process_frames()
@@ -1659,6 +1666,10 @@ func request_density_ray(from: Vector3, to: Vector3, token: int, budget: int = 2
 	_density_requests[_density_serial]=request
 	return true
 
+func try_placement_target(point:Vector3,normal:Vector3)->Dictionary:
+	if stopping or closing or not world_ready or pending_edit:return {}
+	return backend.try_placement_target(point,normal,native_revision)
+
 func request_placement_target(point:Vector3,normal:Vector3,token:int)->bool:
 	if stopping or not world_ready or pending_edit or _density_requests.size()>=8 or token<0:return false
 	_density_serial+=1
@@ -1917,6 +1928,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	var support:=_capture_edit_support(AABB(geometry_lo,geometry_hi-geometry_lo))
 	var support_snapshots:Array=[]
 	for provider:Dictionary in _edit_support_snapshots:support_snapshots.append(provider.snapshot)
+	_hand_edit=commands.size()==1 and (latest_edit_descriptor.command==38 or latest_edit_descriptor.get("shape",-1)==Codec.CONTACT_MINING_SHAPE)
 	var accepted: bool = backend.submit({"kind": "edit", "command": data, "commands": commands, "tiles": affected, "contact_domain":_contact_domain(commands),
 		"epoch": epoch, "ticket": edit_ticket, "geometry_lo": geometry_lo, "geometry_hi": geometry_hi,"support_points":support,"support_snapshots":support_snapshots}, true)
 	if not accepted:

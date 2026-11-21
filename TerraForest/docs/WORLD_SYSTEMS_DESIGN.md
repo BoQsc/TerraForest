@@ -217,3 +217,50 @@ coastal cut, a sealed tunnel below sea level, a breached tunnel, deposition
 that closes the breach, and a bucket withdrawal spanning save/reload. Check
 the resulting volumes and queryable surfaces at several depths. Passing an
 unrestricted flat-plane rendering check cannot establish these behaviours.
+
+### Player mining and paid terrain placement (2026-11-21)
+
+The right mouse button enters `world._unhandled_input`, then
+`terrain_placement.begin_hold` and `target`. The 3.5 m collision ray supplies
+a hit and normal. Native command 39 resolves an exposed sample from 125 lattice
+values. The player, vehicle, object, permissions and inventory checks precede
+the one-unit debit in `mining_rewards.place`. Command 38 stamps the chosen cell.
+An unavailable field takes the ordered worker path and rechecks the slot,
+aim, reach and obstructions when the reply arrives. A read of resident pages
+uses a try-lock and the same command 39. No field read waits for a page-in
+on the scene thread.
+
+The left mouse button starts the authored pickaxe swing in `world_attack.attack`.
+At animation contact the game resolves the live target and applies durability.
+A breaking terrain hit enters `world_attack.destroy`, the stroke buffer and
+`controller._consume_stroke`. The contact-mining brush and paid stamp then
+enter `terrain_world.edit`, including water preflight. The stream marks the
+revision pending. The ordered worker changes the density, prepares the
+resident surface, then emits field and mesh results. The stream stages render
+and physics resources and publishes their seam group, including reserved
+water owners where needed. A pre-draw drain can install finished hand-edit
+work within the remaining staging budget. Save components are captured at
+save/shutdown. Pickaxe animation contact and physical ground change have
+separate clocks.
+
+On the isolated 1080p game route, the original cold placement took 43.90 ms,
+including 17.36 ms to admission. A repeat with resident target lookup took
+36.42 ms, including 0.56 ms to admission, 8.24 ms to field notification,
+17.51 ms more to installation and 10.11 ms more to the observed draw.
+With 10.11 ms to draw and 0.56 ms to admission, the 33.33 ms deadline left
+22.66 ms for field and installation together. They took 25.74 ms. Lifting
+input priority alone cannot close that gap. A direct terrain-worker rebuild
+also missed both deadlines and was removed. Dry mining took 29.10 ms from
+contact and 828.90 ms from the start of the swing.
+
+For wet edits the measured workload includes 3,222 replayed resident triangles
+for lake mining, 4,806 for a sea barrel and 4,508 for a lake barrel. The first
+matching detailed water and collider at the blast probe arrived together on
+draw six at the sea and draw ten at the lake. Apply the local physics and
+basin-capacity gates above before changing visual quality or enabling a new
+renderer. Measure input-to-admission, field notice, installation, physics and
+draw separately. Also check real body support, edited area coverage, inventory
+accounting and reload.
+
+[Dry route](../reports/checks/20261121T095408497733Z/engine.log) and
+[wet route](../reports/checks/20261121T095059227908Z/normal_gameplay_blast_performance.json).

@@ -20,10 +20,11 @@ func _init()->void:
 	clearance.radius=.74;obstruction.shape=clearance;obstruction.collision_mask=6
 func active(game:Node,allow_pending:bool=false)->bool:
 	return not game.session_menu.developer and game.equipped_tool in game.mining_rewards.TERRAIN_ITEMS and game._model_edit_available(allow_pending) and not game.session_menu.visible_ui() and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
-func receive_target(reply:Dictionary)->void:
+func receive_target(reply:Dictionary,game:Node)->void:
 	if pending.is_empty() or reply.token!=pending.token:return
 	cached=pending.duplicate();cached.reply=reply;pending={}
 	if reply.get("status") not in ["hit","miss"]:cached={}
+	elif not queued.is_empty():update(game) # The stream delivers this reply on the main thread.
 func matches(query:Dictionary,terrain:Node)->bool:
 	return not query.is_empty() and query.epoch==terrain.epoch and query.revision==terrain.native_revision and query.ticket==terrain.edit_ticket
 func update(game:Node)->void:
@@ -39,7 +40,7 @@ func update(game:Node)->void:
 	if selected.get("reason")=="Checking terrain":return
 	queued={}
 	if selected.get("ok",false):submit(game,selected)
-func target(game:Node)->Dictionary:
+func target(game:Node,on_click:bool=false)->Dictionary:
 	if not active(game,true):return {}
 	var item:int=game.equipped_tool
 	var start:Vector3=game.camera.global_position
@@ -47,12 +48,17 @@ func target(game:Node)->Dictionary:
 	if hit.is_empty() or not hit.has("normal"):return {}
 	if queried_terrain!=game.terrain:
 		queried_terrain=game.terrain;pending={};cached={}
-		queried_terrain.placement_target_received.connect(receive_target)
+		queried_terrain.placement_target_received.connect(receive_target.bind(game))
 	var cell:=Vector3i((hit.position+hit.normal*.5).round())
 	var axis:int=hit.normal.abs().max_axis_index()
 	if (Vector3(cell)-hit.position).dot(hit.normal)<.38:cell[axis]+=1 if hit.normal[axis]>0 else -1
 	var selection:Dictionary={}
 	if matches(cached,game.terrain):selection=game.terrain.planner.placement_target(hit.position,hit.normal,cached.reply.origin,cached.reply.empty)
+	if on_click and pending.is_empty() and not game.terrain.pending_edit and selection.get("status") not in ["hit","miss"]:
+		var direct:Dictionary=game.terrain.try_placement_target(hit.position,hit.normal)
+		if direct.get("status") in ["hit","miss"]:
+			cached={"reply":direct,"epoch":game.terrain.epoch,"revision":game.terrain.native_revision,"ticket":game.terrain.edit_ticket}
+			selection=direct
 	var resolved:bool=selection.get("status") in ["hit","miss"]
 	if selection.get("status")=="hit":cell=selection.cell
 	if not resolved and pending.is_empty() and not game.terrain.pending_edit:
@@ -82,7 +88,7 @@ func target(game:Node)->Dictionary:
 func place(game:Node)->bool:
 	if not active(game,true):return false
 	# Re-evaluate the live target on click; the display is never edit authority.
-	var selected:=target(game)
+	var selected:=target(game,true)
 	if game.terrain.pending_edit or selected.get("reason")=="Checking terrain":
 		queued={"deadline":Time.get_ticks_msec()+1500,"item":game.equipped_tool,"slot":game.player_hud.active_slot,"epoch":game.terrain.epoch,"eye":game.camera.global_position,"direction":-game.camera.global_basis.z}
 		return true

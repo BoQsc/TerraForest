@@ -9,6 +9,7 @@ var sequence:=0
 var pending:Dictionary={}
 var queued_click:=false
 var last_hit:=false
+var last_contact_us:int=0
 signal impact_resolved(identity:int,accepted:bool)
 signal impact_preparing(from:Vector3,to:Vector3)
 signal contact_effect(target:Dictionary)
@@ -112,6 +113,7 @@ func resolve_contact(identity:int)->void:
 	if pending.item!=0:
 		var row:Dictionary=game.player_hud.inventory.snapshot().slots[pending.slot]
 		if row.item!=pending.item or row.count<=0:cancel();return
+	last_contact_us=Time.get_ticks_usec()
 	pending.contacted=true
 	# Resolve the live occlusion/reach query once, on the visible contact pose.
 	var selected:=target()

@@ -9097,3 +9097,13 @@ After authorized retention brings reports within budget, rerun
 and confirm the in-game Weapons slider controls shots and explosions. The added
 checks cover 80% initial gain, routing through Effects and preservation of a
 selected gain across audio re-preparation. Listening acceptance remains unreviewed.
+
+### Player hand-edit latency, 2026-11-21 (open)
+
+The [architecture contract](WORLD_SYSTEMS_DESIGN.md#player-mining-and-paid-terrain-placement-2026-11-21)
+records the exact paid placement and pickaxe paths. Read-only world tests still
+miss the two-frame gate at both shores and for wet mining. The dry route also
+has a third-draw placement repeat with a sub-millisecond admission. Closing
+requires the same edit to reach matching visible ground and real collision
+in two draws across repeated runs, including the normal installed build.
+See the full-cut and water architecture gates for the larger cases.

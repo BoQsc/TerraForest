@@ -73,6 +73,7 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("try_placement_target","packet"),&TerrainCore::try_placement_target);
         godot::ClassDB::bind_method(godot::D_METHOD("capture_contact_core","bounds","revision","epoch"),&TerrainCore::capture_contact_core);
         godot::ClassDB::bind_method(godot::D_METHOD("execute_explosion_cohort","commands"), &TerrainCore::execute_explosion_cohort);
         godot::ClassDB::bind_method(godot::D_METHOD("configure_mesh_height_cache","enabled"), &TerrainCore::configure_mesh_height_cache);
@@ -657,6 +658,23 @@ public:
         }
         if(!copy_surface_columns(world_,dst,bounds.position.x,bounds.position.y,bounds.size.x,bounds.size.y))return {};
         return copy;
+    }
+    // The click path may read one 5x5x5 mask. Contended locks and paged-out
+    // samples fall back to the ordered worker without blocking the render thread.
+    godot::PackedByteArray try_placement_target(const godot::PackedByteArray &packet) {
+        if(packet.size()!=36 || packet.decode_u32(0)!=39)return {};
+        std::unique_lock<std::mutex> guard(mutex_,std::try_to_lock);
+        if(!guard || storage_load_pending_)return {};
+        const auto point=godot::Vector3(packet.decode_float(12),packet.decode_float(16),packet.decode_float(20));
+        if(!point.is_finite() || point.x<0 || point.z<0 || point.x>WORLD || point.z>WORLD || point.y<0 || point.y>WORLD_Y)return {};
+        const int x=int(point.x+.5f),y=int(point.y+.5f),z=int(point.z+.5f);
+        for(int py=imx(0,y-2)/16;py<=imn(WORLD_Y,y+2)/16;++py)
+            for(int pz=imx(0,z-2)/16;pz<=imn(WORLD,z+2)/16;++pz)
+                for(int px=imx(0,x-2)/16;px<=imn(WORLD,x+2)/16;++px) {
+                    const int page=world_.pages_by_key.get(1+px+WORLD_PAGE_COLUMNS*(pz+WORLD_PAGE_COLUMNS*py));
+                    if(page>=0 && !world_.pages[page].d)return {};
+                }
+        return execute_locked(packet);
     }
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) {
         if(packet.size()<4 || packet.size()>512LL*1024*1024)return reply(0,1);

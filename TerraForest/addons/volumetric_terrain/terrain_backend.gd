@@ -396,7 +396,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		job={"kind":"density_ray","from":from,"to":to,"token":job.token,"epoch":job.epoch,"revision":job.revision,"budget":job.budget,"with_material":job.get("with_material",false)}
 		priority=false # Queries cannot jump ahead of already queued mutations.
 	job["submitted_us"] = Time.get_ticks_usec()
-	if str(job.get("kind", "")) in ["edit", "save"]:
+	if job.get("kind","")=="save":
 		job["component_snapshot"] = _capture_snapshot()
 	mutex.lock()
 	if job.get("kind","")=="material_edit" and _material_pending>=1:
@@ -459,6 +459,13 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 			for index in range(jobs.size()):
 				if str(jobs[index].get("kind","")) in ["save","edit","republish","load","reset","material_edit"]:
 					insertion=index+1
+		jobs.insert(insertion,job)
+	elif job.kind=="placement_target":
+		# A player target may pass background reads, but never an accepted
+		# mutation, save, or an unfamiliar job with ordering requirements.
+		var insertion:=jobs.size()
+		while insertion>0 and jobs[insertion-1].get("kind","") in ["mesh","relight","height","surface_batch","density_ray","density_batch","lake_slice"]:
+			insertion-=1
 		jobs.insert(insertion,job)
 	else:
 		jobs.push_back(job)
@@ -527,7 +534,7 @@ func stop() -> void:
 func _push(result: Dictionary) -> void:
 	mutex.lock()
 	results.push_back(result)
-	var notify:bool=not _edit_notice_pending and result.get("kind","") in ["edit_begin","edit_chunk","edit_done"]
+	var notify:bool=not _edit_notice_pending and result.get("kind","") in ["edit_begin","edit_chunk","edit_done","placement_target"]
 	if notify:_edit_notice_pending=true
 	mutex.unlock()
 	if notify:edit_results_ready.emit()
@@ -1018,6 +1025,21 @@ func _build_bricks(key: Vector3i, expected_build_epoch: int, selected: Array) ->
 		triangles+=int(part.triangles)
 	if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
 	return {"key":key,"step":1,"bricks":parts,"brick_partial":not selected.is_empty(),"bytes":bytes,"triangles":triangles,"worker_ms":(Time.get_ticks_usec()-begin)/1000.0}
+
+func try_placement_target(point:Vector3,normal:Vector3,revision:int)->Dictionary:
+	if native==null or not native.has_method("try_placement_target") or not mutex.try_lock():return {}
+	var barriers:=["edit","save","material_edit","reset","load","republish"]
+	var available:bool=not stopping and active_kind not in barriers
+	if available:
+		for job:Dictionary in jobs:
+			if job.kind in barriers:
+				available=false
+				break
+	var reply:=PackedByteArray()
+	if available:
+		reply=native.try_placement_target(Codec.terrain_target_command(point,normal,revision,build_epoch))
+	mutex.unlock()
+	return {} if reply.is_empty() else Codec.decode_terrain_target(reply)
 
 func _execute_density_query(job: Dictionary) -> void:
 	var query_started:=Time.get_ticks_usec()
@@ -1549,7 +1571,6 @@ func _run() -> void:
 					for packet: PackedByteArray in remaining.get("commands", [remaining["command"]]):
 						if not Codec.reply_ok(_call(packet)):
 							write_allowed = false
-					_apply_components(remaining.get("component_snapshot", {}))
 				elif remaining_kind == "save":
 					_apply_components(remaining.get("component_snapshot", {}))
 				elif remaining_kind == "density_batch":
@@ -1604,7 +1625,6 @@ func _run() -> void:
 		elif kind == "republish":
 			_execute_republish(job,queue_ms)
 		elif kind == "edit":
-			_apply_components(job.get("component_snapshot", {}))
 			var before_stats: PackedByteArray = _call(Codec.command(0))
 			var begin: int = Time.get_ticks_usec()
 			var commands: Array = job.get("commands", [job["command"]])

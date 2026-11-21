@@ -20,16 +20,89 @@ func amount(item:int)->int:
 		if row.item==item:count+=row.count
 	return count
 func capture(name:String)->void:
+	if "--no-preview-captures" in OS.get_cmdline_user_args():return
 	await process_frame;await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(evidence.path_join(name+".png"))
 func refresh()->void:game.terrain_placement_preview.remaining=0;game.terrain_placement_preview.update(game,.1)
 func right_click()->void:
 	var event:=InputEventMouseButton.new();event.button_index=MOUSE_BUTTON_RIGHT;event.pressed=true;game._unhandled_input(event)
 	event=InputEventMouseButton.new();event.button_index=MOUSE_BUTTON_RIGHT;game._input(event)
+# Time actual rendered frames. Read back mesh faces only after the timed draw.
+func observe_hand_edit(cell:Vector3i,placing:bool)->void:
+	var point:=Vector3(cell)+Vector3(.12,0,.12)
+	var ray:=PhysicsRayQueryParameters3D.create(point+Vector3.UP*5,point-Vector3.UP*5,1)
+	ray.exclude=[game.player.get_rid()]
+	var space:PhysicsDirectSpaceState3D=game.get_world_3d().direct_space_state
+	var original:=space.intersect_ray(ray)
+	if not check(not original.is_empty(),"Ground supports hand-edit probe"):return
+	var ticket:int=game.terrain.edit_ticket
+	var impact_clock:={}
+	var on_break:=func(_bounds:AABB)->void:
+		impact_clock.us=game.terrain.edit_accepted_us
+		impact_clock.frame=Engine.get_frames_drawn()
+	var clocks:={}
+	var field:=func(_ticket:int)->void:clocks.field=Time.get_ticks_usec()
+	var installed:=func(_ticket:int,_keys:Array)->void:
+		if not clocks.has("install"):clocks.install=Time.get_ticks_usec()
+	game.terrain.edit_field_ready.connect(field)
+	game.terrain.edit_region_installed.connect(installed)
+	game.terrain.region_invalidated.connect(on_break)
+	await process_frame
+	var start_frame:=Engine.get_frames_drawn()
+	var start_us:=Time.get_ticks_usec()
+	if placing:
+		game.terrain_placement.cached={}
+		right_click()
+	else:
+		var click:=InputEventMouseButton.new()
+		click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
+		game._unhandled_input(click)
+		click.pressed=false;game._input(click)
+	var found:=false
+	for frame in 120:
+		await RenderingServer.frame_post_draw
+		var draw_us:=Time.get_ticks_usec()
+		var hit:=space.intersect_ray(ray)
+		if hit.is_empty() or game.terrain.edit_ticket<=ticket:continue
+		var delta:float=hit.position.y-original.position.y
+		if (placing and delta<.02) or (not placing and delta>-.02):continue
+		var node:Node3D=hit.collider.get_parent()
+		var visual:=false
+		if node is MeshInstance3D and node.is_visible_in_tree() and node.mesh:
+			var positions:PackedVector3Array=node.mesh.get_faces()
+			var origin:=node.to_local(ray.from)
+			var direction:=node.to_local(ray.to)-origin
+			var nearest:=INF
+			for j in range(0,positions.size(),3):
+				var intersection=Geometry3D.ray_intersects_triangle(origin,direction,positions[j],positions[j+1],positions[j+2])
+				if intersection!=null:nearest=minf(nearest,ray.from.distance_to(node.to_global(intersection)))
+			visual=absf(nearest-ray.from.distance_to(hit.position))<.001
+		var elapsed:float=(draw_us-(start_us if placing else game.world_attack.last_contact_us))/1000.0
+		var draws:int=frame+1 if placing else 1+Engine.get_frames_drawn()-impact_clock.get("frame",start_frame)
+		var timing:={
+			"action":"place" if placing else "mine","draws":draws,"ms":elapsed,
+			"click_ms":(draw_us-start_us)/1000.0,"height_delta":delta,"visual":visual,
+			"input_to_admission_ms":(impact_clock.us-start_us)/1000.0 if impact_clock.has("us") else null,
+			"admission_to_field_notice_ms":(clocks.field-impact_clock.us)/1000.0 if clocks.has("field") and impact_clock.has("us") else null,
+			"field_notice_to_install_ms":(clocks.install-clocks.field)/1000.0 if clocks.has("install") and clocks.has("field") else null,
+			"install_to_draw_ms":(draw_us-clocks.install)/1000.0 if clocks.has("install") else null
+		}
+		print("HAND_EDIT ",JSON.stringify(timing))
+		check(visual,"Drawn mesh and collision match within 1 mm")
+		check(draws<=2 and elapsed<=33.334,"Hand edit reaches matching draw within two frames")
+		found=true
+		break
+	game.terrain.edit_field_ready.disconnect(field)
+	game.terrain.edit_region_installed.disconnect(installed)
+	game.terrain.region_invalidated.disconnect(on_break)
+	check(found,"Hand edit changed the probed ground")
+	check(await wait_for(func():return not game.terrain.pending_edit),"Hand edit transaction drains")
+
 func run()->void:
 	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--check-evidence-dir="):evidence=arg.trim_prefix("--check-evidence-dir=")
 		if arg.begins_with("--preview-evidence="):evidence=arg.trim_prefix("--preview-evidence=")
-	DirAccess.make_dir_recursive_absolute(evidence)
+	if "--measure-hand-edits" not in OS.get_cmdline_user_args():DirAccess.make_dir_recursive_absolute(evidence)
 	ProjectSettings.set_setting("terraforest/impact_effects_settings_path","")
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.player_view.settings_path="";root.add_child(game)
 	if not check(await wait_for(func():return not game.loading_active and not game.needs_floor_spawn,50),"temporary forest world becomes playable"):await finish();return
@@ -52,6 +125,18 @@ func run()->void:
 		if chosen.get("ok",false) and chosen.position.y>hit.position.y+.05:break
 	if not check(chosen.get("ok",false),"real forest floor supplies a reachable clear placement target"):await finish();return
 	refresh();var cell:Vector3i=preview.result.cell
+	if "--measure-hand-edits" in OS.get_cmdline_user_args():
+		var stock:=amount(211)
+		await observe_hand_edit(cell,true)
+		check(amount(211)==stock-1,"Placement spends one unit")
+		hud.equip_item(1)
+		game.camera.global_position=Vector3(cell)+Vector3(.12,2.7,.12)
+		game.camera.look_at(Vector3(cell)+Vector3(.121,0,.12))
+		var target:Dictionary=game.world_attack.target()
+		if check(target.get("kind")=="terrain","Pickaxe targets the placed terrain"):
+			game.world_attack.durability.hit(target.key,target.health,target.health-1)
+			await observe_hand_edit(cell,false)
+		await finish();return
 	check(preview.visible and preview.caption.visible and not game.target_overlay.enabled and preview.global_position==preview.result.position,"placement preview works with optional debug overlay disabled and follows the resolved target")
 	check((preview.global_position-preview.result.surface).dot(preview.result.normal)>=.35 and preview.global_position.distance_to(Vector3(cell))<=.36,"compact marker stays outside terrain without moving its paid lattice sample")
 	check(preview.mesh.surface_get_array_len(0)==24 and preview.mesh.get_aabb().size.is_equal_approx(Vector3.ONE*.7) and game.terrain_placement.STAMP_RADIUS==.75,"compact octahedron has eight faces without shrinking the actual terrain stamp")
@@ -69,6 +154,23 @@ func run()->void:
 	game.camera.look_at(steady_surface)
 	await wait_for(func():return game.terrain_placement.target(game).get("ok",false),3)
 	refresh();cell=preview.result.cell
+	if game.terrain.backend.native.has_method("try_placement_target"):
+		var packet:PackedByteArray=game.terrain.Codec.terrain_target_command(preview.result.surface,preview.result.normal,game.terrain.native_revision,game.terrain.backend.build_epoch)
+		var direct:PackedByteArray
+		for attempt in 60:
+			direct=game.terrain.backend.native.try_placement_target(packet)
+			if not direct.is_empty():break
+			await process_frame
+		var decoded:Dictionary=game.terrain.Codec.decode_terrain_target(direct)
+		var reference:Dictionary={}
+		var receive:=func(row:Dictionary)->void:
+			if row.token==91835:reference.merge(row)
+		game.terrain.placement_target_received.connect(receive)
+		var sent:bool=game.terrain.request_placement_target(preview.result.surface,preview.result.normal,91835)
+		if sent:await wait_for(func():return not reference.is_empty(),3)
+		game.terrain.placement_target_received.disconnect(receive)
+		check(decoded.get("cell")==cell and decoded.get("origin")==reference.get("origin") and decoded.get("empty")==reference.get("empty"),"immediate query agrees with the worker on the paid cell and occupancy mask")
+		check(game.terrain.backend.native.try_placement_target(game.terrain.Codec.command(12)).is_empty(),"immediate target reader refuses mutation and cancellation commands")
 	for field in ["epoch","revision","ticket"]:
 		var stale:Dictionary=game.terrain_placement.cached.duplicate(true);stale[field]-=1
 		check(not game.terrain_placement.matches(stale,game.terrain),"cached mask invalidates on changed "+field)
@@ -83,6 +185,7 @@ func run()->void:
 	var placement=game.terrain_placement
 	for cancellation in ["focus","slot","aim","timeout","world"]:
 		placement.cached={}
+		placement.target(game) # Exercise the pending worker fallback.
 		right_click()
 		check(not placement.queued.is_empty() and amount(211)==before and game.mining_rewards.payment.is_empty(),"cold click buffers once without early payment: "+cancellation)
 		var camera_basis:Basis=game.camera.global_basis
@@ -96,12 +199,22 @@ func run()->void:
 		check(placement.queued.is_empty() and amount(211)==before and game.mining_rewards.payment.is_empty(),"changed context cancels the buffered click without spending: "+cancellation)
 		game.app_focused=true;hud.equip_item(211);game.camera.global_basis=camera_basis
 	placement.cached={}
+	placement.target(game) # Exercise the pending worker fallback.
+	var submission:={}
+	var observe_submission:=func(_bounds:AABB)->void:
+		if game.mining_rewards.payment.is_empty():return
+		submission.payment=game.mining_rewards.payment.duplicate()
+		submission.stock=amount(211)
+		refresh()
+		submission.amber=preview.visible and not preview.caption.visible and preview.result.get("reason")=="Terrain is updating"
+	game.terrain.region_invalidated.connect(observe_submission)
 	right_click()
 	check(not placement.queued.is_empty() and amount(211)==before,"first click while the terrain query is pending is retained")
-	check(await wait_for(func():return not game.mining_rewards.payment.is_empty(),3),"buffered first click submits automatically when its target resolves")
-	var payment:Dictionary=game.mining_rewards.payment
-	check(not payment.is_empty() and Vector3i(payment.packet.decode_s32(4),payment.packet.decode_s32(8),payment.packet.decode_s32(12))==cell and amount(211)==before-1,"real right click submits exactly the displayed cell and debits one topsoil")
-	refresh();check(preview.visible and not preview.caption.visible and preview.result.reason=="Terrain is updating","preview remains visible and amber while terrain edit is pending")
+	check(await wait_for(func():return submission.has("payment"),3),"buffered first click submits automatically when its target resolves")
+	game.terrain.region_invalidated.disconnect(observe_submission)
+	var payment:Dictionary=submission.get("payment",{})
+	check(not payment.is_empty() and Vector3i(payment.packet.decode_s32(4),payment.packet.decode_s32(8),payment.packet.decode_s32(12))==cell and submission.stock==before-1,"real right click submits exactly the displayed cell and debits one topsoil")
+	check(submission.get("amber",false),"preview remains visible and amber while terrain edit is pending")
 	check(await wait_for(func():return not game.terrain.pending_edit,20) and not game.mining_rewards.failed,"paid terrain edit publishes normally")
 	check(amount(211)==before-1 and game.terrain.density_revision>revision,"the previewed placement adds terrain and spends exactly one unit")
 	for frame in 10:await process_frame

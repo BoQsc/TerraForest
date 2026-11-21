@@ -44,6 +44,7 @@ func run() -> void:
 		var center:=Vector3(800,30,1310)
 		check(terrain.edit(Codec.brush(center,center,2,0,false,3),center-Vector3.ONE*8,center+Vector3.ONE*8),"native excavation admitted")
 		var before:=captures
+		check(before==0,"persistent terrain edit leaves addon capture to save or shutdown")
 		terrain.save_world();terrain.save_world()
 		check(terrain.pending_edit and captures==before,"manual saves do not capture inventory during pending edit")
 		var deadline:=Time.get_ticks_msec()+15000

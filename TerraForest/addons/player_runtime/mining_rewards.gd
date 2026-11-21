@@ -29,8 +29,8 @@ func place(cell:Vector3i,item:int,slot:int) -> bool:
 	var packet:PackedByteArray=terrain.Codec.command(38,[cell.x,cell.y,cell.z,TERRAIN_ITEMS[item]])
 	if not hud.inventory.consume(slot,1,state.revision).ok:return false
 	payment={"packet":packet,"item":item,"epoch":terrain.epoch,"ticket":terrain.edit_ticket+1}
-	# The queued compound snapshot already includes the debit. Shutdown waits
-	# for publication; rejected/no-op edits refund through the saved reward inbox.
+	# Saves and shutdown capture the debit after publication. Rejected or
+	# unchanged edits refund through the saved reward inbox.
 	if not terrain.edit(packet,Vector3(cell),Vector3(cell)):
 		refund();return false
 	if not hud.slots.is_empty():hud.refresh()
