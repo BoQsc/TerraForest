@@ -1,7 +1,7 @@
 ## Distant barrel chains in saved worlds
 
 The previous remote check covered resident barrels 160 m from the player.
-The [saved-page investigation](../issues/explosive-combat/README.md#saved-barrels-beyond-the-player) documents the player-distance dependency, recovery of distant ignition, and the new default for barrel simulation.
+The Windows package now includes the fix for unloaded barrels. Saved chains completed about 1.3 km from a stationary player in the installed-pack check. [Saved-page investigation and release checks](../issues/explosive-combat/README.md#saved-barrels-beyond-the-player)
 
 ## Full-cut physics and timing decision
 

@@ -24,9 +24,20 @@ prop stayed unloaded. [Saved-page check](../../reports/checks/20261121T095108937
 
 The read-only gameplay world passed at 768 m with ordinary and fast chains.
 The check exercised the ESC slider, sound cutoff, terrain publication and
-save-file integrity. The new behavior has been verified headlessly from source.
-An installed-package playtest and listening review are still open.
+save-file integrity.
 [Gameplay check](../../reports/checks/20261121T095245399988Z/console.log)
+
+**Installed Windows build, November 21.** Launch `dist/TerraForest.exe`. The
+standalone player started with its adjacent pack and loaded the matching release
+structures and terrain DLLs. All 14 installed native libraries match commit
+`31dd1a78`, which includes the barrel fix. [Release startup](../../reports/checks/20261121T103618450194Z/run.json)
+
+The standalone player did not run the external test script. The test engine
+loaded the installed pack and its debug DLLs for both headless checks. Three
+saved barrels finished about 1.3 km from a stationary player at the minimum
+setting. In the read-only gameplay world, two three-barrel chains detonated in
+one step at 768 m with fast reactions enabled. The save hash stayed intact.
+Player visual and listening review remains open. [Standalone test attempt](../../reports/checks/20261121T103321536422Z/run.json) · [Saved barrels](../../reports/checks/20261121T103702722798Z/console.log) · [Gameplay world](../../reports/checks/20261121T103730055153Z/console.log)
 
 ## Water and earlier combat work
 
