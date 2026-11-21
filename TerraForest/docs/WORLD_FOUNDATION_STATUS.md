@@ -9228,3 +9228,37 @@ passed. Both joint publication deadlines failed. The next proof must replace
 changed triangles within an affected owner and show that the old collision
 support disappears on the same draw as the new terrain and water.
 [Shoreline timings](../reports/checks/20261121T112426495341Z/normal_gameplay_blast_performance.json)
+
+### Direct triangle-page publication, 21 November 2026
+
+The experimental page mode now reads selected 8 m sections from the
+committed field. It constructs the incident surface cells, preserves parent
+block-face merging and emits canonical triangles with the existing material,
+lighting and collision channels. A revision or epoch mismatch rejects the
+read. The field check passed 186 assertions, including sparse and dense
+page masks, exact equivalence with a fresh parent mesh and reconstruction of
+the collision perimeter. [Field regression](../reports/checks/20261121T113650049016Z/engine.log)
+
+In the isolated 1080p Cedar Vale game, most of the 64 m cut genuinely needed
+work at this partition size. Writes or their halo reached 132 of 144 pages.
+The other 12 had prior dirty state. Generating every page directly cost
+291.587 ms to the first post-commit draw. With the dense-parent fallback
+the same observation was 191.452 ms, with zero of nine footprint probes
+matching on draw two. The 2 m brush retained two pages, generated two
+directly, and first drew after commit at 19.470 ms from input.
+[All-direct cut](../reports/checks/20261121T113411545297Z/engine.log) · [Dense fallback and sparse brush](../reports/checks/20261121T113759829414Z/engine.log)
+
+Both shoreline blasts reached all 16 local pages through writes or halo.
+In the timing run, admission to terrain publication took 94.670 ms at sea
+and 175.682 ms at the lake. Worst frames were 66.104 ms and 90.725 ms.
+Both sites passed their 2 cm shoreline probes. The two fixed before/after
+pairs at each site show water extending into the crater. The lake has a
+visible light-coloured bank along its outer rim. These final views do not
+qualify submerged object contact or the two-frame deadline.
+[Timing run](../reports/checks/20261121T113540247728Z/normal_gameplay_blast_performance.json) · [Camera run](../reports/checks/20261121T113928481791Z/engine.log)
+
+Keep page publication behind `--triangle-page-terrain`. For the dense cases,
+further partitioning needs a measured bound on replacement work before another
+trial. The open architecture decision is whether persistent render storage and
+a physics representation that can query the committed field can meet the joint
+deadline while preserving the same surface and rigid-body support.

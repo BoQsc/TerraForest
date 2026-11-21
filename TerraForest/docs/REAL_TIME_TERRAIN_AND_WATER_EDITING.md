@@ -82,6 +82,19 @@ Reinstalling already-prepared resources for all 36 owners took 0.59 ms in a sepa
 
 ## Implementation order and exit tests
 
+The opt-in triangle-page implementation can now read an arbitrary mask of
+8 m sections directly from the accepted terrain revision. It preserves exact
+mesh attributes and collider faces in the seam regression. The large authoring
+cut selected all 144 sections in 36 tiles. In the measured run, writes and
+their dependency halos accounted for 132 sections and pre-existing dirty state
+accounted for the other 12. Generating all selected sections separately
+took 291.587 ms from input to the first post-commit draw. Dense tiles now use
+the shared indexed mesh path. Even with that fallback the result took
+191.452 ms. Keep this mode experimental. For dense edits the next design
+must change the cost of generating and installing a changed surface. Finer
+spatial partitions alone leave nearly the entire operation on the critical
+path. [Cut and selection measurements](../reports/checks/20261121T113759829414Z/engine.log)
+
 | Order | Deliverable | Evidence required to advance |
 |---|---|---|
 | 1 | Resident authoritative placement targeting | Unpredicted cold click, moving aim, rapid stacking, slot change, obstruction, cancellation and exactly one debit. Record admission and first matching draw separately. |

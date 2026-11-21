@@ -130,6 +130,25 @@ func run()->void:
 		check(retained>0 and rebuilt>0,"seam edit retains neighbours and rebuilds touched owners")
 	state=core.field_patch_state()
 	var updated:RefCounted=core.capture_contact_core(bounds,state.revision,build_epoch)
+	for width:int in [16,32]:
+		var key:=Vector3i(992,992,width)
+		var full:PackedByteArray=core.execute(Codec.command(1,[key.x,key.y,width,1,build_epoch]))
+		var reference_pages:Array=ClassDB.class_call_static("NativeTerrainCollision","triangle_pages",key,Codec.decode_mesh(full.slice(16)).arrays)
+		var page_arrays:Array=[]
+		for page:Dictionary in reference_pages:page_arrays.append(page.arrays)
+		var rim:Array=ClassDB.class_call_static("NativeTerrainCollision","triangle_page_rim",key,page_arrays)
+		var full_arrays:Array=Codec.decode_mesh(full.slice(16)).arrays
+		check(rim.size()==2 and ClassDB.class_call_static("NativeTerrainCollision","matching_cut_boundary",key,15,rim[0],rim[1],full_arrays[Mesh.ARRAY_VERTEX],full_arrays[Mesh.ARRAY_INDEX]),"partial publication preserves the full contact perimeter")
+		var count:=(width/8)*(width/8)
+		check(not Codec.reply_ok(core.execute(Codec.command(47,[key.x,key.y,width,1,state.revision+1,build_epoch]))),"a superseded triangle page read cannot publish")
+		check(not Codec.reply_ok(core.execute(Codec.command(47,[key.x,key.y,width,1<<count,state.revision,build_epoch]))),"out of bounds triangle page request rejects")
+		for mask:int in [1,(1<<(count-1)),(1<<count)-1]:
+			var payload:PackedByteArray=core.execute(Codec.command(47,[key.x,key.y,width,mask,state.revision,build_epoch]))
+			var pages:=Codec.decode_triangle_pages(payload,key,mask,state.revision)
+			check(not pages.is_empty(),"direct triangle page request succeeds")
+			for page:Dictionary in pages:
+				var canonical_page:Dictionary=reference_pages[page.brick_bottom]
+				check(page.arrays==canonical_page.arrays and page.faces==canonical_page.faces,"direct page %d of %d matches all canonical render channels and collision faces"%[page.brick_bottom,width])
 	check(updated!=null,"changed triangle reader captures resident geometry")
 	if updated!=null:
 		for x in [992,1008]:

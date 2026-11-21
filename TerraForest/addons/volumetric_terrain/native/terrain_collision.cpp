@@ -143,6 +143,28 @@ Array triangle_pages(Vector3i key,const Array &source){
 // Surface-net quads straddle the owner's sample boundary. Compare the
 // complete triangles within two lattice samples of each face. A different
 // triangle order conservatively couples owners even if their surfaces match.
+Array triangle_page_rim(Vector3i key,const Array &pages){
+    PackedVector3Array points;
+    PackedInt32Array indices;
+    for(int page=0;page<pages.size();++page){
+        const Array arrays=pages[page];
+        if(arrays.size()!=Mesh::ARRAY_MAX)return {};
+        const PackedVector3Array p=arrays[Mesh::ARRAY_VERTEX];
+        const PackedInt32Array ix=arrays[Mesh::ARRAY_INDEX];
+        if(ix.size()%3)return {};
+        for(int i=0;i<ix.size();i+=3){
+            Vector3 face[3];bool near=false;
+            for(int j=0;j<3;++j){
+                if(ix[i+j]<0||ix[i+j]>=p.size())return {};
+                face[j]=p[ix[i+j]];
+                near|=face[j].x<=key.x+2||face[j].x>=key.x+key.z-2||
+                      face[j].z<=key.y+2||face[j].z>=key.y+key.z-2;
+            }
+            if(near)for(auto &v:face){indices.push_back(points.size());points.push_back(v);}
+        }
+    }
+    Array result;result.push_back(points);result.push_back(indices);return result;
+}
 int changed_rims(Vector3i key,const PackedVector3Array &a,const PackedInt32Array &ai,
                  const PackedVector3Array &b,const PackedInt32Array &bi) {
     if((key.z!=16 && key.z!=32) || ai.size()%3 || bi.size()%3)return 15;
@@ -212,6 +234,7 @@ bool matching_cut_boundary(Vector3i key,int sides,const PackedVector3Array &befo
 }
 void NativeTerrainCollision::_bind_methods() {
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("triangle_pages","key","arrays"),&triangle_pages);
+    ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("triangle_page_rim","key","pages"),&triangle_page_rim);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("matching_cut_boundary","key","sides","old_points","old_indices","points","indices"),&matching_cut_boundary);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("changed_rims","key","old_points","old_indices","points","indices"),&changed_rims);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("merge_planar_faces","faces"),&merge_planar_faces);

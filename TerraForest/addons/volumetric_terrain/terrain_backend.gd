@@ -597,10 +597,72 @@ func _prepare_triangle_pages(chunk:Dictionary,key:Vector3i,previous:Dictionary={
 	chunk.erase("faces")
 	return true
 
+func _select_triangle_pages(item:Dictionary,journals:Array,counts:Dictionary)->void:
+	var key:Vector3i=item.key
+	var previous:Dictionary=item.get("previous_pages",{})
+	var side:=key.z/8
+	if key.z not in [16,32] or previous.size()!=side*side:return
+	var mask:=0
+	for id in side*side:
+		var reason:="journal_missing" if journals.is_empty() else ""
+		var bit:=(key.y/8+id/side)*256+key.x/8+id%side
+		for journal:PackedByteArray in journals:
+			if journal.size()!=8192:
+				reason="journal_missing"
+				break
+			if journal[bit>>3] & (1<<(bit&7)):
+				reason="write_or_halo"
+				break
+		if reason.is_empty() and not item.get("clean_pages",false):reason="prior_dirty"
+		if reason.is_empty():
+			for light:Vector2 in previous[id][Mesh.ARRAY_TEX_UV]:
+				if light.x<1.0 or light.y<1.0:
+					reason="baked_light"
+					break
+		if not reason.is_empty():mask|=1<<id
+		else:reason="retained"
+		counts[reason]=int(counts.get(reason,0))+1
+	item["page_mask"]=mask
+
+func _direct_triangle_pages(source:Object,item:Dictionary,job:Dictionary)->Dictionary:
+	if not item.has("page_mask"):return {}
+	var key:Vector3i=item.key
+	var side:=key.z/8
+	var mask:int=item.page_mask
+	var previous:Dictionary=item.previous_pages
+	var start:=Time.get_ticks_usec()
+	if not mask:return {"retain_geometry":true,"worker_ms":(Time.get_ticks_usec()-start)/1000.0}
+	# A dense cut covers the whole parent. The ordinary indexed mesh shares
+	# vertices between its pages and only shades each representative once.
+	if mask==(1<<(side*side))-1:return {}
+	var packet:PackedByteArray=source.execute(Codec.command(47,[key.x,key.y,key.z,mask,job.triangle_revision,job.build_epoch]))
+	var pages:=Codec.decode_triangle_pages(packet,key,mask,job.triangle_revision)
+	if pages.is_empty():return {}
+	var changed:Array=[]
+	var rims:=0
+	for page:Dictionary in pages:
+		if previous[page.brick_bottom]==page.arrays:continue
+		var old:Array=previous[page.brick_bottom]
+		rims|=collision_recipes.changed_rims(key,old[Mesh.ARRAY_VERTEX],old[Mesh.ARRAY_INDEX],page.arrays[Mesh.ARRAY_VERTEX],page.arrays[Mesh.ARRAY_INDEX])
+		var faces:PackedVector3Array=collision_recipes.merge_planar_faces(page.faces)
+		var recipes:Dictionary=collision_recipes.prepare(faces,_collision_piece_triangles)
+		if not recipes.ok:return {}
+		page.collision_pieces=recipes.pieces
+		page.erase("faces")
+		changed.append(page)
+	return {"triangle_pages":true,"bricks":changed,"step":1,"bytes":0,"triangles":0,"rims":rims,"direct_pages":pages.size(),"worker_ms":(Time.get_ticks_usec()-start)/1000.0}
+
 func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,share_contacts:bool=false)->void:
 	for item:Dictionary in items:
 		var key:Vector3i=item.key
 		var start:=Time.get_ticks_usec()
+		if triangle_page_terrain and job.has("triangle_revision"):
+			var direct:=_direct_triangle_pages(source,item,job)
+			if not direct.is_empty():
+				direct.merge({"stamp":item.stamp,"key":key,"epoch":job.epoch,"ticket":job.ticket,"kind":"edit_chunk"})
+				completed[key]={"worker_ms":direct.worker_ms}
+				_push(direct)
+				continue
 		var reply:PackedByteArray=source.execute(Codec.command(20 if share_contacts else 1,[key.x,key.y,key.z,1,job.build_epoch]))
 		if not Codec.reply_ok(reply):continue
 		var packet:=reply.slice(16)
@@ -680,7 +742,7 @@ func _dispatch_resident_groups(job:Dictionary,revision:int,scheduled:Dictionary,
 	return tasks
 
 func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
-	return EditCommands.execute(native,commands,revision_before,qualify_surface_owners)
+	return EditCommands.execute(native,commands,revision_before,qualify_surface_owners or triangle_page_terrain)
 
 func _recoverable_edit_rejection(commands:Array,reply:PackedByteArray,before:PackedByteArray,after:PackedByteArray)->bool:
 	if reply.size()<12 or reply.decode_u32(0)!=Codec.REPLY_MAGIC or reply.decode_u32(4) not in [2,3,28,38,41] or reply.decode_u32(8) not in [1,2,3]:return false
@@ -1691,8 +1753,12 @@ func _run() -> void:
 				cache_valid = false
 				latest_packets.clear()
 				latest_packet_bytes = 0
+				var page_selection:Dictionary={}
+				if triangle_page_terrain:
+					job.triangle_revision=after_stats.decode_u32(12)
+					for item:Dictionary in job.tiles:_select_triangle_pages(item,execution.triangle_owners,page_selection)
 				var surface:=_resident_edit_surface(job,after_stats.decode_u32(12))
-				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],"resident_surface":surface,"writes":execution.writes,
+				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],"resident_surface":surface,"writes":execution.writes,"page_selection":page_selection,
 					"count": job["tiles"].size(), "contact_ms":contact_ms, "contact_parallel":contact_task>=0, "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
 				# Stream finished patches to main-thread staging immediately. Worker
 				# builds and resource preparation OVERLAP instead of running in series.
@@ -1725,7 +1791,9 @@ func _run() -> void:
 							if owner.grow(1.0).intersects(bounds): local.append(id)
 						selected=local
 						retain_geometry=selected.is_empty()
-					var chunk: Dictionary = {"retain_geometry":true,"worker_ms":0.0} if retain_geometry else _build(item["key"], false, int(job["build_epoch"]), false, selected, true)
+					var chunk:Dictionary={}
+					if triangle_page_terrain and not retain_geometry:chunk=_direct_triangle_pages(native,item,job)
+					if chunk.is_empty():chunk={"retain_geometry":true,"worker_ms":0.0} if retain_geometry else _build(item["key"],false,int(job["build_epoch"]),false,selected,true)
 					if bool(chunk.get("cancelled", false)):
 						chunk = {"error": "Edit build cancelled; reload before further editing"}
 					build_total += float(chunk.get("worker_ms", 0.0))
@@ -1740,7 +1808,7 @@ func _run() -> void:
 					for item:Dictionary in group["items"]:
 						if group.completed.has(item.key):
 							var result:Dictionary=group.completed[item.key]
-							_remember_packet(item.key,result.packet)
+							if result.has("packet"):_remember_packet(item.key,result.packet)
 							build_total+=float(result.worker_ms)
 							continue
 						var chunk:=_build(item.key,false,job.build_epoch,false,[],true)

@@ -703,6 +703,12 @@ public:
             writes.mark_surface_owners(bits);
             result["surface_owners"]=owners;
         }
+        godot::PackedByteArray pages;
+        if(pages.resize(8192)==godot::OK){
+            auto *bits=pages.ptrw();zero_bytes(bits,8192);
+            writes.mark_surface_owners(bits,8);
+            result["triangle_owners"]=pages;
+        }
         return result;
     }
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) {

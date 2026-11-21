@@ -1814,10 +1814,70 @@ void encode_mesh(const Mesh&m,int ox,int oz,int size,int step,Bytes&out){
  out.n+=int(bytes);
 }
 #include "experimental/density_ray.hpp"
+
+// Match the centroid partition used by NativeTerrainCollision::triangle_pages.
+// Emit the selected pages in first-use vertex order so render attributes,
+// winding and collider faces can be compared directly with a full tile.
+static bool build_triangle_pages(const World&w,int x,int z,int size,u32 selected,u32 epoch,Bytes&out){
+ const int side=size/8,count=side*side;
+ int bounds[4]={x+size,z+size,x-1,z-1};
+ for(int page=0;page<count;++page)if(selected&(1u<<page)){
+  const int px=x+(page%side)*8,pz=z+(page/side)*8;
+  bounds[0]=imn(bounds[0],px-3);bounds[1]=imn(bounds[1],pz-3);
+  bounds[2]=imx(bounds[2],px+10);bounds[3]=imx(bounds[3],pz+10);
+ }
+ Mesh mesh;
+ if(!extract_vertices(w,x,z,size,mesh,epoch,0,WORLD_Y,nullptr,nullptr,bounds)){mesh.release();return false;}
+ connect_patch(w,x,z,size,mesh);
+ // Greedy exact-grid block faces can span a page. Keep their parent ownership.
+ add_blocks(w,x,z,size,mesh);
+ List<u32> indices[16];
+ for(int i=0;!tr_oom&&i<mesh.i.n;i+=3){
+  const V3 sum=mesh.v[mesh.i[i]].p+mesh.v[mesh.i[i+1]].p+mesh.v[mesh.i[i+2]].p;
+  const V3 p={sum.x/3.f,sum.y/3.f,sum.z/3.f};
+  const int px=imx(0,imn(side-1,fl((p.x-x)/8.f))),pz=imx(0,imn(side-1,fl((p.z-z)/8.f)));
+  const int page=px+side*pz;
+  if(selected&(1u<<page))for(int k=0;k<3;++k)indices[page].push(mesh.i[i+k]);
+ }
+ List<int> remap;remap.resize(mesh.v.n);
+ for(int page=0;page<count&&!tr_oom&&!cancelled(w,epoch);++page){
+  if(!(selected&(1u<<page)))continue;
+  Mesh part;
+  for(int j=0;j<indices[page].n&&!tr_oom;++j){
+   const u32 old=indices[page][j];
+   if(!remap[old])remap[old]=part.v.push(mesh.v[old])+1;
+   part.i.push(remap[old]-1);
+  }
+  if(!tr_oom){
+   shade_mesh(w,part,epoch);
+   const int header=out.n;out.u(page);out.u(0);
+   if(!tr_oom){
+    encode_mesh(part,x,z,size,1,out);
+    const u32 bytes=out.n-header-8;copy_bytes(out.p+header+4,&bytes,4);
+   }
+  }
+  for(int j=0;j<indices[page].n;++j)remap[indices[page][j]]=0;
+  part.release();
+ }
+ for(int i=0;i<count;++i)indices[i].release();
+ remap.release();mesh.release();
+ return !tr_oom&&!cancelled(w,epoch);
+}
 void process_request(World&w,const u8*data,int n,Bytes&out){
  Reader r{data,n};u32 cmd=r.u();if(!out.reserve(fixed_edit_reply(cmd)?EDIT_REPLY_CAPACITY:12))return;out.u(REPLY_MAGIC);out.u(cmd);out.u(0);
  if(!r.good){out.p[8]=1;return;}
  if(cmd==0){out.u(w.revision);out.u(w.edits);out.u(w.pages.n);out.u(w.blocks.n);out.u(u32(w.changed_samples));out.u(w.seed);}
+ else if(cmd==47){
+  const int x=int(r.u()),z=int(r.u()),size=int(r.u());const u32 mask=r.u(),revision=r.u(),epoch=r.u();
+  if(!r.good||n!=28||(size!=16&&size!=32)||x<0||z<0||x>=2048||z>=2048||x%size||z%size||
+     !mask||(mask>>(size/8*(size/8)))){out.p[8]=1;return;}
+  if(revision!=u32(w.revision)||cancelled(w,epoch)){out.p[8]=4;return;}
+  if(w.contact_snapshot)w.contact_outside=false;
+  out.u(revision);
+  if(!build_triangle_pages(w,x,z,size,mask,epoch,out)||(w.contact_snapshot&&w.contact_outside)){
+   out.n=12;out.p[8]=tr_oom?2:4;
+  }
+ }
  else if(cmd==1||cmd==20||cmd==44){
   int ox=int(r.u()),oz=int(r.u()),size=int(r.u()),step=int(r.u());
   u32 epoch=r.at+4<=r.n?r.u():terrain_build_epoch(&w);

@@ -426,6 +426,8 @@ func finish_timing()->void:
   if counter.size()==20:blast_metrics[timing_phase].resident_replayed_triangles=counter.decode_u64(12)
   timing_resident_surface=null
  blast_metrics[timing_phase].local_response_ms=timing_local_ms
+ blast_metrics[timing_phase].direct_triangle_pages=game.terrain.last_direct_triangle_pages
+ blast_metrics[timing_phase].page_selection=game.terrain.last_page_selection
  blast_metrics[timing_phase].action_to_local_draw_ms=(local_draw_us-action_started_us)/1000.0 if local_draw_us else -1
  if terrain_admitted_us and terrain_published_us and local_draw_us:
   blast_metrics[timing_phase].action_to_terrain_admission_ms=(terrain_admitted_us-action_started_us)/1000.0
@@ -1149,6 +1151,8 @@ func check_authoring_brush()->void:
   var terrain_stages:={"worker_queue_ms":game.terrain.last_queue_ms,"field_ms":game.terrain.last_edit_ms,
    "mesh_build_ms":game.terrain.last_total_build_ms,"geometry_tiles":game.terrain.last_density_tiles,
    "untouched_surface_tiles":game.terrain.last_untouched_surface_tiles,
+   "direct_triangle_pages":game.terrain.last_direct_triangle_pages,
+   "page_selection":game.terrain.last_page_selection,
    "commit_ms":game.terrain.last_commit_ms,"after_worker_ms":game.terrain.last_prepare_latency_ms,
    "support_worker_ms":game.terrain.last_support_worker_ms,"support_publish_ms":game.terrain.last_support_publish_ms}
   print("AUTHORING_EDIT ",JSON.stringify({"center":str(center),"radius":game.radius,"tool":game.tool,"preparing":preparing,"feedback_us":feedback_us,"admission_us":game.terrain.edit_accepted_us-started if game.terrain.edit_ticket>ticket else null,"publication_us":previous-started if game.terrain.published_revision>revision else null,"frames":frames,"worst_interval_us":worst_us,"terrain_stages":terrain_stages}))

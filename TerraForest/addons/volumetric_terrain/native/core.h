@@ -112,15 +112,18 @@ struct TerrainEditWrites {
  // Fine (step-one) surface owners. Include incident faces, normals, block
  // neighbours and the full procedural band exposed by first page admission.
  static constexpr int OWNER_SIDE=128, OWNER_BYTES=OWNER_SIDE*OWNER_SIDE/8;
- void mark_surface_owners(u8 *bits)const{
+ void mark_surface_owners(u8 *bits,int width=16)const{
+  const int side=2048/width;
   for(int i=0;i<records.n;++i){
    const Record &r=records[i];
    const int x=r.address&2047,z=(r.address>>11)&2047;
    const int extent=r.detail==PAGE_ADMITTED?15:0;
-   const int x0=imx(0,x-4)/16,x1=imn(WORLD,x+extent+4)/16;
-   const int z0=imx(0,z-4)/16,z1=imn(WORLD,z+extent+4)/16;
+   // A removed grid block can split a greedy quad anywhere in its parent.
+   const int halo=(width==8 && r.detail>=BLOCK)?32:4;
+   const int x0=imx(0,x-halo)/width,x1=imn(WORLD,x+extent+halo)/width;
+   const int z0=imx(0,z-halo)/width,z1=imn(WORLD,z+extent+halo)/width;
    for(int rz=z0;rz<=z1;++rz)for(int rx=x0;rx<=x1;++rx){
-    int owner=rz*OWNER_SIDE+rx;bits[owner>>3]|=u8(1u<<(owner&7));
+    int owner=rz*side+rx;bits[owner>>3]|=u8(1u<<(owner&7));
    }
   }
  }

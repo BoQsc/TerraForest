@@ -207,6 +207,8 @@ var last_mesh_upload_ms: float = 0.0
 var last_commit_ms: float = 0.0
 var last_density_tiles: int = 0
 var last_untouched_surface_tiles:int=0
+var last_direct_triangle_pages:int=0
+var last_page_selection:Dictionary={}
 var last_relight_tiles: int = 0
 var slowest_stage: String = "none"
 var slowest_stage_ms: float = 0.0
@@ -580,6 +582,7 @@ func _receive(result: Dictionary) -> void:
 			return
 		latest_member_changes = result.get("member_changed", [])
 		resident_edit_surface=result.get("resident_surface",{})
+		last_page_selection=result.get("page_selection",{})
 		_contact_accepted_ticket=edit_ticket
 		_activate_contact()
 		_record_stage("resident cut snapshot and dispatch" if result.get("contact_parallel",false) else "resident cut worker",float(result.get("contact_ms",0)))
@@ -600,6 +603,7 @@ func _receive(result: Dictionary) -> void:
 			_fail(str(result["error"]))
 			return
 		if result.get("triangle_pages",false) and tiles.get(result.key,{}).get("triangle_pages",false):
+			last_direct_triangle_pages+=int(result.get("direct_pages",0))
 			var changed:Array=[]
 			var bytes:=0
 			var triangles:=0
@@ -721,7 +725,8 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 		var parent:=Node3D.new()
 		parent.visible=false
 		var section:Dictionary={"node":parent,"body":null,"triangle_pages":data.get("triangle_pages",false),"bricks":{},"brick_partial":data.get("brick_partial",false),"dirty":false,"stamp":data.stamp,"step":data.get("step",1),"triangles":data.triangles,"bytes":data.bytes,"used":Time.get_ticks_msec(),"key":data.key,"active":false,"cavity_visibility":true}
-		if data.get("triangle_pages",false):
+		if data.has("rims"):section.rims=data.rims
+		elif data.get("triangle_pages",false):
 			section.rim_geometry=[data.arrays[Mesh.ARRAY_VERTEX],data.arrays[Mesh.ARRAY_INDEX]]
 		return section
 	var upload_begin: int = Time.get_ticks_usec()
@@ -1108,6 +1113,7 @@ func _install(key: Vector3i, entry: Dictionary) -> void:
 				old.bytes += int(entry.bytes)
 				old.triangles += int(entry.triangles)
 				if entry.has("rim_geometry"):old.rim_geometry=entry.rim_geometry
+				elif entry.get("triangle_pages",false):old.erase("rim_geometry")
 				old.stamp = entry.stamp
 				old.used = entry.used
 				old.dirty = false
@@ -1146,7 +1152,7 @@ func _contact_domain(commands:Array)->Dictionary:
 	for z in range(corner.y,end.y,16):
 		for x in range(corner.x,end.x,16):
 			var key:Vector3i=_edit_owner_cells.get(Vector2i(x,z),Vector3i.ZERO)
-			if key.z==0 or (not tiles[key].has("arrays") and not tiles[key].has("rim_geometry")) or tiles[key].step!=1:return {}
+			if key.z==0 or (not tiles[key].has("arrays") and not tiles[key].get("triangle_pages",false)) or tiles[key].step!=1:return {}
 			if not keys.has(key):
 				keys.append(key)
 				bounds=bounds.merge(Rect2i(key.x,key.y,key.z,key.z))
@@ -1174,6 +1180,9 @@ func _stage_contact(key:Vector3i,entry:Dictionary,data:Dictionary)->void:
 		if id.y==bounds.position.y:outer|=4
 		if id.y+id.z==bounds.end.y:outer|=8
 		var rim:=_rim_geometry(tiles[id])
+		if rim.is_empty():
+			_retire_contact()
+			return
 		var replacement:Array=_contact_entries[id].arrays
 		if not backend.collision_recipes.matching_cut_boundary(id,outer,rim[0],rim[1],replacement[Mesh.ARRAY_VERTEX],replacement[Mesh.ARRAY_INDEX]):
 			_record_stage("resident cut boundary mismatch",0)
@@ -1250,6 +1259,13 @@ func _set_edit_replacement(key:Vector3i, replacement:Dictionary, active:bool)->v
 func _rim_geometry(entry:Dictionary)->Array:
 	if entry.has("rim_geometry"):return entry.rim_geometry
 	if entry.has("arrays"):return [entry.arrays[Mesh.ARRAY_VERTEX],entry.arrays[Mesh.ARRAY_INDEX]]
+	if entry.get("triangle_pages",false):
+		var pages:Array=[]
+		for id in (entry.key.z/8)*(entry.key.z/8):
+			if not entry.bricks.has(id):return []
+			pages.append(entry.bricks[id].arrays)
+		entry.rim_geometry=backend.collision_recipes.triangle_page_rim(entry.key,pages)
+		return entry.rim_geometry
 	return []
 
 func _ready_edit_group(seed:Vector3i)->Array[Vector3i]:
@@ -1752,6 +1768,7 @@ func _invalidate() -> Array[Dictionary]:
 						affected[-1]["retain_if_untouched"]=false
 						break
 			_select_dirty_owners(affected[-1],tile_members[key])
+			if was_clean and affected[-1].has("previous_pages") and not lighting_dirty.has(key):affected[-1].clean_pages=true
 		elif key.z == 16 and requested_keys.has(key):
 			# Repeated edits must not invalidate the same requested fine
 			# children forever. Publish a bounded set in this transaction,
@@ -1893,6 +1910,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	last_capture_wait_ms = float(accepted_us - edit_started_us) / 1000.0
 	last_density_tiles = 0
 	last_untouched_surface_tiles=0
+	last_direct_triangle_pages=0
 	last_relight_tiles = 0
 	latest_edit_members.clear()
 	latest_member_changes.clear()

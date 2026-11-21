@@ -152,6 +152,23 @@ static func decode_mesh(source: PackedByteArray) -> Dictionary:
 		"step": source.decode_u32(20), "arrays": arrays, "faces": faces,
 		"triangles": ni / 3, "bytes": source.size()}
 
+static func decode_triangle_pages(reply:PackedByteArray,key:Vector3i,mask:int,revision:int)->Array[Dictionary]:
+	var pages:Array[Dictionary]=[]
+	if not reply_ok(reply) or reply.size()<16 or reply.decode_u32(12)!=revision:return []
+	var offset:=16
+	for id in (key.z/8)*(key.z/8):
+		if not (mask & (1<<id)):continue
+		if offset+8>reply.size() or reply.decode_u32(offset)!=id:return []
+		var size:=reply.decode_u32(offset+4)
+		offset+=8
+		if size<36 or size>reply.size()-offset:return []
+		var page:=decode_mesh(reply.slice(offset,offset+size))
+		if page.has("error") or page.key!=key or page.step!=1:return []
+		page.brick_bottom=id
+		pages.append(page)
+		offset+=size
+	return pages if offset==reply.size() else []
+
 static func encode_decoded_mesh(mesh: Dictionary) -> PackedByteArray:
 	# Inverse of decode_mesh, using native packed-array conversions. No per-vertex
 	# script packing. Derived cache only; this is not the authoritative world save.
