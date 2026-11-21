@@ -8,6 +8,8 @@ The strongest result so far is a resident paid construction click that reached m
 
 ## What counts as instant
 
+**Current decision.** Keep the production terrain and water paths as the visual and physical reference. Build the next checkpoint around making one committed local field revision available to rendering, collision and water. The latest isolated game run reached the first post-commit draw of the 64 m cut at **138.825 ms from input**, with **zero of nine probes matching on draw two**. The remaining gap is large enough to require changing what the player waits for. The worker upload experiment and the next architectural proof are described at the end of this record.
+
 | Observation | Requirement |
 |---|---|
 | Local input feedback | Show the accepted tool action or an actionable rejection by the next rendered frame. Record the moment of input, admission, field change, physics visibility, installation and first matching draw. |
@@ -121,3 +123,23 @@ Persist authored state and finite water quantities at a common recoverable revis
 Run the next packaged checkpoint when changed writes drive actual render triangles, physics and adjacent detailed water. Exercise a paid placement, a breaking mining hit, the entire cut and both gameplay barrels. Use fixed cameras and record the presented revision at every sampled point through draw two. Pair shoreline images with collision and wet/dry probes on both sides of the boundary and around the submerged object. Repeat after a bucket interruption and during an overlapping edit. Record wall time and draw count together so a stalled frame cannot satisfy the gate. Run through an isolated renderer on a read-only save input, independently of the player's desktop and Steam shortcuts.
 
 If the deadline is missed, attribute the first late revision to admission, field mutation, triangle generation, collider preparation, water preparation, main-thread installation or presentation. Compare the measured cost with the remaining serial budget before changing the design. The current priority is the first complete playable publication for an unpredicted large or wet edit. Cold construction before residency remains a separate regression gate.
+
+## Latest checkpoint and next architecture decision
+
+The 21 November working-tree candidate reused resident physics bodies as the number of collider shapes changed and prepared terrain upload buffers on a native worker. The opt-in upload path reproduced the engine's mesh bytes with both index widths. The isolated field suite passed 226 checks, including adding support, removing it and restoring it on rollback. These results establish correctness for those operations. The following timings came from the checkout game with worker packing enabled. Packaged verification of this candidate remains open. [Field and collider checks](../reports/checks/20261121T115657538235Z/engine.log)
+
+| Operation | Measured interval | Result |
+|---|---|---|
+| Full 64 m cut | Input to commit 127.666 ms, then 11.159 ms to the first post-commit draw | 138.825 ms total, 105.495 ms over the 33.33 ms deadline. Forty packed surfaces installed. |
+| Sea barrel | Admission to terrain publication 88.089 ms, then 11.663 ms to the local draw | 99.752 ms combined. Worst frame 49.422 ms. |
+| Lake barrel | Admission to terrain publication 188.210 ms, then 8.326 ms to the local draw | 196.536 ms combined. Worst frame 76.003 ms. |
+| Lake mining | Admission to terrain publication 88.220 ms, then 13.908 ms to the local draw | Input to local draw 102.262 ms. Worst frame 30.298 ms. |
+
+The barrel intervals begin after terrain admission and exclude ignition. The local draw measurement alone cannot certify that the detailed water boundary matched everywhere. For the full cut, even eliminating the entire measured commit-to-draw interval would leave 127.666 ms on the critical path. In a separate replay using prepared resources, all nine rays changed and the perimeter held, but on draw two the physics server reported downward velocity while the scene body still reported sleeping. Its motion became visible on draw three. Keep that discrepancy as an explicit contact regression. [Cut and rigid-body observations](../reports/checks/20261121T115303447428Z/engine.log) · [Shoreline and mining timings](../reports/checks/20261121T115510016373Z/normal_gameplay_blast_performance.json)
+
+### Next implementation checkpoint
+
+1. On admission, have the authority produce a revision containing the exact density, material and local water changes, the required boundary samples, and the revisions it replaces. Bound the synchronous work by the resident edited footprint. Keep a finite lake's conserved quantity and any sea exchange explicit. Test the same cut against progressively larger connected lakes.
+2. Give local rendering and physics access to that revision before background mesh reconstruction. For rendering, evaluate the changed field inside the affected bounds and suppress the superseded surface there, including in depth and shadow passes. For physics, exercise ordinary character sweeps and rigid-body support against the same boundary. A ray-query override alone cannot satisfy this requirement. Keep ordinary engine colliders wherever their measured preparation fits. Require a CPU-only path on the authority.
+3. Publish terrain, detailed water and contact using the same revision. Retain each prior resource until its replacement is ready. Discard a late background result if a newer edit superseded it. Validate the transition at seams and inside the cut when mining, deposition and bucket commands overlap. Save and replicate the committed state through the shared command path.
+4. At the first integrated checkpoint, use the packaged game with the full cut and both shoreline blasts. Sample all nine cut positions and the perimeter, record physics-server and scene-body state, and capture two fixed views at draw two and after settling. Repeat the known lake bucket interruption and submerged-object case. Accept the redesign only when geometry, physical contact, water, frame times and image quality pass together. Keep the experimental switches disabled by default until then.
