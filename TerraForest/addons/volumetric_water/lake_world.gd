@@ -34,6 +34,11 @@ var _local_response_pending:=false
 var _local_publication_pending:=false
 var _local_response_started_us:=0
 var _local_response_us:=0
+var _edit_equilibrium_jobs:=0
+var _edit_dependency_rounds:=0
+var _edit_dependency_regions:=0
+var _edit_worker_us:=0
+var _edit_capture_us:=0
 var _slice_callbacks:=0
 var _slice_last_status:=-99
 var _slice_failure:Dictionary={}
@@ -268,6 +273,11 @@ func _queue_settlement(bounds:AABB,terrain_edit:bool)->void:
   _interrupt_edit_work()
   _local_response_pending=true;_local_publication_pending=false
   _local_response_started_us=Time.get_ticks_usec()
+  _edit_equilibrium_jobs=0
+  _edit_dependency_rounds=0
+  _edit_dependency_regions=0
+  _edit_worker_us=0
+  _edit_capture_us=0
 func _interrupt_equilibrium()->void:
  if _equilibrium_task>=0:
   _equilibrium_job.cancel()
@@ -500,7 +510,19 @@ func _advance_equilibrium()->void:
   WorkerThreadPool.wait_for_task_completion(_equilibrium_task);_equilibrium_task=-1
   var started:=Time.get_ticks_usec()
   var result:Dictionary=water.finish_equilibrium(_equilibrium_job)
-  if result.get("local_response",false) and result.get("pending",false):_edit_patch_attempt=-1
+  if result.get("local_response",false):
+   _edit_equilibrium_jobs+=1
+   _edit_worker_us+=int(result.get("worker_us",0))
+   if result.get("pending",false):
+    _edit_patch_attempt=-1
+    _edit_dependency_rounds+=1
+    _edit_dependency_regions+=int(result.get("required_regions",0))
+   result.edit_equilibrium_jobs=_edit_equilibrium_jobs
+   result.edit_dependency_rounds=_edit_dependency_rounds
+   result.edit_dependency_regions=_edit_dependency_regions
+   result.edit_worker_us=_edit_worker_us
+   result.edit_capture_us=_edit_capture_us
+   result.edit_elapsed_us=Time.get_ticks_usec()-_local_response_started_us
   if result.get("ok",false) and result.get("local_response",false):
    _local_response_pending=false;_local_publication_pending=true
   _equilibrium_last_result=result
@@ -534,6 +556,7 @@ func _advance_equilibrium()->void:
  if capture_started>=_process_deadline:return
  _equilibrium_job=water.begin_equilibrium(mini(350,_process_deadline-capture_started),_local_response_pending)
  last_process_work.equilibrium_capture=Time.get_ticks_usec()-capture_started
+ if _local_response_pending:_edit_capture_us+=int(last_process_work.equilibrium_capture)
  if _equilibrium_job!=null:
   var local:bool=_local_response_pending and terrain.joint_edit_pending()
   var work:Callable=_prepare_water_job.bind(_equilibrium_job,terrain.edit_ticket,terrain.epoch) if local else _equilibrium_job.prepare
