@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
-"""Install Windows desktop links to the Godot launcher (no runtime shell)."""
+"""Install Windows desktop links to the Godot launcher."""
+import argparse
 import ctypes
 from ctypes import wintypes
 import json
@@ -11,7 +12,7 @@ import uuid
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def install():
+def install(last_world_only=False):
     if os.name != "nt":
         raise SystemExit("This shortcut installer is Windows-only. Launch Godot with --path Launcher on other systems.")
     from development_storage import admit
@@ -36,7 +37,9 @@ def install():
     ole.CoTaskMemFree(path)
     records = []
     try:
-        for name, continuing in [("TerraForest", False), ("TerraForest Last World", True)]:
+        shortcuts = [("TerraForest Last World", True)]
+        if not last_world_only:shortcuts.insert(0, ("TerraForest", False))
+        for name, continuing in shortcuts:
             destination = desktop / (name + ".lnk")
             backup = output / (name + ".original.lnk")
             if destination.exists() and not backup.exists():
@@ -71,4 +74,6 @@ def install():
 
 
 if __name__ == "__main__":
-    install()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--last-world-only", action="store_true")
+    install(parser.parse_args().last_world_only)

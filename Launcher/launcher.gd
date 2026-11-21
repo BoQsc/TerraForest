@@ -40,6 +40,24 @@ func start() -> void:
  if not FileAccess.file_exists(project_root.path_join("project.godot")):
   fail("The TerraForest source project must be beside the Launcher folder.");return
  DirAccess.make_dir_recursive_absolute(project_root.path_join("reports"))
+ if OS.get_name() == "Windows":
+  phase = "native"
+  status.text = "Checking native code…"
+  details.text = "Changed C++ extensions are rebuilt before the game starts."
+  log_path = project_root.path_join("reports/worlds_native.log")
+  worker = Thread.new()
+  if worker.start(prepare_native) != OK:worker = null;fail("Cannot start the native code check.")
+ else:
+  start_import()
+
+func prepare_native() -> int:
+ var script := project_root.path_join("tools/prepare_launcher_native.py")
+ var result := OS.execute("py.exe", PackedStringArray(["-3", script]), [], false, false)
+ if result == -1:
+  result = OS.execute("python.exe", PackedStringArray([script]), [], false, false)
+ return result
+
+func start_import() -> void:
  phase = "import"
  status.text = "Refreshing changed resources…"
  details.text = "Godot prepares scripts and assets in the background. No editor window is opened."
@@ -68,6 +86,12 @@ func _process(_delta: float) -> void:
   return
  if worker == null or worker.is_alive():return
  var exit_code: int = worker.wait_to_finish();worker = null
+ if phase == "native":
+  if exit_code != 0:
+   fail("Native code preparation failed (exit %d). See worlds_native.log in Open logs. Windows native preparation requires Python and Git." % exit_code)
+   return
+  start_import()
+  return
  var log_text := FileAccess.get_file_as_string(log_path)
  if exit_code != 0 or "SCRIPT ERROR:" in log_text or "Failed to load script" in log_text or "Failed to load GDExtension" in log_text:
   fail("Resource preparation failed (exit %d). See %s" % [exit_code, log_path]);return
