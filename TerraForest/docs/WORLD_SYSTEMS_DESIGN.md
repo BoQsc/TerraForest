@@ -71,6 +71,23 @@ the server, modding and multiplayer qualification gates. Current evidence
 supports the design direction. Neither dry nor wet editing has passed all
 these gates.
 
+### What an edit must carry across the implementation
+
+| Producer | Consumer | Required data and ordering |
+|---|---|---|
+| Tool or authoring UI | Authority | Operation ID, tool or brush parameters, world identity, expected revisions and required resources. The authority evaluates the live target. Opening an inventory or moving out of reach can invalidate a buffered action. |
+| Authority | Local preparation | Committed revision, changed density and material sample runs, removed block IDs, inventory or bucket delta and support changes. Both the optimized large-cut writer and the general brush writer must describe their actual writes. Cache admission for a new page has its own footprint. |
+| Local preparation | Render, physics and water | Resolve incident faces and seam dependencies from resident data. Prepare exact replacement geometry, terrain-clipped water, wet-region capacity changes and superseded physics owners. The installation boundary checks that all inputs still refer to the same revision. |
+| Playable region | Queries, subsequent edits and peers | Expose the revision, its affected bounds and the first physics step and draw that use it. Gameplay can query the committed region. Distant rendering and wider settling can coalesce work independently. Late joins replay the regional baseline plus subsequent changes. |
+
+Size interactive work by changed samples, incident faces, replaced collision
+owners and affected water connectivity. Measure the cost of registering new
+physics shapes separately from sampling the density. Capacity, elapsed time
+and peak memory for the largest supported operation belong in the same
+report. The 64 m case already produces tens of thousands of changed render
+records. An implementation that still regenerates all of those records
+must demonstrate the required throughput on the reference machine.
+
 ## Resident edits and the first playable revision
 
 The current client serializes terrain edits through one pending ticket. The density worker can accept a field change before the visible terrain, registered physics shapes and detailed water are ready. The shared ticket also covers vegetation support and final bookkeeping. A post-commit draw is a different observation from first contact across the footprint. Keep both clocks. On the packaged default 64 m cut, density work took 9.12 ms, the centre appeared at 43.87 ms and the post-commit draw arrived at 127.27 ms. The shoreline traces independently measure the first matching detailed water and collider. [Cut trace](../reports/checks/20261121T083846972823Z/engine.log) and [shoreline traces](../reports/checks/20261121T011517656506Z/normal_gameplay_blast_performance.json).

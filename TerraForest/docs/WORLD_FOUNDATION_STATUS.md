@@ -9129,3 +9129,27 @@ missed construction at 50.49 ms including 24.51 ms before admission. Mining
 took 15.35 ms from impact. This was a shared-machine diagnostic. Keep the
 deadline open until unpredicted targets and full-footprint terrain, water and
 physics qualify under the contract.
+
+The [packaged cut](../reports/checks/20261121T104255969895Z/engine.log)
+placed the 2 m radius brush on draw one at 16.56 ms. The 64 m wide cut
+matched zero of nine changed footprint probes on draw two. First observed
+geometry appeared at 72.47 ms and the post-commit draw at 139.71 ms.
+Both final cameras show the completed box excavation.
+[Cut camera one](../reports/checks/20261121T104255969895Z/cut_after_angle_1.png)
+and [camera two](../reports/checks/20261121T104255969895Z/cut_after_angle_2.png).
+
+The [packaged shoreline timing run](../reports/checks/20261121T104143475472Z/normal_gameplay_blast_performance.json)
+used the candidate [loaded terrain module](../reports/checks/20261121T104143475472Z/loaded_terrain.json).
+Matching detailed water and collision took 97.39 ms from admission at the sea
+and 214.46 ms at the lake. Lake mining took 105.32 ms from action to local
+draw. Both sampled shorelines reached within 2 cm and the lake barrel preserved
+the finite quantity. The separate camera repeat still failed seven timing
+assertions. Both craters visibly filled, with some angular segments on their
+outlines. The dry bank above the lake remains visible. These samples do not
+establish watertight contact around arbitrary objects. Stable 60 FPS and the
+two-frame milestone remain open.
+
+| Camera | Sea after blast | Lake after blast |
+|---|---|---|
+| First | [Sea](../reports/checks/20261121T104406426716Z/player_shore_after.png) | [Lake](../reports/checks/20261121T104406426716Z/player_lake_after.png) |
+| Reverse | [Sea](../reports/checks/20261121T104406426716Z/player_shore_after_reverse.png) | [Lake](../reports/checks/20261121T104406426716Z/player_lake_after_reverse.png) |
