@@ -586,6 +586,21 @@ func _receive(result: Dictionary) -> void:
 		if result.has("error"):
 			_fail(str(result["error"]))
 			return
+		if result.get("triangle_pages",false) and tiles.get(result.key,{}).get("triangle_pages",false):
+			var changed:Array=[]
+			var bytes:=0
+			var triangles:=0
+			for page:Dictionary in result.bricks:
+				var old:Dictionary=tiles[result.key].bricks.get(page.brick_bottom,{})
+				if old.get("arrays",[])==page.arrays:continue
+				changed.append(page)
+				bytes+=int(page.bytes)
+				triangles+=int(page.triangles)
+			result.bricks=changed
+			result.brick_partial=true
+			result.bytes=bytes
+			result.triangles=triangles
+			result.retain_geometry=changed.is_empty()
 		if result.get("retain_geometry",false):
 			staged_batch[result.key]={"retain_geometry":true,"stamp":result.stamp}
 			batch_remaining-=1
@@ -691,7 +706,10 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 	if data.has("bricks"):
 		var parent:=Node3D.new()
 		parent.visible=false
-		return {"node":parent,"body":null,"bricks":{},"brick_partial":data.get("brick_partial",false),"dirty":false,"stamp":data.stamp,"step":data.get("step",1),"triangles":data.triangles,"bytes":data.bytes,"used":Time.get_ticks_msec(),"key":data.key,"active":false,"cavity_visibility":true}
+		var section:Dictionary={"node":parent,"body":null,"triangle_pages":data.get("triangle_pages",false),"bricks":{},"brick_partial":data.get("brick_partial",false),"dirty":false,"stamp":data.stamp,"step":data.get("step",1),"triangles":data.triangles,"bytes":data.bytes,"used":Time.get_ticks_msec(),"key":data.key,"active":false,"cavity_visibility":true}
+		if data.get("triangle_pages",false):
+			section.rim_geometry=[data.arrays[Mesh.ARRAY_VERTEX],data.arrays[Mesh.ARRAY_INDEX]]
+		return section
 	var upload_begin: int = Time.get_ticks_usec()
 	var key: Vector3i = data["key"]
 	var arrays: Array = data["arrays"]
@@ -700,7 +718,9 @@ func _begin_entry(data: Dictionary) -> Dictionary:
 	# Only the replacement resources are private during staging.
 	var slot:Dictionary={}
 	var old:Dictionary=tiles.get(key,{})
-	if data.get("kind","")=="batch" and not data.has("contact_count") and not data.has("brick_bottom") and not indices.is_empty() and not data.collision_pieces.is_empty():
+	var page_update:bool=data.get("page_update",false)
+	if page_update:old=old.get("bricks",{}).get(data.brick_bottom,{})
+	if (data.get("kind","")=="batch" or page_update) and not data.has("contact_count") and (not data.has("brick_bottom") or page_update) and not indices.is_empty() and not data.collision_pieces.is_empty():
 		var previous_body:StaticBody3D=old.get("body")
 		if old.get("node") is MeshInstance3D and is_instance_valid(previous_body) and previous_body.get_child_count()==data.collision_pieces.size():
 			var colliders:=previous_body.get_children()
@@ -775,8 +795,10 @@ func _prepare_piece() -> bool:
 		if not parent.has("brick_preparation"):
 			var part: Dictionary=parts[index]
 			part["stamp"]=parent.data.stamp
+			part.page_update=parent.data.get("triangle_pages",false) and parent.data.get("brick_partial",false)
 			parent["brick_preparation"]={"data":part,"entry":_begin_entry(part),"piece_at":0}
 			var attach_begin:=Time.get_ticks_usec()
+			if parent.brick_preparation.entry.has("resident_swap"):return false
 			parent.entry.node.add_child(parent.brick_preparation.entry.node)
 			_record_stage("prepared subtree attach",(Time.get_ticks_usec()-attach_begin)/1000.0)
 			# The hidden parent gates the whole region. Keep child visibility local
@@ -1004,6 +1026,7 @@ func _staging_valid(data: Dictionary) -> bool:
 	return true
 
 func _detach_retired_collision(entry: Dictionary) -> void:
+	if entry.has("resident_swap"):return
 	# Layer zero alone still rebuilds Jolt compounds when shapes are freed.
 	# Only retiring entries leave physics; cached LOD entries stay registered.
 	if entry.has("bricks"):
@@ -1022,7 +1045,7 @@ func _destroy_entry(entry: Dictionary) -> void:
 		retired_nodes.push_back(node)
 
 func _set_active(entry: Dictionary, active: bool, inherited_visibility: bool=false) -> void:
-	if bool(entry.get("active", false)) == active:
+	if (inherited_visibility and entry.has("resident_swap")) or bool(entry.get("active",false))==active:
 		return
 	entry["active"] = active
 	if entry.has("bricks"):
@@ -1048,19 +1071,29 @@ func _install(key: Vector3i, entry: Dictionary) -> void:
 			# Keep the live container when only a minority of its bricks changed.
 			# Reparenting an untouched StaticBody leaves and rejoins the physics
 			# space even when the collision layer and mesh revision stay the same.
-			if entry.bricks.size()*2 < old.bricks.size():
+			if entry.get("triangle_pages",false) or entry.bricks.size()*2 < old.bricks.size():
 				for bottom: int in entry.bricks:
+					var replacement: Dictionary = entry.bricks[bottom]
+					if replacement.has("resident_swap"):
+						old.bytes-=old.bricks[bottom].bytes
+						old.triangles-=old.bricks[bottom].triangles
+						_apply_resident_swap(replacement,true)
+						replacement.active=old.active
+						retired_payloads.append(replacement.resident_swap)
+						replacement.erase("resident_swap")
+						old.bricks[bottom]=replacement
+						continue
 					if old.bricks.has(bottom):
 						var replaced: Dictionary = old.bricks[bottom]
 						old.bytes -= int(replaced.bytes)
 						old.triangles -= int(replaced.triangles)
 						_destroy_entry(replaced)
-					var replacement: Dictionary = entry.bricks[bottom]
 					replacement.node.reparent(old.node,false)
 					old.bricks[bottom] = replacement
 					_set_active(replacement,bool(old.active),true)
 				old.bytes += int(entry.bytes)
 				old.triangles += int(entry.triangles)
+				if entry.has("rim_geometry"):old.rim_geometry=entry.rim_geometry
 				old.stamp = entry.stamp
 				old.used = entry.used
 				old.dirty = false
@@ -1099,7 +1132,7 @@ func _contact_domain(commands:Array)->Dictionary:
 	for z in range(corner.y,end.y,16):
 		for x in range(corner.x,end.x,16):
 			var key:Vector3i=_edit_owner_cells.get(Vector2i(x,z),Vector3i.ZERO)
-			if key.z==0 or not tiles[key].has("arrays") or tiles[key].step!=1:return {}
+			if key.z==0 or (not tiles[key].has("arrays") and not tiles[key].has("rim_geometry")) or tiles[key].step!=1:return {}
 			if not keys.has(key):
 				keys.append(key)
 				bounds=bounds.merge(Rect2i(key.x,key.y,key.z,key.z))
@@ -1126,9 +1159,9 @@ func _stage_contact(key:Vector3i,entry:Dictionary,data:Dictionary)->void:
 		if id.x+id.z==bounds.end.x:outer|=2
 		if id.y==bounds.position.y:outer|=4
 		if id.y+id.z==bounds.end.y:outer|=8
-		var old:Array=tiles[id].arrays
+		var rim:=_rim_geometry(tiles[id])
 		var replacement:Array=_contact_entries[id].arrays
-		if not backend.collision_recipes.matching_cut_boundary(id,outer,old[Mesh.ARRAY_VERTEX],old[Mesh.ARRAY_INDEX],replacement[Mesh.ARRAY_VERTEX],replacement[Mesh.ARRAY_INDEX]):
+		if not backend.collision_recipes.matching_cut_boundary(id,outer,rim[0],rim[1],replacement[Mesh.ARRAY_VERTEX],replacement[Mesh.ARRAY_INDEX]):
 			_record_stage("resident cut boundary mismatch",0)
 			_retire_contact()
 			return
@@ -1158,10 +1191,17 @@ func _set_edit_replacement(key:Vector3i, replacement:Dictionary, active:bool)->v
 		# Original and replacement parents coexist until commit. Only the
 		# children actually replaced relinquish their visual and physics space.
 		for id:int in replacement.bricks:
-			if original.bricks.has(id):_set_active(original.bricks[id],not active)
+			if replacement.bricks[id].has("resident_swap"):
+				_apply_resident_swap(replacement.bricks[id],active)
+			elif original.bricks.has(id):_set_active(original.bricks[id],not active)
 	else:
 		_set_active(original,not active)
 	_set_active(replacement,active)
+
+func _rim_geometry(entry:Dictionary)->Array:
+	if entry.has("rim_geometry"):return entry.rim_geometry
+	if entry.has("arrays"):return [entry.arrays[Mesh.ARRAY_VERTEX],entry.arrays[Mesh.ARRAY_INDEX]]
+	return []
 
 func _ready_edit_group(seed:Vector3i)->Array[Vector3i]:
 	if not _edit_visible_owners.has(seed):return []
@@ -1184,8 +1224,11 @@ func _ready_edit_group(seed:Vector3i)->Array[Vector3i]:
 		var old:Dictionary=tiles[key]
 		if not entry.has("rims"):
 			entry.rims=15
-			if old.has("arrays") and entry.has("arrays") and old.step==1 and entry.step==1:
-				entry.rims=backend.collision_recipes.changed_rims(key,old.arrays[Mesh.ARRAY_VERTEX],old.arrays[Mesh.ARRAY_INDEX],entry.arrays[Mesh.ARRAY_VERTEX],entry.arrays[Mesh.ARRAY_INDEX])
+			if old.step==1 and entry.step==1:
+				var before:=_rim_geometry(old)
+				var after:=_rim_geometry(entry)
+				if not before.is_empty() and not after.is_empty():
+					entry.rims=backend.collision_recipes.changed_rims(key,before[0],before[1],after[0],after[1])
 		var rims:int=entry.rims
 		if rims==0:continue
 		for z in range(key.y-16,key.y+key.z+16,16):
@@ -1533,7 +1576,8 @@ func _update_cut(covered:Dictionary={}) -> void:
 		_set_active(tiles[key], true)
 		total_triangles += int(tiles[key]["triangles"])
 		# A completed EMPTY fine patch has valid empty collision, not missing data.
-		if key.z <= 32 and int(tiles[key].get("step",1))==1 and (is_instance_valid(tiles[key]["body"]) or tiles[key].get("bricks",{}).size()==8 or int(tiles[key]["triangles"]) == 0):
+		var expected_parts:int=(key.z/8)*(key.z/8) if tiles[key].get("triangle_pages",false) else 8
+		if key.z <= 32 and int(tiles[key].get("step",1))==1 and (is_instance_valid(tiles[key]["body"]) or tiles[key].get("bricks",{}).size()==expected_parts or int(tiles[key]["triangles"]) == 0):
 			for z in range(key.y / FINE_SIZE, (key.y + key.z) / FINE_SIZE):
 				for x in range(key.x / FINE_SIZE, (key.x + key.z) / FINE_SIZE):
 					active_leaves[Vector2i(x, z)] = true
@@ -1592,7 +1636,12 @@ func _cancel_density_requests(status: String) -> void:
 
 func _select_dirty_owners(job: Dictionary, members: int) -> void:
 	var key: Vector3i=job.key
-	if not tiles.has(key) or not tiles[key].has("bricks"): return
+	if not tiles.has(key) or not tiles[key].has("bricks"):return
+	if tiles[key].get("triangle_pages",false):
+		var previous:Dictionary={}
+		for id:int in tiles[key].bricks:previous[id]=tiles[key].bricks[id].arrays
+		job.previous_pages=previous
+		return
 	var bottoms: Array=[]
 	for bottom: int in tiles[key].bricks:
 		var child: Dictionary=tiles[key].bricks[bottom]

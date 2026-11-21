@@ -20,6 +20,7 @@ var native: Object
 var collision_recipes: RefCounted
 var _collision_piece_triangles := 1024
 var snapshot_terrain: bool = "--snapshot-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+var triangle_page_terrain:bool = "--triangle-page-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var brick_terrain: bool = "--brick-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var region_terrain: bool = "--region-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var local_terrain: bool = not "--whole-patch-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
@@ -566,6 +567,23 @@ func _prepare_contact(source:Object,job:Dictionary,command:PackedByteArray,revis
 # Each worker holds a private snapshot of one 64 m group at the accepted
 # revision. Only complete ordinary terrain packets are eligible for early
 # installation. Missing resident data or an uncaptured shadow uses _build.
+func _prepare_triangle_pages(chunk:Dictionary,key:Vector3i,previous:Dictionary={})->bool:
+	var pages:Array=collision_recipes.triangle_pages(key,chunk.arrays)
+	if pages.is_empty():return false
+	var changed:Array=[]
+	for page:Dictionary in pages:
+		if previous.get(page.brick_bottom,[])==page.arrays:continue
+		changed.append(page)
+		var faces:PackedVector3Array=collision_recipes.merge_planar_faces(page.faces)
+		var recipes:Dictionary=collision_recipes.prepare(faces,_collision_piece_triangles)
+		if not recipes.ok:return false
+		page.collision_pieces=recipes.pieces
+		page.erase("faces")
+	chunk.bricks=changed
+	chunk.triangle_pages=true
+	chunk.erase("faces")
+	return true
+
 func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,share_contacts:bool=false)->void:
 	for item:Dictionary in items:
 		var key:Vector3i=item.key
@@ -575,10 +593,15 @@ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Di
 		var packet:=reply.slice(16)
 		var chunk:=Codec.decode_mesh(packet)
 		if chunk.has("error"):continue
-		var faces:PackedVector3Array=collision_recipes.merge_planar_faces(chunk.faces)
-		var recipes:Dictionary=collision_recipes.prepare(faces,_collision_piece_triangles)
-		if not recipes.ok:continue
-		chunk.merge({"collision_pieces":recipes.pieces,"collision_prepare_ms":recipes.prepare_ms,
+		if triangle_page_terrain:
+			if not _prepare_triangle_pages(chunk,key,item.get("previous_pages",{})):continue
+		else:
+			var faces:PackedVector3Array=collision_recipes.merge_planar_faces(chunk.faces)
+			var recipes:Dictionary=collision_recipes.prepare(faces,_collision_piece_triangles)
+			if not recipes.ok:continue
+			chunk.collision_pieces=recipes.pieces
+			chunk.collision_prepare_ms=recipes.prepare_ms
+		chunk.merge({
 			"stamp":item.stamp,"key":key,"epoch":job.epoch,"ticket":job.ticket,"kind":"edit_chunk",
 			"worker_ms":(Time.get_ticks_usec()-start)/1000.0})
 		chunk.faces=PackedVector3Array()
@@ -1360,16 +1383,18 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 		var epoch_reply: PackedByteArray = _call(Codec.command(13))
 		if epoch_reply.decode_u32(12) != expected_build_epoch:
 			return {"cancelled": true}
-		var collision_faces:PackedVector3Array=result.faces
-		if foreground:collision_faces=collision_recipes.merge_planar_faces(collision_faces)
-		var recipes: Dictionary = collision_recipes.prepare(collision_faces, _collision_piece_triangles)
-		if not recipes.ok:
-			return {"error": recipes.error}
+		if triangle_page_terrain and key.z in [16,32]:
+			if not _prepare_triangle_pages(result,key):return {"error":"Terrain triangle partition failed"}
+		else:
+			var collision_faces:PackedVector3Array=result.faces
+			if foreground:collision_faces=collision_recipes.merge_planar_faces(collision_faces)
+			var recipes: Dictionary = collision_recipes.prepare(collision_faces, _collision_piece_triangles)
+			if not recipes.ok:return {"error": recipes.error}
+			result["collision_pieces"] = recipes.pieces
+			result["collision_prepare_ms"] = recipes.prepare_ms
 		epoch_reply = _call(Codec.command(13))
 		if epoch_reply.decode_u32(12) != expected_build_epoch:
 			return {"cancelled": true}
-		result["collision_pieces"] = recipes.pieces
-		result["collision_prepare_ms"] = recipes.prepare_ms
 		# The pieces own the exact faces; release the now redundant full array.
 		result["faces"] = PackedVector3Array()
 	result["worker_ms"] = float(Time.get_ticks_usec() - begin) / 1000.0

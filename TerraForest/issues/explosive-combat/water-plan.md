@@ -1,4 +1,6 @@
 
+The [changed-triangle comparison](../../docs/WORLD_FOUNDATION_STATUS.md#changed-triangle-publication-trial) records the rejected 8 m page trial and actual packaged timings. The two-frame edit milestone remains open.
+
 The [joint publication measurements](../../docs/WORLD_FOUNDATION_STATUS.md#joint-publication-on-the-packaged-shoreline-route) cover the full cut, both shoreline camera pairs and the outstanding two-frame deadline.
 
 **The two-frame gate remains open.** The [packaged cut and ocean contact measurements](../../docs/WORLD_FOUNDATION_STATUS.md#packaged-cut-and-detailed-ocean-contact) track the current default and the independent terrain-section comparison. See the [changed-triangle results and remaining publication work](../../docs/WORLD_FOUNDATION_STATUS.md#changed-terrain-triangles-and-the-two-frame-edit-gate). The [resident geometry trial](../../docs/WORLD_FOUNDATION_STATUS.md#resident-terrain-geometry-and-shoreline-contact) records the two camera pairs, cube contact and repeated barrel timings. Sea took 108–127 ms and lake took 224–274 ms. A resident excavation now stages changed

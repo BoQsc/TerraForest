@@ -778,6 +778,7 @@ func ready(label:String)->bool:
   game.app_focused=true
   if Time.get_ticks_msec()>=next_progress and game.lakes.water!=null:
    var progress:Dictionary=game.lakes.statistics()
+   if game.terrain.backend.triangle_page_terrain and game.loading_active:print("TRIANGLE_LOAD ",game.loading_stage_text," ",game.loading_work_text," ",game.terrain.loading_state(game.player.position,game.fly))
    print("PLAYER_LOAD_PROGRESS ",label," loading=",game.loading_active," pending=",progress.pending_regions," settling=",progress.settling_regions," regions=",progress.regions," meshes=",progress.dirty_meshes," equilibrium=",progress.equilibrium_pending," request=",progress.next_occupancy_request," busy=",progress.occupancy_busy," builder=",progress.occupancy_builder_present," slices=",progress.slice_callbacks," status=",progress.slice_last_status," patch=",progress.slice_failure," result=",JSON.stringify(progress.equilibrium_result))
    next_progress=Time.get_ticks_msec()+10000
   if not game.terrain.latest_error.is_empty():break
@@ -1241,10 +1242,25 @@ func brush_mesh_owners(view:Camera3D,center:Vector3,radius:float)->Dictionary:
   owners[key]=records
  return owners
 
+# Preserve winding, multiplicity and every shader input across independently
+# numbered render pages. Runs after the measured first draw.
+func triangle_records(arrays:Array,sign:int,counts:Dictionary)->void:
+ var indices:PackedInt32Array=arrays[Mesh.ARRAY_INDEX]
+ for start in range(0,indices.size(),3):
+  var records:=PackedByteArray()
+  for corner in range(start,start+3):
+   var index:=indices[corner]
+   records.append_array(var_to_bytes([arrays[Mesh.ARRAY_VERTEX][index],arrays[Mesh.ARRAY_NORMAL][index],arrays[Mesh.ARRAY_COLOR][index],arrays[Mesh.ARRAY_TEX_UV][index],arrays[Mesh.ARRAY_TEX_UV2][index]]))
+  var key:=records.hex_encode()
+  var number:int=counts.get(key,0)+sign
+  if number==0:counts.erase(key)
+  else:counts[key]=number
+
 func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:Dictionary,old_stamps:Dictionary)->void:
  var after:=brush_mesh_owners(view,center,radius)
  var counts:={"replaced":0,"identical":0,"attributes_only":0,"changed_in_frustum":0,"changed_outside":0,"retained":0,"tiles_with_replacements":0,"resident_nodes_reused":0}
  var collision:={"old_triangles":0,"new_triangles":0,"unchanged_triangles":0,"changed_axis_aligned":0,"old_shapes":0,"new_shapes":0,"shared_shapes":0,"stable_cell_triangles":{}}
+ var delta:={"old":0,"new":0,"kept":0,"inserted":0,"removed":0}
  var verify_sections:bool=radius>=32 and game.terrain.backend.region_terrain
  var verified_sections:=0
  var section_mismatches:=0
@@ -1263,6 +1279,43 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
   for id in current:
    if not old.has(id):ids.append(id)
   ids.sort()
+  var pages:bool=game.terrain.tiles.get(key,{}).get("triangle_pages",false)
+  if pages and radius>=32 and "--authoring-exact-mesh" in OS.get_cmdline_user_args():
+   const FullCodec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
+   var authority:RefCounted=game.terrain.backend.native
+   var epoch:int=authority.execute(FullCodec.command(13)).decode_u32(12)
+   var reply:PackedByteArray=authority.execute(FullCodec.command(1,[key.x,key.y,key.z,1,epoch]))
+   var exact:Dictionary=FullCodec.decode_mesh(reply.slice(16)) if FullCodec.reply_ok(reply) else {}
+   var differences:={}
+   if exact.has("arrays"):triangle_records(exact.arrays,1,differences)
+   for record:Dictionary in current.values():triangle_records(record.arrays,-1,differences)
+   var tile:Dictionary=game.terrain.tiles[key]
+   if tile.active and exact.has("arrays") and differences.is_empty():
+    var edits:={}
+    var old_count:=0
+    var new_count:=0
+    for record:Dictionary in old.values():
+     triangle_records(record.arrays,-1,edits)
+     old_count+=record.arrays[Mesh.ARRAY_INDEX].size()/3
+    for record:Dictionary in current.values():
+     triangle_records(record.arrays,1,edits)
+     new_count+=record.arrays[Mesh.ARRAY_INDEX].size()/3
+    var inserted:=0
+    var removed:=0
+    for n:int in edits.values():
+     if n>0:inserted+=n
+     else:removed-=n
+    delta.old+=old_count
+    delta.new+=new_count
+    delta.kept+=new_count-inserted
+    delta.inserted+=inserted
+    delta.removed+=removed
+   if not differences.is_empty() and tile.dirty and not tile.active and tile.stamp!=game.terrain.stamps[key]:
+    var dormant:=true
+    for child:Dictionary in tile.bricks.values():
+     dormant=dormant and not child.node.is_visible_in_tree() and (child.body==null or child.body.collision_layer==0)
+    check(dormant,"Previous-revision triangle pages are hidden and excluded from physics "+str(key))
+   else:check(exact.has("arrays") and differences.is_empty(),"Triangle pages match all canonical triangles and channels "+str(key))
   var replacements:=0
   for id in ids:
    var a:Dictionary=old.get(id,{})
@@ -1299,7 +1352,7 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
     compare_brush_collision(a.get("shapes",[]),b.get("shapes",[]),collision)
    var old_arrays:Array=a.get("arrays",[])
    var new_arrays:Array=b.get("arrays",[])
-   if radius>=32 and key.z<=32 and "--authoring-exact-mesh" in OS.get_cmdline_user_args():
+   if not pages and radius>=32 and key.z<=32 and "--authoring-exact-mesh" in OS.get_cmdline_user_args():
     const MeshCodec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
     var authority:RefCounted=game.terrain.backend.native
     var epoch:int=authority.execute(MeshCodec.command(13)).decode_u32(12)
@@ -1336,6 +1389,7 @@ func report_brush_dependencies(view:Camera3D,center:Vector3,radius:float,before:
  if verify_sections:
   print("AUTHORING_SECTION_PARITY ",JSON.stringify({"checked":verified_sections,"inactive_stale":inactive_stale_sections,"mismatches":section_mismatches}))
   check(verified_sections>0 and section_mismatches==0,"All published fine sections match independent reconstruction and stale copies are inactive")
+ if delta.new>0:print("AUTHORING_RENDER_TRIANGLE_DELTA ",JSON.stringify(delta))
  print("AUTHORING_DEPENDENCIES ",JSON.stringify(counts))
  if "--authoring-collision-reuse" in OS.get_cmdline_user_args():
   check(collision.old_triangles>0 and collision.new_triangles>0,"Compared installed physics triangles across publication")
@@ -1464,6 +1518,8 @@ func run()->void:
  var session_args:=PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors"])
  var region_trial:=OS.get_cmdline_user_args().has("--region-terrain")
  if region_trial:session_args.append("--region-terrain")
+ var page_trial:=OS.get_cmdline_user_args().has("--triangle-page-terrain")
+ if page_trial:session_args.append("--triangle-page-terrain")
  preload("res://addons/world_runtime/session_options.gd").set_arguments(session_args,true)
  route_scene_start=Time.get_ticks_usec()
  game=load("res://demo/world.tscn").instantiate()
@@ -1471,6 +1527,7 @@ func run()->void:
   game.terrain.backend=BrushProfileBackend.new()
   game.terrain.backend.profile_regions=true
  game.temporary_world=true;root.add_child(game)
+ if page_trial:check(game.terrain.backend.triangle_page_terrain,"Packaged route enabled stable triangle pages")
  if region_trial:check(game.terrain.backend.region_terrain,"Packaged route enabled separate terrain sections")
  var qualification:bool="--qualification-route" in OS.get_cmdline_user_args()
  if qualification:begin_route_capture()

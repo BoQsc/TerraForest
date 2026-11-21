@@ -1,3 +1,29 @@
+## Changed-triangle publication trial
+
+**The two-frame gate failed.** The packaged 1080p Cedar Vale comparison ran on the RTX 4050 Laptop using PCK `48043c3f5d6aa81e508262a14b6fbd3c101d4b76af23717c4db6a10152e221bd`. The candidate requires `--triangle-page-terrain`. Normal gameplay uses the existing resident tile path.
+
+| Normal gameplay action | First matching draw on the candidate | Worst frame interval |
+|---|---:|---:|
+| 64 m cut | 159.94 ms from input to the complete draw | 25.48 ms during the edit |
+| Sea barrel | Draw 6 at 96.57 ms from terrain admission | 50.11 ms outside diagnostics (p99 29.59 ms) |
+| Lake barrel | Draw 15 at 232.08 ms from terrain admission | 30.25 ms outside diagnostics (p99 25.24 ms) |
+
+The full cut still had **0 of 9** changed footprint probes matching on draw two at 43.08 ms. The first local terrain appeared on draw four at 61.73 ms. The candidate split canonical triangles into 8 m horizontal pages, kept identical pages live, reused scene nodes for all 120 changed pages, and merged coplanar collision faces. The first trial before restoring planar merging and exact seam comparisons took 171.19 ms. The full-cut reference on the prior default was 102.53–123.67 ms. [First trial](../reports/checks/20261121T083001808708Z/engine.log) · [Cut timings and exact triangle comparison](../reports/checks/20261121T083406868800Z/engine.log)
+
+A control using the default terrain path in this same PCK took 127.27 ms for the complete cut, with a 26.07 ms worst edit interval. Its 36 render owners matched independent reconstruction and its 3,750 collision samples were byte-identical to the reference. The 8 m candidate was 32.67 ms slower on this comparison. [Same-package control](../reports/checks/20261121T083846972823Z/engine.log)
+
+For the final cut, **45,367 of 56,610** visible output triangles were new when compared by winding, positions, normals, color and both UV channels. 11,243 survived exactly and 10,959 prior triangles disappeared. The trial still regenerates unchanged triangles inside a changed page. The worker field edit took 8.24 ms. Mesh building consumed 110.63 ms of summed worker time, some of it concurrent. The 3,750 final rays agreed with the prior default on every hit and miss. Maximum range difference was 0.123 mm. All checked current render owners matched fresh reconstruction. Nine stale, inactive owners were hidden and excluded from physics. [Candidate rays](../reports/checks/20261121T083406868800Z/brush_contacts.json) · [Reference rays](../reports/checks/20261121T011613680089Z/brush_contacts.json)
+
+At both shores the first changed collider, visible crater and detailed water appeared on the same draw. Terrain and physics agreed within 0.027 mm at the blast probes. The immediate shore contact pass found no gap over 2 cm at 23 sea samples and 26 lake samples. In the separate camera run, sea took 106.86 ms and lake 209.28 ms. Both angles show the inlet opening, and both submerged views show the excavated bank. Mining also missed its two-frame limit. [Timing run](../reports/checks/20261121T083640833883Z/normal_gameplay_blast_performance.json) · [Camera run and waterline checks](../reports/checks/20261121T083517543904Z/engine.log)
+
+The separate construction check placed and removed a cube through gameplay. Water was excluded from its solid interior, reached all four walls within 1 cm, and recovered after removal. [Contact log](../reports/checks/20261121T083734481487Z/engine.log) · [Above water](../reports/checks/20261121T083734481487Z/object_contact_above.png) · [Submerged](../reports/checks/20261121T083734481487Z/object_contact_underwater.png)
+
+| Scene | First angle before and after | Second angle before and after |
+|---|---|---|
+| Cut | [Before](../reports/checks/20261121T083406868800Z/cut_before_angle_1.png) · [After](../reports/checks/20261121T083406868800Z/cut_after_angle_1.png) | [Before](../reports/checks/20261121T083406868800Z/cut_before_angle_2.png) · [After](../reports/checks/20261121T083406868800Z/cut_after_angle_2.png) |
+| Sea | [Before](../reports/checks/20261121T083517543904Z/player_shore_before.png) · [After](../reports/checks/20261121T083517543904Z/player_shore_after.png) | [Before](../reports/checks/20261121T083517543904Z/player_shore_before_reverse.png) · [After](../reports/checks/20261121T083517543904Z/player_shore_after_reverse.png) |
+| Lake | [Before](../reports/checks/20261121T083517543904Z/player_lake_before.png) · [After](../reports/checks/20261121T083517543904Z/player_lake_after.png) | [Before](../reports/checks/20261121T083517543904Z/player_lake_before_reverse.png) · [After](../reports/checks/20261121T083517543904Z/player_lake_after_reverse.png) |
+
 ## Joint publication on the packaged shoreline route
 
 On Cedar Vale at 1920 × 1080, detailed water and terrain first matched the changed physics surface on the same draw at both shores. The two-frame deadline still fails. Measurements below use the installed PCK `5e1b972205702db74a367314c4acf2d359bffaae0982d391cef9a91ce6ecb9ed` and matching external DLLs on the RTX 4050 Laptop. The camera run includes image readback, so use the separate timing run for frame intervals.

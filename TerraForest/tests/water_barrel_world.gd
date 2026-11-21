@@ -57,6 +57,7 @@ func run():
  process_frame.connect(frame_cost)
  RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
  game=load("res://demo/world.tscn").instantiate();game.background_fps=60;root.add_child(game)
+ if "--triangle-page-terrain" in OS.get_cmdline_user_args():check(game.terrain.backend.triangle_page_terrain,"Object contact uses triangle-page terrain")
  var deadline:=Time.get_ticks_msec()+120000
  while not game.has_meta("water_bucket_review_ready") and Time.get_ticks_msec()<deadline:await process_frame
  check(game.has_meta("water_bucket_review_ready"),"Actual lake review world prepares")

@@ -5,6 +5,9 @@
 #include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/array.hpp>
+#include <godot_cpp/classes/mesh.hpp>
+#include <godot_cpp/variant/packed_color_array.hpp>
+#include <godot_cpp/variant/packed_vector2_array.hpp>
 #include <algorithm>
 #include <tuple>
 #include <map>
@@ -91,6 +94,52 @@ PackedVector3Array merge_planar_faces(const PackedVector3Array &faces) {
     result.resize(used);
     return result;
 }
+// Stable spatial ownership survives vertex renumbering and triangle insertion.
+// Each page uses local indices but preserves the original shader inputs and winding.
+Array triangle_pages(Vector3i key,const Array &source){
+    Array result;
+    if((key.z!=16 && key.z!=32)||source.size()!=Mesh::ARRAY_MAX)return result;
+    const PackedVector3Array positions=source[Mesh::ARRAY_VERTEX], normals=source[Mesh::ARRAY_NORMAL];
+    const PackedVector2Array uv=source[Mesh::ARRAY_TEX_UV],uv2=source[Mesh::ARRAY_TEX_UV2];
+    const PackedColorArray colors=source[Mesh::ARRAY_COLOR];
+    const PackedInt32Array indices=source[Mesh::ARRAY_INDEX];
+    const int count=positions.size();
+    if(indices.size()%3 || normals.size()!=count || colors.size()!=count || uv.size()!=count || uv2.size()!=count)return result;
+    const int columns=key.z/8;
+    std::vector<std::vector<int>> owners(columns*columns);
+    for(int at=0;at<indices.size();at+=3){
+        const int a=indices[at],b=indices[at+1],c=indices[at+2];
+        if(a<0||a>=count||b<0||b>=count||c<0||c>=count)return Array();
+        const Vector3 center=(positions[a]+positions[b]+positions[c])/3;
+        const int x=std::clamp(int(Math::floor((center.x-key.x)/8)),0,columns-1);
+        const int z=std::clamp(int(Math::floor((center.z-key.y)/8)),0,columns-1);
+        owners[x+columns*z].push_back(at);
+    }
+    std::vector<int> remap(count,-1);
+    for(int owner=0;owner<int(owners.size());++owner){
+        PackedVector3Array vertices,ns,faces;
+        PackedVector2Array tex,tex2; PackedColorArray cs; PackedInt32Array local;
+        std::vector<int> used;
+        for(int start:owners[owner])for(int j=0;j<3;++j){
+            const int v=indices[start+j];
+            if(remap[v]<0){
+                remap[v]=vertices.size();used.push_back(v);
+                vertices.push_back(positions[v]);ns.push_back(normals[v]);
+                tex.push_back(uv[v]);tex2.push_back(uv2[v]);cs.push_back(colors[v]);
+            }
+            local.push_back(remap[v]);faces.push_back(positions[v]);
+        }
+        for(int v:used)remap[v]=-1;
+        Array arrays;arrays.resize(Mesh::ARRAY_MAX);
+        arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=ns;
+        arrays[Mesh::ARRAY_COLOR]=cs;arrays[Mesh::ARRAY_TEX_UV]=tex;
+        arrays[Mesh::ARRAY_TEX_UV2]=tex2;arrays[Mesh::ARRAY_INDEX]=local;
+        Dictionary page;page["arrays"]=arrays;page["faces"]=faces;page["brick_bottom"]=owner;
+        page["key"]=key;page["step"]=1;page["triangles"]=local.size()/3;
+        page["bytes"]=vertices.size()*56+local.size()*4;result.push_back(page);
+    }
+    return result;
+}
 // Surface-net quads straddle the owner's sample boundary. Compare the
 // complete triangles within two lattice samples of each face. A different
 // triangle order conservatively couples owners even if their surfaces match.
@@ -162,6 +211,7 @@ bool matching_cut_boundary(Vector3i key,int sides,const PackedVector3Array &befo
 
 }
 void NativeTerrainCollision::_bind_methods() {
+    ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("triangle_pages","key","arrays"),&triangle_pages);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("matching_cut_boundary","key","sides","old_points","old_indices","points","indices"),&matching_cut_boundary);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("changed_rims","key","old_points","old_indices","points","indices"),&changed_rims);
     ClassDB::bind_static_method("NativeTerrainCollision",D_METHOD("merge_planar_faces","faces"),&merge_planar_faces);
