@@ -6,6 +6,71 @@ Current delivery order, coverage gates and deferred-work triggers are maintained
 
 Implemented paths include the pinned native toolchain, bounded native entity storage/kinematics, fullscreen measurement policy, static volumetric water, seeded cave/mountain/geology generation, terrain road editing, block/prefab construction, a single integrated vehicle, and compound terrain/addon snapshots. Water bakes connected occupancy from terrain density and invalidates after edits. Definitions and stable IDs survive reload; derived occupancy rebakes. See the addon READMEs for API limits, WORLD_STORAGE.md for snapshot limits, and DELIVERY_STATUS.md for evidence. The contract below remains broader than the implementation: it is not a claim of complete settlement generation, fleets, multiplayer or sustained populated-world performance.
 
+## Real-time terrain and water editing
+
+The player should see a pickaxe break, a paid terrain stamp, a bucket transfer,
+a shoreline explosion or a strategy brush change the world at the place acted
+on. Immediate feedback belongs on the next draw. The entire resident edited
+footprint must reach matching terrain, detailed water and real collision in
+at most two draws and 33.33 ms at 60 Hz. For mining, record both the time from
+button press and the time from the breaking swing's contact. For a barrel,
+record ignition, detonation and terrain admission separately. A 64 m cut has
+the same deadline across its perimeter as at its centre.
+
+**One operation, one revision.** Local tools, authoring, a dedicated authority
+and trusted extensions submit the same versioned commands. Validate identity,
+permissions, reach, preconditions, inventory and affected region revisions
+before mutation. Stage density and material writes, exact block removals,
+water transfers and inventory debits together. A failed or duplicate command
+must never spend twice or expose a partial edit. Persist committed state and
+its revision. Save, reload and replication can reconstruct derived meshes.
+A new subscriber receives a regional baseline followed by ordered changes.
+
+**Resident work.** Keep authoritative samples, cell representatives, bordering
+face ownership, collision owners and water connectivity available around active
+players. Allow a strategy camera to request detail independently of physics
+interest. A brush describes where to search. Committed changed samples describe
+what must be reconstructed. Expand that set by the extractor's dependency
+halo and include geometry introduced when an authored page first becomes
+resident. Reuse unchanged owners. Bound extraction loops, height evaluation
+and temporary storage by the dimensions of the repair. Prepare independent
+owners concurrently and keep an old owner live until its replacement is ready.
+An overlapping edit must validate the previous revision again. Disjoint edits
+may run concurrently once their shared dependencies are known.
+
+**Playable publication.** Install render and physics geometry for the affected
+owners at a coordinated boundary, retire superseded contact and wake bodies
+whose support changed. Joined faces, caves, overhangs, actor sweeps, materials
+and normals must agree through handoff. Publish local water picking, immersion
+and its detailed surface against that same terrain revision. A lake accounts
+for finite volume using regional capacity and outlet connectivity. The sea
+accounts for exchange with its boundary. Track disconnected cavities and
+changes that open or seal outlets. Wider settling, far-detail generation and
+vegetation presentation can finish later. Save ownership and authoritative
+support loss must survive a restart at any publication stage.
+
+**Scale and limits.** A world-management request can cover many regions. Show
+its bounds immediately and report committed progress by revision. Qualify
+the whole resident 64 m edit as one operation. Larger atomic requests need
+their own maximum measured footprint and worst-case memory reservation.
+Streaming to a new location must report readiness separately. Preserve
+player saves on failure. A bounded transaction that prevents an ordinary
+lake teleport or new-world generation fails the loading gate.
+
+**Decision and proof.** Start with persistent terrain geometry and standard
+engine colliders. The packaged replay demonstrated cheap installation of
+already-prepared resources. The unpredicted path must now demonstrate cheap
+preparation as well. Record density time, repaired cells, regenerated faces,
+bytes copied, shape preparation, physics visibility, post-draw latency and
+actual presentation. Compare fresh canonical reconstruction with the local
+result, including untouched neighbours. Require two fixed camera angles,
+water volume and contact, real body support, zoom reversal, repeated edits,
+three cold and three warm routes, and client CPU/GPU p99 at or below 13.3 ms.
+The subsequent sections give measured failures, fallback design choices and
+the server, modding and multiplayer qualification gates. Current evidence
+supports the design direction. Neither dry nor wet editing has passed all
+these gates.
+
 ## Resident edits and the first playable revision
 
 The current client serializes terrain edits through one pending ticket. The density worker can accept a field change before the visible terrain, registered physics shapes and detailed water are ready. The shared ticket also covers vegetation support and final bookkeeping. A post-commit draw is a different observation from first contact across the footprint. Keep both clocks. On the packaged default 64 m cut, density work took 9.12 ms, the centre appeared at 43.87 ms and the post-commit draw arrived at 127.27 ms. The shoreline traces independently measure the first matching detailed water and collider. [Cut trace](../reports/checks/20261121T083846972823Z/engine.log) and [shoreline traces](../reports/checks/20261121T011517656506Z/normal_gameplay_blast_performance.json).

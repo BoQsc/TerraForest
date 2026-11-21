@@ -60,11 +60,13 @@ func run() -> void:
 	var edit: PackedByteArray = core.execute(Codec.brush(point,point,2.5,0,false,1))
 	check(Codec.reply_ok(edit) and edit.decode_u32(16) > 0, "corner excavation changes terrain")
 	after = stats()
-	check(after[3] - before[3] == 4, "corner edit invalidates four owned regions")
+	# Admitting four new 16 m page columns expands the extraction band.
+	# Their border dependencies cover a 4 by 4 group of resident owners.
+	check(after[3] - before[3] == 16, "first corner edit invalidates new page footprints and their neighbours")
 	before = after
 	parity(1280,1280,256,8,"local edit exact mesh")
 	after = stats()
-	check(after[1] - before[1] == 4 and after[0] - before[0] == 285, "local rebuild reuses 285 of 289 regions")
+	check(after[1] - before[1] == 16 and after[0] - before[0] == 273, "first corner rebuild reuses the other 273 of 289 regions")
 	before = stats()
 	point = Vector3(600,0,600)
 	point.y = core.execute(Codec.point_command(point)).decode_float(12)
@@ -164,8 +166,11 @@ func run() -> void:
 		check(Codec.reply_ok(first) and Codec.reply_ok(second) and first.slice(12)==second.slice(12),"thrashing benchmark parity %d" % iteration)
 	var report := {"checks":checks,"failures":failures,"samples":samples,"small_budget_stats":small_budget,"mixed_changed":changed,"replayed":replayed,"replay_changed":replay_changed,"seed":1703,"cancel_join_ms":cancel_join_ms,
 		"scope":"Native reconstruction cache only. Exact mesh, collision and shading bytes relative to uncached current mesher; no GPU/FPS, multiplayer or endurance claim. Cache payload excludes transient and final mesh allocations."}
-	DirAccess.make_dir_recursive_absolute("res://reports")
-	var file := FileAccess.open("res://reports/terrain_region_cache.json",FileAccess.WRITE)
+	var directory := "res://reports"
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--check-evidence-dir="):directory=arg.trim_prefix("--check-evidence-dir=")
+	DirAccess.make_dir_recursive_absolute(directory)
+	var file := FileAccess.open(directory.path_join("terrain_region_cache.json"),FileAccess.WRITE)
 	file.store_string(JSON.stringify(report,"  "))
 	file.close()
 	print("REGION_CACHE ",JSON.stringify(report))

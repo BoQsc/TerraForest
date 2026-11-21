@@ -1157,23 +1157,38 @@ static void mask_uniform_cells(const World&w,int gx,int gz,u32 pages,u32 (&rows)
  }
 }
 static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y,const float*cached_heights=nullptr,const LocalCut*cut=nullptr,const int*dirty_xz=nullptr){
- const int hn=size+2;List<float> heights;
- if(!cached_heights){heights.resize(hn*hn);
- for(int z=-1;z<=size;z++){
-  if(cancelled(w,epoch)){heights.release();return false;}
-  for(int x=-1;x<=size;x++)heights[(x+1)+hn*(z+1)]=w.height(float(ox+x),float(oz+z));
+ // The repair region is expressed in world cells. Sample its positive halo
+ // once and preserve the full owner stride for caller-supplied height tables.
+ const int x0=dirty_xz?imx(-1,dirty_xz[0]-ox):-1;
+ const int z0=dirty_xz?imx(-1,dirty_xz[1]-oz):-1;
+ const int x1=dirty_xz?imn(size-1,dirty_xz[2]-ox):size-1;
+ const int z1=dirty_xz?imn(size-1,dirty_xz[3]-oz):size-1;
+ if(x0>x1||z0>z1)return !cancelled(w,epoch);
+ const int width=x1-x0+2,rows=z1-z0+2;
+ const int sample_y0=imx(0,y_begin-1),sample_y1=imn(WORLD_Y,y_end);
+ if(sample_y0>sample_y1)return !cancelled(w,epoch);
+ List<float> heights;
+ if(!cached_heights){
+  heights.resize(width*rows);
+  if(!heights.p)return false;
+  for(int z=z0;z<=z1+1;z++){
+   if(cancelled(w,epoch)){heights.release();return false;}
+   for(int x=x0;x<=x1+1;x++)heights[(x-x0)+width*(z-z0)]=w.height(float(ox+x),float(oz+z));
+  }
  }
- }
+ const int height_stride=cached_heights?size+2:width;
  const float*height_values=cached_heights?cached_heights:heights.p;
- List<CachedSample> cache;const int plane_size=hn*257;cache.resize(plane_size*2);
- for(int z=-1;z<size;z++){
+ const int plane_size=width*(sample_y1-sample_y0+1);
+ List<CachedSample> cache;cache.resize(plane_size*2);
+ if(!cache.p){heights.release();return false;}
+ for(int z=z0;z<=z1;z++){
   if(cancelled(w,epoch))break;
   zero_bytes(cache.p+((z+1)&1)*plane_size,size_t(plane_size)*sizeof(CachedSample));
-  for(int x=-1;x<size;x++){
+  for(int x=x0;x<=x1;x++){
   int gx=ox+x,gz=oz+z;
-  if(dirty_xz&&(gx<dirty_xz[0]||gx>dirty_xz[2]||gz<dirty_xz[1]||gz>dirty_xz[3]))continue;
   if(gx<-1||gx>WORLD||gz<-1||gz>WORLD)continue;
-  float h[4]={height_values[(x+1)+hn*(z+1)],height_values[(x+2)+hn*(z+1)],height_values[(x+1)+hn*(z+2)],height_values[(x+2)+hn*(z+2)]};
+  const int hc=cached_heights?(x+1)+height_stride*(z+1):(x-x0)+height_stride*(z-z0);
+  float h[4]={height_values[hc],height_values[hc+1],height_values[hc+height_stride],height_values[hc+height_stride+1]};
   float low=mn(mn(h[0],h[1]),mn(h[2],h[3]))-2,high=mx(mx(h[0],h[1]),mx(h[2],h[3]))+1;
   u32 ybits[8]={};mark_y(ybits,fl(low),fl(high)+1);
   if(cut&&ab(gx+.5f-cut->center.x)<=10.f&&ab(gz+.5f-cut->center.z)<=10.f){
@@ -1199,7 +1214,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
    for(int k=0;k<8;k++){
     int xx=gx+(k&1),yy=y+((k>>1)&1),zz=gz+((k>>2)&1);int hc=(k&1)+2*((k>>2)&1);mats[k]=0;
     if(xx<0||xx>WORLD||zz<0||zz>WORLD||yy>WORLD_Y){d[k]=SDF_BAND;continue;}
-    int cache_at=(x+1+(k&1))+hn*yy+((z+((k>>2)&1))&1)*plane_size;
+    int cache_at=(x-x0+(k&1))+width*(yy-sample_y0)+((z+((k>>2)&1))&1)*plane_size;
     CachedSample& cached=cache[cache_at];
     if(cached.valid){d[k]=float(cached.value)/SDF_SCALE;mats[k]=cached.material;if(d[k]<0)signs|=1u<<k;continue;}
     int py=yy>>4;if(py!=cached_py){for(int c=0;c<4;c++){int sx=gx+(c&1),sz=gz+((c>>1)&1);page_indices[c]=sx<0||sz<0||sx>WORLD||sz>WORLD?-1:w.pages_by_key.get(page_key(sx>>4,py,sz>>4));}cached_py=py;}

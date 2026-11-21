@@ -9107,3 +9107,25 @@ has a third-draw placement repeat with a sub-millisecond admission. Closing
 requires the same edit to reach matching visible ground and real collision
 in two draws across repeated runs, including the normal installed build.
 See the full-cut and water architecture gates for the larger cases.
+
+### Bounded terrain extraction for resident edits (open)
+
+The [real-time editing contract](WORLD_SYSTEMS_DESIGN.md#real-time-terrain-and-water-editing)
+now covers both hand tools, water and authoring. Native geometry repair evaluates
+only the heights and rolling sample planes needed by its dirty cell bounds.
+For a four-cell cube within a 16 m owner this requires 25 height samples and
+50 rolling density slots, compared with 324 and 9,252 previously. These counts
+describe temporary extraction work. They do not measure the whole edit.
+
+The [exact reconstruction regression](../reports/checks/20261121T103926124660Z/terrain_region_cache.json)
+passed all 293 checks, including 96 mixed edits, cached-versus-fresh mesh
+bytes, replay of 2,176 edits, multiple detail levels, world edges and cancellation.
+The prior and candidate binaries both invalidated 16 owners for the first cut
+at a page corner. The regression now checks the complete first-page halo.
+
+The [checkout dry route](../reports/checks/20261121T103535578960Z/engine.log)
+passed both edits. A [packaged-content repeat](../reports/checks/20261121T103835395617Z/engine.log)
+missed construction at 50.49 ms including 24.51 ms before admission. Mining
+took 15.35 ms from impact. This was a shared-machine diagnostic. Keep the
+deadline open until unpredicted targets and full-footprint terrain, water and
+physics qualify under the contract.
