@@ -2,6 +2,16 @@
 
 ## Hidden Coast crater backlog
 
+The November 21 gameplay log recorded water status 6 at 13 crater locations.
+The Godot SDK maps 6 to `ERR_OUT_OF_MEMORY`. Coastal terrain admission returned
+it when adding a missing region at the 4,096-region live limit. Trimming the
+separate ocean cache did not free a live slot. Admission now uses ordinary
+pristine-ocean retirement to free slots outside leased footprints, preserving
+edited water and outstanding settlement work. Standard detonation again
+submits the crater before consuming the barrel and igniting its neighbors.
+Submission uses the barrel's world position. The saved-world outcome after
+this fix has not been exercised.
+
 The next save still contained all 29 earlier craters plus four new ones.
 The changed order showed that the one-second rotation ran. Its water index
 contained 3,443 saved regions out of a 4,096-region resident limit. Camera
@@ -40,10 +50,10 @@ reports the wait. This change was reviewed in source only.
 
 ## Saved barrels beyond the player
 
-**Follow-up on standard chain reactions.** Standard mode previously waited for
+**Historical verification of 826350e1.** Standard mode previously waited for
 the crater edit before igniting the next barrel. Shoreline water preparation
-could hold that edit while the player stood still. Both modes now save pending
-craters and propagate ignition independently. In a read-only Hidden Coast run,
+could hold that edit while the player stood still. At that revision both modes saved pending
+craters and propagated ignition independently. In a read-only Hidden Coast run,
 only the first saved barrel was ignited. Its neighbor detonated during ordinary
 physics ticks with the player at the saved position, about 80 m away.
 [Stationary chain](../../reports/checks/20261121T105922689074Z/console.log) · [Chain with all crater requests initially refused](../../reports/checks/20261121T105957859723Z/console.log)

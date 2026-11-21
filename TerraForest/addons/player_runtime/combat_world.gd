@@ -375,7 +375,7 @@ func _detonate(id:int)->bool:
 	# The terrain edit and block transactions retain their own publication and
 	# water admission checks; no collision streaming radius is enlarged here.
 	if barrels.is_removal_protected(id):return true
-	if blast_jobs.size()>=32 or craters.pending.size()>=craters.LIMIT:return false
+	if blast_jobs.size()>=32 or (fast_chains and craters.pending.size()>=craters.LIMIT):return false
 	# get_ids() only sees resident placements. Wait before consuming the source
 	# so a chain crossing a cold page can still discover the next barrel.
 	if not barrels.placement_neighborhood_ready(base,6.0):
@@ -389,9 +389,9 @@ func _detonate(id:int)->bool:
 	# as mining. The environmental admission does not pay mining rewards.
 	var measured:=Time.get_ticks_usec()
 	var crater_point:=base+Vector3.UP*.2
+	if not fast_chains and not game.mining_rewards.excavate_blast(crater_point,3.5):return false
 	if not barrels.remove_instances(PackedInt64Array([id])):return false
-	craters.pending.append({"id":id,"point":crater_point})
-	if not fast_chains and craters.pending.size()==1:_submit_next_crater()
+	if fast_chains:craters.pending.append({"id":id,"point":crater_point})
 	game.terrain._record_stage("blast terrain admission",(Time.get_ticks_usec()-measured)/1000.0)
 	measured=Time.get_ticks_usec()
 	# Water wake-up belongs to the shared committed terrain-edit listener.
@@ -399,6 +399,7 @@ func _detonate(id:int)->bool:
 	var trace_identity:=""
 	if destruction_trace.enabled:
 		trace_identity=destruction_trace.trigger(game.terrain.epoch,id,Engine.get_physics_frames(),Time.get_ticks_usec())
+		if not fast_chains:destruction_trace.admitted(trace_identity,game.terrain.edit_ticket,Engine.get_physics_frames(),Time.get_ticks_usec())
 	game.model_tool.history.clear_history();game.world_attack.durability.forget("model:%s:%d"%[Barrel.KEY,id])
 	var records:PackedInt32Array=state.blast_cells(prefab.get_records(),origin,center,5.0)
 	if not records.is_empty():

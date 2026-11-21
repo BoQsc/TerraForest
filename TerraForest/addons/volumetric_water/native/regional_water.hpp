@@ -206,6 +206,7 @@ class NativeRegionalWater : public godot::RefCounted {
     std::unordered_map<Key,uint64_t> ocean_edit_interests;
     void trim_ocean_cache(uint64_t incoming=0);
     bool restore_ocean_cache(Key k);
+    void retire_pristine_ocean(Key k);
 
     // Main-thread snapshot cache. PackedByteArray copy-on-write keeps an older
     // worker-owned save immutable when the live store changes. Never retain more

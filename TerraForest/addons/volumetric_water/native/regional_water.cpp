@@ -367,6 +367,24 @@ bool NativeRegionalWater::restore_ocean_cache(Key k){
     }
     return true;
 }
+void NativeRegionalWater::retire_pristine_ocean(Key k){
+    auto it=regions.find(k);auto &r=it->second;
+    preserve_mesh_region(k);
+    for(auto amount:r.water)total-=amount;
+    if(r.structures)solid_cache_bytes-=r.structures->bytes;
+    request_set.erase(k);requests.erase(std::remove(requests.begin(),requests.end(),k),requests.end());
+    restored_cache.erase(k);invalidate_snapshot(false);
+    // Publish an empty replacement through the normal batch path; don't
+    // leave stale pick triangles or remove scene geometry independently.
+    if(mesh_set.insert(k).second)meshes.push_back(k);
+    uint64_t bytes=sizeof(Region)+Region::payload_bytes+64+r.vacancies.capacity()*sizeof(uint32_t);
+    if(r.contacts)bytes+=r.contacts->bytes;
+    if(r.structures)bytes+=r.structures->bytes;
+    if(r.valid&&r.has_density&&!r.structures&&bytes<=32*1024*1024){
+        trim_ocean_cache(bytes);ocean_cache.emplace(k,OceanCached{std::move(r),bytes,++ocean_cache_clock});ocean_cache_bytes+=bytes;
+    }
+    regions.erase(it);
+}
 bool NativeRegionalWater::prepare_ocean_edit(const AABB &bounds){
     return prepare_ocean_edit_status(bounds)==OK;
 }
@@ -388,15 +406,46 @@ int NativeRegionalWater::prepare_ocean_edit_status(const AABB &bounds){
         if(std::min({x,z,499-x,499-z})>=35)continue;
         for(int y=lo.y;y<=hi.y;++y){keys.push_back(key(Vector3i(x,y,z)));if(keys.size()>MAX_OCEAN_EDIT_REGIONS)return ERR_PARAMETER_RANGE_ERROR;}
     }
-    bool ready=true;int admitted=0;uint64_t until=Time::get_singleton()->get_ticks_usec()+2000000;
+    const uint64_t now=Time::get_singleton()->get_ticks_usec();
+    const uint64_t until=now+2000000;
+    size_t missing=0;
     for(Key k:keys){
-        ocean_edit_interests[k]=until;
         if(deferred_regions.count(k))return ERR_UNAVAILABLE;
-        if(!regions.count(k)&&ocean_cache.count(k))restore_ocean_cache(k);
+        ocean_edit_interests[k]=until;
+        if(!regions.count(k))++missing;
+    }
+    const size_t wanted=std::min<size_t>(16,missing);
+    if(wanted && regions.size()+wanted>MAX_REGIONS){
+        // Camera residency and older craters may already occupy the reserved
+        // slots. Reclaim only reproducible ocean outside current edit leases.
+        if(fill.running)return ERR_BUSY;
+        const size_t needed=regions.size()+wanted-MAX_REGIONS;
+        std::vector<Key> candidates;
+        for(const auto &[k,r]:regions){
+            if(r.ocean_state!=1||!r.valid||r.settle_pending||request_set.count(k)||
+               local_edit_regions.count(k)||local_receiver_regions.count(k)||local_occupancy_regions.count(k)||
+               equilibrium_dependencies.count(k)||relaxation_before.count(k)||urgent_meshes.count(k))continue;
+            auto lease=ocean_edit_interests.find(k);
+            if(lease==ocean_edit_interests.end()||lease->second<=now)candidates.push_back(k);
+        }
+        if(candidates.size()<needed){limit=true;return ERR_OUT_OF_MEMORY;}
+        const Vector3i center=(lo+hi)/2;
+        std::partial_sort(candidates.begin(),candidates.begin()+needed,candidates.end(),[&](Key a,Key b){
+            return position(a).distance_squared_to(center)>position(b).distance_squared_to(center);
+        });
+        // In-flight solves must recapture their membership after displacement.
+        invalidate_snapshot();
+        for(size_t i=0;i<needed;++i)retire_pristine_ocean(candidates[i]);
+    }
+    bool ready=true;int admitted=0;
+    for(Key k:keys){
         if(!regions.count(k)){
-            ready=false;if(admitted>=16){++ocean_edit_remaining;continue;}
-            trim_ocean_cache();if(regions.size()>=MAX_REGIONS){limit=true;return ERR_OUT_OF_MEMORY;}
-            Region r;r.ocean_state=1;regions.emplace(k,std::move(r));request(k);invalidate_snapshot(false);++admitted;
+            if(admitted>=16){ready=false;++ocean_edit_remaining;continue;}
+            ++admitted;
+            if(!restore_ocean_cache(k)){
+                trim_ocean_cache();
+                Region r;r.ocean_state=1;regions.emplace(k,std::move(r));request(k);invalidate_snapshot(false);
+            }
         }
         if(!regions.at(k).valid){ready=false;++ocean_edit_remaining;request(k);}
     }
@@ -433,21 +482,7 @@ Dictionary NativeRegionalWater::update_ocean_residency(const Vector3 &center,int
         if(r.ocean_state!=1||(std::abs(coordinate.x-cx)<=8&&std::abs(coordinate.z-cz)<=8)){++it;continue;}
         if(pinned_columns.count(key(Vector3i(coordinate.x,0,coordinate.z)))){++it;continue;}
         if(ocean_edit_interests.count(it->first)||equilibrium_dependencies.count(it->first)){++it;continue;}
-        const Key k=it->first;
-        for(auto amount:r.water)total-=amount;
-        if(r.structures)solid_cache_bytes-=r.structures->bytes;
-        request_set.erase(k);requests.erase(std::remove(requests.begin(),requests.end(),k),requests.end());
-        restored_cache.erase(k);invalidate_snapshot(false);
-        // Publish an empty replacement through the normal batch path; don't
-        // leave stale pick triangles or remove scene geometry independently.
-        if(mesh_set.insert(k).second)meshes.push_back(k);
-        uint64_t bytes=sizeof(Region)+Region::payload_bytes+64+r.vacancies.capacity()*sizeof(uint32_t);
-        if(r.contacts)bytes+=r.contacts->bytes;
-        if(r.structures)bytes+=r.structures->bytes;
-        if(r.valid&&r.has_density&&!r.structures&&bytes<=32*1024*1024){
-            trim_ocean_cache(bytes);ocean_cache.emplace(k,OceanCached{std::move(r),bytes,++ocean_cache_clock});ocean_cache_bytes+=bytes;
-        }
-        it=regions.erase(it);++retired;
+        retire_pristine_ocean((it++)->first);++retired;
     }
     // Center-out admission gives the target/feet priority, bounded per call.
     for(int ring=0;ring<=6&&admitted<budget;++ring)
