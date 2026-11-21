@@ -283,6 +283,7 @@ void NativeRegionalWater::_bind_methods(){
     ClassDB::bind_method(D_METHOD("update_ocean_residency","center","budget"),&NativeRegionalWater::update_ocean_residency);
     ClassDB::bind_method(D_METHOD("prepare_ocean_edit","bounds"),&NativeRegionalWater::prepare_ocean_edit);
     ClassDB::bind_method(D_METHOD("prepare_ocean_edit_status","bounds"),&NativeRegionalWater::prepare_ocean_edit_status);
+    ClassDB::bind_method(D_METHOD("get_ocean_edit_remaining"),&NativeRegionalWater::get_ocean_edit_remaining);
     ClassDB::bind_method(D_METHOD("raycast_vacancy","from","to"),&NativeRegionalWater::raycast_vacancy);
     ClassDB::bind_method(D_METHOD("cell_geometry","point"),&NativeRegionalWater::cell_geometry);
     ClassDB::bind_method(D_METHOD("next_requests","limit","ocean_only"),&NativeRegionalWater::next_requests,DEFVAL(true));
@@ -369,7 +370,9 @@ bool NativeRegionalWater::restore_ocean_cache(Key k){
 bool NativeRegionalWater::prepare_ocean_edit(const AABB &bounds){
     return prepare_ocean_edit_status(bounds)==OK;
 }
+static constexpr size_t MAX_OCEAN_EDIT_REGIONS=512;
 int NativeRegionalWater::prepare_ocean_edit_status(const AABB &bounds){
+    ocean_edit_remaining=0;
     if(!surrounding_ocean)return OK;
     if(!bounds.position.is_finite()||!bounds.size.is_finite())return ERR_INVALID_PARAMETER;
     const AABB area=bounds.grow(4.0);
@@ -379,11 +382,11 @@ int NativeRegionalWater::prepare_ocean_edit_status(const AABB &bounds){
     // The ocean presentation switches one XZ column at a time. A cut at the
     // waterline needs the complete four-layer collar used by that switch.
     if(bounds.position.y<=40.0 && bounds.position.y+bounds.size.y>=40.0 &&
-       (hi.x-lo.x+1)*(hi.z-lo.z+1)<=512/4){lo.y=7;hi.y=10;}
+       (hi.x-lo.x+1)*(hi.z-lo.z+1)<=int(MAX_OCEAN_EDIT_REGIONS/4)){lo.y=7;hi.y=10;}
     std::vector<Key> keys;
     for(int z=lo.z;z<=hi.z;++z)for(int x=lo.x;x<=hi.x;++x){
         if(std::min({x,z,499-x,499-z})>=35)continue;
-        for(int y=lo.y;y<=hi.y;++y){keys.push_back(key(Vector3i(x,y,z)));if(keys.size()>512)return ERR_PARAMETER_RANGE_ERROR;}
+        for(int y=lo.y;y<=hi.y;++y){keys.push_back(key(Vector3i(x,y,z)));if(keys.size()>MAX_OCEAN_EDIT_REGIONS)return ERR_PARAMETER_RANGE_ERROR;}
     }
     bool ready=true;int admitted=0;uint64_t until=Time::get_singleton()->get_ticks_usec()+2000000;
     for(Key k:keys){
@@ -391,11 +394,11 @@ int NativeRegionalWater::prepare_ocean_edit_status(const AABB &bounds){
         if(deferred_regions.count(k))return ERR_UNAVAILABLE;
         if(!regions.count(k)&&ocean_cache.count(k))restore_ocean_cache(k);
         if(!regions.count(k)){
-            ready=false;if(admitted>=16)continue;
+            ready=false;if(admitted>=16){++ocean_edit_remaining;continue;}
             trim_ocean_cache();if(regions.size()>=MAX_REGIONS){limit=true;return ERR_OUT_OF_MEMORY;}
             Region r;r.ocean_state=1;regions.emplace(k,std::move(r));request(k);invalidate_snapshot(false);++admitted;
         }
-        if(!regions.at(k).valid)ready=false;
+        if(!regions.at(k).valid){ready=false;++ocean_edit_remaining;request(k);}
     }
     if(!ready){
         // Prepare the requested excavation before unrelated streaming work.
@@ -455,9 +458,11 @@ Dictionary NativeRegionalWater::update_ocean_residency(const Vector3 &center,int
         if(x<0||x>=500||z<0||z>=500||std::min({x,z,499-x,499-z})>=35)continue;
         for(int y=7;y<=10&&admitted<budget;++y){
             Key k=key(Vector3i(x,y,z));if(regions.count(k)||deferred_regions.count(k))continue;
+            // Pristine camera streaming is optional. Keep room for one
+            // supported edit even if the camera never moves to release pages.
+            if(regions.size()>=MAX_REGIONS-MAX_OCEAN_EDIT_REGIONS)break;
             if(restore_ocean_cache(k)){++admitted;continue;}
             trim_ocean_cache();
-            if(regions.size()>=MAX_REGIONS){limit=true;out["capacity_reached"]=true;break;}
             Region r;r.ocean_state=1;regions.emplace(k,std::move(r));request(k);
             invalidate_snapshot(false);++admitted;
         }

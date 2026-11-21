@@ -2,13 +2,22 @@
 
 ## Hidden Coast crater backlog
 
+The next save still contained all 29 earlier craters plus four new ones.
+The changed order showed that the one-second rotation ran. Its water index
+contained 3,443 saved regions out of a 4,096-region resident limit. Camera
+streaming could request another 676. It now leaves room for one supported
+edit footprint. Admission renews the sampling requests for invalid regions.
+The queue keeps a busy crater at the front while its own missing-region count
+falls. After ten seconds without progress it can yield and records the water
+status and remaining count in the game log. Gameplay confirmation is open.
+
 Read-only inspection of Hidden Coast found 29 queued craters and 21 in its
 backup. Both started with barrel 9 at (1937, 40.41, 1757). Only 48 of the 144
 regions in that crater's ocean preparation footprint appeared in the current
 water index. The save records pending craters, but does not record a reason
 for each refused submission.
 
-Ocean admission now prioritizes sampling in the excavation footprint. A
+In the earlier queue fix, ocean admission prioritized sampling in the excavation footprint. A
 crater awaiting admission for one second yields to the next queued crater
 and remains saved for retry. A native rejection also lets the next crater
 proceed. A pending tool hit gets one tick of priority. Gameplay confirmation

@@ -458,9 +458,25 @@ func _submit_next_crater()->void:
 		if destruction_trace.enabled:
 			var identity:=destruction_trace.trigger(game.terrain.epoch,crater.id,Engine.get_physics_frames(),Time.get_ticks_usec())
 			destruction_trace.admitted(identity,craters.ticket,Engine.get_physics_frames(),Time.get_ticks_usec())
-	elif craters.pending.size()>1 and now-int(crater.waiting_since)>=1000:
-		crater.erase("waiting_since")
-		craters.pending.push_back(craters.pending.pop_front())
+	else:
+		var status:Variant=game.terrain.get("water_edit_status")
+		if status==ERR_BUSY:
+			var remaining:int=game.lakes.water.get_ocean_edit_remaining()
+			if remaining<int(crater.get("remaining_regions",2147483647)):
+				crater.remaining_regions=remaining
+				crater.waiting_since=now
+		# Renew the same remote region leases while the sampler is advancing.
+		# Rotating active work lets its two-second residency leases expire.
+		var stall_ms:=10000 if status==ERR_BUSY else 1000
+		if now-int(crater.waiting_since)>=stall_ms:
+			if not crater.get("reported_wait",false):
+				print("[Barrel crater] Waiting at ",crater.point," water status=",status," remaining regions=",crater.get("remaining_regions",-1))
+				crater.reported_wait=true
+			crater.waiting_since=now
+			if craters.pending.size()>1:
+				crater.erase("waiting_since")
+				crater.erase("remaining_regions")
+				craters.pending.push_back(craters.pending.pop_front())
 
 func _crater_resolved(outcome:Dictionary)->void:
 	if craters.ticket<0 or outcome.ticket!=craters.ticket or outcome.epoch!=game.terrain.epoch:return
