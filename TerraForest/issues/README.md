@@ -1,5 +1,7 @@
 # Visual issue tracker
 
+[Hidden Coast crater backlog](explosive-combat/README.md#hidden-coast-crater-backlog) records the saved explosion queue and the change to coastal excavation scheduling.
+
 The [shoreline mining fix](explosive-combat/README.md#shoreline-mining-in-normal-gameplay) connects deferred tool hits to the normal gameplay tick. In-game confirmation remains open.
 
 The Windows package includes the player simulation-distance setting and the fix for chains crossing unloaded object pages. [Distant barrel chain investigation and package checks](explosive-combat/README.md#saved-barrels-beyond-the-player)

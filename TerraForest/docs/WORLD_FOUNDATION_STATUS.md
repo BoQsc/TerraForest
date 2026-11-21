@@ -1,5 +1,7 @@
 ## Distant barrel chains in saved worlds
 
+The [Hidden Coast crater backlog](../issues/explosive-combat/README.md#hidden-coast-crater-backlog) persisted between two saves. The excavation scheduling change has been built and awaits gameplay confirmation.
+
 [Shoreline mining in normal gameplay](../issues/explosive-combat/README.md#shoreline-mining-in-normal-gameplay) tracks a separate source fix for tool strikes that stopped while waiting for water or a crater edit. Gameplay verification remains open.
 
 The previous remote check covered resident barrels 160 m from the player.

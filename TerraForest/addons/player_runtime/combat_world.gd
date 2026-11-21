@@ -446,15 +446,21 @@ func step_detonations(delta:float=1.0/60.0)->void:
 
 func _submit_next_crater()->void:
 	if craters.pending.is_empty() or craters.ticket>=0 or game.terrain.pending_edit:return
-	# A crater changes the density revision and cancels a shoreline strike
-	# waiting for water. Reserve the next edit for that strike.
-	if game.has_method("has_waiting_mining_strike") and game.has_waiting_mining_strike():return
+	# Give a queued tool strike a tick to submit without indefinitely holding
+	# every explosion behind a strike that is itself waiting on water.
 	var crater:Dictionary=craters.pending[0]
+	var now:=Time.get_ticks_msec()
+	if not crater.has("waiting_since"):
+		crater.waiting_since=now
+		if game.has_method("has_waiting_mining_strike") and game.has_waiting_mining_strike():return
 	if game.mining_rewards.excavate_blast(crater.point,3.5):
 		craters.ticket=game.terrain.edit_ticket
 		if destruction_trace.enabled:
 			var identity:=destruction_trace.trigger(game.terrain.epoch,crater.id,Engine.get_physics_frames(),Time.get_ticks_usec())
 			destruction_trace.admitted(identity,craters.ticket,Engine.get_physics_frames(),Time.get_ticks_usec())
+	elif craters.pending.size()>1 and now-int(crater.waiting_since)>=1000:
+		crater.erase("waiting_since")
+		craters.pending.push_back(craters.pending.pop_front())
 
 func _crater_resolved(outcome:Dictionary)->void:
 	if craters.ticket<0 or outcome.ticket!=craters.ticket or outcome.epoch!=game.terrain.epoch:return
@@ -462,6 +468,10 @@ func _crater_resolved(outcome:Dictionary)->void:
 	if outcome.status!="rejected":
 		craters.pending.pop_front()
 		game.terrain.changed_since_save=true
+	elif craters.pending.size()>1:
+		var retry:Dictionary=craters.pending.pop_front()
+		retry.erase("waiting_since")
+		craters.pending.push_back(retry)
 
 func step_blasts()->void:
 	if destruction_commit_active or blast_jobs.is_empty():return

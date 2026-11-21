@@ -397,6 +397,14 @@ int NativeRegionalWater::prepare_ocean_edit_status(const AABB &bounds){
         }
         if(!regions.at(k).valid)ready=false;
     }
+    if(!ready){
+        // Prepare the requested excavation before unrelated streaming work.
+        // Workers return patches by coordinate, independent of deque order.
+        std::stable_partition(requests.begin(),requests.end(),[&](Key k){
+            const auto p=position(k);
+            return p.x>=lo.x&&p.x<=hi.x&&p.y>=lo.y&&p.y<=hi.y&&p.z>=lo.z&&p.z<=hi.z;
+        });
+    }
     return ready?OK:ERR_BUSY;
 }
 Dictionary NativeRegionalWater::update_ocean_residency(const Vector3 &center,int64_t budget){

@@ -1,5 +1,19 @@
 # First firearm and volumetric explosive destruction
 
+## Hidden Coast crater backlog
+
+Read-only inspection of Hidden Coast found 29 queued craters and 21 in its
+backup. Both started with barrel 9 at (1937, 40.41, 1757). Only 48 of the 144
+regions in that crater's ocean preparation footprint appeared in the current
+water index. The save records pending craters, but does not record a reason
+for each refused submission.
+
+Ocean admission now prioritizes sampling in the excavation footprint. A
+crater awaiting admission for one second yields to the next queued crater
+and remains saved for retry. A native rejection also lets the next crater
+proceed. A pending tool hit gets one tick of priority. Gameplay confirmation
+on this save remains open.
+
 ## Shoreline mining in normal gameplay
 
 A finishing tool strike that queued behind another terrain edit or waited for
