@@ -315,7 +315,7 @@ func _continue_joint_edit(ticket:int,epoch:int)->void:
  _process_deadline=began+allowance
  if _settlement_ticket!=ticket and terrain.water_sampling_revision()>=0:_begin_terrain_settlement(ticket)
  _poll_edit_patches()
- if _settlement_ticket==ticket and not _busy and _edit_patch_attempt!=ticket:
+ if _settlement_ticket==ticket and not _busy and _edit_patch_task<0 and _edit_patch_attempt!=ticket:
   _edit_patch_attempt=ticket
   _start_edit_patches(terrain.water_sampling_revision())
  if _filling_id==0 and _local_response_pending and _edit_patch_task<0 and Time.get_ticks_usec()<_process_deadline:_advance_equilibrium()
@@ -366,7 +366,7 @@ func _measured_step(delta:float)->void:
  if terrain.pending_edit and _settlement_ticket!=terrain.edit_ticket and terrain.water_sampling_revision()>=0:
   _begin_terrain_settlement(terrain.edit_ticket)
  _poll_edit_patches()
- if terrain.joint_edit_pending() and _settlement_ticket==terrain.edit_ticket and not _busy and _edit_patch_attempt!=terrain.edit_ticket:
+ if terrain.joint_edit_pending() and _settlement_ticket==terrain.edit_ticket and not _busy and _edit_patch_task<0 and _edit_patch_attempt!=terrain.edit_ticket:
   _edit_patch_attempt=terrain.edit_ticket
   _start_edit_patches(terrain.water_sampling_revision())
  var geometry_ready:bool=not terrain.pending_edit or _installed_edit_ticket==terrain.edit_ticket
@@ -713,6 +713,19 @@ func _prepare_terrain_batch(ocean_only:bool,sampling_revision:int) -> void:
 var _edit_patch_task:=-1
 var _edit_patch_job:Dictionary={}
 
+static func _group_edit_patches(coords:Array,patches:Array,bounds:Rect2i)->Array:
+ if bounds.size.x<=64 and bounds.size.y<=64:return [{"bounds":bounds,"patches":patches}]
+ var groups:Dictionary={}
+ for index in coords.size():
+  var coord:Vector3i=coords[index]
+  var area:=Rect2i(coord.x*4,coord.z*4,4,4)
+  var key:=area.position/64
+  if not groups.has(key):groups[key]={"bounds":area,"patches":[]}
+  var group:Dictionary=groups[key]
+  group.bounds=Rect2i(group.bounds).merge(area)
+  group.patches.append(patches[index])
+ return groups.values()
+
 func _start_edit_patches(revision:int)->bool:
  if _edit_patch_task>=0 or _busy or not terrain.joint_edit_pending():return false
  var coords:Array=water.pending_edit_patches()
@@ -722,7 +735,6 @@ func _start_edit_patches(revision:int)->bool:
  var patches:Array[RefCounted]=[]
  for coord:Vector3i in coords:
   bounds=bounds.merge(Rect2i(coord.x*4,coord.z*4,4,4))
-  if bounds.size.x>64 or bounds.size.y>64:return false
   var patch:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
   if not patch.configure(coord):return false
   if blocks!=null:
@@ -735,18 +747,21 @@ func _start_edit_patches(revision:int)->bool:
   shared=surface.core
  _edit_patch_job={"shared":shared,"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":revision,
   "structures":_structure_revision,"field":terrain.density_revision,"cancel":terrain.backend.build_epoch,
-  "patches":patches,"bounds":bounds,"ready":false}
+  "patches":patches,"groups":_group_edit_patches(coords,patches,bounds),"ready":false}
  _edit_patch_task=WorkerThreadPool.add_task(_prepare_edit_patches.bind(terrain.backend.native,_edit_patch_job),true,"Local edited water contacts")
  return _edit_patch_task>=0
 
 func _prepare_edit_patches(core:Object,job:Dictionary)->void:
- var snapshot:Object=job.shared
- if snapshot==null:snapshot=core.capture_contact_core(job.bounds,job.field,job.cancel)
- if snapshot==null:return
- for patch:RefCounted in job.patches:
-  var status:int=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
-  while status==0:status=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
-  if status!=1:return
+ # Keep one captured field at a time. Every group must match the same
+ # revision and epoch before the main thread can consume any of the patches.
+ for group:Dictionary in job.groups:
+  var snapshot:Object=job.shared
+  if snapshot==null:snapshot=core.capture_contact_core(group.bounds,job.field,job.cancel)
+  if snapshot==null:return
+  for patch:RefCounted in group.patches:
+   var status:int=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
+   while status==0:status=patch.sample_terrain(snapshot,2048,job.field,job.cancel)
+   if status!=1:return
  job.ready=true
  _continue_joint_edit.call_deferred(job.ticket,job.epoch)
 

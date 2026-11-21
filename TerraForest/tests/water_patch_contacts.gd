@@ -13,6 +13,7 @@ func run()->void:
 		GDExtensionManager.load_extension("res://addons/"+descriptor+".gdextension")
 	var core:RefCounted=ClassDB.instantiate("TerrainCore")
 	check(Codec.reply_ok(core.execute(Codec.command(6,[1703,3]))),"isolated real terrain owner initialized")
+	await check_wide_contact(core)
 	var water:RefCounted=ClassDB.instantiate("NativeRegionalWater")
 	var origin:=Vector3i(200,400,200)
 	var patch:=PackedByteArray();patch.resize(80);patch.fill(0)
@@ -47,6 +48,30 @@ func run()->void:
 	for step in 600:water.advance(2048,1.0/60.0)
 	check(water.capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))==before,"restoration never enables flow or changes static water after publication")
 	finish()
+
+func check_wide_contact(core:RefCounted)->void:
+	var lake:=preload("res://addons/volumetric_water/lake_world.gd").new()
+	var coords:=[Vector3i(15,50,25),Vector3i(16,50,25),Vector3i(32,50,25)]
+	var patches:Array=[]
+	for coord:Vector3i in coords:
+		var part:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
+		check(part.configure(coord),"wide edit configures contact at "+str(coord))
+		patches.append(part)
+	var compact:Array=lake._group_edit_patches(coords.slice(0,2),patches.slice(0,2),Rect2i(60,100,8,4))
+	check(compact.size()==1 and compact[0].patches.size()==2,"nearby patches crossing an aligned boundary share a snapshot")
+	var groups:Array=lake._group_edit_patches(coords,patches,Rect2i(60,100,72,4))
+	var token:Dictionary=core.field_patch_state()
+	var build_epoch:PackedByteArray=core.execute(Codec.command(13))
+	var job:={"shared":null,"groups":groups,"field":token.revision,"cancel":build_epoch.decode_u32(12),"ready":false,"ticket":1,"epoch":0}
+	lake._prepare_edit_patches(core,job)
+	check(groups.size()==3 and job.ready,"72 m contact footprint completes on one authoritative revision")
+	job.ready=false
+	job.field+=1
+	lake._prepare_edit_patches(core,job)
+	check(not job.ready,"stale wide contact cannot reach publication")
+	await process_frame
+	lake.free()
+
 func finish()->void:
 	print("WATER_PATCH_CONTACTS checks=",checks," failures=",failures)
 	quit(1 if failures else 0)
