@@ -10,6 +10,11 @@ only the first saved barrel was ignited. Its neighbor detonated during ordinary
 physics ticks with the player at the saved position, about 80 m away.
 [Stationary chain](../../reports/checks/20261121T105922689074Z/console.log) · [Chain with all crater requests initially refused](../../reports/checks/20261121T105957859723Z/console.log)
 
+With water admission held busy, the previous package stalled. The updated
+installed pack detonated both barrels from one ignition with standard pacing
+while the player stood still and the neighbor's crater remained queued.
+[Previous package](../../reports/checks/20261121T110134275557Z/console.log) · [Updated package](../../reports/checks/20261121T110251435178Z/console.log)
+
 The player could have to follow an ignited chain in a saved world. Ordinary
 model paging loaded records within 384 m of the player and could retire them
 beyond 512 m. Combat searched only resident barrels. At a page boundary it

@@ -33,13 +33,22 @@ func run()->void:
 		var ids:PackedInt64Array=game.combat.barrels.get_ids()
 		var start:Vector3=game.player.position
 		var before:int=game.combat.explosions
+		var admission:Callable=game.terrain.water_edit_admission
+		var hold_craters:bool="--hold-craters" in OS.get_cmdline_user_args()
+		if hold_craters:
+			game.terrain.water_edit_admission=func(bounds:AABB,commands:Array)->int:
+				if game.combat.explosions>before:return ERR_BUSY
+				return admission.call(bounds,commands)
 		check(ids.size()==2,"saved shoreline pair loaded")
 		if ids.size()==2:
 			check(game.combat.damage_barrel(ids[0],50),"only the first barrel ignites")
-			var limit:=Time.get_ticks_msec()+3000
+			var limit:=Time.get_ticks_msec()+10000
 			while game.combat.explosions-before<2 and Time.get_ticks_msec()<limit:await physics_frame
 			check(game.combat.explosions-before==2 and game.combat.barrels.get_ids().is_empty(),"neighbor detonates in normal gameplay while shoreline terrain is busy")
+			if hold_craters:check(game.combat.craters.pending.any(func(crater:Dictionary)->bool:return crater.id==ids[1]),"neighbor crater waits while its explosion propagates")
+			print("CHAIN detonations=",game.combat.explosions-before," queued_craters=",game.combat.craters.pending.size())
 			check(Vector2(game.player.position.x-start.x,game.player.position.z-start.z).length()<.1,"player stays in the original position")
+		game.terrain.water_edit_admission=admission
 		check(FileAccess.get_sha256(save)==hash,"saved pair fixture preserved")
 		game.set_process(false);game.set_physics_process(false)
 		await physics_frame;await physics_frame
