@@ -135,6 +135,20 @@ def run(engine, packaged, report, expected_archive=None):
                 with_metrics = ProcessMetrics(owner.pid)
                 try:
                     idle_metrics = with_metrics.sample()
+                    owner.stdin.write("tick-profile\n")
+                    owner.stdin.flush()
+                    initial_tick = lines.get(timeout=10)
+                    # Leave a partial command in the input pipe. Simulation must
+                    # keep ticking while its reader waits for the newline.
+                    owner.stdin.write("tick-pro")
+                    owner.stdin.flush()
+                    time.sleep(0.5)
+                    owner.stdin.write("file\n")
+                    owner.stdin.flush()
+                    idle_tick = lines.get(timeout=10)
+                    partial_input_metrics = with_metrics.sample()
+                    assert initial_tick["hz"] == idle_tick["hz"] == 30
+                    assert idle_tick["tick"] >= initial_tick["tick"] + 8, (initial_tick, idle_tick)
                     rival = subprocess.run(host, cwd=ROOT, input="quit\n", env=env,
                                            capture_output=True, text=True, timeout=30,
                                            creationflags=subprocess.CREATE_NO_WINDOW)
@@ -148,6 +162,11 @@ def run(engine, packaged, report, expected_archive=None):
                     owner.stdin.write("edit-profile\n")
                     owner.stdin.flush()
                     report["edit_profile"] = lines.get(timeout=10)["profile"]
+                    owner.stdin.write("tick-profile\n")
+                    owner.stdin.flush()
+                    report["authority_ticks"] = dict(before=initial_tick, partial_input=idle_tick,
+                                                     idle_one_core_percent=partial_input_metrics.get("process_one_core_percent"),
+                                                     after_edit=lines.get(timeout=10))
                     assert report["edit_profile"]["solves"] > 0
                     report["query_burst"] = check_query_burst(owner, lines)
                     owner.stdin.write("v1 1 excavate 240 31 224 3 0\n")
@@ -170,6 +189,13 @@ def run(engine, packaged, report, expected_archive=None):
                 owner.kill()
                 owner.wait(timeout=10)
         assert hashlib.sha256(archive.read_bytes()).digest()==original_digest
+        # A burst larger than the inbox must drain in order before EOF releases
+        # the lease. The next host invocation reopens the same archive.
+        burst = invoke(host, ["tick-profile"]*65, "AUTHORITY ")[1:]
+        burst_ticks = [row["tick"] for row in burst]
+        assert len(burst_ticks)==65 and burst_ticks==sorted(burst_ticks)
+        assert max(burst_ticks.count(tick) for tick in set(burst_ticks))<=32
+        report["authority_ticks"]["burst_ticks"] = burst_ticks
         first = "v1 1 excavate 240 31 224 3 0"
         invalid = ["v2 1 excavate 240 31 224 3 0", "v1 0 excavate 240 31 224 3 0",
                    "v1 3 excavate 240 31 224 3 1", "v1 1 excavate 240 31 224 4 0",

@@ -3,6 +3,18 @@ extends SceneTree
 ## Trusted operator control over inherited process pipes. No network listener.
 const World=preload("res://addons/world_runtime/dedicated_world.gd")
 var world:=World.new()
+const TICK_HZ:=30
+const QUEUE_CAPACITY:=32
+const WORK_BUDGET_US:=26667
+var reader:=Thread.new()
+var queue_mutex:=Mutex.new()
+var free_slots:=Semaphore.new()
+var inbox:Array[Dictionary]=[]
+var tick_count:=0
+var peak_tick_us:=0
+var over_budget_ticks:=0
+const TICK_HISTORY:=256
+var tick_work_us:=PackedInt64Array()
 
 func _initialize()->void:run.call_deferred()
 
@@ -12,25 +24,66 @@ func run()->void:
 		if arg.begins_with("--authority-slot="):slot=arg.trim_prefix("--authority-slot=")
 	if DisplayServer.get_name()!="headless" or not world.open(slot):
 		printerr("Headless authority could not acquire or restore its world");quit(1);return
+	Engine.physics_ticks_per_second=TICK_HZ
+	Engine.max_fps=TICK_HZ
+	tick_work_us.resize(TICK_HISTORY)
+	for slot_index in QUEUE_CAPACITY:free_slots.post()
+	if reader.start(_read_operator)!=OK:
+		world.archive.release();quit(1);return
+	physics_frame.connect(_tick)
 	print("AUTHORITY ",JSON.stringify({"ready":true,"revision":world.revision(),"last_request_id":world.last_request_id()}))
+
+func _enqueue(message:Dictionary)->void:
+	free_slots.wait()
+	queue_mutex.lock()
+	inbox.append(message)
+	queue_mutex.unlock()
+
+func _read_operator()->void:
 	var pending:=""
 	while true:
 		# A larger blocking read on a Windows pipe may wait for another command.
 		var next:=OS.read_buffer_from_stdin(1)
-		if next.is_empty():break
+		if next.is_empty():
+			_enqueue({"exit":0});return
 		if next[0]==10:
 			var line:=pending.strip_edges()
-			if line=="quit":break
-			print("AUTHORITY ",JSON.stringify(command(line.split(" ",false))))
+			if line=="quit":
+				_enqueue({"exit":0});return
+			_enqueue({"line":line})
 			pending=""
 		elif next[0]!=13:
 			if next[0]<32 or next[0]>126 or pending.length()>=256:
-				printerr("Invalid operator command");world.archive.release();quit(2);return
+				_enqueue({"exit":2});return
 			pending+=String.chr(next[0])
-	world.archive.release()
-	quit()
+
+func _tick()->void:
+	var started:=Time.get_ticks_usec()
+	tick_count+=1
+	for index in QUEUE_CAPACITY:
+		queue_mutex.lock()
+		var message:Dictionary={} if inbox.is_empty() else inbox.pop_front()
+		queue_mutex.unlock()
+		if message.is_empty():break
+		free_slots.post()
+		if message.has("exit"):
+			reader.wait_to_finish()
+			world.archive.release()
+			if message.exit!=0:printerr("Invalid operator command")
+			quit(message.exit);return
+		print("AUTHORITY ",JSON.stringify(command(message.line.split(" ",false))))
+		if Time.get_ticks_usec()-started>=WORK_BUDGET_US:break
+	var elapsed:=Time.get_ticks_usec()-started
+	tick_work_us[(tick_count-1)%TICK_HISTORY]=elapsed
+	peak_tick_us=maxi(peak_tick_us,elapsed)
+	if elapsed>WORK_BUDGET_US:over_budget_ticks+=1
 
 func command(args:PackedStringArray)->Dictionary:
+	if args==PackedStringArray(["tick-profile"]):
+		var samples:=tick_work_us.slice(0,mini(tick_count-1,TICK_HISTORY))
+		samples.sort()
+		var p99:=0 if samples.is_empty() else samples[ceili(samples.size()*0.99)-1]
+		return {"ok":true,"hz":TICK_HZ,"tick":tick_count,"peak_tick_us":peak_tick_us,"over_budget_ticks":over_budget_ticks,"samples":samples.size(),"p99_work_us":p99}
 	if args==PackedStringArray(["edit-profile"]):return {"ok":true,"profile":world.last_edit_profile}
 	if args==PackedStringArray(["v1","inventory"]):
 		var state:Dictionary=world.inventory.snapshot()
