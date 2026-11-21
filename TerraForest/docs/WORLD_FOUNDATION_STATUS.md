@@ -1,5 +1,7 @@
 ## Changed-triangle publication trial
 
+The [architecture comparison and migration gates](WORLD_SYSTEMS_DESIGN.md#architecture-choices-for-interactive-world-edits) record the remaining decision on resident collision, its dependencies and the evidence for resuming implementation.
+
 **The two-frame gate failed.** The packaged 1080p Cedar Vale comparison ran on the RTX 4050 Laptop using PCK `48043c3f5d6aa81e508262a14b6fbd3c101d4b76af23717c4db6a10152e221bd`. The candidate requires `--triangle-page-terrain`. Normal gameplay uses the existing resident tile path.
 
 | Normal gameplay action | First matching draw on the candidate | Worst frame interval |
