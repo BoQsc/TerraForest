@@ -15,6 +15,7 @@ class CheckLauncherTests(unittest.TestCase):
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/building_materials.gd"]), 64 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--script", str(Path("tests/water_barrel_world.gd").resolve())]), 40 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/water_static_editing.gd"]), 2 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/water_equilibrium_scope.gd"]), 2 * 2**20)
         brush = ["godot", "--script", "res://tests/water_player_world.gd", "--authoring-captures"]
         self.assertEqual(planned_report_bytes(brush), 56 * 2**20)
         self.assertEqual(planned_report_bytes(brush + ["--water-load-only"]), 24 * 2**20)

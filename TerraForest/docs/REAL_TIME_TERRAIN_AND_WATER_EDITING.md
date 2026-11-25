@@ -6,6 +6,8 @@ A player should be able to break ground, place terrain, empty a bucket or detona
 
 **Current verdict.** The packaged bird’s-eye editor can edit real terrain and finite water. Nearby terrain dig and fill changed the sampled collider on draw one. The latest full wet cut took 217 ms. In the corresponding shoreline run a sea blast took 30 ms and a lake blast took 47 ms. The full two-frame and steady-60-Hz gates remain open.
 
+Use the [World Editor experiment plan](WORLD_EDIT_EXPERIMENTS.md) for the latest wet and dry controls, default-off authored water option, bottom toolbar and decisions about replacing terrain collision or water settlement.
+
 ## The world editor is the primary workload
 
 An author should be able to draw a channel from above, excavate its banks, deposit material to close one end, add or remove a measured quantity of water, then zoom down and walk or swim through exactly what they edited. A small stroke must preserve a cave roof or a narrow bank. A large stroke must work across region boundaries. Held, turning and interrupted strokes matter as much as individual clicks. The sea and lake blasts remain regression cases for an abrupt edit made through gameplay.

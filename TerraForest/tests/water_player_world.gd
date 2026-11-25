@@ -1116,6 +1116,7 @@ func check_authoring_brush()->void:
  game.player_view.entry.finish()
  var coastal:bool="--authoring-preparation" in OS.get_cmdline_user_args()
  var lake_cut:bool="--authoring-lake-cut" in OS.get_cmdline_user_args()
+ var wet_editor:bool="--authoring-overview-wet" in OS.get_cmdline_user_args()
  var dry_cut:bool="--authoring-dry-cut" in OS.get_cmdline_user_args()
  var fill:bool="--authoring-fill" in OS.get_cmdline_user_args()
  var max_radius:bool="--authoring-max-radius" in OS.get_cmdline_user_args()
@@ -1125,10 +1126,10 @@ func check_authoring_brush()->void:
   game.fly=true
   game.teleport(Vector3(20,50,1008),50)
   if not await ready("coastal brush preparation"):check(false,"Coastal authoring destination is resident");return
- elif lake_cut:
+ elif lake_cut or wet_editor:
   if game.lakes._lakes.is_empty():check(false,"Wide cut has a generated lake");return
   lake=game.lakes._lakes.values()[0]
-  game.teleport(lake.seed)
+  game.teleport(lake.seed+Vector3(7,0,5) if wet_editor else lake.seed)
   if not await ready("wide lake authoring"):check(false,"Wide lake authoring destination is resident");return
   for distance in range(0,65,4):
    for direction in 12:
@@ -1151,6 +1152,9 @@ func check_authoring_brush()->void:
  game.session_menu.set_open(false)
  game.app_focused=true
  Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+ if wet_editor:
+  await check_wet_editor_strokes(wet_target,lake.level)
+  return
  if "--authoring-overview" in OS.get_cmdline_user_args():
   await check_overview_brush()
   return
@@ -1852,6 +1856,92 @@ func brush_button(pressed:bool,button:MouseButton=MOUSE_BUTTON_LEFT)->void:
  Input.parse_input_event(event)
  Input.flush_buffered_events()
  game._update_edit(.06)
+
+# Independent vertical probes distinguish lost mass, a lowered level and a
+# missing boundary after a real editor click. Ledger snapshots stay out of
+# the timed frames. The outside probe is in the same lake as the edited floor.
+func editor_water_transect(target:Vector3,level:float)->Array[Dictionary]:
+ var samples:Array[Dictionary]=[]
+ for offset:float in [0.0,1.0,4.0]:
+  var above:=Vector3(target.x+offset,level+2,target.z)
+  var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(
+   PhysicsRayQueryParameters3D.create(above+Vector3.UP*8,above-Vector3.UP*28,1,[game.player.get_rid()]))
+  var row:={"offset_m":offset,"floor_y":null,"surface_y":null,"immersion_head_y":null}
+  if not floor_hit.is_empty():
+   var feet:Vector3=floor_hit.position+Vector3.UP*.05
+   row.floor_y=floor_hit.position.y
+   var depth:float=game.lakes.depth_at(feet)
+   if depth>0:row.immersion_head_y=feet.y+depth
+   # Search independently of immersion. A rendered hole and a missing
+   # occupancy record are separate observations. Native picking reaches 5 m.
+   while above.y>feet.y:
+    var below:=Vector3(above.x,maxf(feet.y,above.y-4),above.z)
+    var surface:Dictionary=game.lakes.water.raycast_surface(above,below)
+    if surface.get("hit",false):
+     row.surface_y=surface.point.y
+     break
+    above=below
+  samples.append(row)
+ return samples
+
+func check_wet_editor_strokes(target:Vector3,level:float)->void:
+ game.session_menu.activate_developer_slot(0)
+ game.session_menu.set_open(true)
+ game.session_menu.world_editor_button.pressed.emit()
+ for frame in 3:await RenderingServer.frame_post_draw
+ if not game.world_editor_active():check(false,"The world editor opens over the resident lake");return
+ var editor=game.world_editor
+ editor.radius.value=2
+ var initial_ml:=owned_amount()
+ for operation in [0,1]:
+  var before:=editor_water_transect(target,level)
+  if before[0].floor_y==null or before[0].surface_y==null:
+   check(false,"The editor target starts with a physical floor and published lake surface");break
+  var point:=Vector3(target.x,before[0].floor_y,target.z)
+  var pixel:Vector2=editor.camera.unproject_position(point)
+  if not root.get_visible_rect().has_point(pixel) or editor.panel.get_global_rect().has_point(pixel):
+   check(false,"The world-space target is visible outside the toolbar");break
+  editor.operation.select(operation)
+  editor.operation.item_selected.emit(operation)
+  var motion:=InputEventMouseMotion.new();motion.position=pixel
+  root.push_input(motion,true)
+  var press:=InputEventMouseButton.new();press.position=pixel;press.button_index=MOUSE_BUTTON_LEFT;press.pressed=true
+  var revision:int=game.terrain.published_revision
+  var stamp:=Time.get_ticks_usec()
+  root.push_input(press,true)
+  press=press.duplicate();press.pressed=false;root.push_input(press,true)
+  var draws:=0
+  var second:Array[Dictionary]=[]
+  var observed:=0
+  var observed_ms:=0.0
+  while Time.get_ticks_usec()-stamp<5000000:
+   await RenderingServer.frame_post_draw
+   draws+=1
+   var now:=Time.get_ticks_usec()
+   if game.terrain.published_revision>revision and observed==0:
+    observed=draws;observed_ms=(now-stamp)/1000.0
+   if draws==2:second=editor_water_transect(target,level)
+   if observed>0 and draws>=2:break
+  if not await ready("wet editor stroke"):
+   check(false,"Wet editor stroke finishes terrain and water preparation");break
+  var settled:=editor_water_transect(target,level)
+  var final_ml:=owned_amount()
+  print("EDITOR_LAKE_LEDGER ",JSON.stringify({"action":"dig" if operation==0 else "fill","before_ml":initial_ml,"after_ml":final_ml,
+   "target":str(point),"terrain_revision_draw":observed,"terrain_revision_ms":observed_ms,"before":before,"draw_two":second,"settled":settled}))
+  check(observed>0 and settled[0].floor_y!=null and (settled[0].floor_y<point.y-.1 if operation==0 else settled[0].floor_y>point.y+.1),"The editor stroke changes its physical lake floor")
+  check(final_ml==initial_ml,"Terrain-only editing preserves the owned finite quantity")
+  if "--two-frame-edits" in OS.get_cmdline_user_args():
+   var on_time:=observed>0 and observed<=2 and observed_ms<=33.334 and second.size()==settled.size()
+   for n in second.size():
+    for key in ["floor_y","surface_y","immersion_head_y"]:
+     if second[n][key]==null or settled[n][key]==null or absf(second[n][key]-settled[n][key])>(.001 if key=="floor_y" else .025):
+      on_time=false
+   check(on_time,"Wet editor "+("dig" if operation==0 else "fill")+" publishes matching floor, immersion and surface by draw two and 33.33 ms")
+  for row in settled:
+   var surface=row.surface_y
+   var head=row.immersion_head_y
+   check(surface!=null and head!=null and absf(surface-head)<=.025,"Published lake surface and immersion meet at offset "+str(row.offset_m))
+ editor.close()
 
 func check_overview_brush()->void:
  game.session_menu.activate_developer_slot(0)

@@ -32,6 +32,7 @@ WORKLOADS = {
     "brush_drag": EDITOR + ["--authoring-drag"],
     "brush_materials": EDITOR + ["--authoring-materials"],
     "brush_max": EDITOR + ["--authoring-fill", "--authoring-max-radius"],
+    "overview_wet": EDITOR + ["--authoring-overview-wet"],
     "overview_brush": EDITOR + ["--authoring-overview"],
     "overview_review": EDITOR + ["--authoring-overview", "--editor-review"],
     "overview_remote": EDITOR + ["--authoring-overview", "--editor-remote"],

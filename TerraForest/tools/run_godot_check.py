@@ -65,7 +65,7 @@ def planned_report_bytes(command):
         return 40 * 2**20  # Captures plus an at-most-8-MiB terrain failure snapshot.
     scripts = [str(value) for value in command if str(value).endswith(".gd")]
     if "--headless" in command and len(scripts) == 1 and Path(scripts[0]).stem in {
-        "universal_item_drop", "physical_item_drops", "drop_key_standard", "water_static_editing"
+        "universal_item_drop", "physical_item_drops", "drop_key_standard", "water_static_editing", "water_equilibrium_scope"
     }:
         return 2 * 2**20  # Headless variants write only the check log and receipt.
     if len(scripts) == 1 and Path(scripts[0]).stem == "drop_key_standard":
