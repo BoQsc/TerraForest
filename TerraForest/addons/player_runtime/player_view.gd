@@ -75,9 +75,11 @@ func _bind_view(view:Camera3D)->void:
 	var canopy:Node=game.get_node_or_null("CanopyShadows")
 	if canopy!=null:canopy.camera=view
 	game.water_camera.configure(view,game.lakes)
-	if view==third_camera:
+	if view==third_camera or view==editor_camera:
+		# configure() first restores the old camera's dry environment. An
+		# overview opened while swimming must not inherit its underwater fog.
 		view.environment=game.camera.environment
-		if overview:
+		if view==third_camera and overview:
 			var source:Environment=view.environment if view.environment!=null else game.get_world_3d().environment
 			_overview_environment=source.duplicate() if source!=null else Environment.new()
 			_overview_fog_density=_overview_environment.fog_density

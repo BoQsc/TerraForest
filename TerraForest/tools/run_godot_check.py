@@ -45,8 +45,9 @@ def planned_report_bytes(command):
             (scripts == {"terrain_placement_preview.gd"} and any(flag in command for flag in ("--measure-hand-edits", "--no-preview-captures")))):
         return 2 * 2**20  # Log and receipt only; the hand-edit route exits before captures.
     if "--authoring-cut-angles" in command and "--water-load-only" in command and "--authoring-captures" not in command and any(Path(str(value)).name == "water_player_world.gd" for value in command):
-        # Four bounded 1280 x 720 RGBA images plus the normal load-only logs.
-        return 24 * 2**20
+        # Four 1280 x 720 RGBA PNGs use less than 15 MiB even with uncompressed
+        # scanlines. This route exits after the cut, four pictures and logs.
+        return 20 * 2**20
     if "--authoring-captures" in command and any(Path(str(value)).name == "water_player_world.gd" for value in command):
         # Two additional 1080p frames on top of the normal route allowance.
         return 16 * 2**20 + planned_report_bytes([arg for arg in command if arg != "--authoring-captures"])

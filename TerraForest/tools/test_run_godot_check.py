@@ -20,6 +20,7 @@ class CheckLauncherTests(unittest.TestCase):
         release = ["TerraForest.exe", "--", "--water-qualification-driver=res://qualification/water_player_world.gd"]
         self.assertEqual(planned_report_bytes(release + ["--blast-only-timing", "--lossless-shore-views"]), 23 * 2**20)
         self.assertEqual(planned_report_bytes(release + ["--blast-only-timing"]), 40 * 2**20)
+        self.assertEqual(planned_report_bytes(release + ["--water-load-only", "--authoring-cut-angles"]), 20 * 2**20)
 
     def test_pack_rejects_missing_or_mismatched_external_libraries(self):
         with tempfile.TemporaryDirectory() as directory:

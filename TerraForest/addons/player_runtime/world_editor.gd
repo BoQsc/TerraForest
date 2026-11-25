@@ -112,7 +112,6 @@ func open()->void:
 	game.player_view.editor_camera=camera
 	game.tool_view.human.set_third_person(true)
 	camera.fov=game.camera.fov
-	camera.environment=game.camera.environment
 	camera.cull_mask=game.camera.cull_mask
 	_position_camera()
 	game.player_view._bind_view(camera)

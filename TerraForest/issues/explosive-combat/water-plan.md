@@ -1,8 +1,7 @@
 
 
-The latest packaged editor build fills the gameplay craters at both shores. The complete 64 m cut took 246 ms, and elevated vegetation patches remain visible in its reverse view. Sea and lake timing, both angles and the separate bucket run are recorded in the [strategy editor results](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#packaged-strategy-editor-results). The performance and visual issue remains open.
+Sea and lake craters filled and both passed the 2 cm bank checks. The sea reached matching collision and water on draw two in 33.3 ms. The lake took four draws and 68.8 ms. The full wet cut took 227.1 ms and all nine samples matched only after publication. Repeating the reverse capture with the renderer bound to the strategy camera showed the foreground tree crowns. The packaged game also passed the transition from a submerged player into the editor and back. Interactive timing and human visual acceptance remain open. [Measured timings, both angles and object contact](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#packaged-strategy-editor-results)
 
-The sea and lake passed the 2 cm bank checks. Lake water staging took 34 ms after terrain admission. A dry 64 m control also missed two frames. The retained cut views disagree on suspended green patches, so the visual issue remains open. [Packaged comparison and basin-capacity decision](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#which-parts-of-volumetric-water-are-worth-keeping)
 The [changed-triangle comparison](../../docs/WORLD_FOUNDATION_STATUS.md#changed-triangle-publication-trial) records the rejected 8 m page trial and actual packaged timings. The two-frame edit milestone remains open.
 
 The [joint publication measurements](../../docs/WORLD_FOUNDATION_STATUS.md#joint-publication-on-the-packaged-shoreline-route) cover the full cut, both shoreline camera pairs and the outstanding two-frame deadline.

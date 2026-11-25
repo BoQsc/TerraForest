@@ -993,17 +993,25 @@ func check_cut_landscape_support(center:Vector3,phase:String)->void:
 
 func capture_cut_angles(center:Vector3,phase:String)->void:
  var previous:=root.get_camera_3d()
+ var previous_editor:Camera3D=game.player_view.editor_camera
+ var previous_render_view:Vector3=game.terrain.render_view
  var camera:=Camera3D.new()
  root.add_child(camera)
+ camera.fov=previous.fov
+ camera.cull_mask=previous.cull_mask
+ camera.far=4000
  var show_pointer:bool=game.pointer.visible
  var processing:bool=game.is_processing()
  var physics:bool=game.is_physics_processing()
  game.set_process(false);game.set_physics_process(false);game.pointer.visible=false
- camera.make_current()
+ game.player_view.editor_camera=camera
  var offsets:=[Vector3(-54,75,60),Vector3(59,70,-58)]
  for i in offsets.size():
   camera.global_position=center+offsets[i]
   camera.look_at(center+Vector3.UP*8,Vector3.UP)
+  game.terrain.render_view=camera.global_position
+  game.player_view._bind_view(camera)
+  check(game.vegetation.camera==camera and game.ground_cover.boulder_camera==camera and game.water_camera.camera==camera,"Editor cut view is bound to the landscape and water renderers")
   await RenderingServer.frame_post_draw
   await RenderingServer.frame_post_draw
   var picture:=root.get_texture().get_image()
@@ -1011,9 +1019,36 @@ func capture_cut_angles(center:Vector3,phase:String)->void:
   var path:=evidence.path_join("cut_%s_angle_%d.png"%[phase,i+1])
   check(root.get_camera_3d()==camera and picture.save_png(path)==OK,"Retained cut angle %d %s"%[i+1,phase])
  check_cut_landscape_support(center,phase)
- previous.make_current();camera.queue_free()
+ game.player_view.editor_camera=previous_editor
+ game.terrain.render_view=previous_render_view
+ game.player_view._bind_view(previous)
+ camera.queue_free()
  game.pointer.visible=show_pointer
  game.set_process(processing);game.set_physics_process(physics)
+ if phase=="after" and "--authoring-lake-cut" in OS.get_cmdline_user_args():check_submerged_editor_handoff(center)
+
+func check_submerged_editor_handoff(center:Vector3)->void:
+ var eye:Camera3D=game.camera
+ var saved:=eye.global_transform
+ var camera_water:Node=game.water_camera
+ var ground:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(
+  center+Vector3.UP*80,center-Vector3.UP*96,1,[game.player.get_rid()]))
+ if ground.is_empty():
+  check(false,"Submerged editor handoff has a physical cut floor");return
+ var was_third:bool=game.player_view.enabled
+ game.player_view.set_enabled(false,false)
+ check(root.get_camera_3d()==eye,"Submerged handoff begins in first person")
+ eye.global_position=ground.position+Vector3.UP*.08
+ camera_water.update()
+ check(camera_water.underwater,"Player eye enters the published water in the cut")
+ var immersed:Environment=eye.environment
+ game.open_world_editor()
+ check(game.world_editor_active() and not camera_water.underwater and root.get_camera_3d().environment!=immersed,"Opening the world editor underwater restores the above-water environment")
+ if game.world_editor_active():game.world_editor.close()
+ check(root.get_camera_3d()==eye and camera_water.underwater,"Returning to the submerged player restores the underwater environment")
+ eye.global_transform=saved
+ camera_water.update()
+ game.player_view.set_enabled(was_third,false)
 
 func check_authoring_brush()->void:
  game.player_view.entry.finish()
