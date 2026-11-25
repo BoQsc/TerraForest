@@ -31,6 +31,24 @@ using namespace godot;
 namespace terraforest {
 static const Vector3i directions[6]={{0,-1,0},{1,0,0},{-1,0,0},{0,0,1},{0,0,-1},{0,1,0}};
 static bool reply_ok(const PackedByteArray &p,int size){return p.size()==size&&p.decode_u32(0)==0x32505254&&p.decode_u32(8)==0;}
+void NativeRegionalWater::Region::index_intervals() {
+    intervals={};
+    if(brick_geometry!=WaterBrickGeometry::mixed)return;
+    // Hold const handles throughout classification. Reading through writable
+    // handles would detach the old terrain unnecessarily on the worker.
+    const Region &r=*this;
+    const WaterLatticeSigns signs(r.density);
+    for(int z=0;z<8;++z)for(int y=0;y<8;++y){
+        const int row=y+8*z;
+        for(int x=0;x<8;++x){
+            const int i=8*row+x, column=x+8*z;
+            if(r.floor[i]==r.ceiling[i])intervals.closed[column]|=1u<<y;
+            else if(r.has_density&&(signs.air[row]&(1u<<x))&&
+                    !(contacts&&contacts->index[i])&&!(structures&&structures->cells[i]))
+                intervals.air[column]|=1u<<y;
+        }
+    }
+}
 void NativeWaterTerrainBatch::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","patches"),&NativeWaterTerrainBatch::configure);
     ClassDB::bind_method(D_METHOD("sample_terrain","core","budget","revision","epoch"),&NativeWaterTerrainBatch::sample_terrain);
@@ -89,6 +107,7 @@ int64_t NativeWaterTerrainPatch::prepare_structures(){
     while(structure_cursor<512){
         if(cached_cancelled.load(std::memory_order_relaxed))return status=-4;
         int i=structure_cursor++,x=i%8,y=(i/8)%8,z=i/64;
+        if(!structure_only&&structure_hulls.empty()&&!(general_rows[i/8]&(1u<<x)))continue;
         if(structure_only){
             Vector3 origin=Vector3(coord)*4+Vector3(x,y,z)*.5;
             if(!AABB(origin,Vector3(.5,.5,.5)).intersects(structure_edit_bounds))continue;
@@ -258,7 +277,15 @@ int64_t NativeWaterTerrainPatch::sample_boundary(Object *core,int64_t budget,int
     }
     for(int i=0;i<729;++i)if(nearest[i]<.75f*.75f)
         density[i]=(signed_distance[i]<0?-1.f:1.f)*std::sqrt(nearest[i]);
+    const WaterLatticeSigns signs(density);
     for(int z=0;z<8;++z)for(int y=0;y<8;++y)for(int x=0;x<8;++x){
+        const int i=x+8*y+64*z;
+        if(coord.y*8+y<2||coord.y*8+y>=509){floor[i]=ceiling[i]=500;continue;}
+        if(!(signs.mixed[i/8]&(1u<<x))){
+            floor[i]=(signs.air[i/8]&(1u<<x))?0:500;
+            ceiling[i]=500;
+            continue;
+        }
         // Intersection of the four vertical air intervals. This deliberately
         // errs toward solid support: no leakage through a thin diagonal wall.
         // A 0.5 m grid cannot resolve sub-cell tunnels or overhangs.
@@ -269,7 +296,6 @@ int64_t NativeWaterTerrainPatch::sample_boundary(Object *core,int64_t budget,int
             else if(a<=0)lo=std::max(lo,500*(-a)/(b-a));
             else if(b<=0)hi=std::min(hi,500*a/(a-b));
         }
-        int i=x+8*y+64*z;
         floor[i]=uint16_t(std::clamp(int(std::ceil(lo)),0,500));
         ceiling[i]=uint16_t(std::clamp(int(std::floor(hi)),int(floor[i]),500));
         // The four-column intersection may be empty even when a sloping
@@ -278,10 +304,9 @@ int64_t NativeWaterTerrainPatch::sample_boundary(Object *core,int64_t budget,int
         float corners[8];for(int c=0;c<8;++c)corners[c]=density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];
         const auto shaped=WaterCellProfile::make(corners,true,floor[i],ceiling[i]);
         if(shaped.cut&&shaped.capacity()>0){floor[i]=0;ceiling[i]=500;}
-        if(!shaped.cut&&std::any_of(corners,corners+8,[](float value){return value>0;})&&std::any_of(corners,corners+8,[](float value){return value<=0;})){
-            floor[i]=0;ceiling[i]=500;general_terrain=true;
+        if(!shaped.cut){
+            floor[i]=0;ceiling[i]=500;general_terrain=true;general_rows[i/8]|=1u<<x;
         }
-        if(coord.y*8+y<2||coord.y*8+y>=509)floor[i]=ceiling[i]=500;
     }
     // Explicit one-metre terrain cubes are separate from smooth density.
     // Query cell centres on the same pinned worker revision.
@@ -798,6 +823,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
         it->second.density=patch->density;it->second.has_density=true;it->second.occupancy_version=13;it->second.contacts=patch->contacts;
         it->second.brick_geometry=patch->brick_geometry;
         it->second.floor=patch->floor;it->second.ceiling=patch->ceiling;sampled+=patch->structure_only?0:729;
+        it->second.index_intervals();
     }
     it->second.valid=true;it->second.valid_before_edit=-1;
     if(mesh_set.insert(k).second)meshes.push_back(k);
@@ -3295,12 +3321,26 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install,bool p
     if(bytes>1100000||count>MAX_REGIONS||expected>MAX_TOTAL||data.size()!=32+int64_t(bytes)+int64_t(count)*record_bytes+int64_t(data.decode_u64(24)))return false;
     Ref<NativeLakeCatalog> validator;validator.instantiate();if(!validator->validate_snapshot(data.slice(32,32+bytes)))return false;
     std::map<Key,Region> staged;int64_t offset=32+bytes;uint64_t sum=0;Key previous=0;
+    const uint8_t *records=data.ptr();
     for(uint32_t n=0;n<count;++n){Key k=data.decode_u64(offset);uint32_t valid=data.decode_u32(offset+8),shape=data.decode_u32(offset+12);Vector3i p=position(k);
         if(k!=key(p)||(n&&k<=previous)||p.x>=500||p.z>=500||p.y>=64||valid>1||shape>(data.decode_u32(4)>=11?27u:data.decode_u32(4)>=10?11u:data.decode_u32(4)>=7?3u:shaped?1u:0u))return false;previous=k;offset+=16;
         Region r;r.occupancy_version=data.decode_u32(4)>=12?data.decode_u32(4):11;r.valid=valid;r.has_density=shape&1;r.replace_water=shape&2;r.ocean_state=uint8_t((shape>>2)&3);r.settle_pending=(shape&16)!=0;if(r.ocean_state>2)return false;
-        for(int i=0;i<512;++i){r.floor[i]=data.decode_u16(offset);r.ceiling[i]=data.decode_u16(offset+2);r.water[i]=data.decode_u64(offset+4);if(r.water[i]>>63){r.water[i]&=~(uint64_t(1)<<63);if(!r.water[i])return false;}offset+=12;
-            if(r.floor[i]>r.ceiling[i]||r.ceiling[i]>500||r.water[i]>MAX_TOTAL-sum)return false;sum+=r.water[i];}
-        if(shaped)for(float &value:r.density){value=data.decode_float(offset);offset+=4;if(!std::isfinite(value))return false;}
+        std::array<uint64_t,512> amounts;
+        auto floor=r.floor.begin(),ceiling=r.ceiling.begin();
+        const auto initial=sum;
+        for(int i=0;i<512;++i){
+            const auto *p=records+offset;
+            floor[i]=water_u16(p);ceiling[i]=water_u16(p+2);
+            const auto encoded=water_u64(p+4);
+            const auto amount=encoded&~(uint64_t(1)<<63);
+            if((encoded&&!amount)||floor[i]>ceiling[i]||ceiling[i]>500||amount>MAX_TOTAL-sum)return false;
+            amounts[i]=amount;sum+=amount;offset+=12;
+        }
+        if(sum!=initial)r.water=amounts;
+        if(shaped)for(float &value:r.density){
+            value=water_f32(records+offset);offset+=4;
+            if(!std::isfinite(value))return false;
+        }
         // Old saved amounts are authoritative, including over-capacity cells.
         // Restore cached profiles without simulation or quantity changes.
         if(install||data.decode_u32(4)>=6)staged.emplace(k,std::move(r));
@@ -3360,16 +3400,19 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install,bool p
     }
     if(offset!=data.size())return false;
     if(sum!=expected)return false;if(!install)return true;
+    for(auto &[k,r]:staged)r.index_intervals();
     ocean_edit_interests.clear();ocean_settlement_interests.clear();ocean_edit_retry_until=0;
     wet_frontier={};surface_budget_failed=false;equilibrium_dependencies.clear();wide_edit_bounds.clear();local_edit_regions.clear();local_occupancy_regions.clear();local_receiver_regions.clear();relaxation_before.clear();relaxation_dirty_before.clear();urgent_meshes.clear();batch_urgent=false;deferred_regions.clear();settling.clear();settling_set.clear();settle_steps=settle_transfers=settle_us=0;
     ocean_cache.clear();ocean_cache_bytes=0;ocean_cache_hits=0;invalidate_snapshot();cancel_mesh_batch();published_regions.clear();published_occupancy.clear();staged_occupancy.clear();staged_ready.clear();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);solid_cache_bytes=structure_bytes;restored_cache.clear();cache_rebuilds=0;requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
     // Storage intermediates need validated records, not meshing/query admission.
     if(!prepare_render)return true;
     for(auto &[k,r]:regions){
+        const auto &quantity=static_cast<const Region &>(r).water;
         // Older coastal caches can contain rounded-up quantities without a
         // pending flag. Preserve every ml and route these cells through the
         // normal displacement transaction instead of clamping saved amounts.
-        if(r.valid&&!r.settle_pending)for(int i=0;i<512;++i)if(r.water[i]&&r.water[i]>profile(r,i).capacity()){r.settle_pending=true;break;}
+        if(r.valid&&!r.settle_pending&&!quantity.is_initial_zero())for(int i=0;i<512;++i)
+            if(quantity[i]&&quantity[i]>profile(r,i).capacity()){r.settle_pending=true;break;}
         if(r.settle_pending)wake_settling(k);if(r.valid){++cache_hits;restored_cache.insert(k);}else request(k);
         // Version 1 remains playable during one-time terrain-shape cache upgrade.
         if(!r.has_density)request(k);
@@ -3378,7 +3421,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install,bool p
         // boundary node can therefore add only its negative-axis neighbour,
         // not every region in a 3x3x3 reconstruction halo.
         bool negative[3]={false,false,false};
-        for(int i=0;i<512;++i)if(r.water[i]&&profile(r,i).capacity()>0){
+        for(int i=0;!quantity.is_initial_zero()&&i<512;++i)if(quantity[i]&&profile(r,i).capacity()>0){
             if((i&7)==0)negative[0]=true;
             if(((i>>3)&7)==0)negative[1]=true;
             if((i>>6)==0)negative[2]=true;

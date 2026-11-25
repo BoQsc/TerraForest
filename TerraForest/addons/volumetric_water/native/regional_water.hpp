@@ -22,6 +22,7 @@
 #include "water_cell_profile.hpp"
 #include "water_terrain_contacts.hpp"
 #include "snapshot_array.hpp"
+#include "water_brick_intervals.hpp"
 
 namespace terraforest {
 struct WaterSurfaceProfileCache;
@@ -74,6 +75,7 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     std::atomic<bool> cached_cancelled{false};
     uint64_t cached_started_us=0,cached_worker_us=0;
     bool terrain_prepared=false,structure_only=false,general_terrain=false;
+    std::array<uint8_t,64> general_rows{};
     int64_t retained_edit=-1;
     WaterBrickGeometry brick_geometry=WaterBrickGeometry::mixed;
     void classify_uniform_terrain();
@@ -133,6 +135,8 @@ class NativeRegionalWater : public godot::RefCounted {
         bool valid=false,has_density=false,replace_water=false;
         int64_t valid_before_edit=-1; // Transient provenance of this invalidation.
         WaterBrickGeometry brick_geometry=WaterBrickGeometry::mixed;
+        WaterBrickIntervals intervals;
+        void index_intervals();
         // Event-driven settling; the pending flag survives snapshots. The
         // cursor is disposable: replaying a scan never replays a transfer.
         bool settle_pending=false;
@@ -151,7 +155,9 @@ class NativeRegionalWater : public godot::RefCounted {
         uint32_t encoded_vacancies() const;
     };
     static WaterCellProfile profile(const Region &r,int i) {
-        if(r.brick_geometry==WaterBrickGeometry::air){WaterCellProfile clear;clear.cut=true;return clear;}
+        if(r.brick_geometry==WaterBrickGeometry::air||r.intervals.full_air(i)){
+            WaterCellProfile clear;clear.cut=true;return clear;
+        }
         if(r.floor[i]==r.ceiling[i])return WaterCellProfile::make(nullptr,false,r.floor[i],r.ceiling[i]);
         float d[8];int x=i%8,y=(i/8)%8,z=i/64;
         for(int c=0;c<8;++c)d[c]=r.density[x+(c&1)+9*(y+((c>>1)&1))+81*(z+((c>>2)&1))];

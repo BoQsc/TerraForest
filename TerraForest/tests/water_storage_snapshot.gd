@@ -4,6 +4,7 @@ func _initialize()->void:
  var folder:=ProjectSettings.globalize_path("user://water_storage_check_"+str(Time.get_ticks_usec()))
  var store=ClassDB.instantiate("NativeWaterRegionStore");check(store.open_store(folder),"isolated store opens")
  var original:PackedByteArray=packet(125000)
+ check_loaded_records(original)
  for version in [12,13]:
   var edited:=original.duplicate();edited.encode_u32(4,version)
   var component:PackedByteArray=store.publish_water_snapshot(edited)
@@ -33,3 +34,22 @@ func _initialize()->void:
  store.close();check(store.open_store(folder),"store reopens")
  check(store.expand_water_snapshot(encoded)==original and store.expand_water_snapshot(dry_encoded)==dry,"both component versions survive reopen")
  store.close();print("WATER_STORAGE_SNAPSHOT failures=",failures);quit(1 if failures else 0)
+
+func check_loaded_records(original:PackedByteArray)->void:
+ var water:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+ var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ var record:=32+catalog.size()
+ var flagged:=original.duplicate()
+ flagged[record+27]|=128
+ check(water.restore_snapshot(flagged) and water.statistics().water_ml==125000,"historical occupied-cell flag preserves its positive quantity")
+ var before:PackedByteArray=water.capture_snapshot(catalog)
+ for defect in ["empty flag","inverted interval","invalid density","wrong total"]:
+  var data:=original.duplicate()
+  match defect:
+   "empty flag":data[record+39]=128
+   "inverted interval":data.encode_u16(record+16,501)
+   "invalid density":data.encode_float(record+6160,NAN)
+   "wrong total":data.encode_u64(16,125001)
+  check(not water.restore_snapshot(data) and water.capture_snapshot(catalog)==before,"rejected "+defect+" keeps the previously installed volume")
+ var dry:=packet(0)
+ check(water.restore_snapshot(dry) and water.capture_snapshot(catalog)==dry,"dry region retains its canonical bytes after contact indexing")

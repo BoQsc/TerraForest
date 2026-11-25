@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import time
 
 from development_storage import ROOT, admit
 from maintain_water_captures import maintain
@@ -25,6 +26,29 @@ def digest(path):
 
 def save(path, record):
     path.write_text(json.dumps(record, indent=2), encoding="utf-8")
+
+
+def release_stage(stage, files):
+    root = stage.resolve(strict=True)
+    for path in files:
+        if not path.resolve().is_relative_to(root):
+            raise ValueError("Unexpected stage path")
+        # Windows can briefly retain the image mapping after reporting the
+        # exit code. Only retry the files owned by this frozen candidate.
+        deadline = time.monotonic() + 5
+        while True:
+            try:
+                path.unlink(missing_ok=True)
+                break
+            except PermissionError:
+                if time.monotonic() >= deadline:
+                    raise
+                time.sleep(0.1)
+    for directory in sorted((d for d in stage.rglob("*") if d.is_dir()), key=lambda d: -len(d.parts)):
+        if not any(directory.iterdir()):
+            directory.rmdir()
+    if not any(stage.iterdir()):
+        stage.rmdir()
 
 
 def run_route(engine, pack_hash, label, flags, index, frozen_driver):
@@ -98,9 +122,11 @@ def main(timing_only=False, selected_routes=None):
         save(index, record)
         cut = ["--water-load-only", "--authoring-brush", "--authoring-lake-cut"]
         shores = ["--water-immediate-contact", "--water-edit-response", "--blast-only-timing"]
+        bucket_interruption = ["--water-immediate-contact", "--water-edit-response", "--water-no-captures"]
         passed = True
         workloads = {"cut": cut, "shores": shores + ["--water-no-captures"],
-                     "cut_angles": cut + ["--authoring-cut-angles"], "shore_angles": shores}
+                     "cut_angles": cut + ["--authoring-cut-angles"], "shore_angles": shores,
+                     "bucket_interruption": bucket_interruption}
         routes = selected_routes or (["cut", "shores"] if timing_only else list(workloads))
         for label in routes:
             folder, result = run_route(engine, record["pack_sha256"], label, workloads[label], index, frozen_driver)
@@ -125,25 +151,19 @@ def main(timing_only=False, selected_routes=None):
                 save(index, record)
         return 0 if passed and len(record["runs"]) == len(routes) else 1
     finally:
-        for path in [pack, *(target for _, target in copies)]:
-            if not path.resolve().is_relative_to(stage.resolve()):
-                raise ValueError("Unexpected stage path")
-            path.unlink(missing_ok=True)
-        for directory in sorted((d for d in stage.rglob("*") if d.is_dir()), key=lambda d: -len(d.parts)):
-            if not any(directory.iterdir()):
-                directory.rmdir()
-        if not any(stage.iterdir()):
-            stage.rmdir()
-        record["released"] = not stage.exists()
-        save(index, record)
-        print(index, flush=True)
+        try:
+            release_stage(stage, [pack, *(target for _, target in copies)])
+        finally:
+            record["released"] = not stage.exists()
+            save(index, record)
+            print(index, flush=True)
 
 
 if __name__ == "__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--timing-only",action="store_true",help="Run both deadline routes without allocating a camera-capture pass.")
-    selection.add_argument("--route", choices=["cut", "shores", "cut_angles", "shore_angles"], action="append",
+    selection.add_argument("--route", choices=["cut", "shores", "cut_angles", "shore_angles", "bucket_interruption"], action="append",
                            help="Run a named packaged route. Repeat to share the same staged build across routes.")
     args = parser.parse_args()
     raise SystemExit(main(args.timing_only, list(dict.fromkeys(args.route)) if args.route else None))

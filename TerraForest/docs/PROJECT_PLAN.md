@@ -1,6 +1,6 @@
 ## World authority and qualification milestones (November 20)
 
-Milestone 5 remains open. The finite-water release matched the full cut on draw 12 and both barrels on draw three. The cut conserved every millilitre and both shoreline contact suites passed. [Packaged measurements and camera pairs](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#finite-water-publication-on-25-november)
+Milestone 5 remains open. The stored-interval release conserved the full cut and passed both shoreline contact suites, including the lake after bucket interruption. The cut and lake missed the two-frame deadline. [Measurements and visual findings](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#stored-water-intervals-and-interrupted-buckets)
 
 The [real-time editing design](WORLD_SYSTEMS_DESIGN.md#real-time-terrain-and-water-editing) defines the shared publication contract for player mining, construction, water, large authoring operations and world management. Milestone 5 remains open.
 

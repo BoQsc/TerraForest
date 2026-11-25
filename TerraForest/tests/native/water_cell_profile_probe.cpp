@@ -5,11 +5,39 @@
 #include "../../addons/volumetric_water/native/water_storage_groups.hpp"
 #include "../../addons/volumetric_water/native/water_edit_stencil.hpp"
 #include "../../addons/volumetric_water/native/water_level_section.hpp"
+#include "../../addons/volumetric_water/native/water_brick_intervals.hpp"
 #include <atomic>
 #include <cstdio>
 #include <cstdlib>
 using terraforest::WaterCellProfile;
 static void require(bool ok,const char *name){std::printf("%s %s\n",ok?"PASS":"FAIL",name);if(!ok)std::exit(1);}
+static void check_brick_intervals() {
+    using namespace terraforest;
+    bool equal=true;
+    for(unsigned mask=0;mask<256;++mask)for(int y=0;y<8;++y){
+        int end=y;
+        while(end<8&&(mask&(1u<<end)))++end;
+        equal &= WaterBrickIntervals::run(uint8_t(mask),y)==end-y;
+    }
+    require(equal,"all 2,048 vertical runs stop at the first other tier or the region face");
+    std::array<float,729> nodes;
+    for(int pattern=0;pattern<256;++pattern){
+        for(int z=0;z<9;++z)for(int y=0;y<9;++y)for(int x=0;x<9;++x){
+            const int corner=(x&1)+2*(y&1)+4*(z&1);
+            nodes[x+9*y+81*z]=(pattern&(1<<corner))?1.f:((x+y+z)&1?0.f:-1.f);
+        }
+        WaterLatticeSigns signs(nodes);
+        for(int i=0;i<512;++i){
+            const int x=i&7,y=(i>>3)&7,z=i>>6;
+            int air=0;
+            for(int c=0;c<8;++c)air+=nodes[x+(c&1)+9*(y+((c>>1)&1))+81*(z+(c>>2))]>0;
+            const int bit=1<<x;
+            equal &= bool(signs.air[i/8]&bit)==(air==8);
+            equal &= bool(signs.mixed[i/8]&bit)==(air>0&&air<8);
+        }
+    }
+    require(equal,"every eight-corner sign pattern matches scalar occupancy in all 512 cells, including exact zero");
+}
 static void check_graded_shoreline() {
     using namespace terraforest;
     using T=WaterCellProfile::Triangle;
@@ -122,6 +150,7 @@ static void check_edit_stencil(){
     require(equal&&stencil.changed({14,1,1}),"every captured brick agrees with independent stencil intersection; outside stays dirty");
 }
 int main(){
+    check_brick_intervals();
     check_graded_shoreline();
     check_edit_stencil();
     check_storage_groups();

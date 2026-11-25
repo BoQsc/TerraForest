@@ -153,13 +153,20 @@ NativeWaterEquilibriumJob::SpanResult NativeWaterEquilibriumJob::settle_column_p
                     uint64_t before=0,capacity=125000;
                     if(r->brick_geometry==WaterBrickGeometry::air)end=stop;
                     else{
-                        if(r->floor[i]==r->ceiling[i]){++p.y;continue;}
-                        auto bed=W::profile(*r,i);
-                        if(!bed.is_full_air()){
-                            capacity=bed.capacity();
-                            if(!capacity||bed.volume((upper-y*.5)*1000.)<=0){++p.y;continue;}
-                            if(shapes.size()>=budget*2)return fail("shaped tier budget");
-                            shape=int(shapes.size());shapes.push_back(bed);
+                        const int column=WaterBrickIntervals::column(i),tier=y&7;
+                        const int closed=WaterBrickIntervals::run(r->intervals.closed[column],tier);
+                        if(closed){p.y=std::min(stop,y+closed);continue;}
+                        const int clear=WaterBrickIntervals::run(r->intervals.air[column],tier);
+                        if(clear)end=std::min(stop,y+clear);
+                        else{
+                            if(r->floor[i]==r->ceiling[i]){++p.y;continue;}
+                            auto bed=W::profile(*r,i);
+                            if(!bed.is_full_air()){
+                                capacity=bed.capacity();
+                                if(!capacity||bed.volume((upper-y*.5)*1000.)<=0){++p.y;continue;}
+                                if(shapes.size()>=budget*2)return fail("shaped tier budget");
+                                shape=int(shapes.size());shapes.push_back(bed);
+                            }
                         }
                     }
                     if(!r->water.is_initial_zero())for(int n=y;n<end;++n){

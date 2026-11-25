@@ -1,6 +1,6 @@
 
 
-Both shoreline blasts passed their 2 cm bank contact checks in the finite-water release. The full wet cut and both blasts missed the deadline in the latest timing run. [Cedar Vale timing and camera receipts](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#finite-water-publication-on-25-november)
+Both shorelines passed the 2 cm bank checks, including the lake after bucket interruption. The cut and lake missed the two-frame deadline, and the cut images show suspended green patches. [Packaged receipts](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#stored-water-intervals-and-interrupted-buckets)
 The [changed-triangle comparison](../../docs/WORLD_FOUNDATION_STATUS.md#changed-triangle-publication-trial) records the rejected 8 m page trial and actual packaged timings. The two-frame edit milestone remains open.
 
 The [joint publication measurements](../../docs/WORLD_FOUNDATION_STATUS.md#joint-publication-on-the-packaged-shoreline-route) cover the full cut, both shoreline camera pairs and the outstanding two-frame deadline.

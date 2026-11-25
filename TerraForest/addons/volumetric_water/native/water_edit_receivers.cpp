@@ -213,6 +213,7 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
         region.contacts=patch->contacts;region.structures=patch->structures;
         region.has_density=true;region.valid=true;region.settle_pending=true;
         region.brick_geometry=patch->brick_geometry;
+        region.index_intervals();
         if(!identity.is_empty()){
             std::lock_guard<std::mutex> lock(template_mutex);
             const size_t bytes=identity.size()+sizeof(ReceiverTemplate)+64;

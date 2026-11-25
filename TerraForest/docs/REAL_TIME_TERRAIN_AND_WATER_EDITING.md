@@ -4,11 +4,27 @@
 
 A player should be able to break ground, place terrain, empty a bucket or detonate a shoreline barrel and immediately interact with the resulting world. An author should be able to cut across a region boundary and see the whole cut, walk on its new floor and find water wherever the cut opened a connected cavity. The same operation must work from first person, strategy view and the dedicated authority. Water needs depth, a continuous shoreline and consistent volume. Realistic transient flow is outside the requested scope.
 
-**Current verdict.** The latest packaged 64 m cut matched on draw 12 at 213.735 ms. Both shoreline barrels matched on draw three. The sea had reached draw two on earlier runs. The lake and the full cut still miss consistently, and the sea result varies between runs.
+**Current verdict.** The latest no-capture release matched on draw 12 for the 64 m cut, draw two for the sea barrel and draw three for the lake barrel. All cut and crater probes matched at publication. The two-frame guarantee and stable 60 Hz remain open.
 
 ## Windows release qualification
 
 ### Local edit measurements on Cedar Vale
+
+#### Stored water intervals and interrupted buckets
+
+The water store indexes full-air and closed half-metre tiers in each mixed 4 m brick. A mixed tier still uses the clipped terrain and structure profile. On loading a save the reader validates the original archive format and reconstructs the index. Empty water ledgers keep shared zero storage. Native checks exhaust the 256 corner-sign patterns and the 2,048 tier/mask combinations. The storage regression rejects invalid density, inverted floor and ceiling, and bad quantities while preserving the previous world. [Geometry checks](../reports/water_cell_profile.log) · [Storage and recovery checks](../reports/checks/20261125T121716912500Z/console.log)
+
+| Packaged Cedar Vale action | First matching publication | Worst observed frame |
+|---|---:|---:|
+| 64 m cut from input | Draw 12, 226.453 ms | 50.216 ms |
+| Sea barrel from terrain admission | Draw 2, 32.530 ms | 67.295 ms |
+| Lake barrel from terrain admission | Draw 3, 47.398 ms | 21.302 ms |
+
+All nine cut probes matched at publication and zero matched on draw two. The cut conserved 27,698,261,603 ml. Occupancy took 40.808 ms, receiver discovery 44.439 ms, the final column solve 27.208 ms and detailed mesh building 25.605 ms. The prior candidate took 213.735 ms overall. This iteration established the exact resident index and save path but showed no end-to-end cut speedup. Both craters again passed all 81 coverage probes and the 2 cm bank check. Both colliders agreed with the terrain within 0.027 mm. Pickaxe input to visible water took 40.310 ms on this run. [Build receipt](../reports/checks/20261125T121559630541Z/candidate.json) · [Cut timing](../reports/checks/20261125T121825600000Z/console.log) · [Shore and mining timing](../reports/checks/20261125T121913089264Z/normal_gameplay_blast_performance.json)
+
+A separate packaged run scooped and poured twice using the game's bucket handler. The second pair interrupted a live background mesh with 510 pending regions. The four transfers preserved world plus carried quantity and completed in 37.678–49.185 ms. All 24 final lake-bank probes passed after the interruption. The no-capture route runs separately from the baseline blast timing. [Bucket transfer measurements](../reports/checks/20261125T122309425322Z/bucket_response.json) · [Post-interruption contact and deadline failures](../reports/checks/20261125T122309425322Z/console.log)
+
+Both camera pairs and submerged shore views were inspected. The cut exposes green patches suspended above the new pool and a boulder near a cut wall. Visual acceptance remains open pending identification of their owners and a repeat with ground-contact checks. [Cut camera pair](../reports/checks/20261125T121644991074Z/run.json) · [Shore camera pairs and submerged views](../reports/checks/20261125T122007363221Z/run.json)
 
 #### Finite water publication on 25 November
 

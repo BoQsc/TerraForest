@@ -1,6 +1,6 @@
 ## Local water edit qualification
 
-The finite-water package reached the full cut on draw 12 at 213.735 ms and both shoreline barrels on draw three. All nine cut probes matched after publication and zero matched on draw two. The sea met the deadline in two earlier timed runs. Both craters passed the 2 cm bank check on this build. [Timing, contacts and both camera angles](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#finite-water-publication-on-25-november)
+The latest packaged cut matched on draw 12 in 226.453 ms, sea on draw two in 32.530 ms and lake on draw three in 47.398 ms. Contact held after bucket interruption. Visible floating patches in the cut and the two-frame deadline remain open. [Measurements and camera evidence](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#stored-water-intervals-and-interrupted-buckets)
 
 The [Cedar Vale release measurements](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale) cover the complete wet cut, both shoreline explosions, their two camera views, detailed water, collision, and frame intervals. The finite cut completes with conserved quantities and zero main-thread receiver retries. Milestone 5 remains open for joint publication within two draws and 33.33 ms across the full footprint, including shoreline contact.
 

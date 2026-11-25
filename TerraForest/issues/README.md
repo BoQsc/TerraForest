@@ -1,6 +1,6 @@
 # Visual issue tracker
 
-Two-frame publication remains open. The finite-water release took 213.735 ms across the full cut, 45.499 ms at sea and 47.605 ms at the lake. Both crater banks passed the 2 cm check. [Terrain, physics, water and camera evidence](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#finite-water-publication-on-25-november)
+The full cut and lake barrel missed the two-frame deadline. Both shorelines passed contact checks, including the interrupted lake. Floating patches are visible inside the cut. [Timing, contact and visual receipts](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#stored-water-intervals-and-interrupted-buckets)
 
 [Hidden Coast crater backlog](explosive-combat/README.md#hidden-coast-crater-backlog) records the 37 outstanding edits, their saved water footprint, and the changes to live capacity, persistence and firing during terrain updates.
 
