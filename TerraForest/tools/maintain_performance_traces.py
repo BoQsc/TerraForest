@@ -64,6 +64,51 @@ def maintain_traces(root=ROOT, apply=False):
     return result
 
 
+def maintain_observations(root=ROOT, apply=False):
+    """Retain full cadence and unreferenced captures after the owned driver exits."""
+    root = Path(root).resolve()
+    ready = []
+    for manifest in sorted((root/'reports/performance_changes').glob('*/run.json')):
+        folder = confined(manifest.parent, root/'reports/performance_changes')
+        if not (folder/'observation.json').is_file() or (folder/'observation.archive.json').exists():
+            continue
+        run = json.loads(manifest.read_text(encoding='utf-8'))
+        observation = json.loads((folder/'observation.json').read_text(encoding='utf-8'))
+        completion = json.loads((folder/'completion.json').read_text(encoding='utf-8')) if (folder/'completion.json').exists() else observation
+        command = run.get('command', [])
+        if (run.get('result', {}).get('exit_code') is None or
+                not any(Path(str(arg)).name == 'frame_trace_world.gd' for arg in command) or
+                '--trace-world-slot='+str(completion.get('slot', '')) not in command or
+                completion.get('slot') != observation.get('slot') or
+                '--trace-world-output='+folder.as_posix() not in command):
+            continue
+        if not (folder/'.retain').exists() and not (folder/'RETAIN_READY').exists():
+            ready.append(folder)
+    selected = ready[:-2]
+    result = {'candidates': [str(p) for p in selected], 'completed': [], 'reclaimed_bytes': 0}
+    if not apply or not selected:
+        return result
+    admit(root, report_bytes=1024*1024, world_bytes=0)
+    no_game_processes()
+    ordinary_ancestors(root/'reports/retained_artifacts')
+    (root/'reports/retained_artifacts').mkdir(parents=True, exist_ok=True)
+    with owned_lease(root/'reports/retained_artifacts/writer', root):
+        from retire_backed_outputs import referenced_media
+        referenced = referenced_media(root)
+        store = Store(root/'reports/retained_artifacts/chunks')
+        for folder in selected:
+            names = ['arrival.png', 'destruction_before.png', 'destruction_after.png', 'destruction_settled.png',
+                     'outdoor_0.png', 'outdoor_1.png']
+            members = ['observation.json'] + [name for name in names if (folder/name).is_file() and
+                'project/'+(folder/name).relative_to(root).as_posix() not in referenced]
+            record = archive(folder, members, folder/'observation.archive.json', store,
+                             {'kind': 'completed-frame-cadence', 'run_sha256': digest(folder/'run.json'),
+                              'completion_sha256': digest(folder/'completion.json') if (folder/'completion.json').exists() else None})
+            result['reclaimed_bytes'] += retire(record, store, folder)
+            result['completed'].append(str(folder/'observation.archive.json'))
+    return result
+
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)

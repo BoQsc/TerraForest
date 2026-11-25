@@ -38,6 +38,13 @@ use `tools/maintain_performance_traces.py`: two ordinary captures remain ready,
 older traces are reconstructed/hash-verified before their exact loose files retire.
 Each report keeps `traces.archive.json`; `.retain`/`RETAIN_READY` pins are respected.
 The FPS launcher performs this maintenance before admission and after gameplay.
+Full cadence observations and the driver's named, unreferenced screenshots use
+`observation.archive.json` after the matching run has exited. Slot and output
+directory must match the command; pins and the two newest ordinary observations
+stay ready. Referenced screenshots remain loose. This also covers earlier runs
+whose observation is their completion record. Restore with the same archive
+command below into a new inspection directory. Human `--in-place` captures grant
+no ownership or retirement rights over their source player save.
 Use the existing archive restore command with a new inspection directory to read
 cold traces. No regression evidence is discarded and no budget is raised.
 
