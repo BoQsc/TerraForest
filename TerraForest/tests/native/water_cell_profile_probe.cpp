@@ -2,11 +2,129 @@
 #include "../../addons/volumetric_water/native/water_cell_profile.hpp"
 #include "../../addons/volumetric_water/native/water_volume_query.hpp"
 #include "../../addons/volumetric_water/native/water_terrain_contacts.hpp"
+#include "../../addons/volumetric_water/native/water_storage_groups.hpp"
+#include "../../addons/volumetric_water/native/water_edit_stencil.hpp"
+#include "../../addons/volumetric_water/native/water_level_section.hpp"
+#include <atomic>
 #include <cstdio>
 #include <cstdlib>
 using terraforest::WaterCellProfile;
 static void require(bool ok,const char *name){std::printf("%s %s\n",ok?"PASS":"FAIL",name);if(!ok)std::exit(1);}
+static void check_graded_shoreline() {
+    using namespace terraforest;
+    using T=WaterCellProfile::Triangle;
+    using P=WaterCellProfile::Point;
+    // The terrain diagonal runs from (1,0) to (0,1). The water diagonal
+    // runs from (0,0) to (1,1). Each pair of triangles can intersect.
+    const P a{0,0,-70}, b{1,0,690}, c{0,1,175}, d{1,1,-23};
+    WaterCellProfile::Bed terrain{{T{a,b,c},T{b,d,c}}};
+    WaterCellProfile shape;
+    shape.contact=&terrain;
+    for (const std::array<double,4> head : {
+            std::array<double,4>{-.12,.66,.34,.18}, {0,.5,0,.5},
+            {.41,.13,.025,.47}, {.05,.05,.05,.05}, {.5,.5,.5,.5}}) {
+        std::vector<WaterSolidClip::Face> faces;
+        bool planes_match=true;
+        water_cap_sections(shape,head,[&](auto face,auto plane){
+            for (const auto &v:face)
+                planes_match &= std::abs(plane.normal.dot(v)-plane.offset)<1e-12;
+            faces.push_back(std::move(face));
+        });
+        for (int j=0;j<43;++j) for (int i=0;i<43;++i) {
+            const double x=(i+.317)/43., z=(j+.689)/43.;
+            const double floor=(x+z<1
+                ? a.y*(1-x-z)+b.y*x+c.y*z
+                : b.y*(1-z)+d.y*(x+z-1)+c.y*(1-x))*.001;
+            const double level=head[0]+(x>=z
+                ? (head[1]-head[0])*x+(head[3]-head[1])*z
+                : (head[3]-head[2])*x+(head[2]-head[0])*z);
+            bool covered=false;
+            for (const auto &face:faces) {
+                bool positive=false,negative=false;
+                for (size_t k=0;k<face.size();++k) {
+                    const auto &v=face[k], &w=face[(k+1)%face.size()];
+                    const double cross=(w.x-v.x)*(z*.5-v.z)-(w.z-v.z)*(x*.5-v.x);
+                    positive |= cross>1e-12;
+                    negative |= cross< -1e-12;
+                }
+                covered |= !(positive&&negative);
+            }
+            const bool expected=level>0 && level<.5 && level>floor;
+            planes_match &= covered==expected;
+        }
+        require(planes_match,"projected shoreline polygons match independent vertical rays through crossing terrain and water triangles");
+    }
+}
+static void check_storage_groups(){
+    using namespace terraforest;
+    struct Room {uint64_t before=0,after=0,capacity=0;double fraction=0;};
+    constexpr int widths[]={128,96,64};
+    const auto base=[](int i){return i<128?0.:(i<224?.75:1.25);};
+    const auto volume=[&](int i,double head){return 250000.*std::clamp(head-base(i),0.,4.-base(i));};
+    std::vector<WaterSpillEdge> edges;
+    for(int i=1;i<288;++i)
+        edges.push_back({i-1,i,i==128?2.25:(i==224?3.:base(i)+1.e-9)});
+    const auto curve=[&](int i){
+        WaterColumnCurve c;c.bottom=base(i);c.terms[0]=base(i);return c;
+    };
+    std::atomic<bool> cancel{false};
+    for(int source:{0,128,224})for(uint64_t delivered:{1u,125000u,17834937u,123456789u}){
+        std::vector<Room> reference(288);uint64_t left=delivered;
+        for(int i=0;i<288;++i)reference[i].capacity=uint64_t(volume(i,4.));
+        for(int n=0;n<288&&left;++n){
+            auto &r=reference[(source+n)%288];r.before=std::min(left,r.capacity);left-=r.before;
+        }
+        auto grouped=reference,repeat=reference;auto links=edges;
+        uint64_t quantity=delivered;int64_t exchange=0;const char *reason=nullptr;
+        auto cap=[&](int i){return reference[i].capacity;};
+        auto integral=[&](int i,double h){return uint64_t(std::floor(volume(i,h)));};
+        require(distribute_basin_water(reference,links,-1,4.,quantity,exchange,volume,cap,integral,cancel,
+                [](int){},reason,56),"reference spill hierarchy accepts the connected three-pool fixture");
+        size_t groups=0;
+        require(settle_storage_groups(grouped,edges,4.,delivered,curve,volume,cancel,groups)&&groups==3&&
+                settle_storage_groups(repeat,edges,4.,delivered,curve,volume,cancel,groups),
+                "dry-floor contraction preserves both perched outlets");
+        uint64_t total=0;int first=0;
+        for(int width:widths){
+            uint64_t oracle=0,actual=0;bool equal=true;
+            for(int i=first;i<first+width;++i){
+                const uint64_t a=grouped[i].after,b=reference[i].after;
+                equal&=(a>b?a-b:b-a)<=1&&a<=cap(i)&&a==repeat[i].after;actual+=a;oracle+=b;
+            }
+            require(equal&&((actual>oracle?actual-oracle:oracle-actual)<=uint64_t(width))&&
+                    ((oracle==0)==(actual==0)),"grouped room depths agree within one ml and dry basins remain dry");
+            total+=actual;first+=width;
+        }
+        require(total==delivered,"grouped settlement returns every millilitre");
+    }
+}
+static void check_edit_stencil(){
+    using namespace terraforest;
+    WaterEditStencil stencil;
+    require(stencil.begin({0,0,0},{13,12,10}),"allocate the bounded water-contact receipt extent");
+    const uint32_t records[][4]={{0,2,0,2},{9,11,15,23},{48,32,32,65536},{30,43,28,131072}};
+    for(auto &r:records){
+        uint32_t address=r[0]|(r[2]<<11)|(r[1]<<22);uint8_t bytes[8];
+        for(int i=0;i<4;++i){bytes[i]=uint8_t(address>>(8*i));bytes[4+i]=uint8_t(r[3]>>(8*i));}
+        require(stencil.records(bytes,8),"decode a real lattice run, first page, or constructed block");
+    }
+    stencil.seal();bool equal=true;
+    for(int z=0;z<=10;++z)for(int y=0;y<=12;++y)for(int x=0;x<=13;++x){
+        bool touches=false;
+        for(auto &r:records){
+            const bool page=r[3]==65536,block=r[3]==131072;
+            const int dx=page?15:0,y0=int(r[1])-int(page),y1=page?int(r[1])+17:(block?int(r[1]):int(r[3]));
+            touches|=int(r[0])<=x*4+8&&int(r[0])+dx>=x*4-4&&int(r[2])<=z*4+8&&
+                    int(r[2])+dx>=z*4-4&&y0<=y*4+8&&y1>=y*4-4;
+        }
+        equal&=stencil.changed({x,y,z})==touches;
+    }
+    require(equal&&stencil.changed({14,1,1}),"every captured brick agrees with independent stencil intersection; outside stays dirty");
+}
 int main(){
+    check_graded_shoreline();
+    check_edit_stencil();
+    check_storage_groups();
     WaterCellProfile ramp;ramp.floor={0,500,0,500};
     require(ramp.capacity()==62500,"sloped half-cell capacity is 62.5 litres");
     require(std::abs(ramp.volume(250)-15625)<1e-6,"quarter-height wedge integrates to 15.625 litres");

@@ -1,6 +1,6 @@
 ## World authority and qualification milestones (November 20)
 
-Milestone 5 remains open. The sealed terrain reader passed independent triangle, collider and density comparisons. The weighted-column package reached full wet-cut contact on draw 12. [November 25 measurements and two-view evidence](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#shared-terrain-triangles-on-25-november)
+Milestone 5 remains open. The finite-water release matched the full cut on draw 12 and both barrels on draw three. The cut conserved every millilitre and both shoreline contact suites passed. [Packaged measurements and camera pairs](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#finite-water-publication-on-25-november)
 
 The [real-time editing design](WORLD_SYSTEMS_DESIGN.md#real-time-terrain-and-water-editing) defines the shared publication contract for player mining, construction, water, large authoring operations and world management. Milestone 5 remains open.
 

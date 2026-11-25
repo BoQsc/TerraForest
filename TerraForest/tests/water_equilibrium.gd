@@ -47,12 +47,13 @@ func check_level_section()->void:
   else:contact=contact and hit.hit and absf(hit.get("point",Vector3.ZERO).y-41.75)<.00001 and water.depth_at(start-Vector3.UP*.26)>0
  check(sections==1 and contact,"A level volume reaches all four sides of an obstacle within 2 cm and leaves its solid interior dry")
 
-func check_deep_column_portals()->void:
+func check_deep_column_portals(tiled:bool=false)->void:
  var cells:Dictionary={}
  for z in range(81,127):
   for x in range(81,143):
    for y in range(66,84):
-    var bottom:=100+100*(x%2) if y==66 else 0
+    var high_bed:=int(x>=112) if tiled else x%2
+    var bottom:=100+100*high_bed if y==66 else 0
     cells[Vector3i(x,y,z)]=[bottom,500,62483 if y==83 else 1]
    # A dry gallery in the same persistence regions has an intact roof at 65.
    # Its full capacity must never enter the connected water volume above it.
@@ -63,9 +64,14 @@ func check_deep_column_portals()->void:
  var stored:=amounts(water)
  var exact:=stored.size()==62*46
  for p:Vector3i in stored:
-  exact=exact and p.y==66 and stored[p]==(75000 if p.x%2==0 else 50000)
- check(result.ok and result.get("column_rooms",0)==62*46 and result.wide_cells==62*46*18 and exact,
-  "Vertical portals settle 18 tiers to the analytical head over alternating beds in 144 storage regions: "+str(result))
+  var high_bed:bool=p.x>=112 if tiled else p.x%2!=0
+  exact=exact and p.y==66 and stored[p]==(50000 if high_bed else 75000)
+ if tiled:
+  check(result.ok and result.get("column_tiles",0)>0 and result.column_rooms<62*46 and result.wide_cells==62*46*18 and exact,
+   "Flat hydraulic tiles and fine shore columns settle to the analytical head on both sides of a bed step: "+str(result))
+ else:
+  check(result.ok and result.get("column_rooms",0)==62*46 and result.wide_cells==62*46*18 and exact,
+   "Vertical portals settle 18 tiers to the analytical head over alternating beds in 144 storage regions: "+str(result))
  var reopened:RefCounted=ClassDB.instantiate("NativeRegionalWater")
  check(reopened.restore_snapshot(snapshot(water)) and amounts(reopened)==stored,
   "The sealed gallery stays dry and exact per-cell quantities survive save and reload")
@@ -228,6 +234,7 @@ func run_equilibrium()->void:
  check_saved_structure_sections(true)
  await check_regional_prisms()
  await check_deep_column_portals()
+ await check_deep_column_portals(true)
  check_level_section()
  check_inclined_faces()
  check_open_sheet()
@@ -338,6 +345,20 @@ func run_equilibrium()->void:
  water=fixture(cross_region);water.settle_after_edit(wide);result=await solve(water,true)
  check(result.ok and result.get("wide_basin_leaves",0)==3 and amounts(water)==reference,"Vertical column spill matches the scalar result above and below a region seam")
  var editable:=fixture({high:[0,500,125000],low:[0,500,0]})
+ var forecast:=fixture({high:[0,500,125000],low:[0,500,0]})
+ for attempt in 64:
+  var initial:Dictionary=forecast.next_mesh_batch()
+  if initial.is_empty():break
+  if initial.get("complete",false):forecast.commit_mesh_batch(initial.batch)
+ var footprint:=AABB(Vector3(low)*.5,Vector3.ONE*.5)
+ var prepared:RefCounted=forecast.capture_local_edit(false,[footprint])
+ check(prepared!=null and forecast.owns_edit_input(prepared),"Pending field subscribes to the unmodified water revision")
+ if prepared!=null:
+  prepared.prepare([])
+  check(amounts(forecast)=={high:125000} and forecast.owns_edit_input(prepared),"Preparing before field notification leaves the live owner intact")
+  forecast.settle_after_edit(footprint)
+  var admitted:Dictionary=forecast.accept_local_edit(prepared)
+  check(admitted.get("sealed_field_dispatch",false) and amounts(forecast)=={low:125000},"The accepted writer and its prepared water publish the same local revision")
  for attempt in 64:
   var packet:Dictionary=editable.next_mesh_batch()
   if packet.is_empty():break

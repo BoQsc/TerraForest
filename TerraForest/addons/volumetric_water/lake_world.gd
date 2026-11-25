@@ -214,6 +214,7 @@ func remove_lake(id:int) -> void:
  water.remove_bounds(AABB(item.origin,Vector3(item.cells)*item.spacing))
  _lakes.erase(id);terrain.changed_since_save=true;catalog_changed.emit()
 func clear(preserve_store:bool=false) -> void:
+ _retire_anticipated_edit()
  _settlement_ticket=-1;_installed_edit_ticket=-1
  _waiting_mesh_commit=-1;_edit_patch_attempt=-1
  _local_response_pending=false;_local_publication_pending=false
@@ -251,12 +252,15 @@ func _terrain_geometry_installed(ticket:int)->void:
 func _begin_terrain_settlement(ticket:int)->void:
  if _settlement_ticket==ticket:return
  _settlement_ticket=ticket
+ if not _anticipated_edit.is_empty() and not water.owns_edit_input(_anticipated_edit.transaction):
+  _retire_anticipated_edit()
  var low:Vector3=terrain.geometry_lo.min(terrain.edit_lo)
  var high:Vector3=terrain.geometry_hi.max(terrain.edit_hi)
  _queue_settlement(AABB(low,high-low),true)
 
 func _settle_committed_edit(bounds:AABB,_revision:int)->void:
- if _revision>0 and _settlement_ticket==terrain.edit_ticket:
+ if _revision>0 and settling_enabled.is_valid() and not settling_enabled.call():return
+ if _revision>0 and is_instance_valid(terrain) and _settlement_ticket==terrain.edit_ticket:
   # An offscreen edit may complete without installing a visible terrain tile.
   _terrain_geometry_installed(terrain.edit_ticket)
   return
@@ -267,10 +271,10 @@ func _queue_settlement(bounds:AABB,terrain_edit:bool)->void:
  # even while paused; advancement remains separately gated by gameplay state.
  # The notification includes terrain meshing/shadow padding. Water connectivity
  # starts at the edited density bounds and supplies its own dependency halo.
- if terrain_edit:
+ if terrain_edit and is_instance_valid(terrain):
   for area:AABB in terrain.water_edit_areas(bounds):water.settle_after_edit(area)
  else:water.settle_after_edit(bounds)
- if terrain.world_ready and not (loading_active.is_valid() and loading_active.call()):
+ if is_instance_valid(terrain) and terrain.world_ready and not (loading_active.is_valid() and loading_active.call()):
   _interrupt_edit_work()
   _local_response_pending=true;_local_publication_pending=false
   _local_response_started_us=Time.get_ticks_usec()
@@ -296,6 +300,7 @@ func _interrupt_edit_work()->void:
   _mesh_task=-1;_mesh_job=null
  _clear_staged_meshes();_mesh_batch_id=-1
 func _invalidate(bounds:AABB) -> void:
+ _retire_anticipated_edit()
  _settlement_ticket=-1;_installed_edit_ticket=-1
  _waiting_mesh_commit=-1;_edit_patch_attempt=-1
  _interrupt_edit_work()
@@ -303,11 +308,13 @@ func _invalidate(bounds:AABB) -> void:
  var areas:Array[AABB]=terrain.water_edit_areas(bounds)
  var wet_areas:Array[AABB]=[]
  for area:AABB in areas:
-  water.invalidate(area)
+  water.invalidate(area,false,terrain.edit_ticket if terrain.pending_edit and terrain.field_handoff!=null else -1)
   if settling_active.is_valid() and settling_active.call() and water.overlaps_occupied(area.grow(.5)):
    wet_areas.append(area)
  if not wet_areas.is_empty():terrain.reserve_joint_edit(terrain.edit_ticket,wet_areas)
  _discard_builder()
+ if terrain.joint_edit_pending() and not _busy and _edit_patch_task<0 and terrain.field_handoff!=null:
+  _subscribe_to_edit_field(areas,bounds)
 var last_process_us:int=0
 var last_process_work:Dictionary={}
 var _process_deadline:=0
@@ -342,14 +349,14 @@ func _continue_joint_edit(ticket:int,epoch:int)->void:
  # revision are event work. Background occupancy and equilibrium can consume
  # their allowance before either event arrives in this same rendered frame.
  var dispatch:bool=_settlement_ticket!=ticket and terrain.water_sampling_revision()>=0
- var completed:bool=_edit_patch_task>=0 and WorkerThreadPool.is_group_task_completed(_edit_patch_task)
+ var completed:bool=_ready_transaction!=null or (_edit_patch_task>=0 and WorkerThreadPool.is_group_task_completed(_edit_patch_task))
  if allowance<=0 and not dispatch and not completed:return
  var began:=Time.get_ticks_usec()
  _process_deadline=began+allowance
  if _settlement_ticket!=ticket and terrain.water_sampling_revision()>=0:_begin_terrain_settlement(ticket)
- _poll_edit_patches()
  if _settlement_ticket==ticket and not _busy and _edit_patch_task<0 and _edit_patch_attempt!=ticket:
   _start_edit_patches(terrain.water_sampling_revision())
+ _poll_edit_patches()
  if _filling_id==0 and _local_response_pending and _edit_patch_task<0 and Time.get_ticks_usec()<_process_deadline:_advance_equilibrium()
  if _local_publication_pending and Time.get_ticks_usec()<_process_deadline:_publish_meshes()
  _finish_local_publication()
@@ -388,8 +395,14 @@ func _process(delta:float) -> void:
 
 func _measured_step(delta:float)->void:
  for i in range(_retirement_jobs.size()-1,-1,-1):
-  if WorkerThreadPool.is_task_completed(_retirement_jobs[i].task):
-   WorkerThreadPool.wait_for_task_completion(_retirement_jobs[i].task);_retirement_jobs.remove_at(i)
+  var retired:Dictionary=_retirement_jobs[i]
+  if retired.get("group",false):
+   if not WorkerThreadPool.is_group_task_completed(retired.task):continue
+   WorkerThreadPool.wait_for_group_task_completion(retired.task)
+  else:
+   if not WorkerThreadPool.is_task_completed(retired.task):continue
+   WorkerThreadPool.wait_for_task_completion(retired.task)
+  _retirement_jobs.remove_at(i)
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
  # Sampling and settlement consume the accepted density revision. The native
@@ -811,6 +824,50 @@ func _prepare_terrain_batch(ocean_only:bool,sampling_revision:int) -> void:
 # water ownership or scene nodes are handed to the worker.
 var _edit_patch_task:=-1
 var _edit_patch_job:Dictionary={}
+var _anticipated_edit:Dictionary={}
+var _ready_transaction:RefCounted
+
+# This callback runs on the scene thread after the worker has sealed every
+# packet and written its final timestamp. WorkerThreadPool can still be
+# returning from the callback at this point. Its task handle is retired
+# independently of the revision that is ready to draw.
+func _water_worker_ready(ticket:int,epoch:int,transaction:RefCounted)->void:
+ if _anticipated_edit.get("transaction")==transaction or _edit_patch_job.get("transaction")==transaction:
+  _ready_transaction=transaction
+  _continue_joint_edit(ticket,epoch)
+
+func _subscribe_to_edit_field(areas:Array[AABB],bounds:AABB)->void:
+ var resident:RefCounted=water.capture_local_edit(false,areas)
+ if resident==null:return
+ var survey:=_edit_structure_survey(terrain.water_occupancy_edit_bounds(bounds).grow(6))
+ if survey.is_empty():return
+ var job:={"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":terrain.published_revision+1,
+  "structures":_structure_revision,"cancel":terrain.backend.build_epoch,"transaction":resident,
+  "samples_field":true,"anticipated":true,"patches":[],"groups":[],"ready":false}
+ # Only frozen references and the post-commit notification cross the worker
+ # boundary. Both the authority and the renderer keep their old live surfaces.
+ var handoff:RefCounted=terrain.field_handoff
+ _anticipated_edit={"job":job,"handoff":handoff,"transaction":resident}
+ handoff.subscribe(_prepare_sealed_water.bind(job,survey,DisplayServer.get_name()!="headless",_water_worker_ready))
+
+static func _prepare_sealed_water(_index:int,surface:Dictionary,job:Dictionary,survey:Dictionary,render:bool,notify:Callable)->void:
+ job.worker_started_us=Time.get_ticks_usec()
+ job.dispatch_us=surface.dispatch_us
+ job.field=surface.revision
+ if job.ticket==surface.ticket and job.epoch==surface.epoch and job.transaction.set_field(surface.groups,survey.bounds,survey.solids,job.field,job.cancel):
+  job.transaction.set_terrain_writes(surface.get("writes",[]),surface.get("prior_field",-1),job.ticket)
+  job.occupancy_supplied_us=Time.get_ticks_usec()
+  job.transaction.prepare([],render)
+ job.worker_ready_us=Time.get_ticks_usec()
+ notify.call_deferred(job.ticket,job.epoch,job.transaction)
+
+func _retire_anticipated_edit()->void:
+ _ready_transaction=null
+ if _anticipated_edit.is_empty():return
+ _anticipated_edit.transaction.cancel()
+ var task:int=_anticipated_edit.handoff.detach()
+ if task>=0:_retirement_jobs.append({"state":_anticipated_edit.transaction,"task":task,"group":true})
+ _anticipated_edit={}
 
 static func _group_edit_patches(coords:Array,patches:Array,bounds:Rect2i)->Array:
  if bounds.size.x<=64 and bounds.size.y<=64:return [{"bounds":bounds,"patches":patches}]
@@ -853,6 +910,13 @@ static func _contact_groups(coords:Array,patches:Array,bounds:Rect2i,fields:Arra
 
 func _start_edit_patches(revision:int)->bool:
  if _edit_patch_task>=0 or _busy or not terrain.joint_edit_pending():return false
+ if not _anticipated_edit.is_empty():
+  var task:int=_anticipated_edit.handoff.detach()
+  if task>=0:
+   _edit_patch_job=_anticipated_edit.job;_edit_patch_task=task;_edit_patch_attempt=terrain.edit_ticket
+   _anticipated_edit={}
+   return true
+  _anticipated_edit={}
  var surface:Dictionary=terrain.resident_edit_surface
  var fields:Array=[]
  if surface.get("ticket",-1)==terrain.edit_ticket and surface.epoch==terrain.epoch and surface.revision==terrain.density_revision:
@@ -926,7 +990,7 @@ func _prepare_resident_water(_index:int,core:Object,job:Dictionary)->void:
  job.occupancy_supplied_us=Time.get_ticks_usec()
  if job.ready:job.transaction.prepare(job.patches,DisplayServer.get_name()!="headless")
  job.worker_ready_us=Time.get_ticks_usec()
- _continue_joint_edit.call_deferred(job.ticket,job.epoch)
+ _water_worker_ready.call_deferred(job.ticket,job.epoch,job.transaction)
 
 func _finish_contact_groups(job:Dictionary)->void:
  job.ready=false
@@ -940,8 +1004,13 @@ var _shared_contact_patches:=0
 var _resident_edit_fallback:=""
 var _edit_patch_attempt:=-1
 func _poll_edit_patches()->void:
- if _edit_patch_task<0 or not WorkerThreadPool.is_group_task_completed(_edit_patch_task):return
- WorkerThreadPool.wait_for_group_task_completion(_edit_patch_task)
+ if _edit_patch_task<0:return
+ if WorkerThreadPool.is_group_task_completed(_edit_patch_task):
+  WorkerThreadPool.wait_for_group_task_completion(_edit_patch_task)
+ elif _ready_transaction!=null and _edit_patch_job.get("transaction")==_ready_transaction:
+  _retirement_jobs.append({"state":_ready_transaction,"task":_edit_patch_task,"group":true})
+ else:return
+ _ready_transaction=null
  var job:=_edit_patch_job
  _finish_contact_groups(job)
  _edit_patch_task=-1;_edit_patch_job={}
@@ -986,6 +1055,9 @@ func _poll_edit_patches()->void:
     terrain.publish_joint_edit(job.ticket,_commit_prepared_water.bind(_resident_batch_ready))
    terrain.water_preparation_revision+=1
    return
+  if job.get("anticipated",false):
+   _edit_patch_attempt=-1
+   return
   _resident_edit_fallback=result.get("fallback","superseded water revision")
   if job.get("samples_field",false):
    _edit_patch_attempt=-1
@@ -1012,12 +1084,15 @@ func _poll_cached_task() -> void:
  cached_preparation_profiled.emit(info.cached_worker_us/1000.0,maxi(0,info.cached_started_us-job.submitted_us)/1000.0,info.status)
  _slice_ready(job.token,info.status,job.epoch,job.revision)
 func _exit_tree() -> void:
+ _retire_anticipated_edit()
  if _edit_patch_task>=0:WorkerThreadPool.wait_for_group_task_completion(_edit_patch_task)
  if _equilibrium_task>=0:
   _equilibrium_job.cancel();WorkerThreadPool.wait_for_task_completion(_equilibrium_task);_equilibrium_task=-1
  if _mesh_task>=0:
   WorkerThreadPool.wait_for_task_completion(_mesh_task);_mesh_task=-1;_mesh_job=null
- for job:Dictionary in _retirement_jobs:WorkerThreadPool.wait_for_task_completion(job.task)
+ for job:Dictionary in _retirement_jobs:
+  if job.get("group",false):WorkerThreadPool.wait_for_group_task_completion(job.task)
+  else:WorkerThreadPool.wait_for_task_completion(job.task)
  _retirement_jobs.clear()
  if _cached_task>=0:
   _cached_job.builder.cancel_cached()

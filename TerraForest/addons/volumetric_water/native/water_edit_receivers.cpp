@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "regional_water.hpp"
+#include "water_terrain_class.hpp"
+#include "water_packet.hpp"
 #include <godot_cpp/classes/worker_thread_pool.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <algorithm>
@@ -7,6 +9,39 @@
 
 using namespace godot;
 namespace terraforest {
+// The old water head bounds discovery, not permanent residency. A deep cut
+// can traverse thousands of dry cubes on the way to the new pool. After a
+// successful solve, only wet quantities and their complete surface stencil
+// require new owners. Other empty terrain is recoverable from the field.
+void NativeWaterEquilibriumJob::retain_receiver_halo(const NativeRegionalWater &before){
+    using W=NativeRegionalWater;
+    if(!success||column_rooms==0||prepared_receivers.size()<32)return;
+    std::unordered_set<uint64_t> keep;
+    auto add_halo=[&](uint64_t k){
+        const auto b=W::position(k);
+        // The first dry cell above a wet column can own a reconstructed
+        // face in its own mesh. Keep its one-brick halo too.
+        for(int z=std::max(0,b.z-1);z<=std::min(499,b.z+1);++z)
+            for(int y=std::max(0,b.y-1);y<=std::min(63,b.y+2);++y)
+                for(int x=std::max(0,b.x-1);x<=std::min(499,b.x+1);++x)keep.insert(W::key({x,y,z}));
+    };
+    auto wet=[](const W::Region &r){
+        return !r.water.is_initial_zero()&&std::any_of(r.water.begin(),r.water.end(),[](uint64_t ml){return ml!=0;});
+    };
+    std::unordered_set<uint64_t> sources;
+    for(const auto &[k,r]:frozen->regions)if(wet(r))sources.insert(k);
+    for(const auto &[k,r]:before.regions)if(wet(r))sources.insert(k);
+    for(const auto &[k,surface]:before.published_surfaces)sources.insert(k);
+    for(auto k:sources)add_halo(k);
+    keep.insert(changed_regions.begin(),changed_regions.end());
+    prepared_receivers.erase(std::remove_if(prepared_receivers.begin(),prepared_receivers.end(),[&](uint64_t k){
+        const auto &r=frozen->regions.at(k);const auto b=W::position(k);
+        // Missing coastal owners can supply reservoir water procedurally.
+        if(r.structures||r.ocean_state||r.settle_pending||!r.vacancies.empty()||
+                (before.surrounding_ocean&&std::min({b.x,b.z,499-b.x,499-b.z})<35))return false;
+        return !keep.count(k);
+    }),prepared_receivers.end());
+}
 bool NativeWaterEquilibriumJob::set_edit_field(const Array &groups,const AABB &bounds,const Dictionary &solids,int64_t rev,int64_t epoch){
     if(started.load()||frozen.is_null()||wide_edit_bounds.empty()||groups.is_empty()||groups.size()>9||
        !bounds.position.is_finite()||!bounds.size.is_finite()||!bounds.has_volume()||rev<0||epoch<0)return false;
@@ -97,7 +132,7 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
                 const auto &coord=wave[indices[missing[start+i]]].coord;
                 for(int axis=0;axis<3;++axis)*p++=coord[axis]*4;
             }
-            PackedByteArray result=field.core->call("classify_water_bricks",origins,field_revision,field_epoch,true);
+            PackedByteArray result=classify_edit_bricks(field.core.ptr(),origins,field_revision,field_epoch);
             if(result.size()!=17*count)return defer("changed receiver field");
             const uint8_t *data=result.ptr();
             for(int i=0;i<count;++i)std::memcpy(classes[missing[start+i]].data(),data+17*i,17);
@@ -106,9 +141,8 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
             const auto *record=classes[j].data();
             auto &input=wave[indices[j]];uint8_t type=record[0];
             if(!type)continue;
-            if(type==3){
-                LayerSignature signature;signature[0]=int16_t(input.coord.y);
-                for(int n=0;n<8;++n)signature[n+1]=int16_t(uint16_t(record[1+2*n])|(uint16_t(record[2+2*n])<<8));
+            if(type==3||type==4){
+                auto signature=water_section_signature(record,input.coord.y);
                 if(auto old=layered_receivers.find(signature);old!=layered_receivers.end()){
                     input.region=old->second;input.resolved=true;++reused_layered_receivers;
                 }else if(new_layers.size()+layered_receivers.size()<512){
@@ -134,7 +168,7 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
     std::map<uint64_t,W::Region> staged;
     auto sample=[&](Input &input){
         if(input.resolved||input.representative>=0)return true;
-        PackedByteArray request;request.resize(24);request.encode_u32(0,48);
+        PackedByteArray request;request.resize(24);request.encode_u32(0,input.core->is_class("TerrainFieldReader")?49:48);
         request.encode_u32(4,field_revision);request.encode_u32(8,field_epoch);
         for(int axis=0;axis<3;++axis)request.encode_u32(12+4*axis,input.coord[axis]*4);
         PackedByteArray packet=input.core->call("execute",request);
@@ -145,12 +179,13 @@ bool NativeWaterEquilibriumJob::prepare_receivers(){
         if(input.hulls.is_empty()&&packet.size()<=32768&&(opcode==43||opcode==48)&&
            int64_t(vertices)*12<=packet.size()-28){
             identity=packet;
+            auto *normalized=identity.ptrw();
             // Terrain triangles are extracted in world coordinates. Preserve
             // absolute Y (the clipper evaluates millimetres in that frame).
             // X/Z are consumed relative to this owner by every contact path.
             for(uint32_t v=0;v<vertices;++v)for(int axis:{0,2}){
                 const int offset=28+12*v+4*axis;
-                identity.encode_float(offset,packet.decode_float(offset)-float(4*input.coord[axis]));
+                water_store_f32(normalized+offset,water_f32(normalized+offset)-float(4*input.coord[axis]));
             }
             const int height=opcode==43?input.coord.y:(input.coord.y==0?0:(input.coord.y==63?63:1));
             identity.push_back(height);

@@ -31,45 +31,57 @@ inline WaterFaceClip::Polygon water_floor_section(const WaterCellProfile::Triang
     return polygon;
 }
 
-// Intersect a piecewise-linear free surface with a piecewise-linear bed in
-// the horizontal plane. Both keep their original triangle diagonals. A point
-// in the overlap is wet exactly when the bed lies below the free surface.
+// Over each terrain triangle and each half of the reconstructed water cap,
+// both heights are affine in X/Z. Carry the two heights on the same polygon
+// while clipping. This retains the original terrain intersection without
+// constructing a 3D prism or intersecting pairs of projected polygons.
 template<class Emit> void water_cap_sections(const WaterCellProfile &bed,const std::array<double,4> &h,Emit emit){
-    using F=WaterFaceClip;
     using C=WaterSolidClip;
-    const C::Point corners[]={{0,h[0],0},{.5,h[1],0},{0,h[2],.5},{.5,h[3],.5}};
-    for(auto ids:{std::array<int,3>{0,1,3},std::array<int,3>{0,3,2}}){
-        const auto a=corners[ids[0]],b=corners[ids[1]],c=corners[ids[2]];
-        if(std::max({a.y,b.y,c.y})<=0||std::min({a.y,b.y,c.y})>=.5)continue;
-        auto normal=(c-a).cross(b-a);normal=normal*(1./std::sqrt(normal.dot(normal)));
-        C::Plane cap{normal,normal.dot(a)};
-        F::Polygon triangle;
-        for(auto p:{a,b,c})triangle.append({p.x,p.z});
-        // The adjoining vertical owner emits the rest of this same plane.
-        if(!F::clip(triangle,normal.x,normal.z,cap.offset)||
-           !F::clip(triangle,-normal.x,-normal.z,.5*normal.y-cap.offset)||triangle.count<3)continue;
+    struct Vertex {double x,z,bed,head;};
+    for(int half=0;half<2;++half){
+        const double dx=half?h[3]-h[2]:h[1]-h[0];
+        const double dz=half?h[2]-h[0]:h[3]-h[1];
+        if(std::max({h[0],h[3],h[half?2:1]})<=0||std::min({h[0],h[3],h[half?2:1]})>=.5)continue;
+        C::Point normal{-2*dx,1,-2*dz};
+        normal=normal*(1./std::sqrt(normal.dot(normal)));
+        const C::Plane cap{normal,normal.y*h[0]};
         bed.floor_triangles([&](const WaterCellProfile::Triangle &floor){
-            C::Point v[3];
-            for(int i=0;i<3;++i)v[i]={floor[i].x*.5,floor[i].y*.001,floor[i].z*.5};
-            auto up=(v[2]-v[0]).cross(v[1]-v[0]);
-            if(std::abs(up.y)<1e-15)return;
-            if(up.y<0){std::swap(v[1],v[2]);up=up*(-1);}
-            F::Polygon footprint;
-            for(auto p:v)footprint.append({p.x,p.z});
-            auto wet=triangle;
-            if(!F::intersect(wet,footprint))return;
-            // y_bed - y_cap <= 0. Use height-unit coefficients so the
-            // clipping tolerance is independent of either triangle's area.
-            const double dx=normal.x/normal.y-up.x/up.y;
-            const double dz=normal.z/normal.y-up.z/up.y;
-            const double offset=cap.offset/normal.y-up.dot(v[0])/up.y;
-            if(dx==0&&dz==0&&offset<=0)return;
-            if(!F::clip(wet,dx,dz,offset)||wet.count<3||F::area(wet)<=1e-16)return;
-            C::Face face;face.reserve(wet.count);
-            for(size_t i=0;i<wet.count;++i){
-                auto p=wet[i];face.push_back({p.x,(cap.offset-normal.x*p.x-normal.z*p.y)/normal.y,p.y});
+            // A triangle clipped by four half-planes has at most seven
+            // vertices. Strict crossings avoid duplicate endpoints on a plane.
+            std::array<Vertex,8> polygon,scratch;
+            int count=3;
+            for(int i=0;i<3;++i){
+                const auto &v=floor[i];
+                polygon[i]={v.x,v.z,v.y*.001,h[0]+v.x*dx+v.z*dz};
             }
-            emit(std::move(face),cap);
+            auto clip=[&](auto distance){
+                int size=0;
+                auto a=polygon[count-1];double da=distance(a);
+                for(int i=0;i<count;++i){
+                    auto b=polygon[i];double db=distance(b);
+                    if((da<0&&db>0)||(da>0&&db<0)){
+                        const double t=da/(da-db);
+                        scratch[size++]={a.x+t*(b.x-a.x),a.z+t*(b.z-a.z),
+                            a.bed+t*(b.bed-a.bed),a.head+t*(b.head-a.head)};
+                    }
+                    if(db>=0)scratch[size++]=b;
+                    a=b;da=db;
+                }
+                std::copy_n(scratch.begin(),size,polygon.begin());count=size;
+                return count>=3;
+            };
+            if(!clip([half](Vertex v){return half?v.z-v.x:v.x-v.z;}))return;
+            if(!clip([](Vertex v){return v.head;}))return;
+            if(!clip([](Vertex v){return .5-v.head;}))return;
+            if(std::none_of(polygon.begin(),polygon.begin()+count,[](Vertex v){return v.head>v.bed;}))return;
+            if(!clip([](Vertex v){return v.head-v.bed;}))return;
+            C::Face face;face.reserve(count);
+            double area=0;
+            for(int i=0;i<count;++i){
+                const auto &p=polygon[i],&q=polygon[(i+1)%count];
+                area+=p.x*q.z-p.z*q.x;face.push_back({p.x*.5,p.head,p.z*.5});
+            }
+            if(std::abs(area)>8e-16)emit(std::move(face),cap);
         });
     }
 }

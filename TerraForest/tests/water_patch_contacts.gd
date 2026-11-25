@@ -51,6 +51,7 @@ func run()->void:
 			batches+=1
 	check(batches>0 and vertices>0 and water.statistics().query_cache_bytes>0,"restored water builds visible geometry and the matching pick cache")
 	var before:PackedByteArray=water.capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))
+	check_stencil_handoff(before)
 	for step in 600:water.advance(2048,1.0/60.0)
 	check(water.capture_snapshot(ClassDB.instantiate("NativeLakeCatalog").encode([]))==before,"restoration never enables flow or changes static water after publication")
 	water.settle_after_edit(AABB(Vector3(100.6,200.6,100.6),Vector3(32,1,32)))
@@ -66,6 +67,42 @@ func run()->void:
 	check(remaining.size()==16 and remaining.all(func(coord):return not first.has(coord)),"after 64 accepted contacts only the 16 outstanding local receivers remain")
 	check(water.statistics().water_ml==125000,"sampling consecutive local batches conserves the finite quantity")
 	finish()
+
+func check_stencil_handoff(saved:PackedByteArray)->void:
+	var field:RefCounted=ClassDB.instantiate("TerrainCore")
+	field.execute(Codec.command(6,[1703,3]))
+	var prior:int=field.field_patch_state().revision
+	var roof:=Vector3(101,232,101)
+	var receipt:Dictionary=field.execute_edit_with_writes(Codec.brush(roof,roof,2,0,true,1))
+	var rev:int=field.field_patch_state().revision
+	var rect:=Rect2i(88,88,32,32)
+	var reader:RefCounted=field.capture_edit_field(rect,rev,0)
+	check(Codec.reply_ok(receipt.reply) and rev==prior+1 and reader!=null,"a real terrain write above water shares horizontal bounds with the wet owner")
+	if reader==null:return
+	var area:=AABB(Vector3(101,201,101),Vector3.ONE)
+	var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+	var reference:=PackedByteArray()
+	for ticket:int in [22,21]:
+		var store:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+		check(store.restore_snapshot(saved),"restored donor has a committed contact profile")
+		for attempt in 64:
+			var batch:Dictionary=store.next_mesh_batch()
+			if batch.is_empty():break
+			if batch.complete:store.commit_mesh_batch(batch.batch)
+		store.invalidate(area,false,21)
+		var transaction:RefCounted=store.capture_local_edit(false,[area])
+		check(transaction!=null,"pending wet replacement captures the old occupancy revision")
+		if transaction==null:return
+		check(transaction.set_field([{"core":reader,"bounds":rect}],AABB(Vector3(88,184,88),Vector3(32,48,32)),{},rev,0),"immutable contact field admitted")
+		transaction.set_terrain_writes([receipt.writes],prior,ticket)
+		transaction.prepare([])
+		store.settle_after_edit(area)
+		var result:Dictionary=store.accept_local_edit(transaction)
+		check(result.get("unchanged_contact_bricks",-1)==(1 if ticket==21 else 0),"only the ticket that invalidated the donor may reuse its unaffected contact stencil")
+		if result.has("batch"):store.commit_mesh_batch(result.batch)
+		var encoded:PackedByteArray=store.capture_snapshot(catalog)
+		if reference.is_empty():reference=encoded
+		check(not encoded.is_empty() and encoded==reference and store.statistics().water_ml==125000,"reused and resampled contact produce identical persistent water and volume")
 
 func check_wide_contact(core:RefCounted)->void:
 	var lake:=preload("res://addons/volumetric_water/lake_world.gd").new()

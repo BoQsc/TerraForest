@@ -74,6 +74,7 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     std::atomic<bool> cached_cancelled{false};
     uint64_t cached_started_us=0,cached_worker_us=0;
     bool terrain_prepared=false,structure_only=false,general_terrain=false;
+    int64_t retained_edit=-1;
     WaterBrickGeometry brick_geometry=WaterBrickGeometry::mixed;
     void classify_uniform_terrain();
     godot::AABB structure_edit_bounds;
@@ -130,6 +131,7 @@ class NativeRegionalWater : public godot::RefCounted {
         std::shared_ptr<const TerrainWaterContacts> contacts;
         std::shared_ptr<const StructureWaterContacts> structures;
         bool valid=false,has_density=false,replace_water=false;
+        int64_t valid_before_edit=-1; // Transient provenance of this invalidation.
         WaterBrickGeometry brick_geometry=WaterBrickGeometry::mixed;
         // Event-driven settling; the pending flag survives snapshots. The
         // cursor is disposable: replaying a scan never replays a transfer.
@@ -295,7 +297,7 @@ class NativeRegionalWater : public godot::RefCounted {
     void changed_owners(Key region, uint32_t owners);
     void changed(const godot::Vector3i &p);
     void request(Key k);
-    void invalidate_regions(const godot::AABB &bounds,bool replace_water,bool buildings=false);
+    void invalidate_regions(const godot::AABB &bounds,bool replace_water,bool buildings=false,int64_t ticket=-1);
     std::deque<Key> settling;
     std::unordered_set<Key> settling_set;
     uint64_t settle_steps=0,settle_transfers=0,settle_us=0;
@@ -313,6 +315,7 @@ class NativeRegionalWater : public godot::RefCounted {
     bool plan_placement(godot::Vector3i target,const godot::Vector3 &aim,uint64_t amount,Placement &take,godot::Dictionary &out,bool allow_refill=true);
     void apply_placement(const Placement &take);
     void process_fill();
+    godot::Dictionary advance_mesh_batch(bool background,bool indexed_only,bool prepared_only,bool joint_edit,bool sealed);
     struct SurfaceMesh {
         bool valid=true;
         godot::PackedVector3Array vertices,normals;
@@ -344,7 +347,8 @@ class NativeRegionalWater : public godot::RefCounted {
 protected: static void _bind_methods();
 public:
     godot::Array pending_edit_patches() const;
-    godot::Ref<NativeWaterLocalEdit> capture_local_edit(bool wide=false) const;
+    godot::Ref<NativeWaterLocalEdit> capture_local_edit(bool wide=false,const godot::Array &planned=godot::Array()) const;
+    bool owns_edit_input(const godot::Ref<NativeWaterLocalEdit> &edit) const;
     godot::Dictionary accept_local_edit(const godot::Ref<NativeWaterLocalEdit> &edit);
     int64_t interrupt_relaxation();
     void settle_after_edit(const godot::AABB &bounds);
@@ -383,7 +387,7 @@ public:
     godot::Dictionary next_request();
     godot::Array next_requests(int64_t limit,bool ocean_only=true);
     bool accept_patch(const godot::Ref<NativeWaterTerrainPatch> &patch);
-    void invalidate(const godot::AABB &bounds,bool replace_water=false);
+    void invalidate(const godot::AABB &bounds,bool replace_water=false,int64_t ticket=-1);
     void invalidate_buildings(const godot::AABB &bounds);
     bool reuse_building_occupancy(const godot::Ref<NativeWaterTerrainPatch> &patch);
     void advance(int64_t budget,double seconds=1.0/60.0);
@@ -470,6 +474,7 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     size_t air_frontier_receivers=0;
     void expand_air_frontier();
     bool prepare_receivers();
+    void retain_receiver_halo(const NativeRegionalWater &before);
     size_t capture_cursor=0;
     std::shared_ptr<EquilibriumCaptureState> capture_selection;
     godot::String reason;
@@ -480,8 +485,9 @@ class NativeWaterEquilibriumJob : public godot::RefCounted {
     SpanResult settle_wide_spans();
     SpanResult settle_wide_prisms();
     SpanResult settle_column_portals();
-    size_t column_rooms=0,column_portals=0,column_tiers=0;
+    size_t column_rooms=0,column_portals=0,column_tiers=0,column_storage_groups=0,column_tiles=0;
     uint64_t column_us=0;
+    std::array<uint64_t,6> column_phases{};
     const char *column_fallback=nullptr;
     size_t prism_nodes=0,prism_edges=0;
     std::array<uint64_t,5> prism_us{};
@@ -507,6 +513,10 @@ class NativeWaterLocalEdit : public godot::RefCounted {
     friend class NativeRegionalWater;
     godot::Ref<NativeRegionalWater> store;
     uint64_t owner=0,revision=0,survey=0,publication=0;
+    uint64_t base_revision=0,base_survey=0;
+    std::vector<godot::AABB> planned_settlement;
+    godot::Array terrain_writes;
+    int64_t write_ticket=-1;
     size_t receiver_slots=0;
     std::vector<uint64_t> new_receivers;
     godot::Array field_groups;
@@ -523,6 +533,7 @@ class NativeWaterLocalEdit : public godot::RefCounted {
 protected: static void _bind_methods();
 public:
     bool set_field(const godot::Array &groups,const godot::AABB &bounds,const godot::Dictionary &solids,int64_t rev,int64_t epoch);
+    void set_terrain_writes(const godot::Array &writes,int64_t from,int64_t ticket);
     void cancel(){cancelled.store(true);}
     void prepare(const godot::Array &patches,bool prepare_render=false);
 };
@@ -532,6 +543,9 @@ class NativeWaterMeshJob : public godot::RefCounted {
     GDCLASS(NativeWaterMeshJob,godot::RefCounted)
     friend class NativeRegionalWater;
     godot::Ref<NativeRegionalWater> frozen;
+    // Only the synchronous edit worker supplies this pointer. It owns the
+    // private store and joins all mesh lanes before resuming its transaction.
+    const NativeRegionalWater *sealed_store=nullptr;
     std::vector<NativeRegionalWater::SurfaceMesh> results;
     // Completed owners can be uploaded while other lanes clip their surfaces.
     std::mutex delivery_mutex;

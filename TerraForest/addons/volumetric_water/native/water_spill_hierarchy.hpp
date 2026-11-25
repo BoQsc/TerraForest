@@ -4,17 +4,53 @@
 #include <cmath>
 #include <cstdint>
 #include <numeric>
+#include <type_traits>
 #include <vector>
 
 namespace terraforest {
 struct WaterSpillEdge {int a,b;double level;};
 
+// Capacity is monotone and exactly linear between horizontal beds and roofs
+// in open water. Bracketed interpolation jumps across those intervals. On a
+// plateau or poorly conditioned curve, bisection keeps the same upper bound.
+template<class Sum>
+double water_storage_level(double lo,double hi,double quantity,Sum sum,int iterations){
+    double below=sum(lo),above=sum(hi);
+    if(below>=quantity)return lo;
+    if(above<quantity)return hi;
+    for(int i=0;i<iterations;++i){
+        const double mid=lo+(hi-lo)*.5;
+        if(mid==lo||mid==hi)break;
+        double h=mid;
+        if(i%3!=2&&above>below){
+            const double candidate=lo+(hi-lo)*((quantity-below)/(above-below));
+            if(candidate>lo&&candidate<hi)h=candidate;
+        }
+        const double value=sum(h);
+        if(value>=quantity){
+            hi=h;above=value;
+            if(value==quantity){
+                const double previous=std::nextafter(h,lo);
+                if(previous==lo||sum(previous)<quantity)return hi;
+            }
+        }else{lo=h;below=value;}
+    }
+    // Interpolation may spend iterations close to a long dry plateau. A
+    // final binary bracket preserves the precision of the reference solve.
+    for(int i=0;i<iterations;++i){
+        double mid=lo+(hi-lo)*.5;if(mid==lo||mid==hi)break;
+        if(sum(mid)<quantity)lo=mid;else hi=mid;
+    }
+    return hi;
+}
+
 // Both cell and span graphs retain each basin's water below its outlet.
 // Only their graph construction and geometric capacity evaluators differ.
-template<class Cells,class Volume,class Capacity,class Integral,class Cancel,class Mark,class Reason>
+struct SingleSpillLeaf {};
+template<class Cells,class Volume,class Capacity,class Integral,class Cancel,class Mark,class Reason,class Expand=SingleSpillLeaf>
 bool distribute_basin_water(Cells &cells,std::vector<WaterSpillEdge> &edges,int sink,double upper,
     uint64_t &quantity,int64_t &ocean_exchange_ml,Volume volume_at,Capacity capacity,Integral integral_at,
-    const Cancel &cancelled,Mark mark,Reason &reason,int level_iterations=32){
+    const Cancel &cancelled,Mark mark,Reason &reason,int level_iterations=32,Expand expand={}){
     struct Basin {int left=-1,right=-1,parent=-1,begin=0,end=0;double level=0;uint64_t capacity=0,quantity=0,excess=0,extra=0;bool outlet=false;};
     static_assert(sizeof(Basin)<=80,"Recheck hierarchy reservation when a basin grows");
     std::stable_sort(edges.begin(),edges.end(),[](const WaterSpillEdge &a,const WaterSpillEdge &b){return a.level<b.level;});
@@ -44,12 +80,17 @@ bool distribute_basin_water(Cells &cells,std::vector<WaterSpillEdge> &edges,int 
     // Retire saturated leaves from ancestor capacity evaluations.
     // Deep interior cells then contribute a cached integer volume,
     // rather than being rescanned at every shoreline spill height.
-    std::vector<std::vector<int>> active(tree.size());
+    // Each leaf belongs to only one live hydraulic subtree. Splice its list
+    // into the next basin rather than allocating and copying vectors at each
+    // spill. Retain the original traversal order when the two lists tie.
+    struct Active {int first=-1,last=-1,count=0;};
+    std::vector<Active> active(tree.size());
+    std::vector<int> next_active(leaves,-1);
     std::vector<uint64_t> saturated(tree.size());
     for(size_t id=0;id<tree.size();++id){
         auto &node=tree[id];double top=node.parent<0?upper:tree[node.parent].level;
         if(node.outlet){node.capacity=node.left<0?0:tree[node.left].capacity+tree[node.right].capacity;continue;}
-        if(node.left<0)active[id].push_back(int(id));
+        if(node.left<0)active[id]={int(id),int(id),1};
         else{
             saturated[id]=saturated[node.left]+saturated[node.right];
             // All finite descendants together own at most quantity ml.
@@ -59,25 +100,31 @@ bool distribute_basin_water(Cells &cells,std::vector<WaterSpillEdge> &edges,int 
             // one extra ml so the routing pass cannot treat it as full.
             if(sink<0&&tree[node.left].capacity+tree[node.right].capacity>quantity){
                 node.capacity=quantity+1;
-                std::vector<int>().swap(active[node.left]);
-                std::vector<int>().swap(active[node.right]);
                 continue;
             }
             int a=node.left,b=node.right;
-            if(active[a].size()<active[b].size())std::swap(a,b);
-            active[id]=std::move(active[a]);
-            active[id].insert(active[id].end(),active[b].begin(),active[b].end());
-            std::vector<int>().swap(active[b]);
+            if(active[a].count<active[b].count)std::swap(a,b);
+            active[id]=active[a];
+            if(active[b].count){
+                next_active[active[id].last]=active[b].first;
+                active[id].last=active[b].last;active[id].count+=active[b].count;
+            }
             if(top==node.level){node.capacity=tree[node.left].capacity+tree[node.right].capacity;continue;}
         }
-        uint64_t partial=0;size_t retained=0;
-        for(int i:active[id]){
+        uint64_t partial=0;
+        Active kept;
+        for(int i=active[id].first;i>=0;i=next_active[i]){
             if(++work>4000000||cancelled.load()){reason="Basin hierarchy work budget exceeded";return false;}
             uint64_t volume=integral_at(i,top);
             if(volume==capacity(i))saturated[id]+=volume;
-            else{partial+=volume;active[id][retained++]=i;}
+            else{
+                partial+=volume;
+                if(kept.last<0)kept.first=i;else next_active[kept.last]=i;
+                kept.last=i;++kept.count;
+            }
         }
-        active[id].resize(retained);node.capacity=saturated[id]+partial;
+        if(kept.last>=0)next_active[kept.last]=-1;
+        active[id]=kept;node.capacity=saturated[id]+partial;
     }
     mark(6);
     // Record incoming overflow once per node. Descendant routing
@@ -97,9 +144,25 @@ bool distribute_basin_water(Cells &cells,std::vector<WaterSpillEdge> &edges,int 
     stack={trunk};
     while(!stack.empty()){
         int id=stack.back();stack.pop_back();auto &node=tree[id];
-        if(node.left<0){if(id!=sink)cells[id].after=node.quantity;continue;}
+        if(node.left<0){
+            if(id!=sink){
+                cells[id].after=node.quantity;
+                if constexpr(!std::is_same_v<Expand,SingleSpillLeaf>){
+                    const double top=node.parent<0?upper:tree[node.parent].level;
+                    if(!expand(order,node.begin,node.end,0.,top,node.quantity))return false;
+                }
+            }
+            continue;
+        }
         auto &left=tree[node.left];auto &right=tree[node.right];
         if(node.outlet){stack.push_back(node.right);stack.push_back(node.left);continue;}
+        if(!node.quantity){
+            if constexpr(!std::is_same_v<Expand,SingleSpillLeaf>){
+                if(!expand(order,node.begin,node.end,0.,0.,0))return false;
+            }
+            for(int at=node.begin;at<node.end;++at)cells[order[at]].after=0;
+            continue;
+        }
         if(node.quantity<left.capacity+right.capacity){
             uint64_t a=std::min(node.extra,left.capacity-left.quantity);
             uint64_t b=node.extra-a;
@@ -108,10 +171,18 @@ bool distribute_basin_water(Cells &cells,std::vector<WaterSpillEdge> &edges,int 
             stack.push_back(node.right);stack.push_back(node.left);continue;
         }
         double a=node.level,b=node.parent<0?upper:tree[node.parent].level;
-        for(int iteration=0;iteration<level_iterations;++iteration){double m=(a+b)*.5,volume=0;
-            if(m==a||m==b)break;
-            for(int at=node.begin;at<node.end;++at){int i=order[at];volume+=volume_at(i,m);}
-            if(volume<double(node.quantity))a=m;else b=m;
+        if constexpr(!std::is_same_v<Expand,SingleSpillLeaf>){
+            if(!expand(order,node.begin,node.end,a,b,node.quantity))return false;
+            continue;
+        }
+        auto sum=[&](double h){double volume=0;
+            for(int at=node.begin;at<node.end;++at)volume+=volume_at(order[at],h);
+            return volume;
+        };
+        if(level_iterations>=48&&node.end-node.begin>=64)b=water_storage_level(a,b,double(node.quantity),sum,level_iterations);
+        else for(int iteration=0;iteration<level_iterations;++iteration){
+            double m=(a+b)*.5;if(m==a||m==b)break;
+            if(sum(m)<double(node.quantity))a=m;else b=m;
         }
         uint64_t filled=0;std::vector<int> fractions;
         for(int at=node.begin;at<node.end;++at){int i=order[at];auto &c=cells[i];double v=volume_at(i,b);

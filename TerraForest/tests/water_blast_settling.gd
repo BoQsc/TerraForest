@@ -44,6 +44,30 @@ func settle(water:RefCounted)->void:
 		water.advance_settling(256)
 		if water.statistics().settling_regions==0:return
 	check(false,"settling reaches idle within bounded fixture work")
+func hydrate_paged_chamber(water:RefCounted,coordinate:Vector3i,low:Vector3i)->void:
+	# A legacy paged record carries amounts, but its occupancy must be
+	# sampled before any further transfer. Supply the actual two-cell shaft.
+	var request:Dictionary=water.next_request()
+	check(request.get("coordinate")==coordinate,"paged legacy occupancy requests its terrain before settling")
+	var core:RefCounted=ClassDB.instantiate("TerrainCore")
+	var codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
+	core.execute(codec.command(6,[1703,5]))
+	var start:=Vector3(coordinate)*4.0
+	var floor_point:=Vector3(low)*0.5
+	var top:=floor_point+Vector3(0.5,1,0.5)
+	var walls:Array=[]
+	for axis in 3:
+		for positive in [false,true]:
+			var a:=start
+			var b:=start+Vector3.ONE*4
+			if positive:a[axis]=top[axis]
+			else:b[axis]=floor_point[axis]
+			walls.append(PackedFloat64Array([-1,0,0,-a.x,1,0,0,b.x,0,-1,0,-a.y,0,1,0,b.y,0,0,-1,-a.z,0,0,1,b.z]))
+	var patch:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
+	var success:bool=patch.configure(coordinate) and patch.set_structure_hulls(walls)
+	var status:=0
+	while success and status==0:status=patch.sample_terrain(core,2048,0,0)
+	check(success and status==1 and water.accept_patch(patch),"paged chamber publishes its real contact geometry and pending quantity")
 func _initialize()->void:
 	var high:=Vector3i(83,83,83);var low:=high+Vector3i.DOWN
 	var water:=fixture({high:[0,500,125000],low:[0,500,0]})
@@ -64,6 +88,7 @@ func _initialize()->void:
 	var packet:PackedByteArray=paged.capture_region_snapshot(coordinate)
 	var recipient:RefCounted=ClassDB.instantiate("NativeRegionalWater")
 	check(recipient.restore_region_snapshot(coordinate,packet,0,true) and recipient.statistics().settling_regions>0,"region paging retains pending settling")
+	hydrate_paged_chamber(recipient,coordinate,low)
 	settle(recipient)
 	check(amounts(recipient)=={low:125000},"paged settling keeps exact owned water")
 	settle(water);settle(restored)
@@ -102,11 +127,29 @@ func _initialize()->void:
 	check(amounts(water)=={low:125000,high:25000},"capacity excess rises into adjacent space while preserving the filled donor")
 	var row:Dictionary={}
 	for x in range(80,88):row[Vector3i(x,83,83)]=[0,500,125000 if x==83 else 1]
+	# Both ends land exactly on a storage boundary. The adjoining regions
+	# contain the two walls of this sealed channel.
+	row[Vector3i(79,83,83)]=[500,500,0]
+	row[Vector3i(88,83,83)]=[500,500,0]
 	water=fixture(row)
-	water.settle_after_edit(AABB(Vector3(40,41.5,41.5),Vector3(4,.5,.5)));settle(water)
+	var channel:=AABB(Vector3(40,41.5,41.5),Vector3(4,.5,.5))
+	water.settle_after_edit(channel);settle(water)
+	var pairwise:=amounts(water)
+	var balanced:bool=pairwise.size()==8 and water.statistics().water_ml==125007
+	for x in range(80,87):
+		balanced=balanced and absi(int(pairwise.get(Vector3i(x,83,83),0))-int(pairwise.get(Vector3i(x+1,83,83),0)))<=1
+	check(balanced,"Finite pair transfers finish with at most one millilitre across each open face")
+	# The game submits the whole layer to the equilibrium worker. Across a
+	# long channel the pairwise operation alone can accumulate integer ties.
+	water.settle_after_edit(channel)
+	var level:RefCounted=water.begin_equilibrium(0,true)
+	var solved:=false
+	if level!=null:
+		level.prepare()
+		solved=water.finish_equilibrium(level).get("ok",false)
 	var row_amounts:=amounts(water);var minimum:=125000;var maximum:=0;var row_total:=0
 	for value:int in row_amounts.values():minimum=mini(minimum,value);maximum=maxi(maximum,value);row_total+=value
-	check(row_amounts.size()==8 and maximum-minimum<=3 and row_total==125007,"Connected layer equilibrates within declared head precision without losing integer remainders")
+	check(solved and row_amounts.size()==8 and maximum-minimum<=1 and row_total==125007,"Connected layer equilibrates within one millilitre without losing integer remainders (%d cells, %d..%d ml, total %d)"%[row_amounts.size(),minimum,maximum,row_total])
 	var left:=Vector3i(82,83,83);var sill:=left+Vector3i.RIGHT;var right:=sill+Vector3i.RIGHT
 	water=fixture({left:[0,500,75000],sill:[300,500,1],right:[0,500,1000]})
 	water.settle_after_edit(AABB(Vector3(sill)*.5,Vector3.ONE*.5));settle(water)

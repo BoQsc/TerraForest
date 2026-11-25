@@ -3,6 +3,7 @@
 extends EditorExportPlugin
 
 var active:=false
+var previous_project_name:String
 
 func _get_name()->String:
  return "TerraForestWaterQualification"
@@ -11,6 +12,11 @@ func _export_begin(_features:PackedStringArray,_is_debug:bool,path:String,_flags
  var requested:=OS.get_environment("TERRAFOREST_WATER_QUALIFICATION_PACK").replace("\\","/")
  active=not requested.is_empty() and ProjectSettings.globalize_path(path).simplify_path()==requested.simplify_path()
  if active:
+  # The Windows qualification save, graphics settings and cache receipts live
+  # under this original Godot app_userdata name. Pin the process-local export
+  # setting so a display-name change cannot select a different player profile.
+  previous_project_name=ProjectSettings.get_setting("application/config/name")
+  ProjectSettings.set_setting("application/config/name","TerraForest")
   add_file("res://qualification/water_player_world.gd",FileAccess.get_file_as_bytes(OS.get_environment("TERRAFOREST_WATER_QUALIFICATION_DRIVER")),false)
 
 func _export_file(path:String,_type:String,_features:PackedStringArray)->void:
@@ -23,4 +29,5 @@ func _export_file(path:String,_type:String,_features:PackedStringArray)->void:
  print("WATER_RELEASE_MAIN_SCENE ",path)
 
 func _export_end()->void:
+ if active:ProjectSettings.set_setting("application/config/name",previous_project_name)
  active=false

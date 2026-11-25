@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "regional_water.hpp"
+#include "water_terrain_class.hpp"
 #include <algorithm>
 #include <cstring>
 
@@ -45,7 +46,7 @@ void NativeWaterEquilibriumJob::expand_air_frontier(){
                 PackedInt32Array origins;if(origins.resize(n*3)!=OK)return;
                 auto *p=origins.ptrw();
                 for(int j=0;j<n;++j)for(int axis=0;axis<3;++axis)*p++=4*batch[start+j][axis];
-                PackedByteArray classes=core->call("classify_water_bricks",origins,field_revision,field_epoch,true);
+                PackedByteArray classes=classify_edit_bricks(core.ptr(),origins,field_revision,field_epoch);
                 if(classes.size()!=n*17)return;
                 const auto *data=classes.ptr();
                 for(int j=0;j<n;++j){

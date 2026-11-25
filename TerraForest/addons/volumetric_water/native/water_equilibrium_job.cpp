@@ -246,9 +246,13 @@ Dictionary NativeRegionalWater::finish_equilibrium(const Ref<NativeWaterEquilibr
     out["wide_basin_leaves"]=int64_t(job->wide_basin_leaves);
     out["prism_nodes"]=int64_t(job->prism_nodes);out["prism_edges"]=int64_t(job->prism_edges);
     out["column_rooms"]=int64_t(job->column_rooms);out["column_portals"]=int64_t(job->column_portals);
+    out["column_storage_groups"]=int64_t(job->column_storage_groups);
+    out["column_tiles"]=int64_t(job->column_tiles);
     out["column_tiers"]=int64_t(job->column_tiers);out["column_us"]=int64_t(job->column_us);
     out["survey_classes"]=int64_t(job->receiver_classes.size());
     out["air_frontier_receivers"]=int64_t(job->air_frontier_receivers);
+    PackedInt64Array column_times;for(auto t:job->column_phases)column_times.push_back(t);
+    out["column_phase_us"]=column_times;
     if(job->column_fallback)out["column_fallback"]=job->column_fallback;
     PackedInt64Array prism_times;for(auto t:job->prism_us)prism_times.push_back(t);
     out["prism_us"]=prism_times;out["receiver_us"]=int64_t(job->receiver_us);
@@ -375,6 +379,10 @@ void NativeWaterEquilibriumJob::prepare(){
         for(const auto &[k,r]:store.regions)if(r.settle_pending&&r.valid){
             const auto base=W::position(k)*8;
             for(int i=0;i<512;++i)if(r.water[i]&&r.water[i]>W::profile(r,i).capacity())displaced.push_back(base+Vector3i(i%8,(i/8)%8,i/64));
+        }
+        if(local_response&&wide_edit_bounds.empty()&&displaced.empty()&&store.regions.size()>=32&&!local_donors.empty()){
+            if(settle_column_portals()==SpanResult::settled)return true;
+            if(cancelled.load()){reason="Cancelled";return false;}
         }
         if(local_response&&!wide_edit_bounds.empty()&&displaced.empty()){
             auto result=settle_wide_spans();

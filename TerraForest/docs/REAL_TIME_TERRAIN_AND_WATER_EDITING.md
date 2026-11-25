@@ -4,11 +4,27 @@
 
 A player should be able to break ground, place terrain, empty a bucket or detonate a shoreline barrel and immediately interact with the resulting world. An author should be able to cut across a region boundary and see the whole cut, walk on its new floor and find water wherever the cut opened a connected cavity. The same operation must work from first person, strategy view and the dedicated authority. Water needs depth, a continuous shoreline and consistent volume. Realistic transient flow is outside the requested scope.
 
-**Current verdict.** The two-frame requirement remains open. The weighted-column timing run matched at sea on draw two (32.058 ms), at the lake on draw three (45.847 ms), and across the 64 m cut on draw 12 (219.606 ms). The cut kept its finite quantity and both crater banks passed the 2 cm contact check.
+**Current verdict.** The latest packaged 64 m cut matched on draw 12 at 213.735 ms. Both shoreline barrels matched on draw three. The sea had reached draw two on earlier runs. The lake and the full cut still miss consistently, and the sea result varies between runs.
 
 ## Windows release qualification
 
 ### Local edit measurements on Cedar Vale
+
+#### Finite water publication on 25 November
+
+The water worker uses the sealed terrain field and the actual construction hulls. It combines neighbouring vertical columns only when their fine-grained storage and openings agree. Distinct sills and independent pockets retain their own water. The worker keeps wet regions and the neighbours needed to reconstruct their surface. It can release dry survey regions after solving. A terrain edit, its collider and its prepared water share a publication ticket.
+
+| Packaged gameplay action | First draw with matching terrain, collision and detailed water | Worst frame during the action |
+|---|---:|---:|
+| Full 64 m wet cut, from brush input | Draw 12, 213.735 ms | 35.220 ms |
+| Sea barrel, from terrain admission | Draw 3, 45.499 ms | 66.565 ms |
+| Lake barrel, from terrain admission | Draw 3, 47.605 ms | 21.880 ms |
+
+The 1080p release loaded the pinned Cedar Vale save on the RTX 4050 Laptop. The cut conserved 27,698,261,603 ml, with zero of nine matching probes on draw two and nine of nine on publication. Its worker took 35.597 ms to prepare occupancy, 41.213 ms in receiver discovery, 30.004 ms in the final hydraulic solve and 25.706 ms building detailed meshes. It published 589 water packets. The previous cut with shared terrain triangles took 249.458 ms. Timing across these runs does not establish a stable frame rate. [Build receipt](../reports/checks/20261125T120145353846Z/candidate.json) · [Cut and contacts](../reports/checks/20261125T120202550880Z/console.log) · [Previous cut](../reports/checks/20261125T115326437961Z/console.log)
+
+The two craters each passed all 81 coverage probes at first publication. All 23 sea and 26 initial lake bank probes reached within 2 cm, and both collider errors were 0.027 mm. The sea worker finished at 16.987 ms and adoption started at 31.361 ms. The lake worker finished at 27.071 ms and adoption started at 33.646 ms. The images show water meeting both crater banks from the front and reverse views, and a lower pool inside the 64 m cut. The separate underwater views show the crater floor. These are post-publication captures. [Gameplay, contact and mining checks](../reports/checks/20261125T120242811882Z/console.log) · [Frame times](../reports/checks/20261125T120242811882Z/normal_gameplay_blast_performance.json) · [Cut camera pair](../reports/checks/20261125T120326261247Z/run.json) · [Shore camera pairs and underwater views](../reports/checks/20261125T120459259070Z/run.json)
+
+The native geometry test compares five graded free surfaces against 9,245 independent vertical samples through intersecting terrain and water triangles. Headless tests cover hydraulic equivalence and integer rounding, interrupted saves and paged chambers, stale occupancy tickets, and continuity across mesh owners. The captured topology fixture contained 16,348 triangles and had zero unmatched or nonmanifold edges. Arbitrary submerged-object contact, bucket interruptions in the package and the two-frame deadlines remain open. [Native geometry results](../reports/water_cell_profile.log) · [83 equilibrium checks](../reports/checks/20261125T120035144468Z/console.log) · [39 settling checks](../reports/checks/20261125T120001516284Z/console.log) · [53 contact checks](../reports/checks/20261125T115953144474Z/console.log) · [Surface topology](../reports/checks/20261125T120050842414Z/console.log)
 
 #### Shared terrain triangles on 25 November
 
