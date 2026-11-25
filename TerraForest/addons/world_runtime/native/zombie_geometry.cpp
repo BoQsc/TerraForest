@@ -25,13 +25,13 @@ Dictionary fit_cloud(const PackedVector3Array &vertices,const Transform3D &inver
 }
 void NativeZombieAnatomy::invalidate_geometry(){geometry_valid_=false;fitted_shapes_.clear();}
 std::vector<Transform3D> NativeZombieAnatomy::evaluated_poses() const {
-    auto *skeleton=Object::cast_to<Skeleton3D>(ObjectDB::get_instance(skeleton_));if(!skeleton)return {};
+    auto *skeleton=Object::cast_to<Skeleton3D>(ObjectDB::get_instance(skeleton_));if(!skeleton||!skeleton->is_inside_tree()||skeleton->is_queued_for_deletion())return {};
     skeleton->force_update_all_bone_transforms();std::vector<Transform3D> poses(skeleton->get_bone_count());
     for(int bone=0;bone<int(poses.size());bone++)poses[bone]=skeleton->get_global_transform()*skeleton->get_bone_global_pose(bone);
     if(health_<=0&&death_poses_.size()==poses.size()){
         std::vector<PhysicalBone3D*> physical(poses.size(),nullptr);
         for(const auto &group:ragdolls_)for(uint64_t identity:group.bodies){
-            auto *body=Object::cast_to<PhysicalBone3D>(ObjectDB::get_instance(identity));
+            auto *body=Object::cast_to<PhysicalBone3D>(resident_body(identity));
             if(body&&body->get_bone_id()>=0&&body->get_bone_id()<int(poses.size()))physical[body->get_bone_id()]=body;
         }
         for(int bone=0;bone<int(poses.size());bone++){

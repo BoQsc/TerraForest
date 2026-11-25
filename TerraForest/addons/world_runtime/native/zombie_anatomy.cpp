@@ -64,6 +64,12 @@ void NativeZombieAnatomy::_bind_methods(){
     ClassDB::bind_method(D_METHOD("ragdoll_stats"),&NativeZombieAnatomy::ragdoll_stats);
 }
 int NativeZombieAnatomy::part_index(const String &name){for(int i=0;i<14;i++)if(name==NAMES[i])return i;return -1;}
+PhysicsBody3D *NativeZombieAnatomy::resident_body(uint64_t identity){
+    auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(identity));
+    // Severing detaches nodes immediately, before their deferred destruction.
+    // An ObjectID still resolving does not grant access to a world transform.
+    return body&&body->is_inside_tree()&&!body->is_queued_for_deletion()?body:nullptr;
+}
 bool NativeZombieAnatomy::configure(const Dictionary &definitions){
     if(configured_||definitions.size()!=14)return false;
     std::array<Part,14> next;
@@ -257,13 +263,13 @@ bool NativeZombieAnatomy::restore_vitals(const PackedByteArray &bytes){
 Dictionary NativeZombieAnatomy::pick(Vector3 from,Vector3 to) const {
     Dictionary out;auto *skeleton=Object::cast_to<Skeleton3D>(ObjectDB::get_instance(skeleton_));
     Vector3 direction=to-from;
-    if(!skeleton||!from.is_finite()||!to.is_finite()||direction.length_squared()<1e-10||direction.length_squared()>128*128)return out;
+    if(!skeleton||!skeleton->is_inside_tree()||skeleton->is_queued_for_deletion()||!from.is_finite()||!to.is_finite()||direction.length_squared()<1e-10||direction.length_squared()>128*128)return out;
     if(health_>0){
         if(from.distance_to(skeleton->get_global_position())>direction.length()+4)return out;
     }else{
         // Impacts can carry the corpse away from its retired character root.
         bool nearby=false;
-        for(const auto &group:ragdolls_)for(uint64_t id:group.bodies){auto *body=Object::cast_to<PhysicalBone3D>(ObjectDB::get_instance(id));if(body&&from.distance_to(body->get_global_position())<=direction.length()+2)nearby=true;}
+        for(const auto &group:ragdolls_)for(uint64_t id:group.bodies){auto *body=Object::cast_to<PhysicalBone3D>(resident_body(id));if(body&&from.distance_to(body->get_global_position())<=direction.length()+2)nearby=true;}
         if(!nearby)return out;
     }
     skeleton->force_update_all_bone_transforms();std::vector<Transform3D> poses(skeleton->get_bone_count());
@@ -271,7 +277,7 @@ Dictionary NativeZombieAnatomy::pick(Vector3 from,Vector3 to) const {
     if(health_<=0&&death_poses_.size()==poses.size()){
         std::vector<PhysicalBone3D*> physical(poses.size(),nullptr);
         for(const auto &group:ragdolls_)for(uint64_t id:group.bodies){
-            auto *body=Object::cast_to<PhysicalBone3D>(ObjectDB::get_instance(id));
+            auto *body=Object::cast_to<PhysicalBone3D>(resident_body(id));
             if(body&&body->get_bone_id()>=0&&body->get_bone_id()<int(poses.size()))physical[body->get_bone_id()]=body;
         }
         for(int i=0;i<int(poses.size());i++){
@@ -327,7 +333,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
         groups.erase(std::remove_if(groups.begin(),groups.end(),[](const Ragdoll &group){for(uint64_t body:group.bodies)if(ObjectDB::get_instance(body))return false;return true;}),groups.end());
         for(auto &group:groups){
             bool processing=false;
-            for(uint64_t body:group.bodies)if(auto *node=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(body))){if(node->is_inside_tree()&&node->can_process())processing=true;}
+            for(uint64_t body:group.bodies)if(auto *node=resident_body(body)){if(node->is_inside_tree()&&node->can_process())processing=true;}
             if(processing)entries.push_back({&group,owner});
         }
     }
@@ -337,18 +343,18 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
     for(auto &entry:entries){auto &group=*entry.group;if(group.resting){
         bool impact=false;
         for(uint64_t id:group.bodies){
-            auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(!body)continue;
+            auto *body=resident_body(id);if(!body)continue;
             if(auto *bone=Object::cast_to<NativeZombiePhysicalBone>(body)){if(!bone->is_resting())impact=true;}
             if(auto *part=Object::cast_to<NativeZombieRigidPart>(body)){if(!part->is_resting())impact=true;}
             if(ragdoll_rest_impact(server->body_get_direct_state(body->get_rid())))impact=true;
         }
-        if(impact){group.resting=false;group.quiet=0;group.still=0;group.still_poses.clear();for(uint64_t id:group.bodies){auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(body){if(auto *bone=Object::cast_to<NativeZombiePhysicalBone>(body))bone->set_resting(false);if(auto *part=Object::cast_to<NativeZombieRigidPart>(body))part->set_resting(false);server->body_set_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING,false);}}}
+        if(impact){group.resting=false;group.quiet=0;group.still=0;group.still_poses.clear();for(uint64_t id:group.bodies){auto *body=resident_body(id);if(body){if(auto *bone=Object::cast_to<NativeZombiePhysicalBone>(body))bone->set_resting(false);if(auto *part=Object::cast_to<NativeZombieRigidPart>(body))part->set_resting(false);server->body_set_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING,false);}}}
     }}
     ragdoll_clock_+=delta;if(ragdoll_clock_<.1)return;double elapsed=ragdoll_clock_;ragdoll_clock_=0;
     const int count=entries.size();std::vector<int> parents(count);std::vector<bool> ground(count,false),quiet(count,true),awake(count,false);
     std::unordered_map<uint64_t,int> owners;
     for(int index=0;index<count;index++)parents[index]=index;
-    for(int index=0;index<count;index++)for(uint64_t id:entries[index].group->bodies){auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(body)owners.emplace(body->get_rid().get_id(),index);}
+    for(int index=0;index<count;index++)for(uint64_t id:entries[index].group->bodies){auto *body=resident_body(id);if(body)owners.emplace(body->get_rid().get_id(),index);}
     auto root=[&](int index){while(parents[index]!=index){parents[index]=parents[parents[index]];index=parents[index];}return index;};
     for(int index=0;index<count;index++){
         auto &group=*entries[index].group;bool still=group.still_poses.size()==group.bodies.size(),moving_contact=false;
@@ -356,7 +362,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
         group.still_poses.resize(group.bodies.size());
         for(size_t member=0;member<group.bodies.size();member++){
             uint64_t id=group.bodies[member];
-            auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(!body)continue;
+            auto *body=resident_body(id);if(!body)continue;
             RID rid=body->get_rid();awake[index]=awake[index]||!bool(server->body_get_state(rid,PhysicsServer3D::BODY_STATE_SLEEPING));
             Transform3D pose=server->body_get_state(rid,PhysicsServer3D::BODY_STATE_TRANSFORM);const auto &reference=group.still_poses[member];
             double alignment=0;for(int axis=0;axis<3;axis++)alignment+=pose.basis.get_column(axis).dot(reference.basis.get_column(axis));
@@ -390,7 +396,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
         if(still&&!moving_contact)group.still+=elapsed;
         else{
             group.still=0;
-            for(size_t member=0;member<group.bodies.size();member++)if(auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(group.bodies[member])))group.still_poses[member]=server->body_get_state(body->get_rid(),PhysicsServer3D::BODY_STATE_TRANSFORM);
+            for(size_t member=0;member<group.bodies.size();member++)if(auto *body=resident_body(group.bodies[member]))group.still_poses[member]=server->body_get_state(body->get_rid(),PhysicsServer3D::BODY_STATE_TRANSFORM);
         }
         quiet[index]=!moving_contact&&(quiet[index]||group.still>=.9);
     }
@@ -399,7 +405,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
         bool supported=false,stable=true,active=false;double held=1e9;
         for(int index:island){supported=supported||ground[index];stable=stable&&quiet[index];active=active||awake[index];held=std::min(held,entries[index].group->quiet);}
         if(!supported&&stable)for(int index:island)if(entries[index].group->ground_damped&&entries[index].group->support_body){
-            auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(entries[index].group->support_body));
+            auto *body=resident_body(entries[index].group->support_body);
             if(body&&body->is_inside_tree()){
                 Ref<World3D> world=body->get_world_3d();
                 if(world.is_valid()){
@@ -419,7 +425,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
             group.quiet=sleep?0:held;
             if(sleep||!supported||!stable)group.resting=sleep;
             if(!supported&&group.ground_damped){
-                for(size_t member=0;member<group.bodies.size();member++)if(auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(group.bodies[member]))){
+                for(size_t member=0;member<group.bodies.size();member++)if(auto *body=resident_body(group.bodies[member])){
                     server->body_set_param(body->get_rid(),PhysicsServer3D::BODY_PARAM_LINEAR_DAMP,group.damping[member].x);
                     server->body_set_param(body->get_rid(),PhysicsServer3D::BODY_PARAM_ANGULAR_DAMP,group.damping[member].y);
                 }
@@ -429,7 +435,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
                 // Passive impact damping removes constraint/contact chatter.
                 // It starts only after real support and never holds a pose.
                 for(uint64_t id:group.bodies){
-                    auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(!body){group.damping.push_back(Vector2());continue;}
+                    auto *body=resident_body(id);if(!body){group.damping.push_back(Vector2());continue;}
                     RID rid=body->get_rid();
                     group.damping.push_back(Vector2(server->body_get_param(rid,PhysicsServer3D::BODY_PARAM_LINEAR_DAMP),server->body_get_param(rid,PhysicsServer3D::BODY_PARAM_ANGULAR_DAMP)));
                     server->body_set_param(rid,PhysicsServer3D::BODY_PARAM_LINEAR_DAMP,std::max(3.0,double(server->body_get_param(rid,PhysicsServer3D::BODY_PARAM_LINEAR_DAMP))));
@@ -438,7 +444,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
                 group.ground_damped=true;
             }
             if(sleep||!supported||!stable)for(uint64_t id:group.bodies){
-                auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(!body)continue;
+                auto *body=resident_body(id);if(!body)continue;
                 bool was_resting=false;
                 if(auto *bone=Object::cast_to<NativeZombiePhysicalBone>(body)){was_resting=bone->is_resting();bone->set_resting(sleep);}
                 if(auto *part=Object::cast_to<NativeZombieRigidPart>(body)){was_resting=part->is_resting();part->set_resting(sleep);}
@@ -446,7 +452,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
             }
         }
         if(sleep){
-            for(int index:island){for(uint64_t id:entries[index].group->bodies){auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(body)server->body_set_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING,true);}entries[index].owner->settle_events_++;}
+            for(int index:island){for(uint64_t id:entries[index].group->bodies){auto *body=resident_body(id);if(body)server->body_set_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING,true);}entries[index].owner->settle_events_++;}
         }
     }
 }
@@ -461,12 +467,12 @@ void NativeZombieAnatomy::wake_ragdolls(const AABB &bounds){
     if(!bounds.position.is_finite()||!bounds.size.is_finite())return;
     if(bounds.size!=Vector3()){
         bool touched=false;AABB area=bounds.grow(.75);
-        for(const auto &group:ragdolls_)for(uint64_t id:group.bodies){auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(body&&area.has_point(body->get_global_position()))touched=true;}
+        for(const auto &group:ragdolls_)for(uint64_t id:group.bodies){auto *body=resident_body(id);if(body&&area.has_point(body->get_global_position()))touched=true;}
         if(!touched)return;
     }
     auto *server=PhysicsServer3D::get_singleton();
     for(auto &group:ragdolls_){group.resting=false;group.quiet=0;group.still=0;group.still_poses.clear();for(uint64_t id:group.bodies){
-        auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(!body)continue;
+        auto *body=resident_body(id);if(!body)continue;
         if(auto *bone=Object::cast_to<NativeZombiePhysicalBone>(body))bone->set_resting(false);
         if(auto *part=Object::cast_to<NativeZombieRigidPart>(body))part->set_resting(false);
         server->body_set_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING,false);
@@ -474,7 +480,7 @@ void NativeZombieAnatomy::wake_ragdolls(const AABB &bounds){
 }
 Dictionary NativeZombieAnatomy::ragdoll_stats() const {
     Dictionary out;int bodies=0,sleeping=0,resting=0;double linear=0,angular=0;auto *server=PhysicsServer3D::get_singleton();
-    for(const auto &group:ragdolls_)for(uint64_t id:group.bodies){auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(body){bodies++;if(bool(server->body_get_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING)))sleeping++;if(auto *bone=Object::cast_to<NativeZombiePhysicalBone>(body)){if(bone->is_resting())resting++;}if(auto *part=Object::cast_to<NativeZombieRigidPart>(body)){if(part->is_resting())resting++;}Vector3 v=server->body_get_state(body->get_rid(),PhysicsServer3D::BODY_STATE_LINEAR_VELOCITY),w=server->body_get_state(body->get_rid(),PhysicsServer3D::BODY_STATE_ANGULAR_VELOCITY);linear=std::max(linear,double(v.length()));angular=std::max(angular,double(w.length()));}}
+    for(const auto &group:ragdolls_)for(uint64_t id:group.bodies){auto *body=resident_body(id);if(body){bodies++;if(bool(server->body_get_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING)))sleeping++;if(auto *bone=Object::cast_to<NativeZombiePhysicalBone>(body)){if(bone->is_resting())resting++;}if(auto *part=Object::cast_to<NativeZombieRigidPart>(body)){if(part->is_resting())resting++;}Vector3 v=server->body_get_state(body->get_rid(),PhysicsServer3D::BODY_STATE_LINEAR_VELOCITY),w=server->body_get_state(body->get_rid(),PhysicsServer3D::BODY_STATE_ANGULAR_VELOCITY);linear=std::max(linear,double(v.length()));angular=std::max(angular,double(w.length()));}}
     out["groups"]=int(ragdolls_.size());out["bodies"]=bodies;out["sleeping"]=sleeping;out["resting"]=resting;out["settle_events"]=settle_events_;out["maximum_linear_speed"]=linear;out["maximum_angular_speed"]=angular;return out;
 }
 }

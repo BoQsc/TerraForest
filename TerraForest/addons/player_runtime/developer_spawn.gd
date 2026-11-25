@@ -68,6 +68,6 @@ func spawn_zombie()->void:
 	if identity==0:
 		host._retire(host.residents.find(zombie));host.enabled=was_enabled;menu.message.text="Could not save the new zombie; no entity was kept.";return
 	zombie.set_meta("world_zombie_id",identity);zombie.died.connect(func():population.sync(zombie))
-	zombie.process_mode=Node.PROCESS_MODE_DISABLED;zombie.set_behavior(false)
+	zombie.set_simulation_available(false);zombie.set_behavior(false)
 	game.player.collision_mask|=host.CHARACTER_LAYER;game.terrain.changed_since_save=true
 	last_spawn=zombie;menu.message.text="Zombie spawned nearby · Resume to play · Save world to keep it";refresh()

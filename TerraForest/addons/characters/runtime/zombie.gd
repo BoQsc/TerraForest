@@ -93,7 +93,12 @@ var missing: Dictionary = {}
 var part_meshes: Dictionary = {}
 var caps: Dictionary = {}
 var physical_bones: Dictionary = {}
+var ragdoll_profile:Dictionary={}
 var detached_parts: Array[RigidBody3D] = []
+var _simulation_available:=true
+var _ragdoll_started:=false
+var _staged_corpse:=false
+var _pending_pose_bodies:Array=[]
 var collision_exemptions: Array[Dictionary] = []
 var skeleton: Skeleton3D
 var animation_player: AnimationPlayer
@@ -340,17 +345,19 @@ func _refresh_pose_collision_shapes() -> void:
 	# blended joint boundaries, then freezes the proxy with its rigid segment.
 	# Body offsets stay unchanged so the joint's anchor never jumps on refit.
 	for bone_name: String in physical_bones:
-		var body: PhysicalBone3D = physical_bones[bone_name]
-		var pelvis := bone_name == "Hips"
-		var part := String(body.get_meta("limb_key"))
-		if _r4_enabled and part.begins_with("hand"):
-			var body_world := skeleton.global_transform * _current_bone_pose(body.get_bone_id()) * body.body_offset
-			_install_hand_compound(body, part, body_world.affine_inverse())
-		else:
-			var info := _pose_shape_spec(part, pelvis)
-			for child in body.get_children():
-				if child is CollisionShape3D:
-					child.shape = info.shape
+		_fit_pose_body(bone_name)
+
+
+func _fit_pose_body(bone_name:String)->void:
+	var body:PhysicalBone3D=physical_bones[bone_name]
+	var part:=String(body.get_meta("limb_key"))
+	if _r4_enabled and part.begins_with("hand"):
+		var body_world:=skeleton.global_transform*_current_bone_pose(body.get_bone_id())*body.body_offset
+		_install_hand_compound(body,part,body_world.affine_inverse())
+	else:
+		var info:=_pose_shape_spec(part,bone_name=="Hips")
+		for child in body.get_children():
+			if child is CollisionShape3D:child.shape=info.shape
 
 
 
@@ -439,7 +446,6 @@ func get_collision_policy() -> Dictionary:
 
 
 func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
-	var jolt:bool=ProjectSettings.get_setting("physics/3d/physics_engine","")=="Jolt Physics"
 	var index := skeleton.find_bone(bone_name)
 	if index < 0:
 		return
@@ -482,10 +488,27 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 	# ConeTwist uses local X as its twist axis. Blender bones extend along Y.
 	# Rotating the joint frame aligns the limited twist with the limb length.
 	physical.joint_offset = physical.body_offset.affine_inverse() * Transform3D(Basis(Vector3.BACK, PI * 0.5), Vector3.ZERO)
-	if pelvis:
-		physical.joint_type = PhysicalBone3D.JOINT_TYPE_NONE
-	else:
-		physical.joint_type = PhysicalBone3D.JOINT_TYPE_CONE
+	if not pelvis and (part.begins_with("hand") or part.begins_with("foot")):
+		physical.mass=1.25 if part.begins_with("foot") else 0.75
+		physical.angular_damp=1.5
+	_apply_joint_spec(physical,_joint_spec(part,pelvis))
+	physical_bones[bone_name] = physical
+	_body_specs[bone_name] = {"part": part, "offset": physical.body_offset}
+
+
+func _apply_joint_spec(physical:PhysicalBone3D,parameters:Dictionary)->void:
+	physical.joint_type=int(parameters.type)
+	for property:String in parameters:
+		if property!="type":physical.set(property,parameters[property])
+
+
+func _joint_spec(part:String,pelvis:bool)->Dictionary:
+	# One passive joint definition serves construction and death-pose rebinding.
+	# Runtime property-list reflection would rediscover this same authored data.
+	var jolt:bool=ProjectSettings.get_setting("physics/3d/physics_engine","")=="Jolt Physics"
+	var parameters:Dictionary={"type":PhysicalBone3D.JOINT_TYPE_NONE}
+	if not pelvis:
+		parameters.type = PhysicalBone3D.JOINT_TYPE_CONE
 		var swing := 35.0
 		var twist := 25.0
 		if part.begins_with("upper_arm"):
@@ -504,42 +527,40 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 		elif part == "torso":
 			swing = 24.0
 			twist = 20.0
-		physical.set("joint_constraints/swing_span", swing)
-		physical.set("joint_constraints/twist_span", twist)
+		parameters["joint_constraints/swing_span"] = swing
+		parameters["joint_constraints/twist_span"] = twist
 		if not jolt:
-			physical.set("joint_constraints/bias", 0.3)
-			physical.set("joint_constraints/softness", 0.85)
-			physical.set("joint_constraints/relaxation", 1.0)
+			parameters["joint_constraints/bias"] = 0.3
+			parameters["joint_constraints/softness"] = 0.85
+			parameters["joint_constraints/relaxation"] = 1.0
 		if part.begins_with("hand") or part.begins_with("foot") or part.begins_with("forearm"):
 			# Lock translation when a bent forearm bears against the torso.
 			# The same constraint keeps wrists and ankles attached on impact.
 			var ankle := part.begins_with("foot")
 			var elbow := part.begins_with("forearm")
-			physical.joint_type = PhysicalBone3D.JOINT_TYPE_6DOF
-			if not elbow:
-				physical.mass = 1.25 if ankle else 0.75
-				physical.angular_damp = 1.5
+			parameters={"type":PhysicalBone3D.JOINT_TYPE_6DOF}
 			for axis: String in ["x", "y", "z"]:
 				var prefix := "joint_constraints/" + axis + "/"
-				physical.set(prefix + "linear_limit_enabled", true)
-				physical.set(prefix + "linear_limit_lower", 0.0)
-				physical.set(prefix + "linear_limit_upper", 0.0)
-				if not jolt:physical.set(prefix + "linear_limit_softness", 0.95)
+				parameters[prefix + "linear_limit_enabled"] = true
+				parameters[prefix + "linear_limit_lower"] = 0.0
+				parameters[prefix + "linear_limit_upper"] = 0.0
+				if not jolt:parameters[prefix + "linear_limit_softness"] = 0.95
 				# Godot's 6DOF positional recovery uses this nonzero default.
-				physical.set(prefix + "linear_restitution", 0.5)
-				physical.set(prefix + "linear_damping", 1.0)
-				physical.set(prefix + "angular_limit_enabled", true)
+				parameters[prefix + "linear_restitution"] = 0.5
+				parameters[prefix + "linear_damping"] = 1.0
+				parameters[prefix + "angular_limit_enabled"] = true
 				var limit := (12.0 if axis == "x" else 25.0) if ankle else (18.0 if axis == "x" else 30.0)
 				if elbow:
 					limit = 8.0 if axis == "x" else 55.0
-				physical.set(prefix + "angular_limit_lower", -limit)
-				physical.set(prefix + "angular_limit_upper", limit)
-				if not jolt:physical.set(prefix + "angular_limit_softness", 0.85)
-				physical.set(prefix + "angular_restitution", 0.0)
-				physical.set(prefix + "angular_damping", 1.0)
-				if not jolt:physical.set(prefix + "erp", 0.15)
-	physical_bones[bone_name] = physical
-	_body_specs[bone_name] = {"part": part, "offset": physical.body_offset}
+				parameters[prefix + "angular_limit_lower"] = -limit
+				parameters[prefix + "angular_limit_upper"] = limit
+				if not jolt:parameters[prefix + "angular_limit_softness"] = 0.85
+				parameters[prefix + "angular_restitution"] = 0.0
+				parameters[prefix + "angular_damping"] = 1.0
+				if not jolt:parameters[prefix + "erp"] = 0.15
+				for option:String in ["linear_spring_enabled","angular_spring_enabled","linear_motor_enabled","angular_motor_enabled"]:
+					parameters[prefix+option]=false
+	return parameters
 
 
 func _load_behavior_contract() -> void:
@@ -1665,24 +1686,102 @@ func ragdoll(impulse: Vector3 = Vector3.ZERO) -> void:
 	die(impulse)
 
 
+func set_simulation_available(available:bool)->void:
+	# Residency is a state transition, not a scene-tree search. Detached groups
+	# are siblings of the character; their explicit membership owns suspension.
+	if _simulation_available==available:return
+	_simulation_available=available
+	process_mode=Node.PROCESS_MODE_INHERIT if available else Node.PROCESS_MODE_DISABLED
+	if _ragdoll_started:_set_ragdoll_frozen(not available)
+	for group:RigidBody3D in detached_parts:
+		if is_instance_valid(group):_set_detached_frozen(group,not available)
+
+
+func _set_ragdoll_frozen(frozen:bool)->void:
+	if bool(get_meta("corpse_frozen",false))==frozen:return
+	set_meta("corpse_frozen",frozen)
+	if frozen:
+		var modes:Dictionary={}
+		for bone:String in physical_bones:
+			var body:PhysicalBone3D=physical_bones[bone];var rid:=body.get_rid()
+			modes[bone]=[PhysicsServer3D.body_get_mode(rid),PhysicsServer3D.body_get_state(rid,PhysicsServer3D.BODY_STATE_LINEAR_VELOCITY),PhysicsServer3D.body_get_state(rid,PhysicsServer3D.BODY_STATE_ANGULAR_VELOCITY)]
+			PhysicsServer3D.body_set_mode(rid,PhysicsServer3D.BODY_MODE_STATIC)
+		set_meta("corpse_body_modes",modes)
+	else:
+		var modes:Dictionary=get_meta("corpse_body_modes",{})
+		for bone:String in modes:
+			# A frozen corpse can still lose a limb through an explicit world edit.
+			if not physical_bones.has(bone):continue
+			var body:PhysicalBone3D=physical_bones[bone]
+			PhysicsServer3D.body_set_mode(body.get_rid(),modes[bone][0])
+			body.linear_velocity=modes[bone][1];body.angular_velocity=modes[bone][2]
+		remove_meta("corpse_body_modes")
+
+
+func _set_detached_frozen(group:RigidBody3D,frozen:bool)->void:
+	group.process_mode=Node.PROCESS_MODE_DISABLED if frozen else Node.PROCESS_MODE_INHERIT
+	for body:RigidBody3D in group.get_meta("segment_bodies",[]):
+		if not is_instance_valid(body) or body.freeze==frozen:continue
+		if frozen:
+			var rid:=body.get_rid()
+			body.set_meta("resident_velocity",[PhysicsServer3D.body_get_state(rid,PhysicsServer3D.BODY_STATE_LINEAR_VELOCITY),PhysicsServer3D.body_get_state(rid,PhysicsServer3D.BODY_STATE_ANGULAR_VELOCITY)])
+		body.freeze=frozen
+		if not frozen and body.has_meta("resident_velocity"):
+			var motion:Array=body.get_meta("resident_velocity")
+			body.linear_velocity=motion[0];body.angular_velocity=motion[1];body.remove_meta("resident_velocity")
+
+
 func _begin_ragdoll(impulse: Vector3) -> void:
-	if not is_inside_tree() or simulator == null:
+	if not is_inside_tree() or is_queued_for_deletion() or simulator == null:
 		return
-	var saved_constraints: Dictionary = {}
-	for bone_name: String in physical_bones:
-		var physical: PhysicalBone3D = physical_bones[bone_name]
-		if physical.joint_type == PhysicalBone3D.JOINT_TYPE_NONE:
-			continue
-		var parameters := {"type": physical.joint_type}
-		for property in physical.get_property_list():
-			if String(property.name).begins_with("joint_constraints/"):
-				parameters[property.name] = physical.get(property.name)
-				if String(property.name).ends_with("spring_enabled") or String(property.name).ends_with("motor_enabled"):parameters[property.name]=false
-		saved_constraints[bone_name] = parameters
-		physical.joint_type = PhysicalBone3D.JOINT_TYPE_NONE
+	var measured:=Time.get_ticks_usec()
+	ragdoll_profile={"begin_us":measured,"shape_fit_us":0,"slices":0,"max_slice_us":0,"staged":_staged_corpse,"bodies":physical_bones.size()}
+	for bone_name:String in physical_bones:
+		physical_bones[bone_name].joint_type=PhysicalBone3D.JOINT_TYPE_NONE
+	ragdoll_profile.constraints_capture_us=Time.get_ticks_usec()-measured;measured=Time.get_ticks_usec()
+	if _staged_corpse:
+		_pending_pose_bodies=physical_bones.keys()
+		return
 	_refresh_pose_collision_shapes()
+	ragdoll_profile.shape_fit_us=Time.get_ticks_usec()-measured
+	_activate_ragdoll(impulse)
+
+
+func begin_corpse_restore(missing_mask:int)->void:
+	# Saved anatomy is known before admission. Do not cook discarded limbs or
+	# expose a partly restored body to picking, contacts, loot, or persistence.
+	_staged_corpse=true
+	hide();set_simulation_available(false);die()
+	var index:=0
+	for part:String in PARTS:
+		if missing_mask&(1<<index) and part!="torso":sever_limb(part,Vector3.ZERO,false)
+		index+=1
+
+
+func prepare_corpse_step(budget_us:int)->bool:
+	if _ragdoll_started:return true
+	if ragdoll_profile.is_empty():return false # Deferred death-pose capture has not run yet.
+	var began:=Time.get_ticks_usec()
+	while not _pending_pose_bodies.is_empty():
+		var bone:String=_pending_pose_bodies.pop_front()
+		if physical_bones.has(bone):_fit_pose_body(bone)
+		# One hull installation is atomic in the engine. Stop after it consumes
+		# the slice; activation gets its own slice when the last hull overruns.
+		if Time.get_ticks_usec()-began>=maxi(budget_us,1):break
+	var elapsed:=Time.get_ticks_usec()-began
+	ragdoll_profile.shape_fit_us+=elapsed
+	if _pending_pose_bodies.is_empty() and elapsed<maxi(budget_us,1):_activate_ragdoll(Vector3.ZERO)
+	ragdoll_profile.slices+=1
+	ragdoll_profile.max_slice_us=maxi(ragdoll_profile.max_slice_us,Time.get_ticks_usec()-began)
+	return _ragdoll_started
+
+
+func _activate_ragdoll(impulse:Vector3)->void:
+	var began:=Time.get_ticks_usec()
+	var measured:=began
 	simulator.active = true
 	simulator.physical_bones_start_simulation()
+	ragdoll_profile.simulator_start_us=Time.get_ticks_usec()-measured;measured=Time.get_ticks_usec()
 	# Starting the simulator resets native bodies to its cached skeleton pose.
 	# Transfer the sampled death pose afterwards, to both the scene nodes and
 	# physics server, before creating any joint against those body transforms.
@@ -1694,19 +1793,22 @@ func _begin_ragdoll(impulse: Vector3) -> void:
 		PhysicsServer3D.body_set_state(physical.get_rid(), PhysicsServer3D.BODY_STATE_TRANSFORM, body_pose)
 		physical.collision_layer = RAGDOLL_LAYER
 		physical.collision_mask = BODY_COLLISION_MASK
+	ragdoll_profile.pose_transfer_us=Time.get_ticks_usec()-measured;measured=Time.get_ticks_usec()
 	# Rebuild constraints against the animated pose at death. Bind-pose joint
 	# frames would otherwise try to pull the fresh ragdoll back into a T pose.
-	for bone_name: String in saved_constraints:
-		var physical: PhysicalBone3D = physical_bones[bone_name]
-		var parameters: Dictionary = saved_constraints[bone_name]
-		physical.joint_type = int(parameters.type)
-		for property: String in parameters:
-			if property != "type":
-				physical.set(property, parameters[property])
+	for bone_name:String in physical_bones:
+		var physical:PhysicalBone3D=physical_bones[bone_name]
+		_apply_joint_spec(physical,_joint_spec(String(physical.get_meta("limb_key")),bone_name=="Hips"))
+	ragdoll_profile.constraints_restore_us=Time.get_ticks_usec()-measured;measured=Time.get_ticks_usec()
 	for physical: PhysicalBone3D in physical_bones.values():
 		physical.linear_velocity = _death_velocity
 	_apply_body_impulse("torso", impulse)
 	anatomy.track_ragdoll(physical_bones.values())
+	_ragdoll_started=true
+	if not _simulation_available:_set_ragdoll_frozen(true)
+	ragdoll_profile.end_us=Time.get_ticks_usec()
+	ragdoll_profile.activation_us=int(ragdoll_profile.end_us)-began
+	ragdoll_profile.total_us=int(ragdoll_profile.constraints_capture_us)+int(ragdoll_profile.shape_fit_us)+int(ragdoll_profile.activation_us)
 
 
 func _apply_body_impulse(part: String, impulse: Vector3, point: Vector3 = Vector3.ZERO) -> void:
@@ -1877,6 +1979,7 @@ func _spawn_detached(part: String, chain: Array[String], impulse: Vector3) -> vo
 	root_body.set_meta("total_mass", total_mass)
 	detached_parts.append(root_body)
 	anatomy.track_ragdoll(bodies.values())
+	if not _simulation_available:_set_detached_frozen(root_body,true)
 
 
 func _attach_baked_mesh(body: RigidBody3D, source: MeshInstance3D, to_local: Transform3D) -> void:

@@ -9,6 +9,7 @@ var evidence_directory:=""
 func _initialize()->void:
  for argument:String in OS.get_cmdline_user_args():
   if argument.begins_with("--evidence="):evidence_directory=argument.trim_prefix("--evidence=")
+  if argument.begins_with("--check-evidence-dir="):evidence_directory=argument.trim_prefix("--check-evidence-dir=")
  if not ClassDB.class_exists("NativeZombieAnatomy"):GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
  run.call_deferred()
 func check(condition:bool,label:String)->void:

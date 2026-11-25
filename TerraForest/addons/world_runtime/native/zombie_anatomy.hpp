@@ -48,6 +48,7 @@ class NativeZombieAnatomy : public godot::RefCounted {
     uint64_t skeleton_=0;double health_=180,maximum_=180;
     int vertices_=0,triangles_=0,settle_events_=0;bool configured_=false;
     static int part_index(const godot::String &part);
+    static godot::PhysicsBody3D *resident_body(uint64_t identity);
     void invalidate_geometry();
     std::vector<godot::Transform3D> evaluated_poses() const;
 protected:

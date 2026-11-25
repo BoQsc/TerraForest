@@ -5,8 +5,11 @@ const Zombie=preload("res://addons/characters/runtime/zombie.gd")
 var game:Node
 var store:RefCounted
 var active:Dictionary={}
+var pending:Dictionary={}
+const PREPARE_BUDGET_US:=1500
 var ui=preload("res://addons/player_runtime/storage.gd").new()
 var clock:=0.0
+var update_profile:Dictionary={}
 func prepare(owner_game:Node,persistence:RefCounted)->bool:
 	game=owner_game;store=ClassDB.instantiate("NativeCorpseStore")
 	if not store.configure(game.player_hud.inventory,4096,8):return false
@@ -15,6 +18,7 @@ func prepare(owner_game:Node,persistence:RefCounted)->bool:
 func _ready()->void:add_child(ui)
 func retire_location(identities:PackedInt64Array)->void:
 	ui.close()
+	if not pending.is_empty() and identities.has(int(pending.zombie.get_meta("world_zombie_id",0))):_discard_pending()
 	for identity:int in active.keys():
 		var zombie:Node3D=active[identity]
 		if is_instance_valid(zombie) and identities.has(int(zombie.get_meta("world_zombie_id",0))):
@@ -22,9 +26,21 @@ func retire_location(identities:PackedInt64Array)->void:
 
 func clear_live()->void:
 	ui.close()
+	_discard_pending()
 	for zombie:Node in active.values():
 		if is_instance_valid(zombie):zombie.queue_free()
 	active.clear()
+func _discard_pending()->void:
+	if not pending.is_empty() and is_instance_valid(pending.zombie):pending.zombie.queue_free()
+	pending.clear()
+func _advance_pending(focus:Vector3)->void:
+	var zombie:Node3D=pending.zombie
+	var point:Vector3=pending.point
+	if not is_instance_valid(zombie) or active.size()>=12 or point.distance_to(focus)>96.0 or not game._actor_collision_ready(AABB(point-Vector3(2,1,2),Vector3(4,3,4))):
+		_discard_pending();return
+	if zombie.prepare_corpse_step(PREPARE_BUDGET_US):
+		active[int(zombie.get_meta("corpse_identity"))]=zombie
+		zombie.set_simulation_available(true);zombie.show();pending.clear()
 func retain(zombie:Node3D)->bool:
 	var id:int=zombie.get_meta("corpse_identity",0)
 	if id==0:
@@ -58,22 +74,13 @@ func aimed_id(_shared_hit:Variant=null)->int:
 	var hit:Dictionary=game.zombies.pick(origin,origin-game.camera.global_basis.z*3.0,[game.player.get_rid()])
 	return int(hit.zombie.get_meta("corpse_identity",0)) if not hit.is_empty() and not hit.zombie.alive else 0
 func set_frozen(zombie:Node3D,frozen:bool)->void:
-	if bool(zombie.get_meta("corpse_frozen",false))==frozen:return
-	zombie.set_meta("corpse_frozen",frozen)
-	if frozen:
-		var modes:Dictionary={}
-		for bone:String in zombie.physical_bones:
-			var body:PhysicalBone3D=zombie.physical_bones[bone];var rid:RID=body.get_rid()
-			modes[bone]=[PhysicsServer3D.body_get_mode(rid),PhysicsServer3D.body_get_state(rid,PhysicsServer3D.BODY_STATE_LINEAR_VELOCITY),PhysicsServer3D.body_get_state(rid,PhysicsServer3D.BODY_STATE_ANGULAR_VELOCITY)]
-			PhysicsServer3D.body_set_mode(rid,PhysicsServer3D.BODY_MODE_STATIC)
-		zombie.set_meta("corpse_body_modes",modes)
-	else:
-		var modes:Dictionary=zombie.get_meta("corpse_body_modes",{})
-		for bone:String in modes:
-			var body:PhysicalBone3D=zombie.physical_bones[bone]
-			PhysicsServer3D.body_set_mode(body.get_rid(),modes[bone][0]);body.linear_velocity=modes[bone][1];body.angular_velocity=modes[bone][2]
-		zombie.remove_meta("corpse_body_modes")
+	zombie.set_simulation_available(not frozen)
 func update(delta:float,focus:Vector3,available:bool)->void:
+	var profiling:bool=game.zombies.profiling_enabled
+	var begin:=Time.get_ticks_usec() if profiling else 0
+	var readiness_us:=0
+	var freeze_us:=0
+	var sync_us:=0
 	for id:int in active.keys():
 		var zombie:Node3D=active[id]
 		if not is_instance_valid(zombie):active.erase(id);continue
@@ -82,13 +89,15 @@ func update(delta:float,focus:Vector3,available:bool)->void:
 			var remaining:float=float(zombie.get_meta("corpse_save_after"))-delta
 			if remaining<=0:zombie.remove_meta("corpse_save_after");sync(id,zombie);game.terrain.changed_since_save=true
 			else:zombie.set_meta("corpse_save_after",remaining)
+		var phase_start:=Time.get_ticks_usec() if profiling else 0
 		var ready:bool=game._actor_collision_ready(AABB(point-Vector3(2,1,2),Vector3(4,3,4)))
-		zombie.process_mode=Node.PROCESS_MODE_INHERIT if available and ready else Node.PROCESS_MODE_DISABLED
+		if profiling:readiness_us+=Time.get_ticks_usec()-phase_start;phase_start=Time.get_ticks_usec()
 		set_frozen(zombie,not available or not ready)
-		game.zombies._freeze_detached(zombie,not available or not ready)
+		if profiling:freeze_us+=Time.get_ticks_usec()-phase_start;phase_start=Time.get_ticks_usec()
 		if available and point.distance_to(focus)>96.0 and not (ui.opened and ui.identity==id):
 			sync(id,zombie);game.terrain.changed_since_save=true;active.erase(id);zombie.queue_free()
 			if not store.has_contents(id):store.erase_corpse(id);game.terrain.changed_since_save=true
+		if profiling:sync_us+=Time.get_ticks_usec()-phase_start
 	while active.size()>12:
 		var retiring:=0;var farthest:=-1.0
 		for id:int in active:
@@ -99,10 +108,17 @@ func update(delta:float,focus:Vector3,available:bool)->void:
 		if retiring==0:break
 		sync(retiring,active[retiring]);game.terrain.changed_since_save=true;active[retiring].queue_free();active.erase(retiring)
 		if not store.has_contents(retiring):store.erase_corpse(retiring);game.terrain.changed_since_save=true
+	if profiling:update_profile={"active":active.size(),"readiness_us":readiness_us,"freeze_us":freeze_us,"retire_us":sync_us,"update_us":Time.get_ticks_usec()-begin,"restore_us":0}
 	if not available:return
 	clock-=delta
+	if not pending.is_empty():
+		var prepare_start:=Time.get_ticks_usec() if profiling else 0
+		_advance_pending(focus)
+		if profiling:update_profile.restore_us=Time.get_ticks_usec()-prepare_start;update_profile.update_us=Time.get_ticks_usec()-begin
+		return
 	if clock>0 or active.size()>=12:return
 	clock=0.5
+	var restore_start:=Time.get_ticks_usec() if profiling else 0
 	for id:int in store.nearby_corpses(focus,80.0,PackedInt64Array(active.keys())):
 		var record:Dictionary=store.corpse(id);var point:Vector3=record.position
 		if record.pose.size()==180:point=Vector3(record.pose[3],record.pose[7],record.pose[11])
@@ -110,7 +126,7 @@ func update(delta:float,focus:Vector3,available:bool)->void:
 		var zombie=Zombie.new();zombie.geometry_template=game.zombies.geometry_template;zombie.position=record.position;zombie.rotation.y=record.yaw;zombie.hide();game.zombies.add_child(zombie)
 		if not zombie.initialized:zombie.queue_free();break
 		game.zombies.geometry_template=zombie.anatomy
-		zombie.set_meta("corpse_identity",id);active[id]=zombie
+		zombie.set_meta("corpse_identity",id)
 		if int(record.resident)>0:zombie.set_meta("world_zombie_id",int(record.resident))
 		if record.pose.size()==180:
 			zombie.animation_player.stop(true);zombie.animation_player.active=false
@@ -138,16 +154,7 @@ func update(delta:float,focus:Vector3,available:bool)->void:
 				var parent:int=zombie.skeleton.get_bone_parent(bone_index)
 				zombie.skeleton.set_bone_pose(bone_index,poses[bone_index] if parent<0 else poses[parent].affine_inverse()*poses[bone_index])
 			zombie.skeleton.force_update_all_bone_transforms()
-		zombie.die()
-		finish_restore.call_deferred(zombie,record.missing)
+		zombie.begin_corpse_restore(record.missing)
+		pending={"zombie":zombie,"point":point}
 		break
-func finish_restore(zombie:Node3D,missing:int)->void:
-	await get_tree().physics_frame
-	if not is_instance_valid(zombie):return
-	var index:=0
-	for part:String in zombie.PARTS:
-		if missing&(1<<index) and part!="torso" and not zombie.missing.get(part,false):zombie.sever_limb(part,Vector3.ZERO,false)
-		index+=1
-	for detached:RigidBody3D in zombie.detached_parts:
-		if is_instance_valid(detached):detached.queue_free()
-	zombie.detached_parts.clear();zombie.show()
+	if profiling:update_profile.restore_us=Time.get_ticks_usec()-restore_start;update_profile.update_us=Time.get_ticks_usec()-begin

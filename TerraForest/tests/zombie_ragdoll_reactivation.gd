@@ -78,6 +78,7 @@ func observe(label:String,count:int)->void:
 func run()->void:
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--reactivation-evidence="):folder=argument.trim_prefix("--reactivation-evidence=")
+		if argument.begins_with("--check-evidence-dir="):folder=argument.trim_prefix("--check-evidence-dir=")
 		if argument=="--forest":forest=true
 		if argument.begins_with("--pose="):pose=argument.trim_prefix("--pose=")
 	DirAccess.make_dir_recursive_absolute(folder)

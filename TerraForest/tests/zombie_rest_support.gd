@@ -84,6 +84,7 @@ func retired_static_contact()->void:
 func run()->void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--ragdoll-evidence="):output=argument.trim_prefix("--ragdoll-evidence=")
+		if argument.begins_with("--check-evidence-dir="):output=argument.trim_prefix("--check-evidence-dir=")
 	for kind in ["sphere","box","capsule","rotated_body"]:
 		var stage:=Node3D.new();root.add_child(stage)
 		var floor:=StaticBody3D.new();stage.add_child(floor);floor.position=Vector3(950,34.5,1130);floor.collision_layer=1

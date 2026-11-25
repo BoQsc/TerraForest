@@ -96,6 +96,10 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
 	if profiling_enabled:update_phase_us.clear()
 	if is_instance_valid(corpse_host):corpse_host.update(delta,focus,available)
+	if profiling_enabled:update_phase_us["resident corpses"]=Time.get_ticks_usec()-measured_begin
+	var readiness_us:=0
+	var state_us:=0
+	var retire_us:=0
 	if not enabled or not is_instance_valid(target):
 		if not residents.is_empty():
 			clear()
@@ -115,20 +119,25 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 		if zombie.sleeper_active():bounds=bounds.merge(zombie.global_transform*zombie.sleeper.coverage)
 		# Include the next movement tick and ragdoll reach in readiness checks.
 		bounds = bounds.grow(zombie.velocity.length() * delta + 0.1)
+		var phase_start:=Time.get_ticks_usec() if profiling_enabled else 0
 		var ready := readiness.is_valid() and bool(readiness.call(bounds))
+		if profiling_enabled:readiness_us+=Time.get_ticks_usec()-phase_start;phase_start=Time.get_ticks_usec()
 		if zombie.global_position.distance_to(focus) > RETIRE_RADIUS or float(_corpse_age.get(id, 0.0)) > 20.0 or (not available and not zombie.alive):
 			_retire(index)
+			if profiling_enabled:retire_us+=Time.get_ticks_usec()-phase_start
 			continue
 		# Disable the entire subtree while loading, editing, or showing menus.
-		zombie.process_mode = Node.PROCESS_MODE_INHERIT if available and ready else Node.PROCESS_MODE_DISABLED
-		for detached in zombie.detached_parts:
-			if is_instance_valid(detached):
-				_freeze_detached(detached, not available or not ready)
+		zombie.set_simulation_available(available and ready)
 		zombie.set_behavior(available and ready and pursue)
 		if ready and available and zombie.alive:_groan(id,zombie,delta,focus)
 		if not ready and not zombie.alive:
 			_retire(index)
-	if profiling_enabled:update_phase_us["residency"]=Time.get_ticks_usec()-measured_begin
+		if profiling_enabled:state_us+=Time.get_ticks_usec()-phase_start
+	if profiling_enabled:
+		update_phase_us["residency"]=Time.get_ticks_usec()-measured_begin
+		update_phase_us["resident readiness"]=readiness_us
+		update_phase_us["resident state"]=state_us
+		update_phase_us["resident retirement"]=retire_us
 	_update_navigation(delta,available and pursue)
 	if _response_trace_left>0:
 		_response_trace_left=maxf(0.,_response_trace_left-delta);_response_trace_clock-=delta
@@ -379,12 +388,6 @@ func _update_spacing() -> void:
 				var side := signf(lateral) if absf(lateral) > 0.08 else (1.0 if index % 2 == 0 else -1.0)
 				steering += sideways * side * weight * 1.8
 		zombie.crowd_steering = steering.limit_length(1.2)
-
-func _freeze_detached(node: Node, frozen: bool) -> void:
-	if node is RigidBody3D and node.freeze!=frozen:
-		node.freeze = frozen
-	for child in node.get_children():
-		_freeze_detached(child, frozen)
 
 func _retire(index: int,keep_corpse:bool=false) -> void:
 	var zombie = residents[index]

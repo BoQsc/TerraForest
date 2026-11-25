@@ -147,7 +147,7 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		return false
 	zombie.set_meta("world_zombie_id", record.id)
 	zombie.died.connect(func():sync(zombie);last_focus=Vector3.INF)
-	zombie.process_mode = Node.PROCESS_MODE_DISABLED if during_loading else Node.PROCESS_MODE_INHERIT
+	zombie.set_simulation_available(not during_loading)
 	zombie.set_behavior(not during_loading)
 	sync(zombie); admitted += 1
 	return false
