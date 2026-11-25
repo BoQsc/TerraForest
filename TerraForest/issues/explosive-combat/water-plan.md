@@ -1,6 +1,6 @@
 
 
-Both shoreline blasts passed the 2 cm contact tests in the packaged game. The sea reached draw two at 28.509 ms. Lake took four draws at 62.992 ms. The full cut took 346.721 ms and still showed the old collider on draw two. Both cut views and both submerged shoreline views were inspected. [Cedar Vale measurements](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale)
+Both shoreline blasts passed their 2 cm bank contact checks in the weighted-column package. The lake and full cut still missed the deadline. [Cedar Vale timing and camera receipts](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#shared-terrain-triangles-on-25-november)
 The [changed-triangle comparison](../../docs/WORLD_FOUNDATION_STATUS.md#changed-triangle-publication-trial) records the rejected 8 m page trial and actual packaged timings. The two-frame edit milestone remains open.
 
 The [joint publication measurements](../../docs/WORLD_FOUNDATION_STATUS.md#joint-publication-on-the-packaged-shoreline-route) cover the full cut, both shoreline camera pairs and the outstanding two-frame deadline.

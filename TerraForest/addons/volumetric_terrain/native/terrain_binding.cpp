@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "core.h"
 #include "resident_surface_columns.hpp"
+#include "sealed_water_contact.hpp"
 #include "survey_map.hpp"
 #include "terrain_planner.hpp"
 #include "road_profile.hpp"
@@ -32,6 +33,7 @@
 #include <mutex>
 #include <chrono>
 #include <memory>
+#include <map>
 
 namespace terraforest {
 godot::PackedByteArray render_generation_map(const godot::PackedByteArray &,const godot::Array &,const godot::Array &,const godot::PackedByteArray &);
@@ -51,11 +53,20 @@ class TerrainFieldReader : public godot::RefCounted {
     GDCLASS(TerrainFieldReader,godot::RefCounted)
     friend class TerrainCore;
     godot::Ref<godot::RefCounted> field_;
+    struct ContactLane {std::mutex mutex;std::unique_ptr<SealedWaterContact> view;};
+    mutable std::array<ContactLane,3> contact_lanes_;
+    mutable std::atomic<uint64_t> lane_packets_{0};
+    mutable std::mutex extrusion_mutex_;
+    mutable std::map<std::array<i16,66>,uint32_t> extrusion_ids_;
 protected:
     static void _bind_methods();
 public:
     godot::PackedByteArray execute(const godot::PackedByteArray &packet) const;
-    godot::PackedByteArray classify_water_bricks(const godot::PackedInt32Array &origins,int64_t revision,int64_t epoch,bool layers=false) const;
+    godot::Dictionary resident_tile(godot::Vector3i key,int64_t revision,int64_t epoch,bool cache_packet) const;
+    godot::PackedByteArray classify_water_bricks(const godot::PackedInt32Array &origins,int64_t revision,int64_t epoch,bool layers=false,bool extrusions=false) const;
+    godot::PackedByteArray classify_edit_bricks(const godot::PackedInt32Array &origins,int64_t revision,int64_t epoch) const{
+        return classify_water_bricks(origins,revision,epoch,true,true);
+    }
     godot::Dictionary surface_column_stats() const;
     godot::Ref<TerrainFieldReader> capture_contact_core(godot::Rect2i bounds,int64_t revision,int64_t epoch) const;
 };
@@ -860,9 +871,59 @@ private:
 };
 void TerrainFieldReader::_bind_methods(){
     godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"),&TerrainFieldReader::execute);
+    godot::ClassDB::bind_method(godot::D_METHOD("resident_tile","key","revision","epoch","cache_packet"),&TerrainFieldReader::resident_tile);
     godot::ClassDB::bind_method(godot::D_METHOD("surface_column_stats"),&TerrainFieldReader::surface_column_stats);
-    godot::ClassDB::bind_method(godot::D_METHOD("classify_water_bricks","origins","revision","epoch","include_layers"),&TerrainFieldReader::classify_water_bricks,false);
+    godot::ClassDB::bind_method(godot::D_METHOD("classify_water_bricks","origins","revision","epoch","include_layers","include_extrusions"),&TerrainFieldReader::classify_water_bricks,false,false);
+    godot::ClassDB::bind_method(godot::D_METHOD("classify_edit_bricks","origins","revision","epoch"),&TerrainFieldReader::classify_edit_bricks);
     godot::ClassDB::bind_method(godot::D_METHOD("capture_contact_core","bounds","revision","epoch"),&TerrainFieldReader::capture_contact_core);
+}
+godot::Dictionary TerrainFieldReader::resident_tile(godot::Vector3i key,int64_t revision,int64_t epoch,bool cache_packet) const{
+    auto *field=godot::Object::cast_to<TerrainCore>(field_.ptr());
+    const int x=key.x,z=key.y,size=key.z;
+    if(!field||(size!=16&&size!=32)||x<0||z<0||x>WORLD-size||z>WORLD-size||x%16||z%16||
+       epoch<0||epoch>0xffffffffLL)return {};
+    auto &w=field->world_;
+    if(imx(0,x-2)<w.contact_x0||imx(0,z-2)<w.contact_z0||
+       imn(WORLD,x+size+2)>w.contact_x1||imn(WORLD,z+size+2)>w.contact_z1)return {};
+    ::Mesh mesh;
+    {
+        std::lock_guard<std::mutex> guard(field->mutex_);
+        if(revision!=w.revision||u32(epoch)!=terrain_build_epoch(&w))return {};
+        tr_oom=false;w.contact_outside=false;
+        if(!build_patch(w,x,z,size,1,mesh,u32(epoch),true)||tr_oom||w.contact_outside){
+            mesh.release();return {};
+        }
+    }
+    // Geometry is now private. Write the engine's final typed streams once.
+    // The optional derived cache is the only consumer of a serialized tile.
+    const int nv=mesh.v.n,ni=mesh.i.n;
+    godot::PackedVector3Array vertices,normals,faces;
+    godot::PackedVector2Array uv,uv2;godot::PackedColorArray colors;godot::PackedInt32Array indices;
+    if(vertices.resize(nv)!=godot::OK||normals.resize(nv)!=godot::OK||
+       uv.resize(nv)!=godot::OK||uv2.resize(nv)!=godot::OK||colors.resize(nv)!=godot::OK||
+       indices.resize(ni)!=godot::OK||faces.resize(ni)!=godot::OK){mesh.release();return {};}
+    static_assert(sizeof(godot::Vector3)==12&&sizeof(godot::Vector2)==8&&sizeof(godot::Color)==16);
+    MeshChannels channels{(u8*)vertices.ptrw(),(u8*)normals.ptrw(),(u8*)uv.ptrw(),(u8*)uv2.ptrw(),
+        (u8*)colors.ptrw(),(u8*)indices.ptrw(),(u8*)faces.ptrw()};
+    const bool cavity=write_mesh_channels(mesh,1,ni,channels);
+    mesh.release();
+    godot::Dictionary result;
+    const int bytes=36+nv*56+ni*16;
+    if(cache_packet){
+        godot::PackedByteArray packet;if(packet.resize(bytes)!=godot::OK)return {};
+        auto *target=packet.ptrw();const u32 header[]={MESH_MAGIC,5,u32(x),u32(z),u32(size),1,u32(nv),u32(ni),u32(ni)};
+        copy_bytes(target,header,sizeof(header));target+=sizeof(header);
+        auto append=[&](const u8 *data,int length){if(length)copy_bytes(target,data,length);target+=length;};
+        append(channels.positions,12*nv);append(channels.normals,12*nv);append(channels.uv,8*nv);
+        append(channels.uv2,8*nv);append(channels.colors,16*nv);append(channels.indices,4*ni);append(channels.collision,12*ni);
+        result["cache_packet"]=packet;
+    }
+    godot::Array arrays;arrays.resize(godot::Mesh::ARRAY_MAX);
+    arrays[godot::Mesh::ARRAY_VERTEX]=vertices;arrays[godot::Mesh::ARRAY_NORMAL]=normals;arrays[godot::Mesh::ARRAY_TEX_UV]=uv;
+    arrays[godot::Mesh::ARRAY_TEX_UV2]=uv2;arrays[godot::Mesh::ARRAY_COLOR]=colors;arrays[godot::Mesh::ARRAY_INDEX]=indices;
+    result["key"]=key;result["arrays"]=arrays;result["faces"]=faces;result["cavity_visibility"]=cavity;
+    result["step"]=1;result["triangles"]=ni/3;result["bytes"]=bytes;
+    return u32(epoch)==terrain_build_epoch(&w)?result:godot::Dictionary{};
 }
 godot::Dictionary TerrainFieldReader::surface_column_stats() const{
     const auto *field=godot::Object::cast_to<TerrainCore>(field_.ptr());
@@ -871,10 +932,13 @@ godot::Dictionary TerrainFieldReader::surface_column_stats() const{
         const auto &columns=*field->surface_columns_;
         out["columns"]=int64_t(columns.built.load());out["bytes"]=int64_t(columns.retained.load());
         out["meshes"]=int64_t(columns.mesh_reads.load());out["contacts"]=int64_t(columns.contact_reads.load());
+        out["connected_columns"]=int64_t(columns.connected_columns.load());
+        out["indexed_contacts"]=int64_t(columns.connected_contacts.load());
     }
+    out["parallel_contact_packets"]=int64_t(lane_packets_.load());
     return out;
 }
-godot::PackedByteArray TerrainFieldReader::classify_water_bricks(const godot::PackedInt32Array &origins,int64_t revision,int64_t epoch,bool layers) const{
+godot::PackedByteArray TerrainFieldReader::classify_water_bricks(const godot::PackedInt32Array &origins,int64_t revision,int64_t epoch,bool layers,bool extrusions) const{
     const auto *field=godot::Object::cast_to<TerrainCore>(field_.ptr());
     if(!field||origins.size()%3||origins.size()>3*2048)return {};
     const auto &world=field->world_;
@@ -891,6 +955,19 @@ godot::PackedByteArray TerrainFieldReader::classify_water_bricks(const godot::Pa
         if(layers&&!out[0]&&water_layer_signature(world,x,y,z,signature)){
             out[0]=3;
             for(int j=0;j<8;++j){out[1+2*j]=u16(signature[j])&255;out[2+2*j]=u16(signature[j])>>8;}
+        }else if(layers&&extrusions&&!out[0]){
+            std::array<i16,66> section;
+            if(!water_extrusion_signature(world,x,y,z,section.data()))continue;
+            std::lock_guard<std::mutex> lock(extrusion_mutex_);
+            auto known=extrusion_ids_.find(section);
+            if(known==extrusion_ids_.end()){
+                if(extrusion_ids_.size()>=512)continue;
+                known=extrusion_ids_.emplace(section,uint32_t(extrusion_ids_.size()+1)).first;
+            }
+            out[0]=4;
+            uint64_t owner=get_instance_id();
+            for(int j=0;j<8;++j)out[1+j]=uint8_t(owner>>(8*j));
+            for(int j=0;j<4;++j)out[9+j]=uint8_t(known->second>>(8*j));
         }
     }
     return result;
@@ -915,15 +992,30 @@ godot::PackedByteArray TerrainFieldReader::execute(const godot::PackedByteArray 
         const int size=int(packet.decode_u32(12));
         allowed=(size==16||size==32||size==64)&&inside(packet.decode_u32(4),packet.decode_u32(8),size,2);
     }
-    if((command==32||command==43||command==48)&&packet.size()==24)
+    if((command==32||command==43||command==48||command==49)&&packet.size()==24)
         allowed=inside(packet.decode_u32(12),packet.decode_u32(20),4,2);
-    if(command==48&&allowed){
+    if((command==48||command==49)&&allowed){
         tr_oom=false;Bytes bytes;
         if(read_homogeneous_water(world,packet.decode_u32(12),packet.decode_u32(16),packet.decode_u32(20),
                                   packet.decode_u32(4),packet.decode_u32(8),bytes)){
             godot::PackedByteArray result;
             if(!tr_oom&&result.resize(bytes.n)==godot::OK)copy_bytes(result.ptrw(),bytes.p,bytes.n);
             bytes.release();return result;
+        }
+        // A terrain mesh or another mixed receiver may already own the root
+        // reconstruction cache. The revision and page bytes are immutable.
+        // Route concurrent readers to independent contact scratch immediately.
+        std::unique_lock<std::mutex> root(field->mutex_,std::try_to_lock);
+        if(root.owns_lock())return field->execute_locked(packet);
+        for(auto &lane:contact_lanes_){
+            std::unique_lock<std::mutex> guard(lane.mutex,std::try_to_lock);
+            if(!guard.owns_lock())continue;
+            if(!lane.view)lane.view=std::make_unique<SealedWaterContact>(world);
+            lane.view->read(packet.ptr(),int(packet.size()),bytes);
+            godot::PackedByteArray result;
+            if(tr_oom&&bytes.n>=12)bytes.p[8]=2;
+            if(result.resize(bytes.n)==godot::OK&&bytes.n)copy_bytes(result.ptrw(),bytes.p,size_t(bytes.n));
+            bytes.release();++lane_packets_;return result;
         }
     }
     if((command==31||command==40)&&packet.size()>=12){

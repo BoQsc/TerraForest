@@ -152,6 +152,7 @@ func publish_joint_edit(ticket:int,install_water:Callable)->bool:
 	return true
 
 signal edit_field_ready(ticket:int)
+var field_handoff:RefCounted
 # One binary write footprint per command, in commit order. An empty entry
 # requires conservative reconstruction for that command.
 signal edit_writes_ready(ticket:int,footprints:Array)
@@ -1982,8 +1983,9 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	var support_snapshots:Array=[]
 	for provider:Dictionary in _edit_support_snapshots:support_snapshots.append(provider.snapshot)
 	_hand_edit=commands.size()==1 and (latest_edit_descriptor.command==38 or latest_edit_descriptor.get("shape",-1)==Codec.CONTACT_MINING_SHAPE)
+	field_handoff=Backend.EditFieldHandoff.new()
 	var accepted: bool = backend.submit({"kind": "edit", "command": data, "commands": commands, "tiles": affected, "contact_domain":_contact_domain(commands),
-		"epoch": epoch, "ticket": edit_ticket, "geometry_lo": geometry_lo, "geometry_hi": geometry_hi,"support_points":support,"support_snapshots":support_snapshots}, true)
+		"epoch": epoch, "ticket": edit_ticket, "geometry_lo": geometry_lo, "geometry_hi": geometry_hi,"support_points":support,"support_snapshots":support_snapshots,"field_handoff":field_handoff}, true)
 	if not accepted:
 		pending_edit = false
 		_edit_support_snapshots.clear();_edit_support_result.clear()

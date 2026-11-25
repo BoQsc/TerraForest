@@ -80,7 +80,20 @@ func check_planar_collision()->void:
 	hole.remove_at(11);hole.remove_at(10);hole.remove_at(9)
 	check(recipes.merge_planar_faces(hole)==hole,"An unpaired triangle retains its open edge")
 
+static func _field_consumer(_index:int,surface:Dictionary,received:Dictionary)->void:
+	received.ticket=surface.ticket
+	received.dispatch=surface.dispatch_us
+
 func run()->void:
+	for field_first:bool in [true,false]:
+		var handoff:=Backend.EditFieldHandoff.new()
+		var received:Dictionary={}
+		if field_first:handoff.supply({"ticket":81})
+		handoff.subscribe(_field_consumer.bind(received))
+		if not field_first:handoff.supply({"ticket":81})
+		var task:=handoff.detach()
+		if task>=0:WorkerThreadPool.wait_for_group_task_completion(task)
+		check(received.get("ticket")==81 and received.get("dispatch",0)>0 and handoff.detach()<0,"Field readiness dispatches exactly once in either arrival order")
 	check_planar_collision()
 	terrain=Terrain.new();terrain.diagnostics_pause_streaming=true;terrain.backend=QueueGate.new()
 	terrain.save_slot="recovery_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]

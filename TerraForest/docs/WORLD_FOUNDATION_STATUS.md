@@ -1,6 +1,6 @@
 ## Local water edit qualification
 
-The latest Cedar Vale package matched at sea in 28.509 ms, at the lake in 62.992 ms and across the 64 m cut in 346.721 ms. Terrain field work now takes 5.339 ms for that cut. Finite settlement and detailed surface publication still miss the deadline. All nine wet floor probes matched after the cut. Zero changed on draw two. [Build, measurements and both camera views](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale)
+The weighted-column release matched at sea on draw two in 32.058 ms, at the lake on draw three in 45.847 ms and across the 64 m cut on draw 12 in 219.606 ms. All nine wet-floor probes matched after publication and zero matched on draw two. Independent tests of the subsequent shared terrain triangle reader passed 246 checks. [Qualification and camera evidence](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#shared-terrain-triangles-on-25-november)
 
 The [Cedar Vale release measurements](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale) cover the complete wet cut, both shoreline explosions, their two camera views, detailed water, collision, and frame intervals. The finite cut completes with conserved quantities and zero main-thread receiver retries. Milestone 5 remains open for joint publication within two draws and 33.33 ms across the full footprint, including shoreline contact.
 

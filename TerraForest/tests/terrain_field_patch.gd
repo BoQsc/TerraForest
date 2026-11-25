@@ -183,6 +183,12 @@ func run()->void:
 	check(lane.execute(owner)==shared_mesh and neighbor.execute(contact_packet)==pinned_boundary,"borrowed pages retain exact terrain, physics and water across release of the parent view")
 	var counters:Dictionary=neighbor.surface_column_stats()
 	check(counters.columns>0 and counters.meshes==1 and counters.contacts==1 and counters.bytes<=4*1024*1024 and lane.surface_column_stats()==counters,"renderer, collider and adjacent water share one bounded set of extracted surface columns")
+	var tile_key:=Vector3i(992,992,32)
+	var typed:Dictionary=lane.resident_tile(tile_key,state.revision,build_epoch,true)
+	var wire:=Codec.decode_mesh(canonical.slice(16))
+	check(typed.get("cache_packet")==canonical.slice(16) and typed.get("arrays")==wire.arrays and typed.get("faces")==wire.faces and typed.get("cavity_visibility")==wire.cavity_visibility,"sealed tile writes the identical shader channels, pick and physics faces, and persisted cache packet")
+	var volatile_tile:Dictionary=lane.resident_tile(tile_key,state.revision,build_epoch,false)
+	check(volatile_tile.get("arrays")==typed.get("arrays") and not volatile_tile.has("cache_packet") and lane.resident_tile(tile_key,state.revision+1,build_epoch,false).is_empty(),"transient tile bypasses serialization and rejects a stale revision")
 	check(not Codec.reply_ok(neighbor.execute(Codec.command(43,[state.revision,build_epoch,872,40,872]))),"an out-of-bounds water contact cannot synthesize missing terrain")
 	for coord in [Vector3i(1008,40,1008),Vector3i(1004,36,1004),Vector3i(992,40,992)]:
 		var contact:=Codec.command(43,[state.revision,build_epoch,coord.x,coord.y,coord.z])
@@ -270,6 +276,7 @@ func run()->void:
 			check(Codec.reply_ok(actual) and actual.slice(12)==expected.slice(12),"page admission preserves every sealed-floor triangle")
 		check(rim.execute(Codec.command(45)).decode_u64(12)>0,"page admission replays unchanged faces while adding the sealed floor")
 	var cut_reader:RefCounted=core.capture_contact_core(Rect2i(976,976,64,64),state.revision,build_epoch)
+	var cut_field:RefCounted=core.capture_edit_field(Rect2i(976,976,64,64),state.revision,build_epoch)
 	check(cut_reader!=null,"full excavation fits a bounded edit reader")
 	if cut_reader!=null:
 		for x in [976,1008,1036]:
@@ -278,11 +285,28 @@ func run()->void:
 					var contact:=Codec.command(43,[state.revision,build_epoch,x,y,z])
 					var local:PackedByteArray=cut_reader.execute(contact)
 					check(Codec.reply_ok(local) and local==core.execute(contact),"full excavation cell index agrees with ordinary water contact at "+str(Vector3i(x,y,z)))
+					var cut_query:=[state.revision,build_epoch,x,y,z]
+					check(same_contact_faces(core.execute(Codec.command(48,cut_query)),cut_field.execute(Codec.command(49,cut_query))),
+						"Indexed cut contacts retain the ordered authority triangles, density and solids at "+str(Vector3i(x,y,z)))
+		check(cut_field.surface_column_stats().indexed_contacts>0,"The wet cut consumes connected terrain triangles shared across vertical receiver layers")
 	check(not Codec.reply_ok(core.execute(packet)),"stale contact packet rejected on live authority")
 	check(frozen!=null and frozen.execute(packet)==prior,"isolated contact produces byte-identical geometry after live edit")
 	store.close()
 	print("TERRAIN_FIELD_PATCH checks=%d failures=%d"%[checks,failures])
 	quit(1 if failures else 0)
+
+func same_contact_faces(a:PackedByteArray,b:PackedByteArray)->bool:
+	if not Codec.reply_ok(a) or not Codec.reply_ok(b) or a.slice(0,20)!=b.slice(0,20):return false
+	if a.decode_u32(4)==48:return a==b
+	var count:=a.decode_u32(24)
+	var ai:=28+12*a.decode_u32(20)
+	var bi:=28+12*b.decode_u32(20)
+	if count!=b.decode_u32(24) or a.slice(ai+4*count)!=b.slice(bi+4*count):return false
+	for i in count:
+		var av:=28+12*a.decode_u32(ai+4*i)
+		var bv:=28+12*b.decode_u32(bi+4*i)
+		if a.slice(av,av+12)!=b.slice(bv,bv+12):return false
+	return true
 
 func check_compact_brick_survey()->void:
 	var authority:RefCounted=ClassDB.instantiate("TerrainCore")
@@ -317,3 +341,46 @@ func check_compact_brick_survey()->void:
 		if i==0:reference=packet
 		else:identical=identical and reference==packet
 	check(identical,"horizontal receiver strata reproduce every extracted triangle, interpolated density and solid mask under translation")
+	for axis in [0,2]:
+		var wall:=PackedInt32Array()
+		var packets:Array[PackedByteArray]=[]
+		for n in 4:
+			var origin:=Vector3i(96,200,104+4*n)
+			if axis==2:origin=Vector3i(origin.z,origin.y,origin.x)
+			wall.append_array(PackedInt32Array([origin.x,origin.y,origin.z]))
+			var exact:PackedByteArray=authority.execute(Codec.command(43,[revision,epoch,origin.x,origin.y,origin.z]))
+			for v in exact.decode_u32(20):
+				var offset:=28+12*v
+				exact.encode_float(offset,exact.decode_float(offset)-origin.x)
+				exact.encode_float(offset+8,exact.decode_float(offset+8)-origin.z)
+			packets.append(exact)
+		var certificates:PackedByteArray=reader.classify_edit_bricks(wall,revision,epoch)
+		var equivalent:=certificates.size()==68 and certificates[0]==4 and packets[0].decode_u32(24)>0
+		for n in range(1,4):
+			equivalent=equivalent and certificates.slice(17*n,17*n+17)==certificates.slice(0,17) and packets[n]==packets[0]
+		check(equivalent,"Extruded wall certificate agrees with complete authority contact packets along axis "+str(axis))
+	# Keep the field alive across a subsequent authority edit. Compare complete
+	# packets including density, blocks, triangle order and revision on all lanes.
+	var requests:Array[PackedByteArray]=[]
+	var expected:Array[PackedByteArray]=[]
+	for z in range(96,128,4):
+		for x in range(96,128,4):
+			var command:=Codec.command(48,[revision,epoch,x,184,z])
+			requests.append(command)
+			expected.append(authority.execute(command))
+	authority.execute(Codec.brush(p,p,22,0,false,0))
+	var results:Array[Dictionary]=[]
+	for i in 4:results.append({})
+	var task:=WorkerThreadPool.add_group_task(func(lane:int)->void:
+		var matches:=true
+		for n in requests.size():
+			var offset:=(n+13*lane)%requests.size()
+			var packet:PackedByteArray=reader.execute(requests[offset])
+			matches=matches and Codec.reply_ok(packet) and packet==expected[offset]
+		results[lane].match_all=matches
+	,4,4,true,"Concurrent sealed water packets")
+	WorkerThreadPool.wait_for_group_task_completion(task)
+	var all_exact:=true
+	for entry:Dictionary in results:all_exact=all_exact and entry.get("match_all",false)
+	check(all_exact,"256 concurrent reads from the pinned field reproduce the serial packets after a later authority edit")
+	print("SEALED_CONTACT_LANES ",reader.surface_column_stats())

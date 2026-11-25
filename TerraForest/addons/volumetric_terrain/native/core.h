@@ -205,9 +205,13 @@ struct World {
 };
 struct Vertex {V3 p,n;float material=0; u32 face_splits=0,geometry_revision=0,face_revision=0; i32 cx=0,cy=0,cz=0;u32 mask=0; V3 blend{};float substrate=0,sky=1,sun=1,ore=0,asphalt=0;};
 struct Mesh {List<Vertex> v; List<u32> i;void release(){v.release();i.release();}};
+struct SurfaceFaceRun {u16 column,y;int first;};
 struct ResidentSurfaceColumns {
  virtual bool read(const World &world,int x,int z,int size,int bottom,int top,u32 epoch,List<Vertex> &out)=0;
+ virtual bool read_mesh(const World &world,int x,int z,u32 epoch,Mesh &out)=0;
+ virtual bool read_contacts(const World &world,int x,int z,int bottom,int top,u32 epoch,Bytes &out)=0;
 };
+void connect_surface_column(const World &world,int x,int z,Mesh &mesh,List<SurfaceFaceRun> &runs);
 bool extract_surface_column(const World &world,int x,int z,u32 epoch,List<Vertex> &out);
 // Cancellation state is outside World: save/load cannot race a main-thread request.
 u32 terrain_build_epoch(const World *world=nullptr);
@@ -228,7 +232,10 @@ int terrain_visibility(const World&w,V3 origin,V3 direction,int budget=1400);
 void shade_mesh(const World&w,Mesh&m,u32 expected_epoch=0xffffffffu);
 void add_blocks(const World&w,int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y);
 void encode_mesh(const Mesh&m,int ox,int oz,int size,int step,Bytes&out);
+struct MeshChannels {u8 *positions,*normals,*uv,*uv2,*colors,*indices,*collision;};
+bool write_mesh_channels(const Mesh &mesh,int step,int faces,const MeshChannels &channels);
 void process_request(World&w,const u8*data,int length,Bytes&out);
 bool read_homogeneous_water(const World &w,int x,int y,int z,u32 revision,u32 epoch,Bytes &out);
 int water_brick_occupancy(const World &w,int x,int y,int z);
 bool water_layer_signature(const World &w,int x,int y,int z,i16 *samples);
+bool water_extrusion_signature(const World &w,int x,int y,int z,i16 *section);

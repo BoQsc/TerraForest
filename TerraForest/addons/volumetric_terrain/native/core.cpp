@@ -825,7 +825,8 @@ static bool stage_point_cut(World &w,V3 center,float radius,int shape,u8 materia
  CutPages txn(w);
  bool ok;
 #if defined(TERRAFOREST_TYPED_BRIDGE)
- if(w.build_control&&w.build_control->parallel_edit&&hi.x-lo.x>=32&&hi.z-lo.z>=32)
+ const int samples=(fl(hi.x)-fl(lo.x)+1)*(fl(hi.y)-fl(lo.y)+1)*(fl(hi.z)-fl(lo.z)+1);
+ if(w.build_control&&w.build_control->parallel_edit&&samples>=131072)
   ok=cut_parallel_columns(txn,center,radius,shape,material,lo,hi,removed!=nullptr);
  else
 #endif
@@ -1335,7 +1336,7 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
  heights.release();return true;
 }
 
-static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y,const LocalCut*cut=nullptr){
+static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begin=0,int y_end=WORLD_Y,const LocalCut*cut=nullptr,List<SurfaceFaceRun>*runs=nullptr){
  const int representatives=m.v.n;
  Map ids,face_vertices;
  for(int j=0;j<m.v.n;j++){const Vertex&v=m.v[j];u32 k=cell_key(v.cx-ox,v.cy,v.cz-oz,size);if(ids.get(k)<0)ids.put(k,j);}
@@ -1359,6 +1360,12 @@ static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begi
      v.n=normal(m.v[a].n+m.v[b].n+m.v[c].n+m.v[d].n);v.mask=0;return m.v.push(v);},
     [&](int a,int b,int c){m.i.push(a);m.i.push(b);m.i.push(c);});},
   [&](int j,int axis,int a,int b,int d,bool reverse,bool ordinary){
+   if(runs&&!ordinary){
+    const auto &v=m.v[j];
+    const u16 column=u16(v.cx-ox+16*(v.cz-oz));
+    if(!runs->n||(*runs)[runs->n-1].column!=column||(*runs)[runs->n-1].y!=v.cy)
+     runs->push({column,u16(v.cy),m.i.n});
+   }
    // Cell identities are stable, packed mesh indices are revision-local.
    // Retain the diagonal of ordinary faces and remap their four live vertices.
    unsigned split=(m.v[j].face_splits>>(2*axis))&3;
@@ -1385,6 +1392,10 @@ static void connect_patch(const World&w,int ox,int oz,int size,Mesh&m,int y_begi
   m.v[i].face_splits>>=8;m.v[i].face_revision=u32(w.revision);
  }
  ids.release();face_vertices.release();
+}
+
+void connect_surface_column(const World &world,int x,int z,Mesh &mesh,List<SurfaceFaceRun> &runs){
+ connect_patch(world,x,z,16,mesh,0,WORLD_Y,nullptr,&runs);
 }
 
 bool measure_material_surface(const World&w,int x,int z,int size,int y_begin,int y_end,double&integral,int&triangles,bool&closed){
@@ -1422,11 +1433,12 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
  const bool aligned=(size==16||size==32)&&ox%16==0&&oz%16==0&&ox+size<=WORLD&&oz+size<=WORLD;
  const bool resident=aligned&&(w.contact_snapshot||retain_cells);
  const bool reuse=resident&&has_surface_columns(w,ox,oz,size,true);
- const bool shared=resident&&w.surface_columns&&w.surface_columns->read(w,ox,oz,size,0,WORLD_Y,epoch,m.v);
+ const bool connected=resident&&size==16&&w.surface_columns&&w.surface_columns->read_mesh(w,ox,oz,epoch,m);
+ const bool shared=connected||(resident&&w.surface_columns&&w.surface_columns->read(w,ox,oz,size,0,WORLD_Y,epoch,m.v));
  bool ok=shared||((reuse||(region_cache&&!(resident&&w.contact_snapshot)))?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch));
  if(!ok){m.release();return false;}
  if(resident&&!reuse&&!shared)inherit_available_recipes(w,ox,oz,size,m);
- connect_patch(w,ox,oz,size,m);
+ if(!connected)connect_patch(w,ox,oz,size,m);
  if(resident&&!remember_surface_columns(w,ox,oz,size,m)){m.release();return false;}
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
  simplify(w,m,ox,oz,size,step,epoch);
@@ -1887,18 +1899,24 @@ void encode_mesh(const Mesh&m,int ox,int oz,int size,int step,Bytes&out){
  u8 *positions=header+sizeof(fields),*normals=positions+12*m.v.n;
  u8 *uv=normals+12*m.v.n,*uv2=uv+8*m.v.n,*colors=uv2+8*m.v.n;
  u8 *indices=colors+16*m.v.n,*collision=indices+4*m.i.n;
+ write_mesh_channels(m,step,faces,{positions,normals,uv,uv2,colors,indices,collision});
+ out.n+=int(bytes);
+}
+bool write_mesh_channels(const Mesh&m,int step,int faces,const MeshChannels &dst){
  static_assert(sizeof(V3)==12);
+ bool cavity=false;
  for(int i=0;i<m.v.n;++i){
   const Vertex &v=m.v[i];
+  cavity|=v.sky<.999;
   const float light[]={v.sky,v.sun};
   const float surface[]={v.material>=5?v.material:v.ore,float(step)+clampf(v.asphalt,0,1)*.25f};
   const float color[]={v.blend.x,v.blend.y,v.blend.z,v.substrate};
-  copy_bytes(positions+12*i,&v.p,12);copy_bytes(normals+12*i,&v.n,12);
-  copy_bytes(uv+8*i,light,8);copy_bytes(uv2+8*i,surface,8);copy_bytes(colors+16*i,color,16);
+  copy_bytes(dst.positions+12*i,&v.p,12);copy_bytes(dst.normals+12*i,&v.n,12);
+  copy_bytes(dst.uv+8*i,light,8);copy_bytes(dst.uv2+8*i,surface,8);copy_bytes(dst.colors+16*i,color,16);
  }
- if(m.i.n)copy_bytes(indices,m.i.p,size_t(m.i.n)*4);
- for(int i=0;i<faces;++i)copy_bytes(collision+12*i,&m.v[m.i[i]].p,12);
- out.n+=int(bytes);
+ if(m.i.n)copy_bytes(dst.indices,m.i.p,size_t(m.i.n)*4);
+ for(int i=0;i<faces;++i)copy_bytes(dst.collision+12*i,&m.v[m.i[i]].p,12);
+ return cavity;
 }
 #include "experimental/density_ray.hpp"
 
@@ -2019,6 +2037,38 @@ bool water_layer_signature(const World &w,int x,int y,int z,i16 *samples){
   samples[dy+2]=value;
  }
  return true;
+}
+// A terrain profile extruded along X or Z has the same local vertices at
+// every translation along that axis. Each crossing has a paired crossing
+// on the opposite face, so the tangential surface-net coordinate is exactly
+// one half. Pin the other two world coordinates and every signed sample in
+// their section. Missing pages, constructions and domain edges opt out.
+bool water_extrusion_signature(const World &w,int x,int y,int z,i16 *section){
+ if(x<2||z<2||x>WORLD-5||z>WORLD-5||y<4||y>WORLD_Y-8||x%4||y%4||z%4)return false;
+ if(w.blocks.n&&w.block_columns[(x>>5)+64*(z>>5)].n)
+  for(int dz=0;dz<4;++dz)for(int dy=0;dy<4;++dy)for(int dx=0;dx<4;++dx)
+   if(w.blocks.get(block_key(x+dx,y+dy,z+dz))>0)return false;
+ const int x0=x-2,y0=y-2,z0=z-2,px=x0>>4,py=y0>>4,pz=z0>>4;
+ const i16 *pages[8]={};
+ for(int yy=py;yy<=(y+5)>>4;++yy)for(int zz=pz;zz<=(z+5)>>4;++zz)for(int xx=px;xx<=(x+5)>>4;++xx){
+  int id=w.pages_by_key.get(page_key(xx,yy,zz));if(id<0||!w.pages[id].d)return false;
+  pages[(xx-px)+2*(zz-pz)+4*(yy-py)]=w.pages[id].d;
+ }
+ bool along_x=true,along_z=true;i16 x_profile[64],z_profile[64];
+ for(int dy=0;dy<8;++dy)for(int dz=0;dz<8;++dz){
+  const int yy=y0+dy,zz=z0+dz,offset=256*(yy&15)+16*(zz&15);
+  const auto *row=pages+4*((yy>>4)-py)+2*((zz>>4)-pz);
+  const i16 first=row[0][offset+(x0&15)];x_profile[dy*8+dz]=first;
+  for(int dx=0;dx<8;++dx){
+   const int xx=x0+dx;const i16 sample=row[(xx>>4)-px][offset+(xx&15)];
+   if(!dz)z_profile[dy*8+dx]=sample;
+   else if(z_profile[dy*8+dx]!=sample)along_z=false;
+   if(sample!=first)along_x=false;
+   if(!along_x&&!along_z)return false;
+  }
+ }
+ section[0]=i16(y);section[1]=i16(along_x?z+1:-(x+1));
+ copy_bytes(section+2,along_x?x_profile:z_profile,64*sizeof(i16));return true;
 }
 static void water_density_lattice(const World &w,int x,int y,int z,Bytes &out){
  // Water contact consumes one revision of triangles, interpolated density
@@ -2408,18 +2458,27 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   u8 material=0;float density=w.sample(fl(point.x),fl(point.y),fl(point.z),&material);
   out.u(material);out.f(density);out.f(w.has_geology()?w.ore_weight(point,w.height(point.x,point.z)):0);
  }
- else if(cmd==32||cmd==43||cmd==48){
+ else if(cmd==32||cmd==43||cmd==48||cmd==49){
   // Worker-owned boundary packet for material integration. Reuse the exact
   // full-detail terrain extractor/connectivity, without lighting or LOD.
   // Request: revision, cancellation epoch, aligned 4 m region origin (x,y,z).
   u32 revision=r.u(),epoch=r.u();int x=int(r.u()),y=int(r.u()),z=int(r.u());
   if(!r.good||n!=24||x<0||z<0||x>=WORLD||z>=WORLD||y<0||y>=WORLD_Y||x%4||y%4||z%4){out.p[8]=1;return;}
   if(revision!=w.revision||cancelled(w,epoch)){out.p[8]=4;return;}
-  if(cmd==48){
+  const bool indexed_contact=cmd==49&&w.contact_snapshot&&w.surface_columns;
+  if(cmd==48||cmd==49){
+   out.p[4]=48;
    if(read_homogeneous_water(w,x,y,z,revision,epoch,out))return;
    cmd=43;out.p[4]=43;
   }
   Mesh m;int ox=imx(0,x-1),oz=imx(0,z-1),yb=imx(0,y-1),ye=imn(WORLD_Y,y+5);
+  if(indexed_contact){
+   out.u(w.revision);out.u(epoch);
+   if(w.surface_columns->read_contacts(w,ox,oz,yb,ye,epoch,out)){
+    water_density_lattice(w,x,y,z,out);water_block_mask(w,x,y,z,out);return;
+   }
+   out.n=12;
+  }
   // One-cell ownership halo retains faces crossing the requested region.
   // Frozen edit readers share reconstructed density cells with their renderer
   // and collider. Connectivity keeps the original ownership and vertical halo.

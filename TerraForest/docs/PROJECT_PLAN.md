@@ -1,6 +1,6 @@
 ## World authority and qualification milestones (November 20)
 
-The [standalone terrain and water editing document](REAL_TIME_TERRAIN_AND_WATER_EDITING.md) brings together the measured player routes, proposed architecture and qualification gates.
+Milestone 5 remains open. The sealed terrain reader passed independent triangle, collider and density comparisons. The weighted-column package reached full wet-cut contact on draw 12. [November 25 measurements and two-view evidence](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#shared-terrain-triangles-on-25-november)
 
 The [real-time editing design](WORLD_SYSTEMS_DESIGN.md#real-time-terrain-and-water-editing) defines the shared publication contract for player mining, construction, water, large authoring operations and world management. Milestone 5 remains open.
 

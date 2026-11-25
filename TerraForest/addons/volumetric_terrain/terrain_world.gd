@@ -243,6 +243,7 @@ func republish_native_region(bounds: AABB, expected_revision: int) -> bool:
 	edit_started_us=Time.get_ticks_usec();edit_accepted_us=edit_started_us
 	last_capture_wait_ms=0;last_density_tiles=0;last_relight_tiles=0
 	latest_edit_descriptor={"command":0,"source":"location_reset"}
+	field_handoff=null
 	latest_edit_members=[{"captured_us":edit_started_us,"descriptor":latest_edit_descriptor}]
 	latest_member_changes.clear();_edit_support_snapshots.clear();_edit_support_result.clear()
 	edit_lo=bounds.position;edit_hi=bounds.end

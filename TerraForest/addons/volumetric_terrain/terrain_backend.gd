@@ -3,6 +3,49 @@
 extends RefCounted
 const Codec = preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const EditCommands=preload("res://addons/volumetric_terrain/terrain_edit_commands.gd")
+
+# The accepted write and the interested system's snapshot can arrive in
+# either order. Only the second arrival dispatches work. Neither thread waits
+# for the other or for a rendered frame; the consumer owns the task on detach.
+class EditFieldHandoff:
+	extends RefCounted
+	var mutex:=Mutex.new()
+	var surface:Dictionary={}
+	var consumer:Callable
+	var task:=-1
+	var closed:=false
+
+	func subscribe(callback:Callable)->void:
+		mutex.lock()
+		if not closed:
+			consumer=callback
+			_dispatch()
+		mutex.unlock()
+
+	func supply(value:Dictionary)->void:
+		mutex.lock()
+		if not closed:
+			surface=value
+			_dispatch()
+		mutex.unlock()
+
+	func _dispatch()->void:
+		if surface.is_empty() or not consumer.is_valid():return
+		var sealed:=surface.duplicate()
+		sealed.dispatch_us=Time.get_ticks_usec()
+		task=WorkerThreadPool.add_group_task(consumer.bind(sealed),1,1,true,"Committed field dependants")
+		closed=true
+		surface={};consumer=Callable()
+
+	func detach()->int:
+		mutex.lock()
+		closed=true
+		surface={};consumer=Callable()
+		var previous:=task
+		task=-1
+		mutex.unlock()
+		return previous
+
 var thread := Thread.new()
 var mutex := Mutex.new()
 var semaphore := Semaphore.new()
@@ -663,7 +706,7 @@ func _direct_triangle_pages(source:Object,item:Dictionary,job:Dictionary)->Dicti
 		changed.append(page)
 	return {"triangle_pages":true,"bricks":changed,"step":1,"bytes":0,"triangles":0,"rims":rims,"direct_pages":pages.size(),"worker_ms":(Time.get_ticks_usec()-start)/1000.0}
 
-func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,share_contacts:bool=false)->void:
+func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,revision:int)->void:
 	for item:Dictionary in items:
 		var key:Vector3i=item.key
 		var start:=Time.get_ticks_usec()
@@ -674,11 +717,10 @@ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Di
 				completed[key]={"worker_ms":direct.worker_ms}
 				_push(direct)
 				continue
-		var reply:PackedByteArray=source.execute(Codec.command(20 if share_contacts else 1,[key.x,key.y,key.z,1,job.build_epoch]))
-		if not Codec.reply_ok(reply):continue
-		var packet:=reply.slice(16)
-		var chunk:=Codec.decode_mesh(packet)
-		if chunk.has("error"):continue
+		var chunk:Dictionary=source.resident_tile(key,revision,job.build_epoch,disk_cache.enabled)
+		if chunk.is_empty():continue
+		var packet:PackedByteArray=chunk.get("cache_packet",PackedByteArray())
+		chunk.erase("cache_packet")
 		if triangle_page_terrain:
 			if not _prepare_triangle_pages(chunk,key,item.get("previous_pages",{})):continue
 		else:
@@ -694,7 +736,8 @@ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Di
 			"stamp":item.stamp,"key":key,"epoch":job.epoch,"ticket":job.ticket,"kind":"edit_chunk",
 			"worker_ms":(Time.get_ticks_usec()-start)/1000.0})
 		chunk.faces=PackedVector3Array()
-		completed[key]={"packet":packet,"worker_ms":chunk.worker_ms}
+		completed[key]={"worker_ms":chunk.worker_ms}
+		if not packet.is_empty():completed[key].packet=packet
 		_push(chunk)
 
 # Small edits share one immutable native field and its canonical cell vertices
@@ -780,7 +823,7 @@ func _build_resident_lane(field:Object,revision:int,items:Array,job:Dictionary,c
 		var tile:=Rect2i(key.x,key.y,key.z,key.z)
 		bounds=bounds.merge(tile) if bounds.has_area() else tile
 	var reader:Object=field.capture_contact_core(bounds,revision,job.build_epoch)
-	_build_resident_group(reader if reader!=null else field,items,job,completed,true)
+	_build_resident_group(reader if reader!=null else field,items,job,completed,revision)
 
 func _execute_edit_commands(commands:Array,revision_before:int)->Dictionary:
 	return EditCommands.execute(native,commands,revision_before,qualify_surface_owners or triangle_page_terrain)
@@ -1849,6 +1892,11 @@ func _run() -> void:
 					job.triangle_revision=after_stats.decode_u32(12)
 					for item:Dictionary in job.tiles:_select_triangle_pages(item,execution.triangle_owners,page_selection)
 				var surface:=_resident_edit_surface(job,after_stats.decode_u32(12))
+				if job.has("field_handoff") and not surface.is_empty():
+					var dependency:=surface.duplicate()
+					dependency.writes=execution.writes
+					dependency.prior_field=before_stats.decode_u32(12)
+					job.field_handoff.supply(dependency)
 				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],"resident_surface":surface,"writes":execution.writes,"page_selection":page_selection,
 					"count": job["tiles"].size(), "contact_ms":contact_ms, "contact_parallel":contact_task>=0, "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
 				# Stream finished patches to main-thread staging immediately. Worker

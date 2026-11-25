@@ -1,6 +1,6 @@
 # Visual issue tracker
 
-The packaged sea crater met the deadline on draw two at 28.509 ms. The lake crater needed four draws and the full wet cut needed 19. Both crater banks passed the immediate 2 cm check. All nine wet cut probes agreed after publication. [Two camera views, submerged contact and frame distributions](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#local-edit-measurements-on-cedar-vale)
+The 64 m cut and lake barrel still miss two-frame publication. In the weighted-column run the sea crater matched at 32.058 ms, the lake crater at 45.847 ms and the full cut at 219.606 ms. Both banks passed the 2 cm check. [Terrain, physics, water and camera evidence](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#shared-terrain-triangles-on-25-november)
 
 [Hidden Coast crater backlog](explosive-combat/README.md#hidden-coast-crater-backlog) records the 37 outstanding edits, their saved water footprint, and the changes to live capacity, persistence and firing during terrain updates.
 

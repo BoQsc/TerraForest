@@ -1,14 +1,26 @@
 # TerraForest real-time terrain and water editing
 
-**Design and qualification record · 21 November 2026 · Milestone 5 open**
+**Design and qualification record · 25 November 2026 · Milestone 5 open**
 
 A player should be able to break ground, place terrain, empty a bucket or detonate a shoreline barrel and immediately interact with the resulting world. An author should be able to cut across a region boundary and see the whole cut, walk on its new floor and find water wherever the cut opened a connected cavity. The same operation must work from first person, strategy view and the dedicated authority. Water needs depth, a continuous shoreline and consistent volume. Realistic transient flow is outside the requested scope.
 
-**Current verdict.** On the latest paired-camera build, the first matching terrain, collision and detailed water appeared at sea on draw two in 28.509 ms, at the lake on draw four in 62.992 ms and across the full 64 m cut on draw 19 in 346.721 ms. Both blast craters met the 2 cm contact check. All nine wet cut probes matched after publication and zero matched on draw two. The joint two-frame and stable 60 Hz requirements remain open.
+**Current verdict.** The two-frame requirement remains open. The weighted-column timing run matched at sea on draw two (32.058 ms), at the lake on draw three (45.847 ms), and across the 64 m cut on draw 12 (219.606 ms). The cut kept its finite quantity and both crater banks passed the 2 cm contact check.
 
 ## Windows release qualification
 
 ### Local edit measurements on Cedar Vale
+
+#### Shared terrain triangles on 25 November
+
+The sealed field exposes one indexed triangle stream per resident 16 m terrain column. Rendering and collision consume the full stream. A water receiver reads the crossings inside its 4 m volume and its reconstruction halo in canonical connector order. Placed blocks still have their own occupancy mask. If the connected stream exceeds the revision's cache allowance, the reader reconstructs the same faces from the pinned field.
+
+The field regression passed 246 checks. It compares the ordered vertices of every returned contact triangle, the signed density lattice and the block mask against an independent extraction for 36 cut probes. It also compares the typed render arrays, physics faces and serialized mesh with a fresh terrain rebuild, including owners across a seam. [Terrain field checks](../reports/checks/20261125T113527005041Z/console.log)
+
+On the earlier weighted-column release the 64 m cut took 219.606 ms on draw 12. It conserved 27,698,261,603 ml and all nine wet-floor probes matched after publication. Zero matched on draw two. Contact sampling took 34.448 ms, the final column solve took 29.956 ms and building detailed water took 34.294 ms. These three measured stages alone exceeded the 33.334 ms deadline. [Packaged cut and phases](../reports/checks/20261125T112652028337Z/console.log)
+
+On that release the first matching detailed sea crater took 32.058 ms on draw two. The lake took 45.847 ms on draw three. Both craters covered all 81 samples, with no gap beyond 2 cm at any of the 23 initial sea or 26 initial lake contacts. The worst frame intervals were 69.104 ms at sea and 18.884 ms at the lake. An independent camera run on the preceding hydraulic-tile release shows the two before/after views of each cut and crater and the submerged views of both banks. Those images establish the eventual shape. The separate timing receipts establish when the changed surfaces first appeared. [Shore timings](../reports/checks/20261125T112739950917Z/normal_gameplay_blast_performance.json) · [Contact probes](../reports/checks/20261125T112739950917Z/console.log) · [Two-angle cut](../reports/checks/20261125T112133649948Z/run.json) · [Two-angle shorelines](../reports/checks/20261125T112258471257Z/run.json)
+
+Pre-sampling all possible receiving bricks before proving water could reach them increased discovery to 23 rounds in the measured trial. That trial was removed. The production transaction admits receiving regions through connected faces. [Rejected trial](../reports/checks/20261125T110932426047Z/console.log)
 
 Four terrain workers prepared disjoint replacement pages for the 64 m cut. The field stage fell from 14.100 to 5.339 ms. The four-lane replay matched the serial implementation in all 17 binary outputs, including the complete field, the ordered write journal and material counts. Simulated page-admission and allocator failures preserved the original terrain. The water survey classified 3,648 potential receivers without allocating them in the live world. Following certified open air admitted 2,162 receivers early and reduced private discovery from 15 waves to six. The same 3,060 receivers were ultimately reached. Receiver time increased from 54.246 to 73.055 ms in that run. The full cut took 346.721 ms with a 46.741 ms worst frame. It conserved 27,698,261,603 ml. [Field and failure parity](../reports/checks/20261121T185634817830Z_terrain_edit_core_parity.json) · [Cut timing](../reports/checks/20261121T185833607073Z/console.log) · [Column connectivity, sealed roof and reload](../reports/checks/20261121T185553379403Z/console.log)
 
