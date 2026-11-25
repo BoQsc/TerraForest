@@ -10,8 +10,8 @@ class BrushProfileBackend extends "res://addons/volumetric_terrain/terrain_backe
  var worker_done_us:=0
  var resident_triangles:=0
  var initial_authority_replays:=0
- func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,share_contacts:bool=false)->void:
-  super._build_resident_group(source,items,job,completed,share_contacts)
+ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,revision:int)->void:
+  super._build_resident_group(source,items,job,completed,revision)
   var counters:PackedByteArray=source.execute(Codec.command(45))
   if counters.size()==20:
    mutex.lock()
@@ -561,6 +561,7 @@ func mining_response_case(lake:Dictionary)->void:
  check(await ready("mining"),"Mining completes wider relaxation")
  finish_timing()
  check(owned_amount()==before,"Mining conserves every owned millilitre")
+var shoreline_image_bytes:=0
 func capture(label:String,center:Vector3,level:float,underwater:bool=false)->void:
  if DisplayServer.get_name()=="headless" or "--water-no-captures" in OS.get_cmdline_user_args():return
  capture_phase="capture "+label
@@ -596,7 +597,21 @@ func capture(label:String,center:Vector3,level:float,underwater:bool=false)->voi
  game.lakes.set_process(water_processing)
  # Encode only after both angles have been captured. PNG compression must not
  # become a fake low-FPS sample between the two views of the frozen state.
- for entry:Array in captures:entry[0].save_png(entry[1])
+ for entry:Array in captures:
+  var frame:Image=entry[0]
+  var path:String=entry[1]
+  if "--lossless-shore-views" in OS.get_cmdline_user_args():
+   var encoded:=frame.save_webp_to_buffer(false)
+   if encoded.is_empty() or shoreline_image_bytes+encoded.size()>21*1024*1024:
+    check(false,"Full-resolution shoreline image exceeds the declared evidence allowance")
+    continue
+   var file:=FileAccess.open(path.get_basename()+".webp",FileAccess.WRITE)
+   if file==null:check(false,"Shoreline capture opens in the receipt directory");continue
+   check(file.store_buffer(encoded),"Lossless shoreline view saved")
+   shoreline_image_bytes+=encoded.size()
+   file.close()
+  else:
+   check(frame.save_png(path)==OK,"Shoreline PNG saved")
  timing_capture_end=Time.get_ticks_usec()
  if route_started:
   # The interval containing PNG encoding ends on the next frame.
@@ -1005,6 +1020,8 @@ func check_authoring_brush()->void:
  var coastal:bool="--authoring-preparation" in OS.get_cmdline_user_args()
  var lake_cut:bool="--authoring-lake-cut" in OS.get_cmdline_user_args()
  var dry_cut:bool="--authoring-dry-cut" in OS.get_cmdline_user_args()
+ var fill:bool="--authoring-fill" in OS.get_cmdline_user_args()
+ var max_radius:bool="--authoring-max-radius" in OS.get_cmdline_user_args()
  var lake:Dictionary={}
  var wet_target:=Vector3.INF
  if coastal:
@@ -1037,17 +1054,35 @@ func check_authoring_brush()->void:
  game.session_menu.set_open(false)
  game.app_focused=true
  Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+ if "--authoring-overview" in OS.get_cmdline_user_args():
+  await check_overview_brush()
+  return
+ if "--authoring-materials" in OS.get_cmdline_user_args():
+  await check_editor_materials()
+  return
  if "--authoring-drag" in OS.get_cmdline_user_args():
   await check_authoring_drag()
   return
  for i in (1 if coastal else 3):
+  if max_radius and i!=0:continue
   if (lake_cut or dry_cut) and i!=1:continue
   game.radius=2 if i==0 else 32
+  if fill and i==0:
+   # A free authoring tool protects the player's physical capsule during a fill.
+   game.fly=true
+   game.player.global_position+=Vector3.UP*(92 if max_radius else 8)
   if i==1 and "--authoring-at-spawn" not in OS.get_cmdline_user_args():
    game.fly=true
    if lake_cut:game.player.global_position=wet_target+Vector3(-4,65,4)
    else:game.player.global_position+=Vector3.UP*65
   game.session_menu.activate_developer_slot(i)
+  if max_radius:
+   game.session_menu.open_tool_page("Terrain")
+   var size_control:SpinBox=game.session_menu.tool_workspace.radius
+   size_control.value=size_control.max_value
+   check(game.radius==64.0,"The terrain tool's largest selectable radius is 64 m")
+   game.session_menu.set_open(false)
+   Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
   game.player_view.set_enabled(i==1,false)
   var view:Camera3D=root.get_camera_3d()
   view.look_at(Vector3(66,39.9,1008) if coastal else view.global_position+Vector3(.15,-1,-.1),Vector3.UP)
@@ -1069,6 +1104,10 @@ func check_authoring_brush()->void:
    if not dry:return
   check(game.pointer.position.is_equal_approx(center),"Preview matches brush centre")
   check(game.pointer.scale.is_equal_approx(Vector3.ONE*(1 if i==2 else game.radius*2)),"Preview matches brush dimensions")
+  if fill:
+   center=hit+game.latest_hit.normal*game.radius*.32
+   if i==1:center=center.snapped(Vector3.ONE)
+   if i==2:center=(hit+game.latest_hit.normal*.015).floor()+Vector3.ONE*.5
   if i<2 and "--authoring-captures" in OS.get_cmdline_user_args() and DisplayServer.get_name()!="headless":
    await RenderingServer.frame_post_draw
    var capture_path:=evidence.path_join("authoring_brush_%d.png"%i)
@@ -1125,7 +1164,7 @@ func check_authoring_brush()->void:
      contacts.append(sample_hit.get("position",Vector3.INF))
    return contacts
   var footprint:Dictionary={}
-  var check_footprint:=verify_draw and i==1 and "--two-frame-edits" in OS.get_cmdline_user_args()
+  var check_footprint:=verify_draw and (i==1 or max_radius) and "--two-frame-edits" in OS.get_cmdline_user_args()
   var footprint_spacing:float=game.radius*.75
   var observe_second_draw:=func()->void:
    await RenderingServer.frame_post_draw
@@ -1151,7 +1190,7 @@ func check_authoring_brush()->void:
    geometry_draw.draw_us=Time.get_ticks_usec()
    geometry_draw.frame=Engine.get_frames_drawn()
    geometry_draw.contact=sample_center.call()
-   if i==1:geometry_draw.patch=sample_patch.call()
+   if i==1 or max_radius:geometry_draw.patch=sample_patch.call()
    if i==1 and "--authoring-captures" in OS.get_cmdline_user_args():
     check(root.get_texture().get_image().save_png(evidence.path_join("authoring_cut_first_draw.png"))==OK,"Captured the first drawn cut at the editing camera")
 
@@ -1173,7 +1212,8 @@ func check_authoring_brush()->void:
    game.terrain.edit_geometry_installed.connect(observe_geometry)
    game.terrain.edit_region_installed.connect(observe_region)
   var click:=InputEventMouseButton.new()
-  click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
+  click.button_index=MOUSE_BUTTON_RIGHT if fill else MOUSE_BUTTON_LEFT
+  click.pressed=true
   var started:=Time.get_ticks_usec()
   var input_frame:=Engine.get_frames_drawn()
   if check_footprint:observe_second_draw.call()
@@ -1260,6 +1300,8 @@ func check_authoring_brush()->void:
     var frames_to_draw:int=1+geometry_draw.frame-input_frame
     var final_contact:Vector3=sample_center.call()
     check(final_contact.is_finite() and old_contact.is_finite() and geometry_draw.contact.is_equal_approx(final_contact) and old_contact.distance_to(final_contact)>0.01,"Centre collision on the first drawn replacement matches the finished edit")
+    if fill:
+     check(final_contact.is_finite() and old_contact.is_finite() and final_contact.y>old_contact.y+.01,"Added terrain raises the physical surface at the brush centre")
     if geometry_draw.has("patch"):
      var final_patch:PackedVector3Array=sample_patch.call()
      var matches:=0
@@ -1706,13 +1748,221 @@ func compare_brush_collision(old_shapes:Array,new_shapes:Array,total:Dictionary)
    if not bin.changed:stable+=int(bin.count)
   total.stable_cell_triangles[width]=total.stable_cell_triangles.get(width,0)+stable
 
-func brush_button(pressed:bool)->void:
+func brush_button(pressed:bool,button:MouseButton=MOUSE_BUTTON_LEFT)->void:
  var event:=InputEventMouseButton.new()
- event.button_index=MOUSE_BUTTON_LEFT
+ event.button_index=button
  event.pressed=pressed
  Input.parse_input_event(event)
  Input.flush_buffered_events()
  game._update_edit(.06)
+
+func check_overview_brush()->void:
+ game.session_menu.activate_developer_slot(0)
+ game.radius=2
+ var old_view:Camera3D=root.get_camera_3d()
+ game.session_menu.set_open(true)
+ game.session_menu.world_editor_button.pressed.emit()
+ for frame in 60:await RenderingServer.frame_post_draw
+ var view:Camera3D=root.get_camera_3d()
+ if not game.world_editor_active() or view!=game.world_editor.camera:
+  check(false,"World editor menu opens its independent camera");return
+ var avatar_position:Vector3=game.player.global_position
+ var initial_pivot:Vector3=game.world_editor.pivot
+ var screen_center:=root.get_visible_rect().get_center()
+ var pan_event:=InputEventMouseButton.new();pan_event.button_index=MOUSE_BUTTON_MIDDLE;pan_event.position=screen_center;pan_event.pressed=true
+ root.push_input(pan_event,true)
+ var drag:=InputEventMouseMotion.new();drag.position=screen_center+Vector2(35,-18);drag.relative=Vector2(35,-18);drag.button_mask=MOUSE_BUTTON_MASK_MIDDLE
+ root.push_input(drag,true)
+ pan_event.pressed=false;pan_event.position=drag.position;root.push_input(pan_event,true)
+ check(initial_pivot.distance_to(game.world_editor.pivot)>1 and avatar_position.distance_to(game.player.global_position)<.1,"Middle-drag pans the editor independently of the character")
+ var zoom_event:=InputEventMouseButton.new();zoom_event.button_index=MOUSE_BUTTON_WHEEL_UP;zoom_event.position=screen_center;zoom_event.pressed=true
+ var distant:float=game.world_editor.distance
+ root.push_input(zoom_event,true)
+ check(game.world_editor.distance<distant,"Wheel zooms the editor camera")
+ await RenderingServer.frame_post_draw
+ capture_editor_review("terrain")
+ var target:Vector3=game.player.global_position+Vector3(5,0,3)
+ var space:=game.get_world_3d().direct_space_state
+ var ground_ray:=PhysicsRayQueryParameters3D.create(target+Vector3.UP*12,target-Vector3.UP*24,1,[game.player.get_rid()])
+ var ground:Dictionary=space.intersect_ray(ground_ray)
+ if ground.is_empty():check(false,"Overview cursor target has resident collision");return
+ var before:Vector3=ground.position
+ var cursor:=view.unproject_position(before)
+ var bounds:=view.get_viewport().get_visible_rect()
+ var from:=view.project_ray_origin(cursor)
+ var hit:Dictionary=space.intersect_ray(PhysicsRayQueryParameters3D.create(from,from+view.project_ray_normal(cursor)*120,1,[game.player.get_rid()]))
+ if not bounds.has_point(cursor) or cursor.distance_to(bounds.get_center())<25 or hit.is_empty() or before.distance_to(hit.position)>.02:
+  check(false,"Off-centre overview cursor sees the chosen ground directly");return
+ var revision:int=game.terrain.published_revision
+ var move:=InputEventMouseMotion.new();move.position=cursor
+ var press:=InputEventMouseButton.new();press.position=cursor;press.button_index=MOUSE_BUTTON_LEFT;press.pressed=true
+ var started:=Time.get_ticks_usec()
+ root.push_input(move,true);root.push_input(press,true)
+ press=press.duplicate();press.pressed=false;root.push_input(press,true)
+ var draws:=0
+ var changed:=false
+ while Time.get_ticks_usec()-started<1000000:
+  await RenderingServer.frame_post_draw
+  draws+=1
+  hit=space.intersect_ray(ground_ray)
+  if game.terrain.published_revision>revision and not hit.is_empty() and hit.position.y<before.y-.1:
+   changed=true;break
+ var elapsed:=Time.get_ticks_usec()-started
+ print("OVERVIEW_BRUSH ",JSON.stringify({"cursor":str(cursor),"world_target":str(before),"revision_delta":game.terrain.published_revision-revision,"changed":changed,"draws_observed":draws,"elapsed_us":elapsed}))
+ check(changed,"Overview brush excavates the ground under the off-centre cursor")
+ if changed:check(draws<=2 and elapsed<=33334,"Overview edit reaches the chosen ground within two draws and 33.33 ms")
+ if changed:
+  var baseline_ml:=owned_amount()
+  var ground_y:float=hit.position.y
+  for tool_index in [1,2,3]:
+   game.world_editor.operation.select(tool_index)
+   game.world_editor.operation.item_selected.emit(tool_index)
+   if tool_index==2 and "--editor-remote" in OS.get_cmdline_user_args():game.world_editor.volume.value=.25
+   var final_ground:Dictionary=space.intersect_ray(ground_ray)
+   cursor=view.unproject_position(final_ground.position)
+   move.position=cursor;press.position=cursor;press.pressed=true
+   var action_start:=Time.get_ticks_usec()
+   root.push_input(move,true);root.push_input(press,true)
+   press=press.duplicate();press.pressed=false;root.push_input(press,true)
+   var deadline:=Time.get_ticks_msec()+5000
+   var matched:=false
+   var action_draws:=0
+   while Time.get_ticks_msec()<deadline and not matched:
+    await RenderingServer.frame_post_draw
+    action_draws+=1
+    var current:Dictionary=space.intersect_ray(ground_ray)
+    if tool_index==1:matched=not current.is_empty() and current.position.y>ground_y+.1
+    else:
+     var aimed:Dictionary=game.world_editor._pick(cursor,true)
+     matched=not aimed.is_empty() and bool(aimed.get("water",false))==(tool_index==2)
+   check(matched,"World editor publishes cursor operation "+str(tool_index))
+   var action_ms:float=(Time.get_ticks_usec()-action_start)/1000.0
+   print("WORLD_EDITOR_ACTION ",JSON.stringify({"operation":["dig","fill","add_water","remove_water"][tool_index],"matched":matched,"draws":action_draws,"ms":action_ms}))
+   if matched:check(action_draws<=2 and action_ms<=33.334,"World editor operation meets the full two-frame deadline "+str(tool_index))
+   if tool_index==2:capture_editor_review("water")
+   if tool_index>=2:check(owned_amount()==baseline_ml+(roundi(game.world_editor.volume.value*1000000) if tool_index==2 else 0),"Overview water command changes the selected finite quantity exactly once")
+   if not matched:break
+ if "--editor-remote" in OS.get_cmdline_user_args():
+  await check_remote_editor_stroke(screen_center)
+ game.world_editor.close()
+ check(root.get_camera_3d()==old_view and not game.world_editor_active(),"Closing the editor restores the original player camera")
+
+func capture_editor_review(kind:String)->void:
+ if "--editor-review" not in OS.get_cmdline_user_args():return
+ var frame:=root.get_texture().get_image()
+ frame.resize(960,540,Image.INTERPOLATE_LANCZOS)
+ check(frame.save_png(evidence.path_join("world_editor_"+kind+".png"))==OK,"Retained world editor review image "+kind)
+
+func check_remote_editor_stroke(screen_center:Vector2)->void:
+ var editor=game.world_editor
+ editor.operation.select(0)
+ editor.operation.item_selected.emit(0)
+ var player_start:Vector3=game.player.global_position
+ var mouse:=InputEventMouseButton.new()
+ mouse.position=screen_center;mouse.button_index=MOUSE_BUTTON_WHEEL_DOWN;mouse.pressed=true
+ for i in 8:root.push_input(mouse,true)
+ mouse.button_index=MOUSE_BUTTON_MIDDLE;root.push_input(mouse,true)
+ var motion:=InputEventMouseMotion.new()
+ motion.relative=Vector2(-600,0);motion.position=screen_center+motion.relative;motion.button_mask=MOUSE_BUTTON_MASK_MIDDLE
+ root.push_input(motion,true)
+ mouse.position=motion.position;mouse.pressed=false;root.push_input(mouse,true)
+ var pixel:=screen_center+Vector2(60,10)
+ motion.position=pixel;motion.relative=Vector2.ZERO;motion.button_mask=0
+ root.push_input(motion,true)
+ var due:=Time.get_ticks_msec()+10000
+ var before:Dictionary={}
+ while before.is_empty() and Time.get_ticks_msec()<due:
+  await physics_frame
+  before=editor._pick(pixel,false)
+ var remote:=not before.is_empty() and Vector2(before.position.x-player_start.x,before.position.z-player_start.z).length()>120
+ check(remote,"Strategy cursor acquires terrain beyond handheld editor reach")
+ if not remote:return
+ mouse.position=pixel;mouse.button_index=MOUSE_BUTTON_LEFT;mouse.pressed=true
+ var revision:int=game.terrain.published_revision
+ var began:=Time.get_ticks_usec()
+ root.push_input(mouse,true)
+ mouse.pressed=false;root.push_input(mouse,true)
+ var changed:=false
+ var draws:=0
+ while not changed and Time.get_ticks_usec()-began<5000000:
+  await RenderingServer.frame_post_draw
+  draws+=1
+  if game.terrain.published_revision<=revision:continue
+  var after:Dictionary=editor._pick(pixel,false)
+  changed=not after.is_empty() and after.position.y<before.position.y-.1
+ var elapsed:=Time.get_ticks_usec()-began
+ print("WORLD_EDITOR_REMOTE ",JSON.stringify({"target":str(before.position),"avatar_displacement":player_start.distance_to(game.player.global_position),"changed":changed,"draws":draws,"ms":elapsed/1000.0}))
+ check(changed and player_start.distance_to(game.player.global_position)<.1,"Remote excavation changes the selected surface while the character remains in place")
+ if changed:check(draws<=2 and elapsed<=33334,"Remote edit is published and pickable within two draws")
+
+func check_editor_materials()->void:
+ game.session_menu.activate_developer_slot(2)
+ game.player_view.set_enabled(false,false)
+ game.fly=true
+ var column:Vector3=game.player.global_position+Vector3(3,0,-2)
+ column.x=floorf(column.x)+.5
+ column.z=floorf(column.z)+.5
+ var ray:=PhysicsRayQueryParameters3D.create(column+Vector3.UP*12,column-Vector3.UP*24,1,[game.player.get_rid()])
+ var space:=game.get_world_3d().direct_space_state
+ var ground:Dictionary=space.intersect_ray(ray)
+ if ground.is_empty():check(false,"Editor material target has resident terrain collision");return
+ var floor_point:Vector3=ground.position
+ var eye:=floor_point+Vector3.UP*3
+ game.camera.global_position=eye
+ game.camera.look_at(floor_point,Vector3.FORWARD)
+ var cell_top:=floorf((floor_point+Vector3(ground.normal)*.015).y)+1
+ for adding:bool in [true,false]:
+  var button:=MOUSE_BUTTON_RIGHT if adding else MOUSE_BUTTON_LEFT
+  var revision:int=game.terrain.published_revision
+  var began:=Time.get_ticks_usec()
+  brush_button(true,button)
+  brush_button(false,button)
+  var draws:=0
+  var matched:=false
+  while Time.get_ticks_usec()-began<2000000:
+   await RenderingServer.frame_post_draw
+   draws+=1
+   var hit:Dictionary=space.intersect_ray(ray)
+   if game.terrain.published_revision>revision and not hit.is_empty() and absf(hit.position.y-(cell_top if adding else floor_point.y))<.01:
+    matched=true;break
+  var elapsed:=Time.get_ticks_usec()-began
+  print("EDITOR_MATERIAL ",JSON.stringify({"operation":"place_voxel" if adding else "remove_voxel","draws":draws,"elapsed_us":elapsed,"matched":matched}))
+  check(matched,"Voxel edits add real support and restore the original floor")
+  if not matched:return
+  check(draws<=2 and elapsed<=33334,"Voxel change is present within two draws and 33.33 ms")
+ game.session_menu.open_tool_page("Water")
+ var buttons:Dictionary={}
+ for control in game.session_menu.tool_workspace.pages.Water.find_children("*","Button",true,false):
+  if control.text.begins_with("Add water at aim"):buttons[true]=control
+  if control.text.begins_with("Remove water at aim"):buttons[false]=control
+ if buttons.size()!=2:check(false,"Water workspace exposes both authoring actions");return
+ var bottom:=floor_point-Vector3.UP
+ var initial_ml:=owned_amount()
+ if game.lakes.water.raycast_surface(eye,bottom).hit:check(false,"Water brush starts on dry ground");return
+ for action in 4:
+  var adding:=action%2==0
+  var began:=Time.get_ticks_usec()
+  buttons[adding].pressed.emit()
+  var deferred:bool=not game.lakes._pending_dev.is_empty()
+  var callback_us:=Time.get_ticks_usec()-began
+  var accepted_by_us:=-1 if deferred else callback_us
+  var draws:=0
+  var matched:=false
+  while Time.get_ticks_usec()-began<8000000:
+   await RenderingServer.frame_post_draw
+   draws+=1
+   if accepted_by_us<0 and game.lakes._pending_dev.is_empty():accepted_by_us=Time.get_ticks_usec()-began
+   if game.lakes.water.raycast_surface(eye,bottom).hit==adding:
+    matched=true;break
+  var elapsed:=Time.get_ticks_usec()-began
+  var delta:=owned_amount()-initial_ml
+  print("EDITOR_MATERIAL ",JSON.stringify({"operation":"add_water" if adding else "remove_water","cycle":1+floori(action/2.0),"callback_us":callback_us,
+   "initially_pending":deferred,"request_finished_by_us":accepted_by_us,"draws":draws,"elapsed_us":elapsed,"matched":matched,"net_world_ml":delta}))
+  check(matched,"Published water at the aimed point matches the editor action")
+  # This isolated one-unit patch lies entirely within the 2 m removal brush.
+  check(delta==(1000000 if adding else 0),"Editor adds exactly one cubic metre and removes that finite patch")
+  if not matched:return
+  check(draws<=2 and elapsed<=33334,"Water brush changes the published surface within two draws and 33.33 ms")
 
 func check_authoring_drag()->void:
  game.radius=2

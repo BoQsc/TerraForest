@@ -1,5 +1,7 @@
 
 
+The latest packaged editor build fills the gameplay craters at both shores. The complete 64 m cut took 246 ms, and elevated vegetation patches remain visible in its reverse view. Sea and lake timing, both angles and the separate bucket run are recorded in the [strategy editor results](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#packaged-strategy-editor-results). The performance and visual issue remains open.
+
 The sea and lake passed the 2 cm bank checks. Lake water staging took 34 ms after terrain admission. A dry 64 m control also missed two frames. The retained cut views disagree on suspended green patches, so the visual issue remains open. [Packaged comparison and basin-capacity decision](../../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#which-parts-of-volumetric-water-are-worth-keeping)
 The [changed-triangle comparison](../../docs/WORLD_FOUNDATION_STATUS.md#changed-triangle-publication-trial) records the rejected 8 m page trial and actual packaged timings. The two-frame edit milestone remains open.
 

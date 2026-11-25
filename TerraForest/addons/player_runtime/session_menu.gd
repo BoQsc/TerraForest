@@ -29,6 +29,7 @@ var drop_physics_toggle:CheckButton
 var drop_size_toggle:CheckButton
 var third_person_toggle:CheckButton
 var overview_toggle:CheckButton
+var world_editor_button:Button
 var first_person_toggle:CheckButton
 var first_person_shadows_toggle:CheckButton
 var fullscreen_toggle:CheckButton
@@ -157,6 +158,8 @@ func _ready() -> void:
 	label(developer_page,"Developer / diagnostics & experiments").add_theme_font_size_override("font_size",22)
 	label(developer_page,"Global debugging and experimental settings. Item grants live in Dev Bag; block shapes live in Dev Shapes; entities and live vehicles live in Dev Spawner. Selected-tool controls remain on Alt.")
 	mode_button=button(developer_page,"Development mode",toggle_developer)
+	if game.has_method("open_world_editor"):
+		world_editor_button=button(session,"World editor (preview)",game.open_world_editor)
 	var diagnostics:=GridContainer.new();diagnostics.columns=2;developer_page.add_child(diagnostics)
 	for entry in [["Diagnostics",KEY_F3],["Next test site",KEY_F2],["Next biome",KEY_F4],["LOD colours",KEY_F6],["Grass texture",KEY_F7],["Debug light",KEY_F8],["Terrain visualization",KEY_F10]]:
 		button(diagnostics,entry[0],developer_command.bind(entry[1]))
@@ -265,6 +268,7 @@ func sync_panels() -> void:
 	for control in game.construction_palette.editor_controls:control.visible=developer
 	if workspace:tool_workspace.show_tool(current_page)
 func refresh() -> void:
+	if world_editor_button!=null:world_editor_button.visible=developer
 	building_lod_toggle.set_pressed_no_signal(game.structures.blocks.is_geometry_lod_enabled())
 	fullscreen_toggle.set_pressed_no_signal(DisplayServer.window_get_mode() in [DisplayServer.WINDOW_MODE_FULLSCREEN,DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN])
 	mode_label.text=("DEVELOPMENT / free authoring" if developer else "GAMEPLAY / items and material costs")+"    |    Headlamp: "+("on" if game.headlamp.visible else "off")
@@ -377,6 +381,11 @@ func developer_command(key:int)->void:
 	if not developer:message.text="Enter development mode above to use world diagnostics.";return
 	run_command(key)
 func _input(event: InputEvent) -> void:
+	if world_editor_button!=null and game.world_editor_active():
+		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_ESCAPE:
+			game.world_editor.close()
+			get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.physical_keycode==KEY_ESCAPE:
 		if event.pressed and not event.echo and not leaving_world:preload("res://addons/player_runtime/escape_policy.gd").close_or_pause(self)
 		get_viewport().set_input_as_handled();return

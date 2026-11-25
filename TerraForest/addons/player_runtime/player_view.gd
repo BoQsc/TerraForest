@@ -14,6 +14,7 @@ var game:Node
 var enabled:=false
 var active:=false
 var overview:=false
+var editor_camera:Camera3D
 var overview_distance:=32.0
 var zoom_distance:=3.4
 var orbit_yaw:=0.0
@@ -66,10 +67,11 @@ func _bind_view(view:Camera3D)->void:
 	view.make_current()
 	game.vegetation.camera=view
 	game.vegetation.collision_camera=game.camera
-	game.ecosystem.camera=game.camera if overview or entry.active else view
-	game.ground_cover.camera=game.camera if overview or entry.active else view
+	var distant:bool=overview or entry.active or view==editor_camera
+	game.ecosystem.camera=game.camera if distant else view
+	game.ground_cover.camera=game.camera if distant else view
 	game.ground_cover.boulder_camera=view
-	game.vegetation.set_visual_distance(3500.0 if (overview and view==third_camera) or entry.active else 0.0)
+	game.vegetation.set_visual_distance(3500.0 if (overview and view==third_camera) or entry.active or view==editor_camera else 0.0)
 	var canopy:Node=game.get_node_or_null("CanopyShadows")
 	if canopy!=null:canopy.camera=view
 	game.water_camera.configure(view,game.lakes)
@@ -105,6 +107,10 @@ func consume(event:InputEvent)->bool:
 	return event is InputEventKey and event.physical_keycode in [KEY_E,KEY_K,KEY_J,KEY_V,KEY_G]
 
 func update(delta:float=0.0)->void:
+	if editor_camera!=null:
+		game.terrain.render_view=editor_camera.global_position
+		game.tool_view.global_transform=game.player.global_transform*Transform3D(Basis.IDENTITY,Vector3(0,1.65,-.03))
+		return
 	if entry.active:return
 	game.tool_view.human.crouched=game.crouched
 	var wanted:bool=(enabled or overview) and not game.world_vehicle.driving
@@ -165,6 +171,7 @@ func _clear_feel()->void:
 func shot_feedback()->void:
 	if feel_enabled and not active and not entry.blocks_actions():feel.shot(game.tool_view.human.rifle_aiming)
 func _step_feel(delta:float)->void:
+	if editor_camera!=null:return
 	if (not feel_enabled and game.equipped_tool!=9) or active or entry.blocks_actions() or game.loading_active or game.shutdown_requested or game.fly or game.world_vehicle.driving or not game.app_focused or game.session_menu.visible_ui() or game.player_hud.inventory_open or game.player_life.dead:
 		_clear_feel();return
 	var yaw:float=game.camera.global_rotation.y

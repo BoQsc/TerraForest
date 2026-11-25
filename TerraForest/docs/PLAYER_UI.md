@@ -161,6 +161,16 @@ placing a tool in a chest cannot leave it usable in the player's hands.
 
 ## Input and inventory
 
+### Bird's-eye world editor preview
+
+Enter development mode with the backtick key, open the session menu with Esc and select **World editor (preview)**. It opens over the character with a separate camera. Middle-drag pans and the wheel zooms. Left-click or drag on the world to apply the selected tool. **Back to game** or Esc returns to your previous camera.
+
+For a local human playtest from this checkout, run `python tools/run.py --temporary` in the TerraForest project directory. The launcher starts a disposable session. Select the editor from its session menu.
+
+Choose **Dig terrain** or **Fill terrain**, then a sphere, grid box or single voxel. Sphere and box sizes are radii in metres. Fill also selects the material. **Add water** places the selected amount, from 0.05 to 1 m³ per stamp, on the selected surface. **Remove water** removes water inside the displayed radius. Terrain and water use the existing world save rules. Use a disposable world for human comparison with the previous build. [Editor performance and acceptance](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#the-world-editor-is-the-primary-workload)
+
+### Belt and inventory controls
+
 - **1-9 / 0** select belt slots in both modes; these keys no longer change editor
   shapes or object recipes. The visible belt provides the same choices by mouse.
 - **E** interacts independently of the equipped placement tool: aimed chest first,

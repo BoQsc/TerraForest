@@ -99,6 +99,11 @@ func run()->void:
 	check(hud.capture_snapshot()==before and not game.fly,"G in the developer backpack does not drop or toggle flight")
 	hud.set_open(false);tap()
 	check(hud.capture_snapshot()==before and not game.fly,"G on the developer toolbelt does not drop or toggle flight")
+	game.session_menu.set_open(true)
+	game.session_menu.world_editor_button.pressed.emit()
+	tap()
+	check(game.world_editor_active() and hud.capture_snapshot()==before,"G in the world editor preserves the backpack and selected item")
+	game.world_editor.close()
 	game.session_menu.toggle_developer();hud.equip_inventory(20)
 	game.session_menu.drop_physics_toggle.set_pressed(false)
 	check(not game.pickups.physics_enabled,"Player checkbox disables physics for new drops")
@@ -110,6 +115,7 @@ func run()->void:
 	if DisplayServer.get_name()!="headless":
 		var capture_directory:="res://reports/universal_item_drop"
 		for argument in OS.get_cmdline_user_args():
+			if argument.begins_with("--check-evidence-dir="):capture_directory=argument.get_slice("=",1)
 			if argument.begins_with("--drop-evidence="):capture_directory=argument.get_slice("=",1)
 		DirAccess.make_dir_recursive_absolute(capture_directory)
 		for i in 3:await RenderingServer.frame_post_draw

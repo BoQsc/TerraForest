@@ -64,6 +64,18 @@ var world_item_use=preload("res://addons/player_runtime/world_item_use.gd").new(
 var impact_effects:Node3D
 var equipped_tool:=0
 var editor_tool_active:=false
+var world_editor:CanvasLayer
+
+func open_world_editor()->void:
+	if not session_menu.developer or loading_active or shutdown_requested or player_life.dead or world_vehicle.driving or player_view.entry.blocks_actions():return
+	if world_editor==null:
+		world_editor=preload("res://addons/player_runtime/world_editor.gd").new()
+		world_editor.game=self
+		add_child(world_editor)
+	world_editor.open()
+
+func world_editor_active()->bool:
+	return world_editor!=null and world_editor.visible
 var tool_view=preload("res://addons/player_runtime/tool_view.gd").new()
 var player_view=preload("res://addons/player_runtime/player_view.gd").new()
 var first_person_view=preload("res://addons/player_runtime/first_person_view.gd").new()
@@ -1021,6 +1033,7 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 	return true
 
 func _ui_owns_cursor() -> bool:
+	if world_editor_active():return true
 	return session_menu.visible_ui() or player_hud.inventory_open or storage.opened or corpse_loot.ui.opened or vehicle_radial.opened or (session_menu.player_actions!=null and session_menu.player_actions.opened) or (session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access) or (session_menu.confirmation!=null and session_menu.confirmation.visible) or construction_palette.survey_dialog.visible or construction_palette.frontage_dialog.visible
 
 func _restore_gameplay_mouse(attempts:int=4) -> void:
@@ -1038,6 +1051,7 @@ func _restore_gameplay_mouse(attempts:int=4) -> void:
 	if not get_tree().process_frame.is_connected(retry):get_tree().process_frame.connect(retry,CONNECT_ONE_SHOT)
 
 func _movement_input_available() -> bool:
+	if world_editor_active():return false
 	if player_life.dead:return false
 	if player_view.entry.active:return false
 	if session_menu!=null and session_menu.pauses_world():return false
@@ -1045,10 +1059,12 @@ func _movement_input_available() -> bool:
 	return super._movement_input_available() or (world_map!=null and world_map.opened and not world_map.embedded) or (session_menu!=null and session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access and not session_menu.visible_ui() and not player_hud.inventory_open)
 
 func _input(event:InputEvent)->void:
+	if world_editor_active():return
 	super._input(event)
 	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT and not event.pressed:terrain_placement.held=false
 
 func _unhandled_input(event: InputEvent) -> void:
+	if world_editor_active():return
 	if player_life.dead:return
 	if player_view.entry.blocks_actions():return
 	if session_menu.visible_ui():return
@@ -1200,6 +1216,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	super._unhandled_input(event)
 
 func _update_edit(delta: float) -> void:
+	if world_editor_active():
+		world_editor.step(delta)
+		return
 	if player_view.overview or player_view.entry.blocks_actions():
 		pointer.hide();terrain.set_brush_active(false);return
 	if not session_menu.developer:
@@ -1667,6 +1686,8 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	return obstacle
 
 func _physics_process(delta: float) -> void:
+	if world_editor_active() and (loading_active or shutdown_requested or player_life.dead or world_vehicle.driving or not session_menu.developer):
+		world_editor.close()
 	if pickups.physics!=null:
 		pickups.step_physics(delta,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and app_focused and not session_menu.pauses_world() and not player_hud.inventory_open and not player_view.entry.active,_actor_collision_ready)
 	player_life.step(delta)
@@ -1819,6 +1840,7 @@ func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: 
 	return removed
 
 func _model_edit_available(allow_pending:bool=false) -> bool:
+	if world_editor_active():return false
 	if player_life.dead:return false
 	return not player_view.entry.blocks_actions() and not player_view.overview and vehicle_radial.held_since<0 and not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and (allow_pending or not terrain.pending_edit)
 

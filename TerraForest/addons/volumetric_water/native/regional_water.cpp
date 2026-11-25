@@ -1295,16 +1295,32 @@ bool NativeRegionalWater::bucket_footprint(Vector3i target,const Vector3 &aim,ui
     for(int choice=0;choice<4;choice++){
         int x=choice&1?2*target.x-1-preferred_x:preferred_x;
         int z=choice&2?2*target.z-1-preferred_z:preferred_z;
-        uint64_t available=0;bool waiting=false;
+        uint64_t available=0;
+        std::array<Key,8> missing;
+        size_t missing_count=0;
         for(int dz=0;dz<2;dz++)for(int dx=0;dx<2;dx++)
         for(int y=target.y-(collect?1:2);y<=target.y+(collect?0:4);y++){
             Vector3i p(x+dx,y,z+dz);if(!in_domain(p))continue;
-            const Region *r=get(p,!collect);
-            if(!r){waiting|=!collect&&!limit;continue;}
+            const Region *r=static_cast<const NativeRegionalWater *>(this)->get(p);
+            if(!r&&!collect)r=get(p,true);
+            if(!r){
+                if(!collect&&!limit){
+                    const Key brick=region_key(p);
+                    if(std::find(missing.begin(),missing.begin()+missing_count,brick)==missing.begin()+missing_count)
+                        missing[missing_count++]=brick;
+                }
+                continue;
+            }
             auto cap=profile(*r,index(p)).capacity();auto stored=r->water[index(p)];
             available+=collect?std::min(cap,stored):(cap>stored?cap-stored:0);
         }
-        if(waiting){out["pending"]=true;out["reason"]="Preparing water at this location";return false;}
+        if(missing_count){
+            Array missing_regions;
+            for(size_t i=0;i<missing_count;++i)missing_regions.push_back(position(missing[i]));
+            out["pending"]=true;out["reason"]="Preparing water at this location";
+            out["occupancy_regions"]=missing_regions;
+            return false;
+        }
         if(available>=amount){x0=x;z0=z;return true;}
     }
     // Irregular shallow sources still use the bounded connected scoop search;
@@ -1429,7 +1445,14 @@ bool NativeRegionalWater::plan_local_refill(Vector3i target,const Vector3 &aim,u
 bool NativeRegionalWater::plan_placement(Vector3i target,const Vector3 &aim,uint64_t amount,Placement &take,Dictionary &out,bool allow_refill){
     if(has_deferred_overlap(AABB(Vector3(target)*.5-Vector3(2,3,2),Vector3(4.5,6.5,4.5)))){out["pending"]=true;out["reason"]="Loading saved water near the target";return false;}
     Region *origin=get(target,true);
-    if(!origin){out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";return false;}
+    if(!origin){
+        out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";
+        // The first dry pour already knows its nearest two-by-two footprint.
+        // Request its missing bricks together before returning to the renderer.
+        int x0,z0;
+        if(bool(out["pending"]))bucket_footprint(target,aim,amount,false,x0,z0,out);
+        return false;
+    }
     if(allow_refill&&plan_vacancy_refill(target,aim,amount,take))return true;
     if(allow_refill&&plan_local_refill(target,aim,amount,take))return true;
     uint64_t held=origin->water[index(target)],capacity=profile(*origin,index(target)).capacity();
@@ -1589,7 +1612,15 @@ Dictionary NativeRegionalWater::transfer_water(const Vector3 &from,const Vector3
     bool hit=bool(surface["hit"]);
     Vector3i target=hit?Vector3i(surface["cell"]):cell(to);
     if(!pour&&!hit){out["reason"]="Aim at nearby water";return out;}
-    Region *r=get(target,true);if(!r){out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";return out;}
+    Region *r=get(target,true);
+    if(!r){
+        out["pending"]=in_domain(target)&&!limit;out["reason"]="Preparing water at this location";
+        if(pour&&bool(out["pending"])){
+            int x0,z0;
+            bucket_footprint(target,hit?Vector3(surface["point"]):to,amount,false,x0,z0,out);
+        }
+        return out;
+    }
     // A terrain ray can end inside a conservative shoreline cell. Pour into
     // the first open cell just back along the unobstructed aiming segment,
     // instead of rejecting a valid bucket action against a sloping surface.

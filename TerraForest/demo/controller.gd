@@ -51,7 +51,7 @@ func _terrain_pick_received(reply: Dictionary) -> void:
 	if normal.length_squared()<0.5: return
 	terrain_pick_cache={"from":request["from"],"to":request["to"],"revision":reply.revision,"epoch":reply.epoch,"position":reply.position,"normal":normal}
 
-func _terrain_pick(from: Vector3, to: Vector3) -> Dictionary:
+func _terrain_pick(from: Vector3, to: Vector3, cell_budget:int=256) -> Dictionary:
 	if terrain.pending_edit: return {}
 	if not terrain_pick_cache.is_empty():
 		if terrain_pick_cache.revision==terrain.native_revision and terrain_pick_cache.epoch==terrain.epoch and terrain_pick_cache["from"].is_equal_approx(from) and terrain_pick_cache["to"].is_equal_approx(to):
@@ -67,7 +67,7 @@ func _terrain_pick(from: Vector3, to: Vector3) -> Dictionary:
 		terrain_pick_cache={}
 	if terrain_pick_request.is_empty():
 		terrain_pick_serial+=1
-		if terrain.request_density_ray(from,to,terrain_pick_serial,256):
+		if terrain.request_density_ray(from,to,terrain_pick_serial,cell_budget):
 			terrain_pick_request={"token":terrain_pick_serial,"from":from,"to":to}
 	return {}
 
@@ -848,17 +848,19 @@ func _update_edit(delta: float) -> void:
 		if terrain.interaction_target.is_finite():terrain.set_interaction_target(Vector3.INF)
 		pointer.hide()
 		return
-	var hit: Vector3 = latest_hit["position"]
+	_apply_brush_hit(latest_hit, building and not mining, mining or building, continuous)
+
+func _apply_brush_hit(contact: Dictionary, add: bool, pressed: bool, continuous: bool) -> void:
+	var hit: Vector3 = contact["position"]
 	terrain.set_interaction_target(hit)
-	var normal: Vector3 = latest_hit["normal"]
-	var add: bool = building and not mining
+	var normal: Vector3 = contact["normal"]
 	if tool == 1:
 		var cell: Vector3 = (hit + normal * (0.015 if add else -0.015)).floor()
 		if pointer.mesh != block_preview:pointer.mesh = block_preview
 		pointer.position = cell + Vector3.ONE * 0.5
 		pointer.scale = Vector3.ONE
 		pointer.visible = true
-		if (mining or building) and cooldown <= 0.0:
+		if pressed and cooldown <= 0.0:
 			if add and _brush_overlaps_player(cell + Vector3.ONE * 0.5, 0.86):
 				_reject_placement("Placement intersects the player capsule")
 				return
@@ -876,7 +878,7 @@ func _update_edit(delta: float) -> void:
 		pointer.position = center
 		pointer.scale = Vector3.ONE * (2.0 * radius)
 		pointer.show()
-		if (mining or building) and cooldown <= 0.0:
+		if pressed and cooldown <= 0.0:
 			if add and _brush_overlaps_player(center, radius * (1.74 if shape == 1 else 1.0)):
 				_reject_placement("Filling here would embed the player; move away first")
 				return

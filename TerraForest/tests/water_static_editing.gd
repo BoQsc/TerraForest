@@ -5,8 +5,31 @@ func check(ok:bool,label:String):
  print("PASS " if ok else "FAIL ",label)
  if not ok:failures+=1
 func _initialize():call_deferred("run")
+func check_cold_pour():
+ var cold=ClassDB.instantiate("NativeRegionalWater")
+ cold.update_ocean_residency(Vector3(4,40,1000),1)
+ var point:=Vector3(1000.1,200.1,1000.1)
+ var pour:Dictionary=cold.place_water(point,250000)
+ var bricks:Array=pour.get("occupancy_regions",[])
+ check(pour.pending and bricks.size()==8,"A first pour at a brick corner identifies all eight local dependencies at once")
+ if bricks.size()!=8:return
+ var background:Vector3i=cold.next_request().coordinate
+ check(background not in bricks and cold.statistics().water_ml==0,"Waiting for the local footprint leaves ocean work queued and transfers no water")
+ var core=ClassDB.instantiate("TerrainCore")
+ core.execute(preload("res://addons/volumetric_terrain/mesh_codec.gd").command(6,[42,19]))
+ for coordinate:Vector3i in bricks:
+  var patch=ClassDB.instantiate("NativeWaterTerrainPatch")
+  patch.configure(coordinate)
+  var result:=0
+  for step in 200:
+   result=patch.sample_terrain(core,256,0,0)
+   if result!=0:break
+  check(result==1 and cold.accept_patch(patch),"The requested local occupancy brick prepares independently")
+ pour=cold.place_water(point,250000)
+ check(pour.ok and cold.statistics().water_ml==250000 and cold.next_request().coordinate==background,"One quarter cubic metre commits with the unrelated ocean request still pending")
 func run():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
+ check_cold_pour()
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var data:=PackedByteArray();data.resize(32+catalog.size()+6160);data.fill(0)
  data.encode_u32(0,0x31575256);data.encode_u32(4,1);data.encode_u32(8,catalog.size());data.encode_u32(12,1);data.encode_u64(16,125000)

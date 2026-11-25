@@ -55,9 +55,17 @@ def planned_report_bytes(command):
     if "--water-contact-only" in command and any(Path(str(value)).name == "water_barrel_world.gd" for value in command):
         # This route exits after two 1080p RGBA captures, the log and receipt.
         return 24 * 2**20
+    if "--lossless-shore-views" in command and "--blast-only-timing" in command and scripts == {"water_player_world.gd"}:
+        return 23 * 2**20  # Driver enforces 21 MiB of full-resolution lossless frames, plus logs.
     if any(Path(str(value)).name in {"water_barrel_world.gd", "water_player_world.gd"} for value in command):
         return 40 * 2**20  # Captures plus an at-most-8-MiB terrain failure snapshot.
     scripts = [str(value) for value in command if str(value).endswith(".gd")]
+    if "--headless" in command and len(scripts) == 1 and Path(scripts[0]).stem in {
+        "universal_item_drop", "physical_item_drops", "drop_key_standard"
+    }:
+        return 2 * 2**20  # Headless variants write only the check log and receipt.
+    if len(scripts) == 1 and Path(scripts[0]).stem == "drop_key_standard":
+        return 24 * 2**20  # Two 1080p screenshots in the owning check directory.
     if len(scripts) == 1 and Path(scripts[0]).stem in {"terrain_edit_recovery", "location_reset_batch", "terrain_field_patch", "terrain_region_cache"}:
         return 16 * 2**20  # Headless edit transactions write logs and a run receipt.
     if len(scripts) == 1 and Path(scripts[0]).stem == "building_materials":

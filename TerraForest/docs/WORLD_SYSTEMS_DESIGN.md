@@ -8,6 +8,8 @@ Implemented paths include the pinned native toolchain, bounded native entity sto
 
 ## Real-time terrain and water editing
 
+Treat the world editor as the primary workload. A brush at the overview cursor or in first person describes a three-dimensional edit in world coordinates. Independent camera targeting and residency let an author edit remotely while player physics stays at the character. Use held and interrupted strokes, small details and cross-region terrain and water construction to qualify the shared path. A candidate that can change visual quality, editing controls or perceived responsiveness needs a recorded human playtest against the reference before adoption. [Current controls, architecture and acceptance workloads](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#the-world-editor-is-the-primary-workload)
+
 The player should see a pickaxe break, a paid terrain stamp, a bucket transfer,
 a shoreline explosion or a strategy brush change the world at the place acted
 on. Immediate feedback belongs on the next draw. The entire resident edited

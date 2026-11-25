@@ -15,6 +15,28 @@ from maintain_water_captures import maintain
 from run_godot_check import command_for, execute
 
 
+EDITOR = ["--water-load-only", "--authoring-brush"]
+CUT = EDITOR + ["--authoring-lake-cut"]
+SHORES = ["--water-immediate-contact", "--water-edit-response", "--blast-only-timing"]
+DEFAULT_ROUTES = ("cut", "shores", "cut_angles", "shore_angles", "bucket_interruption")
+WORKLOADS = {
+    "cut": CUT,
+    "shores": SHORES + ["--water-no-captures"],
+    "cut_angles": CUT + ["--authoring-cut-angles"],
+    "shore_angles": SHORES + ["--lossless-shore-views"],
+    "bucket_interruption": ["--water-immediate-contact", "--water-edit-response", "--water-no-captures"],
+    "dry_cut": EDITOR + ["--authoring-dry-cut"],
+    "brush_dig": EDITOR,
+    "brush_fill": EDITOR + ["--authoring-fill"],
+    "brush_drag": EDITOR + ["--authoring-drag"],
+    "brush_materials": EDITOR + ["--authoring-materials"],
+    "brush_max": EDITOR + ["--authoring-fill", "--authoring-max-radius"],
+    "overview_brush": EDITOR + ["--authoring-overview"],
+    "overview_review": EDITOR + ["--authoring-overview", "--editor-review"],
+    "overview_remote": EDITOR + ["--authoring-overview", "--editor-remote"],
+}
+
+
 def stamp():
     return datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
 
@@ -120,19 +142,10 @@ def main(timing_only=False, selected_routes=None):
             raise RuntimeError("Candidate export failed inspection")
         record["pack_sha256"] = digest(pack)
         save(index, record)
-        cut = ["--water-load-only", "--authoring-brush", "--authoring-lake-cut"]
-        shores = ["--water-immediate-contact", "--water-edit-response", "--blast-only-timing"]
-        bucket_interruption = ["--water-immediate-contact", "--water-edit-response", "--water-no-captures"]
         passed = True
-        workloads = {"cut": cut, "shores": shores + ["--water-no-captures"],
-                     "cut_angles": cut + ["--authoring-cut-angles"], "shore_angles": shores,
-                     "bucket_interruption": bucket_interruption}
-        routes = selected_routes or (["cut", "shores"] if timing_only else list(workloads))
-        # Optional architectural control. The unmodified game performs the
-        # same size cut inland and the driver verifies the entire area is dry.
-        workloads["dry_cut"] = ["--water-load-only", "--authoring-brush", "--authoring-dry-cut"]
+        routes = selected_routes or (("cut", "shores") if timing_only else DEFAULT_ROUTES)
         for label in routes:
-            folder, result = run_route(engine, record["pack_sha256"], label, workloads[label], index, frozen_driver)
+            folder, result = run_route(engine, record["pack_sha256"], label, WORKLOADS[label], index, frozen_driver)
             record["runs"][label] = str(folder)
             if result.get("exit_code") is not None:
                 record.setdefault("closed_runs", {})[str(folder)] = digest(folder / "run.json")
@@ -141,9 +154,14 @@ def main(timing_only=False, selected_routes=None):
             log = folder / "console.log"
             if result.get("launch_error") or not log.exists() or "WATER_GAMEPLAY_INPUT " not in log.read_text(errors="replace"):
                 break
-            expected = 4 if label == "cut_angles" else 10 if label == "shore_angles" else 0
-            if expected and len(list(folder.glob("*.png"))) == expected and result.get("exit_code") is not None:
-                family = "authoring_cut_angles" if label == "cut_angles" else "water_player_world"
+            reviews = {"cut_angles": (4, "authoring_cut_angles"), "shore_angles": (10, "water_player_world"),
+                       "overview_review": (2, "world_editor")}
+            expected, family = reviews.get(label, (0, None))
+            if expected and result.get("exit_code") is not None:
+                extension = "*.webp" if label == "shore_angles" else "*.png"
+                if len(list(folder.glob(extension))) != expected:
+                    passed = False
+                    continue
                 try:
                     receipt = maintain(True, ROOT, 1, {family})
                     record.setdefault("capture_archives", {})[label] = receipt["manifests"]
@@ -166,7 +184,7 @@ if __name__ == "__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--timing-only",action="store_true",help="Run both deadline routes without allocating a camera-capture pass.")
-    selection.add_argument("--route", choices=["cut", "shores", "cut_angles", "shore_angles", "bucket_interruption", "dry_cut"], action="append",
+    selection.add_argument("--route", choices=WORKLOADS, action="append",
                            help="Run a named packaged route. Repeat to share the same staged build across routes.")
     args = parser.parse_args()
     raise SystemExit(main(args.timing_only, list(dict.fromkeys(args.route)) if args.route else None))

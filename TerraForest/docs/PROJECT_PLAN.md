@@ -1,5 +1,7 @@
 ## World authority and qualification milestones (November 20)
 
+Milestone 5 now has a selectable bird’s-eye world editor in the development session menu. Its packaged route pans away from the character, digs and fills through the pointer, adds measured water and removes it again. Sea and lake explosions remain abrupt gameplay regressions. Open gates include full-footprint publication, steady 60 Hz, strategy and authority parity, and the human visual playtest. [World editor workloads and evidence](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#the-world-editor-is-the-primary-workload)
+
 Milestone 5 remains open. The packaged dry cut also missed two frames. Terrain and water staged at 62 and 208 ms on the wet cut and 7 and 34 ms on the lake blast. Use the basin-capacity comparison and the dry terrain control to evaluate the two costs independently. [Representation decision and receipts](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#which-parts-of-volumetric-water-are-worth-keeping)
 
 The [real-time editing design](WORLD_SYSTEMS_DESIGN.md#real-time-terrain-and-water-editing) defines the shared publication contract for player mining, construction, water, large authoring operations and world management. Milestone 5 remains open.
