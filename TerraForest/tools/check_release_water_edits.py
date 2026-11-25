@@ -18,9 +18,10 @@ from run_godot_check import command_for, execute
 EDITOR = ["--water-load-only", "--authoring-brush"]
 CUT = EDITOR + ["--authoring-lake-cut"]
 SHORES = ["--water-immediate-contact", "--water-edit-response", "--blast-only-timing"]
-DEFAULT_ROUTES = ("cut", "shores", "cut_angles", "shore_angles", "bucket_interruption")
+DEFAULT_ROUTES = ("cut", "shores", "cut_angles", "shore_angles", "bucket_interruption", "object_contact")
 WORKLOADS = {
     "cut": CUT,
+    "object_contact": SHORES + ["--water-no-captures", "--water-object-contact", "--lossless-shore-views"],
     "shores": SHORES + ["--water-no-captures"],
     "cut_angles": CUT + ["--authoring-cut-angles"],
     "shore_angles": SHORES + ["--lossless-shore-views"],
@@ -155,10 +156,10 @@ def main(timing_only=False, selected_routes=None):
             if result.get("launch_error") or not log.exists() or "WATER_GAMEPLAY_INPUT " not in log.read_text(errors="replace"):
                 break
             reviews = {"cut_angles": (4, "authoring_cut_angles"), "shore_angles": (10, "water_player_world"),
-                       "overview_review": (2, "world_editor")}
+                       "overview_review": (2, "world_editor"), "object_contact": (3, "crater_object")}
             expected, family = reviews.get(label, (0, None))
             if expected and result.get("exit_code") is not None:
-                extension = "*.webp" if label == "shore_angles" else "*.png"
+                extension = "*.webp" if label in {"shore_angles", "object_contact"} else "*.png"
                 if len(list(folder.glob(extension))) != expected:
                     passed = False
                     continue

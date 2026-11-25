@@ -16,6 +16,8 @@ NAMES.update(('post_blast.water', 'post_terrain.water'))
 NAMES.update(name + '.png' for name in ('player_shore_before', 'player_shore_after', 'player_shore_underwater', 'player_lake_before', 'player_lake_after', 'player_lake_underwater'))
 REVERSE_NAMES = {name + '_reverse.png' for name in ('player_shore_before', 'player_shore_after', 'player_lake_before', 'player_lake_after')}
 NAMES.update(REVERSE_NAMES)
+NAMES.add("object_contact_above_reverse.png")
+NAMES.update(name.replace(".png", ".webp") for name in tuple(NAMES) if name.startswith("object_contact_"))
 NAMES.update(name.replace(".png", ".webp") for name in tuple(NAMES) if name.startswith(("player_shore_", "player_lake_")))
 NAMES.update(("authoring_brush_0.png","authoring_brush_1.png"))
 NAMES.update(("world_editor_terrain.png","world_editor_water.png"))
@@ -27,7 +29,7 @@ NAMES.update(f"cut_{phase}_angle_{angle}.png" for phase in ("before","after") fo
 def candidates(root=ROOT, keep_ready=2, families=None):
     if keep_ready not in (1, 2):
         raise ValueError('Keep one or two ready runs; archived evidence remains restorable')
-    ready = {'water_barrel_world': [], 'water_player_world': [], 'authoring_brush': [], 'authoring_cut_angles': [], 'world_editor': []}
+    ready = {'water_barrel_world': [], 'water_player_world': [], 'authoring_brush': [], 'authoring_cut_angles': [], 'world_editor': [], 'crater_object': []}
     for manifest in sorted((root / 'reports/checks').glob('*/run.json')):
         run = json.loads(manifest.read_text(encoding='utf-8'))
         if run.get('result', {}).get('exit_code') is None:
@@ -71,6 +73,8 @@ def candidates(root=ROOT, keep_ready=2, families=None):
             family = 'authoring_cut_angles'
         if family == 'water_player_world' and '--editor-review' in command:
             family = 'world_editor'
+        if family == 'water_player_world' and '--water-object-contact' in command:
+            family = 'crater_object'
         if families is not None and family not in families:
             continue
         folder = confined(manifest.parent, root / 'reports/checks')

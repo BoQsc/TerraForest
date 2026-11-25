@@ -563,7 +563,8 @@ func mining_response_case(lake:Dictionary)->void:
  check(owned_amount()==before,"Mining conserves every owned millilitre")
 var shoreline_image_bytes:=0
 func capture(label:String,center:Vector3,level:float,underwater:bool=false)->void:
- if DisplayServer.get_name()=="headless" or "--water-no-captures" in OS.get_cmdline_user_args():return
+ var object_view:=label.begins_with("object_contact_")
+ if DisplayServer.get_name()=="headless" or ("--water-no-captures" in OS.get_cmdline_user_args() and not object_view):return
  capture_phase="capture "+label
  var processing:=game.is_processing();var physics:=game.is_physics_processing()
  var water_processing:bool=game.lakes.is_processing()
@@ -577,6 +578,14 @@ func capture(label:String,center:Vector3,level:float,underwater:bool=false)->voi
  if underwater:
   game.camera.global_position=Vector3(center.x,level-1,center.z)
   game.camera.look_at(game.camera.global_position+Vector3(2,.3,0),Vector3.UP)
+  if object_view:
+   for offset:Vector3 in [Vector3(2,-.4,1),Vector3(-2,-.4,1),Vector3(0,-.4,-2)]:
+    var eye:=Vector3(center.x,level,center.z)+offset
+    if game.lakes.depth_at(eye)>.2:
+     game.camera.global_position=eye
+     game.camera.look_at(Vector3(center.x,level-.1,center.z),Vector3.UP)
+     break
+   check(game.camera.global_position.distance_to(Vector3(center.x,level-1,center.z))>1,"Submerged object camera is outside the cube")
   check(game.lakes.depth_at(game.camera.global_position)>.2,"Underwater capture camera is inside the excavated water volume")
  game.combat.effects.step(.7,true);game.water_camera.update()
  for frame in 4:await process_frame
@@ -585,6 +594,7 @@ func capture(label:String,center:Vector3,level:float,underwater:bool=false)->voi
  if not underwater:
   # Keep the second lake view on the water side of Cedar Vale's bank trees.
   var reverse_offset:=Vector3(5,5,4) if "lake" in label else Vector3(5,1.5,-4)
+  if object_view:reverse_offset=Vector3(2,1.5,2.7)
   game.camera.global_position=Vector3(center.x,level,center.z)+reverse_offset
   game.camera.look_at(Vector3(center.x,level-.6,center.z),Vector3.UP)
   game.water_camera.update()
@@ -602,7 +612,8 @@ func capture(label:String,center:Vector3,level:float,underwater:bool=false)->voi
   var path:String=entry[1]
   if "--lossless-shore-views" in OS.get_cmdline_user_args():
    var encoded:=frame.save_webp_to_buffer(false)
-   if encoded.is_empty() or shoreline_image_bytes+encoded.size()>21*1024*1024:
+   var image_limit_mib:=10 if "--water-object-contact" in OS.get_cmdline_user_args() else 21
+   if encoded.is_empty() or shoreline_image_bytes+encoded.size()>image_limit_mib*1024*1024:
     check(false,"Full-resolution shoreline image exceeds the declared evidence allowance")
     continue
    var file:=FileAccess.open(path.get_basename()+".webp",FileAccess.WRITE)
@@ -617,6 +628,57 @@ func capture(label:String,center:Vector3,level:float,underwater:bool=false)->voi
   # The interval containing PNG encoding ends on the next frame.
   await process_frame
  capture_phase=""
+# Use the real post-blast lake, whose surface has a measurable local slope.
+func check_crater_object(crater:Vector3,lake:Dictionary)->void:
+ var surface_query:=func(p:Vector3)->Dictionary:
+  var above:=Vector3(p.x,lake.level+2,p.z)
+  return game.lakes.water.raycast_surface(above,above-Vector3.UP*4)
+ var center:=Vector3.INF
+ var level:=0.0
+ var cell:=Vector3i.ZERO
+ var toward_lake:=Vector3(lake.seed.x-crater.x,0,lake.seed.z-crater.z).normalized()
+ for distance:float in [3.0,2.0,1.0,0.0,4.0,5.0,6.0,7.0,8.0]:
+  var sample_point:=(crater+toward_lake*distance).floor()+Vector3(.5,0,.5)
+  var sampled:Dictionary=surface_query.call(sample_point)
+  if not sampled.get("hit",false):continue
+  var elevation:float=sampled.point.y
+  var cube:=Vector3i(floori(sample_point.x),floori(elevation),floori(sample_point.z))
+  if elevation-cube.y<.025 or elevation-cube.y>.975 or game.structures.blocks.get_cell(cube)!=0:continue
+  if game.lakes.depth_at(Vector3(sample_point.x,elevation-.4,sample_point.z))<.2:continue
+  level=elevation;cell=cube;center=Vector3(cube)+Vector3(.5,0,.5)
+  break
+ check(center.is_finite(),"A free construction cell crosses the published crater surface")
+ if not center.is_finite():return
+ print("CRATER_OBJECT_CELL ",cell," level=",level," crater_distance_m=",Vector2(center.x-crater.x,center.z-crater.z).length())
+ var interior:=Vector3(center.x,(level+cell.y)*.5,center.z)
+ check(game.lakes.depth_at(interior)>0,"The submerged portion of the construction cell is initially wet")
+ var stock:RefCounted=game.player_hud.inventory
+ var blocks:Node=game.structures.blocks
+ var item:=101+int(blocks.decode_block(1).material)
+ var quantity:=owned_amount()
+ var granted:Dictionary=stock.grant_items(PackedInt64Array([item,1]),stock.snapshot().revision)
+ check(granted.ok and game.construction_inventory.gameplay,"Paid construction is available in the saved world")
+ if not granted.ok or not game.construction_inventory.gameplay:return
+ var placed:bool=game.construction_inventory.place_block(blocks,stock,cell,1)
+ check(placed,"The normal construction transaction places a cube in lake water")
+ if not placed:return
+ check(await ready("crater_cube"),"Crater water settles around the placed cube")
+ check(game.lakes.depth_at(interior)==0,"The cube excludes water from its previously wet interior")
+ for direction:Vector3 in [Vector3.LEFT,Vector3.RIGHT,Vector3.FORWARD,Vector3.BACK]:
+  var hit:Dictionary=surface_query.call(center+direction*.51)
+  var outside:Dictionary=surface_query.call(center+direction*.55)
+  var contact:bool=hit.get("hit",false) and outside.get("hit",false)
+  if contact:
+   contact=absf(hit.point.y-outside.point.y)<=.02 and hit.point.y>cell.y and hit.point.y<cell.y+1
+  check(contact,"Published lake surface reaches within 1 cm of wall "+str(direction))
+  print("CRATER_OBJECT_CONTACT ",JSON.stringify({"wall":str(direction),"contact":contact,"near":str(hit.get("point")),"outside":str(outside.get("point"))}))
+ await capture("object_contact_above",center,level)
+ await capture("object_contact_underwater",center,level,true)
+ check(game.construction_inventory.place_block(blocks,stock,cell,0),"The construction transaction removes the cube")
+ check(await ready("crater_cube_removed"),"Water publishes after cube removal")
+ check(game.lakes.depth_at(interior)>0,"Water returns to the formerly solid part of the crater")
+ check(owned_amount()==quantity,"Placing and removing the cube conserves the saved lake quantity")
+
 func _initialize()->void:run.call_deferred()
 func owned_amount()->int:
  timing_diagnostic("quantity snapshot")
@@ -2187,6 +2249,7 @@ func run()->void:
     check(game.lakes.depth_at(p-Vector3.UP)>.2,"Lake water occupies the excavated space below its former floor")
     if "--water-edit-response" not in OS.get_cmdline_user_args():await capture("player_lake_after",p,lake.level)
     await capture("player_lake_underwater",p,lake.level,true)
+    if "--water-object-contact" in OS.get_cmdline_user_args():await check_crater_object(p,lake)
     if "--water-edit-response" in OS.get_cmdline_user_args():await mining_response_case(lake)
    if "--water-player-performance" in OS.get_cmdline_user_args():await measure_game(lake)
  if qualification:finish_route_capture(original)

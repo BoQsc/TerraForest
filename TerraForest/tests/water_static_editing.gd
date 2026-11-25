@@ -1,5 +1,21 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
+# The native sampler runs below. Holding its callback lets the regression prove
+# which decisions were made at input and completion without advancing any frame.
+class CommandTerrain extends Node3D:
+ signal message_changed(message:String)
+ var epoch:=0
+ var pending_edit:=false
+ var world_ready:=true
+ var changed_since_save:=false
+ var water_preparation_revision:=0
+ var submitted:RefCounted
+ var token:=0
+ func water_sampling_revision()->int:return 0
+ func request_lake_slice(builder:RefCounted,id:int)->bool:
+  submitted=builder;token=id
+  return true
+
 var failures:=0
 func check(ok:bool,label:String):
  print("PASS " if ok else "FAIL ",label)
@@ -27,9 +43,39 @@ func check_cold_pour():
   check(result==1 and cold.accept_patch(patch),"The requested local occupancy brick prepares independently")
  pour=cold.place_water(point,250000)
  check(pour.ok and cold.statistics().water_ml==250000 and cold.next_request().coordinate==background,"One quarter cubic metre commits with the unrelated ocean request still pending")
+func check_command_completion(core:RefCounted,cancel:bool)->void:
+ var scheduler=preload("res://addons/volumetric_water/lake_world.gd").new()
+ var terrain:=CommandTerrain.new()
+ scheduler.terrain=terrain
+ scheduler.water=ClassDB.instantiate("NativeRegionalWater")
+ scheduler.set_process(false)
+ scheduler._epoch=terrain.epoch
+ var point:=Vector3(1000.1,200.1,1000.1)
+ var initial:Dictionary=scheduler.dev_brush(point,false,2,250000)
+ check(initial.pending and terrain.submitted!=null and scheduler._busy,"Input dispatches the local occupancy worker before any frame advances")
+ if terrain.submitted!=null:
+  if cancel:scheduler.dev_brush(point,true,2)
+  var status:=0
+  for i in 200:
+   status=terrain.submitted.sample_terrain(core,2048,0,terrain.epoch)
+   if status!=0:break
+  check(status==1,"The command worker samples the pinned field")
+  scheduler._slice_ready(terrain.token,status,terrain.epoch,0)
+  var expected:=0 if cancel else 250000
+  check(scheduler._pending_dev.is_empty() and scheduler.water.total_water_ml()==expected,
+   "Cancelled pour stays cancelled when the earlier worker returns" if cancel else "The occupancy callback commits the exact pour before another frame")
+  scheduler._slice_ready(terrain.token,status,terrain.epoch,0)
+  check(scheduler.water.total_water_ml()==expected,"A repeated completion preserves the committed quantity")
+ scheduler.free()
+ terrain.free()
+
 func run():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
  check_cold_pour()
+ var command_field:RefCounted=ClassDB.instantiate("TerrainCore")
+ command_field.execute(preload("res://addons/volumetric_terrain/mesh_codec.gd").command(6,[42,19]))
+ check_command_completion(command_field,false)
+ check_command_completion(command_field,true)
  var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
  var data:=PackedByteArray();data.resize(32+catalog.size()+6160);data.fill(0)
  data.encode_u32(0,0x31575256);data.encode_u32(4,1);data.encode_u32(8,catalog.size());data.encode_u32(12,1);data.encode_u64(16,125000)

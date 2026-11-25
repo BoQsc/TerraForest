@@ -468,31 +468,7 @@ func _measured_step(delta:float)->void:
   _ocean_horizon.queue_free();_ocean_horizon=null
   _material.set_shader_parameter("coastal_join",false)
  if _epoch!=terrain.epoch:_epoch=terrain.epoch;_occupancy_failure="";_discard_builder()
- var command_regions:Array
- if not _pending_bucket.is_empty():
-  var p:=_pending_bucket
-  # Expiration is a precondition: never execute a stale click first and
-  # discover afterwards that its loading deadline already passed.
-  var result:Dictionary={"ok":false,"pending":false,"reason":"Water action timed out; bucket unchanged. Try again."} if Time.get_ticks_msec()>p.deadline else _transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
-  if result.has("occupancy_regions"):command_regions=result.occupancy_regions
-  if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
-   _pending_bucket={}
-   if result.pending:result.reason="Water action timed out; bucket unchanged. Try again."
-   if result.ok:terrain.changed_since_save=true;bucket_completed.emit(p.slot)
-   terrain.message_changed.emit(result.reason)
-   interaction_finished.emit(result.reason)
- if not _pending_dev.is_empty():
-  var p:=_pending_dev
-  var result:Dictionary={"ok":false,"pending":false,"reason":"Water placement timed out; no water placed. Try again."} if Time.get_ticks_msec()>p.deadline else water.place_water(p.point,p.amount)
-  if result.has("occupancy_regions"):command_regions=result.occupancy_regions
-  if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
-   _pending_dev={}
-   if result.pending:result.reason="Water placement timed out; no water placed. Try again."
-   if result.ok:
-    terrain.changed_since_save=true
-    _water_command_committed(p.started)
-   terrain.message_changed.emit(result.reason)
-   interaction_finished.emit(result.reason)
+ var command_regions:=_retry_pending_commands()
  var before:Dictionary=water.runtime_state()
  if _filling_id!=0 and not before.fill_active:
   var id:=_filling_id;_filling_id=0
@@ -545,16 +521,7 @@ func _measured_step(delta:float)->void:
      if not solids.ok or not _builder.set_structure_hulls(solids.hulls):_discard_builder()
      if _builder!=null:_builder_reused=water.reuse_building_occupancy(_builder)
      _hull_snapshot_us=Time.get_ticks_usec()-hull_started
-   if _builder!=null:
-    _token=_builder.get_instance_id()
-    if _builder_reused:
-     _cached_job={"builder":_builder,"token":_token,"epoch":terrain.epoch,"revision":_revision,"submitted_us":Time.get_ticks_usec()}
-     _cached_task=WorkerThreadPool.add_task(_builder.prepare_cached,false,"Water cached building occupancy")
-     if _cached_task>=0:_busy=true
-     else:
-      _cached_job={}
-      if terrain.request_lake_slice(_builder,_token):_busy=true
-    elif terrain.request_lake_slice(_builder,_token):_busy=true
+   if _builder!=null:_submit_occupancy_builder()
  last_process_work.occupancy=Time.get_ticks_usec()-occupancy_started
 
  var after:Dictionary=water.runtime_state()
@@ -837,6 +804,28 @@ func _edit_structure_survey(bounds:AABB)->Dictionary:
     solids[Vector3i(origin/4)]=result.hulls if result.ok else null
  _receiver_survey={"ticket":terrain.edit_ticket,"epoch":terrain.epoch,"revision":_structure_revision,"bounds":area,"solids":solids}
  return _receiver_survey
+
+# The native placement planner has already identified this intent's missing
+# bricks. Submit them at input, without waiting for the next water tick to
+# rediscover the same coordinates. A worker already in flight retains ownership.
+func _start_command_occupancy(coordinates:Array)->void:
+ if coordinates.is_empty() or _busy or _builder!=null or _edit_patch_task>=0 or not _prepared_slice.is_empty() or not _occupancy_failure.is_empty():return
+ if not terrain.world_ready or terrain.pending_edit or _epoch!=terrain.epoch:return
+ var revision:int=terrain.water_sampling_revision()
+ if revision<0:return
+ _prepare_terrain_batch(coordinates,revision)
+ if _builder!=null:_submit_occupancy_builder()
+
+func _submit_occupancy_builder()->void:
+ _token=_builder.get_instance_id()
+ if _builder_reused:
+  _cached_job={"builder":_builder,"token":_token,"epoch":terrain.epoch,"revision":_revision,"submitted_us":Time.get_ticks_usec()}
+  _cached_task=WorkerThreadPool.add_task(_builder.prepare_cached,false,"Water cached building occupancy")
+  if _cached_task>=0:_busy=true
+  else:
+   _cached_job={}
+   if terrain.request_lake_slice(_builder,_token):_busy=true
+ elif terrain.request_lake_slice(_builder,_token):_busy=true
 
 func _prepare_terrain_batch(coordinates:Array,sampling_revision:int) -> void:
  _discard_builder()
@@ -1164,13 +1153,44 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
  else:_occupancy_failure="Water occupancy preparation failed; edit remains pending until the world changes"
  if not _occupancy_failure.is_empty():terrain.message_changed.emit(_occupancy_failure)
  _discard_builder()
+ if status==1 and _occupancy_failure.is_empty() and not terrain.pending_edit and (not _pending_bucket.is_empty() or not _pending_dev.is_empty()):
+  _start_command_occupancy(_retry_pending_commands())
+
+func _retry_pending_commands()->Array:
+ var command_regions:Array
+ if not _pending_bucket.is_empty():
+  var p:=_pending_bucket
+  # Expiration is a precondition: never execute a stale click first and
+  # discover afterwards that its loading deadline already passed.
+  var result:Dictionary={"ok":false,"pending":false,"reason":"Water action timed out; bucket unchanged. Try again."} if Time.get_ticks_msec()>p.deadline else _transfer_bucket(p.from,p.to,p.pour,p.inventory,p.slot,p.revision)
+  if result.has("occupancy_regions"):command_regions=result.occupancy_regions
+  if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
+   _pending_bucket={}
+   if result.pending:result.reason="Water action timed out; bucket unchanged. Try again."
+   if result.ok:terrain.changed_since_save=true;bucket_completed.emit(p.slot)
+   terrain.message_changed.emit(result.reason)
+   interaction_finished.emit(result.reason)
+ if not _pending_dev.is_empty():
+  var p:=_pending_dev
+  var result:Dictionary={"ok":false,"pending":false,"reason":"Water placement timed out; no water placed. Try again."} if Time.get_ticks_msec()>p.deadline else water.place_water(p.point,p.amount)
+  if result.has("occupancy_regions"):command_regions=result.occupancy_regions
+  if result.ok or not result.pending or Time.get_ticks_msec()>p.deadline:
+   _pending_dev={}
+   if result.pending:result.reason="Water placement timed out; no water placed. Try again."
+   if result.ok:
+    terrain.changed_since_save=true
+    _water_command_committed(p.started)
+   terrain.message_changed.emit(result.reason)
+   interaction_finished.emit(result.reason)
+ return command_regions
+
 func _transfer_bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revision:int)->Dictionary:
  var started:=Time.get_ticks_usec()
  if _pending_bucket.is_empty():_interrupt_edit_work()
  var result:Dictionary=water.transfer_bucket(from,to,pour,inventory,slot,revision)
  if result.get("ok",false):
   _interrupt_equilibrium()
-  _water_command_committed(started)
+  _water_command_committed(_pending_bucket.get("started",started))
  _bucket_native_us=Time.get_ticks_usec()-started
  _max_bucket_native_us=maxi(_max_bucket_native_us,_bucket_native_us)
  return result
@@ -1178,8 +1198,11 @@ func bucket(from:Vector3,to:Vector3,pour:bool,inventory:RefCounted,slot:int,revi
  # A new intent supersedes queued edits, even if this new target is rejected.
  _pending_bucket.clear();_pending_dev.clear()
  if not terrain.world_ready or terrain.pending_edit:return {"ok":false,"reason":"Wait for the terrain edit to finish"}
+ var started:=Time.get_ticks_usec()
  var result:Dictionary=_transfer_bucket(from,to,pour,inventory,slot,revision)
- if result.pending:_pending_bucket={"from":from,"to":to,"pour":pour,"inventory":inventory,"slot":slot,"revision":revision,"deadline":Time.get_ticks_msec()+5000}
+ if result.pending:
+  _pending_bucket={"from":from,"to":to,"pour":pour,"inventory":inventory,"slot":slot,"revision":revision,"started":started,"deadline":Time.get_ticks_msec()+5000}
+  _start_command_occupancy(result.get("occupancy_regions",[]))
  if result.ok:terrain.changed_since_save=true
  return result
 func dev_brush(point:Vector3,remove:bool,radius:float=2.0,amount_ml:int=1000000) -> Dictionary:
@@ -1195,7 +1218,9 @@ func dev_brush(point:Vector3,remove:bool,radius:float=2.0,amount_ml:int=1000000)
    _water_command_committed(started)
   return {"ok":removed>0,"pending":false,"water_ml":removed,"reason":"Removed %.3f m³ of water"%(float(removed)/1000000.0) if removed>0 else "No water removed; the target is empty or water is preparing"}
  var result:Dictionary=water.place_water(point,amount_ml)
- if result.pending:_pending_dev={"point":point,"amount":amount_ml,"started":started,"deadline":Time.get_ticks_msec()+5000}
+ if result.pending:
+  _pending_dev={"point":point,"amount":amount_ml,"started":started,"deadline":Time.get_ticks_msec()+5000}
+  _start_command_occupancy(result.get("occupancy_regions",[]))
  if result.ok:
   terrain.changed_since_save=true
   _water_command_committed(started)

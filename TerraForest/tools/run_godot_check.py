@@ -51,6 +51,9 @@ def planned_report_bytes(command):
     if "--authoring-captures" in command and any(Path(str(value)).name == "water_player_world.gd" for value in command):
         # Two additional 1080p frames on top of the normal route allowance.
         return 16 * 2**20 + planned_report_bytes([arg for arg in command if arg != "--authoring-captures"])
+    if "--water-object-contact" in command and "--water-no-captures" in command and scripts == {"water_player_world.gd"}:
+        # The encoded object views share a 10 MiB ceiling and retain the original pixels.
+        return (12 if "--lossless-shore-views" in command else 28) * 2**20
     if ("--water-load-only" in command or "--water-no-captures" in command) and any(Path(str(value)).name == "water_player_world.gd" for value in command):
         return 8 * 2**20  # One loaded-world capture plus bounded logs/JSON.
     if "--water-contact-only" in command and any(Path(str(value)).name == "water_barrel_world.gd" for value in command):
@@ -62,7 +65,7 @@ def planned_report_bytes(command):
         return 40 * 2**20  # Captures plus an at-most-8-MiB terrain failure snapshot.
     scripts = [str(value) for value in command if str(value).endswith(".gd")]
     if "--headless" in command and len(scripts) == 1 and Path(scripts[0]).stem in {
-        "universal_item_drop", "physical_item_drops", "drop_key_standard"
+        "universal_item_drop", "physical_item_drops", "drop_key_standard", "water_static_editing"
     }:
         return 2 * 2**20  # Headless variants write only the check log and receipt.
     if len(scripts) == 1 and Path(scripts[0]).stem == "drop_key_standard":
