@@ -5,6 +5,7 @@ import datetime
 import hashlib
 import json
 import os
+import re
 import shutil
 from pathlib import Path
 
@@ -15,7 +16,18 @@ from run_godot_check import execute, verify_pack_native
 from resource_limits import load_budgets, require_free_space
 from maintain_performance_artifacts import capacity, maintain
 from development_storage import admit
-from maintain_performance_traces import maintain_traces
+from maintain_performance_traces import maintain_traces, maintain_observations
+
+
+def validate_source(source, worlds, in_place, human):
+    if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]{0,47}', source):
+        raise ValueError('Source must be a valid world slot')
+    if in_place and not human:
+        raise ValueError('--in-place requires --human; automated probes must use owned worlds')
+    if not in_place and not source.startswith('StartupBench_FPS_'):
+        raise ValueError('Use an owned FPS fixture, or --human --in-place for a player save')
+    if not (worlds / (source + '.trw')).is_file():
+        raise ValueError('Source save does not exist: ' + source)
 
 
 def main():
@@ -23,6 +35,7 @@ def main():
     parser.add_argument('--source', default='StartupBench_FPS_20261109T073252')
     parser.add_argument('--label', default='arrival')
     parser.add_argument('--human', action='store_true', help='Five minutes of normal human play; Ctrl+Shift+F11 finishes early')
+    parser.add_argument('--in-place', action='store_true', help='Human play in the existing source save, with normal saving; no clone or world retirement')
     parser.add_argument('--combat-probe', action='store_true', help='Diagnostic close-combat hits and corpse creation in the owned world')
     parser.add_argument('--short', action='store_true')
     parser.add_argument('--uncapped', action='store_true')
@@ -88,10 +101,14 @@ def main():
         parser.error('--quiet-render-stages requires --render-stages and excludes --verbose')
     if args.render_full_detail and not args.render_partition:
         parser.error('--render-full-detail requires --render-partition')
-    if not args.source.startswith('StartupBench_FPS_') or not args.label.isidentifier():
-        parser.error('Use an owned FPS fixture and an identifier label')
+    if not args.label.isidentifier():
+        parser.error('Use an identifier label')
     config, _ = parse_args([])
     worlds = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest/worlds'
+    try:
+        validate_source(args.source, worlds, args.in_place, args.human)
+    except ValueError as error:
+        parser.error(str(error))
     clone_bytes = 0
     for suffix in ('.trw', '.trw.regions', '.trw.models', '.trw.water', '.trw.terrain',
                    '.trw.baselines', '.preview', '.generation.json', '.presentation.json'):
@@ -100,6 +117,8 @@ def main():
             clone_bytes += sum(p.stat().st_size for p in source.rglob('*') if p.is_file())
         elif source.is_file():
             clone_bytes += source.stat().st_size
+    if args.in_place:
+        clone_bytes = 0
     # Preflight before creating a save clone or report folder. Reserve expected
     # capture space as well as the existing hard free-space floor; never lower it.
     report_bytes = (256 if not args.without_trace else 32) * 2**20
@@ -108,7 +127,8 @@ def main():
     native = verify_pack_native() if args.executable else None
     retained_capacity = capacity(ROOT)
     maintain_traces(ROOT, apply=True)
-    admit(ROOT, report_bytes=report_bytes)
+    maintain_observations(ROOT, apply=True)
+    admit(ROOT, report_bytes=report_bytes, world_bytes=0 if args.in_place else 128*2**20)
     limits = load_budgets()
     storage = dict(source_clone_bytes=clone_bytes, planned_capture_bytes=report_bytes,
                    minimum_free_bytes=limits['minimum_free_bytes'],
@@ -122,18 +142,20 @@ def main():
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder = ROOT / 'reports/performance_changes' / (stamp + '_' + args.label)
     folder.mkdir(parents=True)
-    slot = 'StartupBench_FPS_' + stamp[:-1]
-    copied = clone_once(worlds, args.source, slot)
-    (worlds / (slot + '.diagnostic.json')).write_text(json.dumps({
-        'owner': 'check_frame_trace_world', 'source': args.source,
-        'report': str(folder), 'purpose': 'Isolated performance capture, explicit launch only'
-    }, indent=2), encoding='utf-8')
-    for suffix in ('.preview', '.generation.json', '.presentation.json'):
-        source, target = worlds / (args.source + suffix), worlds / (slot + suffix)
-        if source.is_dir():
-            shutil.copytree(source, target)
-        elif source.is_file():
-            shutil.copy2(source, target)
+    slot = args.source if args.in_place else 'StartupBench_FPS_' + stamp[:-1]
+    copied = {'created': False, 'source_slot': slot, 'mode': 'human_in_place'}
+    if not args.in_place:
+        copied = clone_once(worlds, args.source, slot)
+        (worlds / (slot + '.diagnostic.json')).write_text(json.dumps({
+            'owner': 'check_frame_trace_world', 'source': args.source,
+            'report': str(folder), 'purpose': 'Isolated performance capture, explicit launch only'
+        }, indent=2), encoding='utf-8')
+        for suffix in ('.preview', '.generation.json', '.presentation.json'):
+            source, target = worlds / (args.source + suffix), worlds / (slot + suffix)
+            if source.is_dir():
+                shutil.copytree(source, target)
+            elif source.is_file():
+                shutil.copy2(source, target)
     runtime = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')] if args.executable else []
     command = [str(ROOT / 'TerraForest.exe' if args.executable else config.godot), *runtime,
                '--path', str(ROOT / 'dist' if args.executable else ROOT), '--windowed', '--position', '-2400,-1600',
@@ -146,6 +168,8 @@ def main():
         command += ['--trace-normal-window']
     if args.human:
         command += ['--trace-human']
+    if args.in_place:
+        command += ['--trace-human-in-place']
     if args.combat_probe:
         command += ['--trace-combat-probe']
     if args.short:
@@ -221,6 +245,8 @@ def main():
         command += ['--frame-trace', '--frame-trace-dir=' + str(folder / 'traces')]
     record = dict(command=command, clone=copied, storage_preflight=storage,
                   retention_capacity=retained_capacity, **revision_metadata())
+    record['source_save_sha256_before'] = hashlib.sha256((worlds / (args.source + '.trw')).read_bytes()).hexdigest()
+    record['save_policy'] = 'Normal player save; never owned or retired by this capture' if args.in_place else 'Owned clone'
     record['diagnostic_sha256'] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                   for p in [ROOT/'tests/frame_trace_world.gd', ROOT/'tests/combat_cadence_probe.gd', ROOT/'tests/render_inventory.gd',
                                             ROOT/'tests/render_partition_probe.gd', ROOT/'tests/render_occlusion_probe.gd', ROOT/'tests/cover_outdoor_probe.gd', ROOT/'tests/destruction_load_probe.gd',
@@ -281,9 +307,10 @@ def main():
     # Outside gameplay: keep two recent worlds ready to open; older owned states
     # are reconstructed/hash-verified in the shared archive before retirement.
     try:
-        retention = maintain(ROOT, worlds, apply=True)
+        retention = {} if args.in_place else maintain(ROOT, worlds, apply=True)
         record['retention'] = {key:retention[key] for key in ('receipt','completed','errors','new_archive_bytes') if key in retention}
         record['trace_retention'] = maintain_traces(ROOT, apply=True)
+        record['observation_retention'] = maintain_observations(ROOT, apply=True)
     except (OSError, ValueError) as error:
         record['retention'] = {'errors': [str(error)]}
     manifest.write_text(json.dumps(record, indent=2), encoding='utf-8')

@@ -105,6 +105,10 @@ func frame()->void:
 		sample.fps_cap=Engine.max_fps;sample.vsync=DisplayServer.window_get_vsync_mode()
 		sample.window_focused=DisplayServer.window_is_focused()
 		sample.window_mode=DisplayServer.window_get_mode()
+		if human_active and is_instance_valid(game):
+			sample.loading=game.loading_active;sample.menu=game.session_menu.visible_ui();sample.inventory=game.player_hud.inventory_open
+			sample.entry=game.player_view.entry.blocks_actions();sample.driving=game.world_vehicle.driving
+			sample.position=[game.player.position.x,game.player.position.y,game.player.position.z]
 		if collision_piece_triangles>0:
 			sample.physics_monitor_ms=Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000.0
 		samples.append(sample)
@@ -114,7 +118,12 @@ func source_sha256(path:String)->String:
 	# Compiled exports may not expose source; an empty-text hash is not identity.
 	return code.sha256_text() if not code.is_empty() else ""
 func run()->void:
-	if not slot.begins_with("StartupBench_FPS_") or not slot.is_valid_identifier() or output.is_empty():quit(2);return
+	var in_place:bool="--trace-human" in OS.get_cmdline_user_args() and "--trace-human-in-place" in OS.get_cmdline_user_args()
+	if not preload("res://demo/world_launch.gd").valid_slot(slot) or output.is_empty():quit(2);return
+	if not slot.begins_with("StartupBench_FPS_") and not in_place:quit(2);return
+	if not FileAccess.file_exists("user://worlds/"+slot+".trw"):
+		push_error("Capture source save is missing: "+ProjectSettings.globalize_path("user://worlds/"+slot+".trw"));quit(2);return
+	print("FRAME_TRACE_WORLD source=",ProjectSettings.globalize_path("user://worlds/"+slot+".trw"))
 	var original_occlusion:bool=root.use_occlusion_culling
 	DirAccess.make_dir_recursive_absolute(output)
 	# The recorder-off control must retain the same root GPU timing instrumentation.

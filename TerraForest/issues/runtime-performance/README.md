@@ -1,5 +1,59 @@
 # Runtime performance
 
+## Human Hidden Meadow capture — 2026-11-25
+
+Status: baseline captured and analyzed; systemic fixes and 60 FPS headroom remain
+open. The current checkout (`36b626ce` plus recorded local changes) opened the
+existing `Hidden_Meadow` save, with normal saving and no clone/export. Godot 4.7.2,
+Forward+, RTX 4050 Laptop, 1920×1080, VSync and a 60 FPS cap. The human chose the
+route and actions; no camera/input automation ran. [Run identity and logs](../../reports/performance_changes/20261125T201749487221Z_human_latest/run.json)
+
+The full cadence contains 13,122 focused gameplay intervals (227.94 seconds),
+excluding loading, menus, inventory, entry and focus-transition intervals.
+Median was 16.737 ms, p95 23.751 ms, p99 32.672 ms and maximum 126.027 ms.
+1,666 intervals exceeded 20 ms, 124 exceeded 33.33 ms, 16 exceeded 50 ms and two
+exceeded 100 ms. These are frame-post-draw intervals with recorder overhead, not
+physical display measurements. A capped run does not establish headroom.
+[Full analysis, clusters and route positions](../../reports/performance_changes/20261125T201749487221Z_human_latest/human_analysis.json)
+
+The eight rotating detailed windows retain 31 of the 124 slow focused intervals.
+The worst retained frame (14470) took 58.592 ms: 43.397 ms before the process
+signal, including 10.301 ms of physics callbacks and 32.583 ms in the subsequent
+engine interval. The latter includes stepping, queues and synchronization; it is
+not an isolated Jolt measurement and overlaps the before-process interval. Its
+thread-CPU counter increased by 31.25 ms, at Windows' coarse counter resolution.
+Zombie update was 8.757 ms, including 7.696 ms labelled residency (corpse update,
+readiness checks and actor state updates). Terrain receiving/staging also occurred.
+The GPU timer reported 5.878 ms. Another 47.679 ms interval had a 29.419 ms physics
+tail and no queued terrain work. These observations prioritize CPU physics and
+actor-lifecycle investigation; they do not prove one causal subsystem.
+[Detailed spike analysis](../../reports/performance_changes/20261125T201749487221Z_human_latest/spike_analysis.json)
+
+The earliest 126.027 and 102.523 ms hitches were overwritten by trace rotation;
+their full cadence and positions survive, but detailed causes are unknown. Later
+CPU draw intervals also reached about 27 ms despite low reported GPU times. GPU
+timers can lag, so do not equate those intervals directly with GPU execution.
+The retained slow-frame recorder callback costs about 0.3–0.6 ms, excluding GPU
+query costs and worker contention. A recorder-off equivalent route is still needed.
+
+The process exited normally and the engine logged a verified world save, but the
+driver's finish handshake was not reached (`shutdown_saved=false`). The harness
+therefore correctly remains failed, not a clean regression pass. It also recorded
+one `!is_inside_tree()` transform error in `zombie_world.gd:563`, reached through
+projectile hit testing. The log lacks a matching per-frame timestamp, so correlation
+with any hitch is unknown. Peak sampled private commit was 4.57 GiB (warning,
+below the existing hard limit). [Console log](../../reports/performance_changes/20261125T201749487221Z_human_latest/console.log)
+
+Next: retain the worst and manually marked windows independently of rotation;
+reproduce the recorded hotspots with the same world/settings; subdivide the
+physics-tail and actor residency costs (readiness, corpses, activation/retirement)
+before choosing scheduling/caching changes. Investigate detached-actor projectile
+queries as a separate correctness issue. Add normal-exit capture acknowledgement.
+Record a replay from a retained initial world with tick-indexed actions and state
+checks only after selecting the useful human route. Existing position samples are
+breadcrumbs, not an input replay. Closure requires repeated equivalent runs with
+improved p95/p99/worst clusters, preserved gameplay and an uncapped headroom check.
+
 ## Exploring Cedar Vale at 60 FPS
 
 The extended grounded route uses two 30-second laps with ordinary player

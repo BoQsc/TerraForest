@@ -1,3 +1,25 @@
+## Human performance capture on the latest save
+
+The existing five-minute human recorder now accepts an explicit existing player
+save through `--human --in-place --source SLOT`. It records full frame cadence,
+focus/menu/loading context and player positions, plus rotating subsystem spike
+windows, using the current checkout without a world copy or export. Normal player
+saving applies; capture retention cannot retire that save. See the
+[human capture procedure](HUMAN_FPS_PLAYTEST.md).
+
+The first Hidden Meadow capture retained 227.94 seconds of focused gameplay:
+p95 23.751 ms, p99 32.672 ms, maximum 126.027 ms, and 124 intervals over 33.33 ms.
+Retained detailed spikes implicate CPU work around physics and actor residency;
+the earlier worst windows were overwritten. The ordinary exit saved the world,
+but the capture completion handshake was not reached and a projectile/retired
+actor transform error was logged. This is useful evidence, not a passing gate.
+[Results, limits and next investigations](../issues/runtime-performance/README.md#human-hidden-meadow-capture--2026-11-25)
+
+Systemic performance fixes remain open pending reproducible slow workloads.
+Input/action replay is deferred until a useful route is selected: retain the initial world and settings,
+record tick-indexed actions, then verify the replay's resulting state before using
+it to compare performance. Position samples alone are not a gameplay replay.
+
 ## Local water edit qualification
 
 The final dry 64 m candidate published the correct floor on draw three in all three normal packaged runs, 44.79–63.19 ms after input. One earlier build demonstrated the full cut on draw two, including all 36 visible meshes and colliders. The final profile reduced time to the last worker payload from 63.08 ms to 24.72 ms. Seven owners still awaited staging at the second pre-draw callback. The 255 field checks and the regression for the vegetation support rollback passed. Milestone 5 stays open for repeatable two-frame publication and frame pacing. [Final runs and stage timings](WORLD_EDIT_EXPERIMENTS.md#dry-cut-after-the-support-fix) · [Passing earlier dry run](../reports/checks/20261125T182711488299Z/console.log)

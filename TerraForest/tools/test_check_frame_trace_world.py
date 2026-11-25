@@ -12,6 +12,21 @@ from resource_limits import load_budgets
 
 
 class CapturePreflightTest(unittest.TestCase):
+    def test_player_save_requires_explicit_human_in_place(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            worlds = Path(temporary)
+            save = worlds / 'Hidden_Meadow.trw'
+            save.write_bytes(b'player save')
+            launcher.validate_source('Hidden_Meadow', worlds, True, True)
+            for slot, in_place, human in [('Hidden_Meadow', False, True),
+                                          ('Hidden_Meadow', True, False),
+                                          ('../Hidden_Meadow', True, True),
+                                          ('Missing', True, True)]:
+                with self.subTest(slot=slot, in_place=in_place, human=human):
+                    with self.assertRaises(ValueError):
+                        launcher.validate_source(slot, worlds, in_place, human)
+            self.assertEqual(save.read_bytes(), b'player save')
+
     def test_failed_preflight_creates_no_world_or_report(self):
         for failure in ('space', 'native_pairing'):
             with self.subTest(failure=failure), tempfile.TemporaryDirectory() as temporary:
