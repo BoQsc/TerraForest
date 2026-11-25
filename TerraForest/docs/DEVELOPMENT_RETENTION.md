@@ -97,6 +97,17 @@ ends, leaving two recent worlds ready to open. Startup benchmarks retain two
 recently used frozen builds; archival occurs before a new freeze and after a
 completed batch. No compression, scanning or retention runs inside timed gameplay.
 
+The rendered `physics_residency_world` check reuses an explicitly selected player
+save read-only and allocates no export or world copy. The shared runner admits
+16 MiB for its bounded cadence JSON and logs. `maintain_physics_captures.py`
+archives only `physics_residency.json` from completed matching driver/output
+receipts, verifies reconstruction before retiring loose bytes, and retains two
+ordinary ready runs plus `.retain`/`RETAIN_READY` pins. Each cold run keeps
+`physics.archive.json`, logs and small analysis summaries. The analysis tool can
+read and hash-check archived cadence directly. Maintenance runs before launch
+and after process exit, never during the route. The audited headless zombie
+regressions declare 2 MiB of logs/JSON; their source import cache is reused.
+
 New capture/freeze admission stops when performance reports would exceed 8 GiB
 (including a 256 MiB next-capture allowance), or the archive reaches 10 GiB.
 These are development-output budgets; they do not alter any approved gameplay,

@@ -41,6 +41,13 @@ BOUNDED_CONTRACT_REPORTS = {
 
 def planned_report_bytes(command):
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
+    if "--headless" in command and len(scripts) == 1 and scripts <= {
+        "zombie_residency_lifecycle.gd", "zombie_rest_support.gd", "zombie_ragdoll_reactivation.gd",
+        "zombie_geometry_cache.gd", "corpse_restore_cost.gd", "zombie_corpse_walk.gd"
+    }:
+        return 2 * 2**20  # Lifecycle assertions and bounded timing rows only.
+    if scripts == {"physics_residency_world.gd"}:
+        return 16 * 2**20  # Bounded cadence JSON, no captures, worlds or exports.
     if (scripts == {"manual_save_ordering.gd"} or
             (scripts == {"terrain_placement_preview.gd"} and any(flag in command for flag in ("--measure-hand-edits", "--no-preview-captures")))):
         return 2 * 2**20  # Log and receipt only; the hand-edit route exits before captures.
@@ -249,6 +256,9 @@ def main(argv=None):
     if args.test in {"water_barrel_world", "water_player_world"}:
         from maintain_water_captures import maintain
         maintain(apply=True)
+    if args.test == "physics_residency_world":
+        from maintain_physics_captures import maintain
+        maintain(apply=True)
     folder.mkdir(parents=True)
     manifest = folder / "run.json"
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
@@ -258,6 +268,8 @@ def main(argv=None):
     details["cache_retained"] = retention.get("retained", retention.get("retained_bytes", 0) > 0) if retention.get("managed") or retention.get("error") else None
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
     if args.test in {"water_barrel_world", "water_player_world"}:
+        maintain(apply=True)
+    if args.test == "physics_residency_world":
         maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1

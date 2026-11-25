@@ -15,10 +15,20 @@ but the capture completion handshake was not reached and a projectile/retired
 actor transform error was logged. This is useful evidence, not a passing gate.
 [Results, limits and next investigations](../issues/runtime-performance/README.md#human-hidden-meadow-capture--2026-11-25)
 
-Systemic performance fixes remain open pending reproducible slow workloads.
-Input/action replay is deferred until a useful route is selected: retain the initial world and settings,
-record tick-indexed actions, then verify the replay's resulting state before using
-it to compare performance. Position samples alone are not a gameplay replay.
+The [physics/residency follow-up](../issues/runtime-performance/physics-residency-2026-11-26.md)
+implements staged saved-corpse admission, explicit owned-body suspension and live
+native-body query guards (`271e577f`). The matched two-hotspot route reduced frame
+p99 from 27.204 to 22.272 ms and intervals over 33.333 ms from 29 to 1; geometry,
+support, reactivation and lifecycle regressions pass. Broader draw/physics
+variability, simultaneous combat deaths and uncapped headroom remain unqualified.
+Return with retained worst windows and recorder-off/uncapped equivalent workloads
+before closing overall performance. The repeatable driver checks save hashes,
+endpoints and populations; it is not deterministic full-world replay. Existing
+AI randomness uses transient scene IDs, and a repetition produced different
+population outcomes that the analyzer rejected. Arbitrary human input replay
+still needs retained initial state/settings, tick-indexed actions, stable actor
+random streams and replay state checks. Normal-exit capture acknowledgement also
+remains open; position breadcrumbs alone cannot reconstruct player actions.
 
 ## Local water edit qualification
 

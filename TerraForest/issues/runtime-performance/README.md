@@ -1,9 +1,23 @@
 # Runtime performance
 
+## Physics and corpse residency — 2026-11-26
+
+The [systemic residency fix and repeatable route](physics-residency-2026-11-26.md)
+separate deferred ragdoll construction from engine stepping, remove repeated
+scene searches through explicit physics ownership, and reject removed native
+bodies before spatial queries. Commit `271e577f` preserves population caps,
+collision geometry and live combat behavior. The matched saved-world comparison
+reduced frame p99 from 27.204 to 22.272 ms and intervals over 33.333 ms from 29
+to 1. Lifecycle, geometry, support and reactivation regressions pass. The route
+retains source hashes, inputs through the driver receipt, endpoints, population
+checks and bounded timing evidence. See the report for repetitions and limits.
+Global 60 FPS headroom, arbitrary human input replay and the capture exit
+handshake remain open.
+
 ## Human Hidden Meadow capture — 2026-11-25
 
-Status: baseline captured and analyzed; systemic fixes and 60 FPS headroom remain
-open. The current checkout (`36b626ce` plus recorded local changes) opened the
+Historical baseline captured and analyzed; the residency follow-up is above and
+60 FPS headroom remains open. That checkout (`36b626ce` plus recorded local changes) opened the
 existing `Hidden_Meadow` save, with normal saving and no clone/export. Godot 4.7.2,
 Forward+, RTX 4050 Laptop, 1920×1080, VSync and a 60 FPS cap. The human chose the
 route and actions; no camera/input automation ran. [Run identity and logs](../../reports/performance_changes/20261125T201749487221Z_human_latest/run.json)
@@ -44,11 +58,9 @@ projectile hit testing. The log lacks a matching per-frame timestamp, so correla
 with any hitch is unknown. Peak sampled private commit was 4.57 GiB (warning,
 below the existing hard limit). [Console log](../../reports/performance_changes/20261125T201749487221Z_human_latest/console.log)
 
-Next: retain the worst and manually marked windows independently of rotation;
-reproduce the recorded hotspots with the same world/settings; subdivide the
-physics-tail and actor residency costs (readiness, corpses, activation/retirement)
-before choosing scheduling/caching changes. Investigate detached-actor projectile
-queries as a separate correctness issue. Add normal-exit capture acknowledgement.
+Remaining: retain the worst and manually marked windows independently of rotation
+and add normal-exit capture acknowledgement. Hotspot reproduction, physics-tail
+subdivision and detached-actor queries are covered by the residency follow-up.
 Record a replay from a retained initial world with tick-indexed actions and state
 checks only after selecting the useful human route. Existing position samples are
 breadcrumbs, not an input replay. Closure requires repeated equivalent runs with
