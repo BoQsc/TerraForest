@@ -1226,6 +1226,16 @@ struct LocalCut {
 // For four resident, authored sample columns a mixed sign is necessary for
 // a cell to own a surface vertex. Cull only provably uniform cells. The last
 // row of each slab reads another page and stays on the ordinary sampler.
+static u16 column_signs(const World&w,int page,int col){
+ auto &index=w.contact_signs[page];
+ const u32 bit=1u<<(col&31);
+ if(!(index.valid[col>>5]&bit)){
+  u16 signs=0;const i16 *values=w.pages[page].d+col;
+  for(int y=0;y<16;++y)signs|=u16(values[256*y]<0)<<y;
+  index.columns[col]=signs;index.valid[col>>5]|=bit;
+ }
+ return index.columns[col];
+}
 static void mask_uniform_cells(const World&w,int gx,int gz,u32 pages,u32 (&rows)[8]){
  if(w.contact_signs.n!=w.pages.n){w.contact_signs.resize(w.pages.n);if(tr_oom)return;}
  while(pages){
@@ -1240,20 +1250,18 @@ static void mask_uniform_cells(const World&w,int gx,int gz,u32 pages,u32 (&rows)
    if(x<0||z<0||x>WORLD||z>WORLD){all=0;any=0xffff;break;}
    int page=w.pages_by_key.get(page_key(x>>4,py,z>>4));
    if(page<0){all=0;any=0xffff;break;}
-   int col=(x&15)+16*(z&15);auto&index=w.contact_signs[page];
-   u32 bit=1u<<(col&31);
-   if(!(index.valid[col>>5]&bit)){
-    u16 signs=0;const i16*values=w.pages[page].d+col;
-    for(int y=0;y<16;y++)signs|=u16(values[256*y]<0)<<y;
-    index.columns[col]=signs;index.valid[col>>5]|=bit;
-   }
-   u32 signs=index.columns[col];all&=signs;any|=signs;
+   u32 signs=column_signs(w,page,(x&15)+16*(z&15));all&=signs;any|=signs;
   }
   const u32 crossing=(any|(any>>1))&~(all&(all>>1));
   rows[py/2]&=~((candidates&~crossing)<<shift);
  }
 }
 static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoch,int y_begin=0,int y_end=WORLD_Y,const float*cached_heights=nullptr,const LocalCut*cut=nullptr,const int*dirty_xz=nullptr){
+ // Repeated wall/floor stencils have exactly one connected component. Its
+ // local position and normal depend only on the eight densities and refine
+ // flag. Never reuse world positions, material ids, or face ownership.
+ struct CellShape {float samples[8];terraforest::DensitySurfaceVertex vertex;unsigned component=0;bool refine;};
+ CellShape shapes[64];
  // The repair region is expressed in world cells. Sample its positive halo
  // once and preserve the full owner stride for caller-supplied height tables.
  const int x0=dirty_xz?imx(-1,dirty_xz[0]-ox):-1;
@@ -1295,7 +1303,16 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
    mark_y(ybits,bottom,top);low=mn(low,float(bottom));high=mx(high,float(top));
   }
   bool side=gx<1||gz<1||gx>=WORLD-1||gz>=WORLD-1;if(side){low=0;mark_y(ybits,0,fl(high)+1);}
-  for(int j=0;j<w.caves.n;j++){const Cave&c=w.caves[j];if(gx+1<mn(c.a.x,c.b.x)-c.r-2||gx>mx(c.a.x,c.b.x)+c.r+2||gz+1<mn(c.a.z,c.b.z)-c.r-2||gz>mx(c.a.z,c.b.z)+c.r+2)continue;mark_y(ybits,fl(mn(c.a.y,c.b.y)-c.r-2),fl(mx(c.a.y,c.b.y)+c.r+2)+1);low=mn(low,mn(c.a.y,c.b.y)-c.r-2);high=mx(high,mx(c.a.y,c.b.y)+c.r+2);}
+  const bool indexed=w.indexed_caves==w.caves.n&&gx>=0&&gz>=0&&gx<WORLD&&gz<WORLD;
+  u64 caves=indexed?w.cave_columns[(gx>>6)+32*(gz>>6)]:0;
+  for(int j=0;indexed?caves!=0:j<w.caves.n;++j){
+   if(indexed){j=__builtin_ctzll(caves);caves&=caves-1;}
+   const Cave &c=w.caves[j];
+   if(gx+1<mn(c.a.x,c.b.x)-c.r-2||gx>mx(c.a.x,c.b.x)+c.r+2||
+      gz+1<mn(c.a.z,c.b.z)-c.r-2||gz>mx(c.a.z,c.b.z)+c.r+2)continue;
+   mark_y(ybits,fl(mn(c.a.y,c.b.y)-c.r-2),fl(mx(c.a.y,c.b.y)+c.r+2)+1);
+   low=mn(low,mn(c.a.y,c.b.y)-c.r-2);high=mx(high,mx(c.a.y,c.b.y)+c.r+2);
+  }
   u32 mask=0;for(int zz=0;zz<2;zz++)for(int xx=0;xx<2;xx++){int px=(gx+xx)>>4,pz=(gz+zz)>>4;if(px>=0&&px<NP&&pz>=0&&pz<NP)mask|=w.edit_columns[px+NP*pz];}
   if(mask)for(int py=0;py<=16;py++)if(mask&(1u<<py)){mark_y(ybits,py*16-1,py*16+17);low=mn(low,float(py*16-1));high=mx(high,float(py*16+16));}
    if(mask&&!cut&&w.contact_snapshot&&w.contact_revision==w.revision){
@@ -1305,30 +1322,46 @@ static bool extract_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epo
    int y0=imx(imx(0,y_begin-1),fl(low)),y1=imn(y_end-1,fl(high)+1);
   // Page indices for the four vertical sample columns are shared across all Y cells.
   int cached_py=-999,page_indices[4]={-1,-1,-1,-1};
-  for(int y=y0;y<=y1;y++){
-   if(!(ybits[y>>5]&(1u<<(y&31))))continue;
-   float d[8];u8 mats[8];u32 signs=0;
-   for(int k=0;k<8;k++){
-    int xx=gx+(k&1),yy=y+((k>>1)&1),zz=gz+((k>>2)&1);int hc=(k&1)+2*((k>>2)&1);mats[k]=0;
-    if(xx<0||xx>WORLD||zz<0||zz>WORLD||yy>WORLD_Y){d[k]=SDF_BAND;continue;}
-    int cache_at=(x-x0+(k&1))+width*(yy-sample_y0)+((z+((k>>2)&1))&1)*plane_size;
-    CachedSample& cached=cache[cache_at];
-    if(cached.valid){d[k]=float(cached.value)/SDF_SCALE;mats[k]=cached.material;if(d[k]<0)signs|=1u<<k;continue;}
-    int py=yy>>4;if(py!=cached_py){for(int c=0;c<4;c++){int sx=gx+(c&1),sz=gz+((c>>1)&1);page_indices[c]=sx<0||sz<0||sx>WORLD||sz>WORLD?-1:w.pages_by_key.get(page_key(sx>>4,py,sz>>4));}cached_py=py;}
-    int pi=page_indices[hc];if(pi>=0){const Page*p=w.resident_page(pi);if(!p)return false;int at=(xx&15)+16*((zz&15)+16*(yy&15));d[k]=float(p->d[at])/SDF_SCALE;mats[k]=p->mat[at];}else d[k]=float(quant(w.base({float(xx),float(yy),float(zz)},h[hc])))/SDF_SCALE;
-    if(cut)d[k]=cut->density(xx,yy,zz,d[k]);
-    cached.value=quant(d[k]);cached.material=mats[k];cached.valid=1;
-    if(d[k]<0)signs|=1u<<k;
+  for(int slab=y0>>5;y0<=y1&&slab<=(y1>>5);++slab){
+   u32 candidates=ybits[slab];
+   if(slab==(y0>>5))candidates&=~0u<<(y0&31);
+   if(slab==(y1>>5))candidates&=~0u>>(31-(y1&31));
+   while(candidates){
+    int y=slab*32+__builtin_ctz(candidates);candidates&=candidates-1;
+    float d[8];u8 mats[8];u32 signs=0;
+    for(int k=0;k<8;k++){
+     int xx=gx+(k&1),yy=y+((k>>1)&1),zz=gz+((k>>2)&1);int hc=(k&1)+2*((k>>2)&1);mats[k]=0;
+     if(xx<0||xx>WORLD||zz<0||zz>WORLD||yy>WORLD_Y){d[k]=SDF_BAND;continue;}
+     int cache_at=(x-x0+(k&1))+width*(yy-sample_y0)+((z+((k>>2)&1))&1)*plane_size;
+     CachedSample& cached=cache[cache_at];
+     if(cached.valid){d[k]=float(cached.value)/SDF_SCALE;mats[k]=cached.material;if(d[k]<0)signs|=1u<<k;continue;}
+     int py=yy>>4;if(py!=cached_py){for(int c=0;c<4;c++){int sx=gx+(c&1),sz=gz+((c>>1)&1);page_indices[c]=sx<0||sz<0||sx>WORLD||sz>WORLD?-1:w.pages_by_key.get(page_key(sx>>4,py,sz>>4));}cached_py=py;}
+     int pi=page_indices[hc];if(pi>=0){const Page*p=w.resident_page(pi);if(!p)return false;int at=(xx&15)+16*((zz&15)+16*(yy&15));d[k]=float(p->d[at])/SDF_SCALE;mats[k]=p->mat[at];}else d[k]=float(quant(w.base({float(xx),float(yy),float(zz)},h[hc])))/SDF_SCALE;
+     if(cut)d[k]=cut->density(xx,yy,zz,d[k]);
+     cached.value=quant(d[k]);cached.material=mats[k];cached.valid=1;
+     if(d[k]<0)signs|=1u<<k;
+    }
+    if(signs==0||signs==255)continue;
+    bool refine=false;if(w.surface_style==1)for(int k=0;k<8;k++)if(mats[k])refine=true;
+    auto emit=[&](const terraforest::DensitySurfaceVertex &geometry,unsigned component){
+    V3 p=geometry.position;
+    Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=geometry.normal;v.cx=gx;v.cy=y;v.cz=gz;v.mask=component;v.geometry_revision=u32(w.revision);
+    // Material classification does not affect the field or topology.
+    float best=1e30f;for(int k=0;k<8;k++)if(mats[k]&&mats[k]<5&&ab(d[k])<best){best=ab(d[k]);v.material=float(mats[k]);} // Natural ore IDs are shaded separately from edit materials.
+    m.v.push(v);
+    };
+    if(signs==0x33||signs==0xcc||signs==0x55||signs==0xaa||signs==0x0f||signs==0xf0){
+     u32 hash=u32(i32(d[0]*SDF_SCALE))*31u+u32(i32(d[7]*SDF_SCALE))*17u+signs;
+     auto &saved=shapes[(hash^(hash>>6))&63];
+     bool same=saved.component&&saved.refine==refine;
+     for(int j=0;same&&j<8;++j)same=saved.samples[j]==d[j];
+     if(same)emit(saved.vertex,saved.component);
+     else terraforest::extract_density_components(d,signs,refine,[&](const terraforest::DensitySurfaceVertex &v,unsigned component){
+      copy_bytes(saved.samples,d,sizeof(saved.samples));saved.vertex=v;saved.component=component;saved.refine=refine;
+      emit(v,component);
+     });
+    }else terraforest::extract_density_components(d,signs,refine,emit);
    }
-   if(signs==0||signs==255)continue;
-   bool refine=false;if(w.surface_style==1)for(int k=0;k<8;k++)if(mats[k])refine=true;
-   terraforest::extract_density_components(d,signs,refine,[&](const terraforest::DensitySurfaceVertex &geometry,unsigned component){
-   V3 p=geometry.position;
-   Vertex v;v.p={gx+p.x,y+p.y,gz+p.z};v.n=geometry.normal;v.cx=gx;v.cy=y;v.cz=gz;v.mask=component;v.geometry_revision=u32(w.revision);
-   // Material classification does not affect the field or topology.
-   float best=1e30f;for(int k=0;k<8;k++)if(mats[k]&&mats[k]<5&&ab(d[k])<best){best=ab(d[k]);v.material=float(mats[k]);} // Natural ore IDs are shaded separately from edit materials.
-   m.v.push(v);
-   });
   }
  }}
  cache.release();
@@ -1425,7 +1458,7 @@ bool measure_material_surface(const World&w,int x,int z,int size,int y_begin,int
 
 #include "geometry_regions.hpp"
 
-bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch,bool region_cache,bool retain_cells){
+bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expected_epoch,bool region_cache,bool retain_cells,bool defer_shading,bool mesh_only){
  double mark=w.profile_mesh?mesh_clock_ms():0;
  if(w.profile_mesh)zero_bytes(w.mesh_stage_ms,sizeof(w.mesh_stage_ms));
  const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
@@ -1433,13 +1466,17 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
  const bool aligned=(size==16||size==32)&&ox%16==0&&oz%16==0&&ox+size<=WORLD&&oz+size<=WORLD;
  const bool resident=aligned&&(w.contact_snapshot||retain_cells);
  const bool reuse=resident&&has_surface_columns(w,ox,oz,size,true);
- const bool connected=resident&&size==16&&w.surface_columns&&w.surface_columns->read_mesh(w,ox,oz,epoch,m);
+ // The water index stores a second copy of the connected triangles plus a
+ // vertical run table. A renderer with no contact consumer can connect the
+ // same ordered representatives directly. A late subscriber still has the
+ // sealed columns and can build its index when it actually queries them.
+ const bool connected=!mesh_only&&resident&&size==16&&w.surface_columns&&w.surface_columns->read_mesh(w,ox,oz,epoch,m);
  const bool shared=connected||(resident&&w.surface_columns&&w.surface_columns->read(w,ox,oz,size,0,WORLD_Y,epoch,m.v));
  bool ok=shared||((reuse||(region_cache&&!(resident&&w.contact_snapshot)))?cached_vertices(w,ox,oz,size,m,epoch):extract_vertices(w,ox,oz,size,m,epoch));
  if(!ok){m.release();return false;}
  if(resident&&!reuse&&!shared)inherit_available_recipes(w,ox,oz,size,m);
  if(!connected)connect_patch(w,ox,oz,size,m);
- if(resident&&!remember_surface_columns(w,ox,oz,size,m)){m.release();return false;}
+ if(resident&&!(mesh_only&&shared)&&!remember_surface_columns(w,ox,oz,size,m)){m.release();return false;}
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
  simplify(w,m,ox,oz,size,step,epoch);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[1]=float(now-mark);mark=now;}
@@ -1447,6 +1484,7 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
  add_blocks(w,ox,oz,size,m);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[2]=float(now-mark);mark=now;}
  if(cancelled(w,epoch)){m.release();return false;}
+ if(defer_shading)return true;
  shade_mesh(w,m,epoch);
  if(w.profile_mesh)w.mesh_stage_ms[3]=float(mesh_clock_ms()-mark);
  if(cancelled(w,epoch)){m.release();return false;}
@@ -1528,6 +1566,23 @@ static float exit_time(V3 p,V3 dir,int x,int y,int z,float size){
 // limits are checked at each patch/relight boundary. Nothing is persisted.
 struct RoofCache {
  const World&w;Map &ids,&samples;List<float> &tops;
+ // A box wall has many vertices vertically above one another. Both heights
+ // depend only on XZ within this read-only build. Keep the fractional inputs
+ // exact, including those produced by the visibility-origin adjustment.
+ struct HeightEntry {float x=-1e20f,z=0,value=0;};
+ HeightEntry painted_height[256],surface_height[256];
+ static int slot_at(float x,float z){
+  return int((u32(fl(x))*53u+u32(fl(z))*97u)&255u);
+ }
+ float paint_height(float x,float z){
+  auto &entry=painted_height[slot_at(x,z)];
+  if(entry.x!=x||entry.z!=z)entry={x,z,w.height(x,z)};
+  return entry.value;
+ }
+ // Resident pages on a sealed reader cannot be paged out. The lookup is
+ // shared by roof interpolation, projecting a vertex into air and sky rays.
+ struct PageSlot {u32 key=0;const Page *page=nullptr;};
+ PageSlot sample_pages[64];
  explicit RoofCache(const World&world):w(world),ids(world.light_roofs),samples(world.light_samples),tops(world.light_tops){
   if(w.lighting_revision!=w.revision || samples.n>300000 || ids.n>65536 || w.light_probes.n>32768){
    ids.release();samples.release();tops.release();w.light_probe_ids.release();w.light_probes.release();w.light_exact_probes.release();
@@ -1536,6 +1591,19 @@ struct RoofCache {
  }
  float sample(int x,int y,int z){
   if(x<0||z<0||x>WORLD||z>WORLD||y<0||y>WORLD_Y)return SDF_BAND;
+  if(w.contact_snapshot){
+   int px=x>>4,py=y>>4,pz=z>>4;
+   auto &slot=sample_pages[(px&3)+4*(pz&3)+16*(py&3)];
+   u32 key=page_key(px,py,pz);
+   if(slot.key!=key){
+    int index=w.pages_by_key.get(key);
+    slot={key,index<0?nullptr:w.resident_page(index)};
+   }
+   if(slot.page){
+    int at=(x&15)+16*((z&15)+16*(y&15));
+    return clampf(float(slot.page->d[at])/SDF_SCALE,-SDF_BAND,SDF_BAND);
+   }
+  }
   u32 key=block_key(x,y,z);int v=samples.get(key);if(v>=0)return float(v-32768)/SDF_SCALE;
   i16 q=quant(w.sample(x,y,z));samples.put(key,int(q)+32768);return float(q)/SDF_SCALE;
  }
@@ -1557,7 +1625,26 @@ struct RoofCache {
    }
    float d;
    if(page){
-    int offset=(x&15)+16*((z&15)+16*(y&15));
+    int col=(x&15)+16*(z&15);
+    if(y<upper&&w.contact_snapshot&&w.contact_revision==w.revision&&w.contact_signs.n==w.pages.n){
+     // Use the extractor's immutable sign bits to jump across carved air.
+     // Retain the sample immediately above the crossing for interpolation,
+     // including when the crossing is the top sample of the next page.
+     int row=y&15;
+     u32 solid=column_signs(w,page_index,col)&((2u<<row)-1);
+     if(!solid){
+      d_above=clampf(float(page->d[col])/SDF_SCALE,-SDF_BAND,SDF_BAND);
+      y-=row;
+      continue;
+     }
+     int high=31-__builtin_clz(solid);
+     if(high<row){
+      d_above=clampf(float(page->d[col+256*(high+1)])/SDF_SCALE,-SDF_BAND,SDF_BAND);
+      y-=row-high;
+      if(y<1)break;
+     }
+    }
+    int offset=col+256*(y&15);
     d=clampf(float(page->d[offset])/SDF_SCALE,-SDF_BAND,SDF_BAND);
    }
    else if(page_index<0)d=float(quant(w.base({float(x),float(y),float(z)},h)))/SDF_SCALE;
@@ -1577,6 +1664,11 @@ struct RoofCache {
   return mx(cube_top(x,z),mx(mx(lattice(x,z),lattice(x+1,z)),mx(lattice(x,z+1),lattice(x+1,z+1))));
  }
  float top_at(float px,float pz){
+  auto &entry=surface_height[slot_at(px,pz)];
+  if(entry.x!=px||entry.z!=pz)entry={px,pz,calculate_top(px,pz)};
+  return entry.value;
+ }
+ float calculate_top(float px,float pz){
   int x=fl(px),z=fl(pz);if(x<0||z<0||x>=WORLD||z>=WORLD)return 0;
   float fx=px-x,fz=pz-z;float weights[4]={(1-fx)*(1-fz),fx*(1-fz),(1-fx)*fz,fx*fz};
   float top=mx(mx(lattice(x,z),lattice(x+1,z)),mx(lattice(x,z+1),lattice(x+1,z+1)));
@@ -1645,6 +1737,29 @@ static float owned_lattice_height(const World&w,int x,int z,EditHeightCache *cac
 struct PaintSample {u32 key=0;float base=0,current=0;u8 material=0;};
 struct PaintStencil {
  PaintSample slots[1024];
+ struct PagePaint {u32 key=0;bool painted=false;};
+ PagePaint page_paint[64];
+ bool may_have_paint(const World&w,V3 p){
+  if(!w.contact_snapshot||w.regional_roads&&w.generator_id<UNGRADED_REGION_GENERATOR_ID)return true;
+  int x=fl(p.x),y=fl(p.y),z=fl(p.z);
+  if(x<0||x>=WORLD||y<0||y>=WORLD_Y||z<0||z>=WORLD||((x&15)==15||(y&15)==15||(z&15)==15))return true;
+  const int px=x>>4,py=y>>4,pz=z>>4;
+  const u32 key=page_key(px,py,pz);
+  auto &saved=page_paint[(px&3)+4*(pz&3)+16*(py&3)];
+  if(saved.key==key)return saved.painted;
+  // Only these four material ids contribute paint or paving. Natural ore
+  // still uses the ordinary per-vertex geology and substrate calculations.
+  saved={key,false};
+  int index=w.pages_by_key.get(key);
+  if(index>=0){
+   const auto *page=w.resident_page(index);
+   if(!page)return true;
+   for(int n=0;n<PAGE_SAMPLES;++n){
+    if(page->mat[n]>=1&&page->mat[n]<=4){saved.painted=true;break;}
+   }
+  }
+  return saved.painted;
+ }
  bool read(const World &w,int x,int y,int z,EditHeightCache *heights,PaintSample &out){
   bool inside=x>=0&&x<=WORLD&&z>=0&&z<=WORLD&&y>=0&&y<=WORLD_Y;
   u32 key=inside?block_key(x,y,z):0;
@@ -1674,10 +1789,10 @@ static void shade_mesh_impl(const World&w,Mesh&m,u32 expected_epoch,EditHeightCa
  PaintStencil stencil;RoofCache roof(w);
  for(int i=0;i<m.v.n;i++){
   if((i&7)==0&&cancelled(w,epoch))return;
-  Vertex&v=m.v[i];float h=w.height(v.p.x,v.p.z);
+  Vertex&v=m.v[i];float h=roof.paint_height(v.p.x,v.p.z);
   v.ore=w.has_geology()&&v.material<5?w.ore_weight(v.p,h):0;
   v.substrate=eased(.15f,.65f,h-v.p.y);v.blend={};v.asphalt=0;
-  if(v.material<5){
+  if(v.material<5&&stencil.may_have_paint(w,v.p)){
    int x=fl(v.p.x),y=fl(v.p.y),z=fl(v.p.z);V3 f={v.p.x-x,v.p.y-y,v.p.z-z};float delta=0,total=0,asphalt=0,paved=0,solid=0,original[8];V3 influence{};
    for(int k=0;k<8;k++){
     PaintSample sample;
@@ -1726,7 +1841,7 @@ static V3 visibility_origin(RoofCache&roof,const Vertex&v){
  for(int j=0;j<8;j++){
   int cell_x=fl(p.x),cell_y=fl(p.y),cell_z=fl(p.z);float samples[8];
   for(int corner=0;corner<8;corner++)samples[corner]=roof.sample(cell_x+(corner&1),cell_y+((corner>>1)&1),cell_z+((corner>>2)&1));
-  float f=trilerp(samples,{p.x-cell_x,p.y-cell_y,p.z-cell_z});if(f>=0.f)break;
+  float f=trilerp(samples,{p.x-cell_x,p.y-cell_y,p.z-cell_z});if(f>=0.f)return p;
   V3 direction=terraforest::density_surface_normal(samples,{p.x-cell_x,p.y-cell_y,p.z-cell_z});
   float ahead=interpolated_sample(roof,p+direction*.10f);
   float slope=mx(.10f,(ahead-f)*10.f);
@@ -1835,6 +1950,13 @@ static void shade_vertex_visibility(const World &w,RoofCache &roof,Vertex &v,flo
  Map &probe_ids=w.light_probe_ids;List<SkyProbe>&probes=w.light_probes;
   v.sky=1;v.sun=1;
   if(!has_cover_candidates(w,v.p,h))return;
+  // Above all four column crossings the trilinear field is already in air.
+  // The ordinary projection would return this same origin immediately.
+  // Keep seam, wall and underground vertices on the exact projection path.
+  if(w.contact_snapshot&&v.n.y>=.99f){
+   V3 air=v.p+v.n*.06f;
+   if(air.x>=0&&air.z>=0&&air.x<WORLD&&air.z<WORLD&&air.y<254&&air.y>roof.upper_at(air.x,air.z)+.01f)return;
+  }
   V3 start=visibility_origin(roof,v);
   bool open_above=start.y>=roof.top_at(start.x,start.z)-.002f;
   // An unobstructed vertical column is the cheap exterior fast path. Shadow

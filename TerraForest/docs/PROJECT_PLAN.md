@@ -1,6 +1,6 @@
 ## World authority and qualification milestones (November 20)
 
-The [World Editor experiments](WORLD_EDIT_EXPERIMENTS.md) specify the bottom toolbar, explicit terrain-and-water brush semantics, packaged wet cursor regression and the tests for choosing a new terrain or water backend.
+The [World Editor experiments](WORLD_EDIT_EXPERIMENTS.md) specify the bottom toolbar, explicit terrain-and-water brush semantics, packaged wet cursor regression and the tests for choosing a new terrain or water backend. The [dry 64 m experiment](WORLD_EDIT_EXPERIMENTS.md#dry-64-m-cut-and-collider-installation) records fresh triangle costs, first and subsequent physics installations, exact geometry parity and the first matching gameplay draw.
 
 Milestone 5 now has a selectable bird’s-eye world editor in the development session menu. Its packaged route pans away from the character, digs and fills through the pointer, adds measured water and removes it again. Sea and lake explosions remain abrupt gameplay regressions. Open gates include full-footprint publication, steady 60 Hz, strategy and authority parity, and the human visual playtest. [World editor workloads and evidence](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#the-world-editor-is-the-primary-workload)
 

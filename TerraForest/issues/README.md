@@ -2,6 +2,8 @@
 
 The 64 m dry and wet controls and the lake barrel missed the two-frame deadline. Both craters passed their bank contact checks. Suspended green patches appeared in one cut capture and were absent from the repeat. [Paired cameras and publication timings](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#packaged-comparison-of-terrain-and-water)
 
+The dry 64 m control now compares the visible meshes and registered collider faces across all 36 terrain owners on the second draw. [Triangle generation, first physics installation and frame timings](../docs/WORLD_EDIT_EXPERIMENTS.md#dry-64-m-cut-and-collider-installation)
+
 [Hidden Coast crater backlog](explosive-combat/README.md#hidden-coast-crater-backlog) records the 37 outstanding edits, their saved water footprint, and the changes to live capacity, persistence and firing during terrain updates.
 
 The [shoreline mining fix](explosive-combat/README.md#shoreline-mining-in-normal-gameplay) connects deferred tool hits to the normal gameplay tick. In-game confirmation remains open.

@@ -27,6 +27,8 @@ WORKLOADS = {
     "shore_angles": SHORES + ["--lossless-shore-views"],
     "bucket_interruption": ["--water-immediate-contact", "--water-edit-response", "--water-no-captures"],
     "dry_cut": EDITOR + ["--authoring-dry-cut"],
+    "dry_cut_profile": EDITOR + ["--authoring-dry-cut", "--authoring-native-profile"],
+    "dry_cut_replay": EDITOR + ["--authoring-dry-cut", "--authoring-swap-bound"],
     "brush_dig": EDITOR,
     "brush_fill": EDITOR + ["--authoring-fill"],
     "brush_drag": EDITOR + ["--authoring-drag"],
@@ -146,8 +148,11 @@ def main(timing_only=False, selected_routes=None):
         save(index, record)
         passed = True
         routes = selected_routes or (("cut", "shores") if timing_only else DEFAULT_ROUTES)
-        for label in routes:
-            folder, result = run_route(engine, record["pack_sha256"], label, WORKLOADS[label], index, frozen_driver)
+        repetitions = {}
+        for workload in routes:
+            repetitions[workload] = repetitions.get(workload, 0) + 1
+            label = workload if repetitions[workload] == 1 else f"{workload}.{repetitions[workload]}"
+            folder, result = run_route(engine, record["pack_sha256"], label, WORKLOADS[workload], index, frozen_driver)
             record["runs"][label] = str(folder)
             if result.get("exit_code") is not None:
                 record.setdefault("closed_runs", {})[str(folder)] = digest(folder / "run.json")
@@ -158,9 +163,9 @@ def main(timing_only=False, selected_routes=None):
                 break
             reviews = {"cut_angles": (4, "authoring_cut_angles"), "shore_angles": (10, "water_player_world"),
                        "overview_review": (2, "world_editor"), "object_contact": (3, "crater_object")}
-            expected, family = reviews.get(label, (0, None))
+            expected, family = reviews.get(workload, (0, None))
             if expected and result.get("exit_code") is not None:
-                extension = "*.webp" if label in {"shore_angles", "object_contact"} else "*.png"
+                extension = "*.webp" if workload in {"shore_angles", "object_contact"} else "*.png"
                 if len(list(folder.glob(extension))) != expected:
                     passed = False
                     continue
@@ -187,6 +192,6 @@ if __name__ == "__main__":
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--timing-only",action="store_true",help="Run both deadline routes without allocating a camera-capture pass.")
     selection.add_argument("--route", choices=WORKLOADS, action="append",
-                           help="Run a named packaged route. Repeat to share the same staged build across routes.")
+                           help="Run named packaged routes in order. Repeating a route starts a fresh game process against the same frozen build.")
     args = parser.parse_args()
-    raise SystemExit(main(args.timing_only, list(dict.fromkeys(args.route)) if args.route else None))
+    raise SystemExit(main(args.timing_only, args.route))

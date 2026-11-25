@@ -116,7 +116,6 @@ var staging_versions: Dictionary = {}
 var staged_batch: Dictionary = {}
 # Main-thread publication partner for a wet edit. Both halves keep the last
 # published scene while their revision-owned replacements are prepared.
-var _hand_edit:bool=false
 var resident_edit_surface:Dictionary={}
 var _joint_ticket:=-1
 var _joint_epoch:=-1
@@ -305,7 +304,10 @@ func shutdown() -> void:
 	set_process(false)
 	if RenderingServer.frame_post_draw.is_connected(_post_draw):
 		RenderingServer.frame_post_draw.disconnect(_post_draw)
+	if RenderingServer.frame_pre_draw.is_connected(_before_draw):
+		RenderingServer.frame_pre_draw.disconnect(_before_draw)
 	backend.stop()
+	_clear_collision_preparation()
 	if not slow_edits.is_empty():
 		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://reports"))
 		var report: FileAccess = FileAccess.open("user://reports/slow_edits_%d.json" % OS.get_process_id(), FileAccess.WRITE)
@@ -340,6 +342,11 @@ func _exit_tree() -> void:
 # publication allowance across all opportunities in the same process frame.
 var _staging_frame:=-1
 var _staging_spent_us:=0
+var _process_started_us:=0
+var _wide_resident_edit:=false
+var _staging_collider:CollisionShape3D
+var _early_faces:Dictionary={}
+var _early_shapes:Dictionary={}
 
 func _receive_edit_notice()->void:
 	if stopping or (not pending_edit and _density_requests.is_empty()) or not is_inside_tree() or not is_processing() or not can_process():return
@@ -350,8 +357,18 @@ func _receive_edit_notice()->void:
 # Consume an already-finished local edit before the renderer takes this frame.
 # The usual deferred notification and process pump also serve headless worlds.
 func _before_draw()->void:
-	if pending_edit and (_hand_edit or joint_edit_pending()) and OS.get_thread_caller_id()==OS.get_main_thread_id():
+	if pending_edit and OS.get_thread_caller_id()==OS.get_main_thread_id():
 		_receive_edit_notice()
+		# Spend otherwise unused scene time on resident brush geometry. Leave
+		# at least 5 ms of the 13.3 ms client CPU target for the renderer and
+		# work outside this node's process-to-draw interval.
+		if pending_edit and _wide_resident_edit and not joint_edit_pending() and _staging_frame==Engine.get_process_frames() and _process_started_us>0:
+			var slack:=8300-(Time.get_ticks_usec()-_process_started_us)
+			var remaining:=mini(slack,8300-_staging_spent_us)
+			if remaining>0 and (not preparation.is_empty() or not staging.is_empty() or not _early_faces.is_empty()):
+				var started:=Time.get_ticks_usec()
+				_drain_staging(remaining,true)
+				_staging_spent_us+=Time.get_ticks_usec()-started
 
 func _stage_with_frame_budget()->void:
 	var frame:=Engine.get_process_frames()
@@ -370,6 +387,7 @@ func _process(delta: float) -> void:
 	if stopping:
 		return
 	var receive_begin: int = Time.get_ticks_usec()
+	_process_started_us=receive_begin
 	var ready_results: Array[Dictionary]=backend.poll()
 	_record_stage("receive poll",(Time.get_ticks_usec()-receive_begin)/1000.0)
 	_dispatch_results(ready_results)
@@ -606,6 +624,9 @@ func _receive(result: Dictionary) -> void:
 		edit_worker_done = false
 		edit_writes_ready.emit(edit_ticket,result.get("writes",[]))
 		edit_field_ready.emit(edit_ticket)
+	elif kind=="edit_collision":
+		if pending_edit and result.epoch==epoch and result.ticket==edit_ticket and result.stamp==stamps.get(result.key,-1) and latest_error.is_empty():
+			_early_faces[result.key]=result
 	elif kind == "edit_chunk":
 		if int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
 			return
@@ -635,6 +656,7 @@ func _receive(result: Dictionary) -> void:
 			if batch_remaining==0 and edit_worker_done: _commit_batch()
 			return
 		result["kind"] = "batch"
+		_early_faces.erase(result.key)
 		# Keep interactive tiles ahead of background work in worker priority
 		# order. Later arrivals must not push the aimed-at centre to the back.
 		var insert_at:=0
@@ -718,7 +740,13 @@ func _receive(result: Dictionary) -> void:
 		if batch_remaining == 0:
 			_commit_batch()
 
+func _clear_collision_preparation()->void:
+	_early_faces.clear()
+	_early_shapes.clear()
+	if is_instance_valid(_staging_collider):_staging_collider.shape=null
+
 func _fail(text: String) -> void:
+	_clear_collision_preparation()
 	_retire_contact()
 	for key:Vector3i in staged_batch:
 		if staged_batch[key].get("local_active",false):
@@ -824,9 +852,42 @@ func _apply_resident_swap(entry:Dictionary,active:bool)->void:
 		var collider:CollisionShape3D=slot.colliders[index]
 		var next_shape:Shape3D=shapes[index] if index<shapes.size() else null
 		if collider.shape!=next_shape:collider.shape=next_shape
+	var bound:=Time.get_ticks_usec()
 	entry.node.mesh=slot.mesh if active else slot.old_mesh
 	slot.applied=active
-	_record_stage("resident resource swap",(Time.get_ticks_usec()-started)/1000.0)
+	var finished:=Time.get_ticks_usec()
+	if stage_measured.has_connections():
+		_record_stage("resident collider bind",(bound-started)/1000.0)
+		_record_stage("resident mesh bind",(finished-bound)/1000.0)
+	_record_stage("resident resource swap",(finished-started)/1000.0)
+
+# Jolt builds a fresh concave shape on its first body attachment. Do the
+# first bind as each worker finishes, while neighbouring seams are still
+# being prepared. Only the installed owner's layer can answer game queries.
+func _prime_resident_shape(shape:Shape3D)->void:
+	var began:=Time.get_ticks_usec()
+	if not is_instance_valid(_staging_collider):
+		var holder:=StaticBody3D.new()
+		holder.name="TerrainCollisionPreparation"
+		holder.collision_layer=0
+		holder.collision_mask=0
+		_staging_collider=CollisionShape3D.new()
+		holder.add_child(_staging_collider)
+		add_child(holder)
+	_staging_collider.shape=shape
+	_record_stage("first collider bind",(Time.get_ticks_usec()-began)/1000.0)
+
+func _prepare_early_collider()->void:
+	var key:Vector3i=_early_faces.keys()[0]
+	var item:Dictionary=_early_faces[key]
+	var at:int=item.get("at",0)
+	var piece:RefCounted=item.pieces[at]
+	var prepared:Dictionary=piece.resolve(tiles.get(key,{}).get("collision_shapes",{}))
+	if prepared.get("ok",false):
+		if not prepared.reused:_prime_resident_shape(prepared.shape)
+		_early_shapes[piece]=prepared
+	if at+1==item.pieces.size():_early_faces.erase(key)
+	else:item.at=at+1
 
 func _prepare_piece() -> bool:
 	if preparation.data.has("bricks"):
@@ -867,7 +928,11 @@ func _prepare_piece() -> bool:
 		if data.has("brick_bottom"): old_entry=old_entry.get("bricks",{}).get(data.brick_bottom,{})
 		var previous: Dictionary = old_entry.get("collision_shapes", {})
 		var current: Dictionary = entry["collision_shapes"]
-		var prepared: Dictionary = pieces[at].resolve(previous)
+		# A fallback renderer may produce different geometry. Only reuse a
+		# prepared shape belonging to this exact native recipe object.
+		var primed:=_early_shapes.has(pieces[at])
+		var prepared:Dictionary=_early_shapes[pieces[at]] if primed else pieces[at].resolve(previous)
+		if primed:_early_shapes.erase(pieces[at])
 		last_collision_match_ms = prepared.match_ms
 		current[prepared.token] = prepared.shape
 		_record_stage("collision exact match", prepared.match_ms)
@@ -876,6 +941,8 @@ func _prepare_piece() -> bool:
 			collision_pieces_reused += 1
 		else:
 			collision_pieces_built += 1
+		if _wide_resident_edit and entry.has("resident_swap") and not primed and not prepared.reused:
+			_prime_resident_shape(prepared.shape)
 		var attach_begin: int = Time.get_ticks_usec()
 		if entry.has("resident_swap"):
 			entry.resident_swap.shapes.append(prepared.shape)
@@ -924,7 +991,7 @@ func _select_preparation_work() -> void:
 	elif not paused_preparations.is_empty():
 		preparation=paused_preparations.pop_front()
 
-func _drain_staging(allowance_us:int=-1) -> void:
+func _drain_staging(allowance_us:int=-1, geometry_only:bool=false) -> void:
 	if allowance_us<0:allowance_us=main_build_budget_us
 	var begin: int = Time.get_ticks_usec()
 	# A multi-region background upload must yield between bounded pieces rather
@@ -938,6 +1005,13 @@ func _drain_staging(allowance_us:int=-1) -> void:
 			return
 	while Time.get_ticks_usec() - begin < allowance_us:
 		var unit_begin: int = Time.get_ticks_usec()
+		if geometry_only and pending_edit and batch_remaining==0:
+			# This extra pre-draw slice is for already available resident
+			# geometry. Keep the normal support/commit pump and its rollback
+			# records intact. Never add its unbudgeted work to this slice.
+			if not staged_batch.is_empty() and latest_error.is_empty() and not joint_edit_pending():
+				_install_ready_edit_group(staged_batch.keys())
+			break
 		# Atomic publication is its own indivisible unit. A final collision piece
 		# may already have exhausted this slice; keep the old complete surface
 		# until the next available slice rather than stacking the swap on top.
@@ -952,6 +1026,11 @@ func _drain_staging(allowance_us:int=-1) -> void:
 			continue
 		_select_preparation_work()
 		if preparation.is_empty():
+			if geometry_only and _contact_accepted_ticket==edit_ticket and _early_faces.is_empty() and (staging.is_empty() or staging.front().get("kind")!="batch"):
+				_dispatch_results(backend.poll_resident_results(edit_ticket,false),false)
+			if pending_edit and not _early_faces.is_empty() and (staging.is_empty() or staging.front().get("kind")!="batch"):
+				_prepare_early_collider()
+				continue
 			if staging.is_empty():
 				break
 			if pending_edit and str(staging.front().get("kind",""))!="batch": break
@@ -1165,6 +1244,10 @@ func _contact_domain(commands:Array)->Dictionary:
 	if commands.size()!=1:return {}
 	var packet:PackedByteArray=commands[0]
 	if packet.size()!=44 or packet.decode_u32(0)!=2 or packet.decode_u32(36)!=0 or packet.decode_u32(32)>1 or packet.decode_float(28)<12:return {}
+	# The central preview builds a second set of collision shapes. When a
+	# wide brush already has fine resident owners, prepare their real shapes
+	# immediately. They can be installed as each seam group becomes ready.
+	if packet.decode_float(28)>=32 and _wide_resident_edit:return {}
 	var center:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
 	if center!=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24)):return {}
 	# Cover the target and a full SDF band on all sides with resident fine tiles.
@@ -1373,6 +1456,7 @@ func edit_geometry_ready_in(bounds:AABB)->bool:
 
 func _install_edit_geometry()->void:
 	_retire_contact()
+	_clear_collision_preparation()
 	# Change every adjacent surface and its collider in the same main-thread
 	# turn. Support sampling can finish independently on the terrain worker.
 	_record_stage("geometry ready",0.0)
@@ -1476,6 +1560,19 @@ func _post_draw() -> void:
 	if pending_draw_us > 0:
 		last_draw_latency_ms = float(Time.get_ticks_usec() - pending_draw_us) / 1000.0
 		pending_draw_us = 0
+	# Workers also finish during rendering. Only warm inaccessible physics
+	# shapes here. The just-drawn mesh and all registered gameplay contacts
+	# must still describe the same frame when post-draw observers sample them.
+	if stopping or not pending_edit or not _wide_resident_edit or joint_edit_pending() or OS.get_thread_caller_id()!=OS.get_main_thread_id():return
+	var began:=Time.get_ticks_usec()
+	var remaining:=mini(8300-_staging_spent_us,13300-(began-_process_started_us))
+	if remaining<=0 or _staging_frame!=Engine.get_process_frames():return
+	while Time.get_ticks_usec()-began<remaining:
+		if _early_faces.is_empty():
+			_dispatch_results(backend.poll_resident_results(edit_ticket,true),false)
+			if _early_faces.is_empty():break
+		_prepare_early_collider()
+	_staging_spent_us+=Time.get_ticks_usec()-began
 
 func _distance(key: Vector3i) -> float:
 	var dx: float = maxf(maxf(float(key.x) - focus.x, focus.x - float(key.x + key.z)), 0.0)
@@ -1984,6 +2081,9 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	edit_rollback.clear()
 	resident_edit_surface={}
 	var affected: Array[Dictionary] = _invalidate()
+	_clear_collision_preparation()
+	_wide_resident_edit=affected.size()>8 and affected.all(func(item:Dictionary)->bool:
+		return item.key.z in [16,32] and not item.has("brick_bottoms") and visible_cut.has(item.key) and is_instance_valid(tiles.get(item.key,{}).get("body")))
 	edit_ticket += 1
 	pending_edit = true
 	edit_worker_done = false
@@ -1991,9 +2091,8 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	var support:=_capture_edit_support(AABB(geometry_lo,geometry_hi-geometry_lo))
 	var support_snapshots:Array=[]
 	for provider:Dictionary in _edit_support_snapshots:support_snapshots.append(provider.snapshot)
-	_hand_edit=commands.size()==1 and (latest_edit_descriptor.command==38 or latest_edit_descriptor.get("shape",-1)==Codec.CONTACT_MINING_SHAPE)
 	field_handoff=Backend.EditFieldHandoff.new()
-	var accepted: bool = backend.submit({"kind": "edit", "command": data, "commands": commands, "tiles": affected, "contact_domain":_contact_domain(commands),
+	var accepted: bool = backend.submit({"kind": "edit", "command": data, "commands": commands, "tiles": affected, "contact_domain":_contact_domain(commands),"early_collision":_wide_resident_edit,
 		"epoch": epoch, "ticket": edit_ticket, "geometry_lo": geometry_lo, "geometry_hi": geometry_hi,"support_points":support,"support_snapshots":support_snapshots,"field_handoff":field_handoff}, true)
 	if not accepted:
 		pending_edit = false

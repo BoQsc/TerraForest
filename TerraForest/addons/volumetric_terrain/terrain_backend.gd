@@ -22,12 +22,14 @@ class EditFieldHandoff:
 			_dispatch()
 		mutex.unlock()
 
-	func supply(value:Dictionary)->void:
+	func supply(value:Dictionary)->bool:
 		mutex.lock()
 		if not closed:
 			surface=value
 			_dispatch()
+		var subscribed:=task>=0
 		mutex.unlock()
+		return subscribed
 
 	func _dispatch()->void:
 		if surface.is_empty() or not consumer.is_valid():return
@@ -564,6 +566,25 @@ func poll() -> Array[Dictionary]:
 	mutex.unlock()
 	return ready
 
+# During a draw handoff the scene can use geometry already produced for
+# the current ticket. Leave lifecycle messages and other tickets in order
+# for the ordinary pump. Never wait for a worker to finish another tile.
+func poll_resident_results(ticket:int,faces_only:bool)->Array[Dictionary]:
+	var ready:Array[Dictionary]=[]
+	if not mutex.try_lock():return ready
+	var keep:=0
+	for index in results.size():
+		var packet:Dictionary=results[index]
+		var take:bool=packet.kind=="edit_collision" or (not faces_only and packet.kind=="edit_chunk" and packet.has("arrays") and not packet.has("contact_count"))
+		if take and packet.ticket==ticket:
+			ready.append(packet)
+		else:
+			if keep!=index:results[keep]=packet
+			keep+=1
+	results.resize(keep)
+	mutex.unlock()
+	return ready
+
 func stop() -> void:
 	if _initial_lake_bake!=null:_initial_lake_bake.cancel()
 	_shutdown_snapshot = _capture_snapshot()
@@ -594,7 +615,7 @@ func _push(result: Dictionary) -> void:
 			if surface.get_surface_count()==1:result.prepared_mesh=surface
 	mutex.lock()
 	results.push_back(result)
-	var notify:bool=not _edit_notice_pending and result.get("kind","") in ["edit_begin","edit_chunk","edit_done","placement_target"]
+	var notify:bool=not _edit_notice_pending and result.get("kind","") in ["edit_begin","edit_collision","edit_chunk","edit_done","placement_target"]
 	if notify:_edit_notice_pending=true
 	mutex.unlock()
 	if notify:edit_results_ready.emit()
@@ -706,6 +727,12 @@ func _direct_triangle_pages(source:Object,item:Dictionary,job:Dictionary)->Dicti
 		changed.append(page)
 	return {"triangle_pages":true,"bricks":changed,"step":1,"bytes":0,"triangles":0,"rims":rims,"direct_pages":pages.size(),"worker_ms":(Time.get_ticks_usec()-start)/1000.0}
 
+func _queue_resident_collision(faces:PackedVector3Array,key:Vector3i,stamp:int,ticket:int,expected_epoch:int)->Array:
+	var recipes:Dictionary=collision_recipes.prepare(collision_recipes.merge_planar_faces(faces),_collision_piece_triangles)
+	if not recipes.ok or recipes.pieces.is_empty():return []
+	_push({"kind":"edit_collision","pieces":recipes.pieces,"key":key,"stamp":stamp,"ticket":ticket,"epoch":expected_epoch})
+	return recipes.pieces
+
 func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,revision:int)->void:
 	for item:Dictionary in items:
 		var key:Vector3i=item.key
@@ -717,7 +744,10 @@ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Di
 				completed[key]={"worker_ms":direct.worker_ms}
 				_push(direct)
 				continue
-		var chunk:Dictionary=source.resident_tile(key,revision,job.build_epoch,disk_cache.enabled)
+		var on_faces:=Callable()
+		if job.get("early_collision",false) and not triangle_page_terrain:
+			on_faces=_queue_resident_collision.bind(key,item.stamp,job.ticket,job.epoch)
+		var chunk:Dictionary=source.resident_tile(key,revision,job.build_epoch,disk_cache.enabled,on_faces,job.get("mesh_only",false))
 		if chunk.is_empty():continue
 		var packet:PackedByteArray=chunk.get("cache_packet",PackedByteArray())
 		chunk.erase("cache_packet")
@@ -727,11 +757,12 @@ func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Di
 			if item.has("previous_rim"):
 				chunk.rims=collision_recipes.changed_rims(key,item.previous_rim[0],item.previous_rim[1],chunk.arrays[Mesh.ARRAY_VERTEX],chunk.arrays[Mesh.ARRAY_INDEX])
 				chunk.compared_stamp=item.previous_stamp
-			var faces:PackedVector3Array=collision_recipes.merge_planar_faces(chunk.faces)
-			var recipes:Dictionary=collision_recipes.prepare(faces,_collision_piece_triangles)
-			if not recipes.ok:continue
-			chunk.collision_pieces=recipes.pieces
-			chunk.collision_prepare_ms=recipes.prepare_ms
+			if not chunk.has("collision_pieces"):
+				var faces:PackedVector3Array=collision_recipes.merge_planar_faces(chunk.faces)
+				var recipes:Dictionary=collision_recipes.prepare(faces,_collision_piece_triangles)
+				if not recipes.ok:continue
+				chunk.collision_pieces=recipes.pieces
+				chunk.collision_prepare_ms=recipes.prepare_ms
 		chunk.merge({
 			"stamp":item.stamp,"key":key,"epoch":job.epoch,"ticket":job.ticket,"kind":"edit_chunk",
 			"worker_ms":(Time.get_ticks_usec()-start)/1000.0})
@@ -763,6 +794,11 @@ func _resident_edit_surface(job:Dictionary,revision:int)->Dictionary:
 			surface.core=source
 			surface.bounds=bounds
 			surface.groups.append({"core":source,"bounds":bounds})
+			return surface
+	elif compact and regions.size()>1 and bounds.size.x<=128 and bounds.size.y<=128:
+		var groups:Array=native.capture_edit_domains(regions.values(),revision,job.build_epoch)
+		if not groups.is_empty():
+			surface.groups=groups
 			return surface
 	# Cover the actual owners, including a cut straddling four region corners.
 	# Bound both copied area and reader count for much larger authoring commands.
@@ -797,6 +833,9 @@ func _dispatch_resident_groups(job:Dictionary,scheduled:Dictionary,surface:Dicti
 	# Each reader has mutable extraction caches behind a lock. Give render
 	# lanes private caches so a whole tile cannot block the water contact read.
 	var lanes_per_field:=clampi(OS.get_processor_count()/2/maxi(1,fields.size()),1,4)
+	var workers:=clampi(OS.get_processor_count()/2,1,8)
+	var bulk:=items_to_build.size()>8 and workers>1
+	var batch_size:=maxi(1,ceili(float(items_to_build.size())/(2*workers)))
 	for group:Dictionary in fields:
 		var items:Array=[]
 		for item:Dictionary in items_to_build:
@@ -805,16 +844,37 @@ func _dispatch_resident_groups(job:Dictionary,scheduled:Dictionary,surface:Dicti
 				items.append(item)
 		if items.is_empty():continue
 		var count:=mini(lanes_per_field,items.size())
+		if bulk:count=ceili(float(items.size())/batch_size)
 		# Adjacent owners share their source pages and the lighting halo.
 		items.sort_custom(func(a:Dictionary,b:Dictionary)->bool:return a.key<b.key)
 		for lane in count:
 			var slice:=items.slice(lane*items.size()/count,(lane+1)*items.size()/count)
 			var completed:Dictionary={}
+			if bulk:
+				tasks.append({"field":group.core,"completed":completed,"items":slice})
+				continue
 			var task:=WorkerThreadPool.add_task(_build_resident_lane.bind(group.core,surface.revision,slice,job,completed),true,"Resident terrain triangles and collision")
 			if task<0:continue
 			tasks.append({"task":task,"completed":completed,"items":slice})
 			for item:Dictionary in slice:scheduled[item.key]=true
+	if bulk and not tasks.is_empty():
+		# A cut crossing a regional corner can have sixteen owners in one
+		# field and only one in another. Let free workers claim the next
+		# compact slice regardless of which field they just finished.
+		var task:=WorkerThreadPool.add_group_task(_build_resident_slice.bind(tasks,surface.revision,job),tasks.size(),mini(workers,tasks.size()),true,"Resident terrain triangles and collision")
+		if task<0:return []
+		var pending:Array=[]
+		for batch:Dictionary in tasks:
+			for item:Dictionary in batch["items"]:scheduled[item.key]=true
+			pending.append({"completed":batch.completed,"items":batch["items"]})
+		# Join once before consuming any slice's worker-owned output.
+		pending[0].group_task=task
+		return pending
 	return tasks
+
+func _build_resident_slice(index:int,batches:Array,revision:int,job:Dictionary)->void:
+	var batch:Dictionary=batches[index]
+	_build_resident_lane(batch.field,revision,batch["items"],job,batch.completed)
 
 func _build_resident_lane(field:Object,revision:int,items:Array,job:Dictionary,completed:Dictionary)->void:
 	var bounds:=Rect2i()
@@ -838,11 +898,9 @@ func _recoverable_edit_rejection(commands:Array,reply:PackedByteArray,before:Pac
 
 # The ordered writer stays on this revision until it joins the task. Sampling
 # uses bounded native queries and the worker only writes its private result.
-func _prepare_edit_support(job:Dictionary,support_points:Array,prior:Dictionary,revision:int,output:Dictionary)->void:
+func _prepare_edit_support(job:Dictionary,support_points:Array,support_before:Array,revision:int,output:Dictionary)->void:
 	var started:=Time.get_ticks_usec()
 	var support_after:=_edit_support_samples(support_points,revision)
-	if prior.task>=0:WorkerThreadPool.wait_for_task_completion(prior.task)
-	var support_before:Array=prior.samples.values_before
 	var support:Array=[]
 	if support_before.size()==support_points.size() and support_after.size()==support_points.size():
 		for index in support_points.size():support.append({"before":support_before[index],"after":support_after[index]})
@@ -1896,7 +1954,8 @@ func _run() -> void:
 					var dependency:=surface.duplicate()
 					dependency.writes=execution.writes
 					dependency.prior_field=before_stats.decode_u32(12)
-					job.field_handoff.supply(dependency)
+					var has_contact_consumer:bool=job.field_handoff.supply(dependency)
+					job.mesh_only=job.get("early_collision",false) and not has_contact_consumer
 				_push({"kind": "edit_begin", "epoch": job["epoch"], "ticket": job["ticket"],"resident_surface":surface,"writes":execution.writes,"page_selection":page_selection,
 					"count": job["tiles"].size(), "contact_ms":contact_ms, "contact_parallel":contact_task>=0, "edit_ms": edit_ms, "queue_ms": queue_ms, "stats": after_stats, "member_changed": member_changed, "removed_samples":removed_samples})
 				# Stream finished patches to main-thread staging immediately. Worker
@@ -1914,7 +1973,13 @@ func _run() -> void:
 				var support_output:Dictionary={}
 				var support_task:=-1
 				if not support_points.is_empty():
-					var prepare_support:=_prepare_edit_support.bind(job,support_points,support_before,after_stats.decode_u32(12),support_output)
+					# Only the ordered terrain thread joins the older snapshot task.
+					# A newer pool task can receive ERR_BUSY instead of waiting and
+					# would then observe an empty, still-in-flight sample array.
+					var before_samples:Array=[]
+					if support_before.task<0 or WorkerThreadPool.wait_for_task_completion(support_before.task)==OK:
+						before_samples=support_before.samples.values_before
+					var prepare_support:=_prepare_edit_support.bind(job,support_points,before_samples,after_stats.decode_u32(12),support_output)
 					support_task=WorkerThreadPool.add_task(prepare_support,true,"Terrain vegetation support")
 					if support_task<0:prepare_support.call()
 				for item: Dictionary in items_to_build:
@@ -1949,7 +2014,8 @@ func _run() -> void:
 					chunk["ticket"] = job["ticket"]
 					_push(chunk)
 				for group:Dictionary in groups:
-					WorkerThreadPool.wait_for_task_completion(group.task)
+					if group.has("group_task"):WorkerThreadPool.wait_for_group_task_completion(group.group_task)
+					elif group.has("task"):WorkerThreadPool.wait_for_task_completion(group.task)
 					for item:Dictionary in group["items"]:
 						if group.completed.has(item.key):
 							var result:Dictionary=group.completed[item.key]

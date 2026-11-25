@@ -6,11 +6,15 @@ var failures:=0
 var terrain:Node
 var support_applied:=0
 var support_snapshot:Dictionary={}
+var support_probe_count:=2
 func capture_support(_bounds:AABB)->Array:
-	return [{"ids":PackedInt64Array([1]),"points":PackedVector3Array([Vector3(128,65.92,128),Vector3(128,66.08,128)])}]
+	var points:=PackedVector3Array()
+	for i in support_probe_count:
+		points.append(Vector3(128+(i/2%16)*.01,65.92+(i%2)*.16,128+(i/32)*.01))
+	return [{"ids":PackedInt64Array([1]),"points":points}]
 func apply_support(snapshot:Dictionary,result:Dictionary)->bool:
 	support_applied+=1;support_snapshot=result
-	return snapshot.ids==PackedInt64Array([1]) and result.before.density.size()==2 and result.after.density.size()==2
+	return snapshot.ids==PackedInt64Array([1]) and result.before.density.size()==support_probe_count and result.after.density.size()==support_probe_count
 class QueueGate extends Backend:
 	var reject_edit:=false
 	func submit(job:Dictionary,priority:bool=false)->bool:
@@ -147,6 +151,11 @@ func run()->void:
 	check(changed_fine==8,"three brush members touch eight fine tiles across the two sites")
 	check(terrain.stamps.get(nearby,0)==old_stamp+1 and terrain.stamps.has(Vector3i(704,704,16)),"overlapping brush halos advance each tile once")
 	check(not terrain.stamps.has(middle) and not terrain.modified_columns.has(Vector2i(32,32)),"untouched ground between batch members retains its mesh and column state")
+	support_probe_count=514
+	for add:bool in [true,false,true,false]:
+		var applied_before:=support_applied
+		var admitted:bool=terrain.sculpt_sphere(center,3,add)
+		check(admitted and await settled() and terrain.latest_error.is_empty() and support_applied==applied_before+1 and support_snapshot.before.density!=support_snapshot.after.density,"the ordered worker publishes both revisions of a multi-packet support sample")
 	check_partial_publication()
 	terrain.shutdown();terrain.free()
 	await process_frame

@@ -161,6 +161,22 @@ func run()->void:
 	check(Codec.reply_ok(shared_mesh) and shared_mesh.slice(12)==canonical.slice(12),"resident cells reproduce the rendered mesh and collision packet")
 	check_compact_brick_survey()
 	var sealed:RefCounted=core.capture_edit_field(bounds,state.revision,build_epoch)
+	var adjacent:=Rect2i(1024,992,64,32)
+	var domains:Array=core.capture_edit_domains([bounds,adjacent],state.revision,build_epoch)
+	check(domains.size()==2 and core.capture_edit_domains([bounds,adjacent],state.revision+1,build_epoch).is_empty() and core.capture_edit_domains([bounds,Rect2i(1200,992,32,32)],state.revision,build_epoch).is_empty(),"multi-region capture enforces the revision and bounded footprint")
+	if domains.size()==2:
+		var children:Array=[]
+		for group:Dictionary in domains:
+			var r:Rect2i=group.bounds
+			var key:=Vector3i(r.position.x,r.position.y,32)
+			var ordinary:PackedByteArray=core.execute(Codec.command(1,[key.x,key.y,key.z,1,build_epoch]))
+			var built:Dictionary=group.core.resident_tile(key,state.revision,build_epoch,true)
+			check(Codec.reply_ok(ordinary) and built.get("cache_packet")==ordinary.slice(16),"overlapping lighting halos preserve every shader channel and physics face at "+str(key))
+			children.append([group.core.capture_contact_core(r,state.revision,build_epoch),key,ordinary.slice(16)])
+		domains.clear()
+		for child:Array in children:
+			var rebuilt:Dictionary=child[0].resident_tile(child[1],state.revision,build_epoch,true)
+			check(rebuilt.get("cache_packet")==child[2],"a worker retains inherited and rebuilt columns after its regional reader is released")
 	var lane:RefCounted=sealed.capture_contact_core(bounds,state.revision,build_epoch)
 	var neighbor:RefCounted=sealed.capture_contact_core(Rect2i(1008,992,16,16),state.revision,build_epoch)
 	var roots:=PackedVector3Array()
@@ -180,12 +196,26 @@ func run()->void:
 	sealed=null
 	var contact_packet:=Codec.command(43,[state.revision,build_epoch,1008,40,1008])
 	var pinned_boundary:PackedByteArray=core.execute(contact_packet)
+	var dry_field:RefCounted=core.capture_edit_field(bounds,state.revision,build_epoch)
+	var dry_key:=Vector3i(1008,1008,16)
+	var direct:Dictionary=dry_field.resident_tile(dry_key,state.revision,build_epoch,true,Callable(),true)
+	var dry_reference:PackedByteArray=core.execute(Codec.command(1,[dry_key.x,dry_key.y,16,1,build_epoch]))
+	check(direct.get("cache_packet")==dry_reference.slice(16) and dry_field.surface_column_stats().connected_columns==0,"a terrain-only tile produces identical triangles and physics without building the water face index")
+	check(dry_field.execute(contact_packet)==pinned_boundary,"a later water query returns the same density, triangles and solids from the pinned dry surface")
+	var receiver:=[state.revision,build_epoch,1008,40,1008]
+	check(same_contact_faces(core.execute(Codec.command(48,receiver)),dry_field.execute(Codec.command(49,receiver))) and dry_field.surface_column_stats().indexed_contacts>0,"a later indexed water receiver builds the ordered authority faces on demand")
 	check(lane.execute(owner)==shared_mesh and neighbor.execute(contact_packet)==pinned_boundary,"borrowed pages retain exact terrain, physics and water across release of the parent view")
 	var counters:Dictionary=neighbor.surface_column_stats()
 	check(counters.columns>0 and counters.meshes==1 and counters.contacts==1 and counters.bytes<=4*1024*1024 and lane.surface_column_stats()==counters,"renderer, collider and adjacent water share one bounded set of extracted surface columns")
 	var tile_key:=Vector3i(992,992,32)
 	var typed:Dictionary=lane.resident_tile(tile_key,state.revision,build_epoch,true)
 	var wire:=Codec.decode_mesh(canonical.slice(16))
+	var observed_faces:Array[PackedVector3Array]=[]
+	var on_faces:=func(faces:PackedVector3Array)->Array:
+		observed_faces.append(faces)
+		return []
+	var split:Dictionary=lane.resident_tile(tile_key,state.revision,build_epoch,true,on_faces)
+	check(observed_faces.size()==1 and observed_faces[0]==wire.faces and split.get("cache_packet")==typed.get("cache_packet"),"early physics faces and later shaded mesh match the independent complete packet")
 	check(typed.get("cache_packet")==canonical.slice(16) and typed.get("arrays")==wire.arrays and typed.get("faces")==wire.faces and typed.get("cavity_visibility")==wire.cavity_visibility,"sealed tile writes the identical shader channels, pick and physics faces, and persisted cache packet")
 	var volatile_tile:Dictionary=lane.resident_tile(tile_key,state.revision,build_epoch,false)
 	check(volatile_tile.get("arrays")==typed.get("arrays") and not volatile_tile.has("cache_packet") and lane.resident_tile(tile_key,state.revision+1,build_epoch,false).is_empty(),"transient tile bypasses serialization and rejects a stale revision")

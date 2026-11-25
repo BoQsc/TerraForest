@@ -9,17 +9,17 @@ class BrushProfileBackend extends "res://addons/volumetric_terrain/terrain_backe
  var staging_frames:Array[Dictionary]=[]
  var worker_done_us:=0
  var resident_triangles:=0
+ var resident_tiles:=0
+ var first_tile_us:=0
+ var last_tile_us:=0
+ var last_queued_us:=0
  var initial_authority_replays:=0
- func _build_resident_group(source:Object,items:Array,job:Dictionary,completed:Dictionary,revision:int)->void:
-  super._build_resident_group(source,items,job,completed,revision)
-  var counters:PackedByteArray=source.execute(Codec.command(45))
-  if counters.size()==20:
-   mutex.lock()
-   resident_triangles+=counters.decode_u64(12)
-   mutex.unlock()
 
  func poll()->Array[Dictionary]:
-  var results_batch:=super.poll()
+  return _record_receipt(super.poll())
+ func poll_resident_results(ticket:int,faces_only:bool)->Array[Dictionary]:
+  return _record_receipt(super.poll_resident_results(ticket,faces_only))
+ func _record_receipt(results_batch:Array[Dictionary])->Array[Dictionary]:
   var received:=Time.get_ticks_usec()
   for result in results_batch:
    match result.kind:
@@ -35,12 +35,28 @@ class BrushProfileBackend extends "res://addons/volumetric_terrain/terrain_backe
   if result.kind=="edit_begin":
    stages.fill(0.0)
    tiles_profiled=0
+   resident_tiles=0
+   first_tile_us=0
+   last_tile_us=0
+   last_queued_us=0
    resident_triangles=0
    initial_authority_replays=_call(Codec.command(45)).decode_u64(12)
    measuring=true
    light_start=_call(Codec.command(15))
   elif result.kind=="edit_chunk":
    result.profile_ready_us=Time.get_ticks_usec()
+   if result.has("resident_mesh_ms"):
+    mutex.lock()
+    for i in 4:stages[i]+=result.resident_mesh_ms[i]
+    resident_triangles+=result.resident_replayed_triangles
+    resident_tiles+=1
+    mutex.unlock()
+   if not result.has("contact_count"):
+    mutex.lock()
+    var ready_us:int=result.profile_ready_us
+    if first_tile_us==0 or first_tile_us>ready_us:first_tile_us=ready_us
+    last_tile_us=maxi(ready_us,last_tile_us)
+    mutex.unlock()
   elif result.kind=="edit_done":
    var light:=_call(Codec.command(15))
    var counts:={}
@@ -48,19 +64,35 @@ class BrushProfileBackend extends "res://addons/volumetric_terrain/terrain_backe
    for i in labels.size():counts[labels[i]]=(light.decode_u32(12+4*i)-light_start.decode_u32(12+4*i)) & 0xffffffff
    var live_triangles:=_call(Codec.command(45)).decode_u64(12)-initial_authority_replays
    print("AUTHORING_TRIANGLE_REPLAY ",JSON.stringify({"workers":resident_triangles,"authority":live_triangles}))
-   print("AUTHORING_NATIVE_MS ",JSON.stringify({"tiles":tiles_profiled,"extraction":stages[0],"simplification":stages[1],"blocks":stages[2],"shading":stages[3],"build":result.build_total_ms,"lighting":counts}))
+   print("AUTHORING_NATIVE_MS ",JSON.stringify({"tiles":tiles_profiled+resident_tiles,"resident_tiles":resident_tiles,"extraction":stages[0],"simplification":stages[1],"blocks":stages[2],"shading":stages[3],"build":result.build_total_ms,"authority_lighting":counts}))
    measuring=false
+  var is_owner:bool=result.kind=="edit_chunk" and not result.has("contact_count")
   super._push(result)
+  if is_owner:
+   var queued:=Time.get_ticks_usec()
+   mutex.lock()
+   last_queued_us=maxi(last_queued_us,queued)
+   mutex.unlock()
+ func _dispatch_resident_groups(job:Dictionary,scheduled:Dictionary,surface:Dictionary,items:Array)->Array:
+  var groups:=super._dispatch_resident_groups(job,scheduled,surface,items)
+  var domains:Array=[]
+  for field:Dictionary in surface.get("groups",[]):domains.append(str(field.bounds))
+  print("AUTHORING_CAPTURE_DOMAINS ",JSON.stringify({"requested":items.size(),"scheduled":scheduled.size(),"domains":domains}))
+  return groups
  func _build(key:Vector3i,base:bool,build_epoch:int,relight:bool=false,bottoms:Array=[],foreground:bool=false)->Dictionary:
   var result:=super._build(key,base,build_epoch,relight,bottoms,foreground)
   if measuring and foreground and not result.has("error"):
    var region:Dictionary=result.get("region_stages",{})
+   var totals:=PackedFloat32Array()
    if region.has("native_ms"):
-    for i in 4:stages[i]+=region.native_ms[i]
+    totals=region.native_ms
    elif not result.get("cached",false) and not result.has("bricks"):
     var profile:=_call(Codec.command(19))
-    for i in 4:stages[i]+=profile.decode_float(12+i*4)
+    for i in 4:totals.append(profile.decode_float(12+i*4))
+   mutex.lock()
+   for i in totals.size():stages[i]+=totals[i]
    tiles_profiled+=1
+   mutex.unlock()
   return result
 # Compact phase attribution without full trace output or desktop interaction.
 class FramePhases extends Node:
@@ -115,6 +147,15 @@ func record_exploration_stage(label:String,ms:float)->void:
  exploration_terrain_stages[label]=float(exploration_terrain_stages.get(label,0.0))+ms
 var frame_phases:FramePhases
 var game:Node3D
+var dry_draw_frame:=-1
+var dry_draw_us:=0
+
+func stamp_dry_draw()->void:
+ dry_draw_us=Time.get_ticks_usec()
+ dry_draw_frame=Engine.get_frames_drawn()
+
+func current_dry_draw_us()->int:
+ return dry_draw_us if dry_draw_frame==Engine.get_frames_drawn() else Time.get_ticks_usec()
 var failures:=0
 var evidence:=""
 var slot:="Amber_Pines"
@@ -1118,6 +1159,8 @@ func check_authoring_brush()->void:
  var lake_cut:bool="--authoring-lake-cut" in OS.get_cmdline_user_args()
  var wet_editor:bool="--authoring-overview-wet" in OS.get_cmdline_user_args()
  var dry_cut:bool="--authoring-dry-cut" in OS.get_cmdline_user_args()
+ if dry_cut and game.terrain.backend is BrushProfileBackend:
+  RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
  var fill:bool="--authoring-fill" in OS.get_cmdline_user_args()
  var max_radius:bool="--authoring-max-radius" in OS.get_cmdline_user_args()
  var lake:Dictionary={}
@@ -1238,7 +1281,8 @@ func check_authoring_brush()->void:
   var ticket:int=game.terrain.edit_ticket
   var audit:="--authoring-dependencies" in OS.get_cmdline_user_args() and (i==1 or "--authoring-collision-reuse" in OS.get_cmdline_user_args())
   var replay:bool=i==1 and "--authoring-swap-bound" in OS.get_cmdline_user_args()
-  var resident_before:=resident_payloads() if replay else {}
+  var owner_area:=Rect2(Vector2(center.x-37,center.z-37),Vector2(74,74)) if dry_cut else Rect2()
+  var resident_before:=resident_payloads(owner_area) if replay or dry_cut else {}
   var owners_before:=brush_mesh_owners(view,center,game.radius) if audit else {}
   var stamps_before:Dictionary=game.terrain.stamps.duplicate() if audit else {}
   if audit:
@@ -1248,6 +1292,13 @@ func check_authoring_brush()->void:
   var verify_draw:=profiling or ("--two-frame-edits" in OS.get_cmdline_user_args() and not coastal)
   var draw_record:Dictionary={}
   var geometry_draw:Dictionary={}
+  var batch_draw:Dictionary={}
+  var observe_batch:=func(installed:int)->void:
+   if installed!=ticket+1 or batch_draw.has("installed_us"):return
+   batch_draw.installed_us=Time.get_ticks_usec()
+   await RenderingServer.frame_post_draw
+   batch_draw.draw_us=current_dry_draw_us()
+   batch_draw.frame=Engine.get_frames_drawn()
   var region_stats:={"published_tiles":0,"center_early":false}
   var probe:=PhysicsRayQueryParameters3D.create(center+Vector3.UP*96,center-Vector3.UP*96,1)
   probe.exclude=[game.player.get_rid()]
@@ -1272,11 +1323,16 @@ func check_authoring_brush()->void:
    await RenderingServer.frame_post_draw
    footprint.draw_us=Time.get_ticks_usec()
    footprint.samples=sample_patch.call(footprint_spacing)
+   if dry_cut:
+    footprint.owners=resident_payloads(owner_area)
+    footprint.perimeter=sample_patch.call(40.0)
    if lake_cut:footprint.water=sample_lake_cut_water(footprint.samples)
   if check_footprint:footprint.before=sample_patch.call(footprint_spacing)
+  if dry_cut:footprint.original_perimeter=sample_patch.call(40.0)
   var old_contact:Vector3=sample_center.call() if verify_draw else Vector3.INF
   var gameplay_bodies:Array[RigidBody3D]=[]
   if replay:
+   var editing_pose:=view.global_transform
    var perimeter:PackedVector3Array=sample_patch.call(40.0)
    if old_contact.is_finite() and perimeter[5].is_finite():
     gameplay_bodies=[contact_body_at(old_contact),contact_body_at(perimeter[5])]
@@ -1284,11 +1340,21 @@ func check_authoring_brush()->void:
      await physics_frame
      if gameplay_bodies[0].sleeping and gameplay_bodies[1].sleeping:break
    check(gameplay_bodies.size()==2 and gameplay_bodies.all(func(body):return body.sleeping and body.get_contact_count()>0),"Gameplay cut starts with supported sleeping bodies")
+   view.make_current()
+   view.global_transform=editing_pose
+   game.app_focused=true
+   Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+   game._update_edit(0)
+   if not game.pointer.visible or not game.pointer.position.is_equal_approx(center):
+    check(false,"Replay setup restores the original dry-cut target")
+    for body in gameplay_bodies:body.queue_free()
+    return
   var observe_geometry:=func(installed:int)->void:
    if installed!=ticket+1 or geometry_draw.has("installed_us"):return
    geometry_draw.installed_us=Time.get_ticks_usec()
    await RenderingServer.frame_post_draw
-   geometry_draw.draw_us=Time.get_ticks_usec()
+   geometry_draw.observed_us=Time.get_ticks_usec()
+   geometry_draw.draw_us=current_dry_draw_us() if dry_cut else geometry_draw.observed_us
    geometry_draw.frame=Engine.get_frames_drawn()
    geometry_draw.contact=sample_center.call()
    if i==1 or max_radius:geometry_draw.patch=sample_patch.call()
@@ -1307,14 +1373,35 @@ func check_authoring_brush()->void:
   var observe_draw:=func(row:Dictionary)->void:
    if row.ticket==ticket+1 and row.has("draw_us"):draw_record.merge(row)
   if profiling:
+   if not audit:
+    exploration_terrain_stages.clear()
+    game.terrain.stage_measured.connect(record_exploration_stage)
    game.terrain.stage_measured.connect(record_brush_staging)
   if verify_draw:
    game.terrain.edit_measured.connect(observe_draw)
+   if dry_cut:game.terrain.edit_geometry_installed.connect(observe_batch)
    game.terrain.edit_geometry_installed.connect(observe_geometry)
    game.terrain.edit_region_installed.connect(observe_region)
   var click:=InputEventMouseButton.new()
   click.button_index=MOUSE_BUTTON_RIGHT if fill else MOUSE_BUTTON_LEFT
   click.pressed=true
+  var draw_trace:Array[Dictionary]=[]
+  var submissions:Array[Dictionary]=[]
+  var before_draw:=func()->void:
+   if submissions.size()<24:
+    submissions.append({"us":Time.get_ticks_usec(),"remaining":game.terrain.batch_remaining,"staging_us":game.terrain._staging_spent_us})
+  var trace_draw:=func()->void:
+   if draw_trace.size()>=24:return
+   var now:=Time.get_ticks_usec()
+   var viewport:=root.get_viewport_rid()
+   var sample:Dictionary={"us":current_dry_draw_us(),"observed_us":now,"owners":resident_payloads(owner_area),"hits":sample_patch.call(footprint_spacing)}
+   sample.viewport_cpu_ms=RenderingServer.viewport_get_measured_render_time_cpu(viewport)
+   sample.viewport_gpu_ms=RenderingServer.viewport_get_measured_render_time_gpu(viewport)
+   sample.observer_ms=(Time.get_ticks_usec()-now)/1000.0
+   draw_trace.append(sample)
+  if dry_cut and profiling:
+   RenderingServer.frame_pre_draw.connect(before_draw)
+   RenderingServer.frame_post_draw.connect(trace_draw)
   var started:=Time.get_ticks_usec()
   var input_frame:=Engine.get_frames_drawn()
   if check_footprint:observe_second_draw.call()
@@ -1363,10 +1450,20 @@ func check_authoring_brush()->void:
    check(owned_amount()==initial_volume,"Full lake authoring cut conserves the finite quantity")
   if profiling:
    game.terrain.stage_measured.disconnect(record_brush_staging)
+   if not audit:
+    game.terrain.stage_measured.disconnect(record_exploration_stage)
+    print("AUTHORING_MAIN_STAGES_MS ",JSON.stringify(exploration_terrain_stages))
+   print("AUTHORING_TRIANGLE_WINDOW ",JSON.stringify({"first_payload_from_input_ms":(game.terrain.backend.first_tile_us-started)/1000.0,"last_payload_from_input_ms":(game.terrain.backend.last_tile_us-started)/1000.0,"last_queued_from_input_ms":(game.terrain.backend.last_queued_us-started)/1000.0}))
   if verify_draw:
    var draw_deadline:=Time.get_ticks_usec()+500000
    while draw_record.is_empty() and Time.get_ticks_usec()<draw_deadline:await process_frame
    game.terrain.edit_measured.disconnect(observe_draw)
+   if dry_cut:
+    game.terrain.edit_geometry_installed.disconnect(observe_batch)
+    if profiling:
+     RenderingServer.frame_pre_draw.disconnect(before_draw)
+     RenderingServer.frame_post_draw.disconnect(trace_draw)
+    if batch_draw.has("draw_us"):print("DRY_CUT_FULL_BATCH_DRAW ",JSON.stringify({"install_ms":(batch_draw.installed_us-started)/1000.0,"draw_ms":(batch_draw.draw_us-started)/1000.0,"draw":1+batch_draw.frame-input_frame}))
    game.terrain.edit_geometry_installed.disconnect(observe_geometry)
    game.terrain.edit_region_installed.disconnect(observe_region)
    if check_footprint:
@@ -1380,6 +1477,74 @@ func check_authoring_brush()->void:
      if footprint.has("samples") and final_samples[index].is_equal_approx(footprint.samples[index]):matched+=1
     print("AUTHORING_SECOND_DRAW_FOOTPRINT ",JSON.stringify({"spacing_m":footprint_spacing,"input_to_second_draw_ms":(footprint.draw_us-started)/1000.0,"changed":changed,"matched":matched}))
     check(changed>0 and matched==changed,"Changed collision probes across the brush footprint match the finished edit on draw two")
+    if dry_cut:
+     var final_owners:=resident_payloads(owner_area)
+     var changed_owners:=0
+     var matching_owners:=0
+     var exterior:=0
+     var changed_geometry:=0
+     var changed_shading_only:=0
+     var changed_physics:=0
+     var final_perimeter:PackedVector3Array=sample_patch.call(40.0)
+     var render_digest:=HashingContext.new()
+     var physics_digest:=HashingContext.new()
+     render_digest.start(HashingContext.HASH_SHA256)
+     physics_digest.start(HashingContext.HASH_SHA256)
+     var owner_keys:=resident_before.keys()
+     owner_keys.sort()
+     for key in owner_keys:
+      if not final_owners.has(key):continue
+      var old:Dictionary=resident_before[key]
+      var current:Dictionary=final_owners[key]
+      if old.mesh!=current.mesh or old.shapes!=current.shapes:changed_owners+=1
+      var channels:Array=current.mesh.surface_get_arrays(0)
+      if profiling:
+       var previous_channels:Array=old.mesh.surface_get_arrays(0)
+       if previous_channels[Mesh.ARRAY_VERTEX]!=channels[Mesh.ARRAY_VERTEX] or previous_channels[Mesh.ARRAY_INDEX]!=channels[Mesh.ARRAY_INDEX]:changed_geometry+=1
+       elif previous_channels!=channels:changed_shading_only+=1
+       if old.shapes.size()!=current.shapes.size():changed_physics+=1
+       else:
+        for n in old.shapes.size():
+         if old.shapes[n]==current.shapes[n]:continue
+         if not old.shapes[n] is ConcavePolygonShape3D or not current.shapes[n] is ConcavePolygonShape3D or old.shapes[n].get_faces()!=current.shapes[n].get_faces():
+          changed_physics+=1
+          break
+      render_digest.update(var_to_bytes([key,channels]))
+      physics_digest.update(var_to_bytes(key))
+      for shape in current.shapes:
+       if shape is ConcavePolygonShape3D:physics_digest.update(var_to_bytes(shape.get_faces()))
+      var early:Dictionary=footprint.get("owners",{}).get(key,{})
+      if early.get("active",false) and current.active and early.get("mesh")==current.mesh and early.get("shapes")==current.shapes:matching_owners+=1
+     for n in final_perimeter.size():
+      if n!=4 and final_perimeter[n].is_finite() and final_perimeter[n].is_equal_approx(footprint.original_perimeter[n]) and footprint.has("perimeter") and final_perimeter[n].is_equal_approx(footprint.perimeter[n]):exterior+=1
+     var render_hash:=render_digest.finish().hex_encode()
+     var physics_hash:=physics_digest.finish().hex_encode()
+     if profiling:
+      print("DRY_CUT_CHANGED_CONTENT ",JSON.stringify({"owners":owner_keys.size(),"geometry":changed_geometry,"shading_only":changed_shading_only,"colliders":changed_physics}))
+      var draws:Array=[]
+      var previous_draw:=0
+      for sample:Dictionary in draw_trace:
+       var owners_ok:=0
+       var rays_ok:=0
+       for key in owner_keys:
+        var early:Dictionary=sample.owners.get(key,{})
+        var final:Dictionary=final_owners.get(key,{})
+        if early.get("active",false) and final.get("active",false) and early.mesh==final.mesh and early.shapes==final.shapes:owners_ok+=1
+       for n in final_samples.size():
+        if final_samples[n].is_finite() and sample.hits[n].is_equal_approx(final_samples[n]):rays_ok+=1
+       draws.append({"input_ms":(sample.us-started)/1000.0,"interval_ms":(sample.us-previous_draw)/1000.0 if previous_draw else null,"owners":owners_ok,"rays":rays_ok,"viewport_cpu_ms":sample.viewport_cpu_ms,"viewport_gpu_ms":sample.viewport_gpu_ms,"observer_ms":sample.observer_ms})
+       draws.back().observer_delay_ms=(sample.observed_us-sample.us)/1000.0
+       if draws.size()<=submissions.size():
+        var submission:Dictionary=submissions[draws.size()-1]
+        draws.back().pre_draw_ms=(submission.us-started)/1000.0
+        draws.back().unstaged=submission.remaining
+        draws.back().staging_ms=submission.staging_us/1000.0
+       previous_draw=sample.us
+      print("DRY_CUT_DRAW_TRACE ",JSON.stringify(draws))
+     print("DRY_CUT_SECOND_DRAW ",JSON.stringify({"owners":owner_keys.size(),"changed_owners":changed_owners,"matching_mesh_and_shapes":matching_owners,"stable_exterior":exterior,"elapsed_ms":(footprint.draw_us-started)/1000.0,"render_sha256":render_hash,"collision_sha256":physics_hash}))
+     if slot=="Cedar_Vale" and center.is_equal_approx(Vector3(1010,28,995)):
+      check(owner_keys.size()==36 and render_hash=="30253242dcb13f42c457a4a3b64cbdc872c4246439e2ffc26e7d723c014d329b" and physics_hash=="916c60af5cf9af572367c7c5efc519c06e81aa2b3ee21da03ede2ea3f3267dc0","Installed dry cut preserves every reference mesh channel and collider face across 36 owners")
+     check(changed==9 and matched==9 and exterior==8 and changed_owners>0 and owner_keys.size()==matching_owners and footprint.draw_us-started<=33334,"Dry cut has matching rendered resources, physics shapes and inside/outside contacts across its footprint within two draws and 33.334 ms")
     if lake_cut:
      var final_water:=sample_lake_cut_water(final_samples)
      var wet:=0
@@ -1413,7 +1578,7 @@ func check_authoring_brush()->void:
     print("AUTHORING_REGION ",JSON.stringify(region_stats))
     print("AUTHORING_GEOMETRY_DRAW ",JSON.stringify({"radius":game.radius,"input_to_install_ms":(geometry_draw.installed_us-started)/1000.0,"input_to_draw_ms":(geometry_draw.draw_us-started)/1000.0,"frames_drawn":frames_to_draw}))
     if lake_cut:print("EDIT_READINESS ",JSON.stringify(edit_readiness(game.lakes._equilibrium_last_result,ticket+1,game.terrain.edit_accepted_us,geometry_draw.draw_us)))
-    if dry_cut:print("DRY_CUT_READINESS ",JSON.stringify({"terrain_batch_staged_ms":(game.terrain.last_batch_staged_us-game.terrain.edit_accepted_us)/1000.0,"first_draw_from_input_ms":(geometry_draw.draw_us-started)/1000.0}))
+    if dry_cut:print("DRY_CUT_READINESS ",JSON.stringify({"terrain_batch_staged_ms":(game.terrain.last_batch_staged_us-game.terrain.edit_accepted_us)/1000.0,"first_draw_from_input_ms":(geometry_draw.draw_us-started)/1000.0,"geometry_observer_ms":(geometry_draw.observed_us-started)/1000.0}))
     if "--two-frame-edits" in OS.get_cmdline_user_args():
      check(frames_to_draw<=2 and geometry_draw.draw_us-started<=33334,"Authoring brush reaches first draw in two frames")
    check(not draw_record.is_empty(),"First terrain post-draw receipt belongs to this brush ticket")
@@ -1465,14 +1630,15 @@ func check_authoring_brush()->void:
 
 # Isolate the installation cost from construction. This diagnostic runs only
 # after the ordinary edit in the disposable world. It cannot qualify latency.
-func resident_payloads()->Dictionary:
+func resident_payloads(area:Rect2=Rect2())->Dictionary:
  var result:={}
  for key:Vector3i in game.terrain.visible_cut:
+  if area.has_area() and not area.intersects(Rect2(key.x,key.y,key.z,key.z)):continue
   var entry:Dictionary=game.terrain.tiles[key]
   if key.z>32 or not entry.node is MeshInstance3D or not is_instance_valid(entry.body):continue
   var shapes:Array=[]
   for collider:CollisionShape3D in entry.body.get_children():shapes.append(collider.shape)
-  result[key]={"node":entry.node.get_instance_id(),"mesh":entry.node.mesh,"shapes":shapes}
+  result[key]={"node":entry.node.get_instance_id(),"mesh":entry.node.mesh,"shapes":shapes,"active":entry.node.is_visible_in_tree() and (entry.body.collision_layer&1)!=0}
  return result
 
 func contact_body_at(point:Vector3)->RigidBody3D:
@@ -2197,6 +2363,9 @@ func check_authoring_drag()->void:
  check(await ready("drag release"),"Remaining admitted work drains after release")
 
 func run()->void:
+ # All observers of the same renderer event share its timestamp. The full
+ # footprint gate below also retains the later wall time at the real probes.
+ if "--authoring-dry-cut" in OS.get_cmdline_user_args():RenderingServer.frame_post_draw.connect(stamp_dry_draw)
  var sea_completed:=false
  var expected_source:=""
  for arg in OS.get_cmdline_user_args():

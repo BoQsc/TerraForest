@@ -120,7 +120,7 @@ Marching cubes is a surface extractor that could serve A or B. Choosing it does 
 
 ### Full-cut decision from the packaged replay
 
-The current preview cannot represent a full 64 m cut. In `terrain_stream.gd`, `_contact_domain` selects the center plus or minus 8 m and rejects more than four owners. In `core.cpp`, `LocalCut::density` independently limits excavation to that same central prism. The qualification brush has a 32 m radius, changes 36 owners, and has changed probes 24 m from the center. Faster dispatch of that preview cannot make those outer probes pass. Widening the prism would also invalidate its existing seam and cost assumptions.
+The central preview covers the center plus or minus 8 m and at most four owners. In `core.cpp`, `LocalCut::density` limits excavation to that same prism. The qualification brush has a 32 m radius, changes 36 owners and has changed probes 24 m from the center. Wide resident edits now bypass the central prism and dispatch exact terrain and collision for all affected owners. The [dry edit trials](WORLD_EDIT_EXPERIMENTS.md#repeated-dry-edits-on-one-packaged-build) measure the earliest complete draw across that footprint.
 
 Keep the engine collider for now. Replaying all 36 already prepared final resources cost 0.59 ms on the recorded control. The nine changed rays matched on the first draw, but the unsupported rigid body remained at rest for seven physics ticks. The production handoff therefore also has to invalidate sleeping support. Preparing fresh engine resources is a separate cost. Prebuilt replay excludes native extraction, resource creation, first installation of uncooked geometry, and water reconstruction.
 

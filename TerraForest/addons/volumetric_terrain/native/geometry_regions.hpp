@@ -9,7 +9,12 @@ struct GeometryRegion {
  int dirty_xz[4]={};
  int dirty_y0=0,dirty_y1=0;
  u64 used=0;
- bool present=false,dirty=false;
+ bool present=false,dirty=false,borrowed=false;
+ void release_vertices(){
+  if(borrowed)vertices={};
+  else vertices.release();
+  borrowed=false;
+ }
 };
 struct GeometryCache {
  GeometryRegion regions[GEOMETRY_SLOTS];
@@ -28,12 +33,12 @@ static int geometry_key(int x,int z){return (x/16+1)+GEOMETRY_GRID*(z/16+1);}
 static void discard_region(GeometryCache&c,int slot,bool eviction){
  GeometryRegion&r=c.regions[slot];if(!r.present)return;
  c.index[geometry_key(r.x,r.z)]=0;c.bytes-=u64(r.vertices.cap)*sizeof(Vertex);c.entries--;
- r.vertices.release();r.present=false;r.dirty=false;
+ r.release_vertices();r.present=false;r.dirty=false;
  if(eviction)c.evictions++;
 }
 void release_geometry_cache(const World&w){
  if(!w.geometry_cache)return;
- for(auto&r:w.geometry_cache->regions)r.vertices.release();
+ for(auto&r:w.geometry_cache->regions)r.release_vertices();
  tr_free(w.geometry_cache);w.geometry_cache=nullptr;
 }
 static void dirty_reconstruction(GeometryCache &cache,GeometryRegion &r,int x0,int z0,int x1,int z1,int bottom,int top){
@@ -162,6 +167,31 @@ static bool has_surface_columns(const World&w,int ox,int oz,int size,bool allow_
   }
  return true;
 }
+// Replacement cells arrive in canonical z/x/y/component order. The retained
+// column uses the same order. Merge from the end into the existing allocation
+// so a dense edit never sorts thousands of already ordered representatives.
+static bool merge_retained_vertices(const GeometryRegion &old,List<Vertex> &replacement){
+ auto outside=[&](const Vertex &v){
+  return v.cx<old.dirty_xz[0]||v.cx>old.dirty_xz[2]||v.cz<old.dirty_xz[1]||
+         v.cz>old.dirty_xz[3]||v.cy<old.dirty_y0||v.cy>old.dirty_y1;
+ };
+ int retained=0;
+ for(int i=0;i<old.vertices.n;++i)if(outside(old.vertices[i]))++retained;
+ if(!retained)return true;
+ int next=replacement.n;
+ if(!replacement.reserve(next+retained))return false;
+ replacement.n+=retained;
+ int write=replacement.n;
+ for(int i=old.vertices.n-1;i>=0;--i){
+  const Vertex &v=old.vertices[i];
+  if(!outside(v))continue;
+  while(next>0&&vertex_before(v,replacement[next-1])){
+   --write;--next;replacement[write]=replacement[next];
+  }
+  replacement[--write]=v;
+ }
+ return true;
+}
 static const List<Vertex>* geometry_column(const World&w,GeometryCache &c,int x,int z,u32 epoch,Mesh &temporary){
   int key=geometry_key(x,z),slot=int(c.index[key])-1;
   const List<Vertex>*selected=nullptr;
@@ -172,12 +202,7 @@ static const List<Vertex>* geometry_column(const World&w,GeometryCache &c,int x,
     const auto&r=c.regions[slot];
     if(!extract_vertices(w,x,z,16,temporary,epoch,r.dirty_y0+1,r.dirty_y1+1,nullptr,nullptr,r.dirty_xz))return nullptr;
     inherit_face_recipes(r,temporary.v);
-    for(int i=0;i<r.vertices.n;++i){
-     const auto&v=r.vertices[i];
-     if(v.cx<r.dirty_xz[0]||v.cx>r.dirty_xz[2]||v.cz<r.dirty_xz[1]||v.cz>r.dirty_xz[3]||v.cy<r.dirty_y0||v.cy>r.dirty_y1)temporary.v.push(v);
-    }
-    if(tr_oom)return nullptr;
-    if(temporary.v.n>1)order_vertices(temporary.v.p,0,temporary.v.n-1);
+    if(!merge_retained_vertices(r,temporary.v))return nullptr;
    }else if(!extract_vertices(w,x,z,16,temporary,epoch))return nullptr;
    // Drop halo representatives: every cached cell has exactly one owner.
    int count=0;for(int i=0;i<temporary.v.n;i++){const Vertex&v=temporary.v[i];if(v.cx>=x&&v.cx<x+16&&v.cz>=z&&v.cz<z+16)temporary.v[count++]=v;}temporary.v.n=count;
@@ -216,16 +241,26 @@ static bool cached_vertices(const World&w,int ox,int oz,int size,Mesh&m,u32 epoc
 
 // The worker can repair just the invalidated cells on its immutable field.
 // Copy only columns read by this group, under the existing per-core budget.
-bool copy_surface_columns(const World&source,World&dest,int ox,int oz,int width,int depth){
+bool copy_surface_columns(const World&source,World&dest,int ox,int oz,int width,int depth,bool pinned_parent,bool sealed_source){
  if(!source.geometry_cache)return true;
  for(const auto&r:source.geometry_cache->regions){
   if(!r.present||r.x+16<ox||r.z+16<oz||r.x>=ox+width||r.z>=oz+depth)continue;
   auto*c=ensure_geometry_cache(dest);if(!c)return false;
-  List<Vertex> vertices;vertices.resize(r.vertices.n);
-  if(tr_oom){vertices.release();return false;}
-  if(r.vertices.n)copy_bytes(vertices.p,r.vertices.p,sizeof(Vertex)*r.vertices.n);
-  retain_geometry_column(*c,r.x,r.z,vertices);vertices.release();
+  // Each lane owns its index, dirtiness and replacement buffers. An immutable
+  // column from the common snapshot can survive the lane that first read it.
+  // A column rebuilt by a still-active parent always needs its own copy.
+  const bool borrow=pinned_parent&&(sealed_source||r.borrowed);
+  List<Vertex> vertices;
+  if(borrow)vertices=r.vertices;
+  else{
+   vertices.resize(r.vertices.n);
+   if(tr_oom){vertices.release();return false;}
+   if(r.vertices.n)copy_bytes(vertices.p,r.vertices.p,sizeof(Vertex)*r.vertices.n);
+  }
+  retain_geometry_column(*c,r.x,r.z,vertices);
+  if(!borrow)vertices.release();
   const int slot=int(c->index[geometry_key(r.x,r.z)])-1;
+  if(slot>=0)c->regions[slot].borrowed=borrow;
   if(slot>=0&&r.dirty){
    auto&copy=c->regions[slot];copy.dirty=true;copy.dirty_y0=r.dirty_y0;copy.dirty_y1=r.dirty_y1;
    copy_bytes(copy.dirty_xz,r.dirty_xz,sizeof(r.dirty_xz));
