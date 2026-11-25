@@ -128,6 +128,9 @@ def main(timing_only=False, selected_routes=None):
                      "cut_angles": cut + ["--authoring-cut-angles"], "shore_angles": shores,
                      "bucket_interruption": bucket_interruption}
         routes = selected_routes or (["cut", "shores"] if timing_only else list(workloads))
+        # Optional architectural control. The unmodified game performs the
+        # same size cut inland and the driver verifies the entire area is dry.
+        workloads["dry_cut"] = ["--water-load-only", "--authoring-brush", "--authoring-dry-cut"]
         for label in routes:
             folder, result = run_route(engine, record["pack_sha256"], label, workloads[label], index, frozen_driver)
             record["runs"][label] = str(folder)
@@ -163,7 +166,7 @@ if __name__ == "__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--timing-only",action="store_true",help="Run both deadline routes without allocating a camera-capture pass.")
-    selection.add_argument("--route", choices=["cut", "shores", "cut_angles", "shore_angles", "bucket_interruption"], action="append",
+    selection.add_argument("--route", choices=["cut", "shores", "cut_angles", "shore_angles", "bucket_interruption", "dry_cut"], action="append",
                            help="Run a named packaged route. Repeat to share the same staged build across routes.")
     args = parser.parse_args()
     raise SystemExit(main(args.timing_only, list(dict.fromkeys(args.route)) if args.route else None))

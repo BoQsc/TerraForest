@@ -256,6 +256,7 @@ func verify_shore_target(draw:Dictionary)->Dictionary:
    if floor_hit!=null:terrain_error=minf(terrain_error,absf((transform*Vector3(floor_hit)).y-floor_point.y))
  return {"matched":matched and terrain_error<=.001,"terrain_collision_error_m":terrain_error if is_finite(terrain_error) else -1.0,"floor_frames":1+draw.floor_draw_frame-draw.admit_frame,"floor_ms":(draw.floor_draw_us-draw.admit_us)/1000.0,"floor_to_water_frames":draw.frame-draw.floor_draw_frame,"frames":1+draw.frame-draw.admit_frame,"ms":(draw.draw_us-draw.admit_us)/1000.0,"proxy":draw.proxy,"floor_before":draw.old_floor,"floor_after":draw.floor_y,"surface_y":draw.query_y}
 var timing_resident_surface:RefCounted
+var timing_water_commit:Dictionary={}
 var terrain_admitted_us:=0
 var blast_timeline:Array[Dictionary]=[]
 var blast_started:=0
@@ -344,6 +345,7 @@ func timing_stage(label:String,ms:float)->void:
   timing_stages[label]=float(timing_stages.get(label,0))+ms
   timing_totals[label]=float(timing_totals.get(label,0))+ms
 func start_timing(label:String,target:Vector3=Vector3.INF)->void:
+ timing_water_commit={}
  shore_draw.clear()
  if target.is_finite():
   var ray:=PhysicsRayQueryParameters3D.create(target+Vector3.UP*8,target-Vector3.UP*8,1)
@@ -414,6 +416,16 @@ func sample_timing()->void:
  if timing_worst.size()>5:timing_worst.resize(5)
  timing_stages.clear()
  timing_frames.append((now-timing_previous)/1000.0);timing_water.append(float(game.lakes.last_process_us));timing_previous=now
+func edit_readiness(water:Dictionary,ticket:int,admitted_us:int,drawn_us:int)->Dictionary:
+ if admitted_us<=0 or ticket!=game.terrain.edit_ticket or water.get("timed_ticket",-1)!=ticket:return {}
+ var terrain_ready:int=game.terrain.last_batch_staged_us-admitted_us
+ var water_ready:int=water.get("water_staged_us",-1)
+ var installed:int=water.get("joint_install_us",-1)
+ if terrain_ready<0 or water_ready<0 or installed<0 or drawn_us<admitted_us:return {}
+ return {"ticket":ticket,"terrain_batch_staged_ms":terrain_ready/1000.0,"detailed_water_staged_ms":water_ready/1000.0,
+  "water_worker_ready_ms":water.worker_ready_us/1000.0,"water_installed_ms":installed/1000.0,
+  "first_observed_draw_ms":(drawn_us-admitted_us)/1000.0}
+
 func finish_timing()->void:
  blast_metrics[timing_phase]={"frames":timing_frames.size(),"frame_p95_ms":percentile(timing_frames,.95),"frame_p99_ms":percentile(timing_frames,.99),"frame_max_ms":timing_frames.back() if not timing_frames.is_empty() else 0,"water_main_p95_us":percentile(timing_water,.95),"water_main_max_us":timing_water.back() if not timing_water.is_empty() else 0}
  blast_metrics[timing_phase].water_after_terrain_ms=(Time.get_ticks_usec()-terrain_published_us)/1000.0 if terrain_published_us else -1
@@ -426,6 +438,7 @@ func finish_timing()->void:
   if counter.size()==20:blast_metrics[timing_phase].resident_replayed_triangles=counter.decode_u64(12)
   timing_resident_surface=null
  blast_metrics[timing_phase].local_response_ms=timing_local_ms
+ blast_metrics[timing_phase].readiness=edit_readiness(timing_water_commit,game.terrain.edit_ticket,terrain_admitted_us,local_draw_us)
  blast_metrics[timing_phase].direct_triangle_pages=game.terrain.last_direct_triangle_pages
  blast_metrics[timing_phase].worker_packed_surfaces=game.terrain.last_worker_packed_surfaces
  blast_metrics[timing_phase].page_selection=game.terrain.last_page_selection
@@ -471,6 +484,7 @@ func local_response(point:Vector3,label:String)->void:
     audit_meshes_after=resident_render_meshes()
     audit_edit_areas=game.terrain.water_edit_areas(AABB())
    timing_local_ms=latency
+   timing_water_commit=game.lakes._equilibrium_last_result
    print("LOCAL_WATER_RESPONSE ",label," ms=",latency," wider_pending=",game.lakes.water.runtime_state().settling_regions)
    print("LOCAL_WATER_SOLVE ",label," ",JSON.stringify(game.lakes.statistics().get("equilibrium_result",{})))
    if label=="lake":
@@ -934,6 +948,34 @@ func sample_lake_cut_water(floors:PackedVector3Array)->Array:
   rows.append(row)
  return rows
 
+func check_cut_landscape_support(center:Vector3,phase:String)->void:
+ # Test live render rows against the actual physics world after taking the two
+ # pictures. A falling prop is independent of a procedural row still anchored
+ # at the old lake bed. Stay inside the cut and away from the vertical walls.
+ var interior:=AABB(center-Vector3(29,32,29),Vector3(58,64,58))
+ var sets:={"trees":game.ecosystem._capture_terrain_support(interior),"ground":[],"boulders":[]}
+ if game.ground_enabled:
+  sets.ground=game.ground_cover._capture_terrain_support(interior)
+  if game.ground_cover.boulders!=null:sets.boulders=game.ground_cover.boulders._capture_support(interior)
+ var space:PhysicsDirectSpaceState3D=game.get_world_3d().direct_space_state
+ for kind:String in sets:
+  var tested:=0
+  var suspended:=PackedInt64Array()
+  var greatest_gap:=0.0
+  for batch:Dictionary in sets[kind]:
+   for i in batch.ids.size():
+    var root_point:Vector3=batch.points[batch.offsets[i]]+Vector3.UP*.08
+    if not interior.has_point(root_point):continue
+    tested+=1
+    var ray:=PhysicsRayQueryParameters3D.create(root_point+Vector3.UP,root_point-Vector3.UP*96,1,[game.player.get_rid()])
+    var hit:=space.intersect_ray(ray)
+    var gap:float=root_point.y-hit.position.y if not hit.is_empty() else 96.0
+    if gap>1.0:
+     suspended.append(batch.ids[i])
+     greatest_gap=maxf(greatest_gap,gap)
+  print("CUT_LANDSCAPE_SUPPORT ",JSON.stringify({"phase":phase,"kind":kind,"tested":tested,"suspended":suspended,"greatest_gap_m":greatest_gap}))
+  if tested>0:check(suspended.is_empty(),phase+" cut "+kind+" remain supported by terrain collision")
+
 func capture_cut_angles(center:Vector3,phase:String)->void:
  var previous:=root.get_camera_3d()
  var camera:=Camera3D.new()
@@ -953,6 +995,7 @@ func capture_cut_angles(center:Vector3,phase:String)->void:
   picture.resize(1280,720,Image.INTERPOLATE_LANCZOS)
   var path:=evidence.path_join("cut_%s_angle_%d.png"%[phase,i+1])
   check(root.get_camera_3d()==camera and picture.save_png(path)==OK,"Retained cut angle %d %s"%[i+1,phase])
+ check_cut_landscape_support(center,phase)
  previous.make_current();camera.queue_free()
  game.pointer.visible=show_pointer
  game.set_process(processing);game.set_physics_process(physics)
@@ -961,6 +1004,7 @@ func check_authoring_brush()->void:
  game.player_view.entry.finish()
  var coastal:bool="--authoring-preparation" in OS.get_cmdline_user_args()
  var lake_cut:bool="--authoring-lake-cut" in OS.get_cmdline_user_args()
+ var dry_cut:bool="--authoring-dry-cut" in OS.get_cmdline_user_args()
  var lake:Dictionary={}
  var wet_target:=Vector3.INF
  if coastal:
@@ -997,7 +1041,7 @@ func check_authoring_brush()->void:
   await check_authoring_drag()
   return
  for i in (1 if coastal else 3):
-  if lake_cut and i!=1:continue
+  if (lake_cut or dry_cut) and i!=1:continue
   game.radius=2 if i==0 else 32
   if i==1 and "--authoring-at-spawn" not in OS.get_cmdline_user_args():
    game.fly=true
@@ -1017,6 +1061,12 @@ func check_authoring_brush()->void:
   var center:Vector3=hit-game.latest_hit.normal*game.radius*.55
   if i==1:center=center.snapped(Vector3.ONE)
   if i==2:center=(hit-game.latest_hit.normal*.015).floor()+Vector3.ONE*.5
+  if dry_cut:
+   var bounds:=AABB(center-Vector3.ONE*32,Vector3.ONE*64).grow(4)
+   var inland:bool=bounds.position.x>140 and bounds.position.z>140 and bounds.end.x<1860 and bounds.end.z<1860
+   var dry:bool=inland and not game.lakes.water.has_deferred_overlap(bounds) and not game.lakes.water.overlaps_occupied(bounds)
+   check(dry,"Dry 64 m control has no saved water in the cut or its 4 m collar and lies outside the coastal reservoir")
+   if not dry:return
   check(game.pointer.position.is_equal_approx(center),"Preview matches brush centre")
   check(game.pointer.scale.is_equal_approx(Vector3.ONE*(1 if i==2 else game.radius*2)),"Preview matches brush dimensions")
   if i<2 and "--authoring-captures" in OS.get_cmdline_user_args() and DisplayServer.get_name()!="headless":
@@ -1131,6 +1181,7 @@ func check_authoring_brush()->void:
   game._update_edit(1)
   var preparing:bool=not game.preparing_stroke.is_empty()
   var admitted:bool=game.terrain.pending_edit or preparing
+  if dry_cut:check(not game.terrain.joint_edit_pending(),"Dry cut enters the ordinary terrain-only publication path")
   if coastal:check(preparing,"One press is retained while the remote coastal brush prepares occupancy")
   var feedback_us:=Time.get_ticks_usec()-started
   if not admitted:
@@ -1218,6 +1269,8 @@ func check_authoring_brush()->void:
      check(matches==9,"Nine collision rays at the edited floor agree on first draw and after handoff")
     print("AUTHORING_REGION ",JSON.stringify(region_stats))
     print("AUTHORING_GEOMETRY_DRAW ",JSON.stringify({"radius":game.radius,"input_to_install_ms":(geometry_draw.installed_us-started)/1000.0,"input_to_draw_ms":(geometry_draw.draw_us-started)/1000.0,"frames_drawn":frames_to_draw}))
+    if lake_cut:print("EDIT_READINESS ",JSON.stringify(edit_readiness(game.lakes._equilibrium_last_result,ticket+1,game.terrain.edit_accepted_us,geometry_draw.draw_us)))
+    if dry_cut:print("DRY_CUT_READINESS ",JSON.stringify({"terrain_batch_staged_ms":(game.terrain.last_batch_staged_us-game.terrain.edit_accepted_us)/1000.0,"first_draw_from_input_ms":(geometry_draw.draw_us-started)/1000.0}))
     if "--two-frame-edits" in OS.get_cmdline_user_args():
      check(frames_to_draw<=2 and geometry_draw.draw_us-started<=33334,"Authoring brush reaches first draw in two frames")
    check(not draw_record.is_empty(),"First terrain post-draw receipt belongs to this brush ticket")

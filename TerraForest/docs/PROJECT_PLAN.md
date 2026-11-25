@@ -1,6 +1,6 @@
 ## World authority and qualification milestones (November 20)
 
-Milestone 5 remains open. The stored-interval release conserved the full cut and passed both shoreline contact suites, including the lake after bucket interruption. The cut and lake missed the two-frame deadline. [Measurements and visual findings](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#stored-water-intervals-and-interrupted-buckets)
+Milestone 5 remains open. The packaged dry cut also missed two frames. Terrain and water staged at 62 and 208 ms on the wet cut and 7 and 34 ms on the lake blast. Use the basin-capacity comparison and the dry terrain control to evaluate the two costs independently. [Representation decision and receipts](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#which-parts-of-volumetric-water-are-worth-keeping)
 
 The [real-time editing design](WORLD_SYSTEMS_DESIGN.md#real-time-terrain-and-water-editing) defines the shared publication contract for player mining, construction, water, large authoring operations and world management. Milestone 5 remains open.
 

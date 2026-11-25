@@ -166,6 +166,13 @@ var _contact_accepted_ticket:=-1
 var _edit_visible_owners:Dictionary={}
 var _edit_owner_cells:Dictionary={}
 var batch_remaining: int = 0
+# Wall clock when every terrain mesh and collider for this batch was staged.
+# An edit sharing a water ticket can wait after this point before installation.
+var last_batch_staged_us: int = 0
+func _record_staged_owner()->void:
+	batch_remaining-=1
+	if batch_remaining==0:last_batch_staged_us=Time.get_ticks_usec()
+
 var pending_edit: bool = false
 var edit_ticket: int = 0
 var edit_started_us: int = 0
@@ -594,6 +601,7 @@ func _receive(result: Dictionary) -> void:
 		_read_stats(result["stats"])
 		_mark_modified_columns()
 		batch_remaining = int(result["count"])
+		last_batch_staged_us = Time.get_ticks_usec() if batch_remaining==0 else 0
 		staged_batch.clear()
 		edit_worker_done = false
 		edit_writes_ready.emit(edit_ticket,result.get("writes",[]))
@@ -623,7 +631,7 @@ func _receive(result: Dictionary) -> void:
 		if result.get("retain_geometry",false):
 			if result.get("untouched_surface",false):last_untouched_surface_tiles+=1
 			staged_batch[result.key]={"retain_geometry":true,"stamp":result.stamp}
-			batch_remaining-=1
+			_record_staged_owner()
 			if batch_remaining==0 and edit_worker_done: _commit_batch()
 			return
 		result["kind"] = "batch"
@@ -696,6 +704,7 @@ func _receive(result: Dictionary) -> void:
 				_fail(str(chunk["error"]))
 				return
 		batch_remaining = chunks.size()
+		last_batch_staged_us = Time.get_ticks_usec() if batch_remaining==0 else 0
 		staged_batch.clear()
 		for chunk: Dictionary in chunks:
 			if chunk.has("error"):
@@ -988,7 +997,7 @@ func _drain_staging(allowance_us:int=-1) -> void:
 						_stage_contact(key,entry,data)
 						continue
 					staged_batch[key] = entry
-					batch_remaining -= 1
+					_record_staged_owner()
 					_publish_ready_region(key)
 				else:
 					_install(key, entry)

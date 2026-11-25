@@ -4,7 +4,35 @@
 
 A player should be able to break ground, place terrain, empty a bucket or detonate a shoreline barrel and immediately interact with the resulting world. An author should be able to cut across a region boundary and see the whole cut, walk on its new floor and find water wherever the cut opened a connected cavity. The same operation must work from first person, strategy view and the dedicated authority. Water needs depth, a continuous shoreline and consistent volume. Realistic transient flow is outside the requested scope.
 
-**Current verdict.** The latest no-capture release matched on draw 12 for the 64 m cut, draw two for the sea barrel and draw three for the lake barrel. All cut and crater probes matched at publication. The two-frame guarantee and stable 60 Hz remain open.
+**Current verdict.** In the packaged comparison the first matching wet cut took 239 ms. The sea barrel took 31 ms and the lake barrel took 48 ms from terrain admission. The dry 64 m control also missed two frames. The deadline and stable 60 Hz remain open.
+
+## Which parts of volumetric water are worth keeping?
+
+A still lake only needs a visible surface where air meets water. The game also needs to answer whether a point under that surface is in water, in solid terrain, or in a sealed dry cavity. When a barrel cuts a bank, the terrain supplies the new shape. A connection to the sea supplies its level. A finite lake additionally needs to account for the water available to fill the crater. A bucket must transfer the same quantity between the lake and the inventory. These requirements justify three-dimensional occupancy and a shared revision for rendering, collision and interaction. They do not require simulating waves or rebuilding the interior of a lake when someone digs.
+
+### Packaged comparison of terrain and water
+
+The following measurements use the real Windows executable, the pinned Cedar Vale input and the 1080p RTX 4050 Laptop renderer. Terrain and water readiness are elapsed times on the same clock from terrain admission. Their preparation overlaps. The cut draw times start at input, while the barrel and mining draw times start at terrain admission. A barrel's ignition and game effects occur before terrain admission. The dry control used another inland location and the same 64 m box tool. It checked for stored water throughout the box and a 4 m collar and lay outside the coastal reservoir.
+
+| Action | All terrain meshes and colliders staged | Detailed water staged | First observed change | Worst frame in action |
+|---|---:|---:|---:|---:|
+| Dry 64 m cut | 69.469 ms | No joint water ticket | Centre on draw 5 at 63.270 ms | 25.632 ms |
+| Wet 64 m cut | 62.314 ms | 207.787 ms | Draw 13 at 239.249 ms | 45.497 ms |
+| Sea barrel | 3.575 ms | 17.065 ms | Draw 2 at 31.183 ms | 47.567 ms |
+| Lake barrel | 6.940 ms | 33.960 ms | Draw 3 at 47.696 ms | 20.096 ms |
+| Pickaxe at lake floor | 6.125 ms | 30.538 ms | Local water drawn at 43.760 ms | 17.642 ms |
+
+Dry terrain can publish the centre before the entire batch. Its full post-commit draw took 107.311 ms, and zero of nine final collision samples matched on draw two. For the wet cut, all nine final samples matched after publication and zero matched on draw two. The later of the two preparation times already exceeded the 33.334 ms deadline by 174.453 ms. The lake blast had only 6.940 ms of terrain staging yet its water was still being staged at the deadline. This separates a terrain throughput problem in the large tool from a water publication problem in ordinary shoreline play. [Dry cut](../reports/checks/20261125T125513415130Z/console.log) · [Wet cut](../reports/checks/20261125T124921017157Z/console.log) · [Barrels and pickaxe](../reports/checks/20261125T125315238629Z/normal_gameplay_blast_performance.json)
+
+All nine sampled water surfaces in the finished cut were at 5.232976 m elevation. The sea crater was at 40 m and all 20 water mesh packets used the existing level-surface path. Across two 16 m transects through the lake crater, 41 wet readings ranged from 44.01134 to 44.15113 m. Any one flat level across those readings would miss at least one by about 7 cm. A single lake-wide plane would change the tested scene. These samples leave room for a simpler representation with separate water levels in connected areas and local detail at transitions. They do not prove that every part of a basin is flat. Both shoreline blasts passed all 81 crater probes and the 2 cm bank checks. The latest wet cut camera repeat showed a bare excavation and lower pool. The earlier suspended green patches remain an intermittent finding. [Lake transects and crater checks](../reports/checks/20261125T125315238629Z/console.log) · [Cut camera repeat and landscape support](../reports/checks/20261125T125115243344Z/run.json) · [Both shoreline camera pairs and submerged views](../reports/checks/20261125T122007363221Z/run.json)
+
+The latest shoreline timing and contact run completed. The repeat shoreline camera run stopped before launch because its projected output exceeded the 4 GiB report budget. The retained shoreline images above used the same terrain and water DLL hashes. Run `python tools/check_release_water_edits.py --route dry_cut` from the project directory to reproduce the independent dry comparison. [Camera run receipt](../reports/checks/20261125T125400698198Z/run.json)
+
+### Implementation decision
+
+Keep the water shader, finite quantities, save compatibility, contact checks and shared publication ticket. Keep the existing solver available as a correctness reference. Prioritize the existing basin-capacity design over further special cases in per-cell mesh extraction. Reusing terrain as the solid boundary avoids describing that boundary a second time. Each resident region should retain which cavities connect and how much water they hold below a given elevation. Replacing the summary for the edited region updates a finite basin's level without rediscovering its unchanged interior. The visible surface, bucket rays and immersion queries must all use the same water revision. A breached sill or newly sealed pocket requires an explicit transfer or split, including conservation through save and reload. [Basin-capacity design](WORLD_SYSTEMS_DESIGN.md#finite-shoreline-edits-following-the-november-20-packaged-trials)
+
+Start the comparison on the ordinary lake barrel with an unchanged outlet. Use the existing shoreline driver to compare a basin-backed local surface with the current water, including bucket interruption, two views, actual contacts and elapsed time. Keep the terrain-only cut as the independent control for changed triangles and real collision. Repeat the same local action on two different connected lake sizes before claiming that cost is independent of lake size. Adopt a replacement only after the packaged trials meet both draw and wall-clock budgets, preserve quantities and avoid a frame spike. The comparison above measures the existing implementation. It establishes no timing for the proposed replacement.
 
 ## Windows release qualification
 

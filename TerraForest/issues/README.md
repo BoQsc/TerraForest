@@ -1,6 +1,6 @@
 # Visual issue tracker
 
-The full cut and lake barrel missed the two-frame deadline. Both shorelines passed contact checks, including the interrupted lake. Floating patches are visible inside the cut. [Timing, contact and visual receipts](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#stored-water-intervals-and-interrupted-buckets)
+The 64 m dry and wet controls and the lake barrel missed the two-frame deadline. Both craters passed their bank contact checks. Suspended green patches appeared in one cut capture and were absent from the repeat. [Paired cameras and publication timings](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#packaged-comparison-of-terrain-and-water)
 
 [Hidden Coast crater backlog](explosive-combat/README.md#hidden-coast-crater-backlog) records the 37 outstanding edits, their saved water footprint, and the changes to live capacity, persistence and firing during terrain updates.
 
