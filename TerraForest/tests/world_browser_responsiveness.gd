@@ -94,12 +94,14 @@ func measure_first_ui()->void:
 	var built:=(Time.get_ticks_usec()-start)/1000.0
 	await RenderingServer.frame_post_draw
 	var first:=Time.get_ticks_usec()/1000.0
+	var first_wall_usec:=Time.get_unix_time_from_system()*1000000.0
 	browser.filter_field.grab_focus()
 	var sent:=Time.get_ticks_usec()
 	var event:=InputEventKey.new();event.keycode=KEY_Z;event.unicode=122;event.pressed=true
 	root.push_input(event)
 	await process_frame
 	var response:=(Time.get_ticks_usec()-sent)/1000.0
+	var input_wall_usec:=Time.get_unix_time_from_system()*1000000.0
 	check(browser.filter_field.text=="z","first painted browser accepts keyboard input while background work runs")
 	browser.filter_field.clear();browser.filter_list()
 	var intervals:Array[float]=[];var previous:=Time.get_ticks_usec()
@@ -110,6 +112,11 @@ func measure_first_ui()->void:
 	check(not ResourceLoader.has_cached("res://addons/world_runtime/world_generation_plan.gd"),"first UI does not load world-generation resources")
 	intervals.sort()
 	var metrics:={"first_frame_ms":first,"scene_build_ms":built,"first_input_ms":response,"frame_p95_ms":intervals[int(intervals.size()*.95)],"frame_max_ms":intervals[-1],"worlds":browser.slots.size(),"ui_set":browser.ui_set.id,"failures":failures}
+	for argument:String in OS.get_cmdline_user_args():
+		if argument.begins_with("--launch-start-unix-usec="):
+			var epoch:=float(argument.trim_prefix("--launch-start-unix-usec="))
+			metrics["launch_to_first_frame_ms"]=(first_wall_usec-epoch)/1000.0
+			metrics["launch_to_first_input_ms"]=(input_wall_usec-epoch)/1000.0
 	print("FIRST_UI ",JSON.stringify(metrics))
 	FileAccess.open(folder.path_join("first_ui.json"),FileAccess.WRITE).store_string(JSON.stringify(metrics))
 	await RenderingServer.frame_post_draw

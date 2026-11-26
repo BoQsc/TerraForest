@@ -9,6 +9,7 @@ from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
 FAMILIES = {
+    "full_launch": ("first_ui.png", "first_ui.json"),
     "world_browser_responsiveness": ("first_ui.png", "first_ui.json"),
     "homestead_pack": ("homestead_01.png",),
     "homestead_02_pack": ("homestead_02.png",),

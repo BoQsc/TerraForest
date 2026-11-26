@@ -86,6 +86,12 @@ class PreviewOwnership(unittest.TestCase):
         self.assertNotIn("Homestead_Valley.trw", selected[0][1])
         self.assertTrue(receipt.is_file())
 
+    def test_full_launch_uses_its_own_two_ready_capture_family(self):
+        first = self.preview(1, "full_launch")
+        self.preview(2, "full_launch"); self.preview(3, "full_launch")
+        self.preview(4, "world_browser_responsiveness")
+        self.assertEqual([(first, ("first_ui.png", "first_ui.json"))], candidates(self.root))
+
     def test_pins_are_not_ordinary_ready(self):
         pinned = self.preview(1); (pinned / ".retain").write_text("rejected witness")
         first = self.preview(2); self.preview(3); self.preview(4)

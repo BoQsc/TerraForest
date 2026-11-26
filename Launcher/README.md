@@ -42,3 +42,26 @@ It uses Windows COM directly, backs up the original links once under
 Use `--last-world-only` to retarget only the **TerraForest Last World** desktop link.
 
 Original launcher code: 0BSD. No third-party code or assets were imported.
+
+## Reusing completed source preparation
+
+On Windows, the launcher first compares a bounded local preparation record with
+current file sizes and high-resolution timestamps, the engine identity and the
+small Godot import indexes. It enumerates source and imported files without
+reading every asset. An unchanged checkout opens the browser directly; native
+checks, import, preview preparation and identity hashing run when the record is
+absent, stale or explicitly bypassed with `-- --force-prepare`.
+
+New/deleted files, changed scripts, DLLs, assets, import outputs or engine identity
+invalidate reuse. A source edit during the preparation pipeline prevents publishing
+a ready record. The existing checkout lease, worker cancellation, error UI and
+full native/import/bake checks remain in force. This is a local metadata cache,
+not a content-integrity certificate: use `--force-prepare` after tools intentionally
+restore both file sizes and timestamps. Linux/macOS keep the original preparation
+path. Python was already required for Windows native preparation.
+
+The cache uses two fixed JSON files under `TerraForest/reports/source_preparation`,
+each capped at 4 MiB, with one atomic replacement file. It creates no world or
+export. A prepared record persists across process exits and Windows restarts.
+Full-source measurements and the pending post-reboot qualification are in the
+[browser issue](../TerraForest/issues/browser-responsiveness/README.md#complete-source-launch--2026-11-26).

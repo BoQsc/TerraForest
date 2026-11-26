@@ -354,3 +354,13 @@ The matched `reports/checks/first_ui_20261126T191351710067Z` bundle was separate
 admitted for 32 MiB and is pinned by `.retain` until the browser-latency issue's
 comparison review. It keeps before/after pictures, timing records and rejected
 trials together, with small launcher/UI/startup verification logs in that allowance.
+
+`tools/benchmark_source_launch.py` admits 16 MiB before a complete source-launch
+measurement. It uses the existing checkout and executable, opens no world, and
+writes one RGB 1080p menu image, timing JSON and small logs/receipts. Its `full_launch`
+family keeps two ordinary ready runs through `maintain_homestead_captures.py`;
+only the named screenshot/timing files are archived after process exit. The
+`full_launch_20261126T192359792537Z` comparison was admitted for 32 MiB and is pinned
+until browser review, including its original slow preparation and four captures.
+The production preparation cache uses two fixed JSON records capped at 4 MiB each
+and one temporary atomic replacement, without new saves, exports or source copies.

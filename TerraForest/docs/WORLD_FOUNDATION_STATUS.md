@@ -9520,8 +9520,14 @@ warm-cache source observations with 415 saves, first browser paint falls from
 observes first paint at 0.61–0.62 s and Close dispatch at 1.6–2.9 ms. Browser contracts,
 72 rendered UI-set checks and six resource-loading/cancellation checks pass.
 [Evidence, retained failed trials and remaining work](../issues/browser-responsiveness/README.md#first-visible-and-responsive-ui--2026-11-26).
-Engine/window startup remains; this is not instantaneous launch or a reduction in
-native build/import/icon preparation time. Cold caches, ordinary foreground and
-final-package launch-to-input remain unqualified. Resume at package preparation
-or a reproduced foreground delay, with repeated first-paint/input timings and
-cancellation/clean teardown required before closing that requirement.
+The subsequent complete-source-launch check measures the whole preparation path:
+40.49 s to responsive menu initially, then 2.07–2.73 s when the persistent preparation
+record confirms unchanged inputs/outputs. Native/import/bake work still runs for
+changed files or `--force-prepare`; edited inputs during preparation cannot publish
+a ready record. Forced preparation, cancellation and all 22 Python checks pass.
+[Full timings and the cold-cache procedure](../issues/browser-responsiveness/README.md#complete-source-launch--2026-11-26).
+Engine/window startup remains. Actual OS-cold qualification requires a Windows
+restart, deferred to the user because it interrupts other applications. Resume
+immediately after that restart with the admitted full-launch runner before opening
+the game; require first-paint/input timings, no errors and clean exit. Ordinary
+foreground and final-package launch-to-input remain unqualified.

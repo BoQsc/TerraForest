@@ -46,6 +46,15 @@ func start() -> void:
   fail("The TerraForest source project must be beside the Launcher folder.");return
  DirAccess.make_dir_recursive_absolute(project_root.path_join("reports"))
  if OS.get_name() == "Windows":
+  phase = "check";status.text = "Opening TerraForest…"
+  details.text = "Checking whether source preparation is needed."
+  worker = Thread.new()
+  if worker.start(preparation_cache.bind("check")) != OK:worker = null;fail("Cannot check source preparation.")
+ else:
+  start_native()
+
+func start_native() -> void:
+ if OS.get_name() == "Windows":
   phase = "native"
   status.text = "Checking native code…"
   details.text = "Changed C++ extensions are rebuilt before the game starts."
@@ -54,6 +63,16 @@ func start() -> void:
   if worker.start(prepare_native) != OK:worker = null;fail("Cannot start the native code check.")
  else:
   start_import()
+
+func preparation_cache(action: String) -> int:
+ var args := PackedStringArray([project_root.path_join("tools/source_launch_cache.py"), action, "--engine", engine])
+ if action == "check" and "--force-prepare" in OS.get_cmdline_user_args():args.append("--force")
+ var output:Array=[]
+ var result := OS.execute("py.exe", PackedStringArray(["-3"]) + args, output, true, false)
+ if result == -1:
+  output.clear();result = OS.execute("python.exe", args, output, true, false)
+ if not output.is_empty():print("\n".join(output).right(16000))
+ return result
 
 func prepare_native() -> int:
  var script := project_root.path_join("tools/prepare_launcher_native.py")
@@ -97,6 +116,10 @@ func _process(_delta: float) -> void:
  if worker == null or worker.is_alive():return
  var exit_code: int = worker.wait_to_finish();worker = null
  if closing_requested:finish_close();return
+ if phase == "check":
+  if exit_code == 0:launch_game();return
+  if exit_code == 2:start_native();return
+  fail("Cannot validate source preparation. See the launcher log.");return
  if phase == "identity":
   if exit_code != OK:fail("Cannot record the prepared game identity.");return
   launch_game();return
@@ -131,6 +154,8 @@ func record_identity() -> int:
  var file := FileAccess.open(project_root.path_join("reports/worlds_launch.json"), FileAccess.WRITE)
  if file == null:return FileAccess.get_open_error()
  file.store_string(JSON.stringify(identity, "  "))
+ file.close()
+ if OS.get_name() == "Windows":return preparation_cache("record")
  return OK
 
 func launch_game() -> void:

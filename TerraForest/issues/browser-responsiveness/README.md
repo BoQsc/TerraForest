@@ -1,6 +1,6 @@
 # Startup and saved-world browser latency
 
-- Status: Improved-partial / first-UI source checks pass; earlier package evidence retained below.
+- Status: Improved-partial / complete source launch measured; post-reboot cold-cache test pending.
 - Updated: 2026-11-26. First-UI changes build on `09974c9a`; earlier fixes include `83f09d30` and `39f97200`.
 - User review: Pending.
 - Symptom: Startup waits for save/photo work; filtering or changing worlds hitches.
@@ -215,3 +215,79 @@ launch-to-input timing are unqualified. Return when preparing that package or wh
 foreground startup remains noticeably delayed; require repeated launch-to-paint
 and first-input measurements plus cancellation/clean teardown on the same build.
 This scoped work does not close the world-entry and broader hardware limitations above.
+
+## Complete source launch — 2026-11-26
+
+The normal launcher previously ran native checks, a full import pass and preview
+checks before every menu process. The measured baseline needed 40.488 s from
+external process creation to the first successful menu input. Its preparation
+phases took about 5.3 s native, 7.3 s import, 25.1 s previews and 0.7 s identity.
+The first run refreshed stale item/shape previews against existing local inputs.
+
+Windows now reuses successful preparation through `tools/source_launch_cache.py`.
+Directory enumeration supplies file sizes and high-resolution timestamps without
+opening every asset. Changed/new/deleted source, DLLs, assets or imports invalidate
+reuse; small import-index contents and engine identity also participate. Only the
+completed native/import/bake pipeline records readiness. Input edits during that
+pipeline reject the record. The metadata cache has an explicit `--force-prepare`
+escape for tools that preserve size and timestamps. Checkout ownership, immediate
+Close and visible preparation failures remain enforced.
+
+| Full process-to-menu measurement | Initial baseline | Reuse run 1 | Reuse run 2 |
+| --- | ---: | ---: | ---: |
+| First menu paint | 40484.159 ms | 2723.235 ms | 2063.489 ms |
+| First successful menu input | 40488.159 ms | 2727.235 ms | 2067.489 ms |
+| Input dispatch through next frame | 4.135 ms | 4.183 ms | 4.183 ms |
+| Largest subsequent sampled frame | 16.746 ms | 16.840 ms | 17.766 ms |
+
+[Admission and scope](../../reports/checks/full_launch_20261126T192359792537Z/run.json),
+[baseline](../../reports/checks/full_launch_20261126T192359792537Z/before/first_ui.json),
+[reuse 1](../../reports/checks/full_launch_20261126T192359792537Z/after_1/run.json), [reuse 2](../../reports/checks/full_launch_20261126T192359792537Z/after_2/run.json).
+These are fresh launcher and game processes, using the actual local
+`TerraForest.exe` and normal source preparation, Godot 4.7.2, RTX 4050,
+Forward+, 1920×1080, Survey and 415 existing saves. The test substitutes a read-only
+menu driver for the child scene entry to inject one filter key, observe 180 frames
+and close. The external wall clock includes launcher startup and all preparation.
+No world is opened or saved. Windows filesystem and driver caches were retained;
+this is not yet a post-reboot cold-cache result or an instantaneous-launch claim.
+
+The forced preparation path still passes and takes 15.65 s to menu input with
+already-current previews. [Final forced preparation](../../reports/checks/full_launch_20261126T192359792537Z/native_guard_prepare/receipt.json)
+and [launcher failure/cancellation contracts](../../reports/checks/full_launch_20261126T192359792537Z/launcher_contract/receipt.json)
+pass. [All 22 Python checks, dependency-index freshness and ready-record verification](../../reports/checks/full_launch_20261126T192359792537Z/checks.json)
+pass, including invalidation, edits during preparation, corrupt records, missing
+imports, active native-build ownership and receipt-owned two-ready capture retention. The launcher suite's four
+intentional failure logs are expected. No engine errors were reported by the two
+complete reuse runs.
+
+![After: full source launch to a responsive main menu](../../reports/checks/full_launch_20261126T192359792537Z/after_2/first_ui.png)
+
+Inspected after: the actual Survey menu and existing Homestead_Valley photograph,
+with 415 saves. Captured after the timing observation; a still does not demonstrate
+latency. [Image provenance](images/manifest.json). Normal source preparation also
+updated three existing preview artifacts against the pre-existing local settings;
+they remain unstaged with those inputs. Their before/after hashes are retained in
+[the generated-preview receipt](../../reports/checks/full_launch_20261126T192359792537Z/generated_previews.json).
+
+Reproduce from `TerraForest` after closing the game:
+
+```text
+python tools/benchmark_source_launch.py
+python tools/benchmark_source_launch.py --force-prepare
+```
+
+The runner admits its bounded output before starting the external clock, uses an
+isolated rendered desktop, preserves player saves and archives old owned captures
+after process exit. The prepared record remains local; first use in a new checkout
+still performs required preparation.
+
+**Pending actual cold-cache test:** restart Windows once, return to this chat
+without opening TerraForest, record Windows uptime, then run the first command
+before any engine/version/hash probe. A restart clears OS file-cache residency;
+retain the normal on-disk imports, prepared record and driver caches. Require the
+full launch-to-paint/input receipt, no errors, correct cache invalidation and clean
+exit before recording that result. Restart is deferred to the user because it
+interrupts other applications. Ordinary foreground review and exported-package
+startup remain unqualified. The remaining roughly two seconds include launching
+two Godot processes and graphics-device initialization; removing that cost needs
+a separate bootstrap/renderer architecture change, not skipping validation.
