@@ -408,6 +408,14 @@ func supported_point(around: Vector3,standing:bool=true) -> Vector3:
 	# Ordinary world admission still selects terrain from the original broad probe.
 	return _supported_point(around,standing,4.0,1,.85)
 
+static func _support_probe_bounds(point:Vector3,probe_height:float)->AABB:
+	return AABB(point-Vector3(.6,4,.6),Vector3(1.2,4+maxf(2.,probe_height+1.),1.2))
+
+static func admission_bounds(point:Vector3,restoring_sleep:bool,authored:bool)->AABB:
+	# Queue admission and final support validation must require the same coverage.
+	# A narrower preflight can consume a candidate before its actual query is ready.
+	return AABB(point-Vector3(2.5,.5,2.5),Vector3(5,5,5)) if restoring_sleep or authored else _support_probe_bounds(point,4.0)
+
 func supported_roam_point(around:Vector3,standing:bool=true)->Vector3:
 	# Stay below a room's ceiling and recognize its actual walking floor. The
 	# native route still proves reachability, support and permitted step/slope limits.
@@ -416,7 +424,7 @@ func supported_roam_point(around:Vector3,standing:bool=true)->Vector3:
 func _supported_point(around:Vector3,standing:bool,probe_height:float,support_mask:int,minimum_normal:float)->Vector3:
 	if not around.is_finite() or not readiness.is_valid():
 		return Vector3.INF
-	var bounds := AABB(around - Vector3(0.6, 4, 0.6), Vector3(1.2, 4+maxf(2.,probe_height+1.), 1.2))
+	var bounds := _support_probe_bounds(around,probe_height)
 	if not readiness.call(bounds):
 		return Vector3.INF
 	var space := get_world_3d().direct_space_state
@@ -437,7 +445,7 @@ func _supported_point(around:Vector3,standing:bool,probe_height:float,support_ma
 	return point
 
 func supported_resident_point(point:Vector3,standing:bool)->Vector3:
-	if not point.is_finite() or not readiness.is_valid() or not readiness.call(AABB(point-Vector3(2.5,.5,2.5),Vector3(5,5,5))):return Vector3.INF
+	if not point.is_finite() or not readiness.is_valid() or not readiness.call(admission_bounds(point,true,true)):return Vector3.INF
 	var space:=get_world_3d().direct_space_state
 	var hit:=space.intersect_ray(PhysicsRayQueryParameters3D.create(point+Vector3.UP*.08,point-Vector3.UP*.18,1|2|4))
 	if hit.is_empty() or hit.normal.y<.85:return Vector3.INF

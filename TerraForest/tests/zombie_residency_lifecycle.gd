@@ -4,6 +4,25 @@ const Zombie=preload("res://addons/characters/runtime/zombie.gd")
 class Coverage extends Node:
 	var available:=true
 	func _actor_collision_ready(_bounds:AABB)->bool:return available
+class AdmissionStore extends RefCounted:
+	func initialize(_seed:int,_spawn:Vector3)->bool:return true
+class AdmissionGame extends Node:
+	var terrain:Dictionary={"backend":{"world_seed":1703},"changed_since_save":false}
+	var _initial_generation_spawn:=Vector3.ZERO
+class AdmissionHost extends Node3D:
+	var enabled:=true
+	var population_enabled:=true
+	var profiling_enabled:=false
+	var residents:Array=[]
+	var residency_limit:=6
+	var full_ready:=false
+	var attempts:=0
+	var navigation_interest:Callable
+	var readiness:Callable=func(bounds:AABB)->bool:return bounds.size.x<5 or full_ready
+	func admission_bounds(point:Vector3,sleeping:bool,authored:bool)->AABB:
+		return preload("res://addons/characters/runtime/zombie_world.gd").admission_bounds(point,sleeping,authored)
+	func spawn_at(_point:Vector3,_sleeping:bool,_authored:bool,_id:int,_seed:int)->CharacterBody3D:
+		attempts+=1;return null # Fully ready but unsuitable geometry remains a rejection.
 var failures:=0
 var checks:=0
 var stage:Node3D
@@ -25,6 +44,17 @@ func constraints(actor:Node3D)->Dictionary:
 			if String(property.name).begins_with("joint_constraints/"):values[property.name]=body.get(property.name)
 		result[bone]=values
 	return result
+func admission_coverage()->void:
+	var game:=AdmissionGame.new();var host:=AdmissionHost.new()
+	var population:=preload("res://addons/characters/runtime/zombie_population.gd").new()
+	population.game=game;population.host=host;population.store=AdmissionStore.new()
+	population.last_focus=Vector3.ZERO;population.sampled=true;population.began=Time.get_ticks_msec()
+	population.queue=[{"id":1,"state":1,"position":Vector3(60,0,0),"anchor":1,"sleep":PackedByteArray()}]
+	population.advance(Vector3.ZERO,true)
+	check(population.cursor==0 and population.examined==0 and host.attempts==0,"admission waits for the full support footprint instead of skipping a pending resident")
+	host.full_ready=true;population.advance(Vector3.ZERO,true)
+	check(population.cursor==1 and population.examined==1 and host.attempts==1,"ready but unsuitable geometry still consumes exactly one candidate")
+	game.free();host.free()
 func clouds(actor:Node3D)->Dictionary:
 	var result:Dictionary={}
 	for bone:String in actor.physical_bones:
@@ -34,6 +64,7 @@ func clouds(actor:Node3D)->Dictionary:
 		result[bone]=points
 	return result
 func run()->void:
+	admission_coverage()
 	ProjectSettings.set_setting("physics/3d/default_gravity",0.0)
 	stage=Node3D.new();root.add_child(stage)
 	var ordinary:=fresh();var original_constraints:=constraints(ordinary)

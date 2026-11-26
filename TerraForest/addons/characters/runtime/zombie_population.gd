@@ -16,6 +16,7 @@ var admitted := 0
 var began := 0
 var failure := ""
 var initial_complete := false
+var admission_trace:Array[Dictionary]=[]
 
 func prepare(owner_game: Node, owner_host: Node3D, persistence: RefCounted) -> bool:
 	game = owner_game; host = owner_host
@@ -120,7 +121,8 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 	for zombie in host.residents:
 		if is_instance_valid(zombie):interest.append(zombie.global_position)
 	if host.navigation_interest.is_valid():host.navigation_interest.call(interest)
-	if not host.readiness.call(AABB(point - Vector3(1, 4, 1), Vector3(2, 9, 2))):
+	var required_bounds:AABB=host.admission_bounds(point,not record.sleep.is_empty(),authored)
+	if not host.readiness.call(required_bounds):
 		if Time.get_ticks_msec() - began < 12000:return false
 		if not during_loading:
 			cursor += 1; examined += 1
@@ -129,6 +131,8 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		return false
 	cursor += 1; examined += 1
 	var zombie: CharacterBody3D = host.spawn_at(point,not record.sleep.is_empty(),authored,record.id,game.terrain.backend.world_seed)
+	if host.profiling_enabled and admission_trace.size()<512:
+		admission_trace.append({"id":record.id,"point":point,"loading":during_loading,"authored":authored,"sleeping":not record.sleep.is_empty(),"admitted":zombie!=null,"full_coverage":host.readiness.call(required_bounds),"initialization_us":zombie.initialization_us.duplicate() if zombie!=null else {}})
 	if zombie == null:return false
 	zombie.global_rotation.y = record.yaw
 	var descriptor:Dictionary=store.encounter(record.id)
