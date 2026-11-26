@@ -94,6 +94,8 @@ var part_meshes: Dictionary = {}
 var caps: Dictionary = {}
 var physical_bones: Dictionary = {}
 var ragdoll_profile:Dictionary={}
+var capture_collision_clouds:=false
+var collision_clouds:Dictionary={}
 var detached_parts: Array[RigidBody3D] = []
 var _simulation_available:=true
 var _ragdoll_started:=false
@@ -318,6 +320,7 @@ func _fit_collision_shapes() -> void:
 
 
 func _pose_shape_spec(part: String, pelvis: bool = false) -> Dictionary:
+	var measured:=Time.get_ticks_usec()
 	var key := "pelvis" if pelvis else part
 	if not _shape_cache.has(key) or not part_meshes.has(part):
 		return _shape_spec(part)
@@ -332,11 +335,17 @@ func _pose_shape_spec(part: String, pelvis: bool = false) -> Dictionary:
 			points.append(all_points[vertex])
 	else:
 		points = all_points
+	var sampled:=Time.get_ticks_usec()
+	if capture_collision_clouds and points.size()>=256:collision_clouds[key]=points
+	var cloud:Dictionary=anatomy.prepare_collision_cloud(points)
+	points=cloud.points
+	var prepared:=Time.get_ticks_usec()
 	var shape := ConvexPolygonShape3D.new()
 	shape.points = points
 	shape.margin = 0.003
 	if ProjectSettings.get_setting("physics/3d/physics_engine","")!="Jolt Physics":shape.custom_solver_bias = CONTACT_RECOVERY_BIAS
 	info.shape = shape
+	info.profile={"sample_us":sampled-measured,"cloud_us":prepared-sampled,"cloud_mode":"spatial","input_points":cloud.input_points,"resource_us":Time.get_ticks_usec()-prepared,"points":points.size()}
 	return info
 
 
@@ -349,23 +358,33 @@ func _refresh_pose_collision_shapes() -> void:
 
 
 func _fit_pose_body(bone_name:String)->void:
+	var measured:=Time.get_ticks_usec()
 	var body:PhysicalBone3D=physical_bones[bone_name]
 	var part:=String(body.get_meta("limb_key"))
+	var profile:Dictionary={}
 	if _r4_enabled and part.begins_with("hand"):
 		var body_world:=skeleton.global_transform*_current_bone_pose(body.get_bone_id())*body.body_offset
-		_install_hand_compound(body,part,body_world.affine_inverse())
+		profile=_install_hand_compound(body,part,body_world.affine_inverse())
 	else:
 		var info:=_pose_shape_spec(part,bone_name=="Hips")
+		profile=info.get("profile",{})
+		var install_begin:=Time.get_ticks_usec()
 		for child in body.get_children():
 			if child is CollisionShape3D:child.shape=info.shape
+		profile.install_us=Time.get_ticks_usec()-install_begin
+	profile.total_us=Time.get_ticks_usec()-measured
+	if not ragdoll_profile.has("shapes"):ragdoll_profile.shapes={}
+	ragdoll_profile.shapes[bone_name]=profile
 
 
 
-func _install_hand_compound(body: PhysicsBody3D, part: String, to_local: Transform3D) -> void:
+func _install_hand_compound(body: PhysicsBody3D, part: String, to_local: Transform3D) -> Dictionary:
 	# A single hull fills the opening between a curled palm and its fingers.
 	# Around a ladder rung that creates a deep fictitious intersection. Keep
 	# the real grip opening with native hulls per palm/finger bone segment.
+	var measured:=Time.get_ticks_usec()
 	var groups:Dictionary=anatomy.hand_groups(part,to_local)
+	var profile:Dictionary={"sample_us":Time.get_ticks_usec()-measured,"resource_us":0,"install_us":0,"points":0,"groups":groups.size()}
 	for child in body.get_children():
 		if child is CollisionShape3D:
 			body.remove_child(child)
@@ -375,16 +394,20 @@ func _install_hand_compound(body: PhysicsBody3D, part: String, to_local: Transfo
 		var points: PackedVector3Array = groups[group]
 		if points.size() < 4:
 			continue
+		measured=Time.get_ticks_usec()
 		var shape := ConvexPolygonShape3D.new()
 		shape.points = points
 		shape.margin = 0.002
 		if ProjectSettings.get_setting("physics/3d/physics_engine","")!="Jolt Physics":shape.custom_solver_bias = CONTACT_RECOVERY_BIAS
+		profile.resource_us+=Time.get_ticks_usec()-measured;profile.points+=points.size();measured=Time.get_ticks_usec()
 		var collision := CollisionShape3D.new()
 		collision.name = "Grip_" + group
 		collision.shape = shape
 		body.add_child(collision)
+		profile.install_us+=Time.get_ticks_usec()-measured
 		installed.append(group)
 	body.set_meta("hand_proxy_groups", installed)
+	return profile
 
 
 func _build_ragdoll() -> void:

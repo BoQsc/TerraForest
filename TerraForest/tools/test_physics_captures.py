@@ -13,6 +13,7 @@ class PhysicsCaptureTests(unittest.TestCase):
     def test_only_audited_drivers_receive_bounded_output_allowance(self):
         self.assertEqual(planned_report_bytes(['godot', '--script', 'res://tests/physics_residency_world.gd']), 16 * 2**20)
         self.assertEqual(planned_report_bytes(['godot', '--headless', '--script', 'res://tests/zombie_residency_lifecycle.gd']), 2 * 2**20)
+        self.assertEqual(planned_report_bytes(['godot', '--headless', '--script', 'res://tests/zombie_collision_cloud.gd']), 2 * 2**20)
         self.assertEqual(planned_report_bytes(['godot', '--script', 'res://tests/zombie_ragdoll_reactivation.gd']), 256 * 2**20)
 
     def test_retention_requires_completed_owned_output_and_preserves_two_and_pins(self):
@@ -40,12 +41,27 @@ class PhysicsCaptureTests(unittest.TestCase):
                     samples=[dict(phase='idle', frame_ms=ms, physics_tail_ms=2, corpse_us={'freeze_us':100})
                              for ms in (16, 20, 40, 60)],
                     ragdoll_transitions=[dict(phase='idle', begin_us=1000, end_us=101000,
-                                             total_us=10000, max_slice_us=3000)])
+                                             total_us=10000, max_slice_us=3000,
+                                             shapes={'Head':dict(input_points=5408, points=1844,
+                                                                 cloud_us=50, install_us=2000, plan_built=False)})])
         result = summarize(data)
         self.assertEqual(result['cadence']['over_33_ms'], 2)
         self.assertEqual(result['cadence']['over_50_ms'], 1)
         self.assertEqual(result['ragdolls']['admission_span_ms']['maximum'], 100)
         self.assertEqual(result['ragdolls']['total_ms']['maximum'], 10)
+        head = result['collision_shapes']['bodies']['Head']
+        self.assertEqual(head['input_points']['mean'], 5408)
+        self.assertEqual(head['points']['mean'], 1844)
+        self.assertEqual(head['cloud_ms']['mean'], .05)
+        self.assertEqual(head['install_ms']['mean'], 2)
+        self.assertEqual(head['plan_builds'], 0)
+        data['collision_comparison'] = [dict(part='head', input_points=5408, pairs=[
+            dict(original=dict(total_us=original), reduced=dict(total_us=reduced, points=2000))
+            for original, reduced in [(1000, 600), (1100, 650), (30000, 30000)]])]
+        paired = summarize(data)['paired_collision']['parts']['all']
+        self.assertEqual(paired['original_total_ms'], 1.1)
+        self.assertEqual(paired['reduced_total_ms'], .65)
+        self.assertEqual(paired['retained_points'], 2000)
 
     def test_population_or_settings_drift_cannot_pass_workload_comparison(self):
         first = dict(source_sha256='same', seed=1703, route=[dict(living=5, corpses=10)], physics_hz=60)

@@ -19,6 +19,9 @@ class Observer extends Node:
 	var resident_snapshot:Dictionary={}
 	var residency_events:Array[Dictionary]=[]
 	var observed_actors:Dictionary={}
+	var clouds:Array[Dictionary]=[]
+	var cloud_vertices:=0
+	var cloud_overflow:=false
 	func _ready()->void:
 		process_priority=1000000;process_physics_priority=1000000
 		get_tree().process_frame.connect(begin_process)
@@ -69,6 +72,12 @@ class Observer extends Node:
 				var event:Dictionary=corpse.ragdoll_profile.duplicate();event.phase=phase;event.frame=Engine.get_process_frames()
 				event.corpse_id=corpse.get_meta("corpse_identity",0);event.resident_id=corpse.get_meta("world_zombie_id",0)
 				transitions.append(event)
+				if phase!="setup":
+					for part:String in corpse.collision_clouds:
+						var points:PackedVector3Array=corpse.collision_clouds[part]
+						if clouds.size()>=512 or cloud_vertices+points.size()>524288:cloud_overflow=true;continue
+						clouds.append({"corpse_id":event.corpse_id,"part":part,"phase":phase,"points":points});cloud_vertices+=points.size()
+				corpse.collision_clouds.clear()
 		if previous and phase!="setup" and is_instance_valid(host) and rows.size()<12000:
 			rows.append({"phase":phase,"at_us":now,"frame_ms":(now-previous)/1000.0,
 				"before_process_ms":(process_begin-previous)/1000.0,"process_ms":(process_end-process_begin)/1000.0,
@@ -90,6 +99,32 @@ var slot:="Hidden_Meadow"
 var failures:=0
 var route:Array[Dictionary]=[]
 var population_legs:Array[Dictionary]=[]
+func construct_cloud(stage:Node3D,reducer:RefCounted,points:PackedVector3Array,reduced:bool)->Dictionary:
+	var began:=Time.get_ticks_usec()
+	var input:=points
+	if reduced:input=reducer.prepare_collision_cloud(points).points
+	var prepared:=Time.get_ticks_usec()
+	var body:=StaticBody3D.new();body.collision_layer=0;body.collision_mask=0;stage.add_child(body)
+	var shape:=ConvexPolygonShape3D.new();shape.margin=.003;shape.points=input
+	var collision:=CollisionShape3D.new();collision.shape=shape;body.add_child(collision)
+	var finished:=Time.get_ticks_usec()
+	body.free()
+	return {"points":input.size(),"prepare_us":prepared-began,"construction_us":finished-prepared,"total_us":finished-began}
+func compare_clouds()->Array[Dictionary]:
+	# All construction is outside the measured route. Alternate order and use
+	# fresh resources: each pair cooks the exact same captured posed vertices.
+	var result:Array[Dictionary]=[];var stage:=Node3D.new();root.add_child(stage)
+	var reducer:RefCounted=ClassDB.instantiate("NativeZombieAnatomy")
+	for index in observer.clouds.size():
+		var captured:Dictionary=observer.clouds[index];var points:PackedVector3Array=captured.points
+		var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256);hash.update(points.to_byte_array())
+		var row:={"part":captured.part,"corpse_id":captured.corpse_id,"phase":captured.phase,"input_points":points.size(),"sha256":hash.finish().hex_encode(),"pairs":[]}
+		for repeat in 3:
+			var pair:Dictionary={}
+			for reduced:bool in ([false,true] if (repeat+index)%2==0 else [true,false]):pair["reduced" if reduced else "original"]=construct_cloud(stage,reducer,points,reduced)
+			row.pairs.append(pair)
+		result.append(row)
+	stage.free();observer.clouds.clear();return result
 func _initialize()->void:
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
 	run.call_deferred()
@@ -135,6 +170,7 @@ func run()->void:
 	game.player_view.entry.finish();game.session_menu.set_open(false)
 	game.session_menu.developer_hud.mouse_access=true
 	game.zombies.profiling_enabled=true
+	game.zombies.capture_collision_clouds=true
 	observer=Observer.new();observer.host=game;root.add_child(observer)
 	game.terrain.stage_measured.connect(observer.stage)
 	RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
@@ -148,10 +184,14 @@ func run()->void:
 		await walk("site_%d_back"%site,KEY_W if site==0 else KEY_D,600)
 	check(observer.rows.size()>0 and observer.rows.size()<12000,"Bounded full cadence retained without truncation")
 	check(observer.residency_events.size()<4096,"Bounded identity events retained without truncation")
+	check(not observer.cloud_overflow and not observer.clouds.is_empty(),"Bounded posed collision corpus retained without truncation")
+	observer.phase="setup";game.process_mode=Node.PROCESS_MODE_DISABLED
+	var collision_comparison:=compare_clouds()
 	check(FileAccess.get_sha256(source)==original,"Original player save is unchanged")
 	FileAccess.open(evidence.path_join("physics_residency.json"),FileAccess.WRITE).store_string(JSON.stringify({
 		"schema":1,"source":slot,"source_sha256":original,"seed":1703,"route":route,"samples":observer.rows,"ragdoll_transitions":observer.transitions,
 		"residency_events":observer.residency_events,"population_legs":population_legs,
+		"collision_comparison":collision_comparison,
 		"viewport":root.size,"physics_hz":Engine.physics_ticks_per_second,"vsync":DisplayServer.window_get_vsync_mode(),
 		"scope":"Fixed physics-tick inputs on two saved-world hotspots; setup teleports are outside measurement. Physics tail includes engine queues and stepping. Actual source is read-only; this is a representative workload, not reconstruction of unrecorded human inputs."}))
 	game.terrain.stage_measured.disconnect(observer.stage);observer.free()

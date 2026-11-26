@@ -107,6 +107,13 @@ ordinary ready runs plus `.retain`/`RETAIN_READY` pins. Each cold run keeps
 read and hash-check archived cadence directly. Maintenance runs before launch
 and after process exit, never during the route. The audited headless zombie
 regressions declare 2 MiB of logs/JSON; their source import cache is reused.
+This includes `zombie_collision_cloud`: bounded certificate/contact assertions
+and construction timings go into the owned log, with no capture images, world
+files, geometry dumps or exported builds.
+The residency route can retain at most 512 posed clouds / 524,288 vertices in
+memory for a post-route paired construction check. Only hashes, counts and
+timings enter its existing cadence JSON; raw geometry is released without a
+separate artifact. Its 16 MiB output allowance and receipt lifecycle are unchanged.
 
 New capture/freeze admission stops when performance reports would exceed 8 GiB
 (including a 256 MiB next-capture allowance), or the archive reaches 10 GiB.

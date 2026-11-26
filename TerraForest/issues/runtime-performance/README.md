@@ -2,6 +2,15 @@
 
 ## Physics and corpse residency — 2026-11-26
 
+The [collision construction follow-up](physics-residency-2026-11-26.md#collision-work-reduction-follow-up)
+removes proven interior points before native convex construction, preserving the
+convex boundary. Two repeats compare 163 exact posed inputs each: construction
+CPU including filtering falls 20.5–22.8%, with heads down 31.7–34.9%. Observed
+maximum preparation slices fall from 11.982 to 4.322–5.234 ms. One repeat matches
+all route outcomes; the other is flagged for one population mismatch. Frame p99
+does not improve consistently, so overall frame pacing remains open. Geometry,
+contact, residency and support checks cover the scoped change.
+
 The [systemic residency fix and repeatable route](physics-residency-2026-11-26.md)
 separate deferred ragdoll construction from engine stepping, remove repeated
 scene searches through explicit physics ownership, and reject removed native

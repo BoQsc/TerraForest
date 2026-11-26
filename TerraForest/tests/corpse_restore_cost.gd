@@ -35,6 +35,7 @@ func run()->void:
 		check(actor.detached_parts.is_empty() and actor.visible and not actor.alive,"restored corpse has no detached debris and is visible/dead")
 		check(actor.debris_builds==0,"restoration must not build discarded debris")
 		print("CORPSE_RESTORE_COST parts=",parts," debris_builds=",actor.debris_builds," sever_us=",actor.sever_us," elapsed_with_frame_wait_us=",elapsed)
+		print("COLLISION_PROFILE ",JSON.stringify(actor.ragdoll_profile))
 		actor.queue_free();await process_frame;await process_frame
 	print("CORPSE_RESTORE_COST failures=",failures)
 	quit(0 if failures==0 else 1)

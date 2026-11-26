@@ -1,4 +1,5 @@
 #include "zombie_anatomy.hpp"
+#include "convex_cloud.hpp"
 #include <godot_cpp/classes/mesh_instance3d.hpp>
 #include <godot_cpp/classes/array_mesh.hpp>
 #include <godot_cpp/classes/physical_bone3d.hpp>
@@ -7,6 +8,7 @@
 #include <algorithm>
 #include <map>
 #include <limits>
+#include <chrono>
 using namespace godot;
 namespace terraforest {
 namespace {
@@ -18,12 +20,26 @@ Dictionary fit_cloud(const PackedVector3Array &vertices,const Transform3D &inver
     AABB bounds(inverse_rest.xform(source[0]),Vector3());
     for(int vertex=0;vertex<vertices.size();vertex++){destination[vertex]=inverse_rest.xform(source[vertex]);bounds.expand_to(destination[vertex]);}
     Vector3 center=bounds.get_center();for(int vertex=0;vertex<vertices.size();vertex++)destination[vertex]-=center;
+    points=prepare_convex_cloud(points).points;
     Ref<ConvexPolygonShape3D> shape;shape.instantiate();shape->set_points(points);shape->set_margin(.003);
     result["shape"]=shape;result["offset"]=Transform3D(Basis(),center);result["length"]=bounds.size.y;result["mesh_fit_bounds"]=bounds;
     return result;
 }
 }
 void NativeZombieAnatomy::invalidate_geometry(){geometry_valid_=false;fitted_shapes_.clear();}
+Dictionary NativeZombieAnatomy::prepare_collision_cloud(const PackedVector3Array &points,bool witnesses) const {
+    auto began=std::chrono::steady_clock::now();
+    const auto cloud=prepare_convex_cloud(points,witnesses);
+    Dictionary result;result["points"]=cloud.points;result["input_points"]=points.size();result["cells"]=cloud.cells;
+    result["prepare_us"]=int64_t(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-began).count());
+    if(witnesses){
+        PackedInt32Array supports;for(int index:cloud.supports)supports.push_back(index);result["supports"]=supports;
+        Array certificates;
+        for(const auto &w:cloud.witnesses){Array row;row.push_back(w.point);row.push_back(w.a);row.push_back(w.b);row.push_back(w.c);row.push_back(w.u);row.push_back(w.v);row.push_back(w.w);certificates.push_back(row);}
+        result["witnesses"]=certificates;
+    }
+    return result;
+}
 std::vector<Transform3D> NativeZombieAnatomy::evaluated_poses() const {
     auto *skeleton=Object::cast_to<Skeleton3D>(ObjectDB::get_instance(skeleton_));if(!skeleton||!skeleton->is_inside_tree()||skeleton->is_queued_for_deletion())return {};
     skeleton->force_update_all_bone_transforms();std::vector<Transform3D> poses(skeleton->get_bone_count());

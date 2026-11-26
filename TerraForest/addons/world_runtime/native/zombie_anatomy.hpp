@@ -63,6 +63,7 @@ public:
     godot::Dictionary hand_groups(const godot::String &part,const godot::Transform3D &to_local) const;
     godot::Dictionary closest_contact(const godot::String &part,godot::Vector3 target,bool use_point,const godot::Array &shapes,const godot::AABB &mouth) const;
     godot::Dictionary fit_collision_shapes();
+    godot::Dictionary prepare_collision_cloud(const godot::PackedVector3Array &points,bool witnesses=false) const;
     godot::Dictionary geometry_stats() const;
     godot::Dictionary hit(const godot::String &part,double damage,bool force_sever,const godot::String &impact);
     bool detach(const godot::String &part);

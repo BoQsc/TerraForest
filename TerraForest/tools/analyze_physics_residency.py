@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+from statistics import median
 from pathlib import Path
 
 from analyze_frame_trace import distribution
@@ -44,9 +45,31 @@ def summarize(data):
         key.replace('_us', '_ms'): distribution([r.get(key, 0) / 1000 for r in transitions])
         for key in ('total_us', 'shape_fit_us', 'constraints_capture_us', 'max_slice_us')})
     result['ragdolls']['admission_span_ms'] = distribution([(r['end_us'] - r['begin_us']) / 1000 for r in transitions])
+    bones = sorted({bone for row in transitions for bone in row.get('shapes', {})})
+    result['collision_shapes'] = dict(available=bool(bones), bodies={})
+    for bone in bones:
+        shapes = [row['shapes'][bone] for row in transitions if bone in row.get('shapes', {})]
+        result['collision_shapes']['bodies'][bone] = dict(
+            count=len(shapes), plan_builds=(sum(row.get('plan_built', False) for row in shapes)
+                                           if any('plan_built' in row for row in shapes) else None),
+            **{key: distribution([row[key] for row in shapes if key in row]) for key in ('input_points', 'points')},
+            **{key.replace('_us', '_ms'): distribution([row[key] / 1000 for row in shapes if key in row])
+               for key in ('sample_us', 'cloud_us', 'resource_us', 'install_us', 'total_us')})
     events = data.get('residency_events', [])
     result['residency'] = dict(available='residency_events' in data, events=len(events),
                               deaths=sum(row['kind'] == 'died' for row in events))
+    comparisons = data.get('collision_comparison', [])
+    paired = {}
+    for part in sorted({row['part'] for row in comparisons} | ({'all'} if comparisons else set())):
+        clouds = [row for row in comparisons if part == 'all' or row['part'] == part]
+        original = [median(pair['original']['total_us'] for pair in row['pairs']) / 1000 for row in clouds]
+        reduced = [median(pair['reduced']['total_us'] for pair in row['pairs']) / 1000 for row in clouds]
+        paired[part] = dict(clouds=len(clouds), original_ms=distribution(original), reduced_ms=distribution(reduced),
+                            original_total_ms=sum(original), reduced_total_ms=sum(reduced),
+                            input_points=sum(row['input_points'] for row in clouds),
+                            retained_points=sum(row['pairs'][0]['reduced']['points'] for row in clouds))
+    result['paired_collision'] = dict(available=bool(comparisons), parts=paired,
+        scope='Post-route paired construction on identical captured posed points; median of three alternating-order fresh-resource pairs per cloud. Includes reduction cost, excludes cleanup. Not gameplay-frame timing.')
     return result
 
 

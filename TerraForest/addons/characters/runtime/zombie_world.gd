@@ -40,6 +40,7 @@ var _capsule: CapsuleShape3D
 var _resident_capsule: CapsuleShape3D
 var geometry_template:RefCounted
 var profiling_enabled:=false
+var capture_collision_clouds:=false
 var _navigation_profiling:=false
 var update_phase_us:Dictionary={}
 var _response_trace_left:=0.

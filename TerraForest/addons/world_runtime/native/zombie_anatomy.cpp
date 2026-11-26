@@ -50,6 +50,7 @@ void NativeZombieAnatomy::_bind_methods(){
     ClassDB::bind_method(D_METHOD("hand_groups","part","to_local"),&NativeZombieAnatomy::hand_groups);
     ClassDB::bind_method(D_METHOD("closest_contact","part","target","use_point","shapes","mouth"),&NativeZombieAnatomy::closest_contact);
     ClassDB::bind_method(D_METHOD("fit_collision_shapes"),&NativeZombieAnatomy::fit_collision_shapes);
+    ClassDB::bind_method(D_METHOD("prepare_collision_cloud","points","witnesses"),&NativeZombieAnatomy::prepare_collision_cloud,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("geometry_stats"),&NativeZombieAnatomy::geometry_stats);
     ClassDB::bind_method(D_METHOD("hit","part","damage","force_sever","impact"),&NativeZombieAnatomy::hit,DEFVAL(false),DEFVAL(String("melee")));
     ClassDB::bind_method(D_METHOD("detach","part"),&NativeZombieAnatomy::detach);

@@ -30,6 +30,16 @@ still needs retained initial state/settings, tick-indexed actions, stable actor
 random streams and replay state checks. Normal-exit capture acknowledgement also
 remains open; position breadcrumbs alone cannot reconstruct player actions.
 
+The [collision-work follow-up](../issues/runtime-performance/physics-residency-2026-11-26.md#collision-work-reduction-follow-up)
+now removes only proven interior points from dense convex inputs. On two repeats,
+paired construction of 163 exact posed clouds uses 20.5–22.8% less CPU including
+filtering; observed preparation slices fall from 11.982 to 4.322–5.234 ms.
+Collision boundaries and simulation policy are preserved. One repeat matches all
+recorded route outcomes; one is rejected for a population mismatch. Frame p99 is
+23.374–23.886 ms versus 22.272 ms previously, so broader frame pacing remains
+open despite the construction-work reduction. Retained worst-frame attribution
+and recorder-off equivalent workloads are still required to close that gate.
+
 ## Local water edit qualification
 
 The final dry 64 m candidate published the correct floor on draw three in all three normal packaged runs, 44.79–63.19 ms after input. One earlier build demonstrated the full cut on draw two, including all 36 visible meshes and colliders. The final profile reduced time to the last worker payload from 63.08 ms to 24.72 ms. Seven owners still awaited staging at the second pre-draw callback. The 255 field checks and the regression for the vegetation support rollback passed. Milestone 5 stays open for repeatable two-frame publication and frame pacing. [Final runs and stage timings](WORLD_EDIT_EXPERIMENTS.md#dry-cut-after-the-support-fix) · [Passing earlier dry run](../reports/checks/20261125T182711488299Z/console.log)
