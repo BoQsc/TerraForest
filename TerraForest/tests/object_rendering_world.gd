@@ -129,7 +129,7 @@ func run() -> void:
 	if not check(DisplayServer.get_name()!="headless" and FileAccess.file_exists(source),"renderer and existing read-only source available"): quit(1); return
 	source_hash=FileAccess.get_sha256(source); report.source_sha256=source_hash
 	report.runtime_sha256={}
-	for path: String in ["res://addons/structures/pack_render_mesh.gd","res://addons/structures/pack_registry.gd","res://addons/player_runtime/object_inspector.gd","res://addons/structures/structures_world.gd","res://addons/characters/runtime/zombie.gd","res://addons/characters/runtime/zombie_world.gd","res://addons/characters/runtime/zombie_population.gd","res://addons/player_runtime/corpse_loot.gd"]: report.runtime_sha256[path]=FileAccess.get_sha256(path)
+	for path: String in ["res://addons/structures/pack_render_mesh.gd","res://addons/structures/pack_registry.gd","res://addons/player_runtime/object_inspector.gd","res://addons/structures/structures_world.gd","res://addons/characters/runtime/zombie.gd","res://addons/characters/runtime/zombie_render_mesh.gd","res://addons/characters/runtime/zombie_world.gd","res://addons/characters/runtime/zombie_population.gd","res://addons/player_runtime/corpse_loot.gd"]: report.runtime_sha256[path]=FileAccess.get_sha256(path)
 	seed(1703)
 	preload("res://addons/world_runtime/session_options.gd").set_arguments(PackedStringArray(["--world-slot=Hidden_Meadow","--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors","--vehicle-fleet"]),true)
 	ProjectSettings.set_setting("terraforest/pistol_trial_settings_path","")

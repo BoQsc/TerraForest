@@ -290,6 +290,10 @@ The `model_horizon` regression admits 2 MiB, puts its small `fixture.trw` and
 100,000-record pressure case stays in memory.
 `object_pack_render_mesh` admits 16 MiB for four 1152×768 RGB material/LOD sheets,
 pixel/geometry results and logs (2 MiB headless), under the same two-ready policy.
+`zombie_render_mesh` uses the same allowance and lifecycle for two 1024×1536 RGB
+rig comparisons and its small pixel/geometry JSON. The headless geometry-bake
+and mesh-bake regressions admit 2 MiB for assertions and receipts; they write no
+images, world copies or exports.
 The headless-only `original_size_drops` check admits 2 MiB for its assertion log
 and receipt. Its tiny process-owned preference fixture is removed by the test;
 the headless branch writes no screenshot, save or export. Rendered variants keep

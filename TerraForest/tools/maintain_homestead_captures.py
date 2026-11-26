@@ -25,6 +25,7 @@ FAMILIES = {
     "object_rendering_world": ("names_on_out.png", "names_on_return.png", "object_rendering.json"),
     "model_horizon": ("fixture.trw", "result.json"),
     "object_pack_render_mesh": ("source_materials.png", "combined_materials.png", "lod_source.png", "lod_render.png", "render_mesh.json"),
+    "zombie_render_mesh": ("zombie_source.png", "zombie_combined.png", "zombie_render_mesh.json"),
     "drop_key_standard": ("backpack.png", "player_settings.png"),
 }
 

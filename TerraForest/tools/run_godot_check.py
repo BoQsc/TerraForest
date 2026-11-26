@@ -44,8 +44,8 @@ def planned_report_bytes(command):
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
     if scripts == {"model_horizon.gd"}:
         return 2 * 2**20  # Small receipt-owned native fixture and result JSON; large density case stays in memory.
-    if scripts == {"object_pack_render_mesh.gd"}:
-        return (2 if "--headless" in command else 16) * 2**20  # Four 1152x768 RGB material/LOD comparisons and a small summary.
+    if scripts in ({"object_pack_render_mesh.gd"}, {"zombie_render_mesh.gd"}):
+        return (2 if "--headless" in command else 16) * 2**20  # Four 1152x768 pack sheets or two 1024x1536 rig sheets, plus a small summary.
     if scripts == {"object_rendering_world.gd"}:
         return 32 * 2**20  # Two 1080p PNGs, <=8 MiB cadence, logs; read-only source, no saved world/export.
     if scripts == {"object_system_world.gd"}:
@@ -60,7 +60,8 @@ def planned_report_bytes(command):
         return 2 * 2**20  # Tiny owned archive fixture, assertion log, JSON and receipt.
     if "--headless" in command and len(scripts) == 1 and scripts <= {
         "zombie_residency_lifecycle.gd", "zombie_rest_support.gd", "zombie_ragdoll_reactivation.gd",
-        "zombie_geometry_cache.gd", "corpse_restore_cost.gd", "zombie_corpse_walk.gd", "zombie_collision_cloud.gd", "zombie_awareness.gd"
+        "zombie_geometry_cache.gd", "zombie_geometry_bake.gd", "zombie_mesh_bake.gd",
+        "corpse_restore_cost.gd", "zombie_corpse_walk.gd", "zombie_collision_cloud.gd", "zombie_awareness.gd"
     }:
         return 2 * 2**20  # Lifecycle assertions and bounded timing rows only.
     if scripts == {"physics_residency_world.gd"}:
@@ -279,7 +280,7 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         from maintain_homestead_captures import maintain
         maintain(apply=True)
     folder.mkdir(parents=True)
@@ -294,7 +295,7 @@ def main(argv=None):
         maintain(apply=True)
     if args.test == "physics_residency_world":
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1

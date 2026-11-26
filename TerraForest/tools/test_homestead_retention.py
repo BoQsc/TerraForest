@@ -58,8 +58,10 @@ class PreviewOwnership(unittest.TestCase):
         self.preview(46, "model_horizon"); self.preview(47, "model_horizon")
         render_mesh = self.preview(48, "object_pack_render_mesh")
         self.preview(49, "object_pack_render_mesh"); self.preview(50, "object_pack_render_mesh")
+        zombie_render = self.preview(51, "zombie_render_mesh")
+        self.preview(52, "zombie_render_mesh"); self.preview(53, "zombie_render_mesh")
         selected = candidates(self.root)
-        self.assertEqual([first, third_pack, fourth_pack, fifth_pack, sixth_pack, seventh_pack, eighth_pack, ninth_pack, tenth_pack, outdoor, mansion, object_world, object_rendering, model_horizon, render_mesh, input_run], [folder for folder, _ in selected])
+        self.assertEqual([first, third_pack, fourth_pack, fifth_pack, sixth_pack, seventh_pack, eighth_pack, ninth_pack, tenth_pack, outdoor, mansion, object_world, object_rendering, model_horizon, render_mesh, zombie_render, input_run], [folder for folder, _ in selected])
         self.assertEqual(("backpack.png", "player_settings.png"), selected[-1][1])
 
     def test_pins_are_not_ordinary_ready(self):

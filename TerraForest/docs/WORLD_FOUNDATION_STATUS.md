@@ -9475,8 +9475,12 @@ bounded visual pages and a four-leg 1,000-object walking route with all normal
 systems enabled. GPU cost improved, but the strict 16.7 ms p95/p99 target remains
 unmet; the linked report retains failed runs and the CPU follow-up requirement.
 Cooperative character admission, worker-prepared head hulls and segmented hand
-construction reduce restoration spikes. The uncontended follow-up still fails
-all four strict frame gates. Corpse-walk testing also reproduces one existing
+construction reduce restoration spikes. Cached character material batching reduces
+visible rig surfaces from 45 to 14 while retaining skin, morphs and geometry.
+The final uncontended replay passes all gameplay assertions and one of four
+strict frame gates; three still fail. At the user's request, optimization work
+is closed out as a development checkpoint, with the unmet target and resumption
+criteria recorded in the linked report. Corpse-walk testing also reproduces one existing
 torso-speed failure exactly on the committed baseline; it is not marked passed.
 Mansion visual
 approval, generated-site terrain fit and full circulation remain unaccepted;

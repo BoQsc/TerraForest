@@ -155,6 +155,20 @@
       "run": "20261126T133229803577Z",
       "status": "rejected shared-material ordering / lamp edge",
       "source": "Actual Godot paired comparison; preserved in receipt-owned cold archive"
+    },
+    {
+      "path": "reports/checks/20261126T165629156606Z/zombie_combined.png",
+      "sha256": "15cc409bc97bb38140b5a78f2f8469db14be80b1ac76110dc6acf4dad8ecf639",
+      "run": "20261126T165629156606Z",
+      "status": "inspected rig batching, animated face and distance LODs; 83 checks pass",
+      "source": "Actual Godot Forward+ 1024x1536 RGB paired-comparison sheet; original texture sizes and animated source geometry"
+    },
+    {
+      "path": "reports/checks/20261126T165138197821Z/names_on_out.png",
+      "sha256": "ef24f1bc27150f21af6ffea09a8258bfffd72e5044a65174c017e471e97e46b8",
+      "run": "20261126T165138197821Z",
+      "status": "inspected final full-game route; three of four strict frame gates fail",
+      "source": "Actual Godot Forward+ 1920x1080; 1000 mixed-pack additions, normal gameplay, read-only Hidden_Meadow"
     }
   ]
 }

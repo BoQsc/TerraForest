@@ -266,7 +266,83 @@ resolution, object count, shadow policy or gameplay system was changed.
 All 36 functional checks passed: 2,400 gameplay physics ticks, eight active
 zombies, physical drops, all 1,000 added records and unchanged save bytes. All
 four strict frame gates still failed. Stable 60 FPS remains open; the next work
-is CPU draw submissions (5,208–7,521 p95 calls), including the 46 authored
+is CPU draw submissions (5,208–7,521 p95 calls), including the 45 authored
 material surfaces per complete zombie. Any batching must retain original skin,
 morphs, material appearance, severing, collision and saved-state behavior and
 pass the unchanged four-leg timing contract before this requirement closes.
+
+## Closeout: character material batching (26 November)
+
+At the user's request, this investigation ends with the verified improvements
+committed and the remaining performance work recorded. Stable 60 FPS remains
+unqualified; do not interpret this development checkpoint as closing that target.
+
+`zombie_render_mesh.gd` combines compatible opaque R4 material surfaces into a
+cached shared PBR shader. A complete visible rig uses 14 surfaces instead of 45;
+including the hidden severing caps, 123 surfaces become 40. Texture arrays retain
+the source dimensions, mipmaps and UVs. Source-order vertices, skin weights,
+blend shapes, original culling bounds and index-LOD transitions remain intact.
+Collision/anatomy still use the original CPU geometry. Unsupported materials,
+custom models and custom geometry sources keep the existing rendering path.
+Derived geometry propagates invalidation to the original cache listeners.
+This is original 0BSD code using existing Godot APIs and assets, with no new
+third-party intake or native binary changes.
+
+The shared textures and combined geometry are prepared once per process. Reading
+the source importer's LODs is cold preparation, not a per-character or per-frame
+operation; it is separate from the offline collision/render bake counters.
+
+- `20261126T164428070146Z`: geometry-bake checks, 19 pass, including independent
+  skin/morph contacts and source-edit invalidation.
+- `20261126T164822830801Z`: native/reference animated and detached mesh baking,
+  164 surface comparisons, zero failures.
+- `20261126T164642572542Z`: 77 geometry/material checks pass. Paired full-body,
+  face and bite-pose images were inspected. Mean RGB-channel error is 0.00944
+  byte; 169 of 3,145,728 channels differ by more than two bytes. The result is
+  visually matched within the declared tolerance, not pixel-identical.
+- `20261126T165629156606Z`: final six-view comparison, 83 checks pass. Both
+  distant views differ by at most one channel byte, and rendered primitive
+  counts match the original in every view (6,866 at 6 m; 5,277 at 24 m).
+  The full comparison sheet and final walking capture were visually inspected.
+- `20261126T165848309404Z`: final staged character lifecycle regression passes.
+  Ten launcher/retention unit tests also pass. Admitted editor import
+  `zombie_render_uid_import_20261126T165803091565Z` generated both new script
+  identities without engine errors; source and UID sidecars are committed together.
+- `20261126T164336368743Z`: rejected first LOD-access attempt used an API absent
+  from the installed engine. The supported ImporterMesh API fixes it; the
+  original erroring receipt remains retained.
+- `20261126T164901688601Z`: another Company of Heroes process was running during
+  this replay; it is contended evidence, not a performance comparison. The user
+  closed it before the following strict replay.
+
+Strict full-game replay `20261126T165138197821Z`, without CPU diagnostics:
+
+| Mixed-pack leg | Median ms | p95 ms | p99 ms | GPU p95 ms | Render CPU p95 ms |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Names off, outward | 12.847 | 16.832 | 20.155 | 8.393 | 6.610 |
+| Names off, return | 11.206 | 14.705 | 16.516 | 7.597 | 4.959 |
+| Names on, outward | 15.549 | 20.269 | 32.003 | 8.766 | 7.500 |
+| Names on, return | 12.833 | 16.675 | 20.178 | 7.941 | 5.401 |
+
+All 36 functional assertions pass, including all 1,000 additions remaining
+resident, complete rendered representation, ordinary gameplay execution and
+unchanged player-save bytes. Only one of the four strict timing gates passes.
+Draw-call p95 falls to 4,709–7,109, but slow frames remain. The machine retains
+Legion Quiet Mode and the same 1080p renderer, shadows and gameplay settings.
+
+Diagnostic `20261126T165408389667Z` passes its 36 functional assertions; its
+command deliberately omits the FPS gate and therefore is not a qualification
+pass. It retains 2,982 detailed rows. Slow frames combine draw submission and
+physics callbacks, sometimes executing three or four physics steps after a
+stall. Profiling overhead and run variation preclude treating its worse tails
+as a clean A/B result. Inspection layout in the strict run takes approximately
+1.4 ms typically and up to 2.5 ms per refresh. These are investigation leads,
+not proof that a particular remaining subsystem is the sole bottleneck.
+
+Resume when dense-world performance is prioritized again: attribute the
+remaining physics/collision-selection and draw-submission tails, then test any
+change against this same four-leg route. Closure requires every p95 and p99
+below 16.667 ms, all gameplay/residency/save assertions and relevant visual and
+geometry regressions passing. Do not lower the gate, reduce the workload or
+disable systems to claim completion. The existing corpse-walk speed failure
+and separate mansion design/terrain/circulation acceptance remain open.

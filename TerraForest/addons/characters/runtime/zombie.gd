@@ -17,6 +17,7 @@ signal movement_mode_changed(mode: String)
 const MODEL_PATH := "res://addons/characters/runtime/assets/Zombie.r4.glb"
 const DEFAULT_MODEL = preload("res://addons/characters/runtime/assets/Zombie.r4.glb")
 const DEFAULT_GEOMETRY = preload("res://addons/characters/runtime/assets/Zombie.geometry.res")
+const RenderMesh = preload("res://addons/characters/runtime/zombie_render_mesh.gd")
 const DRAG_WALK = preload("res://addons/characters/runtime/assets/Zombie.drag_walk.res")
 const ALERT_WALK = preload("res://addons/characters/runtime/assets/Zombie.alert.res")
 const DRAG_WALK_REFERENCE_SPEED := 0.45
@@ -179,6 +180,7 @@ var configuration_failed:=false
 var _configuration_stage:=0
 var _configuration_bone:=-1
 var render_bake_surface_reads:=0
+var merge_render_materials:=true
 var sleeper:RefCounted
 
 func _init(saved_pose_admission:bool=false,saved_missing_mask:int=0)->void:
@@ -322,9 +324,21 @@ func _configuration_shapes() -> bool:
 
 func _configuration_bake() -> bool:
 	var bake_reads_before:=_bake_surface_reads
-	for source:MeshInstance3D in part_meshes.values():_bake_source(source.mesh)
+	var render_nodes:Array=part_meshes.values()
 	for pair:Dictionary in caps.values():
-		for source:MeshInstance3D in pair.values():_bake_source(source.mesh)
+		render_nodes.append_array(pair.values())
+	var compatible:=merge_render_materials and geometry_source==DEFAULT_GEOMETRY and model_scene==DEFAULT_MODEL
+	if compatible:
+		var sources:Array=[]
+		for source:MeshInstance3D in render_nodes:sources.append(source.mesh)
+		compatible=RenderMesh.configure(sources)
+	for source:MeshInstance3D in render_nodes:
+		var packet:=_bake_source(source.mesh)
+		if compatible:
+			var rendered:Dictionary=RenderMesh.prepare(source.mesh,packet)
+			if not rendered.is_empty():
+				_prepare_bake_packet(rendered.mesh,rendered.packet)
+				source.mesh=rendered.mesh
 	render_bake_surface_reads=_bake_surface_reads-bake_reads_before
 	return true
 

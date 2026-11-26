@@ -155,6 +155,13 @@ exactly on the committed baseline and remains open. Full evidence and the next
 draw-submission work are in the linked rendering report; this is not a stable
 60 FPS or visual-approval claim.
 
+The final character-material follow-up reduces visible rig surfaces from 45 to
+14 while preserving skin, morphs, contact geometry and severed-mesh baking.
+Replay `20261126T165138197821Z` passes all 36 functional assertions and one of
+four strict timing gates. The user requested closing this investigation with
+commit/push; stable 60 FPS remains open. The linked performance report contains
+the final timing table, retained diagnostics and explicit resumption criteria.
+
 From `TerraForest`, use the admitted runner:
 
 ```text

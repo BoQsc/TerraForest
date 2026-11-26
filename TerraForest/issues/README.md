@@ -8,7 +8,9 @@ and dense-scene 60 FPS remain open. The
 reduced geometry/material costs, distance LODs and 1,000-object walking checks;
 slow-frame qualification remains open despite successful residency and gameplay
 assertions. Character admission now spreads setup and hull preparation across
-frames; the uncontended four-leg replay still misses the strict frame budget.
+frames, and character material batching reduces visible surfaces from 45 to 14.
+The final uncontended replay passes one of four strict frame gates. Investigation
+is closed out at the user's request; the remaining 60 FPS requirement stays open.
 
 The 64 m dry and wet controls and the lake barrel missed the two-frame deadline. Both craters passed their bank contact checks. Suspended green patches appeared in one cut capture and were absent from the repeat. [Paired cameras and publication timings](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#packaged-comparison-of-terrain-and-water)
 

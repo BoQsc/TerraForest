@@ -9,6 +9,10 @@ from run_godot_check import command_for, execute, verify_pack_native, planned_re
 
 class CheckLauncherTests(unittest.TestCase):
     def test_report_growth_is_declared_only_for_audited_checks(self):
+        self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/zombie_render_mesh.gd"]), 16 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/zombie_render_mesh.gd"]), 2 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/zombie_geometry_bake.gd"]), 2 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/zombie_mesh_bake.gd"]), 2 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/original_size_drops.gd"]), 2 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/original_size_drops.gd"]), 256 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/water_mesh_worker.gd"]), 16 * 2**20)
