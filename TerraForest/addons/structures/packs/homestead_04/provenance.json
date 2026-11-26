@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "pack": "terraforest.homestead_04",
+  "version": "1.0.0",
+  "creator": "TerraForest contributors, authored with Codex",
+  "date": "2026-11-26",
+  "origin": "Original parametric geometry and procedural materials; no external asset inputs",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
+  "authoring_tool": "Existing Godot 4.7.2 Steam; external engine, not vendored by this pack",
+  "brief": "A separate recognizable household pack with the user-approved roster and a rendered preview of its actual meshes",
+  "author_command": "python tools/run_godot_check.py homestead_04_pack --require \"failures=0\" -- --author-pack",
+  "icon_command": "python tools/run_godot_check.py homestead_04_pack --isolated-render --require \"failures=0\" -- --preview-only",
+  "source_sha256": {
+    "addons/structures/packs/homestead_02/author.gd": "44569d6b3e354ae1b940e5af5e43a6ab3027e4a44c6b3c34bf56fc43428411bf",
+    "addons/structures/packs/homestead_04/author.gd": "faa1d9431f6361274d4efd169844c4b70dc184bb39d0ed2a0376c39b4713560d",
+    "addons/structures/packs/homestead_04/catalog.gd": "935405200ba51d2e195d6a17e0554ab4cacd092f6b9b3dd4f2ba0782d682e713",
+    "tests/homestead_04_pack.gd": "cab155dc04e91290758fd04b74bcf2433ba55c0a29c8fd5a73e3d393841dc850"
+  },
+  "asset_sha256": {
+    "addons/structures/packs/homestead_04/icons.trtex": "e65f29d8dc4f812a4cb6eaadb567b947f787fa3f975c3c5eb6570f4a7c2a8cb0",
+    "addons/structures/packs/homestead_04/models/cable_spool.tres": "af9e214a6f2a28b8c968527204ba9c08e82ee9ad182d76570aa31bf17ca9ba68",
+    "addons/structures/packs/homestead_04/models/handcart.tres": "04ff5bf8896596d29f3192b02c3df128183fa5fdd2c1da627cb3938c5e097ae1",
+    "addons/structures/packs/homestead_04/models/paint_tin.tres": "2e35c2d06e5400541388ed5ea6333c0c1a9102596c6be258eef52190bb6ffeeb",
+    "addons/structures/packs/homestead_04/models/plank_stack.tres": "4ef71aa449b2ac5a472c5b608f7fdb7e0b711fe8828a360f61c75f4373739be4",
+    "addons/structures/packs/homestead_04/models/rope.tres": "3b03b34b67627ff536ae7f49b7b287fcde40386a082c68b6914a50df851df215",
+    "addons/structures/packs/homestead_04/models/sawhorse.tres": "82097c84b90750fdba1c9ff7a7fcbd2abc28118c6a17062e6dddd2fe6700b52f",
+    "addons/structures/packs/homestead_04/models/tool_board.tres": "d0d436b40f2acccfd0673958e6828868b9cf06d322473ae7569bbb1b18e1c96c",
+    "addons/structures/packs/homestead_04/models/toolbox.tres": "ff6f3ecd7a6f30dd3508cef80fa5159cb24858fe8b88018aed11fb379f225dc7",
+    "addons/structures/packs/homestead_04/models/vise.tres": "a6b466761d92764dcc722c393dad9e20b1134ff219b39790b267924ce3ed7264",
+    "addons/structures/packs/homestead_04/models/workbench.tres": "67b03d67f6817a30fd7ac9f2394f5b20885ec021fda9df545a360aaac21fbb45",
+    "addons/structures/packs/homestead_04/pack.json": "be9f2184c3ac703643dec9756ccce84603213a46a16f51f50f97012eff2f92c7"
+  }
+}

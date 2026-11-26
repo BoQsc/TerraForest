@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "terraforest.homestead_04",
+  "name": "Homestead 04",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {"id":"workbench","item":750,"name":"Homestead heavy workbench","recipe":[102,18,104,3,227,4],"salvage":[102,9,104,1],"health":180,"material":"wood"},
+    {"id":"vise","item":751,"name":"Homestead bench vise","recipe":[104,8,227,3],"salvage":[104,4],"health":160,"material":"other"},
+    {"id":"tool_board","item":752,"name":"Homestead wall tool board","mount":"wall","recipe":[102,6,104,4,227,4],"salvage":[102,3,104,2],"health":100,"material":"wood"},
+    {"id":"toolbox","item":753,"name":"Homestead metal toolbox","recipe":[104,6,227,3],"salvage":[104,3,227,1],"health":120,"material":"other"},
+    {"id":"sawhorse","item":754,"name":"Homestead sawhorse","recipe":[102,7,227,2],"salvage":[102,3],"health":90,"material":"wood"},
+    {"id":"plank_stack","item":755,"name":"Homestead timber plank stack","recipe":[102,10],"salvage":[102,5],"health":110,"material":"wood"},
+    {"id":"paint_tin","item":756,"name":"Homestead paint tin and brush","recipe":[104,2,102,1,204,2],"salvage":[104,1],"health":40,"material":"other"},
+    {"id":"rope","item":757,"name":"Homestead coiled rope","recipe":[204,10],"salvage":[204,5],"health":35,"material":"other"},
+    {"id":"cable_spool","item":758,"name":"Homestead cable spool","recipe":[102,5,226,6,104,1],"salvage":[102,2,226,3],"health":100,"material":"wood"},
+    {"id":"handcart","item":759,"name":"Homestead small handcart","recipe":[102,14,104,8,227,6],"salvage":[102,7,104,4],"health":170,"material":"wood"}
+  ]
+}

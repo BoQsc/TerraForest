@@ -17,20 +17,26 @@ class PreviewOwnership(unittest.TestCase):
     def preview(self, number, family="homestead_pack", **result):
         folder = self.root / "reports/checks" / f"{number:03}"
         folder.mkdir(parents=True)
-        image = FAMILIES[family]
-        (folder / image).write_bytes(b"retained fixture")
-        run = {"command": ["godot", "--script", f"res://tests/{family}.gd", "--check-evidence-dir=" + str(folder)],
+        for image in FAMILIES[family]:
+            (folder / image).write_bytes(b"retained fixture")
+        run = {"command": ["godot", "--temporary", "--script", f"res://tests/{family}.gd", "--check-evidence-dir=" + str(folder)],
                "result": {"exit_code": 0, **result}}
         (folder / "run.json").write_text(json.dumps(run), encoding="utf-8")
         return folder
 
-    def test_two_ready_per_pack(self):
+    def test_two_ready_per_capture_family(self):
         first = self.preview(1)
         self.preview(2); self.preview(3)
         self.preview(4, "homestead_02_pack"); self.preview(5, "homestead_02_pack")
         third_pack = self.preview(6, "homestead_03_pack")
         self.preview(7, "homestead_03_pack"); self.preview(8, "homestead_03_pack")
-        self.assertEqual([first, third_pack], [folder for folder, _ in candidates(self.root)])
+        fourth_pack = self.preview(9, "homestead_04_pack")
+        self.preview(10, "homestead_04_pack"); self.preview(11, "homestead_04_pack")
+        input_run = self.preview(12, "drop_key_standard")
+        self.preview(13, "drop_key_standard"); self.preview(14, "drop_key_standard")
+        selected = candidates(self.root)
+        self.assertEqual([first, third_pack, fourth_pack, input_run], [folder for folder, _ in selected])
+        self.assertEqual(("backpack.png", "player_settings.png"), selected[-1][1])
 
     def test_pins_are_not_ordinary_ready(self):
         pinned = self.preview(1); (pinned / ".retain").write_text("rejected witness")
@@ -38,6 +44,10 @@ class PreviewOwnership(unittest.TestCase):
         self.assertEqual([first], [folder for folder, _ in candidates(self.root)])
 
     def test_incomplete_and_unowned_captures_survive(self):
+        manual = self.preview(0)
+        record = json.loads((manual / "run.json").read_text())
+        record["command"].remove("--temporary")
+        (manual / "run.json").write_text(json.dumps(record))
         self.preview(1, exit_code=None)
         unowned = self.preview(2)
         record = json.loads((unowned / "run.json").read_text())

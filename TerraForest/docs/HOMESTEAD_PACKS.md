@@ -1,6 +1,6 @@
 # Homestead household object packs
 
-Three separate original asset packs extend the existing table/chair/shelf/chest
+Four separate original asset packs extend the existing table/chair/shelf/chest
 set. They use stable pack, item and native model identities, with committed
 baked meshes, icon atlases, editable source and exact hash provenance.
 
@@ -9,8 +9,9 @@ baked meshes, icon atlases, editable source and exact hash provenance.
 | [Homestead 01 — Household Essentials](../addons/structures/packs/homestead_01/README.md) | Bed, nightstand, wardrobe, counter, cupboard, sink, stove, sofa, books, mug | 720–729 |
 | [Homestead 02 — Lived-in Details](../addons/structures/packs/homestead_02/README.md) | Rug, curtains/rail, landscape picture, clock, coat rack, basket, crate, bottle, dishes, lamp | 730–739 |
 | [Homestead 03 — Washroom & Utility](../addons/structures/packs/homestead_03/README.md) | Bathtub, toilet/cistern, mirror, towel rail, folded towels, soap dish, paper holder, laundry tub, washboard, broom/dustpan | 740–749 |
+| [Homestead 04 — Workshop & Repairs](../addons/structures/packs/homestead_04/README.md) | Workbench, vise, wall tool board, toolbox, sawhorse, plank stack, paint tin/brush, rope, cable spool, handcart | 750–759 |
 
-All three appear independently in the Objects pack filter and Dev Bag categories.
+All four appear independently in the Objects pack filter and Dev Bag categories.
 Normal placement, recipes, partial salvage, durability, native history, model
 streaming and structure save/reload remain shared. Inventory drops use the
 universal parcel fallback and existing bounded physical pool. No new per-item
@@ -48,6 +49,11 @@ folded fabrics. Its mirror uses a simple finish and authored highlights without
 live room reflections. Editable new geometry reuses the existing Homestead 02
 0BSD offline helpers; the exact helper hash is retained in pack provenance.
 
+![Homestead 04 workshop and repairs](../reports/checks/20261126T091005146674Z/homestead_04.png)
+
+Homestead 04 authoring preview: open furniture frames, mechanical details,
+continuous rope/cable meshes, and a spoked handcart. These are static furnishings.
+
 ## Scope and return triggers
 
 These are furnishings. Clock hands are static, cloth does not simulate and
@@ -66,6 +72,15 @@ volume-conservation contract, native inventory transfers and fresh-provider
 reload evidence. Live mirrors require a separate bounded reflection experiment,
 sparse/dense timings and an explicit fallback before default admission. These
 requirements are deferred to their gameplay/effect contracts, not declared done.
+
+Homestead 04 crafting, usable hand tools, moving vise/lid parts, toolbox storage,
+paint application, rope/cable attachment and cart motion remain unimplemented.
+Crafting needs shared recipe/progress transactions and conservation/reload
+checks. Storage needs the existing cross-collection ownership prerequisite.
+Moving parts need shared state and reload tests. Cart motion needs one physics
+owner, bounded residency and saved-motion/support checks. Rope/cable use needs
+an attachment/length/state contract. Return to these shared gameplay contracts
+before adding behavior; the pack introduces no new actor or vehicle permission.
 
 Headless density fixtures cover 1,000 mixed placements per pack, native ownership
 and byte-exact reopen. They do not establish graphical frame rate, transparent
@@ -86,6 +101,14 @@ furnishing is outside this milestone; the rejected district layout is unchanged.
   shared damage/salvage, icons, byte-exact reopen, pre-pack save admission,
   1,000 mixed placements and real wall support on all four sides:
   `reports/checks/20261126T085712674667Z/run.json`.
+- Homestead 04: 111 assertions covering paid placement, no unpaid duplicates,
+  shared damage/salvage, icons, byte-exact reopen, pre-pack save admission,
+  1,000 mixed placements and real tool-board wall support on all four sides:
+  `reports/checks/20261126T091105311460Z/run.json`.
+- Expanded Homestead 04 catalog: universal drops/recollection pass 783 checks
+  (`reports/checks/20261126T091251412951Z/run.json`), physical drops pass 126
+  (`reports/checks/20261126T091337525004Z/run.json`), and actual-world rendered
+  G/input checks pass 35 (`reports/checks/20261126T091431643291Z/run.json`).
 - Expanded Homestead 03 catalog: universal drops/recollection pass 713 checks
   (`reports/checks/20261126T085806878619Z/run.json`), physical drops pass 116
   (`reports/checks/20261126T085904647712Z/run.json`), and the actual-world rendered
@@ -112,9 +135,11 @@ allocated. Keep at most two ordinary ready contact sheets per pack, preserving
 rejected evidence and receipt-owned archival rules. Asset/source provenance and
 offline credits have their own freshness checks.
 
-`tools/maintain_homestead_captures.py` runs before and after pack checks. It keeps
-two ordinary ready previews per pack and cold-retains only exact image names
-from completed matching driver/output receipts. Pins, incomplete processes,
+`tools/maintain_homestead_captures.py` runs before and after pack checks and the
+required G/input driver. It keeps two ordinary ready runs per capture family,
+covering each pack's preview and the input driver's two UI images. It cold-retains
+only exact image names from completed matching temporary driver/output receipts.
+Pins, incomplete processes,
 other files and unowned captures are excluded. Existing verified chunk archives
 preserve every byte before exact-file retirement; logs and run receipts stay
 ready. Three ownership/pin regressions pass. No storage limit is raised.
@@ -123,3 +148,12 @@ Godot's headless editor import generated the new script identity sidecars:
 `reports/checks/homestead_uid_import_20261126T084351486949Z/run.json`.
 Homestead 03 identities were generated by the later import at
 `reports/checks/homestead03_uid_import_20261126T090113095694Z/run.json`.
+Homestead 04 identities were generated at
+`reports/checks/homestead04_uid_import_20261126T091652930378Z/run.json`.
+
+The input capture lifecycle cold-retained the older two menu images from
+`reports/checks/20261126T084058031606Z` after the later input driver exited.
+`homestead.archive.json` there retains exact filenames, hashes and verified
+chunk reconstruction; run receipts/logs remain ready and two recent UI runs
+remain loose. The archive preserves all image bytes under the existing storage
+limits.

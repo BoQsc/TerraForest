@@ -9414,12 +9414,12 @@ Terrain and water now share a bounded set of field readers across a region junct
 
 ## Separate Homestead household packs, 26 November 2026
 
-[Homestead 01, 02 and 03](HOMESTEAD_PACKS.md) add thirty original household objects,
+[Homestead 01–04](HOMESTEAD_PACKS.md) add forty original household objects,
 with separate pack identities, menu filters, inventory IDs, editable geometry,
 CC0 asset notices and hash provenance. All share native model/history/storage
 owners and universal item drops. Homestead 02 adds checked wall mounting and a
 table lamp in the existing bounded resident-light pool. Rendered model sheets,
-98/139/137 pack assertions, 116 physical-drop assertions and the 35-assertion rendered
+98/139/137/111 pack assertions, 126 physical-drop assertions and the 35-assertion rendered
 G/input regression are recorded in the linked status, including retained failures.
 
 These are furnishing packs, not a completed dense-house performance milestone.
@@ -9428,5 +9428,8 @@ sitting, washing, cleaning and fixture water exchange remain unimplemented.
 Prerequisites and closure evidence are listed in the pack status. No generated layout or player save
 is refurnished. Return for a representative sparse/cluttered house route before
 claiming frame-rate, transparent-material or navigation acceptance. Visual review
-of the new Homestead 03 sheet remains with the user. Its mirror has a simple
-finish; live reflections require their own bounded effect/performance contract.
+of the new Homestead 04 sheet remains with the user. Homestead 03's mirror has
+a simple finish; live reflections require their own bounded effect/performance
+contract. Homestead 04 crafting, usable tools, moving parts, toolbox storage,
+rope/cable attachment and cart motion remain unimplemented; prerequisites and
+closure evidence are recorded in the linked pack status.

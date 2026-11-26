@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: 0BSD
-"""Cold-retain receipt-owned Homestead previews, preserving two ready per pack."""
+"""Cold-retain Homestead previews and required G-input UI captures, two ready per family."""
 import argparse
 import json
 from pathlib import Path
@@ -8,7 +8,13 @@ from development_storage import admit
 from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
-FAMILIES = {"homestead_pack": "homestead_01.png", "homestead_02_pack": "homestead_02.png", "homestead_03_pack": "homestead_03.png"}
+FAMILIES = {
+    "homestead_pack": ("homestead_01.png",),
+    "homestead_02_pack": ("homestead_02.png",),
+    "homestead_03_pack": ("homestead_03.png",),
+    "homestead_04_pack": ("homestead_04.png",),
+    "drop_key_standard": ("backpack.png", "player_settings.png"),
+}
 
 
 def candidates(root=ROOT):
@@ -16,7 +22,7 @@ def candidates(root=ROOT):
     for receipt in sorted((root / "reports/checks").glob("*/run.json")):
         run = json.loads(receipt.read_text(encoding="utf-8"))
         command = run.get("command", [])
-        if run.get("result", {}).get("exit_code") is None or "--script" not in command:
+        if run.get("result", {}).get("exit_code") is None or "--script" not in command or "--temporary" not in command:
             continue
         index = command.index("--script") + 1
         if index >= len(command):
@@ -30,8 +36,9 @@ def candidates(root=ROOT):
             continue
         if any((folder / pin).exists() for pin in (".retain", "RETAIN_READY", "homestead.archive.json")):
             continue
-        if (folder / FAMILIES[family]).is_file():
-            ready[family].append((folder, FAMILIES[family]))
+        members = tuple(name for name in FAMILIES[family] if (folder / name).is_file())
+        if members:
+            ready[family].append((folder, members))
     return [entry for entries in ready.values() for entry in entries[:-2]]
 
 
@@ -44,12 +51,12 @@ def maintain(apply=False, root=ROOT):
     no_game_processes()
     with owned_lease(root / "reports/retained_artifacts/writer", root):
         store = Store(root / "reports/retained_artifacts/chunks")
-        for folder, member in selected:
+        for folder, members in selected:
             no_game_processes()
             if any((folder / pin).exists() for pin in (".retain", "RETAIN_READY")):
                 continue
-            record = archive(folder, [member], folder / "homestead.archive.json", store,
-                             dict(kind="completed-homestead-preview", run_sha256=digest(folder / "run.json")))
+            record = archive(folder, list(members), folder / "homestead.archive.json", store,
+                             dict(kind="completed-object-check-captures", run_sha256=digest(folder / "run.json")))
             result["reclaimed_bytes"] += retire(record, store, folder)
             result["manifests"].append(str(folder / "homestead.archive.json"))
     return result

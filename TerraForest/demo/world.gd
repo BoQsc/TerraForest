@@ -216,8 +216,9 @@ func _ready() -> void:
 	var homestead: Array[Dictionary]=preload("res://addons/structures/packs/homestead_01/catalog.gd").register(structures)
 	var homestead_details: Array[Dictionary]=preload("res://addons/structures/packs/homestead_02/catalog.gd").register(structures)
 	var homestead_washroom: Array[Dictionary]=preload("res://addons/structures/packs/homestead_03/catalog.gd").register(structures)
+	var homestead_workshop: Array[Dictionary]=preload("res://addons/structures/packs/homestead_04/catalog.gd").register(structures)
 	await _startup_step("Registering furniture and storage")
-	structures_ready = structures_ready and furniture.size()==3 and homestead.size()==10 and homestead_details.size()==10 and homestead_washroom.size()==10
+	structures_ready = structures_ready and furniture.size()==3 and homestead.size()==10 and homestead_details.size()==10 and homestead_washroom.size()==10 and homestead_workshop.size()==10
 	var ladder: Dictionary=preload("res://addons/structures/ladder_catalog.gd").register(structures)
 	structures_ready = structures_ready and not ladder.is_empty()
 	var chest: Dictionary=preload("res://addons/structures/storage_catalog.gd").register(structures)
@@ -370,6 +371,7 @@ func _ready() -> void:
 	object_entries.append_array(homestead)
 	object_entries.append_array(homestead_details)
 	object_entries.append_array(homestead_washroom)
+	object_entries.append_array(homestead_workshop)
 	object_entries.append(ladder)
 	object_entries.append(chest)
 	object_entries.append(window)

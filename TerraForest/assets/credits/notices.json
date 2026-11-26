@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "homestead_04",
+      "title": "Homestead 04 workshop and repairs pack",
+      "license": "CC0 1.0 assets / 0BSD code",
+      "source": "addons/structures/packs/homestead_04/ASSET_LICENSE.md",
+      "summary": "Ten original workshop props with editable geometry, continuous rope/cable meshes, matching icons and stable pack identities. Tools, storage and cart wheels are static furnishings.",
+      "text": "# Homestead 04 — original workshop and repair furnishings\n\nNew original assets in this pack are contributed by TerraForest contributors\nunder **CC0-1.0**, to the extent copyright or related rights exist and are held\nby the contributors. The dedication follows the repository's contribution\nterms and does not purport to license third-party rights.\n\nCC0 legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nCovered assets: `pack.json`, `models/workbench.tres`, `models/vise.tres`,\n`models/tool_board.tres`, `models/toolbox.tres`, `models/sawhorse.tres`,\n`models/plank_stack.tres`, `models/paint_tin.tres`, `models/rope.tres`,\n`models/cable_spool.tres`, `models/handcart.tres`, their embedded materials\nand textures, and `icons.trtex`.\n\nThese original parametric models were authored with Codex for TerraForest on\n2026-11-26. The user requested a separate Homestead 04 pack using the proposed\nworkshop roster, followed by a picture of its actual models. The brief specifies\nweathered timber, dull iron, faded teal paint and restrained rust-red accents.\nNo external model, image, texture, branding or reference artwork was copied.\nThe hand tools on the board were authored here as decorative geometry rather\nthan extracted from existing held-tool art.\n\n`author.gd` retains editable geometry, including continuous rope/cable tube\nconstruction, vise details, open furniture frames and cart wheel spokes.\nIt reuses the project's original 0BSD mesh helpers and CC0 procedural patterns\nfrom Homestead 02; those terms and provenance remain intact. The runtime meshes\nhave their own embedded geometry/materials/textures. `provenance.json` records\nexact asset hashes and both the local author and reused helper source hashes.\n\nGodot's primitives and SurfaceTool are external authoring tools, not new\nvendored dependencies or material covered by this dedication. Authoring,\ncatalog, integration and test code is original **0BSD**. License dedication\nremains separate from visual review and gameplay/performance acceptance."
+    },
+    {
       "id": "homestead_03",
       "title": "Homestead 03 washroom and utility pack",
       "license": "CC0 1.0 assets / 0BSD code",
