@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "homestead_06",
+      "title": "Homestead 06 study and communications pack",
+      "license": "CC0 1.0 assets / 0BSD code",
+      "source": "addons/structures/packs/homestead_06/ASSET_LICENSE.md",
+      "summary": "Ten original study furnishings, detailed static desk equipment, original calendar artwork and matching icons. Includes editable geometry and stable identities; communications, fan motion and storage are decorative.",
+      "text": "# Homestead 06 — original study and communications furnishings\n\nNew original assets in this pack are contributed by TerraForest contributors\nunder **CC0-1.0**, to the extent copyright or related rights exist and are held\nby the contributors. The dedication follows the repository's contribution\nterms and does not purport to license third-party rights.\n\nCC0 legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nCovered assets: `pack.json`, `models/writing_desk.tres`, `models/desk_chair.tres`,\n`models/typewriter.tres`, `models/radio.tres`, `models/telephone.tres`,\n`models/desk_fan.tres`, `models/documents.tres`, `models/calendar.tres`,\n`models/briefcase.tres`, `models/wastebasket.tres`, their embedded\nmaterials/textures, and `icons.trtex`.\n\nThese original parametric models were authored with Codex for TerraForest on\n2026-11-26. The user requested a separate Homestead 06 study/communications\npack using the proposed ten-object roster and a picture of its actual models.\nThe brief specifies dark timber, cream metal, muted teal and black plastic,\nwith detailed static typewriter keys, telephone dial/cord and fan guard/blades.\nNo external models, images, fonts, branding or third-party reference artwork\nwere supplied or copied. Calendar artwork uses original geometric digits and\nan authored November 2026 layout. Paper markings, crumpled-paper geometry and\nprocedural leather grain are original work.\n\n`author.gd` retains editable geometry and print artwork. It reuses the project's\noriginal 0BSD mesh/tube helpers and CC0 procedural material patterns from\nHomestead 02 and 04; their terms and provenance remain intact. Runtime meshes\nembed their own geometry/materials/textures. `provenance.json` records exact\noutput and local source hashes plus both inherited helper source hashes.\n\nGodot's primitives, SurfaceTool and image APIs are external authoring tools,\nnot new vendored dependencies or material covered by this dedication.\nAuthoring, catalog, integration and test code is original **0BSD**. License\ndedication remains separate from visual review and gameplay/performance acceptance."
+    },
+    {
       "id": "homestead_05",
       "title": "Homestead 05 kitchen and pantry pack",
       "license": "CC0 1.0 assets / 0BSD code",

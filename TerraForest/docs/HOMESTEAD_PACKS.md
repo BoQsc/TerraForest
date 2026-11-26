@@ -1,6 +1,6 @@
 # Homestead household object packs
 
-Five separate original asset packs extend the existing table/chair/shelf/chest
+Six separate original asset packs extend the existing table/chair/shelf/chest
 set. They use stable pack, item and native model identities, with committed
 baked meshes, icon atlases, editable source and exact hash provenance.
 
@@ -11,8 +11,9 @@ baked meshes, icon atlases, editable source and exact hash provenance.
 | [Homestead 03 — Washroom & Utility](../addons/structures/packs/homestead_03/README.md) | Bathtub, toilet/cistern, mirror, towel rail, folded towels, soap dish, paper holder, laundry tub, washboard, broom/dustpan | 740–749 |
 | [Homestead 04 — Workshop & Repairs](../addons/structures/packs/homestead_04/README.md) | Workbench, vise, wall tool board, toolbox, sawhorse, plank stack, paint tin/brush, rope, cable spool, handcart | 750–759 |
 | [Homestead 05 — Kitchen & Pantry](../addons/structures/packs/homestead_05/README.md) | Refrigerator, kettle, pot/lid, frying pan, cutting board/knife, utensil rail, plate rack, preserve jars, bread bin, grain sack | 760–769 |
+| [Homestead 06 — Study & Communications](../addons/structures/packs/homestead_06/README.md) | Writing desk, desk chair, typewriter, radio, telephone, fan, documents, calendar, briefcase, wastebasket | 770–779 |
 
-All five appear independently in the Objects pack filter and Dev Bag categories.
+All six appear independently in the Objects pack filter and Dev Bag categories.
 Normal placement, recipes, partial salvage, durability, native history, model
 streaming and structure save/reload remain shared. Inventory drops use the
 universal parcel fallback and existing bounded physical pool. No new per-item
@@ -62,6 +63,13 @@ lid, kitchen wall pieces, translucent jars with visible contents and a shaped
 grain sack. Helpers from Homestead 02 and 04 retain their source hashes in the
 new pack's provenance; runtime meshes embed their own materials and geometry.
 
+![Homestead 06 study and communications](../reports/checks/20261126T094909968881Z/homestead_06.png)
+
+Homestead 06 authoring preview: open desk/chair frames, detailed static desk
+equipment, coiled telephone cord, fine fan/basket wires, original calendar print
+and procedural leather grain. The calendar artwork needs no external font or
+image. Helpers from Homestead 02 and 04 retain their source hashes in provenance.
+
 ## Scope and return triggers
 
 These are furnishings. Clock hands are static, cloth does not simulate and
@@ -100,6 +108,18 @@ Moving parts need shared state and collision/interaction tests. Return to these
 gameplay contracts before adding behavior; no food, weapon or appliance
 permission is introduced by furnishing admission.
 
+Homestead 06 radio audio/tuning, telephone calls, fan motion, typing, readable
+documents, live calendar updates, sitting and briefcase/basket/drawer storage
+remain unimplemented. Audio needs a shared bounded playback/power contract with
+saved state; calls need explicit communication/interaction permissions. Fan
+motion needs shared appliance state, a bounded effect/animation budget and reload
+checks. Readable content needs shared content identities and permissions; a live
+calendar needs shared world time and reload evidence. Sitting needs shared
+actor/seat ownership. Storage needs cross-collection container identities and
+nonempty-removal protection. Return to those contracts before adding behavior,
+with interaction and fresh-provider reload evidence for each. The highlighted
+calendar date is authored artwork, not a live simulation.
+
 Headless density fixtures cover 1,000 mixed placements per pack, native ownership
 and byte-exact reopen. They do not establish graphical frame rate, transparent
 overdraw cost, dense-house navigation quality, total RAM/VRAM or 60 FPS headroom.
@@ -109,6 +129,19 @@ furnishing is outside this milestone; the rejected district layout is unchanged.
 
 ## Verification
 
+- Homestead 06: 111 assertions covering paid placement, no unpaid duplicates,
+  shared damage/salvage, icons, byte-exact reopen, pre-pack save admission,
+  1,000 mixed placements and real calendar wall supports on all four sides:
+  `reports/checks/20261126T095004064947Z/run.json`.
+- Expanded Homestead 06 catalog: universal drops/recollection pass 923 checks
+  (`reports/checks/20261126T095039417357Z/run.json`) and physical drops pass 146
+  (`reports/checks/20261126T095107224713Z/run.json`). Actual-world rendered
+  G/input checks pass 35 (`reports/checks/20261126T095142499491Z/run.json`).
+- Homestead 06 authoring initially failed an inferred floating-point declaration
+  (`reports/checks/20261126T094345566690Z/run.json`), then exposed a missing
+  cream material (`reports/checks/20261126T094725530740Z/run.json`). Both source
+  errors were corrected before integration; the clean ten-model bake passed at
+  `reports/checks/20261126T094800372409Z/run.json`. Failed receipts remain intact.
 - Homestead 01: 98 assertions, including the mixed-density fixture and fresh
   structure owners: `reports/checks/20261126T084217973148Z/run.json`.
 - Homestead 02: 139 assertions, including 1,000 mixed placements, paid placement,
@@ -178,6 +211,8 @@ Homestead 04 identities were generated at
 `reports/checks/homestead04_uid_import_20261126T091652930378Z/run.json`.
 Homestead 05 identities were generated at
 `reports/checks/homestead05_uid_import_20261126T093406161794Z/run.json`.
+Homestead 06 identities were generated at
+`reports/checks/homestead06_uid_import_20261126T095315702613Z/run.json`.
 
 The input capture lifecycle cold-retained the older two menu images from
 `reports/checks/20261126T084058031606Z` after the later input driver exited.

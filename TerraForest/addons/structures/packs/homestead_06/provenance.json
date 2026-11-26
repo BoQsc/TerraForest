@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "pack": "terraforest.homestead_06",
+  "version": "1.0.0",
+  "creator": "TerraForest contributors, authored with Codex",
+  "date": "2026-11-26",
+  "origin": "Original parametric geometry and procedural materials; no external asset inputs",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
+  "authoring_tool": "Existing Godot 4.7.2 Steam; external engine, not vendored by this pack",
+  "brief": "A separate recognizable household pack with the user-approved roster and a rendered preview of its actual meshes",
+  "author_command": "python tools/run_godot_check.py homestead_06_pack --require \"failures=0\" -- --author-pack",
+  "icon_command": "python tools/run_godot_check.py homestead_06_pack --isolated-render --require \"failures=0\" -- --preview-only",
+  "source_sha256": {
+    "addons/structures/packs/homestead_02/author.gd": "44569d6b3e354ae1b940e5af5e43a6ab3027e4a44c6b3c34bf56fc43428411bf",
+    "addons/structures/packs/homestead_04/author.gd": "faa1d9431f6361274d4efd169844c4b70dc184bb39d0ed2a0376c39b4713560d",
+    "addons/structures/packs/homestead_06/author.gd": "d45eb1e77436ab2f3e50f92af24480171b77908fec252d73445e5b63314f4b72",
+    "addons/structures/packs/homestead_06/catalog.gd": "9306ce7de8f432be56651e080d5944ae83ad8844d433223ddd3e94b99096dfc0",
+    "tests/homestead_06_pack.gd": "3ae3805e5da323d8eed3879bdd59adb119474e7b9c7599225949ec03f1730f47"
+  },
+  "asset_sha256": {
+    "addons/structures/packs/homestead_06/icons.trtex": "15e13568901a480a45edbe6bc0d0428eee1d9783f276127607ddc32db1e60774",
+    "addons/structures/packs/homestead_06/models/briefcase.tres": "b54619fb439dfcef8189aeca3a9b73767809805982aad1f18a22b6ef0f61f99d",
+    "addons/structures/packs/homestead_06/models/calendar.tres": "4171867b850878bb2064ecf137a34316419220938e04820f161c1765c9d9fca0",
+    "addons/structures/packs/homestead_06/models/desk_chair.tres": "2e6d8c736df5d085542842e512aae59e783168c2946fe320b3083d99cd4ab224",
+    "addons/structures/packs/homestead_06/models/desk_fan.tres": "45160ebb9ba679d15bfacd8d279ac72f769f185e22b143d99f0c113e21fb420b",
+    "addons/structures/packs/homestead_06/models/documents.tres": "b06d35badcf996686d7dadfdc3910038b10bfd1a563c10082d2e3af2bf85b61b",
+    "addons/structures/packs/homestead_06/models/radio.tres": "05ae14b6f037b054257b0e5bb79381cd96925f462224dcc89fd298d8d634b237",
+    "addons/structures/packs/homestead_06/models/telephone.tres": "956ce2e4bfb90bb18ff587c2cdc868532fa0b4f0c44019f6340ce10b56dd30bd",
+    "addons/structures/packs/homestead_06/models/typewriter.tres": "af5f145cad0653ae7380b73e380e5e3e803092dec9dadc5f2fdda2bcf01acee4",
+    "addons/structures/packs/homestead_06/models/wastebasket.tres": "1ca51aa25cf5ffd24444976791e3ade929e6049a9cf1adbd00c4ec37ec2a0ac3",
+    "addons/structures/packs/homestead_06/models/writing_desk.tres": "8cc7c5091e676559a8d03dd36cda9e917124f927c90f31990aafe31bb3fb1c8f",
+    "addons/structures/packs/homestead_06/pack.json": "4a178e34733b420d461ad600de39d0937f4789942faa705f5cda49f3e00c1825"
+  }
+}
