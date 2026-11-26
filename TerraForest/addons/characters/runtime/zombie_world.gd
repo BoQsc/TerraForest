@@ -448,7 +448,7 @@ func supported_resident_point(point:Vector3,standing:bool)->Vector3:
 		if not space.intersect_shape(query,1).is_empty():return Vector3.INF
 	return point
 
-func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false) -> CharacterBody3D:
+func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false,persistent_id:int=0,world_seed:int=0) -> CharacterBody3D:
 	if not enabled or not point.is_finite() or residents.size() >= residency_limit or not is_instance_valid(target):
 		return null
 	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
@@ -477,7 +477,7 @@ func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false) -> 
 	residents.append(zombie)
 	if is_instance_valid(corpse_host):zombie.died.connect(func():corpse_host.retain(zombie))
 	var id:int=zombie.get_instance_id()
-	awareness.add_agent(id,zombie.global_position)
+	awareness.add_agent(id,zombie.global_position,persistent_id,world_seed)
 	_sense_clock[id]=float(residents.size()%3)*0.08
 	zombie.tree_exiting.connect(func():
 		if is_instance_valid(navigator):navigator.remove_agent(id)

@@ -62,6 +62,18 @@ func _initialize()->void:
 	check(admitted and not station.add_agent(17,Vector3.ZERO),"station awareness admits sixteen and rejects overflow")
 	var invalid_station=ClassDB.instantiate("NativeZombieAwareness")
 	check(not invalid_station.configure(17,42),"station cap cannot be silently widened")
+	var replay_a=ClassDB.instantiate("NativeZombieAwareness");replay_a.configure(2,99)
+	var replay_b=ClassDB.instantiate("NativeZombieAwareness");replay_b.configure(2,123456)
+	check(replay_a.add_agent(1,Vector3.ZERO,987654321,1703) and replay_b.add_agent(80001,Vector3.ZERO,987654321,1703),"Persistent random identity is independent of runtime ownership")
+	var matched:=true
+	for tick in 240:
+		var a:Dictionary=replay_a.advance(1,Vector3.ZERO,1.0/60,true,"following")
+		var b:Dictionary=replay_b.advance(80001,Vector3.ZERO,1.0/60,true,"following")
+		matched=matched and a==b
+	check(matched,"Identical persistent actor/world streams survive different node IDs and global random seeds")
+	replay_b.add_agent(80002,Vector3.ZERO,987654321,1704)
+	replay_a.add_agent(2,Vector3.ZERO,987654321,1703)
+	check(replay_a.status(2).remaining_seconds!=replay_b.status(80002).remaining_seconds,"Different world seeds keep independent roaming streams")
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	FileAccess.open("res://reports/zombie_awareness.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures}))
 	print("ZOMBIE_AWARENESS checks=",checks," failures=",failures);quit(1 if failures else 0)

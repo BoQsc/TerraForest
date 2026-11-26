@@ -40,7 +40,7 @@ protected:
     static void _bind_methods();
 public:
     bool configure(int capacity,int64_t seed);
-    bool add_agent(int64_t id,const godot::Vector3 &feet);
+    bool add_agent(int64_t id,const godot::Vector3 &feet,int64_t persistent_id=0,int64_t world_seed=0);
     bool set_profile(int64_t id,const godot::Dictionary &profile);
     bool set_sleeping(int64_t id,int pose);
     bool finish_waking(int64_t id);

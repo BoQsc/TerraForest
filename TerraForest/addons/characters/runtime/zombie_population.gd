@@ -128,7 +128,7 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		failure = "Zombie residency timed out waiting for terrain/object collision"
 		return false
 	cursor += 1; examined += 1
-	var zombie: CharacterBody3D = host.spawn_at(point,not record.sleep.is_empty(),authored)
+	var zombie: CharacterBody3D = host.spawn_at(point,not record.sleep.is_empty(),authored,record.id,game.terrain.backend.world_seed)
 	if zombie == null:return false
 	zombie.global_rotation.y = record.yaw
 	var descriptor:Dictionary=store.encounter(record.id)

@@ -8,7 +8,7 @@ using namespace godot;
 namespace terraforest {
 void NativeZombieAwareness::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","capacity","seed"),&NativeZombieAwareness::configure);
-    ClassDB::bind_method(D_METHOD("add_agent","id","feet"),&NativeZombieAwareness::add_agent);
+    ClassDB::bind_method(D_METHOD("add_agent","id","feet","persistent_id","world_seed"),&NativeZombieAwareness::add_agent,DEFVAL(0),DEFVAL(0));
     ClassDB::bind_method(D_METHOD("set_profile","id","profile"),&NativeZombieAwareness::set_profile);
     ClassDB::bind_method(D_METHOD("set_sleeping","id","pose"),&NativeZombieAwareness::set_sleeping);
     ClassDB::bind_method(D_METHOD("finish_waking","id"),&NativeZombieAwareness::finish_waking);
@@ -61,9 +61,15 @@ Dictionary NativeZombieAwareness::describe(const Agent &a){
     out["unseen_seconds"]=a.unseen;out["remaining_seconds"]=a.remaining;out["ignore_seconds"]=a.ignore;return out;
 }
 bool NativeZombieAwareness::configure(int capacity,int64_t seed){if(capacity_||capacity<1||capacity>16)return false;capacity_=capacity;seed_=uint32_t(seed)|1;agents_.reserve(capacity);return true;}
-bool NativeZombieAwareness::add_agent(int64_t id,const Vector3 &feet){
+bool NativeZombieAwareness::add_agent(int64_t id,const Vector3 &feet,int64_t persistent_id,int64_t world_seed){
     if(!capacity_||id<=0||!feet.is_finite()||find(id)||int(agents_.size())>=capacity_)return false;
     Agent a;a.id=id;a.home=a.goal=a.last_seen=feet;a.random=(seed_^uint32_t(id)^uint32_t(uint64_t(id)>>32))|1;
+    // Runtime handles still own lifetime/query membership. Persistent actors use
+    // a separate random stream, independent of render/streaming node allocation.
+    if(persistent_id>0){
+        uint32_t mixed=uint32_t(persistent_id)*2654435761u ^ uint32_t(uint64_t(persistent_id)>>32)*2246822519u ^ uint32_t(world_seed)*3266489917u;
+        mixed^=mixed>>16;a.random=mixed|1;
+    }
     a.remaining=.3+random(a)*1.7;agents_.push_back(a);return true;
 }
 bool NativeZombieAwareness::set_profile(int64_t id,const Dictionary &values){
