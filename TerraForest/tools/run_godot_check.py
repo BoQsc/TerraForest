@@ -23,6 +23,7 @@ from development_storage import admit, register_worlds
 # evidence remains in the owning run directory; they do not allocate exports.
 # This declares planned growth, not a change to any storage category limit.
 BOUNDED_WATER_REPORTS = {
+    "water_render_pages",
     "px9_handgun", "water_patch", "water_patch_contacts", "water_structure_cache", "water_static_editing", "water_region_io",
     "water_region_retirement", "water_map_identity", "ocean_residency", "water_snapshot_cost",
     "water_player_world", "water_publication_scale", "water_local_surface", "water_equilibrium_scope", "water_ocean_equilibrium",
@@ -43,7 +44,7 @@ def planned_report_bytes(command):
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
     if "--headless" in command and len(scripts) == 1 and scripts <= {
         "zombie_residency_lifecycle.gd", "zombie_rest_support.gd", "zombie_ragdoll_reactivation.gd",
-        "zombie_geometry_cache.gd", "corpse_restore_cost.gd", "zombie_corpse_walk.gd", "zombie_collision_cloud.gd"
+        "zombie_geometry_cache.gd", "corpse_restore_cost.gd", "zombie_corpse_walk.gd", "zombie_collision_cloud.gd", "zombie_awareness.gd"
     }:
         return 2 * 2**20  # Lifecycle assertions and bounded timing rows only.
     if scripts == {"physics_residency_world.gd"}:

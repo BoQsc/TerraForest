@@ -70,6 +70,8 @@ class ResourceMonitor:
         self.working_peak = None
         self.vram_peak = None
         self.next_sample = 0
+        self.sample_intervals = []
+        self.sample_intervals_truncated = False
         self.limits = load_budgets()
         if os.name == 'nt':
             from windows_process_metrics import ProcessMetrics, GpuMemoryMetrics
@@ -83,19 +85,28 @@ class ResourceMonitor:
         if time.monotonic() < self.next_sample:
             return
         self.next_sample = time.monotonic() + .5
+        observed = dict(utc_start_s=time.time())
+        began = time.perf_counter()
         if self.process:
             try:
                 row = self.process.sample()
                 self.samples += 1
                 self.private_peak = max(self.private_peak or 0, row['private_commit_bytes'], row['peak_private_commit_bytes'])
                 self.working_peak = max(self.working_peak or 0, row['working_set_bytes'], row['peak_working_set_bytes'])
+                observed.update({key: row[key] for key in ('process_cpu_ms', 'system_busy_percent', 'interval_s') if key in row})
             except OSError:
                 pass
+        observed['process_sample_ms'] = (time.perf_counter() - began) * 1000
+        began = time.perf_counter()
         if self.gpu:
             value = self.gpu.sample()
             if value is not None:
                 self.gpu_samples += 1
                 self.vram_peak = max(self.vram_peak or 0, value)
+        observed['gpu_sample_ms'] = (time.perf_counter() - began) * 1000
+        observed['utc_end_s'] = time.time()
+        if len(self.sample_intervals) < 2048: self.sample_intervals.append(observed)
+        else: self.sample_intervals_truncated = True
 
     def close(self):
         for reader in [self.process, self.gpu]:
@@ -108,6 +119,7 @@ class ResourceMonitor:
         return dict(samples=self.samples, gpu_samples=self.gpu_samples, peak_private_commit_bytes=self.private_peak,
                     peak_working_set_bytes=self.working_peak, peak_dedicated_gpu_bytes=self.vram_peak,
                     checks=checks, limits=self.limits, errors=self.errors,
+                    sample_intervals=self.sample_intervals, sample_intervals_truncated=self.sample_intervals_truncated,
                     exceeded=any(check['status'] == 'exceeded' for check in checks.values()),
                     telemetry_complete=complete,
                     within_sampled_limits=complete and all(checks[name]['status'] != 'exceeded' for name in ['ram', 'vram']),

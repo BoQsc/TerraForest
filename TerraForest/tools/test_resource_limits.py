@@ -56,6 +56,19 @@ class ResourceLimitTests(unittest.TestCase):
         self.assertEqual(report['checks']['vram']['status'], 'unavailable')
         reader.close()
 
+    def test_monitor_cost_evidence_is_bounded_even_when_counters_are_unavailable(self):
+        with patch('resource_limits.os.name', 'unavailable'):
+            reader = ResourceMonitor(1)
+        for _ in range(2050):
+            reader.next_sample = 0
+            reader.sample()
+        report = reader.report()
+        self.assertEqual(len(report['sample_intervals']), 2048)
+        self.assertTrue(report['sample_intervals_truncated'])
+        self.assertFalse(report['telemetry_complete'])
+        self.assertGreaterEqual(report['sample_intervals'][0]['gpu_sample_ms'], 0)
+        reader.close()
+
     def test_export_estimate_keeps_disk_reserve_and_content_limit_separate(self):
         with patch('resource_limits.Path.stat') as metadata:
             metadata.side_effect = FileNotFoundError

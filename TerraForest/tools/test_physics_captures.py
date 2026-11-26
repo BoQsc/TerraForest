@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 from maintain_physics_captures import candidates
-from analyze_physics_residency import summarize, workload_differences
+from analyze_physics_residency import read_capture, summarize, workload_differences
 from run_godot_check import planned_report_bytes
 
 
@@ -55,6 +55,14 @@ class PhysicsCaptureTests(unittest.TestCase):
         self.assertEqual(head['cloud_ms']['mean'], .05)
         self.assertEqual(head['install_ms']['mean'], 2)
         self.assertEqual(head['plan_builds'], 0)
+        data['render_ablation'] = [dict(phase='0:baseline', draw_us=99000, setup_ms=1,
+            render_cpu_ms=80, gpu_ms=4, draw_calls=1000)]
+        data['samples'][0]['render_markers'] = {'available': True}
+        diagnostic = summarize(data)
+        self.assertTrue(diagnostic['diagnostics'])
+        self.assertEqual(diagnostic['cadence']['frames'], 4)
+        self.assertEqual(diagnostic['cadence']['frame_ms']['maximum'], 60)
+        self.assertEqual(diagnostic['render_ablation']['0:baseline']['draw_us']['mean'], 99000)
         data['collision_comparison'] = [dict(part='head', input_points=5408, pairs=[
             dict(original=dict(total_us=original), reduced=dict(total_us=reduced, points=2000))
             for original, reduced in [(1000, 600), (1100, 650), (30000, 30000)]])]
@@ -69,6 +77,31 @@ class PhysicsCaptureTests(unittest.TestCase):
         self.assertEqual(workload_differences(first, dict(first, route=[dict(living=4, corpses=11)])), ['route'])
         self.assertEqual(workload_differences(first, dict(first, physics_hz=30)), ['physics_hz'])
         self.assertEqual(workload_differences(first, dict(first, source_sha256='changed')), ['source_sha256'])
+        first['diagnostics'] = False
+        self.assertEqual(workload_differences(first, dict(first, diagnostics=True)), ['diagnostics'])
+        first['manual_no_present'] = False
+        first['detached_present'] = False
+        self.assertEqual(workload_differences(first, dict(first, manual_no_present=True)), ['manual_no_present'])
+        self.assertEqual(workload_differences(first, dict(first, detached_present=True)), ['detached_present'])
+        for key, value, changed in [('presentation_surface', 'interactive_desktop', 'isolated_desktop'),
+                                    ('window_mode', 3, 0), ('window_focus', 'focused', 'mixed')]:
+            first[key] = value
+            self.assertEqual(workload_differences(first, dict(first, **{key: changed})), [key])
+
+    def test_presentation_provenance_comes_from_actual_launcher_receipt(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            (folder / 'physics_residency.json').write_text('{}')
+            (folder / 'run.json').write_text(json.dumps(dict(command=['godot', '--windowed', '--isolated-render'])))
+            data = read_capture(folder)
+            self.assertEqual((data['presentation_surface'], data['window_mode']), ('isolated_desktop', 0))
+            (folder / 'run.json').write_text(json.dumps(dict(command=['godot', '--fullscreen'])))
+            data = read_capture(folder)
+            self.assertEqual((data['presentation_surface'], data['window_mode']), ('interactive_desktop', 3))
+            (folder / 'physics_residency.json').write_text('{"window_mode":0}')
+            self.assertEqual(read_capture(folder)['window_mode'], 0)
+            (folder / 'run.json').write_text('{}')
+            self.assertEqual(read_capture(folder)['presentation_surface'], 'unknown')
 
 
 if __name__ == '__main__':

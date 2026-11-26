@@ -15,14 +15,25 @@ ROOT = Path(__file__).resolve().parents[1]
 def read_capture(folder):
     path = folder / 'physics_residency.json'
     if path.is_file():
-        return json.loads(path.read_text(encoding='utf-8'))
-    record = load_manifest(folder / 'physics.archive.json')
-    member = next(row for row in record['files'] if row['path'] == path.name)
-    store = Store(ROOT / 'reports/retained_artifacts/chunks')
-    data = b''.join(store.get(key) for key in member['chunks'])
-    if len(data) != member['bytes'] or hashlib.sha256(data).hexdigest() != member['sha256']:
-        raise ValueError('Archived cadence failed its complete-file hash')
-    return json.loads(data)
+        data = json.loads(path.read_text(encoding='utf-8'))
+    else:
+        record = load_manifest(folder / 'physics.archive.json')
+        member = next(row for row in record['files'] if row['path'] == path.name)
+        store = Store(ROOT / 'reports/retained_artifacts/chunks')
+        raw = b''.join(store.get(key) for key in member['chunks'])
+        if len(raw) != member['bytes'] or hashlib.sha256(raw).hexdigest() != member['sha256']:
+            raise ValueError('Archived cadence failed its complete-file hash')
+        data = json.loads(raw)
+    receipt = folder / 'run.json'
+    if receipt.is_file():
+        run = json.loads(receipt.read_text(encoding='utf-8'))
+        command = run.get('command', [])
+        data['presentation_surface'] = ('headless' if run.get('headless') or '--headless' in command else
+            'isolated_desktop' if run.get('isolated_render') or '--isolated-render' in command else
+            'interactive_desktop' if '--fullscreen' in command or '--windowed' in command else 'unknown')
+        if 'window_mode' not in data:
+            data['window_mode'] = 0 if '--windowed' in command or '--windowed-probe' in command else 3 if '--fullscreen' in command else -1
+    return data
 
 
 def summarize(data):
@@ -36,8 +47,40 @@ def summarize(data):
                   scope=data['scope'], route=data['route'], cadence=cadence(rows),
                   phases={phase: cadence([r for r in rows if r['phase'] == phase])
                           for phase in dict.fromkeys(r['phase'] for r in rows)})
-    for key in ('viewport', 'physics_hz', 'vsync'):
+    for key in ('viewport', 'physics_hz', 'vsync', 'window_mode', 'presentation_surface'):
         if key in data: result[key] = data[key]
+    focus = [r['window_focused'] for r in rows if 'window_focused' in r]
+    result['window_focus'] = 'unknown'
+    if focus:
+        result['window_focus'] = 'focused' if all(focus) else 'unfocused' if not any(focus) else 'mixed'
+        result['focused_frames'] = sum(focus)
+    result['diagnostics'] = data.get('diagnostics', any('render_markers' in r for r in rows))
+    result['manual_no_present'] = data.get('manual_no_present', False)
+    result['detached_present'] = data.get('detached_present', False)
+    if 'fps_cap' in data: result['fps_cap'] = data['fps_cap']
+    if 'engine_settings' in data: result['engine_settings'] = data['engine_settings']
+    result['water_render_pages'] = data.get('water_render_pages', {})
+    boundaries = ('physics_ms', 'physics_tail_ms', 'process_ms', 'pre_draw_ms', 'draw_ms',
+                  'render_setup_ms', 'render_cpu_ms', 'gpu_ms', 'draw_calls', 'render_primitives',
+                  'thread_cycles', 'draw_cycles', 'process_draw_cycles')
+    result['frame_work'] = {key: distribution([r[key] for r in rows if key in r])
+                            for key in boundaries if any(key in r for r in rows)}
+    slow = [r for r in rows if r['frame_ms'] >= result['cadence']['frame_ms']['p99']]
+    result['slow_frame_work'] = {key: distribution([r[key] for r in slow if key in r])
+                                 for key in boundaries if any(key in r for r in slow)}
+    result['frame_work_scope'] = ('Boundaries overlap: physics_tail and physics are within before_process. '
+        'Viewport CPU/GPU timers are delayed readback, not the current draw. Detailed marker capture '
+        'adds overhead; do not compare diagnostic cadence with ordinary captures.')
+    groups = data.get('render_inventory', {}).get('groups', {})
+    result['render_ablation'] = {}
+    for phase in dict.fromkeys(r['phase'] for r in data.get('render_ablation', [])):
+        subset = [r for r in data['render_ablation'] if r['phase'] == phase]
+        key = phase.split(':', 1)[1]
+        result['render_ablation'][phase] = dict(
+            group=groups.get(key, {}).get('script', key),
+            **{name: distribution([r[name] for r in subset if name in r]) for name in
+               ('draw_us', 'setup_ms', 'render_cpu_ms', 'gpu_ms', 'draw_calls', 'draw_cycles')
+               if any(name in r for r in subset)})
     result['corpse_ms'] = {key.removesuffix('_us'): distribution([r['corpse_us'].get(key, 0) / 1000 for r in rows])
                           for key in ('update_us', 'readiness_us', 'freeze_us', 'restore_us')}
     transitions = [r for r in data.get('ragdoll_transitions', []) if r['phase'] != 'setup']
@@ -75,7 +118,7 @@ def summarize(data):
 
 def workload_differences(first, other):
     required = ('source_sha256', 'seed', 'route')
-    settings = ('viewport', 'physics_hz', 'vsync')
+    settings = ('viewport', 'physics_hz', 'vsync', 'fps_cap', 'diagnostics', 'manual_no_present', 'detached_present', 'engine_settings', 'presentation_surface', 'window_mode', 'window_focus')
     return [key for key in required if first[key] != other[key]] + [
         key for key in settings if key in first and key in other and first[key] != other[key]]
 
