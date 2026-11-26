@@ -47,3 +47,13 @@ Use repeated source and package runs, record build/native hashes, cache state,
 world identity, worker limits and concurrent load, and distinguish first play
 from later background completion. Existing measurements do not qualify broader
 seeds, larger worlds, foreground smoothness or a performance improvement.
+
+## Current parallelism review — 2026-11-26
+
+`parallelism_20261126.json` records the existing Homestead_Valley generation and
+a fresh read-only load, source hashes, CPU/memory observations and scope limits.
+It is original AI-assisted CC0-1.0 analysis of local data. No external material
+was imported. [Interpretation and implementation order](../../WORLD_STARTUP_ARCHITECTURE.md#parallelism-review--2026-11-26)
+distinguish this current implementation from the historical November 2 audit.
+The pinned raw bundle is `reports/checks/loading_parallelism_20261126T201830261855Z`;
+its initial diagnostic failure is retained beside the successful fixed run.

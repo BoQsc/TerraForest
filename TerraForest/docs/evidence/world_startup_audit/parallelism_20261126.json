@@ -1,0 +1,377 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted analysis of local source and retained engine reports; no external material imported.",
+  "date": "2026-11-26",
+  "source_base": "3fc473388498b60103995b01cf91f41784b222e0",
+  "source_sha256": {
+    "demo/world.gd": "737fd0d3cad0aff972ba79554f13dec8dfdaa5cf9ace5645ee6c84dad6e55717",
+    "project.godot": "c822a11bf19411c7107b11f589eed7d98d99a94afd5c1e40faafdd0526f31061",
+    "tests/regional_loading_trace.gd": "2c249f5489207bf05b9c5b11508e5b21fc1ee133f39a3f6560094e2b8f8a3fb2",
+    "addons/world_runtime/startup_resources.gd": "a72be7f69f409e2eb880035cf629eb57f6c651ea30f959e343210000128153f7",
+    "addons/world_runtime/generate_world_task.gd": "7ac32568cfd9fc035a388398c07d77b508bb2f84503d72494f88a955393c4aa4",
+    "addons/world_runtime/custom_world_plan.gd": "01c54fa30ea886e88481ce8aa1f39d78ccb1af46a13d3a3bdc47a9882a0f756d",
+    "addons/world_runtime/world_persistence.gd": "d1438b6d36438020e3fd6ef770e5df58421824752e595845dc0255370e7b50a4",
+    "addons/structures/outdoor_generation.gd": "5e59bc12b3f051e7b24b368de32bf7dc7f2f3a89046d8ca80c7521a03af73924",
+    "addons/structures/model_paging_coordinator.gd": "4855e1c10337b801cfb6457e406bad8c79dc5a0f99b8e7a1a95fd419642e5e69",
+    "addons/structures/native/model_horizon.cpp": "7040c773d25229830b02cc54fa1d5f27ef3589329f6be2c0643465c1d31c2371",
+    "addons/structures/native/model_horizon.hpp": "1f845a953e13c73bc2b56c9fcb0f5e72a4be5cd1ba72af3ff5bd6d92b157806c",
+    "addons/volumetric_terrain/terrain_backend.gd": "d684ad6848add9a73e085fd2ec386f82c16fe5e17d66c95ba0dcfe7549a5fd0d",
+    "addons/volumetric_terrain/terrain_world.gd": "bb50332d1528a3bd3ae8a99c8a99a14bf2a65246fdc30f2bfc42de5187d54d05",
+    "addons/volumetric_terrain/native/generation_parallel.hpp": "59d2a6c9d262b84c456cb420b1732e37842d3c36e8bb561c67af10d59c180977",
+    "addons/volumetric_terrain/native/terrain_binding.cpp": "fc411464b5d62150891a722cf5055ea65563d1bfd9134f2abadc7717e52a30a9",
+    "addons/volumetric_terrain/native/terrain_region_store.cpp": "c2394b5e9a0aa24e375c00d8dd38847578c84c0ca169f9ab2d4ead6d59848603",
+    "addons/volumetric_water/lake_world.gd": "72cd897e471af30aa6eaf59c27b0c10c7ed814e976464d7940c7c5f4d2f2485d"
+  },
+  "scope": "Read-only restoration; existing caches; temporary/read-only mode bypasses normal map-ready gate. Original failed trace retained in parent; no world writes or copies.",
+  "evidence_bundle": "reports/checks/loading_parallelism_20261126T201830261855Z",
+  "load": {
+    "result": {
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 41.52915970000322,
+      "unchanged_world": true,
+      "errors": [],
+      "passed": true
+    },
+    "cpu": {
+      "logical_processors": 12,
+      "cpu_seconds": 66.125,
+      "mean_busy_cores": 1.5922547067571626,
+      "peak_quarter_second_cores": 10.640250629541812
+    },
+    "initialization": {
+      "ms": 12104,
+      "stages": {
+        "Connecting actor services": 50.875,
+        "Connecting chest storage": 0.094,
+        "Connecting corpse storage": 0.101,
+        "Connecting ground cover storage": 0.069,
+        "Connecting pack storage": 0.282,
+        "Connecting pickup storage": 425.097,
+        "Connecting player interactions": 430.859,
+        "Connecting quests": 0.101,
+        "Connecting regional archive": 0.024,
+        "Connecting saved world components": 103.812,
+        "Connecting structure catalog": 0.014,
+        "Connecting structure registration": 0.618,
+        "Connecting terrain attachment": 117.833,
+        "Connecting terrain tools": 2.186,
+        "Connecting trader": 0.163,
+        "Connecting vegetation storage": 0.057,
+        "Connecting water": 0.038,
+        "Connecting water registration": 0.101,
+        "Connecting zombie population": 0.104,
+        "Initializing terrain and collision": 298.098,
+        "Preparing first-person character": 256.604,
+        "Preparing forest renderer": 456.067,
+        "Preparing ground cover and water": 303.768,
+        "Preparing world menus": 356.961,
+        "Registering building parts": 4595.343,
+        "Registering doors and outdoor objects": 16.448,
+        "Registering furniture and storage": 55.431,
+        "Registering structure materials": 37.7,
+        "Starting world services": 0.007
+      }
+    },
+    "sampled_progress": [
+      {
+        "ms": 12108,
+        "label": "Reading saved world data",
+        "terrain": {
+          "coverage_ready": 0,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 0,
+          "local_total": 9,
+          "queued": 0,
+          "ready": false,
+          "root_total": 64,
+          "roots": 0,
+          "worker": "cache_accounting"
+        },
+        "spawn": true
+      },
+      {
+        "ms": 17115,
+        "label": "Loading landscape coverage · 16 / 64 required areas ready",
+        "terrain": {
+          "coverage_ready": 16,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 4,
+          "ready": false,
+          "root_total": 64,
+          "roots": 16,
+          "worker": "mesh"
+        },
+        "spawn": false
+      },
+      {
+        "ms": 22126,
+        "label": "Loading landscape coverage · 40 / 64 required areas ready",
+        "terrain": {
+          "coverage_ready": 40,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 5,
+          "ready": false,
+          "root_total": 64,
+          "roots": 40,
+          "worker": "mesh"
+        },
+        "spawn": false
+      },
+      {
+        "ms": 27143,
+        "label": "Preparing world-wide object visuals",
+        "terrain": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 3,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "mesh"
+        },
+        "spawn": false
+      },
+      {
+        "ms": 32159,
+        "label": "Preparing world-wide object visuals",
+        "terrain": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "spawn": false
+      },
+      {
+        "ms": 37176,
+        "label": "Preparing world-wide object visuals",
+        "terrain": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "spawn": false
+      },
+      {
+        "ms": 39790,
+        "label": "Your world is ready",
+        "terrain": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "spawn": false
+      }
+    ],
+    "backend_startup": {
+      "completed_us": {
+        "cache_configuration": 51471,
+        "cache_fingerprint": 8175,
+        "main_initialization": 1252,
+        "native_configuration": 27,
+        "startup_metadata": 223971,
+        "worker_launch": 237,
+        "world_load_or_generate": 892927
+      },
+      "elapsed_us": 29624722,
+      "pending_results": 3,
+      "phase": "published",
+      "phase_us": 28446662,
+      "terrain_bake": {
+        "checkpoints": 0,
+        "completed": 0,
+        "phase": 0,
+        "state": 0,
+        "total": 0
+      }
+    },
+    "memory": {
+      "peak_private_commit_bytes": 3982442496,
+      "peak_working_set_bytes": 2131025920,
+      "peak_dedicated_gpu_bytes": 1777942528
+    }
+  },
+  "generation": {
+    "report_id": "42ba0b21b127adaba2a2f5c052e0dc1f",
+    "run_sha256": "5dd0ba793b3115671068c79863a80d2f4ea2701a2acf80cd59316e49f8af28bf",
+    "timings": [
+      {
+        "microseconds": 26041951.0,
+        "stage": "Planning terrain, streets and building sites",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 20459816.0,
+        "stage": "Initializing generated terrain data",
+        "visits": 2.0
+      },
+      {
+        "microseconds": 2653.0,
+        "stage": "Baking roads, foundations and connected mineral veins before terrain loading",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 9530466.0,
+        "stage": "Building roads and foundations",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 1099920.0,
+        "stage": "Preparing water sources",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 333327.0,
+        "stage": "Preparing generated world data",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 25943.0,
+        "stage": "Loading water sources",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 10993.0,
+        "stage": "Baking terrain overview",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 7260700.0,
+        "stage": "Placing buildings and interiors",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 235486.0,
+        "stage": "Placing sleeping building residents",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 786886.0,
+        "stage": "Placing off-road locations, supplies and sleepers",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 2070.0,
+        "stage": "Stocking locked containers",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 5816.0,
+        "stage": "Reinforcing occasional house doors",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 223837.0,
+        "stage": "Parking vehicles in clear garages and warehouses",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 317553.0,
+        "stage": "Furnishing rooms with breakable light objects",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 44334836.0,
+        "stage": "Placing outdoor storage, garden and service-yard objects",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 12441.0,
+        "stage": "Placing destructible lake bridges",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 67498.0,
+        "stage": "Baking streets and location metadata",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 700324.0,
+        "stage": "Baking destructible sidewalk plates",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 1943.0,
+        "stage": "Placing mineral-bearing stones and map markers",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 926588.0,
+        "stage": "Placing town entrance signs",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 3582598.0,
+        "stage": "Finishing quest-location water contacts",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 334025.0,
+        "stage": "Preserving original quest locations",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 116921.0,
+        "stage": "Validating starting area",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 1158.0,
+        "stage": "Finishing water preparation",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 25329977.0,
+        "stage": "Saving generated world",
+        "visits": 1.0
+      },
+      {
+        "microseconds": 17894928.0,
+        "stage": "Caching the saved world map",
+        "visits": 1.0
+      }
+    ],
+    "scope": "Existing generation, not repeated or a controlled comparison; cache hit. Creation driver retained a stale UI-label failure; separate fresh read-only restoration passed 19 checks."
+  },
+  "failed_trial": {
+    "path": "reports/checks/loading_parallelism_20261126T201830261855Z",
+    "cause": "The diagnostic queried lakes/loading controls before cooperative world construction completed; owned engine stopped and failure retained."
+  },
+  "limits": [
+    "Process CPU includes rendering and other engine workers; aggregate utilization is not per-task profiling.",
+    "Existing OS, import and derived caches, 60 FPS, isolated rendering desktop; not cold-cache or foreground qualification.",
+    "Direct diagnostic entry bypasses browser resource prefetch; temporary/read-only mode bypasses ordinary map-ready gate.",
+    "No production scheduling change or before/after speedup claimed."
+  ]
+}

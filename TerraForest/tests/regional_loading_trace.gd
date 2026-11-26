@@ -8,6 +8,10 @@ func run()->void:
  var compare:bool="--loading-cap-comparison" in OS.get_cmdline_user_args()
  game.max_fps=15 if compare else 60;game.background_fps=game.max_fps
  root.add_child(game)
+ # World construction now yields between stages. Diagnostics must wait until
+ # the water service and loading controls exist; their construction is timed too.
+ while not game.startup_complete:await process_frame
+ print("LOADING_INITIALIZATION ",JSON.stringify({"ms":Time.get_ticks_msec()-began,"stages":game.startup_timings}))
  var next_report:=0
  while game.loading_active and Time.get_ticks_msec()-began<60000:
   if compare and Time.get_ticks_msec()-began>15000 and game.background_fps==15:
@@ -19,5 +23,6 @@ func run()->void:
   await process_frame
  var failed:bool=game.loading_active
  print("LOADING_TRACE_END ",JSON.stringify({"ms":Time.get_ticks_msec()-began,"terrain":game.terrain.loading_state(game.player.position,game.fly),"water":game.lakes.statistics(),"spawn":game.waiting_spawn,"position":game.player.position,"label":game.loading_label.text}))
+ print("LOADING_BACKEND_STARTUP ",JSON.stringify(game.terrain.backend.startup_diagnostics()))
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame
  print("REGIONAL_LOADING_TRACE failures=",1 if failed else 0);quit(1 if failed else 0)

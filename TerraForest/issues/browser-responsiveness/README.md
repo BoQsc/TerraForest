@@ -291,3 +291,29 @@ interrupts other applications. Ordinary foreground review and exported-package
 startup remain unqualified. The remaining roughly two seconds include launching
 two Godot processes and graphics-device initialization; removing that cost needs
 a separate bootstrap/renderer architecture change, not skipping validation.
+
+## Generation and loading parallelism review — 2026-11-26
+
+[Current audit, measurements and implementation order](../../docs/WORLD_STARTUP_ARCHITECTURE.md#parallelism-review--2026-11-26).
+Generation/loading already use background workers, native multicore batches and
+four resource requests in flight, but expensive serial dependencies remain.
+The existing furnished-world creation spent 44.335 s placing 684 outdoor objects,
+26.042 s planning even with a cache hit, 25.330 s saving and 17.895 s caching the
+saved map. Outdoor support probes still await one request per viable candidate.
+
+A fresh read-only direct load reached ready in 39.790 s, averaging 1.59 busy
+logical cores over its 41.529 s process lifetime on 12 logical processors.
+World-wide object visuals dominate the final sampled progress labels; that
+reader has only two requests in flight and budgeted owner-thread publication.
+This diagnostic bypasses browser prefetch and the ordinary map-ready gate; it
+is not a normal Play-to-control or cold-cache benchmark. Original save hashes
+are unchanged. Its fixed run exits zero with no failures; the initial stale
+harness failure is retained in the same admitted bundle.
+
+Status remains improved-partial: no production scheduling changed in this
+review. Next implementation should batch outdoor support probes, reduce plan
+cache hydration and overlap independent initialization, then measure and tune
+object-horizon loading. Require deterministic layouts/snapshots, cancellation,
+bounded memory and matched normal generation/Play-to-control measurements before
+closing those items. Post-reboot launch and foreground/package acceptance above
+remain separately pending. No new visual acceptance claim is made.

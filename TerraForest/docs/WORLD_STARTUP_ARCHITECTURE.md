@@ -1,6 +1,8 @@
 <!-- SPDX-License-Identifier: CC0-1.0 -->
 # World generation, loading and storage audit
 
+Current implementation and measurements: [26 November parallelism review](#parallelism-review--2026-11-26). The November 2 analysis below is historical; resource prefetch, local vegetation readiness and regional water storage have since changed.
+
 2026-11-02. Investigation and proposed architecture, **not a completed performance
 rewrite**. New original analysis/data are CC0-1.0; diagnostic code is 0BSD.
 Source baseline: `788892f7` plus the shared checkout's existing location-reset
@@ -590,3 +592,144 @@ caching. Those remain measurable costs. Persistent derived-cache indexing, regio
 water residency/decode reuse, broader seeds, cold caches, foreground responsiveness
 and sustained travel remain open as documented above. Optional preview capture is
 now outside the play wait; this does not establish universal startup performance.
+
+## Parallelism review — 2026-11-26
+
+Status: audit complete; production scheduling unchanged. Source baseline
+`3fc47338` plus existing local inputs, with only the diagnostic construction wait
+changed for this review. [Current measurements and source hashes](evidence/world_startup_audit/parallelism_20261126.json)
+record the exact inspected files. Analysis/data are original AI-assisted CC0-1.0;
+the diagnostic retains 0BSD. No external code or assets were imported.
+
+### Existing concurrency
+
+- `startup_resources.gd` already keeps **four non-script resource requests in
+  flight**. Script compilation and ordered dependency consumption stay on the
+  owner thread, with cooperative yields. Cancellation drains submitted requests.
+  The old one-request-at-a-time resource-loader finding no longer applies.
+- Generation planning runs on a background thread. Terrain has a persistent
+  worker, and native generation/storage helpers use up to four workers when
+  batch thresholds justify them. Large resident terrain work can dispatch up to
+  eight workers across fields using private reader caches; this is not evidence
+  that initial mesh loading uses eight workers. Water preparation, meshes and
+  occupancy also have worker jobs. Native storage reporting one worker for a
+  particular flush does not mean the whole engine is single-threaded.
+- Terrain and component restoration are prepared off the scene thread. Scene,
+  collision and GPU attachment remain budgeted owner-thread operations. The
+  terrain worker prepares registered component restores sequentially. Native
+  terrain planning methods also share a core mutex: extra script threads calling
+  the same mutable core would not automatically create useful parallelism.
+- Map warming can overlap ordinary restoration/presentation after the verified
+  world is available. Forest/boulder readiness is local by default now. Terrain
+  still requests all 64 coarse landscape areas, and building/object horizon,
+  local collision, water, actors/vehicles and map readiness remain release gates.
+
+### Measured generation bottlenecks
+
+Existing `Homestead_Valley` generation report
+`42ba0b21b127adaba2a2f5c052e0dc1f` records a **160.077 s creating phase**
+(159.641 s in stage timings), 52 buildings, 35 furnished lots and 684 outdoor
+objects. These are wall-clock stage totals, including waits, from one existing
+run; no new world was generated for this audit.
+
+| Stage | Wall time | Current dependency or constraint |
+| --- | ---: | --- |
+| Planning, cache hit | 26.042 s | Prefab expansion/fingerprinting precedes cache lookup; cached recipes are reconstructed. Native town/site reservations remain ordered. |
+| Resource/setup initialization, two visits | 20.460 s | Game resources start only after planning completes; subsequent scene setup is cooperative but mostly sequential. |
+| Roads/foundations | 9.530 s | Background earthworks; this report's storage flush selected one worker. |
+| Buildings/interiors | 7.261 s | Ordered placement and attachment publication. |
+| Outdoor objects | 44.335 s | Surface candidates are batched per lot, but each viable object awaits its own density-support query before insertion. |
+| Save | 25.330 s | Capture, encoding, checkpoint/publication and storage; not measured as pure CPU work. |
+| Saved map cache | 17.895 s | Runs after save completion in the generation task. |
+
+`outdoor_generation.gd` has at least one support-query wait per accepted object,
+plus rejected candidates. The 44.335 s includes other placement work; it is not
+all proven query waiting. The terrain request supports 4096 samples, paged in
+512-sample pieces. Batch candidate support probes within that limit, then accept
+and insert in deterministic order while rechecking conflicts with prior inserts.
+Launching hundreds of separate asynchronous requests into the same worker queue
+would retain the avoidable dispatch/wait cost.
+
+The complete create-and-enter observation was 216.044 s. The difference from
+creating includes verification/publication/handoff/loading; it is **not a
+separately measured 56-second load**. The original creation driver retained one
+stale UI-label assertion failure in `reports/checks/20261126T174619035076Z`.
+Fresh read-only restoration subsequently passed 19 checks in
+`reports/checks/20261126T175554049707Z`; do not relabel the earlier test as passed.
+
+The generated root is now 574,721 bytes and water is regional, unlike the old
+42 MB inline-water example above. Publication covered 53,303,176 bytes across
+2929 files. Additional save workers should be justified by CPU/I/O/flush timings,
+not by the historic root-size diagnosis.
+
+### Fresh read-only load
+
+[Fixed run receipt](../reports/checks/loading_parallelism_20261126T201830261855Z/fixed/run.json):
+Godot 4.7.2, RTX 4050, 12 logical processors, Forward+, 1920×1080, 60 FPS,
+existing OS/import/derived caches, isolated rendered desktop. Ground cover,
+actors, vehicle fleet and gameplay construction were enabled. All original
+world files checked against the pre-run hashes remained unchanged; no save copy,
+new world, export or native build was created.
+
+- Direct diagnostic entry to ready: **39.790 s**; process lifetime including
+  launch/teardown: **41.529 s**. Initialization completed at 12.104 s, including
+  4.595 s registering building parts. Stage timers exclude cooperative yields;
+  the initialization total also includes resource loading/scene construction.
+- Aggregate process CPU: **66.125 CPU-seconds**, averaging **1.59 busy logical
+  cores**, with a 250 ms sample peaking at **10.64**. The 30–40 s tail averaged
+  roughly one core. These include renderer/engine work and do not identify how
+  many terrain workers were active or prove that every idle core can help.
+- Samples show landscape coverage at 17.115/22.126 s, then **world-wide object
+  visuals** at 27.143, 32.159 and 37.176 s, before ready at 39.790 s. Five-second
+  progress samples do not establish exact stage boundaries.
+- Object horizon archive reads are asynchronous but limited to **two in flight**.
+  `NativeModelHorizon::advance()` has defaults of 1024 records, two uploads and
+  1500 microseconds per frame. A region read can span multiple budgeted advances.
+  This is a concrete throughput constraint during loading, not evidence that
+  its gameplay frame budgets should simply be removed. First instrument read
+  latency, records/pages and time-budget exhaustion, then consider bounded
+  loading-specific concurrency and native snapshot preparation.
+- Backend startup reports about 893 ms reading/generating the terrain root,
+  224 ms metadata and 51 ms cache configuration. Its later `published` phase
+  age is not a single 28-second blocking operation. Peak private commit was
+  3.98 GB and dedicated GPU memory 1.78 GB, within recorded budgets.
+
+Scope limits: this script directly instantiates the world rather than running
+normal browser resource prefetch. Read-only/temporary mode bypasses the normal
+map-ready gate. It is therefore a diagnostic of this restoration path, **not a
+normal Play-to-control benchmark**, OS-cold test or foreground frame-pacing claim.
+
+The first probe failed because the old diagnostic accessed water/loading controls
+before cooperative construction completed; its owned process was stopped and
+its failed receipt remains in the parent bundle. The fixed probe waits for
+`startup_complete`, records initialization/backend phases, exits zero and reports
+`REGIONAL_LOADING_TRACE failures=0`. The admitted bundle is pinned, bounded, and
+contains CPU samples, commands, logs and original-world hashes.
+
+### Implementation order and closure evidence
+
+1. **Batch outdoor support queries.** Preserve candidate order, deterministic IDs,
+   occupancy/road/tree/vehicle/water checks, revisions and cancellation. Compare
+   exact accepted placements and unchanged save/reload behavior, then repeat the
+   same generation/options with stage timings and memory limits.
+2. **Remove plan-cache reconstruction overhead and overlap independent setup.**
+   Attribute fingerprinting/expansion/cache hydration before adding workers.
+   Planning currently loads prefab resources/shared caches, so prepare immutable
+   inputs and audit that ownership before overlapping resource prefetch with it.
+   Preserve cache invalidation, deterministic plans and cancellation teardown.
+3. **Improve object-horizon loading throughput.** Measure its two-read window,
+   native record preparation and per-frame publication separately. Bound extra
+   in-flight memory; keep scene/GPU ownership and interactive frame budgets.
+   Recheck normal Play-to-control with visible distant objects, local collision,
+   water, vehicles, actors, map readiness and first movement intact.
+4. **Parallelize independent restore/mesh work and overlap save/map preparation
+   where measured.** Use private immutable inputs and stable ordered publication;
+   do not share mutable terrain caches or bypass native locking. Map data may be
+   prepared against a frozen snapshot, but publish only with its matching durable
+   checkpoint. Verify snapshot equivalence, failure recovery, cancellation and
+   RAM/VRAM/IO costs before claiming a benefit.
+
+The audit confirms remaining serialization and underused CPU time; it does not
+claim a runtime speedup. Return when implementing the above stages, with matched
+cache-state/end-to-end measurements. The separate post-reboot cold-launch check
+and ordinary foreground/exported-package acceptance remain pending.

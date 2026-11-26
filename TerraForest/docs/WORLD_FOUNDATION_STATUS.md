@@ -9531,3 +9531,22 @@ restart, deferred to the user because it interrupts other applications. Resume
 immediately after that restart with the admitted full-launch runner before opening
 the game; require first-paint/input timings, no errors and clean exit. Ordinary
 foreground and final-package launch-to-input remain unqualified.
+
+### Generation and loading parallelism audit — 2026-11-26
+
+[Current architecture review and closure criteria](WORLD_STARTUP_ARCHITECTURE.md#parallelism-review--2026-11-26)
+and [tracked issue](../issues/browser-responsiveness/README.md#generation-and-loading-parallelism-review--2026-11-26).
+The audit confirms existing asynchronous/native multicore work and four-resource
+prefetch, alongside serial planning/resource stages, per-object outdoor density
+queries, ordered restore work and a two-read object-horizon window. Existing
+Homestead_Valley generation spends 44.335 s on outdoor objects, 26.042 s on a warm
+plan, 25.330 s saving and 17.895 s caching its map. A fresh read-only diagnostic
+reaches ready in 39.790 s; average process CPU is 1.59 of 12 logical cores, with
+brief 10.64-core bursts. Saves remain unchanged. This is direct diagnostic entry
+with existing caches and no ordinary map-ready gate, not normal Play timing.
+The diagnostic construction wait is fixed and the rerun passes; the initial
+failed receipt is retained. Production scheduling is unchanged. Return for
+batched placement, plan-cache/setup overlap and object-horizon throughput work;
+require equivalent layouts/snapshots, cancellation, bounded resources and matched
+normal generation/loading measurements before claiming improvement. Post-reboot
+cold launch and foreground/exported-package acceptance remain open separately.
