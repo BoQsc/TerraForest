@@ -30,7 +30,7 @@ func label(text: String) -> Label:
 func button(text: String,action: Callable) -> void:
 	var out:=Button.new();out.text=text;out.focus_mode=Control.FOCUS_NONE;out.pressed.connect(action);content.add_child(out)
 func option(text: String,values: Array,index: int,action: Callable) -> void:
-	label(text);var out:=OptionButton.new();out.focus_mode=Control.FOCUS_NONE
+	label(text);var out:=OptionButton.new();out.focus_mode=Control.FOCUS_NONE;out.fit_to_longest_item=false;out.clip_text=true;out.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
 	for entry in values:out.add_item(str(entry))
 	out.select(maxi(0,index));out.item_selected.connect(action);content.add_child(out)
 func number(text: String,value: float,minimum: float,maximum: float,step: float,action: Callable) -> void:
@@ -71,6 +71,14 @@ Right mouse: fill")
 			for entry in game.model_tool.catalog:names.append(entry.title)
 			option("Object",names,game.model_tool.selected,func(i: int):game.model_tool.select(i))
 			button("Transforms / detailed settings",game.session_menu.open_current_tool)
+			var inspect:=CheckBox.new(); inspect.text="Inspect aimed object"; inspect.button_pressed=game.object_inspector.enabled; inspect.focus_mode=Control.FOCUS_NONE; content.add_child(inspect)
+			inspect.toggled.connect(func(value: bool):game.object_inspector.enabled=value)
+			label("Turn inspection off to place or remove objects.")
+			var names_toggle:=CheckBox.new(); names_toggle.text="Show nearby object names"; names_toggle.button_pressed=game.object_inspector.nearby_names; names_toggle.focus_mode=Control.FOCUS_NONE; content.add_child(names_toggle)
+			names_toggle.toggled.connect(func(value: bool):game.object_inspector.nearby_names=value; game.object_inspector.enabled=true; inspect.set_pressed_no_signal(true))
+			label("Names avoid walls and overlapping text. Aim at an object for priority. Hold Alt to select a mode.")
+			button("Scatter Outdoor 01 at aim",func():game.outdoor_scatter.scatter_at_aim(game))
+			label("6 m patch · supported dry ground · keeps planned roads clear · undo per object")
 		5:
 			label(("Left mouse: remove" if game.session_menu.developer else "E: collect")+"\nRight mouse: plant / place")
 			option("Species",game.player_hud.GroundCatalog.NAMES,game.ground_species,func(i: int):

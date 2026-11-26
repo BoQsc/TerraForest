@@ -12,6 +12,8 @@ func describe(game: Node, target: Dictionary) -> String:
 	if game.quests.rally.aimed(target):return "E · Start quest / restore this location"
 	if game.trader.aimed(target):return "E · Trade supplies"
 	if game.corpse_loot.aimed_id(target)>0:return "E · Search zombie corpse"
+	var pack_container: int=game.pack_storage.aimed_id(target)
+	if pack_container>0: return game.pack_storage.prompt(pack_container)
 	var chest:int=game.storage.aimed_id(target)
 	if chest>0:return game.storage.prompt(chest)
 	var door_hint: String=game.doors.describe(target)
@@ -56,7 +58,7 @@ func interact(game: Node) -> bool:
 	# Re-pick at the input event: the presentation cache is never authoritative.
 	var target:=hit(game)
 	if game.quests.rally.try_interact(target):remaining=0.0;return true
-	var handled: bool=game.trader.try_open(target) or game.corpse_loot.ui.try_open(target) or game.storage.try_open(target) or game.doors.try_interact(target)
+	var handled: bool=game.trader.try_open(target) or game.corpse_loot.ui.try_open(target) or game.storage.try_open(target) or game.pack_storage.try_open(target) or game.doors.try_interact(target)
 	var loose: Dictionary={} if handled else loose_target(game,target)
 	if not handled and loose.get("kind")=="pickup":
 		var result: Dictionary=game.pickups.collect_aimed(game.camera.global_position,pickup_end(game,target),game.player_hud.inventory,game._pickup_reachable)

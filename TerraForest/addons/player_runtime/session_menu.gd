@@ -216,7 +216,7 @@ func set_open(value: bool) -> void:
 	if value and world_map!=null and world_map.opened:world_map.set_open(false)
 	var changing_focus: bool=value or visible_ui() or game.storage.opened or game.player_hud.inventory_open
 	if changing_focus and developer_hud!=null:developer_hud.end_mouse_access()
-	game.storage.close();game.player_hud.set_open(false)
+	game.storage.close();game.pack_storage.close();game.player_hud.set_open(false)
 	workspace=false;opened=value;panel.visible=value
 	game.player_hud.inventory_open=value;game.player_hud.enabled=not value
 	if changing_focus:game._clear_motion()

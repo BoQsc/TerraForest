@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "images": [
+    {
+      "path": "reports/checks/20261126T113606125927Z/mansion_salon.png",
+      "sha256": "55a84d74177e4ec44794a8e40cc83a255d663da89e38afec22ddb415a97c16f5",
+      "run": "20261126T113606125927Z",
+      "status": "rejected R1",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T115201989434Z/mansion_bedroom.png",
+      "sha256": "2b7d7450c10d39db734840c3983f96b19e51116ff739243f6a6527a7fdcf9b0b",
+      "run": "20261126T115201989434Z",
+      "status": "rejected intermediate R2 support",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T110320093900Z/outdoor_01.png",
+      "sha256": "8d7ee62bfa74c630c60afafdbf07e78b22f1b1f003eb0386be3e7cb368529e09",
+      "run": "20261126T110320093900Z",
+      "status": "rejected baseline shapes",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T115044082821Z/outdoor_01.png",
+      "sha256": "a98ef8e7b53dd304d7cd0b10b7f3b4066322ba0418e4db84a65c2a64f3c0d686",
+      "run": "20261126T115044082821Z",
+      "status": "current pack",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T115544624062Z/mansion_exterior.png",
+      "sha256": "30d8c39ececc23cb9f0d65a5bafa47adaf54b4e94fe7c282b8b177910d0e34c6",
+      "run": "20261126T115544624062Z",
+      "status": "current R2",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T115544624062Z/mansion_plan.png",
+      "sha256": "edc9eebf9f9659e495e15a3d54d4b0b38e449f5aa5c0ba8edd42a05b92b9053c",
+      "run": "20261126T115544624062Z",
+      "status": "current R2",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T115544624062Z/mansion_salon.png",
+      "sha256": "77a88f03e8a2bb2b56d28d13c5dbda1d6085ad1df9bdd9812f22e42848b06b49",
+      "run": "20261126T115544624062Z",
+      "status": "current R2",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T115544624062Z/mansion_dining.png",
+      "sha256": "cc15823c31ec68adfdac01386b711614ccc520a88114c27616006a038e472e55",
+      "run": "20261126T115544624062Z",
+      "status": "current R2",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T115544624062Z/mansion_bedroom.png",
+      "sha256": "3d2c2619f9759e8bb9fd131fa01fd05bc8560a1fd179c63cd8bb7ca08ee5bc0a",
+      "run": "20261126T115544624062Z",
+      "status": "current R2",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T115544624062Z/mansion_workshop.png",
+      "sha256": "d51f4b77ab91ca9ab54a155975b7ee1c30bdbb3a7394d1902414fedfd340345a",
+      "run": "20261126T115544624062Z",
+      "status": "current R2",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T120200048287Z/object_names.png",
+      "sha256": "99773feafa2a9322adaafd8829cd008c651ae3bc65eff9fa91548414e4063a9b",
+      "run": "20261126T120200048287Z",
+      "status": "final ordinary-game UI / seed 1703",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; temporary ordinary game, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T120200048287Z/outdoor_storage.png",
+      "sha256": "64912eff9ff69664ef1e9bea93c1d797681462e639e6320ddb86d72e71031a74",
+      "run": "20261126T120200048287Z",
+      "status": "final ordinary-game UI / seed 1703",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; temporary ordinary game, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T120200048287Z/object_density.png",
+      "sha256": "47b4b3655bb3a408530df8ce7f74de96385afb6de217776289d7ef280fc4a2bc",
+      "run": "20261126T120200048287Z",
+      "status": "final ordinary-game UI / seed 1703",
+      "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; temporary ordinary game, no player save"
+    }
+  ]
+}

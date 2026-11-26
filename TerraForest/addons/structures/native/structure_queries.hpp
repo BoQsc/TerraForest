@@ -21,6 +21,7 @@ public:
     void configure_archive(const godot::Ref<NativeRegionWorldArchive> &archive,const godot::PackedByteArray &checkpoint);
     void clear_exclusion_cache();
     godot::Dictionary exclusion_stats() const;
+    godot::Dictionary nearby_models(const godot::Array &models,godot::Vector3 center,double radius,int limit) const;
     godot::Dictionary capture_models(NativeBlockWorld *blocks,const godot::Array &models,godot::Vector3i origin,godot::Vector3i size) const;
     bool is_collision_region_ready(NativeBlockWorld *blocks,const godot::Array &models,const godot::AABB &bounds) const;
     godot::PackedByteArray overlap_mask(NativeBlockWorld *blocks,const godot::Array &models,const godot::TypedArray<godot::Transform3D> &transforms,const godot::AABB &bounds);

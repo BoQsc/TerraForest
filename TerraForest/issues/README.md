@@ -1,5 +1,10 @@
 # Visual issue tracker
 
+[Homestead Manor and outdoor object integration](homestead-manor/README.md)
+records the rejected first interior, corrected furniture contacts and cutaway,
+new outdoor pack and inspection UI. User visual approval, generated terrain fit
+and dense-scene 60 FPS remain open.
+
 The 64 m dry and wet controls and the lake barrel missed the two-frame deadline. Both craters passed their bank contact checks. Suspended green patches appeared in one cut capture and were absent from the repeat. [Paired cameras and publication timings](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#packaged-comparison-of-terrain-and-water)
 
 The dry 64 m control now compares the visible meshes and registered collider faces across all 36 terrain owners on the second draw. [Triangle generation, first physics installation and frame timings](../docs/WORLD_EDIT_EXPERIMENTS.md#dry-64-m-cut-and-collider-installation)

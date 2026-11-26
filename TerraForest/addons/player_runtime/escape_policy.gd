@@ -20,6 +20,8 @@ static func close_or_pause(menu:CanvasLayer)->void:
 		trader.ui.close()
 	elif game.corpse_loot.ui.opened:
 		game.corpse_loot.ui.close()
+	elif game.get("pack_storage")!=null and game.pack_storage.opened:
+		game.pack_storage.close()
 	elif game.storage.opened:
 		game.storage.close()
 	elif game.player_hud.modal.visible:

@@ -147,7 +147,7 @@ func set_open(value:bool,from_inventory:bool=false)->void:
  var was_embedded:=embedded
  embedded=value and from_inventory
  if value and not embedded:
-  game.session_menu.set_open(false);game.storage.close();game.player_hud.set_open(false)
+  game.session_menu.set_open(false);game.storage.close();game.pack_storage.close();game.player_hud.set_open(false)
   game.session_menu.developer_hud.mouse_access=false
  opened=value;panel.visible=value;context_menu.hide();view.dragging=false;view.teleport_click=false;set_survey_processing(value or warming)
  panel.position=Vector2(220,200) if embedded else Vector2(100,50)

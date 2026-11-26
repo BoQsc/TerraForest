@@ -61,7 +61,7 @@ func begin() -> Dictionary:
 	if not reason.is_empty():return {"ok":false,"reason":reason}
 	busy=true;phase="checkpoint";cancelled=false;_checkpoint=false;_mutated=false;_started=Time.get_ticks_usec();_epoch=game.terrain.epoch
 	last_result={};plan=null;batch=null
-	game.trader.ui.close();game.storage.close();game.corpse_loot.ui.close()
+	game.trader.ui.close();game.storage.close();game.pack_storage.close();game.corpse_loot.ui.close()
 	game.player_hud.set_open(false);game.session_menu.set_open(false)
 	game._cancel_edit_input();game._begin_loading("Restoring quest location")
 	_physics_enabled=game.is_physics_processing();game.set_physics_process(false)

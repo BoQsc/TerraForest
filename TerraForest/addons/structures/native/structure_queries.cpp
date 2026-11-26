@@ -7,6 +7,7 @@
 namespace terraforest {
 using namespace godot;
 void NativeStructureQueries::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("nearby_models","models","center","radius","limit"),&NativeStructureQueries::nearby_models);
     ClassDB::bind_method(D_METHOD("capture_models","blocks","models","origin","size"),&NativeStructureQueries::capture_models);
     ClassDB::bind_method(D_METHOD("is_collision_region_ready","blocks","models","world_bounds"),&NativeStructureQueries::is_collision_region_ready);
     ClassDB::bind_method(D_METHOD("overlap_mask","blocks","models","transforms","prototype_bounds"),&NativeStructureQueries::overlap_mask);

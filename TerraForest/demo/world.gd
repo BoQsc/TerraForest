@@ -48,6 +48,9 @@ var destination_guide=preload("res://addons/player_runtime/destination_guide.gd"
 var player_notices=preload("res://addons/player_runtime/player_notices.gd").new()
 var trader=preload("res://addons/player_runtime/trader_world.gd").new()
 var quests=preload("res://addons/player_runtime/quest_world.gd").new()
+var pack_storage=preload("res://addons/player_runtime/pack_storage.gd").new()
+var outdoor_scatter=preload("res://addons/structures/outdoor_scatter.gd").new()
+var object_inspector=preload("res://addons/player_runtime/object_inspector.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
 var corpse_loot=preload("res://addons/player_runtime/corpse_loot.gd").new()
 var doors=preload("res://addons/structures/door_interaction.gd").new()
@@ -213,18 +216,9 @@ func _ready() -> void:
 	structures_ready = structures_ready and door_models != null
 	structures_ready = structures_ready and preload("res://addons/structures/paving_catalog.gd").register(structures)
 	var furniture: Array[Dictionary]=preload("res://addons/structures/furniture_catalog.gd").register(structures)
-	var homestead: Array[Dictionary]=preload("res://addons/structures/packs/homestead_01/catalog.gd").register(structures)
-	var homestead_details: Array[Dictionary]=preload("res://addons/structures/packs/homestead_02/catalog.gd").register(structures)
-	var homestead_washroom: Array[Dictionary]=preload("res://addons/structures/packs/homestead_03/catalog.gd").register(structures)
-	var homestead_workshop: Array[Dictionary]=preload("res://addons/structures/packs/homestead_04/catalog.gd").register(structures)
-	var homestead_kitchen: Array[Dictionary]=preload("res://addons/structures/packs/homestead_05/catalog.gd").register(structures)
-	var homestead_study: Array[Dictionary]=preload("res://addons/structures/packs/homestead_06/catalog.gd").register(structures)
-	var homestead_lounge: Array[Dictionary]=preload("res://addons/structures/packs/homestead_07/catalog.gd").register(structures)
-	var homestead_porch: Array[Dictionary]=preload("res://addons/structures/packs/homestead_08/catalog.gd").register(structures)
-	var homestead_bedroom: Array[Dictionary]=preload("res://addons/structures/packs/homestead_09/catalog.gd").register(structures)
-	var homestead_dining: Array[Dictionary]=preload("res://addons/structures/packs/homestead_10/catalog.gd").register(structures)
+	var pack_entries: Array[Dictionary]=preload("res://addons/structures/pack_registry.gd").register(structures)
 	await _startup_step("Registering furniture and storage")
-	structures_ready = structures_ready and furniture.size()==3 and homestead.size()==10 and homestead_details.size()==10 and homestead_washroom.size()==10 and homestead_workshop.size()==10 and homestead_kitchen.size()==10 and homestead_study.size()==10 and homestead_lounge.size()==10 and homestead_porch.size()==10 and homestead_bedroom.size()==10 and homestead_dining.size()==10
+	structures_ready = structures_ready and furniture.size()==3 and preload("res://addons/structures/pack_registry.gd").discover() and pack_entries.size()==preload("res://addons/structures/pack_registry.gd").objects.size()
 	var ladder: Dictionary=preload("res://addons/structures/ladder_catalog.gd").register(structures)
 	structures_ready = structures_ready and not ladder.is_empty()
 	var chest: Dictionary=preload("res://addons/structures/storage_catalog.gd").register(structures)
@@ -306,6 +300,7 @@ func _ready() -> void:
 		return
 	var persistence_steps:Array=[
 		["chest storage",func():return storage.prepare(self,persistence)],
+		["pack storage",func():return pack_storage.prepare(self,persistence)],
 		["trader",func():return trader.prepare(self,persistence)],
 		["quests",func():return quests.prepare(self,persistence)],
 		["corpse storage",func():return corpse_loot.prepare(self,persistence)],
@@ -374,16 +369,7 @@ func _ready() -> void:
 		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4),"costs":PackedInt64Array([104,8]),"cost_label":"8 metal"},
 		{"title":"Doorway","mesh":doorway,"collection":door_models,"scale":Vector3.ONE,"costs":PackedInt64Array([103,8]),"cost_label":"8 concrete"}]
 	object_entries.append_array(furniture)
-	object_entries.append_array(homestead)
-	object_entries.append_array(homestead_details)
-	object_entries.append_array(homestead_washroom)
-	object_entries.append_array(homestead_workshop)
-	object_entries.append_array(homestead_kitchen)
-	object_entries.append_array(homestead_study)
-	object_entries.append_array(homestead_lounge)
-	object_entries.append_array(homestead_porch)
-	object_entries.append_array(homestead_bedroom)
-	object_entries.append_array(homestead_dining)
+	object_entries.append_array(pack_entries)
 	object_entries.append(ladder)
 	object_entries.append(chest)
 	object_entries.append(window)
@@ -407,6 +393,8 @@ func _ready() -> void:
 	add_child(player_hud)
 	await _startup_step("Preparing world menus")
 	add_child(storage)
+	add_child(pack_storage)
+	object_inspector.game=self; add_child(object_inspector)
 	add_child(corpse_loot)
 	session_menu.world_page_factory=_make_world_locations
 	target_overlay.game=self;add_child(target_overlay)
@@ -675,6 +663,9 @@ func _setup_prefabs() -> void:
 	var large_house: Resource=preload("res://addons/structures/furniture_catalog.gd").large_house()
 	if large_house!=null:
 		structure_prefabs.append(large_house);large_house.changed.connect(_invalidate_prefab_preview)
+	var manor: Resource=preload("res://addons/structures/mansion/catalog.gd").asset()
+	if manor!=null:
+		structure_prefabs.append(manor); manor.changed.connect(_invalidate_prefab_preview)
 	for index in preload("res://addons/structures/civic_catalog.gd").IDS.size():
 		var civic:Resource=preload("res://addons/structures/civic_catalog.gd").asset(index)
 		if civic!=null:
@@ -1109,6 +1100,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.physical_keycode==KEY_ESCAPE:
 				Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
 		return
+	if session_menu.developer and model_tool.active and object_inspector.enabled and event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:return
 	if object_placement.handle_input(event):return
 	if not session_menu.developer and combat.handle_input(event):return
 	if not session_menu.developer and equipped_tool>=401 and equipped_tool<=411 and event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
@@ -1768,7 +1760,7 @@ func _process(delta: float) -> void:
 	ground_preview.update(self,delta)
 	terrain_placement_preview.update(self,delta)
 	_update_prefab_preview(delta)
-	model_tool.update(delta,_model_edit_available())
+	model_tool.update(delta,_model_edit_available() and not (session_menu.developer and model_tool.active and object_inspector.enabled))
 	tool_view.visible=not world_vehicle.driving and (player_view.active or (not session_menu.visible_ui() and not player_hud.inventory_open))
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)

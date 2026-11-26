@@ -69,8 +69,7 @@ func runtime(world: Node3D) -> Node3D:
 	for key: String in definitions:
 		var row: Dictionary = definitions[key]
 		sources.append({"collection": world.model(key), "offset": row.offset, "color": row.color, "energy": row.energy, "range": row.range, "shadows": true})
-	sources.append_array(preload("res://addons/structures/packs/homestead_02/catalog.gd").light_sources(world))
-	sources.append_array(preload("res://addons/structures/packs/homestead_07/catalog.gd").light_sources(world))
+	sources.append_array(preload("res://addons/structures/pack_registry.gd").light_sources(world))
 	var pool: Node3D = ClassDB.instantiate("NativeResidentLights")
 	world.add_child(pool)
 	if not pool.configure(sources, 4): pool.free(); return null

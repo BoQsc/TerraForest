@@ -18,6 +18,7 @@ func cancel()->void:
 func consume(event:InputEvent)->bool:
 	if opened and event is InputEventKey and event.pressed and event.physical_keycode==KEY_ESCAPE:cancel();return true
 	if opened and event is InputEventKey and event.pressed and event.physical_keycode in [KEY_1,KEY_F]:choice=0;activate();return true
+	if opened and event is InputEventKey and event.pressed and event.physical_keycode in [KEY_2,KEY_O]:choice=1;activate();return true
 	if opened and event is InputEventMouseButton:
 		if event.pressed:
 			if event.button_index==MOUSE_BUTTON_LEFT:_update_choice();activate()
@@ -43,17 +44,26 @@ func _process(_delta:float)->void:
 	view.queue_redraw()
 func _update_choice()->void:
 	var offset:=view.get_global_mouse_position()-get_viewport().get_visible_rect().size*.5
-	choice=0 if offset.length_squared()<=220.0*220.0 else -1
+	choice=0 if offset.length_squared()<=220.0*220.0 else (1 if Rect2(Vector2(-190,-335),Vector2(380,90)).has_point(offset) else -1)
 func activate()->void:
 	var selected:=choice;cancel()
 	if selected==0 and available():menu.toggle_flight()
+	elif selected==1 and available():
+		if not menu.developer: menu.toggle_developer()
+		if menu.developer:
+			game.object_inspector.enabled=true
+			menu.developer_hud.displayed_slot=-1
+			menu.activate_developer_slot(4); menu.developer_hud.hidden_by_user=false; menu.developer_hud.refresh()
 func paint(canvas:Control)->void:
 	var center:=get_viewport().get_visible_rect().size*.5
 	if not opened:
 		canvas.draw_arc(center,30,-PI*.5,-PI*.5+TAU*clampf(float(Time.get_ticks_msec()-menu.tilde_down)/350,0,1),32,Color("8ee0bc"),4,true);return
 	canvas.draw_circle(center,190,Color(.015,.03,.035,.94))
 	canvas.draw_arc(center,178,0,TAU,64,Color("8ce2bb") if choice==0 else Color("45665a"),8,true)
+	canvas.draw_rect(Rect2(center+Vector2(-190,-335),Vector2(380,90)),Color("31594c") if choice==1 else Color("18332e"))
 	var font:Font=ThemeDB.fallback_font
+	canvas.draw_string(font,center+Vector2(-140,-295),"2 · Objects / inspection",HORIZONTAL_ALIGNMENT_LEFT,-1,22,Color("daf4e7"))
+	canvas.draw_string(font,center+Vector2(-142,-270),"Then hold Alt to select nearby names",HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("c2d9cf"))
 	for row:Array in [["1 · Return to walking" if game.fly else "1 · Enable fly",-12],["Release to select · move away to cancel",35],["Release ` to choose",230],["Esc / right mouse: cancel",256]]:
 		var size:=22 if int(row[1])<0 else 16
 		var text:String=row[0];var width:=font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,size).x

@@ -7,26 +7,8 @@ static var atlas: ImageTexture
 static var regions: Dictionary={}
 static var bucket_icon:ImageTexture
 static func texture(key: Variant) -> Texture2D:
-	if str(key).begins_with("Homestead 10 · ") or (str(key).is_valid_int() and int(key)>=810 and int(key)<=819):
-		return preload("res://addons/structures/packs/homestead_10/catalog.gd").icon(key)
-	if str(key).begins_with("Homestead 09 · ") or (str(key).is_valid_int() and int(key)>=800 and int(key)<=809):
-		return preload("res://addons/structures/packs/homestead_09/catalog.gd").icon(key)
-	if str(key).begins_with("Homestead 08 · ") or (str(key).is_valid_int() and int(key)>=790 and int(key)<=799):
-		return preload("res://addons/structures/packs/homestead_08/catalog.gd").icon(key)
-	if str(key).begins_with("Homestead 07 · ") or (str(key).is_valid_int() and int(key)>=780 and int(key)<=789):
-		return preload("res://addons/structures/packs/homestead_07/catalog.gd").icon(key)
-	if str(key).begins_with("Homestead 06 · ") or (str(key).is_valid_int() and int(key)>=770 and int(key)<=779):
-		return preload("res://addons/structures/packs/homestead_06/catalog.gd").icon(key)
-	if str(key).begins_with("Homestead 05 · ") or (str(key).is_valid_int() and int(key)>=760 and int(key)<=769):
-		return preload("res://addons/structures/packs/homestead_05/catalog.gd").icon(key)
-	if str(key).begins_with("Homestead 04 · ") or (str(key).is_valid_int() and int(key)>=750 and int(key)<=759):
-		return preload("res://addons/structures/packs/homestead_04/catalog.gd").icon(key)
-	if str(key).begins_with("Homestead 03 · ") or (str(key).is_valid_int() and int(key)>=740 and int(key)<=749):
-		return preload("res://addons/structures/packs/homestead_03/catalog.gd").icon(key)
-	if str(key).begins_with("Homestead 02 · ") or (str(key).is_valid_int() and int(key)>=730 and int(key)<=739):
-		return preload("res://addons/structures/packs/homestead_02/catalog.gd").icon(key)
-	if str(key).begins_with("Homestead 01 · ") or (str(key).is_valid_int() and int(key)>=720 and int(key)<=729):
-		return preload("res://addons/structures/packs/homestead_01/catalog.gd").icon(key)
+	var pack_icon: Texture2D=preload("res://addons/structures/pack_registry.gd").icon(key)
+	if pack_icon!=null: return pack_icon
 	if SALVAGE.has(str(key)):return SALVAGE[str(key)]
 	if str(key)=="9":return preload("res://addons/player_runtime/art/px9.svg")
 	if str(key)=="228":return preload("res://addons/player_runtime/art/cartridge.svg")

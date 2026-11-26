@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "creator": "TerraForest contributors, authored with Codex",
+  "date": "2026-11-26",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "authoring_tool": "Existing external Godot 4.7.2 Steam",
+  "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
+  "id": "terraforest.homestead_manor_r2",
+  "origin": "Original courtyard building arrangement; inherited models/materials retain separate notices",
+  "brief": "Large two-storey courtyard mansion with rooms for all 100 Homestead objects and an outdoor service yard",
+  "source_sha256": {
+    "addons/structures/mansion/author.gd": "a7888ffc0f72f43d9af318c650366f504d301a075598b40f4d3e209291a3f31d",
+    "addons/structures/mansion/catalog.gd": "2c8c4dd5c9960aad3232d3ae19dc922687ea8bbe25a7650363c167b2b51de683",
+    "addons/structures/outdoor_scatter.gd": "6c081da3126cb2aac06c45411adb217a723eb9987f671bc0ea008078433bbcc4",
+    "reviews/building_expansion/recipes.gd": "5495d74c0c219738b39585a9183ca596463808adcd776cd3ace8c3ac3a662fd1",
+    "reviews/city_buildings/recipes.gd": "f2583e26f92026fc6cece4886f960ba418014520050b2d889830f92741156a3f",
+    "tests/homestead_mansion.gd": "8d0c1ec0797edc417aeb4977f72ce2560031ddcc4e7eba6cfa209b1fc8fb8b2f"
+  },
+  "input_sha256": {
+    "addons/structures/objects/wooden_door.object.json": "19edc28a771b9b92ce80f36323dc6e895c1cf37ea94bedc6fcf415bf1b38e751",
+    "addons/structures/packs/homestead_01/provenance.json": "ba60aae9ed83d93fcc3c2ce68eff41df88402311e189c42bcd0163827126ca70",
+    "addons/structures/packs/homestead_02/provenance.json": "7c4f2b83c0a7897ea553e6a716e58bd9cb5a763c07b870295f8787dc9b632054",
+    "addons/structures/packs/homestead_03/provenance.json": "38fce5a0eaeebd6d0d9ddd83b02640370d5b1e0e994b1d85dafd499448152b3f",
+    "addons/structures/packs/homestead_04/provenance.json": "9ca49e6ba831d6abd4b82596bc527f0bb3d855ff3def2cf8bc292bc4c2accd6d",
+    "addons/structures/packs/homestead_05/provenance.json": "b5ccb4d1f70cd9b9c3486f18a1cb172c02b97c2505547cd2d6763c41e989a300",
+    "addons/structures/packs/homestead_06/provenance.json": "7825680c873e9d54b2118313893cc7e595806456e0b0bbbf068dc457d425cd68",
+    "addons/structures/packs/homestead_07/provenance.json": "a55ee40b8f9f2d52b15f22f8466e0d541c7aceda7fe836180140a5ff9c7cb84f",
+    "addons/structures/packs/homestead_08/provenance.json": "2019bb11f20691b5b940a36e964af30b8b9557a85b483622753240a29e7fd417",
+    "addons/structures/packs/homestead_09/provenance.json": "7f19f0209507ecf0e93c98206cfd7617a2fac5f9224349b33d8a2fb76bb2f0ca",
+    "addons/structures/packs/homestead_10/provenance.json": "40df0801a5b2784983c293c9e97751e44103fdeb611dce9edb8d6b5c58dc1263",
+    "addons/structures/packs/outdoor_01/provenance.json": "e7184c492d967cf935b8f3a786297df0ae09d341e72a161447b0fb676ef54e46",
+    "addons/structures/prefabs/window_model.tres": "750b1b196a272f2b232ca7f4f59306640d1bcec821928db4da716ed0e3779e41",
+    "addons/structures/textures/expansion_v2/provenance.json": "e042a7dce28654cba65e51a47b245d0e8ea5783380601f82534e7ee183409542"
+  },
+  "asset_sha256": {
+    "addons/structures/mansion/homestead_manor.tres": "8c782cdf834cd752b95fb30fac19929a8accde11af254f0f1c667a76bae15ff3"
+  }
+}

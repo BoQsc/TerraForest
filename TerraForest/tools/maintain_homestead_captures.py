@@ -19,6 +19,9 @@ FAMILIES = {
     "homestead_08_pack": ("homestead_08.png",),
     "homestead_09_pack": ("homestead_09.png",),
     "homestead_10_pack": ("homestead_10.png",),
+    "outdoor_01_pack": ("outdoor_01.png",),
+    "homestead_mansion": ("mansion_exterior.png", "mansion_plan.png", "mansion_salon.png", "mansion_dining.png", "mansion_bedroom.png", "mansion_workshop.png"),
+    "object_system_world": ("object_names.png", "outdoor_storage.png", "object_density.png", "object_state.bin", "object_performance.json"),
     "drop_key_standard": ("backpack.png", "player_settings.png"),
 }
 

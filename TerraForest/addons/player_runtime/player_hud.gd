@@ -27,7 +27,7 @@ class GroundCatalog:
 	const ITEMS: Array[int]=[201,204,205,206,207,208,209,210,212]
 	const COSTS: Array[int]=[201,204,205,206,207,208,209,102,212]
 	const NAMES: Array[String]=["Stone","Fern","Grass clump","White wildflower","Golden wildflower","Violet wildflower","Low bush","Dry twigs","Woody bush"]
-const RESOURCES: Dictionary=ItemCatalog.RESOURCES
+var RESOURCES: Dictionary=ItemCatalog.RESOURCES
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7,212:8}
 var ground_tools_enabled:=false
 var inventory: RefCounted

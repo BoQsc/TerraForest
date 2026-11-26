@@ -272,6 +272,23 @@ Logs and JSON remain loose. Restore `captures.archive.json` with the existing
 `maintain_performance_artifacts.py --restore ... --destination ...` command.
 
 
+## Object pack and mansion captures
+
+`run_godot_check.py` admits 2 MiB for registry/container/restore checks, 16 MiB
+for an Outdoor 01 sheet, 64 MiB for six mansion views, and 32 MiB for the ordinary
+object-system run (three PNGs, a native state fixture capped at 4 MiB, timing JSON
+and logs). No full export, source copy or saved world is allocated. Headless pack
+and mansion checks admit 2 MiB. The native state fixture is reused by hash for a
+fresh-process restoration test.
+
+`maintain_homestead_captures.py` archives the receipt-owned Outdoor 01, mansion
+and object-system families after the owned engine exits, keeping at most two
+ordinary ready runs per family. Native state and timing JSON are archived with
+the object-system pictures; run receipts and diagnostic logs stay loose. Explicit
+`.retain` witnesses preserve rejected R1 mansion and Outdoor 01 comparisons until
+the linked visual issue is closed. All archives use the existing verified shared
+chunk store and inspection restore workflow; this adds no storage budget.
+
 ## Native launcher regression family
 
 `tools/check_launcher_world_flow.py` admits 16 MiB of reports and 128 MiB for

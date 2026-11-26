@@ -72,11 +72,27 @@ NOTICES = [
 ]
 
 
+
+def discovered_notices():
+    """New data-only object packs bring their own adjacent notice; no host list edit."""
+    entries = list(NOTICES)
+    known = {row[3] for row in entries}
+    for manifest in sorted((ROOT / "addons/structures/packs").glob("*/pack.json")):
+        data = json.loads(manifest.read_text(encoding="utf-8-sig"))
+        source = (manifest.parent / "ASSET_LICENSE.md").relative_to(ROOT).as_posix()
+        if source not in known:
+            entries.append((data["id"], data["name"] + " object pack", "CC0 1.0 assets / 0BSD code", source,
+                            "Original object pack with editable authoring sources; see the retained notice for its scope and inputs."))
+    entries.append(("homestead_manor", "Homestead Manor courtyard mansion", "CC0 1.0 arrangement / 0BSD code",
+                    "addons/structures/mansion/ASSET_LICENSE.md", "Original furnished two-storey courtyard design; inherited models and materials retain their separate notices."))
+    return entries
+
+
 def bundle():
     return {"schema": 1, "notices": [
         dict(id=key, title=title, license=license_name, source=source,
              summary=summary, text=(ROOT / source).read_text(encoding="utf-8").strip())
-        for key, title, license_name, source, summary in NOTICES
+        for key, title, license_name, source, summary in discovered_notices()
     ]}
 
 
@@ -88,7 +104,7 @@ def main():
     if args.check:
         if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != content:
             parser.exit(1, "Credit notices are stale; run tools/build_credit_notices.py\n")
-        print(f"PASS: all {len(NOTICES)} offline notices match their retained source files")
+        print(f"PASS: all {len(discovered_notices())} offline notices match their retained source files")
     else:
         OUTPUT.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT.write_text(content, encoding="utf-8")

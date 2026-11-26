@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "id": "terraforest.outdoor_01",
+  "name": "Outdoor 01",
+  "name_prefix": "Outdoor ",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {
+      "id": "bird_nest",
+      "item": 820,
+      "name": "Outdoor woven bird nest",
+      "recipe": [
+        204,
+        8
+      ],
+      "salvage": [
+        204,
+        4
+      ],
+      "health": 35,
+      "material": "other",
+      "container": 4
+    },
+    {
+      "id": "duffel_bag",
+      "item": 821,
+      "name": "Outdoor canvas duffel bag",
+      "recipe": [
+        225,
+        12,
+        227,
+        2
+      ],
+      "salvage": [
+        225,
+        6
+      ],
+      "health": 100,
+      "material": "other",
+      "container": 12
+    },
+    {
+      "id": "cardboard_box",
+      "item": 822,
+      "name": "Outdoor taped cardboard box",
+      "recipe": [
+        204,
+        8
+      ],
+      "salvage": [
+        204,
+        4
+      ],
+      "health": 35,
+      "material": "wood",
+      "container": 16
+    },
+    {
+      "id": "open_box",
+      "item": 823,
+      "name": "Outdoor open cardboard box",
+      "recipe": [
+        204,
+        6
+      ],
+      "salvage": [
+        204,
+        3
+      ],
+      "health": 35,
+      "material": "wood",
+      "container": 12
+    },
+    {
+      "id": "tire",
+      "item": 824,
+      "name": "Outdoor worn vehicle tire",
+      "recipe": [
+        104,
+        4,
+        204,
+        4
+      ],
+      "salvage": [
+        104,
+        2
+      ],
+      "health": 100,
+      "material": "other"
+    },
+    {
+      "id": "tire_stack",
+      "item": 825,
+      "name": "Outdoor stack of worn tires",
+      "recipe": [
+        104,
+        12,
+        204,
+        12
+      ],
+      "salvage": [
+        104,
+        6
+      ],
+      "health": 100,
+      "material": "other"
+    },
+    {
+      "id": "litter",
+      "item": 826,
+      "name": "Outdoor discarded paper and cans",
+      "recipe": [
+        204,
+        2,
+        104,
+        1
+      ],
+      "salvage": [
+        104,
+        1
+      ],
+      "health": 35,
+      "material": "other"
+    },
+    {
+      "id": "trash_bag",
+      "item": 827,
+      "name": "Outdoor tied refuse bag",
+      "recipe": [
+        225,
+        5,
+        204,
+        2
+      ],
+      "salvage": [
+        225,
+        2
+      ],
+      "health": 35,
+      "material": "other",
+      "container": 8
+    },
+    {
+      "id": "trash_can",
+      "item": 828,
+      "name": "Outdoor galvanized trash can",
+      "recipe": [
+        104,
+        10,
+        227,
+        2
+      ],
+      "salvage": [
+        104,
+        5
+      ],
+      "health": 100,
+      "material": "other",
+      "container": 16
+    },
+    {
+      "id": "dumpster",
+      "item": 829,
+      "name": "Outdoor large wheeled refuse container",
+      "recipe": [
+        104,
+        30,
+        227,
+        8
+      ],
+      "salvage": [
+        104,
+        15
+      ],
+      "health": 240,
+      "material": "other",
+      "container": 32
+    }
+  ]
+}

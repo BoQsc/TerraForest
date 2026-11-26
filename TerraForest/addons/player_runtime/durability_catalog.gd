@@ -32,42 +32,8 @@ const MODELS={
 }
 
 static func model_profile(asset:String,objects:Dictionary={})->Dictionary:
-	if asset.begins_with("packs/homestead_10/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_10/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	if asset.begins_with("packs/homestead_09/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_09/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	if asset.begins_with("packs/homestead_08/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_08/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	if asset.begins_with("packs/homestead_07/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_07/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	if asset.begins_with("packs/homestead_06/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_06/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	if asset.begins_with("packs/homestead_05/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_05/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	if asset.begins_with("packs/homestead_04/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_04/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	if asset.begins_with("packs/homestead_03/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_03/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	if asset.begins_with("packs/homestead_02/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_02/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	if asset.begins_with("packs/homestead_01/"):
-		var profile:Dictionary=preload("res://addons/structures/packs/homestead_01/catalog.gd").profile(asset)
-		if not profile.is_empty():return profile
-	var rails=preload("res://addons/structures/mine_rail_catalog.gd")
-	for part:String in rails.PARTS:
-		if asset==rails.key(part):return {"name":rails.PARTS[part],"health":120,"material":"other"}
-	if asset==preload("res://addons/structures/door_catalog.gd").KEY and not objects.has(asset):
-		var definition:Dictionary=preload("res://addons/structures/door_catalog.gd").builtin_definition()
-		return {"name":definition.name,"health":definition.durability.health,"material":definition.durability.material}
+	var pack_profile: Dictionary=preload("res://addons/structures/pack_registry.gd").profile(asset)
+	if not pack_profile.is_empty(): return pack_profile
 	if objects.has(asset):
 		var definition:Dictionary=objects[asset]
 		return {"name":definition.name,"health":definition.durability.health,"material":definition.durability.material}

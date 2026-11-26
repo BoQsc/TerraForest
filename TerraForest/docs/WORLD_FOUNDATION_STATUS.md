@@ -9463,3 +9463,12 @@ saved part/motion state, bounded physics/effects, capacity/conservation and
 native transfer/consumption rules are prerequisites. Interaction, reload and
 sparse/dense graphical evidence are required by the linked status; cabinet
 glazing uses simple alpha transparency without live reflection/refraction.
+
+Object pack discovery, outdoor content, selectable inspection and the new mansion
+are tracked in [Object pack integration](OBJECT_PACK_INTEGRATION.md): 110 folder-
+discovered objects, seven outdoor container types, bounded native name inspection,
+explicit scatter and the furnished Homestead Manor R2. Native/save/drop/input
+checks pass; current visual evidence, timing scope and remaining acceptance are
+linked there. The dense 1,000-object scene exceeds 16.7 ms p95. Mansion visual
+approval, generated-site terrain fit and full circulation remain unaccepted;
+the new preset is not a generation default.

@@ -12,6 +12,7 @@ var collection: Node3D
 var pending_restore:=PackedByteArray()
 var opened:=false
 var identity:=0
+var title_label: Label
 var panel: PanelContainer
 var player_list: GridContainer
 var storage_list: GridContainer
@@ -41,14 +42,17 @@ func restore_structures(bytes: PackedByteArray) -> bool:
 	close()
 	for id: int in store.get_ids():
 		if not collection.set_removal_protected(id,false): return false
+	if game.get("pack_storage")!=null: game.pack_storage.restore_protection(false)
 	if not game.structures.restore_storage_snapshot(bytes):
 		for id: int in store.get_ids(): collection.set_removal_protected(id,true)
+		if game.get("pack_storage")!=null: game.pack_storage.restore_protection(true)
 		return false
 	if not pending_restore.is_empty():
 		if not store.restore_storage_snapshot(pending_restore): return false
 		pending_restore=PackedByteArray()
 	var ok:=true
 	for id: int in store.get_ids(): ok=collection.set_removal_protected(id,true) and ok
+	if game.get("pack_storage")!=null: ok=game.pack_storage.restore_protection(true) and ok
 	return ok
 func allowed() -> bool:
 	return game.app_focused and game.terrain.world_ready and not game.loading_active and not game.shutdown_requested and not game.terrain.pending_edit and not game.world_vehicle.driving
@@ -87,7 +91,7 @@ func _ready() -> void:
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,24)
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",14);margin.add_child(column)
-	var title:=Label.new();title.text=container_name;title.add_theme_font_size_override("font_size",26);column.add_child(title)
+	title_label=Label.new();title_label.text=container_name;title_label.add_theme_font_size_override("font_size",26);column.add_child(title_label)
 	var instructions:=Label.new();instructions.text="Drag between inventories. Shift-drag moves half."+(" Empty the chest before removal." if not external else " Loot remains saved with this corpse.");column.add_child(instructions)
 	var headings:=HBoxContainer.new();headings.add_theme_constant_override("separation",18);column.add_child(headings)
 	for text in ["YOUR BACKPACK","CORPSE CONTENTS" if external else "CHEST CONTENTS"]:
