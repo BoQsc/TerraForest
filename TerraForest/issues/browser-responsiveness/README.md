@@ -311,9 +311,26 @@ are unchanged. Its fixed run exits zero with no failures; the initial stale
 harness failure is retained in the same admitted bundle.
 
 Status remains improved-partial: no production scheduling changed in this
-review. Next implementation should batch outdoor support probes, reduce plan
-cache hydration and overlap independent initialization, then measure and tune
-object-horizon loading. Require deterministic layouts/snapshots, cancellation,
+review. Outdoor support batching is now implemented in the follow-up below. Remaining
+work is to reduce plan-cache hydration, overlap independent initialization, and
+measure and tune object-horizon loading. Require deterministic layouts/snapshots, cancellation,
 bounded memory and matched normal generation/Play-to-control measurements before
 closing those items. Post-reboot launch and foreground/package acceptance above
 remain separately pending. No new visual acceptance claim is made.
+
+
+## Outdoor terrain-query batching — 2026-11-26
+
+Implemented: per-lot bounded support queries replace per-object waits, while
+collision checks and native insertion keep the original order. One matched
+ordinary Frontier expedition pair records outdoor placement **44.577 → 16.628 s**,
+generation **154.030 → 129.840 s**, and Generate to loading complete
+**198.304 → 176.133 s**. All 684 ordered placements and exact native transforms/IDs
+match; skipped count remains 919. The pass uses 50 density requests; 11 focused
+checks and both normal generation/publication/reopen flows pass. RAM/VRAM stay
+within recorded budgets. [Implementation, receipts and limits](../../docs/WORLD_STARTUP_ARCHITECTURE.md#batched-outdoor-support-queries--2026-11-26).
+
+This is a single warm-cache pair, before intro completion, not universal loading
+performance or visual acceptance. Plan/cache setup, object-horizon loading,
+save/map overlap, post-reboot launch and foreground/package qualification remain
+open. No existing player world was used as a writable benchmark fixture.

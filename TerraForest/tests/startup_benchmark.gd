@@ -58,10 +58,12 @@ func run()->void:
  change_scene_to_file("res://demo/worlds.tscn");await scene_changed
  if not await wait_for(func():return not current_scene.library.loading,60):quit(1);return
  var browser=current_scene
+ var generation_status:=""
  started=Time.get_ticks_usec()
  if generate:
   browser.name_field.text=slot;browser.seed_field.value=1703;browser.world_tabs.current_tab=1
   browser.generate_button.pressed.emit()
+  generation_status=browser.preparation_status
  else:
   var command:Dictionary=preload("res://demo/world_launch.gd").command(slot,false,29,1703,true)
   if not "--benchmark-normal-load" in OS.get_cmdline_user_args():command.args.append("--snapshot-readonly")
@@ -71,6 +73,8 @@ func run()->void:
  var ready:bool=await wait_for(func():return is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn" and current_scene.startup_complete and not current_scene.loading_active,600)
  var elapsed:=(Time.get_ticks_usec()-started)/1000.0
  var result:Dictionary={"ok":ready,"generate":generate,"slot":slot,"first_ready_ms":elapsed,"observed_stage_ms":stages,"scope":"Normal browser recipe; offscreen 1920x1080 60 FPS; first loading barrier release, before intro completion. All normal actors enabled."}
+ if generate and FileAccess.file_exists(generation_status):
+  result.generation=JSON.parse_string(FileAccess.get_file_as_string(generation_status))
  if is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn":
   var game=current_scene
   result.startup=game.startup_timings

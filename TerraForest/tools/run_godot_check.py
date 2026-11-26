@@ -42,6 +42,8 @@ BOUNDED_CONTRACT_REPORTS = {
 
 def planned_report_bytes(command):
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
+    if scripts == {"outdoor_support_batches.gd"}:
+        return 2 * 2**20  # Bounded support-query assertions and logs; no saved world or image.
     if scripts == {"world_browser_responsiveness.gd"}:
         return 8 * 2**20  # One 1080p RGB browser image, small timing JSON and logs.
     if scripts == {"model_horizon.gd"}:

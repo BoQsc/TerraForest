@@ -57,3 +57,11 @@ was imported. [Interpretation and implementation order](../../WORLD_STARTUP_ARCH
 distinguish this current implementation from the historical November 2 audit.
 The pinned raw bundle is `reports/checks/loading_parallelism_20261126T201830261855Z`;
 its initial diagnostic failure is retained beside the successful fixed run.
+
+
+`outdoor_batches_20261126.json` records the subsequent matched generation pair:
+684 identical native transforms/IDs, 11 focused checks and the measured outdoor,
+creating-phase and full loading-barrier timings. It is original AI-assisted
+CC0-1.0 analysis of local runs; source/test/tool changes are 0BSD. Raw receipts
+and source witnesses remain in the linked startup benchmark directories under
+the existing two-ready world retention lifecycle.

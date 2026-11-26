@@ -9545,8 +9545,26 @@ reaches ready in 39.790 s; average process CPU is 1.59 of 12 logical cores, with
 brief 10.64-core bursts. Saves remain unchanged. This is direct diagnostic entry
 with existing caches and no ordinary map-ready gate, not normal Play timing.
 The diagnostic construction wait is fixed and the rerun passes; the initial
-failed receipt is retained. Production scheduling is unchanged. Return for
-batched placement, plan-cache/setup overlap and object-horizon throughput work;
+failed receipt is retained. The follow-up below implements support-query batching.
+Return for plan-cache/setup overlap and object-horizon throughput work;
 require equivalent layouts/snapshots, cancellation, bounded resources and matched
 normal generation/loading measurements before claiming improvement. Post-reboot
 cold launch and foreground/exported-package acceptance remain open separately.
+
+
+### Batched outdoor terrain queries — 2026-11-26
+
+The per-object query item from the parallelism audit is implemented. Bounded
+4096-point support requests retain native paging, candidate/ID order, current
+collision exclusions and the same placement target. In one matched normal
+Frontier expedition generation pair, outdoor placement is **44.577 → 16.628 s**,
+creation **154.030 → 129.840 s**, and Generate to loading complete
+**198.304 → 176.133 s**. All 684 transforms/model keys/IDs/order and 919 skipped
+candidates match. Fifty support requests replace at least 684 individual ones.
+Eleven focused checks and both normal generation/publication/reopen paths pass;
+RAM/VRAM remain within budget. [Evidence and limits](WORLD_STARTUP_ARCHITECTURE.md#batched-outdoor-support-queries--2026-11-26).
+This closes batching for the tested recipe, not multi-seed/cold-cache performance,
+generation UI cadence or visual acceptance. Remaining: plan-cache/setup overlap,
+object-horizon throughput and save/map work; return to their recorded closure
+criteria when implementing those stages. Existing player saves remain outside
+benchmark ownership; two ready test worlds use the verified archive lifecycle.

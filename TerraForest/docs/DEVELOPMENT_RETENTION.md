@@ -364,3 +364,16 @@ only the named screenshot/timing files are archived after process exit. The
 until browser review, including its original slow preparation and four captures.
 The production preparation cache uses two fixed JSON records capped at 4 MiB each
 and one temporary atomic replacement, without new saves, exports or source copies.
+
+
+## Outdoor generation comparison
+
+`tools/benchmark_outdoor_generation.py` admits 12 MiB of logs/JSON and one ready
+image plus 128 MiB for generation per run. It uses the ordinary source browser
+recipe and `startup_benchmark.gd`, with a fresh receipt-owned `StartupBench_` slot.
+Existing startup retention archives verified older fixtures after the engine exits
+and keeps two ready worlds across that family. Generation staging follows the
+normal publication lifecycle. Existing player saves are never benchmark targets.
+The small source witness, exact placement transforms and receipts remain loose;
+no export, full source copy or storage-budget increase is allocated. The focused
+`outdoor_support_batches` check needs only 2 MiB of admitted logs, no saved world.

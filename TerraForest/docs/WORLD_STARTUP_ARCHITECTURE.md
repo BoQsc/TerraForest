@@ -708,7 +708,9 @@ contains CPU samples, commands, logs and original-world hashes.
 
 ### Implementation order and closure evidence
 
-1. **Batch outdoor support queries.** Preserve candidate order, deterministic IDs,
+1. **Batch outdoor support queries.** Implemented in the
+   [follow-up below](#batched-outdoor-support-queries--2026-11-26). Original closure
+   criteria: preserve candidate order, deterministic IDs,
    occupancy/road/tree/vehicle/water checks, revisions and cancellation. Compare
    exact accepted placements and unchanged save/reload behavior, then repeat the
    same generation/options with stage timings and memory limits.
@@ -733,3 +735,65 @@ The audit confirms remaining serialization and underused CPU time; it does not
 claim a runtime speedup. Return when implementing the above stages, with matched
 cache-state/end-to-end measurements. The separate post-reboot cold-launch check
 and ordinary foreground/exported-package acceptance remain pending.
+
+
+## Batched outdoor support queries — 2026-11-26
+
+Implemented and verified for the ordinary furnished-world recipe. Terrain
+support samples are grouped per lot into requests of at most 4096 points; native
+evaluation retains its 512-point pages. Static filtering precedes these reads.
+Publication still visits the original candidate order, rechecking building/model
+and vehicle conflicts after every earlier insertion, and stops at the original
+16-object lot target. Skipped-candidate accounting is unchanged. Revision/epoch
+checks reject changed terrain across the complete lot; failed or incomplete
+support batches cannot publish that lot. No threading, terrain, world-recipe,
+object geometry or placement policy changed.
+
+Generation reports now retain each placement's exact 48-byte float32 transform
+as base64, together with model key, native ID, position and lot. This permits
+strict comparisons without relying on rounded coordinates or screenshots.
+
+[Machine-readable comparison](evidence/world_startup_audit/outdoor_batches_20261126.json)
+retains source hashes, commands/receipt links, limits and memory checks.
+One sequential pair on Godot 4.7.2 / RTX 4050, Forward+, isolated 1920×1080 at
+60 FPS, seed 1703 / generator 29, untouched Frontier expedition options and
+retained OS/import/plan/derived caches:
+
+| Measurement | Individual queries | Batched queries | Time reduction |
+| --- | ---: | ---: | ---: |
+| Outdoor placement | 44.577 s | 16.628 s | 27.950 s / 62.7% |
+| Coordinator creating phase | 154.030 s | 129.840 s | 24.189 s / 15.7% |
+| Generate to loading barrier release | 198.304 s | 176.133 s | 22.170 s / 11.2% |
+
+All **684 placements across 13 model types match exactly**, including native IDs,
+order and every transform byte; both runs skip 919 visited candidates. The batched
+pass submits 50 density requests / 64,770 samples, compared with at least 684
+individual requests in the original path. Surface sampling is unchanged. Both
+normal Generate & play runs save, validate, publish, reopen and shut down cleanly.
+The loading measurement includes normal map readiness but stops before intro
+completion. Other stage variation explains why the total saving differs from
+the outdoor-stage saving; this is not a multi-run statistical speed guarantee.
+Peak process private commit is 4.176 → 4.169 GB and dedicated GPU memory 1.775 GB
+in both runs, within recorded budgets. Player saves are not benchmark inputs.
+
+The focused headless regression passes 11 checks: equality with 48 individual
+queries across mixed supported/unsupported/nonfinite samples, request boundaries,
+empty input, short replies, stale revisions, replaced epochs, cancellation and
+oversized footprints. Existing general-world image source/export warnings remain
+visible in the benchmark logs; no new script/runtime errors occurred. No visual,
+generation-UI frame-pacing, additional-seed or cold-cache acceptance is claimed.
+
+Reproduce the optimized run with `python tools/benchmark_outdoor_generation.py
+--label after --compare <before-report-directory>`. Labels do not select an
+implementation. Baseline reproduction needs the exact `outdoor_source.gd.txt`
+from the before receipt (the original per-object path with the same transform
+logging), restored for that run and replaced with current source afterward.
+The runner never switches source files itself. Run the focused regression with
+`python tools/run_godot_check.py outdoor_support_batches --headless --timeout 40
+--require "OUTDOOR_SUPPORT_BATCHES checks=11 failures=0"`.
+The benchmark uses the existing two-ready startup-world archive lifecycle and
+bounded admission; no source tree copy, native build or export is allocated.
+
+This closes the per-object terrain-query batching item for the tested recipe.
+Plan-cache hydration/setup overlap, object-horizon throughput and save/map
+parallelism from the audit remain separate work with their original closure gates.

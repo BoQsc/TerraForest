@@ -7,6 +7,7 @@ const Tokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
 const TARGET_PER_LOT:=16
 const MAX_OBJECTS:=4096
 const ATTEMPTS:=48
+const SUPPORT_BATCH_LIMIT:=4096
 const ITEMS:=[828,827,822,823,824,825,821,826,829,798,799,736,735]
 
 static func candidates(lot:Dictionary,world_seed:int,roads:Array=[])->Array[Dictionary]:
@@ -84,10 +85,32 @@ static func _density(terrain:Node,points:PackedVector3Array)->PackedFloat32Array
 	if received.is_empty() or received[0].status!="ok" or received[0].epoch!=terrain.epoch or received[0].revision!=terrain.density_revision:return PackedFloat32Array()
 	return received[0].values
 
+static func _support(terrain:Node,bounds:Array[AABB])->Dictionary:
+	var supported:Array[bool]=[];var cursor:=0;var requests:=0;var sample_count:=0
+	var epoch:int=terrain.epoch;var revision:int=terrain.density_revision
+	while cursor<bounds.size():
+		if terrain.stopping:return {"ok":false}
+		var points:=PackedVector3Array();var spans:Array[Vector2i]=[]
+		while cursor<bounds.size():
+			var probes:=support_probes(bounds[cursor])
+			if probes.size()>SUPPORT_BATCH_LIMIT:return {"ok":false}
+			if points.size()+probes.size()>SUPPORT_BATCH_LIMIT:break
+			spans.append(Vector2i(points.size(),probes.size()));points.append_array(probes);cursor+=1
+		var samples:=await _density(terrain,points);requests+=1;sample_count+=points.size()
+		if samples.size()!=points.size() or terrain.epoch!=epoch or terrain.density_revision!=revision:return {"ok":false}
+		for span in spans:
+			var valid:=true
+			for offset in span.y:
+				var sample:float=samples[span.x+offset]
+				if not is_finite(sample) or (sample<0)!=(offset%2==0):valid=false;break
+			supported.append(valid)
+	return {"ok":true,"supported":supported,"requests":requests,"samples":sample_count}
+
 static func publish(game:Node,lots:Array,roads:Array,world_seed:int)->Dictionary:
 	var placements:Array[Dictionary]=[];var skipped:=0
 	var tree_cache:Dictionary={}
 	var models:Dictionary=game.structures.model_collections()
+	var density_requests:=0;var density_samples:=0
 	for lot:Dictionary in lots:
 		if game.shutdown_requested:return {"ok":false,"reason":"Outdoor generation cancelled"}
 		if placements.size()+TARGET_PER_LOT>MAX_OBJECTS:return {"ok":false,"reason":"Outdoor generation exceeds its 4096-object authoring budget"}
@@ -95,40 +118,46 @@ static func publish(game:Node,lots:Array,roads:Array,world_seed:int)->Dictionary
 		if proposals.is_empty():continue
 		var points:=PackedVector3Array()
 		for proposal:Dictionary in proposals:points.append(proposal.pose.origin)
+		var epoch:int=game.terrain.epoch;var revision:int=game.terrain.density_revision
 		var surface:=await _surface(game.terrain,points)
-		if surface.is_empty() or surface.points.size()!=points.size():return {"ok":false,"reason":"Outdoor terrain survey unavailable"}
-		var inserted:=0
+		if surface.is_empty() or surface.points.size()!=points.size() or surface.normals.size()!=points.size():return {"ok":false,"reason":"Outdoor terrain survey unavailable"}
+		var prepared:Array[Dictionary]=[];var support_bounds:Array[AABB]=[]
+		var protected:=[AABB(game._initial_generation_spawn-Vector3(2,0,2),Vector3(4,3,4))]
+		for location:Dictionary in game.quests.store.get_locations():protected.append(location.bounds)
+		# Only terrain reads move ahead. Object conflicts are checked below, after
+		# every earlier accepted insertion, in the original candidate order.
 		for index in proposals.size():
-			if inserted>=TARGET_PER_LOT:break
 			var proposal:Dictionary=proposals[index];var point:Vector3=surface.points[index]
-			if not point.is_finite() or surface.normals[index].y<.96 or game.lakes.water.depth_at(point)>.02:skipped+=1;continue
+			if not point.is_finite() or surface.normals[index].y<.96 or game.lakes.water.depth_at(point)>.02:prepared.append({});continue
 			var prototype:AABB=proposal.mesh.get_aabb()
 			for part:AABB in proposal.mesh.get_meta("collision_boxes"):prototype=prototype.merge(part)
 			var pose:Transform3D=proposal.pose;pose.origin=point-Vector3.UP*prototype.position.y
 			var bounds:AABB=pose*prototype
-			var protected:=[AABB(game._initial_generation_spawn-Vector3(2,0,2),Vector3(4,3,4))]
-			for location:Dictionary in game.quests.store.get_locations():protected.append(location.bounds)
 			var blocked:=false
 			for box:AABB in protected:
 				if box.intersects(bounds.grow(.3)):blocked=true;break
-			if blocked or Scatter.near_road(point,maxf(bounds.size.x,bounds.size.z)*.5+1.2,roads):skipped+=1;continue
-			if tree_blocked(game,bounds,tree_cache):skipped+=1;continue
+			if blocked or Scatter.near_road(point,maxf(bounds.size.x,bounds.size.z)*.5+1.2,roads):prepared.append({});continue
+			if tree_blocked(game,bounds,tree_cache):prepared.append({});continue
+			prepared.append({"proposal":proposal,"pose":pose,"bounds":bounds,"point":point,"support_index":support_bounds.size()});support_bounds.append(bounds)
+		var support:Dictionary=await _support(game.terrain,support_bounds)
+		if game.shutdown_requested:return {"ok":false,"reason":"Outdoor generation cancelled"}
+		if not support.ok or game.terrain.epoch!=epoch or game.terrain.density_revision!=revision:return {"ok":false,"reason":"Outdoor support survey unavailable"}
+		density_requests+=support.requests;density_samples+=support.samples
+		var inserted:=0
+		for entry:Dictionary in prepared:
+			if inserted>=TARGET_PER_LOT:break
+			if entry.is_empty():skipped+=1;continue
+			var proposal:Dictionary=entry.proposal;var pose:Transform3D=entry.pose;var bounds:AABB=entry.bounds
 			if not preload("res://addons/vehicle_runtime/building_parking.gd")._clear(game.structures.blocks,models,bounds.grow(.15)):skipped+=1;continue
-			var car:Dictionary=game.world_vehicle.fleet.query_near(point,6,32,128)
+			var car:Dictionary=game.world_vehicle.fleet.query_near(entry.point,6,32,128)
 			if not car.get("ok",false) or not car.get("complete",false) or not car.ids.is_empty():skipped+=1;continue
-			var probes:=support_probes(bounds)
-			var samples:=await _density(game.terrain,probes)
-			if samples.size()!=probes.size():return {"ok":false,"reason":"Outdoor support survey unavailable"}
-			var supported:=true
-			for sample in samples.size():
-				if not is_finite(samples[sample]) or (samples[sample]<0)!=(sample%2==0):supported=false;break
-			if not supported:skipped+=1;continue
+			if not support.supported[entry.support_index]:skipped+=1;continue
 			var packed:=PackedFloat32Array()
 			for row in 3:
 				for column in 3:packed.append(pose.basis[column][row])
 				packed.append(pose.origin[row])
 			var identity:int=models[proposal.model].insert_instance(packed,AABB())
 			if identity<=0:return {"ok":false,"reason":"Outdoor object publication failed"}
-			placements.append({"model":proposal.model,"id":identity,"position":pose.origin,"lot":lot.get("label","Building")});inserted+=1
+			placements.append({"model":proposal.model,"id":identity,"position":pose.origin,"transform":Marshalls.raw_to_base64(packed.to_byte_array()),"lot":lot.get("label","Building")});inserted+=1
 	if not placements.is_empty():game.terrain.changed_since_save=true
-	return {"ok":true,"placements":placements,"skipped":skipped,"target_per_lot":TARGET_PER_LOT}
+	return {"ok":true,"placements":placements,"skipped":skipped,"target_per_lot":TARGET_PER_LOT,"density_requests":density_requests,"density_samples":density_samples}

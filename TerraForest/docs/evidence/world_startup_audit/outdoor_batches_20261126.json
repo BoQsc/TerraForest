@@ -1,0 +1,96 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted analysis of local TerraForest engine runs; no imported material.",
+  "date": "2026-11-26",
+  "scope": "One sequential before/after pair, normal untouched Frontier expedition recipe, seed 1703, generator 29. Fresh processes, retained OS/import/plan/derived caches; isolated rendered desktop, 1920x1080, 60 FPS, Forward+, Godot 4.7.2, RTX 4050. First-ready excludes intro completion.",
+  "runs": [
+    {
+      "path": "reports/startup_optimization/outdoor_before_20261126T202955003472Z",
+      "slot": "StartupBench_44b662f98c274b9f",
+      "source_sha256": "40daa13399382f885a0680f9705ef9543da7947fd8c0629a25a5ff5cc924f470",
+      "driver_sha256": "aa3a78be23f4fd239053698408325a9e1d0b617c197ae863a62a5ee0e4b272d2",
+      "generation_report": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\generation_reports\\404b8177ebc1a5803392ef5dbd740ed6",
+      "passed": true,
+      "memory_checks": {
+        "ram": {
+          "bytes": 4175675392,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1775484928,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "path": "reports/startup_optimization/outdoor_after_20261126T203629566583Z",
+      "slot": "StartupBench_07044e5517ac476b",
+      "source_sha256": "48b889c915887ee340b3bf92d59657c0eb609b2fe389e82fbbe3cbf06f2a59d4",
+      "driver_sha256": "aa3a78be23f4fd239053698408325a9e1d0b617c197ae863a62a5ee0e4b272d2",
+      "generation_report": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\generation_reports\\7ce00aa09cb4ec28b5c9ed35d9c6dfad",
+      "passed": true,
+      "memory_checks": {
+        "ram": {
+          "bytes": 4168806400,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1775484928,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    }
+  ],
+  "measurements": {
+    "outdoor_seconds": {
+      "before": 44.577471,
+      "after": 16.627723,
+      "saved_seconds": 27.949748000000003,
+      "reduction_percent": 62.69926797776393
+    },
+    "creating_seconds": {
+      "before": 154.029768,
+      "after": 129.840462,
+      "saved_seconds": 24.189305999999988,
+      "reduction_percent": 15.70430593649923
+    },
+    "first_ready_seconds": {
+      "before": 198.303754,
+      "after": 176.133382,
+      "saved_seconds": 22.170371999999986,
+      "reduction_percent": 11.18000620401769
+    }
+  },
+  "equivalence": {
+    "placements": 684,
+    "skipped": 919,
+    "model_types": 13,
+    "identical": true,
+    "coverage": "Ordered model keys, native IDs, lot labels and exact 48-byte float32 transforms handed to native insertion; counts of skipped candidates.",
+    "sha256": "a78d3e23a6f9f933cd0f1944e2ec10d08c402f6503c5265fec6a978812ef970b"
+  },
+  "batch": {
+    "density_requests": 50,
+    "density_samples": 64770,
+    "maximum_samples_per_request": 4096,
+    "native_page_samples": 512
+  },
+  "focused_test": {
+    "receipt": "reports/checks/20261126T203433591222Z/run.json",
+    "checks": 11,
+    "failures": 0
+  },
+  "limits": [
+    "Single pair is not a cross-seed, cold-cache or lower-end-hardware guarantee.",
+    "No generation UI frame-pacing or broad world-quality acceptance claimed.",
+    "Known source general_world.png Image.load_from_file export warning remains outside this change."
+  ]
+}
