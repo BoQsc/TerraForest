@@ -208,3 +208,65 @@ close only with all four strict frame gates plus functional and visual checks.
 Do not reduce object count, shadows, simulation or the acceptance threshold to
 make this milestone pass. Mansion visual approval, generated-site terrain fit
 and full circulation remain separately open in the existing integration issue.
+
+## Follow-up: character admission stalls (26 November)
+
+The opt-in `--cpu-diagnostics` route now separates physics callbacks, physics
+solver tail, process work and draw submission, including main-thread CPU work,
+native block/horizon/light timings and corpse preparation phases. Ordinary
+qualification runs omit this instrumentation. Trace size stays below the
+existing 8 MiB cap and the 32 MiB receipt allowance; no storage budget changed.
+
+Saved-corpse restoration was still doing synchronous scene setup and installing
+large head hulls in single steps. Diagnostic `20261126T141311696302Z` measured
+up to 5.354 ms of restoration work, with a 4.214 ms head installation. The
+character initializer now yields between scene instantiation, attachment,
+anatomy, baking, individual physical bodies and animation setup. Saved-corpse
+and ordinary live-population admission use 750 us cooperative slices. Pending
+characters remain hidden and unavailable; readiness, distance, visibility,
+capacity and support are rechecked before publishing a live resident. Reset,
+retirement and cancellation dispose of incomplete work.
+
+Large saved-pose hulls use the engine's unsimplified convex cleaner on a worker
+through an immutable CPU-only Mesh packet. No engine implementation was copied.
+Main-thread installation uses the resulting boundary vertices. Fingers retain
+their original compound shapes and are installed in separate quanta. Other
+small hull clouds are unchanged. Cleaning is not bit-identical geometry:
+independent rest/attack/morph ray contacts agree within 0.5 mm (observed worst
+0.340 mm), below the existing 3 mm head margin. Immediate combat deaths retain
+the original synchronous path. Worker completion is joined before cancellation
+releases its owning data; no worker reads the scene tree.
+
+- `20261126T141911042542Z`: collision-cloud/contact checks, 86 pass.
+- `20261126T142010211203Z`: staged saved-anatomy and no-debris checks pass.
+- `20261126T142514380803Z`: lifecycle checks, 27 pass, including tiny-budget
+  progress, worker cancellation, unparented-scene cleanup and live admission.
+- `20261126T142859237106Z`: corpse rest/support checks, 33 pass.
+- `20261126T143022929665Z`: corpse walking has one existing failure: leftward
+  torso speed 3.07536 m/s exceeds its 3 m/s limit. The committed-baseline replay
+  `20261126T143217251653Z` reproduces every recorded route metric exactly,
+  including that failure. Neither the threshold nor physics policy was changed.
+  Both receipts retain their complete `corpse_walk_result.json`; this remains
+  an open baseline limitation, not a passing regression.
+
+Diagnostic `20261126T142050850922Z` reduced observed restoration peaks to
+1.806 ms, but a second GPU game was running during it and the preceding detailed
+profile. These are attribution evidence, not clean FPS comparisons. The user
+closed the competing game before strict replay `20261126T142559219408Z`.
+The machine remained in its existing Legion Quiet Mode; no power setting,
+resolution, object count, shadow policy or gameplay system was changed.
+
+| Uncontended mixed-pack leg | p95 ms | p99 ms | GPU p95 ms |
+| --- | ---: | ---: | ---: |
+| Names off, outward | 18.503 | 21.063 | 8.859 |
+| Names off, return | 16.184 | 18.627 | 7.979 |
+| Names on, outward | 21.476 | 26.296 | 8.960 |
+| Names on, return | 17.630 | 20.087 | 7.687 |
+
+All 36 functional checks passed: 2,400 gameplay physics ticks, eight active
+zombies, physical drops, all 1,000 added records and unchanged save bytes. All
+four strict frame gates still failed. Stable 60 FPS remains open; the next work
+is CPU draw submissions (5,208–7,521 p95 calls), including the 46 authored
+material surfaces per complete zombie. Any batching must retain original skin,
+morphs, material appearance, severing, collision and saved-state behavior and
+pass the unchanged four-leg timing contract before this requirement closes.

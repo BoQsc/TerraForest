@@ -21,7 +21,7 @@ class AdmissionHost extends Node3D:
 	var readiness:Callable=func(bounds:AABB)->bool:return bounds.size.x<5 or full_ready
 	func admission_bounds(point:Vector3,sleeping:bool,authored:bool)->AABB:
 		return preload("res://addons/characters/runtime/zombie_world.gd").admission_bounds(point,sleeping,authored)
-	func spawn_at(_point:Vector3,_sleeping:bool,_authored:bool,_id:int,_seed:int)->CharacterBody3D:
+	func spawn_at(_point:Vector3,_sleeping:bool,_authored:bool,_id:int,_seed:int,_deferred:bool=false)->CharacterBody3D:
 		attempts+=1;return null # Fully ready but unsuitable geometry remains a rejection.
 var failures:=0
 var checks:=0
@@ -63,6 +63,30 @@ func clouds(actor:Node3D)->Dictionary:
 			if child is CollisionShape3D:points.append(child.shape.points)
 		result[bone]=points
 	return result
+func staged_live_admission()->void:
+	var cancelled:=Zombie.new();cancelled.defer_configuration=true;cancelled.hide();cancelled.set_simulation_available(false);stage.add_child(cancelled)
+	cancelled.prepare_configuration_step(1)
+	var unattached:Node=cancelled.model
+	check(unattached!=null and unattached.get_parent()==null,"scene instantiation can yield before tree attachment")
+	cancelled.queue_free();await process_frame;await process_frame
+	check(not is_instance_valid(unattached),"cancelling before attachment frees the unparented model")
+	var floor_body:=StaticBody3D.new();floor_body.position.y=-.5
+	var shape:=BoxShape3D.new();shape.size=Vector3(100,1,100)
+	var collision:=CollisionShape3D.new();collision.shape=shape;floor_body.add_child(collision);stage.add_child(floor_body)
+	var world:=preload("res://addons/characters/runtime/zombie_world.gd").new();stage.add_child(world)
+	var target:=Node3D.new();stage.add_child(target);target.position=Vector3(40,0,0)
+	world.target=target;world.enabled=true;world.readiness=func(_box:AABB)->bool:return true
+	await physics_frame
+	var actor:CharacterBody3D=world.spawn_at(Vector3.ZERO,false,false,0,1703,true)
+	check(actor!=null and world.residents.is_empty() and not actor.initialized and not actor.visible,"live admission begins hidden without entering the resident pool")
+	if actor!=null:
+		var slices:=0
+		while not actor.initialized and not actor.configuration_failed and slices<64:
+			actor.prepare_configuration_step(750);slices+=1;await process_frame
+		check(actor.initialized and slices>1 and world.residents.is_empty() and not actor.visible and actor.process_mode==Node.PROCESS_MODE_DISABLED,"live configuration spans frames without movement, contacts or early visibility")
+		check(world.finish_spawn(actor,0,1703) and world.residents.has(actor),"fully prepared live actor joins ordinary awareness and residency")
+		check(not world.finish_spawn(actor,0,1703),"publication cannot register the same actor twice")
+	world.clear();world.queue_free();target.queue_free();floor_body.queue_free();await process_frame;await process_frame
 func run()->void:
 	admission_coverage()
 	ProjectSettings.set_setting("physics/3d/default_gravity",0.0)
@@ -88,18 +112,31 @@ func run()->void:
 	check(not staged.visible and not staged.alive and staged.detached_parts.is_empty(),"pending corpse is hidden, dead and creates no disposable debris")
 	check(staged.physical_bones.size()==11 and not staged.physical_bones.has("LeftArm"),"known missing anatomy is removed before hull preparation")
 	var steps:=0;var partial_safe:=true
-	while not staged._ragdoll_started and steps<30:
+	while not staged._ragdoll_started and steps<256:
 		for body:PhysicalBone3D in staged.physical_bones.values():partial_safe=partial_safe and body.collision_layer==0
 		staged.prepare_corpse_step(1);steps+=1
 		if staged._pending_pose_bodies.is_empty():staged.prepare_corpse_step(1500)
-	check(partial_safe and steps==11 and staged._ragdoll_started,"partial preparation never publishes collision and progresses once per body")
+		await process_frame
+	check(partial_safe and steps>11 and steps<256 and staged._ragdoll_started,"tiny-budget preparation makes progress through worker hulls and individual fingers without publishing partial collision")
 	var matched:=true;var actual:=clouds(staged)
 	for bone:String in actual:
 		if actual[bone].size()!=reference[bone].size():matched=false;continue
 		for shape in actual[bone].size():
+			if bone=="Head":
+				# The engine cleaner returns hull vertices, not the render cloud.
+				# Compare independent directional supports; detailed engine contact
+				# rays for rest/attack/morph are in zombie_collision_cloud.gd.
+				for sample in 128:
+					var y:=1.0-2.0*(sample+.5)/128.0;var radius:=sqrt(1-y*y);var angle:=sample*2.399963229728653
+					var direction:=Vector3(radius*cos(angle),y,radius*sin(angle))
+					var a:=-INF;var b:=-INF
+					for point:Vector3 in actual[bone][shape]:a=maxf(a,point.dot(direction))
+					for point:Vector3 in reference[bone][shape]:b=maxf(b,point.dot(direction))
+					matched=matched and absf(a-b)<.0005
+				continue
 			if actual[bone][shape].size()!=reference[bone][shape].size():matched=false;continue
 			for vertex in actual[bone][shape].size():matched=matched and actual[bone][shape][vertex].distance_to(reference[bone][shape][vertex])<0.0001
-	check(matched,"staged collision preserves every sampled hull point and finger compound")
+	check(matched,"staged collision preserves finger compounds and small clouds exactly; cleaned head support matches within 0.5 mm")
 	var same_joints:=true;var restored:=constraints(staged)
 	for bone:String in restored:same_joints=same_joints and restored[bone]==original_constraints[bone]
 	check(same_joints,"saved anatomy retains the same joints on remaining bodies")
@@ -145,7 +182,11 @@ func run()->void:
 	check(detached_safe,"all owned detached segments resume together")
 	living.free();await process_frame
 	var cancelled:=fresh();cancelled.begin_corpse_restore(0);await process_frame
-	cancelled.prepare_corpse_step(1);cancelled.queue_free();await process_frame;await process_frame
+	for attempt in 16:
+		cancelled.prepare_corpse_step(1)
+		if not cancelled._pending_pose_hull.is_empty():break
+	check(not cancelled._pending_pose_hull.is_empty(),"cancellation fixture owns a worker hull task")
+	cancelled.queue_free();await process_frame;await process_frame
 	check(not is_instance_valid(cancelled),"partial admission retires without deferred activation or leaked nodes")
 	var host:=preload("res://addons/player_runtime/corpse_loot.gd").new();stage.add_child(host)
 	var coverage:=Coverage.new();stage.add_child(coverage);host.game=coverage
@@ -159,5 +200,6 @@ func run()->void:
 	host._advance_pending(Vector3(200,0,0))
 	check(host.pending.is_empty() and host.active.is_empty() and distant.is_queued_for_deletion(),"leaving residency cancels pending work without adding an active corpse")
 	await process_frame
+	await staged_live_admission()
 	stage.free();await process_frame
 	print("ZOMBIE_RESIDENCY_LIFECYCLE checks=",checks," failures=",failures);quit(failures)

@@ -16,6 +16,24 @@ var definitions: Array=[]
 var expected_counts: Dictionary={}
 var report: Dictionary={"schema":1,"scope":"Read-only Hidden_Meadow; collision test floor with 1000 native pack objects; normal gameplay, AI, pickups, terrain, water, vegetation, actors and vehicle fleet remain enabled","legs":[]}
 class Observer extends Node:
+	const FrameTrace=preload("res://addons/world_runtime/frame_trace.gd")
+	var diagnostics:=OS.get_cmdline_user_args().has("--cpu-diagnostics")
+	var cpu_rows: Array=[]
+	var frame_stages: Dictionary={}
+	var frame_zombies: Dictionary={}
+	var probe: RefCounted
+	var frame_start:=0
+	var process_start:=0
+	var process_end:=0
+	var draw_start:=0
+	var physics_start:=0
+	var physics_us:=0
+	var physics_steps:=0
+	var tail_start:=0
+	var tail_us:=0
+	var previous_work:=PackedInt64Array()
+	var process_work:=PackedInt64Array()
+	var draw_work:=PackedInt64Array()
 	var host: Node
 	var phase:="setup"
 	var rows: Array=[]
@@ -27,12 +45,53 @@ class Observer extends Node:
 	var stages: Dictionary={}
 	func stage(label: String,ms: float) -> void:
 		if phase=="setup": return
+		if diagnostics: frame_stages[label]=float(frame_stages.get(label,0.0))+ms
 		var key:=phase+"/"+label
 		if not stages.has(key): stages[key]=[]
 		if stages[key].size()<20000: stages[key].append(ms)
 	func _input(_event: InputEvent) -> void: get_viewport().set_input_as_handled()
-	func _ready() -> void: process_priority=1000000; process_physics_priority=1000000
+	func _ready() -> void:
+		process_priority=1000000; process_physics_priority=1000000
+		if diagnostics:
+			probe=ClassDB.instantiate("NativeResourceUsage")
+			get_tree().process_frame.connect(begin_process)
+			get_tree().physics_frame.connect(begin_physics)
+			RenderingServer.frame_pre_draw.connect(begin_draw)
+			RenderingServer.frame_post_draw.connect(end_draw)
+	func work() -> PackedInt64Array: return probe.thread_work()
+	func finish_tail(now: int) -> void:
+		if tail_start>0: tail_us+=now-tail_start;tail_start=0
+	func begin_process() -> void:
+		process_start=Time.get_ticks_usec();finish_tail(process_start);process_work=work()
+	func begin_physics() -> void:
+		physics_start=Time.get_ticks_usec();finish_tail(physics_start)
+	func begin_draw() -> void: draw_start=Time.get_ticks_usec();draw_work=work()
+	func end_draw() -> void:
+		var now:=Time.get_ticks_usec();var current_work:=work()
+		if phase!="setup" and frame_start>0 and cpu_rows.size()<6000:
+			var row:={"phase":phase,"at_us":now,"frame_ms":(now-frame_start)/1000.0,"before_process_ms":(process_start-frame_start)/1000.0,"process_ms":(process_end-process_start)/1000.0,"pre_draw_ms":(draw_start-process_end)/1000.0,"draw_ms":(now-draw_start)/1000.0,"physics_ms":physics_us/1000.0,"physics_tail_ms":tail_us/1000.0,"physics_steps":physics_steps,"stages":frame_stages,"zombie_us":frame_zombies,"render_setup_ms":RenderingServer.get_frame_setup_time_cpu(),"pipeline_draw":Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_DRAW)}
+			FrameTrace.add_work(row,"",previous_work,current_work);FrameTrace.add_work(row,"draw",draw_work,current_work);FrameTrace.add_work(row,"process",process_work,draw_work)
+			row.native={}
+			for key: String in ["blocks","_model_horizon","resident_lights"]:
+				var owner: Node=host.structures.get(key)
+				if is_instance_valid(owner): row.native[key]=owner.process_frame_profile()
+			row.forest_us=host.vegetation.last_process_us;row.ecosystem_us=host.ecosystem.last_process_us;row.cover_us=host.ground_cover.last_process_us
+			row.corpse_us=host.corpse_loot.update_profile.duplicate()
+			if not host.corpse_loot.pending.is_empty():
+				var corpse: Node=host.corpse_loot.pending.zombie
+				row.corpse_init=corpse.initialization_us.duplicate();row.corpse_prepare=corpse.ragdoll_profile.duplicate(true)
+			cpu_rows.append(row)
+		frame_start=now;previous_work=current_work;physics_us=0;physics_steps=0;tail_us=0;frame_stages={};frame_zombies={}
+	func _exit_tree() -> void:
+		if diagnostics:
+			RenderingServer.frame_pre_draw.disconnect(begin_draw)
+			RenderingServer.frame_post_draw.disconnect(end_draw)
 	func _physics_process(_delta: float) -> void:
+		if diagnostics:
+			var now:=Time.get_ticks_usec()
+			if physics_start>0: physics_us+=now-physics_start;physics_steps+=1
+			tail_start=now
+			for key: String in host.zombies.update_phase_us: frame_zombies[key]=int(frame_zombies.get(key,0))+int(host.zombies.update_phase_us[key])
 		if phase=="setup": return
 		physics_ticks+=1
 		if not host.is_physics_processing() or host.loading_active or host.player_hud.inventory_open or host.session_menu.pauses_world() or host.player_life.dead or host.fly or not host.zombies.population_enabled or not host.pickups.physics_enabled or not host.ground_enabled or host.actors.pool==null or not host.world_vehicle.fleet_enabled: invalid_ticks+=1
@@ -44,6 +103,7 @@ class Observer extends Node:
 		if phase!="setup" and previous>0 and rows.size()<20000:
 			rows.append([phase,(now-previous)/1000.0,RenderingServer.viewport_get_measured_render_time_gpu(get_viewport().get_viewport_rid()),RenderingServer.viewport_get_measured_render_time_cpu(get_viewport().get_viewport_rid()),Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000.0,Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME),float(host.object_inspector.stats.get("query_layout_us",0)),host.player.position.x,host.player.position.y,host.player.position.z])
 		previous=now
+		if diagnostics: process_end=Time.get_ticks_usec()
 var observer: Observer
 func _initialize() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -69,7 +129,7 @@ func run() -> void:
 	if not check(DisplayServer.get_name()!="headless" and FileAccess.file_exists(source),"renderer and existing read-only source available"): quit(1); return
 	source_hash=FileAccess.get_sha256(source); report.source_sha256=source_hash
 	report.runtime_sha256={}
-	for path: String in ["res://addons/structures/pack_render_mesh.gd","res://addons/structures/pack_registry.gd","res://addons/player_runtime/object_inspector.gd","res://addons/structures/structures_world.gd"]: report.runtime_sha256[path]=FileAccess.get_sha256(path)
+	for path: String in ["res://addons/structures/pack_render_mesh.gd","res://addons/structures/pack_registry.gd","res://addons/player_runtime/object_inspector.gd","res://addons/structures/structures_world.gd","res://addons/characters/runtime/zombie.gd","res://addons/characters/runtime/zombie_world.gd","res://addons/characters/runtime/zombie_population.gd","res://addons/player_runtime/corpse_loot.gd"]: report.runtime_sha256[path]=FileAccess.get_sha256(path)
 	seed(1703)
 	preload("res://addons/world_runtime/session_options.gd").set_arguments(PackedStringArray(["--world-slot=Hidden_Meadow","--snapshot-readonly","--temporary","--no-derived-cache","--gameplay-construction","--ground-cover","--actors","--vehicle-fleet"]),true)
 	ProjectSettings.set_setting("terraforest/pistol_trial_settings_path","")
@@ -82,6 +142,11 @@ func run() -> void:
 	report.loading_ms=Time.get_ticks_msec()-started
 	if not check(game.startup_complete and not game.loading_active,"ordinary saved world loads without modifying its source"): await finish(); return
 	game.player_view.entry.finish(); game.session_menu.set_open(false)
+	if observer.diagnostics:
+		game.zombies.profiling_enabled=true
+		game.ground_cover.profiling_enabled=true
+		game.vegetation.renderer.profiling_enabled=true
+		game.structures.blocks.set_process_profiling_enabled(true)
 	if game.session_menu.developer: game.session_menu.toggle_developer()
 	game.fly=false; game.needs_floor_spawn=false
 	game.session_menu.developer_hud.hidden_by_user=true; game.session_menu.developer_hud.refresh()
@@ -186,6 +251,7 @@ func finish() -> void:
 	report.checks=checks; report.failures=failures
 	report.columns=["phase","frame_ms","gpu_ms","render_cpu_ms","physics_ms","draw_calls","primitives","last_inspection_us","x","y","z"]
 	report.samples=observer.rows if observer!=null else []
+	if observer!=null and observer.diagnostics: report.cpu_samples=observer.cpu_rows
 	if observer!=null: observer.free()
 	var encoded:=JSON.stringify(report)
 	if encoded.length()>8*1024*1024: print("FAIL trace exceeds declared 8 MiB"); failures+=1

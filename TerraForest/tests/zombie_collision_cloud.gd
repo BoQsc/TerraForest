@@ -82,6 +82,11 @@ func actor_clouds(actor:Node3D,label:String)->void:
 		var cached:Dictionary=actor.anatomy.prepare_collision_cloud(points)
 		print("CLOUD_REVALIDATE ",label," ",part," input=",points.size()," retained=",cached.points.size()," prepare_us=",cached.prepare_us)
 		await contacts(points,cached.points,label+" "+part)
+		if part=="head":
+			var job:=Zombie.CollisionHull.new();job.points=cached.points;job.start()
+			while not job.ready():await process_frame
+			check(job.shape!=null and job.shape.points.size()<cached.points.size(),"worker cleans the complete head hull without simplification: "+label)
+			await contacts(points,job.shape.points,label+" worker-cleaned head")
 		if part=="head" and OS.get_cmdline_user_args().has("--duplicate-cloud-probe"):
 			var distinct:Dictionary={}
 			for point:Vector3 in cached.points:distinct[point]=true

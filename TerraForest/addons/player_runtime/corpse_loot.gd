@@ -6,7 +6,7 @@ var game:Node
 var store:RefCounted
 var active:Dictionary={}
 var pending:Dictionary={}
-const PREPARE_BUDGET_US:=1500
+const PREPARE_BUDGET_US:=750
 var ui=preload("res://addons/player_runtime/storage.gd").new()
 var clock:=0.0
 var update_profile:Dictionary={}
@@ -38,6 +38,13 @@ func _advance_pending(focus:Vector3)->void:
 	var point:Vector3=pending.point
 	if not is_instance_valid(zombie) or active.size()>=12 or point.distance_to(focus)>96.0 or not game._actor_collision_ready(AABB(point-Vector3(2,1,2),Vector3(4,3,4))):
 		_discard_pending();return
+	if not zombie.initialized:
+		if zombie.prepare_configuration_step(PREPARE_BUDGET_US):game.zombies.geometry_template=zombie.anatomy
+		elif zombie.configuration_failed:_discard_pending()
+		return
+	if pending.has("record"):
+		_restore_pose(zombie,pending.record);pending.erase("record")
+		return
 	if zombie.prepare_corpse_step(PREPARE_BUDGET_US):
 		active[int(zombie.get_meta("corpse_identity"))]=zombie
 		zombie.set_simulation_available(true);zombie.show();pending.clear()
@@ -123,38 +130,41 @@ func update(delta:float,focus:Vector3,available:bool)->void:
 		var record:Dictionary=store.corpse(id);var point:Vector3=record.position
 		if record.pose.size()==180:point=Vector3(record.pose[3],record.pose[7],record.pose[11])
 		if point.distance_to(focus)>80.0 or not game._actor_collision_ready(AABB(point-Vector3(2,1,2),Vector3(4,3,4))):continue
-		var zombie=Zombie.new(true,record.missing);zombie.capture_collision_clouds=game.zombies.capture_collision_clouds;zombie.geometry_template=game.zombies.geometry_template;zombie.position=record.position;zombie.rotation.y=record.yaw;zombie.hide();game.zombies.add_child(zombie)
-		if not zombie.initialized:zombie.queue_free();break
-		game.zombies.geometry_template=zombie.anatomy
+		var zombie=Zombie.new(true,record.missing)
+		zombie.defer_configuration=true;zombie.set_simulation_available(false)
+		zombie.capture_collision_clouds=game.zombies.capture_collision_clouds;zombie.geometry_template=game.zombies.geometry_template
+		zombie.position=record.position;zombie.rotation.y=record.yaw;zombie.hide();game.zombies.add_child(zombie)
 		zombie.set_meta("corpse_identity",id)
 		if int(record.resident)>0:zombie.set_meta("world_zombie_id",int(record.resident))
-		if record.pose.size()==180:
-			zombie.animation_player.stop(true);zombie.animation_player.active=false
-			zombie.skeleton.force_update_all_bone_transforms()
-			var original:Array[Transform3D]=[]
-			for bone_index in zombie.skeleton.get_bone_count():original.append(zombie.skeleton.get_bone_global_pose(bone_index))
-			var restored:Dictionary={}
-			var index:=0
-			var bones:Array=[]
-			for part:String in zombie.PARTS:bones.append(zombie.PARTS[part].bone)
-			bones.append("Hips")
-			for bone:String in bones:
-				if index==14 or (record.missing&(1<<index))==0:
-					var offset:=index*12;var values:PackedFloat32Array=record.pose
-					var pose:=Transform3D(Basis(Vector3(values[offset],values[offset+4],values[offset+8]),Vector3(values[offset+1],values[offset+5],values[offset+9]),Vector3(values[offset+2],values[offset+6],values[offset+10])),Vector3(values[offset+3],values[offset+7],values[offset+11]))
-					var body:PhysicalBone3D=zombie.physical_bones[bone]
-					restored[zombie.skeleton.find_bone(bone)]=zombie.skeleton.global_transform.affine_inverse()*pose*body.body_offset.affine_inverse()
-				index+=1
-			var poses:Array[Transform3D]=original.duplicate()
-			for bone_index in poses.size():
-				var ancestor:int=bone_index
-				while ancestor>=0 and not restored.has(ancestor):ancestor=zombie.skeleton.get_bone_parent(ancestor)
-				if ancestor>=0:poses[bone_index]=restored[ancestor]*original[ancestor].affine_inverse()*original[bone_index]
-			for bone_index in poses.size():
-				var parent:int=zombie.skeleton.get_bone_parent(bone_index)
-				zombie.skeleton.set_bone_pose(bone_index,poses[bone_index] if parent<0 else poses[parent].affine_inverse()*poses[bone_index])
-			zombie.skeleton.force_update_all_bone_transforms()
-		zombie.begin_corpse_restore(record.missing)
-		pending={"zombie":zombie,"point":point}
+		pending={"zombie":zombie,"point":point,"record":record}
 		break
 	if profiling:update_profile.restore_us=Time.get_ticks_usec()-restore_start;update_profile.update_us=Time.get_ticks_usec()-begin
+
+func _restore_pose(zombie:Node3D,record:Dictionary)->void:
+	if record.pose.size()==180:
+		zombie.animation_player.stop(true);zombie.animation_player.active=false
+		zombie.skeleton.force_update_all_bone_transforms()
+		var original:Array[Transform3D]=[]
+		for bone_index in zombie.skeleton.get_bone_count():original.append(zombie.skeleton.get_bone_global_pose(bone_index))
+		var restored:Dictionary={}
+		var index:=0
+		var bones:Array=[]
+		for part:String in zombie.PARTS:bones.append(zombie.PARTS[part].bone)
+		bones.append("Hips")
+		for bone:String in bones:
+			if index==14 or (record.missing&(1<<index))==0:
+				var offset:=index*12;var values:PackedFloat32Array=record.pose
+				var pose:=Transform3D(Basis(Vector3(values[offset],values[offset+4],values[offset+8]),Vector3(values[offset+1],values[offset+5],values[offset+9]),Vector3(values[offset+2],values[offset+6],values[offset+10])),Vector3(values[offset+3],values[offset+7],values[offset+11]))
+				var body:PhysicalBone3D=zombie.physical_bones[bone]
+				restored[zombie.skeleton.find_bone(bone)]=zombie.skeleton.global_transform.affine_inverse()*pose*body.body_offset.affine_inverse()
+			index+=1
+		var poses:Array[Transform3D]=original.duplicate()
+		for bone_index in poses.size():
+			var ancestor:int=bone_index
+			while ancestor>=0 and not restored.has(ancestor):ancestor=zombie.skeleton.get_bone_parent(ancestor)
+			if ancestor>=0:poses[bone_index]=restored[ancestor]*original[ancestor].affine_inverse()*original[bone_index]
+		for bone_index in poses.size():
+			var parent:int=zombie.skeleton.get_bone_parent(bone_index)
+			zombie.skeleton.set_bone_pose(bone_index,poses[bone_index] if parent<0 else poses[parent].affine_inverse()*poses[bone_index])
+		zombie.skeleton.force_update_all_bone_transforms()
+	zombie.begin_corpse_restore(record.missing)

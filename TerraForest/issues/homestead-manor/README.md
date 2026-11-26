@@ -147,6 +147,14 @@ Code: [mansion author](../../addons/structures/mansion/author.gd),
 
 ## Reproduce / history
 
+The CPU follow-up stages character/corpse admission and prepares large saved
+head hulls on a worker. Lifecycle, collision-contact and rest checks pass;
+the uncontended replay `20261126T142559219408Z` passes all 36 gameplay assertions
+but fails all four 60 FPS gates. One corpse-walk torso-speed failure reproduces
+exactly on the committed baseline and remains open. Full evidence and the next
+draw-submission work are in the linked rendering report; this is not a stable
+60 FPS or visual-approval claim.
+
 From `TerraForest`, use the admitted runner:
 
 ```text

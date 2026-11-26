@@ -456,7 +456,7 @@ func supported_resident_point(point:Vector3,standing:bool)->Vector3:
 		if not space.intersect_shape(query,1).is_empty():return Vector3.INF
 	return point
 
-func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false,persistent_id:int=0,world_seed:int=0) -> CharacterBody3D:
+func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false,persistent_id:int=0,world_seed:int=0,deferred:bool=false) -> CharacterBody3D:
 	if not enabled or not point.is_finite() or residents.size() >= residency_limit or not is_instance_valid(target):
 		return null
 	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
@@ -465,6 +465,8 @@ func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false,pers
 	if not supported.is_finite():
 		return null
 	var zombie := Zombie.new()
+	zombie.defer_configuration=deferred
+	if deferred:zombie.hide();zombie.set_simulation_available(false)
 	if profiling_enabled:update_phase_us["admission instance"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	zombie.geometry_template=geometry_template
 	zombie.position = to_local(point if restoring_sleep else supported)
@@ -479,8 +481,13 @@ func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false,pers
 		navigator.set_exclusions(excluded);_navigation_exclusions=excluded
 	add_child(zombie)
 	if profiling_enabled:update_phase_us["admission attach"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
-	if not zombie.initialized:
-		zombie.queue_free();return null
+	if deferred:return zombie
+	if not finish_spawn(zombie,persistent_id,world_seed):zombie.queue_free();return null
+	return zombie
+
+
+func finish_spawn(zombie:CharacterBody3D,persistent_id:int=0,world_seed:int=0)->bool:
+	if not zombie.initialized or residents.size()>=residency_limit or zombie in residents:return false
 	geometry_template=zombie.anatomy
 	residents.append(zombie)
 	if is_instance_valid(corpse_host):zombie.died.connect(func():corpse_host.retain(zombie))
@@ -495,7 +502,7 @@ func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false,pers
 			awareness.provoke(id,target.global_position)
 			if trace_responses:
 				_response_trace_left=6.;_response_trace_clock=0.;_response_trace_rows.clear())
-	return zombie
+	return true
 
 func _record_response_trace(available:bool)->void:
 	# One bounded local receipt after a real hit makes a further standing report

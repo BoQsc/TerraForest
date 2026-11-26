@@ -1,6 +1,12 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 const Zombie=preload("res://addons/characters/runtime/zombie.gd")
+class CloudMesh extends Mesh:
+	var points:PackedVector3Array
+	func _get_surface_count()->int:return 1
+	func _surface_get_arrays(_index:int)->Array:
+		var arrays:Array=[];arrays.resize(Mesh.ARRAY_MAX);arrays[Mesh.ARRAY_VERTEX]=points;return arrays
+	func _get_aabb()->AABB:return AABB()
 class ObservedZombie extends Zombie:
 	var debris_builds:=0
 	var sever_us:=0
@@ -21,8 +27,25 @@ func run()->void:
 		for part:String in Zombie.PARTS:
 			if part in parts:mask|=1<<index
 			index+=1
-		var actor:=ObservedZombie.new(true,mask);actor.process_mode=Node.PROCESS_MODE_DISABLED;root.add_child(actor)
+		var actor:=ObservedZombie.new(true,mask);actor.defer_configuration=true;actor.set_simulation_available(false);actor.hide();root.add_child(actor)
+		check(not actor.initialized,"staged admission does not initialize in tree attachment")
+		var slices:=0
+		while not actor.initialized and not actor.configuration_failed:
+			actor.prepare_configuration_step(750);slices+=1;await process_frame
+		check(slices>1 and not actor.visible and actor.process_mode==Node.PROCESS_MODE_DISABLED,"configuration yields while actor stays hidden and unavailable")
 		check(actor.initialized,"actor initialized")
+		if OS.get_cmdline_user_args().has("--clean-hull-probe"):
+			var points:PackedVector3Array=actor.anatomy.sample_vertices("head",Transform3D.IDENTITY)
+			var cloud:Dictionary=actor.anatomy.prepare_collision_cloud(points)
+			var mesh:=CloudMesh.new();mesh.points=cloud.points
+			var clean_begin:=Time.get_ticks_usec();var clean:=mesh.create_convex_shape(true,false)
+			var clean_us:=Time.get_ticks_usec()-clean_begin
+			var installs:Array=[]
+			for candidate:bool in [false,true,false,true]:
+				var shape:=ConvexPolygonShape3D.new();shape.points=clean.points if candidate else cloud.points;shape.margin=.003
+				var body:=StaticBody3D.new();root.add_child(body);var collision:=CollisionShape3D.new();collision.shape=shape
+				var install_begin:=Time.get_ticks_usec();body.add_child(collision);installs.append({"clean":candidate,"us":Time.get_ticks_usec()-install_begin});body.free()
+			print("CLEAN_HULL_PROBE ",JSON.stringify({"original":cloud.points.size(),"clean":clean.points.size(),"clean_us":clean_us,"installs":installs}))
 		var began:=Time.get_ticks_usec()
 		actor.begin_corpse_restore(mask);await process_frame
 		while not actor.prepare_corpse_step(1500):await process_frame
@@ -36,6 +59,7 @@ func run()->void:
 		check(actor.debris_builds==0,"restoration must not build discarded debris")
 		print("CORPSE_RESTORE_COST parts=",parts," debris_builds=",actor.debris_builds," sever_us=",actor.sever_us," elapsed_with_frame_wait_us=",elapsed)
 		print("COLLISION_PROFILE ",JSON.stringify(actor.ragdoll_profile))
+		print("INITIALIZATION_PROFILE ",JSON.stringify(actor.initialization_us))
 		actor.queue_free();await process_frame;await process_frame
 	print("CORPSE_RESTORE_COST failures=",failures)
 	quit(0 if failures==0 else 1)

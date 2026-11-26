@@ -17,6 +17,9 @@ var began := 0
 var failure := ""
 var initial_complete := false
 var admission_trace:Array[Dictionary]=[]
+# Original cooperative admission: SPDX-License-Identifier: 0BSD.
+var pending:Dictionary={}
+const PREPARE_BUDGET_US:=750
 
 func prepare(owner_game: Node, owner_host: Node3D, persistence: RefCounted) -> bool:
 	game = owner_game; host = owner_host
@@ -25,6 +28,7 @@ func prepare(owner_game: Node, owner_host: Node3D, persistence: RefCounted) -> b
 	return persistence.register_component("zombie_population_v1", capture, restore, store, PackedByteArray())
 
 func reset_stream() -> void:
+	_discard_pending()
 	token -= 1; waiting = false; sampled = false
 	queue.clear(); sampling.clear(); cursor = 0; examined = 0; admitted = 0
 	last_focus = Vector3.INF; initial_complete = false; failure = ""
@@ -52,7 +56,7 @@ func status() -> Dictionary:
 	return {"world":store.statistics(), "active":host.residents.size(), "sample_pending":waiting, "candidates":queue.size(), "examined":examined, "admitted":admitted, "ready":initial_complete, "failure":failure}
 
 func busy() -> bool:
-	return host.population_enabled and last_focus.is_finite() and (not sampled or cursor < queue.size())
+	return host.population_enabled and last_focus.is_finite() and (not sampled or cursor < queue.size() or not pending.is_empty())
 
 func advance(focus: Vector3, during_loading: bool) -> bool:
 	if not host.enabled or not host.population_enabled:return true
@@ -63,6 +67,7 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		failure = "Zombie population does not match this world seed"
 		return false
 	if not last_focus.is_finite() or focus.distance_to(last_focus) >= 16.0:
+		_discard_pending()
 		for zombie in host.residents:
 			if is_instance_valid(zombie):sync(zombie)
 		token -= 1; waiting = false; sampled = false
@@ -74,6 +79,7 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		queue=queue.filter(func(record:Dictionary):return record.anchor!=0)+queue.filter(func(record:Dictionary):return record.anchor==0)
 		cursor = 0; examined = 0; admitted = 0; began = Time.get_ticks_msec()
 		game.terrain.changed_since_save = true
+	if not pending.is_empty():return _advance_pending(focus,during_loading)
 	if not sampled:
 		if waiting:return false
 		sampling = queue.duplicate(true)
@@ -130,10 +136,44 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		failure = "Zombie residency timed out waiting for terrain/object collision"
 		return false
 	cursor += 1; examined += 1
-	var zombie: CharacterBody3D = host.spawn_at(point,not record.sleep.is_empty(),authored,record.id,game.terrain.backend.world_seed)
+	var zombie: CharacterBody3D = host.spawn_at(point,not record.sleep.is_empty(),authored,record.id,game.terrain.backend.world_seed,not during_loading)
+	if zombie==null:return false
+	if not during_loading:
+		pending={"zombie":zombie,"record":record,"point":point}
+		return false
+	return _finish_admission(zombie,record,during_loading)
+
+func _discard_pending()->void:
+	if not pending.is_empty() and is_instance_valid(pending.zombie):pending.zombie.queue_free()
+	pending.clear()
+
+func _advance_pending(focus:Vector3,during_loading:bool)->bool:
+	var zombie:CharacterBody3D=pending.zombie
+	var record:Dictionary=pending.record
+	var point:Vector3=pending.point
+	var authored:bool=record.anchor!=0
+	var required_bounds:AABB=host.admission_bounds(point,not record.sleep.is_empty(),authored)
+	if point.distance_to(focus)>94.0 or host.residents.size()>=host.residency_limit or not host.readiness.call(required_bounds):
+		_discard_pending();return false
+	if not zombie.prepare_configuration_step(PREPARE_BUDGET_US):
+		if zombie.configuration_failed:_discard_pending()
+		return false
+	# Preparation never grants visibility or movement. Recheck the original
+	# admission policy after yielding before publishing this resident.
+	var offset:=point-focus;offset.y=0
+	var visible:bool=host.spawn_visible.is_valid() and host.spawn_visible.call(point+Vector3.UP)
+	if not during_loading and ((authored and (offset.length()<8.0 or visible) and not _occluded(point)) or (not authored and (offset.length()<40.0 or visible))):
+		_discard_pending();return false
+	var supported:Vector3=host.supported_resident_point(point,record.sleep.is_empty()) if not record.sleep.is_empty() or authored else host.supported_point(point)
+	if not supported.is_finite() or not host.finish_spawn(zombie,record.id,game.terrain.backend.world_seed):
+		_discard_pending();return false
+	if record.sleep.is_empty():zombie.global_position=supported
+	pending.clear()
+	return _finish_admission(zombie,record,during_loading)
+
+func _finish_admission(zombie:CharacterBody3D,record:Dictionary,during_loading:bool)->bool:
 	if host.profiling_enabled and admission_trace.size()<512:
-		admission_trace.append({"id":record.id,"point":point,"loading":during_loading,"authored":authored,"sleeping":not record.sleep.is_empty(),"admitted":zombie!=null,"full_coverage":host.readiness.call(required_bounds),"initialization_us":zombie.initialization_us.duplicate() if zombie!=null else {}})
-	if zombie == null:return false
+		admission_trace.append({"id":record.id,"point":zombie.global_position,"loading":during_loading,"authored":record.anchor!=0,"sleeping":not record.sleep.is_empty(),"admitted":true,"full_coverage":host.readiness.call(host.admission_bounds(zombie.global_position,not record.sleep.is_empty(),record.anchor!=0)),"initialization_us":zombie.initialization_us.duplicate()})
 	zombie.global_rotation.y = record.yaw
 	var descriptor:Dictionary=store.encounter(record.id)
 	# Authored sleeper identity survives after its transient waking bytes are cleared.
@@ -153,6 +193,7 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 	zombie.died.connect(func():sync(zombie);last_focus=Vector3.INF)
 	zombie.set_simulation_available(not during_loading)
 	zombie.set_behavior(not during_loading)
+	zombie.show()
 	sync(zombie); admitted += 1
 	return false
 

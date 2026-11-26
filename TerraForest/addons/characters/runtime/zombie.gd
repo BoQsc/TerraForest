@@ -103,6 +103,29 @@ var _staged_corpse:=false
 var _saved_pose_admission:=false
 var _saved_missing_mask:=0
 var _pending_pose_bodies:Array=[]
+# Original asynchronous hull preparation: SPDX-License-Identifier: 0BSD.
+# This CPU-only Mesh exposes an immutable vertex packet to the engine's hull
+# cleaner. It never creates a render surface or reads a scene node on a worker.
+class CollisionHull extends Mesh:
+	var points:PackedVector3Array
+	var shape:ConvexPolygonShape3D
+	var task:=-1
+	var elapsed_us:=0
+	func _get_surface_count()->int:return 1
+	func _surface_get_arrays(_index:int)->Array:
+		var arrays:Array=[];arrays.resize(Mesh.ARRAY_MAX);arrays[Mesh.ARRAY_VERTEX]=points;return arrays
+	func _get_aabb()->AABB:return AABB()
+	func start()->void:task=WorkerThreadPool.add_task(build,false,"Corpse collision hull")
+	func build()->void:
+		var began:=Time.get_ticks_usec();shape=create_convex_shape(true,false);elapsed_us=Time.get_ticks_usec()-began
+	func ready()->bool:
+		if task<0:return true
+		if not WorkerThreadPool.is_task_completed(task):return false
+		WorkerThreadPool.wait_for_task_completion(task);task=-1;return true
+	func finish()->void:
+		if task>=0:WorkerThreadPool.wait_for_task_completion(task);task=-1
+var _pending_pose_hull:Dictionary={}
+var _pending_hand:Dictionary={}
 var collision_exemptions: Array[Dictionary] = []
 var skeleton: Skeleton3D
 var animation_player: AnimationPlayer
@@ -150,6 +173,11 @@ var _contact_standoff := INF
 var _tracked_target_id := 0
 var _animation_cursor_valid := false
 var initialization_us:Dictionary={}
+# Original staged admission glue: SPDX-License-Identifier: 0BSD.
+var defer_configuration:=false
+var configuration_failed:=false
+var _configuration_stage:=0
+var _configuration_bone:=-1
 var render_bake_surface_reads:=0
 var sleeper:RefCounted
 
@@ -168,28 +196,64 @@ func begin_sleep(pose:int,record:PackedByteArray=PackedByteArray())->bool:
 
 
 func _ready() -> void:
-	configure(model_scene)
+	if not defer_configuration:configure(model_scene)
 
 
 func configure(scene: PackedScene = null) -> void:
-	if initialized:
-		return
-	var measured_begin:=Time.get_ticks_usec()
+	if initialized or configuration_failed:return
+	if scene!=null:model_scene=scene
+	prepare_configuration_step(1000000000)
+
+
+func prepare_configuration_step(budget_us:int) -> bool:
+	# The owner keeps a staged actor hidden and unavailable until all phases
+	# finish. Ordinary synchronous callers retain the same configure contract.
+	if initialized or configuration_failed:return initialized
+	var began:=Time.get_ticks_usec()
+	var operations:=0
+	while not initialized and not configuration_failed:
+		if operations>0 and budget_us<1000000000 and _configuration_stage in [1,7]:break
+		var phase:=Time.get_ticks_usec()
+		var label:=""
+		var ok:=true
+		match _configuration_stage:
+			0:label="scene instantiate";ok=_configuration_scene()
+			1:label="scene attach";ok=_configuration_attach()
+			2:label="parts";ok=_configuration_parts()
+			3:label="anatomy";ok=_configuration_anatomy()
+			4:label="shape fit";ok=_configuration_shapes()
+			5:label="render bake cache";ok=_configuration_bake()
+			6:
+				label="ragdoll"
+				if not _build_ragdoll_step():_configuration_stage-=1
+			7:label="animation";ok=_configuration_animation()
+		initialization_us[label]=int(initialization_us.get(label,0))+Time.get_ticks_usec()-phase
+		configuration_failed=not ok
+		_configuration_stage+=1
+		operations+=1
+		if Time.get_ticks_usec()-began>=maxi(1,budget_us):break
+	initialization_us["scene"]=int(initialization_us.get("scene instantiate",0))+int(initialization_us.get("scene attach",0))
+	initialization_us["max slice"]=maxi(int(initialization_us.get("max slice",0)),Time.get_ticks_usec()-began)
+	return initialized
+
+
+func _configuration_scene() -> bool:
+	var scene:=model_scene
 	if scene == null:
 		# The built-in immutable resource joins the threaded startup dependency
 		# preparation. Alternate authored models retain their explicit source path.
 		scene = DEFAULT_MODEL if model_path==MODEL_PATH else load(model_path) as PackedScene
 	if scene == null:
 		push_error("Zombie model was not found: " + model_path)
-		return
+		return false
 	model_scene = scene
-	initialization_us["scene resource"]=Time.get_ticks_usec()-measured_begin
-	var scene_begin:=Time.get_ticks_usec()
 	model = scene.instantiate() as Node3D
-	initialization_us["scene instantiate"]=Time.get_ticks_usec()-scene_begin;scene_begin=Time.get_ticks_usec()
+	return model!=null
+
+
+func _configuration_attach() -> bool:
 	model.name = "Model"
 	add_child(model)
-	initialization_us["scene attach"]=Time.get_ticks_usec()-scene_begin
 	skeleton = _find_type(model, "Skeleton3D") as Skeleton3D
 	animation_player = _find_type(model, "AnimationPlayer") as AnimationPlayer
 	if animation_player!=null and revision_id=="r4":
@@ -197,8 +261,11 @@ func configure(scene: PackedScene = null) -> void:
 		animation_player.add_animation_library("alert_walk",ALERT_WALK)
 	if skeleton == null:
 		push_error("Zombie model requires a Skeleton3D.")
-		return
-	initialization_us["scene"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
+		return false
+	return true
+
+
+func _configuration_parts() -> bool:
 	for part: String in PARTS:
 		var spec: Dictionary = PARTS[part]
 		limb_health[part] = float(spec.health)
@@ -228,41 +295,52 @@ func configure(scene: PackedScene = null) -> void:
 	capsule.shape = shape
 	capsule.position.y = shape.height * 0.5
 	add_child(capsule)
-	initialization_us["parts"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
+	return true
+
+
+func _configuration_anatomy() -> bool:
 	var shared_geometry:RefCounted=geometry_template
 	var prepared_readback:=0
-	if geometry_source!=null and geometry_source.source_model==scene:
+	if geometry_source!=null and geometry_source.source_model==model_scene:
 		shared_geometry=geometry_source.prepare(skeleton,part_meshes,PARTS)
 		prepared_readback=int(geometry_source.last_readback_us)
 	anatomy=ClassDB.instantiate("NativeZombieAnatomy")
 	if anatomy==null or not anatomy.configure(PARTS) or not anatomy.set_hit_meshes(skeleton,part_meshes,shared_geometry):
-		push_error("Zombie native anatomy initialization failed");return
+		push_error("Zombie native anatomy initialization failed");return false
 	geometry_template=null
-	initialization_us["anatomy"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	# Nested timing: included in anatomy, not additional work to sum into it.
 	initialization_us["anatomy readback"]=anatomy.geometry_stats().readback_us+prepared_readback
+	return true
+
+
+func _configuration_shapes() -> bool:
 	_fit_collision_shapes()
 	if _shape_cache.size()!=15:
-		push_error("Zombie collision geometry initialization failed");return
-	initialization_us["shape fit"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
+		push_error("Zombie collision geometry initialization failed");return false
+	return true
+
+
+func _configuration_bake() -> bool:
 	var bake_reads_before:=_bake_surface_reads
 	for source:MeshInstance3D in part_meshes.values():_bake_source(source.mesh)
 	for pair:Dictionary in caps.values():
 		for source:MeshInstance3D in pair.values():_bake_source(source.mesh)
 	render_bake_surface_reads=_bake_surface_reads-bake_reads_before
-	initialization_us["render bake cache"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
-	_build_ragdoll()
+	return true
+
+
+func _configuration_animation() -> bool:
 	hit_reaction=ClassDB.instantiate("NativeZombieHitReaction");skeleton.add_child(hit_reaction)
-	if not hit_reaction.configure(PARTS):push_error("Zombie impact modifier initialization failed");return
-	initialization_us["ragdoll"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
+	if not hit_reaction.configure(PARTS):push_error("Zombie impact modifier initialization failed");return false
 	initialized = true
 	_load_behavior_contract()
 	_model_origin = model.position
 	_play_animation("Zombie_Idle")
 	if animation_player != null:
 		animation_player.advance(0.0)
-	initialization_us["animation"]=Time.get_ticks_usec()-measured_begin
 	if OS.is_stdout_verbose():print("Zombie ready: ", part_meshes.size(), " native damage regions, ", physical_bones.size(), " physical bones.")
+
+	return true
 
 
 func _find_type(node: Node, type_name: String) -> Node:
@@ -325,7 +403,7 @@ func _fit_collision_shapes() -> void:
 	_shape_cache=anatomy.fit_collision_shapes()
 
 
-func _pose_shape_spec(part: String, pelvis: bool = false) -> Dictionary:
+func _pose_shape_spec(part: String, pelvis: bool = false, deferred_hull:bool=false) -> Dictionary:
 	var measured:=Time.get_ticks_usec()
 	var key := "pelvis" if pelvis else part
 	if not _shape_cache.has(key) or not part_meshes.has(part):
@@ -346,6 +424,11 @@ func _pose_shape_spec(part: String, pelvis: bool = false) -> Dictionary:
 	var cloud:Dictionary=anatomy.prepare_collision_cloud(points)
 	points=cloud.points
 	var prepared:=Time.get_ticks_usec()
+	if deferred_hull and points.size()>=1024:
+		var job:=CollisionHull.new();job.points=points;job.start()
+		info.hull_job=job
+		info.profile={"sample_us":sampled-measured,"cloud_us":prepared-sampled,"cloud_mode":"spatial_unique_clean","input_points":cloud.input_points,"duplicate_points":cloud.duplicate_points,"resource_us":0,"points":points.size()}
+		return info
 	var shape := ConvexPolygonShape3D.new()
 	shape.points = points
 	shape.margin = 0.003
@@ -400,33 +483,68 @@ func _install_hand_compound(body: PhysicsBody3D, part: String, to_local: Transfo
 		var points: PackedVector3Array = groups[group]
 		if points.size() < 4:
 			continue
-		measured=Time.get_ticks_usec()
-		var shape := ConvexPolygonShape3D.new()
-		shape.points = points
-		shape.margin = 0.002
-		if ProjectSettings.get_setting("physics/3d/physics_engine","")!="Jolt Physics":shape.custom_solver_bias = CONTACT_RECOVERY_BIAS
-		profile.resource_us+=Time.get_ticks_usec()-measured;profile.points+=points.size();measured=Time.get_ticks_usec()
-		var collision := CollisionShape3D.new()
-		collision.name = "Grip_" + group
-		collision.shape = shape
-		body.add_child(collision)
-		profile.install_us+=Time.get_ticks_usec()-measured
+		_install_hand_segment(body,group,points,profile)
 		installed.append(group)
 	body.set_meta("hand_proxy_groups", installed)
 	return profile
 
 
+func _install_hand_segment(body:PhysicsBody3D,group:String,points:PackedVector3Array,profile:Dictionary)->void:
+	var measured:=Time.get_ticks_usec()
+	var shape:=ConvexPolygonShape3D.new();shape.points=points;shape.margin=.002
+	if ProjectSettings.get_setting("physics/3d/physics_engine","")!="Jolt Physics":shape.custom_solver_bias=CONTACT_RECOVERY_BIAS
+	profile.resource_us+=Time.get_ticks_usec()-measured;profile.points+=points.size();measured=Time.get_ticks_usec()
+	var collision:=CollisionShape3D.new();collision.name="Grip_"+group;collision.shape=shape;body.add_child(collision)
+	profile.install_us+=Time.get_ticks_usec()-measured
+
+
+func _prepare_hand_step(bone:String,budget_us:int)->bool:
+	var began:=Time.get_ticks_usec()
+	var body:PhysicalBone3D=physical_bones[bone]
+	if _pending_hand.is_empty():
+		var part:String=body.get_meta("limb_key")
+		var body_world:=skeleton.global_transform*_current_bone_pose(body.get_bone_id())*body.body_offset
+		var groups:Dictionary=anatomy.hand_groups(part,body_world.affine_inverse())
+		var profile:Dictionary={"sample_us":Time.get_ticks_usec()-began,"resource_us":0,"install_us":0,"points":0,"groups":groups.size(),"total_us":0}
+		for child in body.get_children():
+			if child is CollisionShape3D:body.remove_child(child);child.queue_free()
+		_pending_hand={"groups":groups,"remaining":groups.keys(),"installed":[],"profile":profile}
+	while not _pending_hand.remaining.is_empty():
+		var group:String=_pending_hand.remaining.pop_front()
+		var points:PackedVector3Array=_pending_hand.groups[group]
+		if points.size()<4:continue
+		_install_hand_segment(body,group,points,_pending_hand.profile)
+		_pending_hand.installed.append(group)
+		if Time.get_ticks_usec()-began>=maxi(1,budget_us):break
+	_pending_hand.profile.total_us+=Time.get_ticks_usec()-began
+	if not _pending_hand.remaining.is_empty():return false
+	body.set_meta("hand_proxy_groups",Array(_pending_hand.installed,TYPE_STRING,&"",null))
+	if not ragdoll_profile.has("shapes"):ragdoll_profile.shapes={}
+	ragdoll_profile.shapes[bone]=_pending_hand.profile;_pending_hand.clear()
+	return true
+
+
 func _build_ragdoll() -> void:
-	simulator = PhysicalBoneSimulator3D.new()
-	simulator.name = "RagdollSimulator"
-	skeleton.add_child(simulator)
-	simulator.active = false
-	_add_physical_bone("Hips", "torso", true)
-	var part_index:=0
-	for part: String in PARTS:
+	while not _build_ragdoll_step():pass
+
+
+func _build_ragdoll_step() -> bool:
+	if _configuration_bone<0:
+		simulator=PhysicalBoneSimulator3D.new();simulator.name="RagdollSimulator"
+		skeleton.add_child(simulator);simulator.active=false
+		_configuration_bone=0
+		return false
+	if _configuration_bone==0:
+		_add_physical_bone("Hips","torso",true)
+		_configuration_bone+=1
+		return false
+	if _configuration_bone<=PARTS.size():
+		var part_index:=_configuration_bone-1
+		var part:String=PARTS.keys()[part_index]
 		if part=="torso" or (_saved_missing_mask&(1<<part_index))==0:
-			_add_physical_bone(String(PARTS[part].bone), part, false)
-		part_index+=1
+			_add_physical_bone(String(PARTS[part].bone),part,false)
+		_configuration_bone+=1
+		return false
 	# Neighboring proxies meet or overlap at a shared joint. Every other pair
 	# remains collidable, including opposite limbs and hands against the torso.
 	for bone_name: String in physical_bones:
@@ -438,6 +556,8 @@ func _build_ragdoll() -> void:
 				_exempt_joint_neighbors(physical, physical_bones[ancestor_name])
 				break
 			ancestor = skeleton.get_bone_parent(ancestor)
+
+	return true
 
 
 func _exempt_joint_neighbors(body_a: PhysicsBody3D, body_b: PhysicsBody3D) -> void:
@@ -1798,8 +1918,33 @@ func prepare_corpse_step(budget_us:int)->bool:
 	if ragdoll_profile.is_empty():return false # Deferred death-pose capture has not run yet.
 	var began:=Time.get_ticks_usec()
 	while not _pending_pose_bodies.is_empty():
-		var bone:String=_pending_pose_bodies.pop_front()
-		if physical_bones.has(bone):_fit_pose_body(bone)
+		var bone:String=_pending_pose_bodies.front()
+		if physical_bones.has(bone):
+			var body:PhysicalBone3D=physical_bones[bone]
+			var part:String=body.get_meta("limb_key")
+			if _r4_enabled and part.begins_with("hand"):
+				if not _prepare_hand_step(bone,maxi(1,budget_us-(Time.get_ticks_usec()-began))):break
+			else:
+				var info:Dictionary
+				if _pending_pose_hull.is_empty():
+					info=_pose_shape_spec(part,bone=="Hips",true)
+					if info.has("hull_job"):_pending_pose_hull=info;break
+				else:
+					info=_pending_pose_hull
+					var job:CollisionHull=info.hull_job
+					if not job.ready():break
+					info.shape=job.shape;info.shape.margin=.003
+					if ProjectSettings.get_setting("physics/3d/physics_engine","")!="Jolt Physics":info.shape.custom_solver_bias=CONTACT_RECOVERY_BIAS
+					info.profile.clean_worker_us=job.elapsed_us;info.profile.points=job.shape.points.size()
+					_pending_pose_hull={}
+				var installed:=Time.get_ticks_usec()
+				for child in body.get_children():
+					if child is CollisionShape3D:child.shape=info.shape
+				info.profile.install_us=Time.get_ticks_usec()-installed
+				info.profile.total_us=int(info.profile.sample_us)+int(info.profile.cloud_us)+int(info.profile.resource_us)+int(info.profile.install_us)
+				if not ragdoll_profile.has("shapes"):ragdoll_profile.shapes={}
+				ragdoll_profile.shapes[bone]=info.profile
+		_pending_pose_bodies.pop_front()
 		# One hull installation is atomic in the engine. Stop after it consumes
 		# the slice; activation gets its own slice when the last hull overruns.
 		if Time.get_ticks_usec()-began>=maxi(budget_us,1):break
@@ -2075,6 +2220,8 @@ func _bake_cpu(source:MeshInstance3D,to_local:Transform3D)->ArrayMesh:
 	return result
 
 func _exit_tree() -> void:
+	if not _pending_pose_hull.is_empty():_pending_pose_hull.hull_job.finish();_pending_pose_hull.clear()
+	if is_instance_valid(model) and model.get_parent()==null:model.free()
 	for body in detached_parts:
 		if is_instance_valid(body) and not body.is_queued_for_deletion():
 			body.queue_free()
