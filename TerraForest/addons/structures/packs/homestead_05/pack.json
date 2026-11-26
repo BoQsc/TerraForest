@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "terraforest.homestead_05",
+  "name": "Homestead 05",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {"id":"refrigerator","item":760,"name":"Homestead compact refrigerator","recipe":[104,16,227,4,226,3],"salvage":[104,8,226,1],"health":180,"material":"other"},
+    {"id":"kettle","item":761,"name":"Homestead kettle","recipe":[104,3,203,2,102,1],"salvage":[104,1,203,1],"health":65,"material":"other"},
+    {"id":"cooking_pot","item":762,"name":"Homestead cooking pot and lid","recipe":[104,4,203,2],"salvage":[104,2,203,1],"health":75,"material":"other"},
+    {"id":"frying_pan","item":763,"name":"Homestead frying pan","recipe":[104,3,102,1],"salvage":[104,1],"health":70,"material":"other"},
+    {"id":"cutting_board","item":764,"name":"Homestead cutting board and knife","recipe":[102,2,104,1],"salvage":[102,1],"health":45,"material":"wood"},
+    {"id":"utensil_rail","item":765,"name":"Homestead wall utensil rail","mount":"wall","recipe":[104,4,102,1,227,2],"salvage":[104,2],"health":65,"material":"other"},
+    {"id":"plate_rack","item":766,"name":"Homestead wall plate rack","mount":"wall","recipe":[102,5,201,3,227,2],"salvage":[102,2,201,1],"health":70,"material":"wood"},
+    {"id":"preserve_jars","item":767,"name":"Homestead preserve jar cluster","recipe":[201,3,104,1,204,2],"salvage":[201,1],"health":30,"material":"other"},
+    {"id":"bread_bin","item":768,"name":"Homestead bread bin","recipe":[102,4,104,1],"salvage":[102,2],"health":65,"material":"wood"},
+    {"id":"grain_sack","item":769,"name":"Homestead grain sack","recipe":[225,4,204,5],"salvage":[225,2,204,2],"health":40,"material":"other"}
+  ]
+}

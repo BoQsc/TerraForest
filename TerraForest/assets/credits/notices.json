@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "homestead_05",
+      "title": "Homestead 05 kitchen and pantry pack",
+      "license": "CC0 1.0 assets / 0BSD code",
+      "source": "addons/structures/packs/homestead_05/ASSET_LICENSE.md",
+      "summary": "Ten original kitchen furnishings, copper cookware, translucent jars with authored contents, and a fabric grain sack. Includes editable geometry, matching icons and stable identities; food and appliances remain decorative.",
+      "text": "# Homestead 05 — original kitchen and pantry furnishings\n\nNew original assets in this pack are contributed by TerraForest contributors\nunder **CC0-1.0**, to the extent copyright or related rights exist and are held\nby the contributors. The dedication follows the repository's contribution\nterms and does not purport to license third-party rights.\n\nCC0 legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nCovered assets: `pack.json`, `models/refrigerator.tres`, `models/kettle.tres`,\n`models/cooking_pot.tres`, `models/frying_pan.tres`, `models/cutting_board.tres`,\n`models/utensil_rail.tres`, `models/plate_rack.tres`,\n`models/preserve_jars.tres`, `models/bread_bin.tres`, `models/grain_sack.tres`,\ntheir embedded materials/textures, and `icons.trtex`.\n\nThese original parametric models were authored with Codex for TerraForest on\n2026-11-26. The user requested a separate Homestead 05 kitchen/pantry pack using\nthe proposed ten-object roster and a picture of its actual models. The brief\nspecifies cream enamel, faded teal, weathered timber, copper cookware and warm\nfood colours. No external models, images, food photographs, textures, branding\nor third-party reference artwork were supplied or copied. Jar contents and\ngrain kernels are original generated geometry; labels contain no brand artwork.\n\n`author.gd` retains editable geometry. It reuses the project's original 0BSD\nmesh/tube helpers and CC0 procedural material patterns from Homestead 02 and\n04; those terms and provenance remain intact. Runtime meshes embed their own\ngeometry/materials/textures. `provenance.json` records exact output and local\nsource hashes plus both inherited helper source hashes.\n\nGodot's primitives and SurfaceTool are external authoring tools, not new\nvendored dependencies or material covered by this dedication. Authoring,\ncatalog, integration and test code is original **0BSD**. License dedication\nremains separate from visual review and gameplay/performance acceptance."
+    },
+    {
       "id": "homestead_04",
       "title": "Homestead 04 workshop and repairs pack",
       "license": "CC0 1.0 assets / 0BSD code",

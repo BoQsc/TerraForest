@@ -34,8 +34,10 @@ class PreviewOwnership(unittest.TestCase):
         self.preview(10, "homestead_04_pack"); self.preview(11, "homestead_04_pack")
         input_run = self.preview(12, "drop_key_standard")
         self.preview(13, "drop_key_standard"); self.preview(14, "drop_key_standard")
+        fifth_pack = self.preview(15, "homestead_05_pack")
+        self.preview(16, "homestead_05_pack"); self.preview(17, "homestead_05_pack")
         selected = candidates(self.root)
-        self.assertEqual([first, third_pack, fourth_pack, input_run], [folder for folder, _ in selected])
+        self.assertEqual([first, third_pack, fourth_pack, fifth_pack, input_run], [folder for folder, _ in selected])
         self.assertEqual(("backpack.png", "player_settings.png"), selected[-1][1])
 
     def test_pins_are_not_ordinary_ready(self):

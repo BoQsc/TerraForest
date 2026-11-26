@@ -13,6 +13,7 @@ FAMILIES = {
     "homestead_02_pack": ("homestead_02.png",),
     "homestead_03_pack": ("homestead_03.png",),
     "homestead_04_pack": ("homestead_04.png",),
+    "homestead_05_pack": ("homestead_05.png",),
     "drop_key_standard": ("backpack.png", "player_settings.png"),
 }
 

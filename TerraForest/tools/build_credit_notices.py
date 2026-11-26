@@ -7,6 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "assets/credits/notices.json"
 NOTICES = [
+    ("homestead_05", "Homestead 05 kitchen and pantry pack", "CC0 1.0 assets / 0BSD code", "addons/structures/packs/homestead_05/ASSET_LICENSE.md",
+     "Ten original kitchen furnishings, copper cookware, translucent jars with authored contents, and a fabric grain sack. Includes editable geometry, matching icons and stable identities; food and appliances remain decorative."),
     ("homestead_04", "Homestead 04 workshop and repairs pack", "CC0 1.0 assets / 0BSD code", "addons/structures/packs/homestead_04/ASSET_LICENSE.md",
      "Ten original workshop props with editable geometry, continuous rope/cable meshes, matching icons and stable pack identities. Tools, storage and cart wheels are static furnishings."),
     ("homestead_03", "Homestead 03 washroom and utility pack", "CC0 1.0 assets / 0BSD code", "addons/structures/packs/homestead_03/ASSET_LICENSE.md",

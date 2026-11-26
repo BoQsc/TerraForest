@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "pack": "terraforest.homestead_05",
+  "version": "1.0.0",
+  "creator": "TerraForest contributors, authored with Codex",
+  "date": "2026-11-26",
+  "origin": "Original parametric geometry and procedural materials; no external asset inputs",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
+  "authoring_tool": "Existing Godot 4.7.2 Steam; external engine, not vendored by this pack",
+  "brief": "A separate recognizable household pack with the user-approved roster and a rendered preview of its actual meshes",
+  "author_command": "python tools/run_godot_check.py homestead_05_pack --require \"failures=0\" -- --author-pack",
+  "icon_command": "python tools/run_godot_check.py homestead_05_pack --isolated-render --require \"failures=0\" -- --preview-only",
+  "source_sha256": {
+    "addons/structures/packs/homestead_02/author.gd": "44569d6b3e354ae1b940e5af5e43a6ab3027e4a44c6b3c34bf56fc43428411bf",
+    "addons/structures/packs/homestead_04/author.gd": "faa1d9431f6361274d4efd169844c4b70dc184bb39d0ed2a0376c39b4713560d",
+    "addons/structures/packs/homestead_05/author.gd": "1b98cd50ee18536c5977c23f716b640d148439f5e2310cccdc99bef66705f3fd",
+    "addons/structures/packs/homestead_05/catalog.gd": "b0fd58a933191fcef0dcf2cc98dd33239d9e42a37475a4c2ed41ce894488b7e8",
+    "tests/homestead_05_pack.gd": "40abd7b9db82067d5ef1bce74f24796579d4b4856f30580c200c8329e70faae8"
+  },
+  "asset_sha256": {
+    "addons/structures/packs/homestead_05/icons.trtex": "de28efd90068ebc9ec5c8ff93440b6575a2d70efff974b890574fde3a1c10164",
+    "addons/structures/packs/homestead_05/models/bread_bin.tres": "b1cf97c87e69d8565397030c59b6c9394f36fefb0ee52b499374c6dcbc008552",
+    "addons/structures/packs/homestead_05/models/cooking_pot.tres": "8c30668cebdcd516ebaebc43fc58d46028623c0f44713d43a1b3b9395ebb66d7",
+    "addons/structures/packs/homestead_05/models/cutting_board.tres": "a0076282b149fc8f0c58a7d04e7577668a024b67c70b5ef63381ad3964c8de35",
+    "addons/structures/packs/homestead_05/models/frying_pan.tres": "6a73df2b9e77bba96f21db48b625efb08f98dcc3620fe1a7d215bbcc2f41c960",
+    "addons/structures/packs/homestead_05/models/grain_sack.tres": "ced396b8b5e481da627db4afc29d9fbb853ec136fee00b8563bc31dae2ba4aa0",
+    "addons/structures/packs/homestead_05/models/kettle.tres": "94f6be5b9aa468cb9757a3b5fa79affe4df17a3c1a2fd579b57b13656306f049",
+    "addons/structures/packs/homestead_05/models/plate_rack.tres": "78a248e3962023fa0ddc064189c3d1d2e18af89328df0c91b604c871954302ca",
+    "addons/structures/packs/homestead_05/models/preserve_jars.tres": "c92f8981560ac09a17823785954c6e00eef357eb2efb58e43e40067e9593d5ad",
+    "addons/structures/packs/homestead_05/models/refrigerator.tres": "8d713b61056cb503913421d9331678ec92a6c3fa2026c00d23a70d303e2b4db0",
+    "addons/structures/packs/homestead_05/models/utensil_rail.tres": "fe377be53e12eb2827e641d13f7f28a7a81887185416f969dce36651256cf044",
+    "addons/structures/packs/homestead_05/pack.json": "2f17594b864219241f7000867931ab3a742d4c690c9bf8272cd3c96ec048e202"
+  }
+}
