@@ -301,6 +301,14 @@ can verify that fixture by its supplied SHA-256. `house_population_world` admits
 Hidden Meadow read-only and creates no saved world. Both families join the same
 two-ready receipt-owned capture lifecycle; a test name does not grant ownership
 over its source save. No output limit is increased.
+`homestead_generated_world` admits 24 MiB per run for at most three RGB 1080p
+views and small logs/JSON. It creates the one explicitly requested playable
+`Homestead_Valley` through the ordinary browser, refusing existing saves, and
+inspects the same published world in a fresh read-only process. Its photos and
+inspection JSON join the two-ready receipt-owned lifecycle. `created_world.json`
+remains loose as provenance; the requested player world is never a disposable
+fixture or a capture-retirement member. Production staging uses the existing
+verified generation-copy lifecycle; no source copy or export is allocated.
 The audited headless `furnished_capture` library roundtrip declares 2 MiB for
 logs and its small temporary prefab; the driver removes only its exact owned
 library files after verifying capture, reopen, rejection and rotated placement.

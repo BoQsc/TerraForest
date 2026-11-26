@@ -197,6 +197,27 @@
       "run": "20261126T172654731486Z",
       "status": "inspected future-house population / scoped engineering evidence",
       "source": "Actual Godot Forward+ read-only Hidden Meadow; transient outdoor publication probes, unchanged canonical save"
+    },
+    {
+      "path": "reports/checks/20261126T175554049707Z/cottage_interior.png",
+      "sha256": "39827c81869d26c9a53cf6a7493ec39996ab7d55346ec08756a3e22b819916fb",
+      "run": "20261126T175554049707Z",
+      "status": "inspected actual new-world population; 19 fresh-process checks pass; visual acceptance and sustained FPS remain separate",
+      "source": "Actual Godot Forward+ 1920x1080 RGB; normal published Homestead_Valley, Frontier expedition seed 1703 / terrain 29; fresh read-only session"
+    },
+    {
+      "path": "reports/checks/20261126T175554049707Z/house_interior.png",
+      "sha256": "899044387798c96cd3359380cd5aac8b1e6dd65afe509aa176603d27e5ee0487",
+      "run": "20261126T175554049707Z",
+      "status": "inspected actual new-world population; 19 fresh-process checks pass; visual acceptance and sustained FPS remain separate",
+      "source": "Actual Godot Forward+ 1920x1080 RGB; normal published Homestead_Valley, Frontier expedition seed 1703 / terrain 29; fresh read-only session"
+    },
+    {
+      "path": "reports/checks/20261126T175554049707Z/outdoor_yard.png",
+      "sha256": "d7470a82fa534c485b127848caff030ecba43b4c037717cd70d87338b3a745f2",
+      "run": "20261126T175554049707Z",
+      "status": "inspected actual new-world population; 19 fresh-process checks pass; visual acceptance and sustained FPS remain separate",
+      "source": "Actual Godot Forward+ 1920x1080 RGB; normal published Homestead_Valley, Frontier expedition seed 1703 / terrain 29; fresh read-only session"
     }
   ]
 }

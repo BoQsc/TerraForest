@@ -32,7 +32,19 @@ static func heights(core,points:PackedVector3Array)->PackedFloat32Array:
   for i in batch.size():result.append(reply.decode_float(12+i*8))
  return result
 
-static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[])->Dictionary:
+static func translated_recipe(source:Array,from:Vector3,to:Vector3)->Array:
+ # Catalog recipes place immutable prefab resources on an integer translated
+ # lattice. Share those resources within one search, not across editor sessions.
+ var delta:=Vector3i(to)-Vector3i(from)
+ var result:Array=[]
+ for original:Dictionary in source:
+  var lot:Dictionary=original.duplicate()
+  lot.origin=Vector3i(original.origin)+delta
+  if lot.has("street_z"):lot.street_z=float(original.street_z)+to.z-from.z
+  result.append(lot)
+ return result
+
+static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[],default_layout:bool=false)->Dictionary:
  var source:Array=Lots.recipe(center,true) if recipe.is_empty() else recipe
  var descriptors:Array=[]
  for index in source.size():
@@ -57,7 +69,7 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
    for turn in lot.rotation:access=Vector3(1-access.z,access.y,access.x)
    lot.access_points.append(access)
   descriptors.append(lot)
- var result:Dictionary=core.plan_lots(center,descriptors,roads,recipe.is_empty())
+ var result:Dictionary=core.plan_lots(center,descriptors,roads,recipe.is_empty() or default_layout)
  for lot:Dictionary in result.get("lots",[]):
   var earthwork_survey:Dictionary=lot.survey.duplicate()
   earthwork_survey.grade-=Contact.inset(lot.asset)
@@ -186,9 +198,15 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
   var cost:float=roads.mean_earthwork+0.3*(roads.max_cut+roads.max_fill)+0.001*center.distance_to(candidate)
   candidates.append({"center":candidate,"roads":roads,"cost":cost,"order":attempts})
  candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost if a.cost!=b.cost else a.order<b.order)
+ var source_center:Vector3=candidates[0].center if not candidates.is_empty() else center
+ var recipe_started:=Time.get_ticks_usec()
+ var source:Array=recipe_provider.call(source_center) if recipe_provider.is_valid() else Lots.recipe(source_center,true)
+ var recipe_usec:=Time.get_ticks_usec()-recipe_started
+ if "--plan-diagnostics" in OS.get_cmdline_user_args():print("LOT_SEARCH_CANDIDATES count=",candidates.size()," recipe_builds=1 recipe_ms=",recipe_usec/1000.0)
  for candidate:Dictionary in candidates:
+  var recipe:Array=translated_recipe(source,source_center,candidate.center)
   for variant in range(1 if recipe_provider.is_valid() else (12 if protected.distributed else 4)):
-   var lots:Dictionary=plan(core,candidate.center,candidate.roads.segments,variant,recipe_provider.call(candidate.center) if recipe_provider.is_valid() else [])
+   var lots:Dictionary=plan(core,candidate.center,candidate.roads.segments,variant,recipe,not recipe_provider.is_valid())
    best_missing=mini(best_missing,lots.rejected.size())
    if lots.ok:
     var checked:Dictionary={"ok":true,"lots":lots.lots,"roads":candidate.roads.segments}

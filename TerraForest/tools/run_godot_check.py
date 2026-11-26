@@ -52,6 +52,8 @@ def planned_report_bytes(command):
         return 32 * 2**20  # Three 1080p PNGs, <=4 MiB native fixture, small timing JSON; no world/export.
     if "--headless" in command and scripts == {"furnished_capture.gd"}:
         return 2 * 2**20  # Small owned prefab-library roundtrip; exact temporary files removed by the driver.
+    if scripts == {"homestead_generated_world.gd"}:
+        return 24 * 2**20  # Three RGB 1080p views and small receipts; requested player save is retained.
     if scripts == {"house_population_world.gd"}:
         return 16 * 2**20  # One 1080p PNG and bounded outdoor publication JSON; no saved world.
     if scripts == {"house_furnishings.gd"}:
@@ -286,7 +288,7 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "homestead_generated_world", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         from maintain_homestead_captures import maintain
         maintain(apply=True)
     folder.mkdir(parents=True)
@@ -301,7 +303,7 @@ def main(argv=None):
         maintain(apply=True)
     if args.test == "physics_residency_world":
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "homestead_generated_world", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1

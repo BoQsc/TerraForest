@@ -1,7 +1,8 @@
 # Visual issue tracker
 
 [Homestead Manor and outdoor object integration](homestead-manor/README.md)
-records the rejected first interior, corrected furniture contacts and cutaway,
+now also records the generation-timeout fix and the requested Homestead Valley
+with 52 buildings and 684 outdoor objects. It retains the first interior, contacts and cutaway,
 new outdoor pack and inspection UI. User visual approval, generated terrain fit
 and dense-scene 60 FPS remain open. The
 [full-game rendering follow-up](../docs/OBJECT_RENDERING_PERFORMANCE.md) records

@@ -41,6 +41,18 @@ func run()->void:
 	fingerprint_asset=public_assets[0].duplicate();var attachments:Array=fingerprint_asset.get_model_attachments();attachments.pop_back();fingerprint_asset.set_model_attachments(attachments)
 	check(Custom.prefab_fingerprint(fingerprint_asset)!=original_fingerprint,"attachment edits invalidate placement cache")
 	check(Furniture.enclosed_cottage().resource_name=="Furnished cottage with door and windows","existing construction presets retain cottage identity")
+	if "--recipes-only" in OS.get_cmdline_user_args():
+		var planner=preload("res://addons/structures/terrain_lot_planner.gd")
+		for recipe:Callable in [Civic.recipe,preload("res://addons/structures/city_catalog.gd").recipe,preload("res://addons/structures/northern_lots.gd").recipe,preload("res://addons/structures/central_market.gd").recipe]:
+			for center:Vector3 in [Vector3(800,0,1200),Vector3(800.25,0,1200.75)]:
+				var source:Array=recipe.call(center);var target:=center+Vector3(48,0,-72)
+				var actual:Array=planner.translated_recipe(source,center,target);var expected:Array=recipe.call(target)
+				var exact:=actual.size()==expected.size()
+				for index in mini(actual.size(),expected.size()):
+					exact=exact and actual[index].origin==expected[index].origin and actual[index].rotation==expected[index].rotation and actual[index].street_z==expected[index].street_z and actual[index].label==expected[index].label and Custom.prefab_fingerprint(actual[index].asset)==Custom.prefab_fingerprint(expected[index].asset)
+				check(exact,"reused recipe matches fresh catalog geometry, furnishings and plot coordinates: "+str(recipe)+" / "+str(center))
+		if "--recipes-only" in OS.get_cmdline_user_args():
+			print("PRODUCTION_BUILDING_CATALOG checks=",checks," failures=",failures);quit(1 if failures else 0);return
 	var cases:Array=[Recipe.DEFAULTS.duplicate()]
 	if "--single-district" in OS.get_cmdline_user_args():cases[0].settlements=1;cases[0].districts=1
 	if "--all-recipes" in OS.get_cmdline_user_args():
@@ -49,9 +61,16 @@ func run()->void:
 			var values:Array=style.values
 			cases.append({"biome":values[0],"settlements":values[1]+1,"districts":values[2]+1,"network":values[3],"trails":values[4],"road_grid":3,"material_veins":1})
 	for settings:Dictionary in cases:
-		var worker:=Thread.new();worker.start(Plan.build.bind(1703,29,true,true,"user://generation_plans",settings))
-		while worker.is_alive():await process_frame
+		var progress:=preload("res://addons/world_runtime/world_plan_progress.gd").new()
+		var worker:=Thread.new();var began:=Time.get_ticks_msec();var next_profile:=began;var previous:=""
+		worker.start(Plan.build.bind(1703,29,true,true,"user://generation_plans",settings,progress))
+		while worker.is_alive():
+			if "--profile-planning" in OS.get_cmdline_user_args() and Time.get_ticks_msec()>=next_profile:
+				var state:Dictionary=progress.snapshot();var activity:String=state.get("activity","")
+				if activity!=previous or Time.get_ticks_msec()>=next_profile+4000:print("PLAN_PROGRESS ",Time.get_ticks_msec()-began,"ms ",JSON.stringify(state));previous=activity;next_profile=Time.get_ticks_msec()+1000
+			await process_frame
 		var result:Dictionary=worker.wait_to_finish()
+		print("PLAN_COMPLETED milliseconds=",Time.get_ticks_msec()-began," cache_hit=",result.get("cache_hit",false)," digest=",result.get("plan_digest",""))
 		check(result.get("ok",false),"normal recipe fits: "+str(settings)+" / "+str(result.get("reason","ok")))
 		if not result.get("ok",false):continue
 		var civic_sites:Array=result.sites.filter(func(site:Dictionary):return site.recipe_kind=="civic")

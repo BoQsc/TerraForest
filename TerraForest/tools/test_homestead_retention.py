@@ -68,6 +68,17 @@ class PreviewOwnership(unittest.TestCase):
         self.assertEqual([first, third_pack, fourth_pack, fifth_pack, sixth_pack, seventh_pack, eighth_pack, ninth_pack, tenth_pack, outdoor, mansion, house_world, house_layout, object_world, object_rendering, model_horizon, render_mesh, zombie_render, input_run], [folder for folder, _ in selected])
         self.assertEqual(("backpack.png", "player_settings.png"), selected[-1][1])
 
+    def test_requested_player_world_is_outside_capture_retirement(self):
+        first = self.preview(1, "homestead_generated_world")
+        self.preview(2, "homestead_generated_world"); self.preview(3, "homestead_generated_world")
+        receipt = first / "created_world.json"
+        receipt.write_text(json.dumps({"slot": "Homestead_Valley", "user_requested_playable_world": True}))
+        selected = candidates(self.root)
+        self.assertEqual([first], [folder for folder, _ in selected])
+        self.assertNotIn("created_world.json", selected[0][1])
+        self.assertNotIn("Homestead_Valley.trw", selected[0][1])
+        self.assertTrue(receipt.is_file())
+
     def test_pins_are_not_ordinary_ready(self):
         pinned = self.preview(1); (pinned / ".retain").write_text("rejected witness")
         first = self.preview(2); self.preview(3); self.preview(4)

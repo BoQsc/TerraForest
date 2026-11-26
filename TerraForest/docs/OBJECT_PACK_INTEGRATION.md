@@ -75,6 +75,46 @@ python tools/run_godot_check.py house_population_world --isolated-render --requi
 python tools/run_godot_check.py production_building_catalog --headless --require failures=0 --timeout 180 -- --single-district
 ```
 
+### Generation timeout and the requested new world
+
+Terrain fitting now builds each furnished catalog recipe once per bounded search,
+then translates its plot dictionaries for the unchanged candidate/variant order.
+Prefab resources are shared only within that search. The default native street
+layout flag, foundation samples, reserved areas, entrance checks and 2 m fill /
+3 m cut limits are retained. No recipe size or generation deadline is relaxed.
+
+The previously timed-out full default now completes its cold plan in 69.603 s
+(`20261126T174332284109Z`, 40 checks). Separate recipe equivalence checks pass at
+integer and fractional centres (`20261126T174209159050Z`, 42 checks). See the
+[issue history](../issues/homestead-manor/README.md#future-house-population-26-november)
+for retained baseline failures and the creation driver's corrected stale UI-label
+assertion.
+
+The current normal UI default is **Frontier expedition**: three settlements,
+two districts each, interconnected roads, trails, material veins and introduction.
+The user-requested `Homestead_Valley` is an ordinary playable saved world, created
+from this default with seed 1703 / terrain 29. Generate & play reaches gameplay
+in 216.044 s, including native verification/publication; its warm plan takes
+26.042 s. It contains 52 buildings and 684 outdoor props of thirteen types.
+This is production-world evidence, separate from the earlier transient fixtures.
+Fresh-process check `20261126T175554049707Z` passes all 19 assertions, including
+published recipe identity, native house-object positions, outdoor object identity
+and unchanged save hash. Its three inspected images are in the linked issue.
+The plan has 35 populated residential/service lots and 3,789 planned attachments.
+Eleven launcher/retention unit tests pass.
+
+The capture driver refuses to overwrite this world. Create only when that new
+player world is explicitly wanted and does not already exist; subsequent checks
+reuse its `created_world.json` receipt through `--homestead-source=<absolute-path>`.
+Photos use a fresh read-only game process, leaving the published save intact.
+
+```text
+python tools/run_godot_check.py production_building_catalog --headless --require failures=0 --timeout 120 -- --recipes-only
+python tools/run_godot_check.py production_building_catalog --headless --require failures=0 --timeout 240 -- --profile-planning
+python tools/run_godot_check.py homestead_generated_world --isolated-render --require failures=0 --timeout 600 -- --create-homestead-world
+python tools/run_godot_check.py homestead_generated_world --isolated-render --require failures=0 --timeout 300 -- --homestead-source=<absolute-path-to-created_world.json>
+```
+
 Hold Backtick, choose **2 / Objects / inspection** (or point at that card), then
 hold Alt to access **Show nearby object names**. Alt alone never selects the
 mode, and releasing Alt keeps the selected setting. A short Backtick tap retains

@@ -39,10 +39,14 @@ static func locate(core,hint:Vector3,occupied:AABB,legacy:bool=false,road_grid:i
   survey_usec+=Time.get_ticks_usec()-begun
   if roads.ok:candidates.append({"center":center,"roads":roads,"cost":roads.mean_earthwork+0.3*(roads.max_cut+roads.max_fill)+0.001*center.distance_to(hint)})
  candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost)
+ var source_center:Vector3=candidates[0].center if not candidates.is_empty() else hint
+ var recipe_started:=Time.get_ticks_usec()
+ var source:Array=recipe(source_center,legacy)
+ recipe_usec+=Time.get_ticks_usec()-recipe_started
  for candidate:Dictionary in candidates:
   attempts+=1
   var begun:=Time.get_ticks_usec()
-  var assets:Array=recipe(candidate.center,legacy)
+  var assets:Array=Planner.translated_recipe(source,source_center,candidate.center)
   recipe_usec+=Time.get_ticks_usec()-begun;begun=Time.get_ticks_usec()
   var lots:Dictionary=Planner.plan(core,candidate.center,candidate.roads.segments,0,assets)
   fitting_usec+=Time.get_ticks_usec()-begun

@@ -181,12 +181,38 @@ positions are skipped; removed objects do not refill.
   temporary outdoor placement check in the existing world, not a refurnished save.
 - `20261126T172253885102Z`: 40 normal-catalog and complete single-district planning
   checks pass, including unchanged terrain footprints and cached reconstruction.
-- `20261126T171654243044Z`: the full default multi-settlement plan reaches its
-  240-second timeout. This is retained as an unresolved full-scale check. The
-  larger new-world publication/reopen, complete room traversal and sustained
-  population performance remain unqualified. Resume those when full-world
-  generation/quality qualification is prioritized; require normal publication,
-  fresh-process reload, actual routes and frame traces before closing them.
+- `20261126T171654243044Z`: the original full default plan timed out at 240 s.
+  Profiling `20261126T173809036603Z` also remained in its first settlement until
+  the 120 s limit. Both failed receipts remain intact. The search was repeatedly
+  rebuilding furnished prefab recipes for terrain candidates and variants.
+- `20261126T174209159050Z`: 42 checks pass; search-local recipe reuse matches
+  freshly authored civic, city, neighbourhood and market recipes at integer and
+  fractional centres, including complete prefab fingerprints and plot coordinates.
+- `20261126T174332284109Z`: all 40 full-default checks pass. The cold placement
+  plan completes in 69.603 s with six districts and 52 buildings; native terrain,
+  entrance, road and earthworks checks remain in force. Warm reconstruction
+  preserves the exact plan digest.
+- `20261126T174619035076Z`: the explicitly requested playable **Homestead Valley**
+  is created through normal Generate & play, seed 1703 / terrain 29 / default
+  **Frontier expedition**. Native generation, verification and publication succeed;
+  the game opens in 216.044 s with 684 supported outdoor objects of thirteen types.
+  The driver records one stale assertion expecting the old Connected countryside
+  label; its actual recipe equals the unchanged defaults. That assertion is fixed
+  to Frontier expedition, and this receipt remains failed rather than rewritten.
+  The new player world is preserved, separately from disposable capture retention.
+- `20261126T175057755722Z` and `20261126T175355747079Z` retain successful
+  fresh-game object/pose/hash assertions with one failing harness comparison:
+  JSON parses numeric recipe values as floats, which native recipe admission
+  correctly refuses. The capture driver now converts these receipt fields back
+  to integers before canonical encoding. `20261126T175313149767Z` retains an
+  intermediate capture-driver type-inference parse error, fixed with an explicit
+  Vector3 annotation. The first yard camera was obstructed by a house; the
+  corrected camera faces a populated yard from outside its nearest building.
+
+Complete room/entrance traversal and sustained population frame qualification
+remain open. Close them with actual routes and full-game frame traces; generation
+and persistence success do not establish universal terrain or visual acceptance.
+
 - `20261126T172839981722Z`: the existing prefab-library capture/reopen and rotated
   placement regression passes with the new objects. Ten launcher/retention tests
   pass, and admitted editor import `house_population_uid_import_20261126T173006617403Z`
@@ -196,8 +222,9 @@ Earlier failed checks remain retained: `20261126T170617470057Z` has a corrected
 test assertion-helper parse error; `20261126T171312897503Z` rejected a valid surface
 reply by comparing the publication and density revision counters. The outdoor
 pass now checks each counter against its corresponding captured source state;
-the final real-terrain replay passes. The full default planning timeout above
-remains unresolved.
+the final real-terrain replay passes. The full-default planning timeout is now
+fixed by the search-local recipe reuse described above; full room traversal and
+populated-world frame qualification remain open.
 
 ![Newly furnished cottage](../../reports/checks/20261126T172449697845Z/cottage.png)
 
@@ -242,3 +269,32 @@ Homestead Manor R2; it is deliberately not a world-generation default.
 Earlier placement failures `20261126T110837607606Z`, `20261126T113151793913Z`
 and `20261126T113412856973Z` remain in the original reports: furniture clearances
 and the outdoor attachment envelope were corrected, not bypassed.
+
+### Requested generated world: fresh-process evidence
+
+`20261126T175554049707Z` passes all 19 checks in a new normal-game process. My worlds
+lists Homestead Valley; the native default recipe and publication receipt match.
+The saved plan contains 35 populated residential/service lots and 3,789 planned
+attachments. Both inspected houses restore every authored Homestead object
+position in their native collections. A generated yard prop retains its native
+identity/pose; the 684-prop publication is preserved. The `.trw` SHA-256 remains
+`1626bc34b2da9fbebe5666b2b3336578652e88590f69935ed512c898d43fe115`
+after read-only inspection. Eleven launcher/retention unit tests pass; capture
+retirement excludes the player world and keeps its creation provenance.
+
+![Furnished cottage in the new world](../../reports/checks/20261126T175554049707Z/cottage_interior.png)
+
+Actual published world, cottage interior; furnishings, original fabric and nearby
+terrain are loaded from the saved world. This is no longer the isolated fixture.
+
+![Large-house kitchen in the new world](../../reports/checks/20261126T175554049707Z/house_interior.png)
+
+Actual saved large-house kitchen, with original chest and added kitchen objects.
+
+![Generated outdoor yard](../../reports/checks/20261126T175554049707Z/outdoor_yard.png)
+
+A nine-object local group in the generated workshop yard: boxes, tire, duffel,
+planter, basket, refuse and garden objects. Camera faces inward from outside the
+nearest building, correcting the earlier obstructed view. All three full-resolution
+images were inspected. They establish this capture's visible population, not
+complete site-quality acceptance, every-room traversal or stable 60 FPS.

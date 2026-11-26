@@ -9495,3 +9495,16 @@ generation pass adds supported outdoor service/garden groups around lots, with
 roads, approaches, trees, encounters and vehicle clearances protected. Engineering
 and image evidence are tracked in the existing Homestead integration issue;
 this does not close its separate mansion/terrain-quality or stable-60-FPS work.
+
+The full-default generation timeout is now fixed by reusing furnished recipes
+within each bounded terrain search. The complete cold plan passes in 69.603 s,
+with all district/road/earthworks constraints unchanged. Normal **Frontier
+expedition** Generate & play publishes the requested `Homestead_Valley` in
+216.044 s: 52 buildings and 684 outdoor objects of thirteen types. The existing
+[Homestead issue](../issues/homestead-manor/README.md#future-house-population-26-november)
+retains the original timeouts and a corrected stale UI-label assertion. This
+closes generation/publication for that requested world. Fresh-process receipt
+`20261126T175554049707Z` passes 19 checks and supplies three inspected pictures;
+object positions/identity and the saved hash survive restoration. Complete room traversal,
+terrain-quality acceptance and sustained populated-world frame qualification
+remain separate open requirements.
