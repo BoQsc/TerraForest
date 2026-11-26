@@ -66,6 +66,8 @@ var loading_active:Callable
 var settling_active:Callable
 var settling_enabled:Callable
 var _filling_id:=0
+var _render_pages=preload("res://addons/volumetric_water/water_render_pages.gd").new()
+var _render_page_changes:Dictionary={}
 var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
 # Hidden superseded instances are destroyed under the normal frame budget.
@@ -103,6 +105,8 @@ var _notify_seconds:=0.0
 var _changed_bounds:=AABB()
 var _have_bounds:=false
 var _capacity_reported:=false
+func _init()->void:
+ _render_pages.name="WaterRenderPages";_render_pages.material=_material;add_child(_render_pages)
 func prepare() -> bool:
  if not ClassDB.class_exists("NativeRegionalWater"):GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
  if not ClassDB.class_exists("NativeRegionalWater"):return false
@@ -224,6 +228,7 @@ func clear(preserve_store:bool=false) -> void:
  _ocean_admitting=false
  _occupancy_failure=""
  _lakes.clear();_filling_id=0;_pending_bucket.clear();_pending_dev.clear()
+ _render_pages.clear()
  for mesh:MeshInstance3D in _meshes.values():mesh.queue_free()
  _clear_staged_meshes();_meshes.clear();_mesh_faces.clear();_mesh_batch_id=0;_published_mesh_batch_id=0
  _published_over_capacity_ml=0
@@ -403,6 +408,7 @@ func _process(delta:float) -> void:
  _process_deadline=measured_begin+_remaining_frame_work()
  last_process_work.clear()
  _measured_step(delta)
+ if Time.get_ticks_usec()<_process_deadline:_render_pages.step()
  # Retirement uses the unused portion of this frame, not an additional budget.
  var retired_begin:=Time.get_ticks_usec()
  var retirement_deadline:=mini(_process_deadline,retired_begin+150)
@@ -609,6 +615,7 @@ var _replacement_visible:Array[MeshInstance3D]=[]
 var _resident_water_meshes:Dictionary[Vector3i,ArrayMesh]={}
 var _resident_batch_ready:=-1
 func _clear_replacement_bookkeeping()->void:
+ _render_page_changes.clear()
  _replacement_faces.clear();_replacement_removals.clear()
  _staged_over_capacity_delta_ml=0
  _replacement_hidden.clear();_replacement_visible.clear();_resident_water_meshes.clear()
@@ -659,6 +666,7 @@ func _stage_render_owner(update:Dictionary)->void:
   if previous!=null:_replacement_hidden.append(previous)
   _replacement_removals.append(coord)
   _staged_meshes[coord]=null
+  _render_page_changes[coord]={}
   return
  var geometry:ArrayMesh=update.get("render_mesh")
  if geometry==null:
@@ -667,12 +675,14 @@ func _stage_render_owner(update:Dictionary)->void:
  if previous!=null and terrain.joint_edit_pending():
   _staged_meshes[coord]=previous
   _resident_water_meshes[coord]=geometry
+  _render_page_changes[coord]={"node":previous,"arrays":update.render_arrays}
   return
  if previous!=null:_replacement_hidden.append(previous)
  var node:=MeshInstance3D.new()
  node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;node.material_override=_material
  node.position=bounds.position;node.visible=false;node.mesh=geometry;add_child(node)
  _staged_meshes[coord]=node
+ _render_page_changes[coord]={"node":node,"arrays":update.render_arrays}
  _replacement_visible.append(node)
 
 func _publish_meshes() -> void:
@@ -743,6 +753,7 @@ func _commit_prepared_water(batch:int)->bool:
  for coordinate:Vector3i in _replacement_removals:
   _meshes.erase(coordinate);_mesh_faces.erase(coordinate)
  _retired_mesh_nodes.append_array(_replacement_hidden)
+ _render_pages.commit(_render_page_changes)
  if _have_staged_bounds:
   _changed_bounds=_changed_bounds.merge(_staged_bounds) if _have_bounds else _staged_bounds;_have_bounds=true
  _mesh_commit_nodes_us=Time.get_ticks_usec()-bookkeeping_started
@@ -1236,7 +1247,7 @@ func preparation_ready()->bool:
  return not state.fill_active and state.pending_regions==0 and state.settling_regions==0
 
 func statistics() -> Dictionary:
- var s:Dictionary=water.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
+ var s:Dictionary=water.statistics();s.render_pages=_render_pages.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
  s.ocean_boundary_exchange_ml=_ocean_exchange_ml
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1

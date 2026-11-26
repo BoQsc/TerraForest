@@ -5,6 +5,7 @@
 #include "generated_lake_bake.hpp"
 #include "water_region_store.hpp"
 #include "water_region_io.hpp"
+#include "water_render_pages.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -25,6 +26,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeWaterSnapshot);
         GDREGISTER_CLASS(terraforest::NativeWaterRegionStore);
         GDREGISTER_CLASS(terraforest::NativeWaterRegionIO);
+        GDREGISTER_CLASS(terraforest::NativeWaterRenderPages);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

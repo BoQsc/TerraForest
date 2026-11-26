@@ -67,6 +67,9 @@ func run():
  game.terrain.lake_slice_profiled.connect(func(worker:float,queue:float,status:int):
   if measured:terrain_preparations.append({"worker_ms":worker,"queue_ms":queue,"status":status}))
  game.set_process(false);game.set_physics_process(false);game._clear_motion();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+ # This fixture pauses the combat scheduler and exercises one synchronous
+ # terrain admission. Do not inherit the player's saved asynchronous chain mode.
+ game.combat.fast_chains=false
  game.tool_view.visible=false
  check(game.combat.blast_water_settling,"Terrain-reactive water is enabled in ordinary gameplay")
  # Fixed-player rendering check: exercise the real committed-edit callback and
@@ -91,6 +94,7 @@ func run():
  game.combat.detonations.erase(id)
  check(await idle_water(),"Barrel crater water settles and publishes within the bound")
  var finished:=Time.get_ticks_usec();var elapsed:=finished-started;measured=false
+ check(terrain_published_us>=started,"The admitted barrel excavation actually publishes terrain")
  var water_latency:float=(finished-terrain_published_us)/1000.0 if terrain_published_us else -1
  var after:=amounts(game.lakes.capture_snapshot());var stats:Dictionary=game.lakes.statistics()
  var checkpoint:=FileAccess.open(evidence.path_join("post_blast_statistics.json"),FileAccess.WRITE);checkpoint.store_string(JSON.stringify(stats,"  "));checkpoint.close()
