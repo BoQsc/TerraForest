@@ -34,6 +34,7 @@ var numeric_controls:=VBoxContainer.new()
 var numeric_fields: Array[SpinBox]=[]
 var numeric_apply: Button
 var history_controls: HBoxContainer
+var pack_filter := OptionButton.new()
 
 func can_edit() -> bool:
 	return active and edit_available and (not availability.is_valid() or availability.call())
@@ -74,6 +75,13 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	var content := VBoxContainer.new()
 	panel.add_child(content)
 	content.add_child(caption)
+	pack_filter.add_item("All object packs")
+	var packs: Array[String] = []
+	for entry: Dictionary in catalog:
+		var pack: String = entry.get("pack", "Base game")
+		if not packs.has(pack): packs.append(pack); pack_filter.add_item(pack)
+	pack_filter.item_selected.connect(func(index: int):filter_pack("" if index == 0 else pack_filter.get_item_text(index)))
+	content.add_child(pack_filter)
 	var object_grid:=GridContainer.new()
 	object_grid.columns=2
 	object_grid.add_theme_constant_override("h_separation",8)
@@ -131,6 +139,10 @@ func configure(view: Camera3D, actor: CharacterBody3D, entries: Array[Dictionary
 	content.add_child(help)
 	panel.hide()
 	select(0)
+
+func filter_pack(pack: String) -> void:
+	for index in choices.size():
+		choices[index].visible = pack.is_empty() or catalog[index].get("pack", "Base game") == pack
 
 func select(index: int) -> void:
 	if index<0 or index>=catalog.size():
@@ -272,9 +284,18 @@ func ray() -> Dictionary:
 
 func target() -> Dictionary:
 	var hit := ray()
-	if hit.is_empty() or hit.normal.y<0.65:
+	if hit.is_empty():
 		return {}
 	var entry: Dictionary = catalog[selected]
+	if entry.get("mount", "floor") == "wall":
+		var wall := preload("res://addons/structures/wall_object_placement.gd").target(entry,hit,0.1,quarter_turns)
+		if not wall.has("transform"): return {}
+		if support_ready.is_valid() and not support_ready.call(wall.bounds.grow(0.16)):
+			wall.placement_ok=false;wall.reason="Placement area is still loading";return wall
+		wall.placement_ok=preload("res://addons/structures/wall_object_placement.gd").supported(block_world,entry,wall.transform,[player.get_rid()])
+		wall.reason="" if wall.placement_ok else "Mounting points need solid wall support"
+		return wall
+	if hit.normal.y<0.65: return {}
 	var basis := Basis(Vector3.UP,quarter_turns*PI*0.5)*Basis.from_scale(entry.scale)
 	var local_bounds: AABB = Transform3D(basis,Vector3.ZERO)*entry.mesh.get_aabb()
 	var anchor: Vector3 = hit.position

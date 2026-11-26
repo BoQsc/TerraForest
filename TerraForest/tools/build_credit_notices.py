@@ -7,6 +7,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "assets/credits/notices.json"
 NOTICES = [
+    ("homestead_02", "Homestead 02 household detail pack", "CC0 1.0 assets / 0BSD code", "addons/structures/packs/homestead_02/ASSET_LICENSE.md",
+     "Ten original parametric domestic details, procedural fabrics, an original landscape picture, amber glass and matching icons. Includes editable geometry and stable pack identities."),
+    ("homestead_01", "Homestead 01 household object pack", "CC0 1.0 assets / 0BSD code", "addons/structures/packs/homestead_01/ASSET_LICENSE.md",
+     "Ten original parametric household models, materials and matching icons. The pack retains editable geometry, stable model/item identities and authoring provenance."),
     ("item_hold", "Original generic held-item motion", "CC0 1.0 motion / 0BSD code", "addons/characters/runtime/assets/Human.item_hold.LICENSE.txt",
      "Original held-item baseline, mount data and neutral fallback geometry. Existing character, consumable meshes and locomotion retain their separate provenance; the first version remains selected after comparison with revision 02."),
     ("torch_attack", "Original torch strike animation", "CC0 1.0 motion / 0BSD code", "addons/characters/runtime/assets/Human.torch_attack.LICENSE.txt",

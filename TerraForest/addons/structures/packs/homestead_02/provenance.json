@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "pack": "terraforest.homestead_02",
+  "version": "1.0.0",
+  "creator": "TerraForest contributors, authored with Codex",
+  "date": "2026-11-26",
+  "origin": "Original parametric geometry and procedural materials; no external asset inputs",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
+  "authoring_tool": "Existing Godot 4.7.2 Steam; external engine, not vendored by this pack",
+  "brief": "A separate recognizable household pack with the user-approved roster and a rendered preview of its actual meshes",
+  "author_command": "python tools/run_godot_check.py homestead_02_pack --require \"failures=0\" -- --author-pack",
+  "icon_command": "python tools/run_godot_check.py homestead_02_pack --isolated-render --require \"failures=0\" -- --preview-only",
+  "source_sha256": {
+    "addons/structures/packs/homestead_02/author.gd": "44569d6b3e354ae1b940e5af5e43a6ab3027e4a44c6b3c34bf56fc43428411bf",
+    "addons/structures/packs/homestead_02/catalog.gd": "8f76136981ff62a7a342ba6003fb6e40bf030e9006910e8fd66845418f1e1145",
+    "tests/homestead_02_pack.gd": "b37654578c4836b45d8669497877f5b9383011bcd77164a01af9796e0b55a1d4"
+  },
+  "asset_sha256": {
+    "addons/structures/packs/homestead_02/icons.trtex": "e3525e744bd8b707a565a2cdd33dc27049e7957f2665794c1dc1afc4ff87501c",
+    "addons/structures/packs/homestead_02/models/basket.tres": "83db12a0e77bc74e8bbd3de17534c4a1a94dec32295a7d08adc92c1aa56c7bd4",
+    "addons/structures/packs/homestead_02/models/bottle.tres": "63893915cb6dd630e24fd5c82e312de5f35dc3f41290a1606c9f8da7630fbb01",
+    "addons/structures/packs/homestead_02/models/clock.tres": "5faea5f83ebbc95919db60080cfd4619dad1f07dc949dbdf1251d6181419e7e6",
+    "addons/structures/packs/homestead_02/models/coat_rack.tres": "c50bbf21be7cbc1c893c5b2ddb336238e43871f35af85c9ce0956e55fe7d535a",
+    "addons/structures/packs/homestead_02/models/crate.tres": "76b232ecae6f7f85c96e11b17f8e4da2f8e078b221356cd07cd9343683b241f9",
+    "addons/structures/packs/homestead_02/models/curtains.tres": "3f65ecad8acf22bd0f1bd7571bd8fe551315ebc793a3897f65713234e3935e48",
+    "addons/structures/packs/homestead_02/models/dishes.tres": "cabd91dddeeb0f79bee8efbb2ad6faa356ed3dcbf883e90f1aaeb31b9e5f95bc",
+    "addons/structures/packs/homestead_02/models/lamp.tres": "5b822e19bde3af3e235fd4dd92955e51fe7c5eb1c1f79bf95c4bffc3e25e9068",
+    "addons/structures/packs/homestead_02/models/picture.tres": "e655b2c3b4290c9f0c87721ed4a63def92ad1a54af682ac001c347af6c32d635",
+    "addons/structures/packs/homestead_02/models/rug.tres": "b37a4d4e2d38a6a44e974aa191e602b968747165845525770536da4910f9b0a1",
+    "addons/structures/packs/homestead_02/pack.json": "54081098a1d2f5f2d9ae8650a258fc209ca684d2a343448c1c14ffe38cf04722"
+  }
+}

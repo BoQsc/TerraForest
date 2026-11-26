@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "pack": "terraforest.homestead_01",
+  "version": "1.0.0",
+  "creator": "TerraForest contributors, authored with Codex",
+  "date": "2026-11-26",
+  "origin": "Original parametric geometry and procedural materials; no external asset inputs",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
+  "authoring_tool": "Existing Godot 4.7.2 Steam; external engine, not vendored by this pack",
+  "brief": "A separate recognizable household pack with the user-approved roster and a rendered preview of its actual meshes",
+  "author_command": "python tools/run_godot_check.py homestead_pack --require \"failures=0\" -- --author-pack",
+  "icon_command": "python tools/run_godot_check.py homestead_pack --isolated-render --require \"failures=0\" -- --preview-only",
+  "source_sha256": {
+    "addons/structures/packs/homestead_01/author.gd": "aa6f64b6f3f8e0e3574392f09e3e74253f57798d484d378a3cc7d8f12cd7a83a",
+    "addons/structures/packs/homestead_01/catalog.gd": "52484a626b74dd18856c5629329770139b483ae3c9e4e80825110e48b34e7c9e",
+    "tests/homestead_pack.gd": "faa443b7fcfc18eb691820ff7a13fd0390fd68a40d5f5bd774420bc7164d11d8"
+  },
+  "asset_sha256": {
+    "addons/structures/packs/homestead_01/icons.trtex": "8ae484d1b6a442f814be88cd7c9d9e9f7ba86711bea53b25ea2ddad029261d16",
+    "addons/structures/packs/homestead_01/models/bed.tres": "d576ae4d9e117e5a9f8d79bf02b50711aa4838f30ab55a751460d1114dfbfdb8",
+    "addons/structures/packs/homestead_01/models/books.tres": "8573830b03f3512f4c242a04d0225f375f5ab6d4e749ed8124637b8c05c365c4",
+    "addons/structures/packs/homestead_01/models/counter.tres": "7e0b1b493e6c7edbf83043e659d3dbdc47fc600bf4aff58a9ae53f086cae968b",
+    "addons/structures/packs/homestead_01/models/cupboard.tres": "a907de7ae5e00b470f3103c5e1b2d4b3d7a45be20d3ed9d53454d18c0b252328",
+    "addons/structures/packs/homestead_01/models/mug.tres": "ce5fc6f9cf43f9fa10b164d6a716cbd1b87d345f3bac501a6eef56b01866c456",
+    "addons/structures/packs/homestead_01/models/nightstand.tres": "0593cda71bee3267f431754d220e0506616203e5f7c3155d81364195dc08ca5c",
+    "addons/structures/packs/homestead_01/models/sink.tres": "bc76533a9c736befb6911bc3de5a462e307f01831c33feeec762d547c6e81daa",
+    "addons/structures/packs/homestead_01/models/sofa.tres": "47fec9823c6312701445231e1697fcf89e62c520f793926348aeb868fe5b9ed1",
+    "addons/structures/packs/homestead_01/models/stove.tres": "71604406e440773a412789d22279e91cf94320d9179bb70f613581d5485fc647",
+    "addons/structures/packs/homestead_01/models/wardrobe.tres": "df3fa4dec0ce3ecf81823a04d886154b357023aedef4bb60336f6c1364aaa1b4",
+    "addons/structures/packs/homestead_01/pack.json": "42da18f1498d7c1c97140b4f89a871bdb61e9a3d6e5145844762889bea4bd1cd"
+  }
+}

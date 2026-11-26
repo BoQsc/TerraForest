@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "terraforest.homestead_02",
+  "name": "Homestead 02",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {"id":"rug","item":730,"name":"Homestead woven rug","recipe":[225,6],"salvage":[225,3],"health":35,"material":"other"},
+    {"id":"curtains","item":731,"name":"Homestead curtains and rail","mount":"wall","recipe":[225,8,104,2],"salvage":[225,4,104,1],"health":45,"material":"other"},
+    {"id":"picture","item":732,"name":"Homestead framed landscape","mount":"wall","recipe":[102,3,225,1],"salvage":[102,1],"health":40,"material":"wood"},
+    {"id":"clock","item":733,"name":"Homestead wall clock","mount":"wall","recipe":[102,2,104,1,227,2],"salvage":[102,1],"health":50,"material":"wood"},
+    {"id":"coat_rack","item":734,"name":"Homestead coat rack","recipe":[102,5,104,1],"salvage":[102,2],"health":70,"material":"wood"},
+    {"id":"basket","item":735,"name":"Homestead laundry basket","recipe":[204,8,225,2],"salvage":[204,4],"health":40,"material":"other"},
+    {"id":"crate","item":736,"name":"Homestead wooden crate","recipe":[102,5,227,2],"salvage":[102,2],"health":75,"material":"wood"},
+    {"id":"bottle","item":737,"name":"Homestead amber bottle","recipe":[201,2,104,1],"salvage":[201,1],"health":20,"material":"other"},
+    {"id":"dishes","item":738,"name":"Homestead plate and bowl set","recipe":[201,3],"salvage":[201,1],"health":25,"material":"other"},
+    {"id":"lamp","item":739,"name":"Homestead table lamp","recipe":[104,3,225,2,226,1],"salvage":[104,1,225,1],"health":60,"material":"other","light":{"offset":[0,0.48,0],"color":"ffd6a0","energy":0.65,"range":4.0,"shadows":true}}
+  ]
+}

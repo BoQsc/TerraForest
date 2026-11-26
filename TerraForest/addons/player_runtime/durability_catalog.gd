@@ -32,6 +32,12 @@ const MODELS={
 }
 
 static func model_profile(asset:String,objects:Dictionary={})->Dictionary:
+	if asset.begins_with("packs/homestead_02/"):
+		var profile:Dictionary=preload("res://addons/structures/packs/homestead_02/catalog.gd").profile(asset)
+		if not profile.is_empty():return profile
+	if asset.begins_with("packs/homestead_01/"):
+		var profile:Dictionary=preload("res://addons/structures/packs/homestead_01/catalog.gd").profile(asset)
+		if not profile.is_empty():return profile
 	var rails=preload("res://addons/structures/mine_rail_catalog.gd")
 	for part:String in rails.PARTS:
 		if asset==rails.key(part):return {"name":rails.PARTS[part],"health":120,"material":"other"}

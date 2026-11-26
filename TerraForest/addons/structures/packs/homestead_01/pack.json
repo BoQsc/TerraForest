@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "terraforest.homestead_01",
+  "name": "Homestead 01",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {"id":"bed","item":720,"name":"Homestead bed","recipe":[102,12,225,6],"salvage":[102,6,225,2],"health":120,"material":"wood"},
+    {"id":"nightstand","item":721,"name":"Homestead nightstand","recipe":[102,5,227,2],"salvage":[102,2],"health":80,"material":"wood"},
+    {"id":"wardrobe","item":722,"name":"Homestead wardrobe","recipe":[102,16,227,4],"salvage":[102,8,227,1],"health":150,"material":"wood"},
+    {"id":"counter","item":723,"name":"Homestead kitchen counter","recipe":[102,8,104,2],"salvage":[102,4,104,1],"health":120,"material":"wood"},
+    {"id":"cupboard","item":724,"name":"Homestead cupboard","recipe":[102,10,227,3],"salvage":[102,5,227,1],"health":110,"material":"wood"},
+    {"id":"sink","item":725,"name":"Homestead sink","recipe":[104,6,102,4],"salvage":[104,3,102,2],"health":140,"material":"other"},
+    {"id":"stove","item":726,"name":"Homestead iron stove","recipe":[104,12,227,4],"salvage":[104,6,227,1],"health":180,"material":"other"},
+    {"id":"sofa","item":727,"name":"Homestead sofa","recipe":[102,10,225,10],"salvage":[102,5,225,4],"health":110,"material":"wood"},
+    {"id":"books","item":728,"name":"Homestead book cluster","recipe":[225,3,102,1],"salvage":[225,1],"health":30,"material":"other"},
+    {"id":"mug","item":729,"name":"Homestead enamel mug","recipe":[104,1],"salvage":[],"health":25,"material":"other"}
+  ]
+}

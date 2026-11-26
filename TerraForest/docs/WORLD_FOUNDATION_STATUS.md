@@ -9411,3 +9411,21 @@ Native water discovery now retains the open face leading to each requested regio
 ## Parallel resident contact and Windows release validation
 
 Terrain and water now share a bounded set of field readers across a region junction. Water contact groups prepare concurrently and validate one edit revision before installation. All 42 contact checks passed. Release-game publication took 8,659 ms on the wet 64 m cut, 127.048 ms after admission for the sea barrel and 162.524 ms for the lake barrel. The finished floor was wet at all nine cut samples. All three workloads missed the deadline. The local capacity and outlet authority, GPU surface generation and atomic publication independent of wider equilibrium are still open. [Measurements and two-angle evidence](REAL_TIME_TERRAIN_AND_WATER_EDITING.md#windows-release-qualification)
+
+## Separate Homestead household packs, 26 November 2026
+
+[Homestead 01 and 02](HOMESTEAD_PACKS.md) add twenty original household objects,
+with separate pack identities, menu filters, inventory IDs, editable geometry,
+CC0 asset notices and hash provenance. Both share native model/history/storage
+owners and universal item drops. Homestead 02 adds checked wall mounting and a
+table lamp in the existing bounded resident-light pool. Rendered model sheets,
+98/139 pack assertions, 106 physical-drop assertions and the 35-assertion rendered
+G/input regression are recorded in the linked status, including retained failures.
+
+These are furnishing packs, not a completed dense-house performance milestone.
+Clock motion, simulated cloth, cabinet/basket/crate storage, cooking, sleeping,
+sitting and sink water exchange remain unimplemented, with prerequisites and
+closure evidence listed in the pack status. No generated layout or player save
+is refurnished. Return for a representative sparse/cluttered house route before
+claiming frame-rate, transparent-material or navigation acceptance. Visual review
+of the new Homestead 02 sheet remains with the user.

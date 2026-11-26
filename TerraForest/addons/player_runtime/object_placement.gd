@@ -52,6 +52,7 @@ func target()->Dictionary:
 	var start:Vector3=game.camera.global_position
 	var hit:Dictionary=game.structures.blocks.raycast_scene(start,start-game.camera.global_basis.z*4,15,[game.player.get_rid()])
 	if hit.is_empty():return {"ok":false,"reason":"Aim at nearby ground or a building surface"}
+	if entry.get("mount","floor")=="wall": return wall_target(entry,hit)
 	var basis:=Basis(Vector3.UP,quarter_turns*PI*.5)*Basis.from_scale(entry.scale)
 	var local:AABB=Transform3D(basis,Vector3.ZERO)*entry.mesh.get_aabb()
 	var anchor:Vector3=hit.position
@@ -77,6 +78,21 @@ func target()->Dictionary:
 		if not get_world_3d().direct_space_state.intersect_shape(clearance_query,1).is_empty():
 			result.reason="Object overlaps terrain or another placement";return result
 	if game.equipped_tool==222 and game.combat.barrels.region_stats().logical_instances>=256:result.reason="Barrel limit reached";return result
+	result.ok=entry.collection.can_insert_instance(game.model_tool.records(result.transform,entry.collection),game.model_tool.protection())
+	result.reason="" if result.ok else "Object overlaps another placement or capacity is reached"
+	return result
+
+func wall_target(entry:Dictionary,hit:Dictionary)->Dictionary:
+	var mount=preload("res://addons/structures/wall_object_placement.gd")
+	var result:Dictionary=mount.target(entry,hit,0 if free_placement else 0.1,quarter_turns)
+	result.ok=false;result.entry=entry
+	if not result.has("transform"):return result
+	if not game._placement_collision_ready(result.bounds.grow(0.16)):result.reason="Placement area is still loading";return result
+	if not mount.supported(game.structures.blocks,entry,result.transform,[game.player.get_rid()]):result.reason="Mounting points need solid wall support";return result
+	if not game._prefab_player_clear(result.bounds) or game.world_vehicle.overlaps_edit(result.bounds):result.reason="Move clear of the placement";return result
+	clearance_shape.size=result.bounds.size*0.96
+	clearance_query.transform=Transform3D(Basis.IDENTITY,result.bounds.get_center());clearance_query.collision_mask=15
+	if not get_world_3d().direct_space_state.intersect_shape(clearance_query,1).is_empty():result.reason="Object overlaps another placement";return result
 	result.ok=entry.collection.can_insert_instance(game.model_tool.records(result.transform,entry.collection),game.model_tool.protection())
 	result.reason="" if result.ok else "Object overlaps another placement or capacity is reached"
 	return result

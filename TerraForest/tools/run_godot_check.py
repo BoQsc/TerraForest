@@ -42,6 +42,8 @@ BOUNDED_CONTRACT_REPORTS = {
 
 def planned_report_bytes(command):
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
+    if scripts in ({"homestead_pack.gd"}, {"homestead_02_pack.gd"}):
+        return (2 if "--headless" in command else 16) * 2**20  # Logs or one bounded contact sheet; no saved world/export.
     if "--headless" in command and scripts == {"structure_exclusion_paging.gd"}:
         return 2 * 2**20  # Tiny owned archive fixture, assertion log, JSON and receipt.
     if "--headless" in command and len(scripts) == 1 and scripts <= {
@@ -262,6 +264,9 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
+    if args.test in {"homestead_pack", "homestead_02_pack"}:
+        from maintain_homestead_captures import maintain
+        maintain(apply=True)
     folder.mkdir(parents=True)
     manifest = folder / "run.json"
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
@@ -273,6 +278,8 @@ def main(argv=None):
     if args.test in {"water_barrel_world", "water_player_world"}:
         maintain(apply=True)
     if args.test == "physics_residency_world":
+        maintain(apply=True)
+    if args.test in {"homestead_pack", "homestead_02_pack"}:
         maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1
