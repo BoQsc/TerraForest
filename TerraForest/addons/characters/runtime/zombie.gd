@@ -100,6 +100,8 @@ var detached_parts: Array[RigidBody3D] = []
 var _simulation_available:=true
 var _ragdoll_started:=false
 var _staged_corpse:=false
+var _saved_pose_admission:=false
+var _saved_missing_mask:=0
 var _pending_pose_bodies:Array=[]
 var collision_exemptions: Array[Dictionary] = []
 var skeleton: Skeleton3D
@@ -150,6 +152,10 @@ var _animation_cursor_valid := false
 var initialization_us:Dictionary={}
 var render_bake_surface_reads:=0
 var sleeper:RefCounted
+
+func _init(saved_pose_admission:bool=false,saved_missing_mask:int=0)->void:
+	_saved_pose_admission=saved_pose_admission
+	_saved_missing_mask=saved_missing_mask if saved_pose_admission else 0
 
 func sleeper_active()->bool:
 	return sleeper!=null and not sleeper.phase.is_empty() and alive
@@ -416,8 +422,11 @@ func _build_ragdoll() -> void:
 	skeleton.add_child(simulator)
 	simulator.active = false
 	_add_physical_bone("Hips", "torso", true)
+	var part_index:=0
 	for part: String in PARTS:
-		_add_physical_bone(String(PARTS[part].bone), part, false)
+		if part=="torso" or (_saved_missing_mask&(1<<part_index))==0:
+			_add_physical_bone(String(PARTS[part].bone), part, false)
+		part_index+=1
 	# Neighboring proxies meet or overlap at a shared joint. Every other pair
 	# remains collidable, including opposite limbs and hands against the torso.
 	for bone_name: String in physical_bones:
@@ -496,16 +505,17 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 	var info := _shape_spec(part)
 	if pelvis:
 		if _shape_cache.has("pelvis"):
-			shape_node.shape = _shape_cache.pelvis.shape
+			if not _saved_pose_admission:shape_node.shape = _shape_cache.pelvis.shape
 			physical.body_offset = _shape_cache.pelvis.offset
 		else:
-			var box := BoxShape3D.new()
-			box.size = Vector3(0.28, 0.21, 0.22)
-			box.margin = 0.008
-			shape_node.shape = box
+			if not _saved_pose_admission:
+				var box := BoxShape3D.new()
+				box.size = Vector3(0.28, 0.21, 0.22)
+				box.margin = 0.008
+				shape_node.shape = box
 			physical.body_offset = Transform3D.IDENTITY
 	else:
-		shape_node.shape = info.shape
+		if not _saved_pose_admission:shape_node.shape = info.shape
 		physical.body_offset = info.offset
 	physical.add_child(shape_node)
 	# ConeTwist uses local X as its twist axis. Blender bones extend along Y.
@@ -514,7 +524,9 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 	if not pelvis and (part.begins_with("hand") or part.begins_with("foot")):
 		physical.mass=1.25 if part.begins_with("foot") else 0.75
 		physical.angular_damp=1.5
-	_apply_joint_spec(physical,_joint_spec(part,pelvis))
+	# Saved corpses go directly to their saved geometry and joint frames. Keep
+	# offsets for pose decoding, but never install disposable rest-pose physics.
+	if not _saved_pose_admission:_apply_joint_spec(physical,_joint_spec(part,pelvis))
 	physical_bones[bone_name] = physical
 	_body_specs[bone_name] = {"part": part, "offset": physical.body_offset}
 

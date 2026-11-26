@@ -31,8 +31,8 @@ func check(value:bool,label:String)->void:
 	checks+=1
 	if not value:failures+=1
 	print("PASS " if value else "FAIL ",label)
-func fresh(point:Vector3=Vector3.ZERO)->Node3D:
-	var actor:=Zombie.new();actor.position=point;stage.add_child(actor)
+func fresh(point:Vector3=Vector3.ZERO,saved_pose:bool=false,missing_mask:int=0)->Node3D:
+	var actor:=Zombie.new(saved_pose,missing_mask);actor.position=point;stage.add_child(actor)
 	actor.set_behavior(false);actor.animation_player.play(actor._animation_key("Zombie_Attack_Left"))
 	actor.animation_player.seek(0.65,true);actor.animation_player.pause()
 	return actor
@@ -72,10 +72,18 @@ func run()->void:
 	check(constraints(ordinary)==original_constraints,"death rebinding preserves every authored joint parameter")
 	print("IMMEDIATE_RAGDOLL ",JSON.stringify(ordinary.ragdoll_profile))
 	var reference:=clouds(ordinary)
-	var staged:=fresh(Vector3(10,0,0));var mask:=0;var index:=0
+	var mask:=0;var index:=0
 	for part:String in Zombie.PARTS:
 		if part in ["upper_arm_l","forearm_l","hand_l","foot_r"]:mask|=1<<index
 		index+=1
+	var staged:=fresh(Vector3(10,0,0),true,mask)
+	check(staged.physical_bones.size()==11,"saved missing bodies are never constructed")
+	var empty_physics:=true
+	for body:PhysicalBone3D in staged.physical_bones.values():
+		empty_physics=empty_physics and body.joint_type==PhysicalBone3D.JOINT_TYPE_NONE
+		for child in body.get_children():
+			if child is CollisionShape3D:empty_physics=empty_physics and child.shape==null
+	check(empty_physics,"saved-pose admission creates no disposable rest-pose shapes or joints")
 	staged.begin_corpse_restore(mask);await process_frame
 	check(not staged.visible and not staged.alive and staged.detached_parts.is_empty(),"pending corpse is hidden, dead and creates no disposable debris")
 	check(staged.physical_bones.size()==11 and not staged.physical_bones.has("LeftArm"),"known missing anatomy is removed before hull preparation")
