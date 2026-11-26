@@ -40,6 +40,7 @@ class NativeStaticBatch : public Node3D {
     void reset_world_render(){if(world_render_owner){++world_render_epoch;world_render_changes.clear();world_render_seeded.clear();}}
     void change_world_render(int64_t id){if(world_render_owner){if(world_render_changes.size()>=200000)reset_world_render();world_render_changes.insert(id);}}
     PackedByteArray overlap_mask_impl(const TypedArray<Transform3D> &transforms,const AABB &bounds,bool include_unloaded) const;
+    void accumulate_overlap(const std::vector<AABB> &queries,const AABB &combined,bool include_unloaded,PackedByteArray &result,uint64_t *visited=nullptr) const;
     friend class NativeModelTransferScheduler;
     std::shared_ptr<ModelCheckpointLease> paging_checkpoint;
     uint64_t paging_owner=0;

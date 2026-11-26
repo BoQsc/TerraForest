@@ -271,14 +271,19 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 	if _requests.is_empty():_pending.erase(request.key)
 	if not _wanted.has(request.key) or epoch!=terrain.epoch or revision!=terrain.published_revision or terrain.pending_edit or _scatter_job.is_empty() or _scatter_job.exclusion!=_exclusion_revision:
 		_scatter_job.clear();return
+	var measured:=Time.get_ticks_usec() if profiling_enabled else 0
 	var placed: Dictionary=native.place(request.ids,points,normals)
 	if not placed.ok: rejected_batches+=1;_scatter_job.clear();return
 	var mask: PackedByteArray=removed.mask(placed.ids)
+	if profiling_enabled:terrain._record_stage("cover surface placement",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	var structure_mask:=PackedByteArray();var water_mask:=PackedByteArray()
 	var road_mask:PackedByteArray=road_regions.placement_mask(placed.transforms,0.3) if road_regions!=null else PackedByteArray()
+	if profiling_enabled:terrain._record_stage("cover road mask",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	if road_regions!=null and road_mask.size()!=mask.size():return
 	if structures!=null: structure_mask=structures.overlap_mask(placed.transforms,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,0.8,0.8)))
+	if profiling_enabled:terrain._record_stage("cover structure mask",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	if water!=null: water_mask=water.placement_mask(placed.transforms)
+	if profiling_enabled:terrain._record_stage("cover water mask",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	if (structures!=null and structure_mask.size()!=mask.size()) or (water!=null and water_mask.size()!=mask.size()):
 		rejected_batches+=1;_scatter_job.clear();return
 	# Only this bounded 64-candidate owner is combined in scene glue.
@@ -286,6 +291,7 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 		if (structures!=null and structure_mask[i]) or (water!=null and water_mask[i]): mask[i]=1
 		if road_regions!=null and road_mask[i]:mask[i]=1
 	var packed: Array=native.pack(placed.ids,placed.transforms,mask,_scatter_job.shelter)
+	if profiling_enabled:terrain._record_stage("cover packing",(Time.get_ticks_usec()-measured)/1000.0);measured=Time.get_ticks_usec()
 	if packed.size()!=Catalog.COUNT: rejected_batches+=1;_scatter_job.clear();return
 	if boulders!=null:packed[0]=native.boulder_rows(packed[0],false)
 	# Replies may arrive in any order; concatenate by original layer for stable IDs.

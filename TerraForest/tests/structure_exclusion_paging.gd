@@ -31,12 +31,55 @@ func resolve()->PackedByteArray:
 		await process_frame
 		result=mask()
 	return result
+func shared_queries()->void:
+	var owner:Node3D=ClassDB.instantiate("NativeBlockWorld")
+	owner.set_cells(PackedInt32Array([0,0,0,1]))
+	var service:RefCounted=ClassDB.instantiate("NativeStructureQueries")
+	var collections:Array=[]
+	for collection in 4:
+		var batch:Node3D=ClassDB.instantiate("NativeStaticBatch")
+		batch.configure_collision_only();batch.configure_asset("test/shared_%d"%collection,BoxMesh.new())
+		var parts:Array[AABB]=[AABB(Vector3(-2,0,-.5),Vector3(1,4,1)),AABB(Vector3(1,0,-.5),Vector3(1,4,1))]
+		batch.configure_compound_collision(parts,8,8,2,64,32)
+		var ids:=PackedInt64Array();var poses:=PackedFloat32Array()
+		for index in 128:
+			ids.append(index+1);poses.append_array(pose(Vector3(index*64,0,4+collection*8)))
+		batch.upsert_instances(ids,poses);collections.append(batch)
+	var probes:Array[Transform3D]=[]
+	for z in range(0,33):
+		for x in [-1.5,0.,1.5]:probes.append(Transform3D(Basis.IDENTITY,Vector3(x,.5,z)))
+	for variant in 3:
+		if variant==1:
+			collections[1].transform=Transform3D(Basis(Vector3.UP,.4).scaled(Vector3(1.2,.9,.8)),Vector3(1,0,2))
+		elif variant==2:
+			collections[0].remove_instances(PackedInt64Array([1]))
+			collections[2].upsert_instances(PackedInt64Array([1]),pose(Vector3(1,0,30)))
+		var expected:PackedByteArray=owner.overlap_mask(probes,BOUNDS)
+		for batch:Node3D in collections:
+			var individual:PackedByteArray=batch.overlap_mask(probes,BOUNDS)
+			for index in expected.size():expected[index]|=individual[index]
+		check(service.overlap_mask(owner,collections,probes,BOUNDS)==expected,"shared query matches individual masks across frame/edit variant %d"%variant)
+		var stats:Dictionary=service.exclusion_stats()
+		if variant==0:
+			check(stats.query_transforms==probes.size() and stats.query_frame_reuses>=collections.size(),"same-frame collections transform each candidate only once")
+			check(stats.query_model_nodes<64,"spatial traversal prunes distant placement groups")
+			check(expected[12]==1 and expected[13]==0 and expected[14]==1,"compound arch opening is preserved")
+		else:check(stats.query_transforms==probes.size()*3,"different frames recompute only the necessary local boxes")
+		if variant==2:check(expected[12]==0 and expected[91]==1,"removed and moved placements update indexed exclusion immediately")
+	var invalid:Array[Transform3D]=[Transform3D(Basis.from_scale(Vector3.ZERO),Vector3.ZERO)]
+	check(service.overlap_mask(owner,collections,invalid,BOUNDS).is_empty(),"invalid candidate rejects the entire shared packet")
+	collections[0].scale=Vector3.ZERO
+	check(service.overlap_mask(owner,collections,probes,BOUNDS).is_empty(),"invalid collection frame cannot reuse a valid packet")
+	for batch:Node3D in collections:batch.free()
+	owner.free()
 func run()->void:
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--profile-dir="):output=argument.trim_prefix("--profile-dir=")
+		if argument.begins_with("--check-evidence-dir="):output=argument.trim_prefix("--check-evidence-dir=")
 	DirAccess.make_dir_recursive_absolute(output)
 	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
 	GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
+	shared_queries()
 	blocks=ClassDB.instantiate("NativeBlockWorld")
 	models=ClassDB.instantiate("NativeStaticBatch")
 	queries=ClassDB.instantiate("NativeStructureQueries")

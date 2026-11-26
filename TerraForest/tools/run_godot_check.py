@@ -42,6 +42,8 @@ BOUNDED_CONTRACT_REPORTS = {
 
 def planned_report_bytes(command):
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
+    if "--headless" in command and scripts == {"structure_exclusion_paging.gd"}:
+        return 2 * 2**20  # Tiny owned archive fixture, assertion log, JSON and receipt.
     if "--headless" in command and len(scripts) == 1 and scripts <= {
         "zombie_residency_lifecycle.gd", "zombie_rest_support.gd", "zombie_ragdoll_reactivation.gd",
         "zombie_geometry_cache.gd", "corpse_restore_cost.gd", "zombie_corpse_walk.gd", "zombie_collision_cloud.gd", "zombie_awareness.gd"

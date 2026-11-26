@@ -3,6 +3,7 @@
 #include "exclusion_page.hpp"
 #include "static_batch.hpp"
 #include "model_transfer_scheduler.hpp"
+#include "exclusion_queries.hpp"
 #include <godot_cpp/classes/time.hpp>
 #include <algorithm>
 #include <cmath>
@@ -22,6 +23,7 @@ struct StructureExclusionCache {
     Ref<NativeRegionWorldArchive> block_archive;
     PackedByteArray block_checkpoint;
     uint64_t serial=0,bytes=0,high_bytes=0,reads=0,hits=0,failures=0,evictions=0,last_us=0;
+    uint64_t query_transforms=0,query_frame_reuses=0,query_model_nodes=0;
     int pending=0;
     String state="ready";
     ~StructureExclusionCache(){clear();}
@@ -96,11 +98,13 @@ Dictionary NativeStructureQueries::exclusion_stats() const {
     result["bytes"]=int64_t(exclusion->bytes);result["byte_limit"]=int64_t(StructureExclusionCache::LIMIT);result["high_bytes"]=int64_t(exclusion->high_bytes);
     result["reads"]=int64_t(exclusion->reads);result["hits"]=int64_t(exclusion->hits);result["failures"]=int64_t(exclusion->failures);
     result["evictions"]=int64_t(exclusion->evictions);result["last_us"]=int64_t(exclusion->last_us);
+    result["query_transforms"]=int64_t(exclusion->query_transforms);result["query_frame_reuses"]=int64_t(exclusion->query_frame_reuses);result["query_model_nodes"]=int64_t(exclusion->query_model_nodes);
     result["live_pages"]=NativeExclusionPage::live_pages();return result;
 }
 PackedByteArray NativeStructureQueries::overlap_mask(NativeBlockWorld *blocks,const Array &models,const TypedArray<Transform3D> &transforms,const AABB &bounds) {
     const uint64_t begin=Time::get_singleton()->get_ticks_usec();
     exclusion->poll();exclusion->state="invalid";
+    exclusion->query_transforms=0;exclusion->query_frame_reuses=0;exclusion->query_model_nodes=0;
     if(!blocks||models.size()>256)return {};
     std::vector<NativeStaticBatch*> collections;
     for(int index=0;index<models.size();++index) {
@@ -108,20 +112,22 @@ PackedByteArray NativeStructureQueries::overlap_mask(NativeBlockWorld *blocks,co
         Object *object=value;auto *model=Object::cast_to<NativeStaticBatch>(object);
         if(!model)return {};collections.push_back(model);
     }
-    PackedByteArray result=blocks->overlap_mask_impl(transforms,bounds,false);
-    if(result.size()!=transforms.size())return {};
+    ExclusionQueries prepared;
+    if(!prepared.configure(transforms,bounds)||!prepared.in_frame(blocks->is_inside_tree()?blocks->get_global_transform():blocks->get_transform()))return {};
+    PackedByteArray result;result.resize(transforms.size());
+    auto *output=result.ptrw();
+    for(size_t i=0;i<prepared.boxes.size();++i)output[i]=blocks->occupied_local(prepared.boxes[i])?1:0;
     for(auto *model:collections) {
-        PackedByteArray mask=model->overlap_mask_impl(transforms,bounds,false);
-        if(mask.size()!=result.size())return {};
-        for(int64_t index=0;index<result.size();++index)result.set(index,result[index]|mask[index]);
+        if(!prepared.in_frame(model->is_inside_tree()?model->get_global_transform():model->get_transform()))return {};
+        model->accumulate_overlap(prepared.boxes,prepared.combined,false,result,&exclusion->query_model_nodes);
     }
     exclusion->state="ready";
     if(transforms.is_empty()){exclusion->last_us=Time::get_singleton()->get_ticks_usec()-begin;return result;}
-    const Transform3D block_inverse=(blocks->is_inside_tree()?blocks->get_global_transform():blocks->get_transform()).affine_inverse();
-    std::vector<AABB> block_queries;block_queries.reserve(transforms.size());
+    if(!prepared.in_frame(blocks->is_inside_tree()?blocks->get_global_transform():blocks->get_transform()))return {};
+    const auto &block_queries=prepared.boxes;
     std::map<BlockKey,std::vector<int>> block_regions;
     for(int index=0;index<transforms.size();++index) {
-        const Transform3D pose=transforms[index];const AABB box=(block_inverse*pose).xform(bounds);block_queries.push_back(box);
+        const AABB &box=block_queries[index];
         if(result[index]||blocks->unloaded_regions.empty())continue;
         const Vector3 low=box.position.max(Vector3(-1048576,-1048576,-1048576)),high=box.get_end().min(Vector3(1048576,1048576,1048576));
         if(low.x>=high.x||low.y>=high.y||low.z>=high.z)continue;
@@ -143,12 +149,8 @@ PackedByteArray NativeStructureQueries::overlap_mask(NativeBlockWorld *blocks,co
     }
     for(auto *model:collections) {
         if(model->unloaded_regions.empty()||model->source_mesh.is_null()||transforms.is_empty())continue;
-        const Transform3D inverse=(model->is_inside_tree()?model->get_global_transform():model->get_transform()).affine_inverse();
-        std::vector<AABB> queries;queries.reserve(transforms.size());AABB combined;
-        for(int index=0;index<transforms.size();++index) {
-            const Transform3D pose=transforms[index];const AABB box=(inverse*pose).xform(bounds);
-            queries.push_back(box);combined=index?combined.merge(box):box;
-        }
+        if(!prepared.in_frame(model->is_inside_tree()?model->get_global_transform():model->get_transform()))return {};
+        const auto &queries=prepared.boxes;const AABB &combined=prepared.combined;
         TypedArray<AABB> parts;
         if(model->proxy_parts.empty())parts.push_back(model->source_mesh->get_aabb());
         else for(const auto &part:model->proxy_parts)parts.push_back(part);
@@ -169,6 +171,7 @@ PackedByteArray NativeStructureQueries::overlap_mask(NativeBlockWorld *blocks,co
         visit(visit,model->unloaded_bounds.root());
     }
     exclusion->last_us=Time::get_singleton()->get_ticks_usec()-begin;
+    exclusion->query_transforms=prepared.transformed;exclusion->query_frame_reuses=prepared.reused;
     if(!ready)return {};
     exclusion->state="ready";return result;
 }

@@ -107,6 +107,9 @@ ordinary ready runs plus `.retain`/`RETAIN_READY` pins. Each cold run keeps
 read and hash-check archived cadence directly. Maintenance runs before launch
 and after process exit, never during the route. The audited headless zombie
 regressions declare 2 MiB of logs/JSON; their source import cache is reused.
+The headless `structure_exclusion_paging` regression also declares 2 MiB for its
+small archive fixture, assertions and JSON. It uses the receipt-owned check
+directory, with no exported build or player-world copy.
 This includes `zombie_collision_cloud`: bounded certificate/contact assertions
 and construction timings go into the owned log, with no capture images, world
 files, geometry dumps or exported builds.
