@@ -9414,12 +9414,12 @@ Terrain and water now share a bounded set of field readers across a region junct
 
 ## Separate Homestead household packs, 26 November 2026
 
-[Homestead 01–07](HOMESTEAD_PACKS.md) add seventy original household objects,
+[Homestead 01–08](HOMESTEAD_PACKS.md) add eighty original household objects,
 with separate pack identities, menu filters, inventory IDs, editable geometry,
 CC0 asset notices and hash provenance. All share native model/history/storage
 owners and universal item drops. Homestead 02 adds checked wall mounting and a
 table lamp in the existing bounded resident-light pool. Rendered model sheets,
-98/139/137/111/124/111/103 pack assertions, 993 universal-drop checks, 156 physical-drop
+98/139/137/111/124/111/103/124 pack assertions, 1,063 universal-drop checks, 166 physical-drop
 checks and 35 rendered G/input checks are recorded in the linked status, including
 retained failures.
 
@@ -9429,7 +9429,7 @@ sitting, washing, cleaning and fixture water exchange remain unimplemented.
 Prerequisites and closure evidence are listed in the pack status. No generated layout or player save
 is refurnished. Return for a representative sparse/cluttered house route before
 claiming frame-rate, transparent-material or navigation acceptance. Visual review
-of the new Homestead 07 sheet remains with the user. Homestead 03's mirror has
+of the new Homestead 08 sheet remains with the user. Homestead 03's mirror has
 a simple finish; live reflections require their own bounded effect/performance
 contract. Homestead 04 crafting, usable tools, moving parts, toolbox storage,
 rope/cable attachment and cart motion remain unimplemented; prerequisites and
@@ -9446,3 +9446,8 @@ chess, reading and fire/heat/smoke remain unimplemented. Shared ownership/state,
 interaction permissions, fuel conservation and bounded effect budgets are
 prerequisites, with interaction/reload closure checks in the linked pack status.
 The fireplace is unlit; the floor lamp uses the existing bounded lighting pool.
+Homestead 08 storage, mail delivery, key use, equipping decorative footwear,
+umbrella opening, seating, growth and watering remain unimplemented. Shared
+container/delivery/lock/equipment/actor identities, saved moving state, resource
+conservation and growth/time are prerequisites; interaction and reload evidence
+are required by the linked pack status. Foliage is opaque static geometry.

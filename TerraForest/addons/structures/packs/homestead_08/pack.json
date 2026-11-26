@@ -1,0 +1,202 @@
+{
+  "schema": 1,
+  "id": "terraforest.homestead_08",
+  "name": "Homestead 08",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {
+      "id": "hall_console",
+      "item": 790,
+      "name": "Homestead narrow hall console",
+      "recipe": [
+        102,
+        10,
+        227,
+        2
+      ],
+      "salvage": [
+        102,
+        5
+      ],
+      "health": 120,
+      "material": "wood"
+    },
+    {
+      "id": "entry_bench",
+      "item": 791,
+      "name": "Homestead entryway bench",
+      "recipe": [
+        102,
+        9,
+        104,
+        4,
+        227,
+        3
+      ],
+      "salvage": [
+        102,
+        4,
+        104,
+        2
+      ],
+      "health": 140,
+      "material": "wood"
+    },
+    {
+      "id": "shoe_rack",
+      "item": 792,
+      "name": "Homestead shoe rack with shoes",
+      "recipe": [
+        102,
+        6,
+        104,
+        2,
+        225,
+        3
+      ],
+      "salvage": [
+        102,
+        3,
+        225,
+        1
+      ],
+      "health": 90,
+      "material": "wood"
+    },
+    {
+      "id": "umbrella_stand",
+      "item": 793,
+      "name": "Homestead umbrella stand with umbrellas",
+      "recipe": [
+        104,
+        5,
+        225,
+        4,
+        227,
+        2
+      ],
+      "salvage": [
+        104,
+        2,
+        225,
+        1
+      ],
+      "health": 75,
+      "material": "other"
+    },
+    {
+      "id": "doormat",
+      "item": 794,
+      "name": "Homestead woven doormat",
+      "recipe": [
+        204,
+        5,
+        225,
+        2
+      ],
+      "salvage": [
+        204,
+        2
+      ],
+      "health": 45,
+      "material": "other"
+    },
+    {
+      "id": "key_rack",
+      "item": 795,
+      "name": "Homestead wall key rack",
+      "recipe": [
+        102,
+        2,
+        104,
+        2,
+        227,
+        1
+      ],
+      "salvage": [
+        102,
+        1,
+        104,
+        1
+      ],
+      "health": 50,
+      "material": "wood",
+      "mount": "wall"
+    },
+    {
+      "id": "mailbox",
+      "item": 796,
+      "name": "Homestead wall mounted mailbox",
+      "recipe": [
+        104,
+        5,
+        227,
+        3
+      ],
+      "salvage": [
+        104,
+        2,
+        227,
+        1
+      ],
+      "health": 90,
+      "material": "other",
+      "mount": "wall"
+    },
+    {
+      "id": "muddy_boots",
+      "item": 797,
+      "name": "Homestead pair of muddy boots",
+      "recipe": [
+        225,
+        5,
+        204,
+        2
+      ],
+      "salvage": [
+        225,
+        2
+      ],
+      "health": 55,
+      "material": "other"
+    },
+    {
+      "id": "planter",
+      "item": 798,
+      "name": "Homestead terracotta planter with foliage",
+      "recipe": [
+        201,
+        4,
+        204,
+        4
+      ],
+      "salvage": [
+        201,
+        2,
+        204,
+        1
+      ],
+      "health": 65,
+      "material": "stone"
+    },
+    {
+      "id": "watering_can",
+      "item": 799,
+      "name": "Homestead metal watering can",
+      "recipe": [
+        104,
+        4,
+        227,
+        2
+      ],
+      "salvage": [
+        104,
+        2
+      ],
+      "health": 75,
+      "material": "other"
+    }
+  ]
+}

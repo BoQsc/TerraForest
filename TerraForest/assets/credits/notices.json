@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "homestead_08",
+      "title": "Homestead 08 entryway and porch pack",
+      "license": "CC0 1.0 assets / 0BSD code",
+      "source": "addons/structures/packs/homestead_08/ASSET_LICENSE.md",
+      "summary": "Ten original entryway and porch furnishings, folded umbrellas, footwear, original coir weave, solid foliage and matching icons. Includes editable geometry; storage, mail, equipment and plant care remain unimplemented.",
+      "text": "# Homestead 08 — original entryway and porch furnishings\n\nNew original assets in this pack are contributed by TerraForest contributors\nunder **CC0-1.0**, to the extent copyright or related rights exist and are held\nby the contributors. This follows the repository contribution terms and does\nnot purport to license third-party rights.\n\nCC0 legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nCovered assets: `pack.json`, `models/hall_console.tres`, `models/entry_bench.tres`,\n`models/shoe_rack.tres`, `models/umbrella_stand.tres`, `models/doormat.tres`,\n`models/key_rack.tres`, `models/mailbox.tres`, `models/muddy_boots.tres`,\n`models/planter.tres`, `models/watering_can.tres`, their embedded materials and\ntextures, and `icons.trtex`.\n\nThese original parametric models were authored with Codex for TerraForest on\n2026-11-26. The user requested a separate Homestead 08 pack and a picture of\nits actual models, accepting the proposed ten-object Entryway & Porch roster.\nThe brief specifies weathered timber, faded green metal, woven fibre and\nterracotta. No external models, photographs, textures, fonts, branding or\nthird-party reference artwork were supplied or copied. Coir weave, foliage,\nmud patches, umbrella pleats, keys and footwear are original geometry or\nprocedural pixels. No third-party plant or footwear design assets are included.\n\n`author.gd` retains editable geometry. It reuses the project's original 0BSD\nmesh/tube helpers and CC0 procedural materials from Homestead 02 and 04;\ntheir terms and provenance remain intact. Runtime meshes embed their own\ngeometry/materials/textures. `provenance.json` records exact output and local\nsource hashes, including both inherited helper source hashes.\n\nGodot's primitives, SurfaceTool and image APIs are external authoring tools,\nnot new vendored dependencies or material covered by this dedication. Pack\nauthoring, catalog, integration and test code is original **0BSD**. Asset\ndedication is separate from visual review and gameplay/performance acceptance."
+    },
+    {
       "id": "homestead_07",
       "title": "Homestead 07 living room and leisure pack",
       "license": "CC0 1.0 assets / 0BSD code",
