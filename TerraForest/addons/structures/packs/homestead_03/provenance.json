@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "pack": "terraforest.homestead_03",
+  "version": "1.0.0",
+  "creator": "TerraForest contributors, authored with Codex",
+  "date": "2026-11-26",
+  "origin": "Original parametric geometry and procedural materials; no external asset inputs",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
+  "authoring_tool": "Existing Godot 4.7.2 Steam; external engine, not vendored by this pack",
+  "brief": "A separate recognizable household pack with the user-approved roster and a rendered preview of its actual meshes",
+  "author_command": "python tools/run_godot_check.py homestead_03_pack --require \"failures=0\" -- --author-pack",
+  "icon_command": "python tools/run_godot_check.py homestead_03_pack --isolated-render --require \"failures=0\" -- --preview-only",
+  "source_sha256": {
+    "addons/structures/packs/homestead_02/author.gd": "44569d6b3e354ae1b940e5af5e43a6ab3027e4a44c6b3c34bf56fc43428411bf",
+    "addons/structures/packs/homestead_03/author.gd": "71f89321e45a1f56d24dfabdbadf6b044964c7c35c2cf378bbee21dbb37b7296",
+    "addons/structures/packs/homestead_03/catalog.gd": "90fa8dcc3ce6229e4cda494d6bd633a4d4d8951eb85ee98f4d29d8bb42fc7596",
+    "tests/homestead_03_pack.gd": "4b11c7bbd01f839802ba3605feeb21817d26461f5055adb99bb8a360718be459"
+  },
+  "asset_sha256": {
+    "addons/structures/packs/homestead_03/icons.trtex": "8569d77e939c383d09d7020d7b46c2fdfaf0e8bec51aaf9fadd31f37f95771bf",
+    "addons/structures/packs/homestead_03/models/bathtub.tres": "fbb4955c294f9920e9d2daa204e29ac613f8254395010ba81b15858fb6f5efc6",
+    "addons/structures/packs/homestead_03/models/broom_set.tres": "805c9ab64174240d340bce4f9a7049b2762557b217d993eaeefab30c7e669829",
+    "addons/structures/packs/homestead_03/models/laundry_tub.tres": "2008636efda942d018b95f90fec0e3ec6a4ff9d9c63302c43d2e34b0548940c7",
+    "addons/structures/packs/homestead_03/models/mirror.tres": "b7a73eee4fdfe36b21e175d7d936a383b949402d61fce539dc709ea1433c88b4",
+    "addons/structures/packs/homestead_03/models/paper_holder.tres": "70a63cf099563cf71e3d4195d6c735824cf256919b63bb008e81fb7c0ba39371",
+    "addons/structures/packs/homestead_03/models/soap_dish.tres": "7c32736cfb035bf87f05d27aa3ea26a17ef01eb17845fbcd8a54c634b0887935",
+    "addons/structures/packs/homestead_03/models/toilet.tres": "0eab7c85dd63fced448b3c3d9408a42fabe9efd76822bc1e5a9a29e306e079ef",
+    "addons/structures/packs/homestead_03/models/towel_rail.tres": "72cbf1f08051df645418531a8306aaeb155a51fbf7f520f86f6eae9cfb063a05",
+    "addons/structures/packs/homestead_03/models/towels.tres": "fb5793365e96e4df220594b01b55997eb10c867290d104506c012cd971460307",
+    "addons/structures/packs/homestead_03/models/washboard.tres": "360e8abd28a0f74d26c534082aeea2f3189fd8173a16e28c1a2bd5fabd98ac18",
+    "addons/structures/packs/homestead_03/pack.json": "80840999fc8b06bfcbdfcd7e89ee9078892283111112194260f725ca66c969a2"
+  }
+}

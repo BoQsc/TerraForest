@@ -7,6 +7,8 @@ static var atlas: ImageTexture
 static var regions: Dictionary={}
 static var bucket_icon:ImageTexture
 static func texture(key: Variant) -> Texture2D:
+	if str(key).begins_with("Homestead 03 · ") or (str(key).is_valid_int() and int(key)>=740 and int(key)<=749):
+		return preload("res://addons/structures/packs/homestead_03/catalog.gd").icon(key)
 	if str(key).begins_with("Homestead 02 · ") or (str(key).is_valid_int() and int(key)>=730 and int(key)<=739):
 		return preload("res://addons/structures/packs/homestead_02/catalog.gd").icon(key)
 	if str(key).begins_with("Homestead 01 · ") or (str(key).is_valid_int() and int(key)>=720 and int(key)<=729):

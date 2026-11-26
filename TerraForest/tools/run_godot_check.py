@@ -42,7 +42,7 @@ BOUNDED_CONTRACT_REPORTS = {
 
 def planned_report_bytes(command):
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
-    if scripts in ({"homestead_pack.gd"}, {"homestead_02_pack.gd"}):
+    if scripts in ({"homestead_pack.gd"}, {"homestead_02_pack.gd"}, {"homestead_03_pack.gd"}):
         return (2 if "--headless" in command else 16) * 2**20  # Logs or one bounded contact sheet; no saved world/export.
     if "--headless" in command and scripts == {"structure_exclusion_paging.gd"}:
         return 2 * 2**20  # Tiny owned archive fixture, assertion log, JSON and receipt.
@@ -264,7 +264,7 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack"}:
+    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack"}:
         from maintain_homestead_captures import maintain
         maintain(apply=True)
     folder.mkdir(parents=True)
@@ -279,7 +279,7 @@ def main(argv=None):
         maintain(apply=True)
     if args.test == "physics_residency_world":
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack"}:
+    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack"}:
         maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1

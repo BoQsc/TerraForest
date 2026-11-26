@@ -4,6 +4,7 @@ static func salvage_recipes(objects: Dictionary = {}) -> Dictionary:
 	var result: Dictionary=preload("res://addons/structures/furniture_catalog.gd").salvage_recipes()
 	result.merge(preload("res://addons/structures/packs/homestead_01/catalog.gd").recipes(true))
 	result.merge(preload("res://addons/structures/packs/homestead_02/catalog.gd").recipes(true))
+	result.merge(preload("res://addons/structures/packs/homestead_03/catalog.gd").recipes(true))
 	# Partial recovery, below construction cost; glass is not a separate item yet.
 	result[preload("res://addons/structures/window_catalog.gd").KEY]=PackedInt64Array([102,2])
 	var door=preload("res://addons/structures/door_catalog.gd")
@@ -23,6 +24,7 @@ static func recipes(objects: Dictionary = {}) -> Dictionary:
 	var result: Dictionary=preload("res://addons/structures/furniture_catalog.gd").recipes()
 	result.merge(preload("res://addons/structures/packs/homestead_01/catalog.gd").recipes())
 	result.merge(preload("res://addons/structures/packs/homestead_02/catalog.gd").recipes())
+	result.merge(preload("res://addons/structures/packs/homestead_03/catalog.gd").recipes())
 	var ladder=preload("res://addons/structures/ladder_catalog.gd")
 	var chest=preload("res://addons/structures/storage_catalog.gd")
 	result[ladder.KEY]=ladder.recipe()

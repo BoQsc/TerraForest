@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "terraforest.homestead_03",
+  "name": "Homestead 03",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {"id":"bathtub","item":740,"name":"Homestead enamel bathtub","recipe":[104,14,227,4],"salvage":[104,7,227,1],"health":180,"material":"other"},
+    {"id":"toilet","item":741,"name":"Homestead toilet and cistern","recipe":[201,8,104,3],"salvage":[201,4,104,1],"health":140,"material":"other"},
+    {"id":"mirror","item":742,"name":"Homestead wall mirror","mount":"wall","recipe":[102,3,104,2],"salvage":[102,1,104,1],"health":35,"material":"wood"},
+    {"id":"towel_rail","item":743,"name":"Homestead towel rail","mount":"wall","recipe":[104,2,225,3],"salvage":[104,1,225,1],"health":45,"material":"other"},
+    {"id":"towels","item":744,"name":"Homestead folded towels","recipe":[225,5],"salvage":[225,2],"health":25,"material":"other"},
+    {"id":"soap_dish","item":745,"name":"Homestead soap dish","recipe":[201,2,204,1],"salvage":[201,1],"health":20,"material":"other"},
+    {"id":"paper_holder","item":746,"name":"Homestead paper holder","mount":"wall","recipe":[104,1,225,2],"salvage":[225,1],"health":30,"material":"other"},
+    {"id":"laundry_tub","item":747,"name":"Homestead laundry tub","recipe":[104,6,227,2],"salvage":[104,3],"health":110,"material":"other"},
+    {"id":"washboard","item":748,"name":"Homestead washboard","recipe":[102,3,104,2],"salvage":[102,1,104,1],"health":65,"material":"wood"},
+    {"id":"broom_set","item":749,"name":"Homestead broom and dustpan","recipe":[102,2,204,4,104,1],"salvage":[102,1,204,2],"health":40,"material":"wood"}
+  ]
+}

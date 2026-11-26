@@ -14,8 +14,10 @@ def record(number):
     manifest = json.loads((folder / "pack.json").read_text(encoding="utf-8-sig"))
     assets = [folder / "pack.json", folder / "icons.trtex"]
     assets += [folder / "models" / (row["id"] + ".tres") for row in manifest["objects"]]
-    driver = "homestead_pack" if number == 1 else "homestead_02_pack"
+    driver = "homestead_pack" if number == 1 else f"homestead_{number:02}_pack"
     source = [folder / "author.gd", folder / "catalog.gd", ROOT / "tests" / (driver + ".gd")]
+    if number == 3:
+        source.append(ROOT / "addons/structures/packs/homestead_02/author.gd")
 
     def hashes(paths):
         return {path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -39,7 +41,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    for number in (1, 2):
+    for number in (1, 2, 3):
         value = record(number)
         output = ROOT / "addons/structures/packs" / f"homestead_{number:02}" / "provenance.json"
         content = json.dumps(value, indent=2) + "\n"
@@ -48,7 +50,7 @@ def main():
                 parser.exit(1, f"Stale Homestead {number:02} provenance; run tools/homestead_provenance.py\n")
         else:
             output.write_text(content, encoding="utf-8")
-    print("PASS Homestead 01/02 provenance " + ("verified" if args.check else "recorded"))
+    print("PASS Homestead 01/02/03 provenance " + ("verified" if args.check else "recorded"))
 
 
 if __name__ == "__main__":

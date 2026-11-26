@@ -18,7 +18,7 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	var row:=HBoxContainer.new();parent.add_child(row)
 	search=LineEdit.new();TextInputFocus.configure(search);search.placeholder_text="Search items by name or ID…";search.clear_button_enabled=true;search.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(search)
 	category=OptionButton.new()
-	for title:String in ["All items","Tools","Building materials","Resources & plants","Clothing","Water containers","Vehicles","Objects & furniture","Homestead 01","Homestead 02"]:category.add_item(title)
+	for title:String in ["All items","Tools","Building materials","Resources & plants","Clothing","Water containers","Vehicles","Objects & furniture","Homestead 01","Homestead 02","Homestead 03"]:category.add_item(title)
 	row.add_child(category)
 	count=SpinBox.new();count.custom_minimum_size.x=120;count.min_value=1;count.max_value=999;count.value=1;count.prefix="Qty ";row.add_child(count)
 	summary=menu.label(parent,"")
@@ -43,7 +43,7 @@ func item_category(item:int)->int:
 func filter_items()->void:
 	var query:=search.text.strip_edges().to_lower();var matches:=0
 	for item:int in entries:
-		var found:bool=(category.selected==0 or category.selected==item_category(item) or (category.selected==8 and item>=720 and item<=729) or (category.selected==9 and item>=730 and item<=739)) and ItemCatalog.matches(item,query)
+		var found:bool=(category.selected==0 or category.selected==item_category(item) or (category.selected==8 and item>=720 and item<=729) or (category.selected==9 and item>=730 and item<=739) or (category.selected==10 and item>=740 and item<=749)) and ItemCatalog.matches(item,query)
 		entries[item].visible=found
 		if found:matches+=1
 	empty.visible=matches==0;summary.text="%d / %d items · Shift-click: full stack · Full inventories are left unchanged"%[matches,catalog.size()]

@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "homestead_03",
+      "title": "Homestead 03 washroom and utility pack",
+      "license": "CC0 1.0 assets / 0BSD code",
+      "source": "addons/structures/packs/homestead_03/ASSET_LICENSE.md",
+      "summary": "Ten original washroom and cleaning props, with editable geometry, embedded materials, matching icons and stable identities. The mirror uses an inexpensive finish without live reflections.",
+      "text": "# Homestead 03 — original washroom and utility objects\n\nNew original assets in this pack are contributed by TerraForest contributors\nunder **CC0-1.0**, to the extent copyright or related rights exist and are held\nby the contributors. The dedication follows the repository's contribution\nterms and does not purport to license third-party rights.\n\nCC0 legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nCovered assets: `pack.json`, `models/bathtub.tres`, `models/toilet.tres`,\n`models/mirror.tres`, `models/towel_rail.tres`, `models/towels.tres`,\n`models/soap_dish.tres`, `models/paper_holder.tres`, `models/laundry_tub.tres`,\n`models/washboard.tres`, `models/broom_set.tres`, their embedded materials and\ntextures, and `icons.trtex`.\n\nThese original parametric models were authored with Codex for TerraForest on\n2026-11-26. The user requested a separate Homestead 03 pack using the proposed\nwashroom/utility roster, followed by a picture of the actual new objects.\nThe brief specifies cream enamel, dull zinc, faded teal towels and weathered\ntimber. No external models, photographs, images, textures or branding were\nsupplied or copied. The inexpensive mirror surface contains no captured room\nimage or third-party reflection photograph.\n\nEditable geometry is in `author.gd`. It reuses this project's original 0BSD\nmesh helpers and CC0 procedural material patterns from Homestead 02; those\nexisting terms and provenance remain intact. The runtime meshes contain their\nown embedded geometry, materials and textures. `provenance.json` records exact\nasset hashes and both the local author and reused helper source hashes.\n\nGodot's primitives and SurfaceTool are external authoring tools, not new\nvendored dependencies or assets covered by this dedication. Original authoring,\ncatalog, integration and test code is **0BSD**. License dedication remains\nseparate from visual review and performance acceptance."
+    },
+    {
       "id": "homestead_02",
       "title": "Homestead 02 household detail pack",
       "license": "CC0 1.0 assets / 0BSD code",

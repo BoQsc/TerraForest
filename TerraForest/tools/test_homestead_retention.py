@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from maintain_homestead_captures import candidates
+from maintain_homestead_captures import FAMILIES, candidates
 
 
 class PreviewOwnership(unittest.TestCase):
@@ -17,7 +17,7 @@ class PreviewOwnership(unittest.TestCase):
     def preview(self, number, family="homestead_pack", **result):
         folder = self.root / "reports/checks" / f"{number:03}"
         folder.mkdir(parents=True)
-        image = "homestead_01.png" if family == "homestead_pack" else "homestead_02.png"
+        image = FAMILIES[family]
         (folder / image).write_bytes(b"retained fixture")
         run = {"command": ["godot", "--script", f"res://tests/{family}.gd", "--check-evidence-dir=" + str(folder)],
                "result": {"exit_code": 0, **result}}
@@ -28,7 +28,9 @@ class PreviewOwnership(unittest.TestCase):
         first = self.preview(1)
         self.preview(2); self.preview(3)
         self.preview(4, "homestead_02_pack"); self.preview(5, "homestead_02_pack")
-        self.assertEqual([first], [folder for folder, _ in candidates(self.root)])
+        third_pack = self.preview(6, "homestead_03_pack")
+        self.preview(7, "homestead_03_pack"); self.preview(8, "homestead_03_pack")
+        self.assertEqual([first, third_pack], [folder for folder, _ in candidates(self.root)])
 
     def test_pins_are_not_ordinary_ready(self):
         pinned = self.preview(1); (pinned / ".retain").write_text("rejected witness")

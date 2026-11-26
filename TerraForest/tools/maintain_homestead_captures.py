@@ -8,7 +8,7 @@ from development_storage import admit
 from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
-FAMILIES = {"homestead_pack": "homestead_01.png", "homestead_02_pack": "homestead_02.png"}
+FAMILIES = {"homestead_pack": "homestead_01.png", "homestead_02_pack": "homestead_02.png", "homestead_03_pack": "homestead_03.png"}
 
 
 def candidates(root=ROOT):
