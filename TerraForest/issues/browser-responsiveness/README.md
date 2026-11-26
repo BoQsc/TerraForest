@@ -1,7 +1,7 @@
 # Startup and saved-world browser latency
 
-- Status: Improved-partial / installed, source and package functional checks pass.
-- Updated: 2026-11-03. Earlier fix: `83f09d30`; current startup changes build on `39f97200`.
+- Status: Improved-partial / first-UI source checks pass; earlier package evidence retained below.
+- Updated: 2026-11-26. First-UI changes build on `09974c9a`; earlier fixes include `83f09d30` and `39f97200`.
 - User review: Pending.
 - Symptom: Startup waits for save/photo work; filtering or changing worlds hitches.
 
@@ -145,3 +145,73 @@ benchmark world; no new external assets were imported. Its hash and scope are in
 [the performance evidence](../../docs/evidence/world_startup_optimization/preview_results.json).
 This still does not qualify cold caches, broader seeds, foreground frame pacing,
 weak hardware or general world quality. Those remain open in the linked contract.
+
+## First visible and responsive UI — 2026-11-26
+
+The separate launcher now paints before starting preparation. Executable/native
+hashing and log validation join the existing background work; Close responds immediately and keeps
+the checkout lease until the active worker exits, without launching the next stage.
+Godot rejects hiding its main window, so handoff and pending Close now minimize it.
+The browser loads only its selected built-in UI design. Custom designs retain
+full discovery. Last-played dates come from the catalog worker, removing metadata
+file reads from drawing. Invalid selections return empty details.
+
+Matched source observations, Godot 4.7.2, RTX 4050, Forward+, 1920×1080, 60 FPS,
+Survey UI and 415 existing saves, sequential processes on an isolated Windows desktop:
+
+| Measurement | Before | After run 1 | After run 2 |
+| --- | ---: | ---: | ---: |
+| Engine clock to first browser paint | 2034.684 ms | 1370.943 ms | 1389.934 ms |
+| Browser scene construction | 487.322 ms | 306.823 ms | 263.313 ms |
+| First filter input through next frame | 4.712 ms | 3.838 ms | 4.175 ms |
+| Largest subsequent sampled frame | 16.903 ms | 16.936 ms | 17.164 ms |
+
+[Comparison admission and source hashes](../../reports/checks/first_ui_20261126T191351710067Z/run.json),
+[before](../../reports/checks/first_ui_20261126T191351710067Z/before/first_ui.json),
+[after 1](../../reports/checks/first_ui_20261126T191351710067Z/after_1/first_ui.json),
+[after 2](../../reports/checks/first_ui_20261126T191351710067Z/after_2/first_ui.json).
+The four UI scripts were compared against `09974c9a` in the same checkout and
+restored before subsequent checks. These are warm OS-cache observations, one
+before and two after; engine ticks exclude the time before engine initialization.
+They do not measure the full launcher preparation interval or cold boot.
+
+The rendered GL Compatibility launcher contract observed first paint at
+621.106 ms and Close dispatch at 1.599 ms during a controlled worker. A final run
+with worker log-validation coverage recorded 614.814 ms / 2.872 ms. Native
+preparation/import/icon checks still run normally; this does not claim they finish
+sooner. The actual native build/import pipeline was not timed again here.
+[Launcher contract](../../reports/checks/first_ui_20261126T191351710067Z/launcher_log_final/receipt.json),
+[browser contract](../../reports/checks/first_ui_20261126T191351710067Z/browser_final/receipt.json),
+[72 rendered UI-set checks](../../reports/checks/first_ui_20261126T191351710067Z/ui_sets_final/receipt.json) and
+[six dependency-loading/cancellation checks](../../reports/checks/first_ui_20261126T191351710067Z/startup_index_final/receipt.json)
+pass. The authored dependency index was refreshed for the already committed
+object packs and other runtime additions; no graph scan is added to menu startup.
+The final launcher suite emits four expected error logs for intentional failure cases.
+Twelve Python launcher/retention tests and dependency-index freshness also pass.
+
+Retained failed trials: `launcher_contract` exposed the unsupported main-window
+hide; `browser_contract` exposed invalid-slot details and obsolete expectations
+that an asynchronous preview loads immediately; `ui_sets` attempted real GUI
+activation without a rendered window. Final checks above cover the corrections.
+These failed receipts remain in the same pinned bundle.
+
+![After: responsive source world browser](../../reports/checks/first_ui_20261126T191351710067Z/after_2/first_ui.png)
+
+Inspected after: Survey browser with the existing Homestead_Valley photograph,
+415 saves; no world opened or modified. This image is captured after the initial
+180-frame observation, not at first paint. The still demonstrates layout only;
+input/cadence evidence is in the timing records. [Image provenance](images/manifest.json).
+
+Reproduce the bounded source observation with the normal admission/retention runner:
+
+```text
+python tools/run_godot_check.py world_browser_responsiveness --isolated-render --require failures=0 --timeout 45 -- --measure-first-ui
+```
+
+Remaining: first UI is not literally instant. Engine/window initialization remains,
+and native preparation can keep the launcher visible before the browser opens.
+Cold filesystem/driver caches, the final exported package and ordinary foreground
+launch-to-input timing are unqualified. Return when preparing that package or when
+foreground startup remains noticeably delayed; require repeated launch-to-paint
+and first-input measurements plus cancellation/clean teardown on the same build.
+This scoped work does not close the world-entry and broader hardware limitations above.

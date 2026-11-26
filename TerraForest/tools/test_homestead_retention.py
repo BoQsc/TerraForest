@@ -68,6 +68,13 @@ class PreviewOwnership(unittest.TestCase):
         self.assertEqual([first, third_pack, fourth_pack, fifth_pack, sixth_pack, seventh_pack, eighth_pack, ninth_pack, tenth_pack, outdoor, mansion, house_world, house_layout, object_world, object_rendering, model_horizon, render_mesh, zombie_render, input_run], [folder for folder, _ in selected])
         self.assertEqual(("backpack.png", "player_settings.png"), selected[-1][1])
 
+    def test_browser_image_and_timings_retire_together_after_two_ready(self):
+        first = self.preview(1, "world_browser_responsiveness")
+        self.preview(2, "world_browser_responsiveness")
+        self.assertEqual([], candidates(self.root))
+        self.preview(3, "world_browser_responsiveness")
+        self.assertEqual([(first, ("first_ui.png", "first_ui.json"))], candidates(self.root))
+
     def test_requested_player_world_is_outside_capture_retirement(self):
         first = self.preview(1, "homestead_generated_world")
         self.preview(2, "homestead_generated_world"); self.preview(3, "homestead_generated_world")

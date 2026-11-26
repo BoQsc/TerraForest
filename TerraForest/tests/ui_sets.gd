@@ -44,7 +44,7 @@ func run()->void:
 			check(browser.get_meta("ui_layout","") in ["survey","planet"],"reference composition is used by the live browser: "+id)
 			browser.saved_title.text="Sample world";browser.saved_details.text="Preview data · no save opened";browser.worlds.add_item("Sample world")
 			await process_frame;await process_frame
-			if DisplayServer.get_name()!="headless":
+			if DisplayServer.get_name()!="headless" and "--no-ui-captures" not in OS.get_cmdline_user_args():
 				await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(folder.path_join(id+"_browser.png"))
 			browser.world_tabs.current_tab=1
 			await process_frame;await process_frame
@@ -62,7 +62,7 @@ func run()->void:
 			check(screen.diagnostics.panel.visible and screen.diagnostics.live.text.contains("completed = 500"),"details toggle exposes actual counters: "+id)
 			screen.diagnostics.ribbon.pressed.emit()
 		if id in ["expedition","diorama"]:check(is_equal_approx(screen.background.ring.value,0.71),"planet ring follows measured progress: "+id)
-		if DisplayServer.get_name()!="headless":
+		if DisplayServer.get_name()!="headless" and "--no-ui-captures" not in OS.get_cmdline_user_args():
 			await process_frame;await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png(folder.path_join(id+"_loading.png"))
 		screen.cancel_path=folder.path_join(id+"_cancel.request");screen.cancel_button.disabled=false
@@ -81,12 +81,12 @@ func run()->void:
 		studio.chooser.select(studio.ids.find(id));studio.mode.select(0);studio.refresh_preview()
 		await process_frame
 		check(studio.preview!=null and studio.viewport.gui_disable_input,"reference preview is isolated from gameplay input: "+id)
-		if DisplayServer.get_name()!="headless":
+		if DisplayServer.get_name()!="headless" and "--no-ui-captures" not in OS.get_cmdline_user_args():
 			await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png(folder.path_join(id+"_studio.png"))
 	studio.chooser.select(studio.ids.find("survey"));studio.mode.select(1);studio.refresh_preview();studio.screen.select(1);studio.preview.show_screen(1)
 	await process_frame
-	if DisplayServer.get_name()!="headless":
+	if DisplayServer.get_name()!="headless" and "--no-ui-captures" not in OS.get_cmdline_user_args():
 		await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(folder.path_join("live_create_studio.png"))
 	studio.activate_button.pressed.emit()
 	check(Registry.active().id=="survey" and studio.status.text.begins_with("Activated"),"studio activation action persists the chosen functional set")

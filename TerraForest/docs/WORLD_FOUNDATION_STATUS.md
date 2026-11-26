@@ -9508,3 +9508,20 @@ closes generation/publication for that requested world. Fresh-process receipt
 object positions/identity and the saved hash survive restoration. Complete room traversal,
 terrain-quality acceptance and sustained populated-world frame qualification
 remain separate open requirements.
+
+### First visible and responsive launch UI — 2026-11-26
+
+The launcher paints before source preparation, keeps executable/library hashing
+on a worker and responds to Close immediately while retaining the checkout lease
+until the current worker exits. The world browser opens only its selected built-in
+UI design and uses worker-read dates when drawing its saved-world list. In matched
+warm-cache source observations with 415 saves, first browser paint falls from
+2.03 s to 1.37–1.39 s, with first input about 4 ms. The rendered launcher contract
+observes first paint at 0.61–0.62 s and Close dispatch at 1.6–2.9 ms. Browser contracts,
+72 rendered UI-set checks and six resource-loading/cancellation checks pass.
+[Evidence, retained failed trials and remaining work](../issues/browser-responsiveness/README.md#first-visible-and-responsive-ui--2026-11-26).
+Engine/window startup remains; this is not instantaneous launch or a reduction in
+native build/import/icon preparation time. Cold caches, ordinary foreground and
+final-package launch-to-input remain unqualified. Resume at package preparation
+or a reproduced foreground delay, with repeated first-paint/input timings and
+cancellation/clean teardown required before closing that requirement.

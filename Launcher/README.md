@@ -14,6 +14,13 @@ Launch an editor-capable Godot 4.7 engine with `--path Launcher`. Add
 compatibility `TerraForest/Worlds.cmd` merely forwards to this Godot project.
 Desktop shortcuts point directly to the engine and this project.
 
+The launcher paints its controls before starting preparation and caps its UI at
+60 FPS. Native checks, imports, log validation, preview preparation and executable/library hashes
+run on joined workers. Close minimizes immediately during preparation, then exits
+after the current worker releases its files; it starts no subsequent stage or game.
+The checkout lease remains held until that exit. Game handoff also minimizes the
+launcher; an unexpected game exit restores its error window.
+
 The launcher shows progress, checks the Windows source DLLs, runs the engine's
 headless editor import pass, refreshes item previews and starts the world-browser scene. The editor UI
 never opens. Import/process failures remain visible with Retry and Open logs.

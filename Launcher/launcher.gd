@@ -13,8 +13,10 @@ var status: Label
 var details: Label
 var retry: Button
 var log_path := ""
+var closing_requested := false
 
 func _ready() -> void:
+ Engine.max_fps = 60
  get_tree().auto_accept_quit = false
  var panel := MarginContainer.new()
  panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -32,7 +34,10 @@ func _ready() -> void:
  var port := 32000 + posmod(project_root.hash(), 16000)
  if lock.listen(port, "127.0.0.1") != OK:
   fail("TerraForest is already launching or running from this launcher.");return
- start()
+ # Present the working controls before filesystem checks or process startup.
+ if DisplayServer.get_name() != "headless":await RenderingServer.frame_post_draw
+ else:await get_tree().process_frame
+ if not closing_requested:start()
 
 func start() -> void:
  if worker != null or game_pid > 0:return
@@ -72,7 +77,12 @@ func start_import() -> void:
 
 func run_process(arguments: PackedStringArray) -> int:
  # Joining this worker establishes ownership of the process result.
- return OS.execute(engine, arguments, [], false, false)
+ var code := OS.execute(engine, arguments, [], false, false)
+ if code != 0:return code
+ # Import logs can be large. Validate them before joining, away from input.
+ var log_text := FileAccess.get_file_as_string(log_path)
+ if "SCRIPT ERROR:" in log_text or "Failed to load script" in log_text or "Failed to load GDExtension" in log_text:return ERR_PARSE_ERROR
+ return OK
 
 func _process(_delta: float) -> void:
  if game_pid > 0:
@@ -81,20 +91,23 @@ func _process(_delta: float) -> void:
    game_pid = -1
    if code == 0:get_tree().quit()
    else:
-    get_window().show()
+    get_window().mode = Window.MODE_WINDOWED
     fail("TerraForest stopped unexpectedly (exit %d). See worlds_game.log in Open logs." % code)
   return
  if worker == null or worker.is_alive():return
  var exit_code: int = worker.wait_to_finish();worker = null
+ if closing_requested:finish_close();return
+ if phase == "identity":
+  if exit_code != OK:fail("Cannot record the prepared game identity.");return
+  launch_game();return
  if phase == "native":
   if exit_code != 0:
    fail("Native code preparation failed (exit %d). See worlds_native.log in Open logs. Windows native preparation requires Python and Git." % exit_code)
    return
   start_import()
   return
- var log_text := FileAccess.get_file_as_string(log_path)
- if exit_code != 0 or "SCRIPT ERROR:" in log_text or "Failed to load script" in log_text or "Failed to load GDExtension" in log_text:
-  fail("Resource preparation failed (exit %d). See %s" % [exit_code, log_path]);return
+ if exit_code != 0:
+  fail("Resource preparation failed (code %d). See %s" % [exit_code, log_path]);return
  if phase == "import":
   phase = "icons";status.text = "Preparing item previews…"
   log_path = project_root.path_join("reports/worlds_icons.log")
@@ -102,6 +115,12 @@ func _process(_delta: float) -> void:
   if worker.start(run_process.bind(PackedStringArray(["--headless", "--path", project_root, "--log-file", log_path, "--script", "res://tools/ensure_item_icons.gd"]))) != OK:
    worker = null;fail("Cannot prepare item previews.")
   return
+ phase = "identity";status.text = "Opening TerraForest…"
+ worker = Thread.new()
+ if worker.start(record_identity) != OK:worker = null;fail("Cannot record the prepared game identity.")
+
+func record_identity() -> int:
+ # Executable/library hashing is IO work, never an input-thread operation.
  var identity := {"mode": "source", "project": project_root, "engine": engine, "engine_sha256": FileAccess.get_sha256(engine), "continue_last": continue_last, "prepared_at": Time.get_datetime_string_from_system(true), "water_script_sha256": FileAccess.get_sha256(project_root.path_join("addons/volumetric_water/lake_world.gd")), "generation_script_sha256": FileAccess.get_sha256(project_root.path_join("addons/world_runtime/generate_world_task.gd"))}
  var water_libraries := {}
  var water_bin := project_root.path_join("addons/volumetric_water/bin")
@@ -109,7 +128,12 @@ func _process(_delta: float) -> void:
   if filename.ends_with(".dll") or filename.ends_with(".so") or filename.ends_with(".dylib"):
    water_libraries[filename] = FileAccess.get_sha256(water_bin.path_join(filename))
  identity["water_native_sha256"] = water_libraries
- FileAccess.open(project_root.path_join("reports/worlds_launch.json"), FileAccess.WRITE).store_string(JSON.stringify(identity, "  "))
+ var file := FileAccess.open(project_root.path_join("reports/worlds_launch.json"), FileAccess.WRITE)
+ if file == null:return FileAccess.get_open_error()
+ file.store_string(JSON.stringify(identity, "  "))
+ return OK
+
+func launch_game() -> void:
  if prepare_only:get_tree().quit();return
  var args := PackedStringArray(["--path", project_root, "--log-file", project_root.path_join("reports/worlds_game.log"), "--max-fps", "60", "res://demo/worlds.tscn", "--"])
  if continue_last:args.append("--continue-last")
@@ -117,7 +141,7 @@ func _process(_delta: float) -> void:
  game_pid = OS.create_process(engine, args)
  if game_pid <= 0:fail("Godot could not start TerraForest.");return
  status.text = "TerraForest is running"
- get_window().hide()
+ get_window().mode = Window.MODE_MINIMIZED
 
 func fail(message: String) -> void:
  status.text = "Unable to launch TerraForest"
@@ -127,9 +151,15 @@ func fail(message: String) -> void:
  if prepare_only:get_tree().quit(1)
 
 func close_requested() -> void:
+ closing_requested = true
  if worker != null:
-  details.text = "Please wait for resource preparation to finish before closing."
+  # A build/import owns files until it exits. Minimize immediately, then
+  # release the lease without launching another phase or opening the game.
+  get_window().mode = Window.MODE_MINIMIZED
   return
+ finish_close()
+
+func finish_close() -> void:
  get_tree().quit()
 
 func _notification(what: int) -> void:

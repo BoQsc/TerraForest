@@ -48,3 +48,9 @@ objects; warming every individual GDScript also produced shutdown retention.
 Retain grouped owner-thread script loading, not those trials. See the
 [browser tracker](../issues/browser-responsiveness/README.md) for evidence and
 remaining single-call costs. API reference: [Godot background loading](https://docs.godotengine.org/en/4.4/tutorials/io/background_loading.html).
+
+
+First UI is independent of this gameplay dependency graph: the source launcher
+paints before preparing files, and the browser loads only its selected built-in
+UI design. Save metadata, thumbnail decoding and launch identity hashing stay on
+workers. See the [first-UI measurements and limits](../issues/browser-responsiveness/README.md#first-visible-and-responsive-ui--2026-11-26).

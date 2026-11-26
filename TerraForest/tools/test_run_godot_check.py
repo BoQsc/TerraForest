@@ -13,6 +13,7 @@ class CheckLauncherTests(unittest.TestCase):
         self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/house_furnishings.gd"]), 8 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/house_population_world.gd"]), 16 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/homestead_generated_world.gd"]), 24 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/world_browser_responsiveness.gd"]), 8 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/furnished_capture.gd"]), 2 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/zombie_render_mesh.gd"]), 16 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/zombie_render_mesh.gd"]), 2 * 2**20)

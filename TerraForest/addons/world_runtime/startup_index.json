@@ -58,11 +58,13 @@
   "res://addons/characters/runtime/zombie.gd": [
     "res://addons/characters/runtime/assets/Zombie.r4.glb",
     "res://addons/characters/runtime/assets/Zombie.geometry.res",
+    "res://addons/characters/runtime/zombie_render_mesh.gd",
     "res://addons/characters/runtime/assets/Zombie.drag_walk.res",
     "res://addons/characters/runtime/assets/Zombie.alert.res",
     "res://addons/characters/runtime/zombie_sleeper.gd"
   ],
   "res://addons/characters/runtime/zombie_population.gd": [],
+  "res://addons/characters/runtime/zombie_render_mesh.gd": [],
   "res://addons/characters/runtime/zombie_sleeper.gd": [
     "res://addons/characters/runtime/assets/Zombie.sleepers.res"
   ],
@@ -100,7 +102,8 @@
     "res://addons/world_runtime/runtime_modules.gd",
     "res://addons/structures/object_mesh.gd",
     "res://addons/house_lights/flame.gdshader",
-    "res://addons/structures/object_catalog.gd"
+    "res://addons/structures/object_catalog.gd",
+    "res://addons/structures/pack_registry.gd"
   ],
   "res://addons/house_lights/generation.gd": [
     "res://addons/house_lights/catalog.gd",
@@ -111,7 +114,9 @@
   "res://addons/player_runtime/bullet_holes.gd": [
     "res://addons/player_runtime/bullet_mark.gdshader"
   ],
-  "res://addons/player_runtime/carried_object_catalog.gd": [],
+  "res://addons/player_runtime/carried_object_catalog.gd": [
+    "res://addons/structures/pack_registry.gd"
+  ],
   "res://addons/player_runtime/character_panel.gd": [
     "res://addons/characters/wearables/clothing.gd",
     "res://addons/player_runtime/character_portrait.gd",
@@ -154,7 +159,8 @@
   "res://addons/player_runtime/developer_bag.gd": [
     "res://addons/player_runtime/item_icons.gd",
     "res://addons/player_runtime/text_input_focus.gd",
-    "res://addons/player_runtime/item_catalog.gd"
+    "res://addons/player_runtime/item_catalog.gd",
+    "res://addons/structures/pack_registry.gd"
   ],
   "res://addons/player_runtime/developer_hud.gd": [
     "res://addons/world_runtime/mouse_ownership.gd"
@@ -166,8 +172,7 @@
   ],
   "res://addons/player_runtime/developer_spawn.gd": [],
   "res://addons/player_runtime/durability_catalog.gd": [
-    "res://addons/structures/mine_rail_catalog.gd",
-    "res://addons/structures/door_catalog.gd"
+    "res://addons/structures/pack_registry.gd"
   ],
   "res://addons/player_runtime/entry_fly_in.gd": [
     "res://addons/characters/runtime/assets/Human.wakeup.res"
@@ -206,13 +211,15 @@
   ],
   "res://addons/player_runtime/item_catalog.gd": [
     "res://addons/player_runtime/carried_object_catalog.gd",
-    "res://addons/player_runtime/durability_catalog.gd"
+    "res://addons/player_runtime/durability_catalog.gd",
+    "res://addons/structures/pack_registry.gd"
   ],
   "res://addons/player_runtime/item_icons.gd": [
     "res://addons/player_runtime/art/salvage/224.svg",
     "res://addons/player_runtime/art/salvage/225.svg",
     "res://addons/player_runtime/art/salvage/226.svg",
     "res://addons/player_runtime/art/salvage/227.svg",
+    "res://addons/structures/pack_registry.gd",
     "res://addons/player_runtime/art/px9.svg",
     "res://addons/player_runtime/art/cartridge.svg",
     "res://addons/player_runtime/art/ranger.svg",
@@ -228,9 +235,17 @@
   ],
   "res://addons/player_runtime/map_markers.gd": [],
   "res://addons/player_runtime/mining_rewards.gd": [],
+  "res://addons/player_runtime/object_inspector.gd": [
+    "res://addons/player_runtime/durability_catalog.gd"
+  ],
   "res://addons/player_runtime/object_placement.gd": [
     "res://addons/player_runtime/carried_object_catalog.gd",
-    "res://addons/player_runtime/combat_barrel.gd"
+    "res://addons/player_runtime/combat_barrel.gd",
+    "res://addons/structures/wall_object_placement.gd"
+  ],
+  "res://addons/player_runtime/pack_storage.gd": [
+    "res://addons/player_runtime/storage.gd",
+    "res://addons/structures/pack_registry.gd"
   ],
   "res://addons/player_runtime/pistol_crosshair.gd": [],
   "res://addons/player_runtime/pistol_sound_trial.gd": [
@@ -368,6 +383,9 @@
     "res://addons/player_runtime/progression_rules.gd"
   ],
   "res://addons/player_runtime/world_drop_target.gd": [],
+  "res://addons/player_runtime/world_editor.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd"
+  ],
   "res://addons/player_runtime/world_item_use.gd": [],
   "res://addons/presentation/fullscreen_policy.gd": [],
   "res://addons/structures/bridge_catalog.gd": [],
@@ -386,6 +404,7 @@
     "res://addons/structures/cellar_catalog.gd"
   ],
   "res://addons/structures/city_catalog.gd": [
+    "res://addons/structures/house_furnishings.gd",
     "res://addons/structures/northern_lots.gd"
   ],
   "res://addons/structures/civic_catalog.gd": [
@@ -394,6 +413,7 @@
   ],
   "res://addons/structures/construction_catalog.gd": [
     "res://addons/structures/furniture_catalog.gd",
+    "res://addons/structures/pack_registry.gd",
     "res://addons/structures/window_catalog.gd",
     "res://addons/structures/door_catalog.gd",
     "res://addons/structures/guardrail_catalog.gd",
@@ -427,21 +447,26 @@
   ],
   "res://addons/structures/door_reinforcement_generation.gd": [],
   "res://addons/structures/door_reinforcement_mesh.gd": [],
-  "res://addons/structures/expansion_catalog.gd": [],
+  "res://addons/structures/expansion_catalog.gd": [
+    "res://addons/structures/house_furnishings.gd"
+  ],
   "res://addons/structures/fence_catalog.gd": [],
   "res://addons/structures/foundation_check.gd": [
     "res://addons/volumetric_terrain/surface_tokens.gd",
     "res://addons/structures/terrain_contact.gd"
   ],
   "res://addons/structures/furniture_catalog.gd": [
+    "res://addons/structures/house_furnishings.gd",
     "res://addons/structures/expansion_catalog.gd"
   ],
   "res://addons/structures/guardrail_catalog.gd": [],
+  "res://addons/structures/house_furnishings.gd": [],
   "res://addons/structures/ladder_catalog.gd": [],
   "res://addons/structures/lake_crossings.gd": [
     "res://addons/structures/northern_lots.gd",
     "res://addons/structures/bridge_catalog.gd"
   ],
+  "res://addons/structures/mansion/catalog.gd": [],
   "res://addons/structures/material_startup.gd": [
     "res://addons/structures/textures/arrays/original.res",
     "res://addons/structures/textures/arrays/terraforest.res",
@@ -451,7 +476,8 @@
   "res://addons/structures/mine_rail_catalog.gd": [],
   "res://addons/structures/model_paging_coordinator.gd": [],
   "res://addons/structures/model_tool.gd": [
-    "res://addons/player_runtime/item_icons.gd"
+    "res://addons/player_runtime/item_icons.gd",
+    "res://addons/structures/wall_object_placement.gd"
   ],
   "res://addons/structures/neighborhood_common.gd": [],
   "res://addons/structures/northern_lots.gd": [
@@ -465,6 +491,19 @@
     "res://addons/structures/object_mesh.gd"
   ],
   "res://addons/structures/object_mesh.gd": [],
+  "res://addons/structures/outdoor_generation.gd": [
+    "res://addons/structures/pack_registry.gd",
+    "res://addons/structures/outdoor_scatter.gd",
+    "res://addons/volumetric_terrain/surface_tokens.gd",
+    "res://addons/vehicle_runtime/building_parking.gd"
+  ],
+  "res://addons/structures/outdoor_scatter.gd": [
+    "res://addons/structures/pack_registry.gd"
+  ],
+  "res://addons/structures/pack_registry.gd": [
+    "res://addons/structures/pack_render_mesh.gd"
+  ],
+  "res://addons/structures/pack_render_mesh.gd": [],
   "res://addons/structures/paving_catalog.gd": [],
   "res://addons/structures/prefab_library.gd": [],
   "res://addons/structures/regional_districts.gd": [],
@@ -495,8 +534,10 @@
     "res://addons/structures/terrain_contact.gd",
     "res://addons/structures/site_plan.gd"
   ],
+  "res://addons/structures/wall_object_placement.gd": [],
   "res://addons/structures/window_catalog.gd": [],
   "res://addons/structures/workshop_catalog.gd": [
+    "res://addons/structures/house_furnishings.gd",
     "res://addons/structures/expansion_catalog.gd"
   ],
   "res://addons/vegetation/assets.gd": [
@@ -572,6 +613,7 @@
   "res://addons/volumetric_water/lake_editor.gd": [],
   "res://addons/volumetric_water/lake_world.gd": [
     "res://addons/volumetric_water/publication_budget.gd",
+    "res://addons/volumetric_water/water_render_pages.gd",
     "res://addons/volumetric_water/water.gdshader",
     "res://addons/volumetric_water/textures/water_ripples_normal.png",
     "res://addons/volumetric_water/ocean_presentation.gd",
@@ -580,6 +622,7 @@
   "res://addons/volumetric_water/ocean_presentation.gd": [],
   "res://addons/volumetric_water/publication_budget.gd": [],
   "res://addons/volumetric_water/water_camera.gd": [],
+  "res://addons/volumetric_water/water_render_pages.gd": [],
   "res://addons/volumetric_water/water_start.gd": [],
   "res://addons/world_ecosystem/boulder_horizon.gd": [
     "res://addons/volumetric_terrain/surface_tokens.gd",
@@ -664,6 +707,7 @@
     "res://addons/structures/door_reinforcement_generation.gd",
     "res://addons/vehicle_runtime/building_parking.gd",
     "res://addons/house_lights/generation.gd",
+    "res://addons/structures/outdoor_generation.gd",
     "res://addons/structures/lake_crossings.gd",
     "res://addons/volumetric_water/coastal_inlet.gd",
     "res://addons/structures/civic_catalog.gd",
@@ -911,6 +955,9 @@
     "res://addons/player_runtime/player_notices.gd",
     "res://addons/player_runtime/trader_world.gd",
     "res://addons/player_runtime/quest_world.gd",
+    "res://addons/player_runtime/pack_storage.gd",
+    "res://addons/structures/outdoor_scatter.gd",
+    "res://addons/player_runtime/object_inspector.gd",
     "res://addons/player_runtime/storage.gd",
     "res://addons/player_runtime/corpse_loot.gd",
     "res://addons/structures/door_interaction.gd",
@@ -923,6 +970,7 @@
     "res://addons/player_runtime/combat_world.gd",
     "res://addons/player_runtime/world_attack.gd",
     "res://addons/player_runtime/world_item_use.gd",
+    "res://addons/player_runtime/world_editor.gd",
     "res://addons/player_runtime/tool_view.gd",
     "res://addons/player_runtime/player_view.gd",
     "res://addons/player_runtime/first_person_view.gd",
@@ -943,6 +991,7 @@
     "res://addons/player_runtime/combat_barrel.gd",
     "res://addons/structures/paving_catalog.gd",
     "res://addons/structures/furniture_catalog.gd",
+    "res://addons/structures/pack_registry.gd",
     "res://addons/structures/ladder_catalog.gd",
     "res://addons/structures/storage_catalog.gd",
     "res://addons/structures/window_catalog.gd",
@@ -956,8 +1005,10 @@
     "res://addons/vegetation/canopy_shadows.gd",
     "res://addons/world_runtime/coverage_window.gd",
     "res://addons/volumetric_water/water_start.gd",
+    "res://addons/structures/house_furnishings.gd",
     "res://addons/structures/bridge_catalog.gd",
     "res://addons/structures/workshop_catalog.gd",
+    "res://addons/structures/mansion/catalog.gd",
     "res://addons/structures/civic_catalog.gd",
     "res://addons/structures/site_plan.gd",
     "res://addons/structures/construction_catalog.gd",

@@ -19,6 +19,7 @@ var include_preparation:=false
 var order:="played"
 var selected_slot:=""
 var cache:Dictionary={}
+var dates:Dictionary={}
 
 func refresh(include_drafts:bool=false,sort_by:String="played")->void:
 	revision+=1;cache.clear()
@@ -39,7 +40,7 @@ func _start_next()->void:
 	var job:Callable
 	if scan_pending:
 		scan_pending=false;scanning=true
-		job=Launch.saved_slots.bind(directory,include_preparation,order)
+		job=Launch.saved_catalog.bind(directory,include_preparation,order)
 	elif not selected_slot.is_empty() and not cache.has(selected_slot):
 		scanning=false;job_slot=selected_slot
 		job=_read_details.bind(job_slot,directory)
@@ -60,7 +61,8 @@ func _process(_delta:float)->void:
 	var result:Variant=worker.wait_to_finish();worker=null
 	if job_revision==revision:
 		if scanning:
-			loading=false;catalog_ready.emit(result)
+			dates=result.dates
+			loading=false;catalog_ready.emit(result.slots)
 		else:
 			var picture:Texture2D=null
 			if result.image!=null:picture=ImageTexture.create_from_image(result.image)
@@ -70,6 +72,7 @@ func _process(_delta:float)->void:
 	_start_next()
 
 static func _read_details(slot:String,folder:String)->Dictionary:
+	if not Launch.valid_slot(slot):return {"details":{},"image":null}
 	var details:=Presentation.details(slot,folder)
 	var photograph:=Presentation.read_image(slot,folder,THUMBNAIL_SIZE)
 	details["placeholder"]=photograph==null

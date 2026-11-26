@@ -157,6 +157,7 @@ func refresh() -> void:
 	library.refresh(show_preparation.button_pressed,["played","created","name"][sort_order.selected])
 func _catalog_ready(found:PackedStringArray)->void:
 	slots=found
+	if is_instance_valid(date_column):date_column.cache.clear()
 	if continue_pending:
 		continue_pending=false;continue_last_world.call_deferred();return
 	filter_list()
@@ -235,7 +236,8 @@ func _install_date_column()->void:
 		date_column.queue_redraw()
 
 func last_played_text(slot:String)->String:
-	var stamp:=int(preload("res://addons/world_runtime/world_presentation.gd").metadata(slot).get("last_played",0))
+	# The catalog worker already read this metadata. Never touch disk from _draw.
+	var stamp:=int(library.dates.get(slot,0)) if library!=null else 0
 	if stamp<=0:return "never"
 	var offset:int=int(Time.get_time_zone_from_system().bias)*60
 	var date:Dictionary=Time.get_datetime_dict_from_unix_time(stamp+offset)

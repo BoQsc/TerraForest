@@ -50,8 +50,11 @@ static func preparation_slot(slot:String)->bool:
 	var pattern:=RegEx.new();pattern.compile("^combined_stage_[0-9a-f]{32}$")
 	return pattern.search(slot)!=null
 static func saved_slots(directory: String="user://worlds",include_preparation:bool=false,order:String="played") -> PackedStringArray:
+	return saved_catalog(directory,include_preparation,order).slots
+static func saved_catalog(directory: String="user://worlds",include_preparation:bool=false,order:String="played") -> Dictionary:
 	var slots:=PackedStringArray();var folder:=DirAccess.open(directory)
-	if folder==null:return slots
+	var dates:Dictionary={}
+	if folder==null:return {"slots":slots,"dates":dates}
 	for file in folder.get_files():
 		if file.ends_with(".trw") and valid_slot(file.trim_suffix(".trw")) and (include_preparation or not preparation_slot(file.trim_suffix(".trw"))):slots.append(file.trim_suffix(".trw"))
 	var rows:Array=[]
@@ -61,6 +64,7 @@ static func saved_slots(directory: String="user://worlds",include_preparation:bo
 		if FileAccess.file_exists(directory.path_join(slot+".diagnostic.json")):continue
 		var path:=directory.path_join(slot+".trw")
 		var data:Dictionary=preload("res://addons/world_runtime/world_presentation.gd").metadata(slot,directory)
+		dates[slot]=int(data.get("last_played",0))
 		rows.append({"slot":slot,"time":int(data.get("last_played",0)) if order=="played" else int(data.get("created",0)),"saved":FileAccess.get_modified_time(path)})
 	rows.sort_custom(func(a:Dictionary,b:Dictionary):
 		if order=="name":return a.slot.naturalnocasecmp_to(b.slot)<0
@@ -69,7 +73,7 @@ static func saved_slots(directory: String="user://worlds",include_preparation:bo
 		return a.slot.naturalnocasecmp_to(b.slot)<0)
 	slots.clear()
 	for row:Dictionary in rows:slots.append(row.slot)
-	return slots
+	return {"slots":slots,"dates":dates}
 static func terrain_generator(ocean:bool,buildable:bool)->int:
 	return (29 if ocean else 28) if buildable else (31 if ocean else 30)
 static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds",ocean:bool=true,layout:String="connected",buildable:bool=true,options:Dictionary={}) -> Dictionary:

@@ -82,8 +82,16 @@ static func selected_id()->String:
 	var settings:=ConfigFile.new()
 	return str(settings.get_value("world_screens","active","shipped")) if settings.load(preference_path)==OK else "shipped"
 static func active()->Resource:
-	var sets:=discover();var selected:String=selected_id()
-	var value:Resource=sets.get(selected,DEFAULT)
+	var selected:String=selected_id()
+	# Shipped folder identities are canonical. Opening one screen must not load
+	# every other design, reference scene and texture just to find that screen.
+	var value:Resource=null
+	if selected in ["shipped","survey","expedition","diorama","campfire"]:
+		value=load("res://addons/ui_sets/sets/"+selected+"/set.tres")
+		if value==null or value.id!=selected:value=null
+	# Arbitrary third-party folder layouts still use full discovery. The studio
+	# also keeps discovery so all designs and diagnostics remain available.
+	if value==null:value=discover().get(selected,DEFAULT)
 	var error:=validate(value,true)
 	if not error.is_empty():diagnostics.append(selected+": "+error);value=DEFAULT
 	return resolve(value)

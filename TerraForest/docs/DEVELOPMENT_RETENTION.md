@@ -341,3 +341,16 @@ these two fixtures in place; do not silently evict them or increase the budget.
 The Godot launcher itself creates no saves or exports during preparation. It uses
 fixed report filenames and bounded Godot log rotation; shortcut backups are kept
 once, with installed-target receipts, rather than duplicated per installation.
+
+## First-UI timing captures
+
+`world_browser_responsiveness` admits 8 MiB for one RGB 1080p image, small timing
+JSON and logs. It reads the existing save library without opening a world; its
+functional mode uses only tiny disposable metadata fixtures. `first_ui.png` and
+`first_ui.json` join the existing two-ready receipt-owned capture lifecycle in
+`maintain_homestead_captures.py`; logs and run receipts remain loose. No save,
+source copy, export or storage-budget increase is needed.
+The matched `reports/checks/first_ui_20261126T191351710067Z` bundle was separately
+admitted for 32 MiB and is pinned by `.retain` until the browser-latency issue's
+comparison review. It keeps before/after pictures, timing records and rejected
+trials together, with small launcher/UI/startup verification logs in that allowance.

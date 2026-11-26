@@ -6,5 +6,13 @@
     "caption": "Source browser after async loading; 299 existing saved worlds, 1920x1080 Forward+. Selected Exploration_1703_596a160e photograph is a pre-existing world preview; no world opened or modified. Layout reviewed, timing comparison is in logs.",
     "edited": false,
     "provenance": "Godot viewport capture of existing project UI/assets. Existing component/asset terms remain; no new third-party material imported."
+  },
+  {
+    "file": "../../../reports/checks/first_ui_20261126T191351710067Z/after_2/first_ui.png",
+    "source": "reports/checks/first_ui_20261126T191351710067Z/after_2/first_ui.png",
+    "sha256": "a8c52a9087224283880dc9eb69e45fa4b629cce67fca0e9259c985a378ee973a",
+    "caption": "After: Survey world browser, 415 existing saves, Godot 4.7.2 Forward+, 1920x1080, 60 FPS. Existing Homestead_Valley photograph; no world opened or modified. Captured after 180 observed frames; first-paint and input times are in the adjacent JSON. Layout inspected; user review pending.",
+    "edited": false,
+    "provenance": "Godot viewport capture of existing project UI/assets and previously requested world photograph. Existing terms and notices remain; no new external material imported."
   }
 ]
