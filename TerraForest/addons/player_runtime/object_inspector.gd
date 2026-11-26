@@ -44,6 +44,7 @@ func _process(delta: float) -> void:
 
 func choose_labels() -> void:
 	labels.clear(); target.clear()
+	stats["occlusion_queries"]=0
 	var camera: Camera3D=game.camera; var start: Vector3=camera.global_position
 	var hit: Dictionary=game.structures.blocks.raycast_scene(start,start-camera.global_basis.z*RANGE,7,[game.player.get_rid()])
 	if not hit.is_empty() and title_by_collection.has(hit.collider):
@@ -62,9 +63,6 @@ func choose_labels() -> void:
 		if camera.is_position_behind(point): continue
 		var pixel:=camera.unproject_position(point)
 		if not Rect2(Vector2(30,80),size-Vector2(60,160)).has_point(pixel): continue
-		# No names through walls. Query only the capped candidate set at 6.7 Hz.
-		var blocking: Dictionary=game.structures.blocks.raycast_scene(start,point,7,[game.player.get_rid()])
-		if not blocking.is_empty() and (blocking.collider!=row.collection or row.collection.placement_for_body(blocking.rid)!=row.id) and start.distance_to(blocking.position)<start.distance_to(point)-.08: continue
 		var text: String=title_by_collection.get(row.collection,"Object").trim_prefix("Homestead ").trim_prefix("Outdoor ")
 		text=text.left(45)+" · %.1f m"%float(row.distance)
 		var width:=ThemeDB.fallback_font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,16).x+18
@@ -73,6 +71,11 @@ func choose_labels() -> void:
 			for other: Rect2 in occupied:
 				if rect.grow(4).intersects(other): free=false; break
 			if not free: continue
+			# Occlusion matters only when a label has space. Crowded labels formerly
+			# spent physics queries before being rejected by this same layout.
+			stats.occlusion_queries+=1
+			var blocking: Dictionary=game.structures.blocks.raycast_scene(start,point,7,[game.player.get_rid()])
+			if not blocking.is_empty() and (blocking.collider!=row.collection or row.collection.placement_for_body(blocking.rid)!=row.id) and start.distance_to(blocking.position)<start.distance_to(point)-.08: break
 			occupied.append(rect); labels.append({"text":text,"rect":rect,"point":point}); break
 	stats["shown"]=labels.size()
 

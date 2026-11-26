@@ -42,6 +42,12 @@ BOUNDED_CONTRACT_REPORTS = {
 
 def planned_report_bytes(command):
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
+    if scripts == {"model_horizon.gd"}:
+        return 2 * 2**20  # Small receipt-owned native fixture and result JSON; large density case stays in memory.
+    if scripts == {"object_pack_render_mesh.gd"}:
+        return (2 if "--headless" in command else 16) * 2**20  # Four 1152x768 RGB material/LOD comparisons and a small summary.
+    if scripts == {"object_rendering_world.gd"}:
+        return 32 * 2**20  # Two 1080p PNGs, <=8 MiB cadence, logs; read-only source, no saved world/export.
     if scripts == {"object_system_world.gd"}:
         return 32 * 2**20  # Three 1080p PNGs, <=4 MiB native fixture, small timing JSON; no world/export.
     if scripts == {"homestead_mansion.gd"}:
@@ -83,7 +89,7 @@ def planned_report_bytes(command):
         return 40 * 2**20  # Captures plus an at-most-8-MiB terrain failure snapshot.
     scripts = [str(value) for value in command if str(value).endswith(".gd")]
     if "--headless" in command and len(scripts) == 1 and Path(scripts[0]).stem in {
-        "universal_item_drop", "physical_item_drops", "drop_key_standard", "water_static_editing", "water_equilibrium_scope"
+        "universal_item_drop", "physical_item_drops", "original_size_drops", "drop_key_standard", "water_static_editing", "water_equilibrium_scope"
     }:
         return 2 * 2**20  # Headless variants write only the check log and receipt.
     if len(scripts) == 1 and Path(scripts[0]).stem == "drop_key_standard":
@@ -219,6 +225,7 @@ def main(argv=None):
     display.add_argument("--isolated-render", action="store_true", help="Render on a separate Windows desktop without switching or sending input")
     parser.add_argument("--pack", action="store_true", help="Installed resource pack with matching native libraries")
     parser.add_argument("--executable", action="store_true", help="Installed game executable and pack")
+    parser.add_argument("--render-thread", choices=("safe", "separate"), help="Diagnostic engine rendering-thread override, recorded in the receipt")
     parser.add_argument("--persistent", action="store_true", help="Unique disposable save slot; water_static_compound only")
     parser.add_argument("--timeout", type=float, default=90)
     parser.add_argument("--require", required=True, help="Successful completion text in console output")
@@ -243,6 +250,8 @@ def main(argv=None):
         command, cache = command_for(engine, args.test, folder, values[split+1:], args.headless, args.persistent)
     except ValueError as error:
         parser.error(str(error))
+    if args.render_thread:
+        command[1:1] = ["--render-thread", args.render_thread]
     if packaged:
         command[command.index("--path")+1] = str(ROOT / "dist")
         command[command.index("--script")+1] = str(ROOT / "tests" / (args.test+".gd"))
@@ -270,7 +279,7 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "object_system_world", "drop_key_standard"}:
+    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "model_horizon", "drop_key_standard"}:
         from maintain_homestead_captures import maintain
         maintain(apply=True)
     folder.mkdir(parents=True)
@@ -285,7 +294,7 @@ def main(argv=None):
         maintain(apply=True)
     if args.test == "physics_residency_world":
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "object_system_world", "drop_key_standard"}:
+    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "model_horizon", "drop_key_standard"}:
         maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1

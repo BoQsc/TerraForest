@@ -142,7 +142,15 @@ static func register(world: Node3D) -> Array[Dictionary]:
 		if not boxes is Array or boxes.is_empty() or boxes.size()>64: push_error("Invalid pack collision: "+path); return []
 		for box: Variant in boxes:
 			if not box is AABB or not box.position.is_finite() or not box.size.is_finite() or box.size.x<=0 or box.size.y<=0 or box.size.z<=0: push_error("Invalid pack collision box: "+path); return []
+		# Authored static props share bounded visual pages; canonical collision and
+		# storage retain their 32 m regions and individual object identities.
+		mesh.set_meta("world_render_region_span",4)
 		meshes[key]=mesh
+	preload("res://addons/structures/pack_render_mesh.gd").configure(meshes.values())
+	for key: String in meshes:
+		meshes[key]=preload("res://addons/structures/pack_render_mesh.gd").prepare(meshes[key])
+		# A preview may have cached this geometry before world admission.
+		meshes[key].set_meta("world_render_region_span",4)
 	for key: String in objects:
 		var row: Dictionary=objects[key]; var mesh: Mesh=meshes[key]
 		var collection: Node3D=world.register_model(key,mesh)

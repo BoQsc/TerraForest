@@ -27,7 +27,7 @@
       "path": "reports/checks/20261126T115044082821Z/outdoor_01.png",
       "sha256": "a98ef8e7b53dd304d7cd0b10b7f3b4066322ba0418e4db84a65c2a64f3c0d686",
       "run": "20261126T115044082821Z",
-      "status": "current pack",
+      "status": "historical pack 1.0.0, before geometry optimization",
       "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; authored fixture, no player save"
     },
     {
@@ -92,6 +92,69 @@
       "run": "20261126T120200048287Z",
       "status": "final ordinary-game UI / seed 1703",
       "source": "Actual Godot 4.7.2 Forward+ frame, 1920x1080; temporary ordinary game, no player save"
+    },
+    {
+      "path": "reports/checks/20261126T124759765199Z/outdoor_01.png",
+      "sha256": "2ed8de3b57c34459a50e6c4a780dadbd4d49ca7b584a778083445285037d59a1",
+      "run": "20261126T124759765199Z",
+      "status": "current Outdoor 01 version 1.0.1, reduced tiny-cap tessellation",
+      "source": "Actual Godot Forward+ 1920x1080 authoring sheet; original authored materials and dimensions"
+    },
+    {
+      "path": "reports/checks/20261126T133656440181Z/source_materials.png",
+      "sha256": "63c50b2ffe2fcf1bd170dd9b9705617095d7394f38914bf5c7d2466b228c4165",
+      "run": "20261126T133656440181Z",
+      "status": "reference full-detail materials",
+      "source": "Actual Godot Forward+ paired 1152x768 RGB contact sheet; six fixed cameras"
+    },
+    {
+      "path": "reports/checks/20261126T133656440181Z/combined_materials.png",
+      "sha256": "fd5a16f35c19c10f0126d78f8a69e1e7ff0c77c6eb14ea06a306b72e074238a5",
+      "run": "20261126T133656440181Z",
+      "status": "verified material comparison, not user visual approval",
+      "source": "Actual Godot Forward+ paired 1152x768 RGB contact sheet; full-detail source and derived meshes, max channel difference 1"
+    },
+    {
+      "path": "reports/checks/20261126T133656440181Z/lod_source.png",
+      "sha256": "d0aa49605f5b3ecb67e22fd49617876fa8120d96f6d4412f5838afb453272a71",
+      "run": "20261126T133656440181Z",
+      "status": "reference distant geometry",
+      "source": "Actual Godot Forward+ 1152x768 RGB contact sheet; cameras four times wider than close views"
+    },
+    {
+      "path": "reports/checks/20261126T133656440181Z/lod_render.png",
+      "sha256": "58c3125ff3c825b15110f6e6f75e986a8bc7955d8bb034dd1b2ce593bbbaa707",
+      "run": "20261126T133656440181Z",
+      "status": "inspected distant index LOD comparison",
+      "source": "Actual Godot Forward+ 1152x768 RGB contact sheet; matched distant cameras"
+    },
+    {
+      "path": "reports/checks/20261126T134609137005Z/names_on_out.png",
+      "sha256": "661cf45626870a483fd20d93b725e81ae28ed2a9832d4d2e48a8c57093110ee8",
+      "run": "20261126T134609137005Z",
+      "status": "mixed-pack full-game walk; 60 FPS tail gate failed",
+      "source": "Actual Godot Forward+ 1920x1080; 1000 added objects in read-only Hidden_Meadow, temporary floor at Y44.25, gameplay systems enabled"
+    },
+    {
+      "path": "reports/checks/20261126T134903560062Z/names_on_out.png",
+      "sha256": "a12a75e2e258719acae6a355a8238365466e2e819821a79c1500389d1d3c1caf",
+      "run": "20261126T134903560062Z",
+      "status": "Outdoor-only full-game walk; 60 FPS tail gate failed",
+      "source": "Actual Godot Forward+ 1920x1080; 1000 added outdoor objects in read-only Hidden_Meadow, temporary floor at Y44.25, gameplay systems enabled"
+    },
+    {
+      "path": "reports/checks/20261126T132834293682Z/combined_materials.png",
+      "sha256": "072e48efc109b745a9b9bb2e079d59bdec9be5917eae56b30ac2f3daedd33ff4",
+      "run": "20261126T132834293682Z",
+      "status": "rejected discard-based culling / cabinet glazing",
+      "source": "Actual Godot paired comparison; preserved in receipt-owned cold archive"
+    },
+    {
+      "path": "reports/checks/20261126T133229803577Z/combined_materials.png",
+      "sha256": "04d45e82baed4a21a2df34783939b8088dfaf54171df0c81e3c7dd580e3c572b",
+      "run": "20261126T133229803577Z",
+      "status": "rejected shared-material ordering / lamp edge",
+      "source": "Actual Godot paired comparison; preserved in receipt-owned cold archive"
     }
   ]
 }

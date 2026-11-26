@@ -13,6 +13,9 @@ boxes, tires, litter, trash bags, trash cans and a large refuse container, using
 native shared rendering and reusable storage. No external models, photographs,
 textures, brands or reference images were imported.
 
+Version 1.0.1 reduces offline tessellation of tiny tube endcaps for dense scenes.
+The original forms, materials and stable object identities are retained.
+
 The offline author extends the project's Homestead 10 author, which reuses the
 Homestead 02/04 primitive helpers and Homestead 07 cushion formula. Their original
 0BSD source notices remain intact. No engine source is copied into this pack.

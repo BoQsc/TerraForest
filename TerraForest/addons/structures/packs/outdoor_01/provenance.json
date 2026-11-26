@@ -7,7 +7,7 @@
   "authoring_tool": "Existing external Godot 4.7.2 Steam",
   "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
   "pack": "terraforest.outdoor_01",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "origin": "Original parametric outdoor models and procedural materials; no external assets",
   "brief": "Separate outdoor container/prop pack: nest, duffel, boxes, tires, litter, refuse bag, can and dumpster",
   "source_sha256": {
@@ -15,22 +15,22 @@
     "addons/structures/packs/homestead_04/author.gd": "faa1d9431f6361274d4efd169844c4b70dc184bb39d0ed2a0376c39b4713560d",
     "addons/structures/packs/homestead_07/author.gd": "a0aff6dcdb61348d61b5e257dbec06d286065e23e3d941c3c9e4c017c663b475",
     "addons/structures/packs/homestead_10/author.gd": "8e26073ace9db3bc16f0c9b9fb820b35d67ee2b3628e159f2d2c7b2bd16a648a",
-    "addons/structures/packs/outdoor_01/author.gd": "5abc4fe83919e24768214f6ae0da26939e380078e81ae089be74f2baefe151a7",
+    "addons/structures/packs/outdoor_01/author.gd": "6880f4e379be7a8909db733b8f42752dc21b82f544e2f3d436c8b261e1b13304",
     "addons/structures/packs/outdoor_01/catalog.gd": "1fb06a5dfc0dac5068f8b7d91de4479ac10e7c95687a1ed91e672ab0a37cde9e",
-    "tests/outdoor_01_pack.gd": "e401b57bc279f403c79e0f977ae3e4ce17fca9a73a27719b918441378103cf82"
+    "tests/outdoor_01_pack.gd": "ec48d71125dae24526e731f208452186e63a313284866de390a4afce8f908ae3"
   },
   "asset_sha256": {
-    "addons/structures/packs/outdoor_01/icons.trtex": "5ac6ad2e0a2d59c8a3ca6abeb82b81faafcd99c65d5469a0142d01ed30256d75",
-    "addons/structures/packs/outdoor_01/models/bird_nest.tres": "c9c1f095900bf27118a2edbf3f500164a542316f4ded5d7b0ea3f1f056937e8a",
+    "addons/structures/packs/outdoor_01/icons.trtex": "91ca2f45499797b27c9b6c026d3df12f139e00ef8bed1826525312827275428f",
+    "addons/structures/packs/outdoor_01/models/bird_nest.tres": "a7ed25b33693f29d7348e29b5d27b9c2b0ca2fb46ee131bc0a0f53f17994c9f1",
     "addons/structures/packs/outdoor_01/models/cardboard_box.tres": "5d3ae554f0c7ca49c9d71cb17fe51bb17b289ecc8dd5da3336c9a1e55232eeff",
-    "addons/structures/packs/outdoor_01/models/duffel_bag.tres": "1ac999d7e0e0523673004c7623dce53246a706c9823d036fbfd039b42a6e8307",
-    "addons/structures/packs/outdoor_01/models/dumpster.tres": "f03b7a68e897494178848323138f269708f1f23f3e3f8eca7043f1fab2f7d41a",
+    "addons/structures/packs/outdoor_01/models/duffel_bag.tres": "a348b1de35b70b46a95edfe058a56eeaf0a8301794e6a03c4d77561d5991691f",
+    "addons/structures/packs/outdoor_01/models/dumpster.tres": "8c705ae754676f12a23c194a400f05a83a0ca7f32ec8434991b3d46eb4c6b3ef",
     "addons/structures/packs/outdoor_01/models/litter.tres": "33eea9c17f481f27d6b88d3d53e4c13e407450e45e47ee1d60105ff6913f8e55",
     "addons/structures/packs/outdoor_01/models/open_box.tres": "3277cfbaed379ca9ca45f65708651d4c101a39d341dc7597b2aa2138e9e8efd3",
     "addons/structures/packs/outdoor_01/models/tire.tres": "1abcf6fe1893f8233dd0970cdd8dc55edadf2ac724af46f5ac4ecdb3a328a0a9",
     "addons/structures/packs/outdoor_01/models/tire_stack.tres": "e589b21a32767bda61c76f0996d9013e547261f120ca5a8121c817c1c48c50b0",
-    "addons/structures/packs/outdoor_01/models/trash_bag.tres": "156a3109f1c646e44892bc5d944191b3d6d055801486aeb5085522a3ab36850b",
-    "addons/structures/packs/outdoor_01/models/trash_can.tres": "a6486389f22f8a2130a7091c88044d059bd7c1530428ef7781c0098f055fa6b6",
-    "addons/structures/packs/outdoor_01/pack.json": "57296cd763b5ac843168271fead0888926e0fd8c9c2a0b92c8885ece02f24b6f"
+    "addons/structures/packs/outdoor_01/models/trash_bag.tres": "ee9dce1410662c8fd223df6e0a30b7e5f8c3752dd20f0fa84415d70f7368e99f",
+    "addons/structures/packs/outdoor_01/models/trash_can.tres": "45370d3a7d8eed194e89a13220b539c7ff4df70973e9b49254e1e17a3cac1775",
+    "addons/structures/packs/outdoor_01/pack.json": "2f5914974746b57cf5098d96cfd996f4bca73c9d0ebda327282c1f01a08a7552"
   }
 }

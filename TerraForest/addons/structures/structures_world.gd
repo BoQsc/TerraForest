@@ -245,8 +245,13 @@ func set_model_focus(world_position: Vector3) -> void:
 		collection.set_render_focus(world_position)
 
 func register_model(asset_id: String, mesh: Mesh) -> Node3D:
-	if _sealed or _models.has(asset_id) or _models.size() >= 256 or not prepare():
+	if mesh==null or _sealed or _models.has(asset_id) or _models.size() >= 256 or not prepare():
 		return null
+	# Small ordinary props (doors, windows, furniture) share bounded visual pages.
+	# Explicit asset policy wins; large models retain finer spatial culling.
+	var size:=mesh.get_aabb().size
+	if not mesh.has_meta("world_render_region_span") and maxf(size.x,maxf(size.y,size.z))<=4.0:
+		mesh.set_meta("world_render_region_span",2)
 	var collection: Node3D = ClassDB.instantiate("NativeStaticBatch")
 	if not collection.configure_asset(asset_id,mesh):
 		collection.free()

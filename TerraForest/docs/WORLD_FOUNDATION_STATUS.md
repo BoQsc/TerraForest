@@ -9469,6 +9469,11 @@ are tracked in [Object pack integration](OBJECT_PACK_INTEGRATION.md): 110 folder
 discovered objects, seven outdoor container types, bounded native name inspection,
 explicit scatter and the furnished Homestead Manor R2. Native/save/drop/input
 checks pass; current visual evidence, timing scope and remaining acceptance are
-linked there. The dense 1,000-object scene exceeds 16.7 ms p95. Mansion visual
+linked there. [Full-game object rendering qualification](OBJECT_RENDERING_PERFORMANCE.md)
+now covers reduced outdoor geometry, cached material consolidation/index LODs,
+bounded visual pages and a four-leg 1,000-object walking route with all normal
+systems enabled. GPU cost improved, but the strict 16.7 ms p95/p99 target remains
+unmet; the linked report retains failed runs and the CPU follow-up requirement.
+Mansion visual
 approval, generated-site terrain fit and full circulation remain unaccepted;
 the new preset is not a generation default.

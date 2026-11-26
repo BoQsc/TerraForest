@@ -281,6 +281,20 @@ and logs). No full export, source copy or saved world is allocated. Headless pac
 and mansion checks admit 2 MiB. The native state fixture is reused by hash for a
 fresh-process restoration test.
 
+The full-game `object_rendering_world` walk admits 32 MiB for two PNGs, a frame
+trace capped at 8 MiB, logs and the receipt. It reads the existing Hidden_Meadow
+snapshot without saving; its floor and 1,000 added objects exist only in memory.
+Its named captures and trace use the same two-ready receipt-owned lifecycle.
+The `model_horizon` regression admits 2 MiB, puts its small `fixture.trw` and
+`result.json` inside the receipt directory and uses that lifecycle too. Its
+100,000-record pressure case stays in memory.
+`object_pack_render_mesh` admits 16 MiB for four 1152×768 RGB material/LOD sheets,
+pixel/geometry results and logs (2 MiB headless), under the same two-ready policy.
+The headless-only `original_size_drops` check admits 2 MiB for its assertion log
+and receipt. Its tiny process-owned preference fixture is removed by the test;
+the headless branch writes no screenshot, save or export. Rendered variants keep
+the existing conservative allowance and are not admitted by this exception.
+
 `maintain_homestead_captures.py` archives the receipt-owned Outdoor 01, mansion
 and object-system families after the owned engine exits, keeping at most two
 ordinary ready runs per family. Native state and timing JSON are archived with

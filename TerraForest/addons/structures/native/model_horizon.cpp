@@ -109,7 +109,19 @@ bool NativeModelHorizon::assign(Collection &collection,int64_t identity,const Na
         auto &page=pages.at(existing->second.page);auto &record=page.records[existing->second.slot];
         if(record.transform!=transform){record.transform=transform;dirty.insert(existing->second.page);}return true;
     }
-    const BlockKey origin=NativeStaticBatch::group_for(transform);
+    BlockKey origin=NativeStaticBatch::group_for(transform);
+    // Small furnishing packs can share a wider visual page than their 32 m
+    // canonical storage/collision region. Keep exact poses and the 256-record
+    // page cap; this only reduces repeated material submissions in dense rooms.
+    // This is authored render policy, never a value taken from saved records.
+    if(auto *batch=source(collection.id)) {
+        const Variant policy=batch->source_mesh->get_meta("world_render_region_span",1);
+        const int span=policy.get_type()==Variant::INT?int(policy):1;
+        if(span==2||span==4) {
+            auto align=[span](int value){const int remainder=value%span;return value-(remainder<0?remainder+span:remainder);};
+            origin={align(origin.x),align(origin.y),align(origin.z)};
+        }
+    }
     auto candidates=collection.available.find(origin);
     const bool create=candidates==collection.available.end()||candidates->second.empty();
     if(charged_bytes()+RECORD_CHARGE+(create?PAGE_CHARGE:0)>byte_limit||pages.size()+(create?1:0)>16384) {error="Model visual residency budget exceeded";capacity_error=true;return false;}

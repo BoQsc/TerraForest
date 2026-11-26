@@ -22,6 +22,9 @@ FAMILIES = {
     "outdoor_01_pack": ("outdoor_01.png",),
     "homestead_mansion": ("mansion_exterior.png", "mansion_plan.png", "mansion_salon.png", "mansion_dining.png", "mansion_bedroom.png", "mansion_workshop.png"),
     "object_system_world": ("object_names.png", "outdoor_storage.png", "object_density.png", "object_state.bin", "object_performance.json"),
+    "object_rendering_world": ("names_on_out.png", "names_on_return.png", "object_rendering.json"),
+    "model_horizon": ("fixture.trw", "result.json"),
+    "object_pack_render_mesh": ("source_materials.png", "combined_materials.png", "lod_source.png", "lod_render.png", "render_mesh.json"),
     "drop_key_standard": ("backpack.png", "player_settings.png"),
 }
 

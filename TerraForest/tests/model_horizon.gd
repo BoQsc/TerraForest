@@ -25,6 +25,7 @@ func drain(horizon:Node,record_budget:int=1024,upload_budget:int=3)->bool:
 func run()->void:
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--view-output="):output=argument.trim_prefix("--view-output=")
+		if argument.begins_with("--check-evidence-dir="):output=argument.trim_prefix("--check-evidence-dir=")
 	DirAccess.make_dir_recursive_absolute(output)
 	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
 	GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
@@ -43,7 +44,7 @@ func run()->void:
 	var codec:RefCounted=ClassDB.instantiate("NativeStructuresSnapshot");codec.configure_assets(PackedStringArray([ASSET]))
 	var raw:RefCounted=ClassDB.instantiate("NativeWorldArchive")
 	var archive:RefCounted=ClassDB.instantiate("NativeRegionWorldArchive");archive.configure(raw,codec,true)
-	var path:=ProjectSettings.globalize_path(output.path_join("fixture_%d.trw"%OS.get_process_id()))
+	var path:=ProjectSettings.globalize_path(output.path_join("fixture.trw"))
 	check(archive.acquire(path) and archive.publish(path,archive.encode({"terrain":PackedByteArray([1]),"structures":codec.encode(blocks.capture_snapshot(),{ASSET:original})}))==OK and archive.start_region_reads(8,64*1024*1024),"isolated archived fixture starts existing shared reader")
 	var pin:PackedByteArray=archive.published_model_index(ASSET).checkpoint
 	var horizon:Node=ClassDB.instantiate("NativeModelHorizon");root.add_child(horizon)
@@ -174,7 +175,23 @@ func run()->void:
 	check(horizon.statistics().ready and horizon.represented_ids(batch)==batch.get_ids(),"capacity pressure recovers after removals without a world reload or missing identities")
 	batch.free();horizon.advance()
 	check(horizon.statistics().collections==0 and horizon.statistics().rendered==0 and horizon.statistics().gpu_transform_bytes==0,"destroying a source before the visual owner releases all of its draw pages")
-	horizon.clear();horizon.free();blocks.free();archive.join_region_reads();archive.release()
+	horizon.clear()
+	var wide:Node3D=ClassDB.instantiate("NativeStaticBatch");root.add_child(wide)
+	var wide_mesh:=BoxMesh.new();wide_mesh.set_meta("world_render_region_span",4)
+	check(wide.configure_asset("test/wide_pages",wide_mesh) and wide.configure_render_streaming(true,384,128,1048576,2,49152),"wide-page source configures independently of canonical regions")
+	var wide_ids:=PackedInt64Array();var wide_poses:=PackedFloat32Array()
+	var positions:=[-129.0,-127.0,-96.0,-1.0,0.0,64.0,127.0,128.0]
+	for index in positions.size():wide_ids.append(index+1);wide_poses.append_array(pose(Vector3(positions[index],1,1)))
+	check(wide.upsert_instances(wide_ids,wide_poses),"wide-page fixture crosses positive and negative 32/128 m boundaries")
+	var wide_snapshot:PackedByteArray=wide.capture_snapshot()
+	check(horizon.configure(archive,[wide],{}) and await drain(horizon) and horizon.statistics().pages==4 and horizon.represented_ids(wide)==wide_ids,"eight records across seven storage regions share four bounded visual pages")
+	var exact:=true
+	for index in positions.size():
+		var visual:Dictionary=horizon.visual_record(wide,index+1)
+		exact=exact and visual.transform.origin.is_equal_approx(Vector3(positions[index],1,1)) and visual.node.multimesh.instance_count<=256
+	check(exact and wide.capture_snapshot()==wide_snapshot,"wider pages preserve exact world poses, page capacity and save bytes")
+	check(wide.remove_instances(PackedInt64Array([3])) and await drain(horizon) and horizon.represented_ids(wide)==PackedInt64Array([1,2,4,5,6,7,8]),"removing one wide-page object preserves all cross-region neighbors")
+	horizon.clear();wide.free();horizon.free();blocks.free();archive.join_region_reads();archive.release()
 	var counter:RefCounted=ClassDB.instantiate("NativeModelRenderPage")
 	check(counter.live_pages()==0,"renderer teardown releases all native archived pages")
 	FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"archived":archived_stats,"dense":dense},"  "))

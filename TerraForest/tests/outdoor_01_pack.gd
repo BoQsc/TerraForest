@@ -52,10 +52,16 @@ func run() -> void:
 	var coordinator := preload("res://addons/player_runtime/construction_inventory.gd").new(); coordinator.gameplay = true
 	var recipes := preload("res://addons/structures/construction_catalog.gd").recipes()
 	var salvage := preload("res://addons/structures/construction_catalog.gd").salvage_recipes()
+	var total_triangles:=0
 	for index in entries.size():
 		var entry: Dictionary = entries[index]
 		var definition: Dictionary = Pack.definitions()[index]
 		var mesh: Mesh = entry.mesh
+		var triangles:=0
+		for surface in mesh.get_surface_count(): triangles+=mesh.surface_get_array_index_len(surface)/3
+		total_triangles+=triangles
+		if definition.id=="bird_nest": check(triangles<=20000,"nest geometry budget excludes oversampled twig endcaps")
+		if definition.id=="trash_can": check(triangles<=6000,"can geometry budget excludes oversampled fluting endcaps")
 		check(mesh.get_aabb().size.length() > 0.1 and mesh.get_aabb().position.y >= -0.001,"authored dimensions and bottom anchor: "+definition.id)
 		check(mesh.get_meta("pack_id") == Pack.ID and mesh.get_meta("collision_boxes").size() > 0,"pack provenance and collision: "+definition.id)
 		check(Items.item_name(entry.item) == definition.name and Items.Objects.TITLES[entry.item] == entry.title and Items.matches(entry.item,"outdoor object"),"inventory and placement identity agree: "+definition.id)
@@ -69,6 +75,8 @@ func run() -> void:
 		check(id > 0,"paid carried placement: "+definition.id)
 		var before: PackedByteArray = inventory.capture_storage_snapshot()
 		check(coordinator.place_model(history,entry.collection,inventory,records,AABB(),PackedInt64Array([entry.item,1])) == 0 and inventory.capture_storage_snapshot() == before,"no unpaid duplicate: "+definition.id)
+	check(total_triangles<=50000,"ten-object pack stays within 50000 source triangles")
+	print("OUTDOOR01_GEOMETRY triangles=",total_triangles)
 	var snapshot: PackedByteArray = world.capture_storage_snapshot()
 	check(not snapshot.is_empty(),"combined structure snapshot includes pack identities")
 	var reopened := World.new(); root.add_child(reopened); Pack.register(reopened)

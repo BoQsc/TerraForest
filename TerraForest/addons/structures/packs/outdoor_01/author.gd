@@ -12,6 +12,14 @@ func _init() -> void:
 	materials.rubber.albedo_color=Color("242827")
 	materials.steel.albedo_color=Color("9ca5a0"); materials.steel.roughness=.72
 
+func sphere(center: Vector3, radius: float, material: String) -> void:
+	# Millimetre-wide tube ends used 288 triangles each. Their silhouette needs
+	# only an octagonal ring and two poles; retain full detail for larger spheres.
+	var mesh:=SphereMesh.new(); mesh.radius=radius; mesh.height=radius*2
+	mesh.radial_segments=8 if radius<=.02 else 16
+	mesh.rings=1 if radius<=.02 else 8
+	append(mesh,Transform3D(Basis.IDENTITY,center),material)
+
 func build(slug: String) -> ArrayMesh:
 	surfaces.clear(); collision.clear(); wall_points.clear()
 	match slug:

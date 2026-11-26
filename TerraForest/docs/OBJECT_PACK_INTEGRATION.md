@@ -156,16 +156,27 @@ is within short-run variation; it does not establish that labels improve speed.
 The JSON counts assertions before cleanup; the console's 32 also includes the
 successful shutdown assertion. The dense frame-budget limitation remains.
 
+## Full-game rendering follow-up
+
+[Object rendering qualification](OBJECT_RENDERING_PERFORMANCE.md) records the
+subsequent geometry, material, distance-LOD and native visual-page work. Its new
+1,000-object driver walks approximately 220 m with normal world, AI, physics,
+vegetation, actors, vehicle fleet and physical pickups enabled throughout all
+2,400 measured physics ticks. It uses an existing player world read-only and
+verifies the source hash. The earlier stationary numbers above remain historical
+evidence and do not qualify full-game 60 FPS. The strict p95/p99 gate remains open.
+
 ## Remaining acceptance and return triggers
 
 - User visual review of the mansion is pending. Before making it a generation
   default, fit a real lot to terrain and roads, then verify all entrances, room
   circulation, ground contact and generated neighbouring views. Current tests
   cover prefab clearance, the main stair in both directions and a courtyard walk.
-- Dense rendering needs optimization before claiming 60 FPS with 1,000 extra
-  mixed props. Profile mesh/material/shadow cost and resident pages against this
-  retained route, then repeat player traversal with full simulation and longer
-  samples. Do not hide this limitation behind fast native insertion timings.
+- Dense rendering still needs qualification before claiming 60 FPS with 1,000
+  extra mixed props. Continue from the full-game route, CPU/GPU measurements and
+  rejected experiments in the linked rendering report; close with all four
+  p95/p99 gates plus functional and visual checks. Native insertion timings do
+  not establish frame rate.
 - Package/export discovery remains to be exercised by the next requested build;
   manifests are included by the preset, but this task creates no full export.
 - Interactive cabinet lids, cloth, individual litter, rolling tires and loot

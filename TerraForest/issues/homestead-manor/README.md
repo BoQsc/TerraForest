@@ -96,6 +96,33 @@ Final ordinary temporary game, seed 1703, salon camera. Name labels avoid each
 other and the HUD; aimed object has priority, and Alt only accesses the controls.
 The manor is above terrain in this route, not evidence of an accepted building lot.
 
+## Rendering follow-up
+
+![Matched material comparison](../../reports/checks/20261126T133656440181Z/combined_materials.png)
+
+Actual six-camera render comparison after material consolidation. The matching
+[source materials](../../reports/checks/20261126T133656440181Z/source_materials.png)
+differ by at most one RGB level; the camera faces the cabinet glazing. Matched
+[distant source](../../reports/checks/20261126T133656440181Z/lod_source.png) and
+[distance LOD](../../reports/checks/20261126T133656440181Z/lod_render.png) views
+were also inspected. Shader-discard and lamp-edge failures remain in the image
+manifest with their original cold-archive receipts.
+
+![Full-game mixed-object walk](../../reports/checks/20261126T134609137005Z/names_on_out.png)
+
+Actual normal-game walking view with 1,000 added objects from all eleven packs,
+plus the existing world. This temporary test floor at Y=44.25 is not a mansion
+lot or a save edit. All 3,506 model records remained rendered, with normal AI,
+physics, vegetation, actors, vehicle fleet and pickups enabled. The HUD's
+instantaneous FPS does not qualify the run: slow-frame p95/p99 gates failed.
+The [performance report](../../docs/OBJECT_RENDERING_PERFORMANCE.md) records
+the complete four-leg data and zero-added-object control.
+
+The [Outdoor 01 v1.0.1 sheet](../../reports/checks/20261126T124759765199Z/outdoor_01.png)
+shows the reduced tessellation at unchanged authored dimensions. Its 94 checks
+pass. Icons use the original authored meshes, so render-cache changes do not
+require rebaking them; source/output hashes are refreshed in pack provenance.
+
 ## Remaining / resume here
 
 User visual approval remains open. Before generator adoption, fit a real lot,
@@ -103,9 +130,13 @@ verify ground/road contact and traverse every room/entrance with full gameplay
 collision and doors. The main-stair and courtyard checks do not cover every
 possible route. Do not replace established houses or refurnish player saves.
 
-The 1,000-extra-object frame test exceeds the 16.7 ms budget. Profile material,
-mesh and shadow cost, compare the same retained route, and test longer walking
-samples with full simulation before claiming dense-scene 60 FPS. No new runtime
+The [full-game rendering follow-up](../../docs/OBJECT_RENDERING_PERFORMANCE.md)
+reduces outdoor geometry and consolidates compatible materials, adds distance
+LODs and tests four walking legs with all normal systems enabled. Its strict
+1,000-extra-object p95/p99 frame gate still exceeds 16.7 ms. Continue from the
+retained CPU/GPU measurements and control route before claiming dense-scene
+60 FPS. Material/LOD comparison pictures are engineering checks; mansion user
+approval remains open. No new runtime
 simulation is implied for individual litter, eggs, cabinet lids or tires.
 
 Detailed controls, pack-folder contract, evidence and timing scope:
