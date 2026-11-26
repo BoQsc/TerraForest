@@ -1,0 +1,225 @@
+{
+  "schema": 1,
+  "id": "terraforest.homestead_07",
+  "name": "Homestead 07",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {
+      "id": "armchair",
+      "item": 780,
+      "name": "Homestead upholstered armchair",
+      "recipe": [
+        102,
+        8,
+        225,
+        12,
+        227,
+        2
+      ],
+      "salvage": [
+        102,
+        4,
+        225,
+        5
+      ],
+      "health": 120,
+      "material": "wood"
+    },
+    {
+      "id": "coffee_table",
+      "item": 781,
+      "name": "Homestead low coffee table",
+      "recipe": [
+        102,
+        10,
+        227,
+        2
+      ],
+      "salvage": [
+        102,
+        5
+      ],
+      "health": 120,
+      "material": "wood"
+    },
+    {
+      "id": "bookcase",
+      "item": 782,
+      "name": "Homestead tall bookcase with books",
+      "recipe": [
+        102,
+        16,
+        225,
+        4,
+        227,
+        3
+      ],
+      "salvage": [
+        102,
+        8,
+        225,
+        1
+      ],
+      "health": 150,
+      "material": "wood"
+    },
+    {
+      "id": "sideboard",
+      "item": 783,
+      "name": "Homestead sideboard cabinet",
+      "recipe": [
+        102,
+        18,
+        104,
+        2,
+        227,
+        4
+      ],
+      "salvage": [
+        102,
+        9,
+        104,
+        1
+      ],
+      "health": 160,
+      "material": "wood"
+    },
+    {
+      "id": "record_player",
+      "item": 784,
+      "name": "Homestead record player",
+      "recipe": [
+        102,
+        4,
+        104,
+        4,
+        226,
+        3,
+        227,
+        2
+      ],
+      "salvage": [
+        102,
+        2,
+        104,
+        2,
+        226,
+        1
+      ],
+      "health": 80,
+      "material": "other"
+    },
+    {
+      "id": "record_crate",
+      "item": 785,
+      "name": "Homestead vinyl record crate",
+      "recipe": [
+        102,
+        5,
+        225,
+        3,
+        227,
+        2
+      ],
+      "salvage": [
+        102,
+        2,
+        225,
+        1
+      ],
+      "health": 65,
+      "material": "wood"
+    },
+    {
+      "id": "chessboard",
+      "item": 786,
+      "name": "Homestead chessboard with pieces",
+      "recipe": [
+        102,
+        5,
+        225,
+        1
+      ],
+      "salvage": [
+        102,
+        2
+      ],
+      "health": 55,
+      "material": "wood"
+    },
+    {
+      "id": "newspapers",
+      "item": 787,
+      "name": "Homestead newspaper stack",
+      "recipe": [
+        225,
+        3,
+        204,
+        1
+      ],
+      "salvage": [
+        225,
+        1
+      ],
+      "health": 25,
+      "material": "other"
+    },
+    {
+      "id": "floor_lamp",
+      "item": 788,
+      "name": "Homestead standing floor lamp",
+      "recipe": [
+        104,
+        5,
+        225,
+        4,
+        226,
+        2
+      ],
+      "salvage": [
+        104,
+        2,
+        225,
+        1
+      ],
+      "health": 80,
+      "material": "other",
+      "light": {
+        "offset": [
+          0,
+          1.46,
+          0
+        ],
+        "color": "#ffda9d",
+        "energy": 0.9,
+        "range": 5.0,
+        "shadows": false
+      }
+    },
+    {
+      "id": "fireplace",
+      "item": 789,
+      "name": "Homestead fireplace surround with logs",
+      "recipe": [
+        201,
+        24,
+        102,
+        6,
+        104,
+        4
+      ],
+      "salvage": [
+        201,
+        12,
+        102,
+        2,
+        104,
+        2
+      ],
+      "health": 240,
+      "material": "stone"
+    }
+  ]
+}

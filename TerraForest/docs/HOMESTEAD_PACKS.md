@@ -1,6 +1,6 @@
 # Homestead household object packs
 
-Six separate original asset packs extend the existing table/chair/shelf/chest
+Seven separate original asset packs extend the existing table/chair/shelf/chest
 set. They use stable pack, item and native model identities, with committed
 baked meshes, icon atlases, editable source and exact hash provenance.
 
@@ -12,8 +12,9 @@ baked meshes, icon atlases, editable source and exact hash provenance.
 | [Homestead 04 — Workshop & Repairs](../addons/structures/packs/homestead_04/README.md) | Workbench, vise, wall tool board, toolbox, sawhorse, plank stack, paint tin/brush, rope, cable spool, handcart | 750–759 |
 | [Homestead 05 — Kitchen & Pantry](../addons/structures/packs/homestead_05/README.md) | Refrigerator, kettle, pot/lid, frying pan, cutting board/knife, utensil rail, plate rack, preserve jars, bread bin, grain sack | 760–769 |
 | [Homestead 06 — Study & Communications](../addons/structures/packs/homestead_06/README.md) | Writing desk, desk chair, typewriter, radio, telephone, fan, documents, calendar, briefcase, wastebasket | 770–779 |
+| [Homestead 07 — Living Room & Leisure](../addons/structures/packs/homestead_07/README.md) | Armchair, coffee table, bookcase, sideboard, record player, record crate, chessboard/pieces, newspapers, floor lamp, fireplace/logs | 780–789 |
 
-All six appear independently in the Objects pack filter and Dev Bag categories.
+All seven appear independently in the Objects pack filter and Dev Bag categories.
 Normal placement, recipes, partial salvage, durability, native history, model
 streaming and structure save/reload remain shared. Inventory drops use the
 universal parcel fallback and existing bounded physical pool. No new per-item
@@ -70,6 +71,15 @@ equipment, coiled telephone cord, fine fan/basket wires, original calendar print
 and procedural leather grain. The calendar artwork needs no external font or
 image. Helpers from Homestead 02 and 04 retain their source hashes in provenance.
 
+![Homestead 07 living room and leisure](../reports/checks/20261126T100319569071Z/homestead_07.png)
+
+Homestead 07 authoring preview: rounded upholstery, open furniture frames,
+varied book spines, a grooved record, 32 independently shaped chess pieces,
+original newspaper print and a stone fireplace arch with unlit logs. The first
+sheet at `reports/checks/20261126T100143942680Z/homestead_07.png` is retained as
+a rejected caption-encoding witness; explicit UTF-8 decoding and short display
+captions correct the labels without changing the authored model geometry.
+
 ## Scope and return triggers
 
 These are furnishings. Clock hands are static, cloth does not simulate and
@@ -120,6 +130,18 @@ nonempty-removal protection. Return to those contracts before adding behavior,
 with interaction and fresh-provider reload evidence for each. The highlighted
 calendar date is authored artwork, not a live simulation.
 
+Homestead 07 seating, cabinet/record storage, music playback, moving lid/tonearm,
+playable chess, readable newspapers/books and fire/heat/smoke remain unimplemented.
+Sitting needs shared actor/seat ownership. Storage needs cross-collection container
+identities, transfer/lock rules and nonempty-removal protection. Music needs bounded
+shared playback/saved state and suitable content provenance. Moving parts need
+shared saved state and collision/interaction checks. Chess needs shared board/piece
+transactions and interaction rules; reading needs content identities/permissions.
+Fire needs shared fuel/conservation and heat rules plus bounded effects. Return
+with interaction and fresh-provider reload evidence before adding each behavior.
+The fireplace is unlit. The floor lamp uses the existing four-slot native light
+pool without independent switch state or a light node per placed copy.
+
 Headless density fixtures cover 1,000 mixed placements per pack, native ownership
 and byte-exact reopen. They do not establish graphical frame rate, transparent
 overdraw cost, dense-house navigation quality, total RAM/VRAM or 60 FPS headroom.
@@ -129,6 +151,23 @@ furnishing is outside this milestone; the rejected district layout is unchanged.
 
 ## Verification
 
+- Homestead 07: 103 assertions covering paid placement, no unpaid duplicates,
+  shared damage/salvage, icons, byte-exact reopen, pre-pack save admission,
+  1,000 mixed placements and shared native floor/table lamp source identities:
+  `reports/checks/20261126T100442445821Z/run.json`.
+- Expanded Homestead 07 catalog: universal drops/recollection pass 993 checks
+  (`reports/checks/20261126T100521586563Z/run.json`) and physical drops pass 156
+  (`reports/checks/20261126T100601102222Z/run.json`). Actual-world rendered
+  G/input checks pass 35 (`reports/checks/20261126T100642271901Z/run.json`).
+- Homestead 07 authoring initially failed an inferred vector-loop declaration
+  (`reports/checks/20261126T095920689884Z/run.json`); the typed loop and clean
+  ten-model bake passed at `reports/checks/20261126T100049193223Z/run.json`.
+  The first catalog check exposed malformed UTF-8 titles and an invalid lamp
+  test setup (`reports/checks/20261126T100231872770Z/run.json`). After the title
+  fix, only that fixture failed (`reports/checks/20261126T100357703459Z/run.json`):
+  it registered the older lamp pack after snapshot capture sealed its world
+  schema. The corrected lighting fixture registers both packs in a fresh world,
+  matching real startup. Earlier failed receipts remain intact.
 - Homestead 06: 111 assertions covering paid placement, no unpaid duplicates,
   shared damage/salvage, icons, byte-exact reopen, pre-pack save admission,
   1,000 mixed placements and real calendar wall supports on all four sides:
@@ -213,6 +252,8 @@ Homestead 05 identities were generated at
 `reports/checks/homestead05_uid_import_20261126T093406161794Z/run.json`.
 Homestead 06 identities were generated at
 `reports/checks/homestead06_uid_import_20261126T095315702613Z/run.json`.
+Homestead 07 identities were generated at
+`reports/checks/homestead07_uid_import_20261126T100826666261Z/run.json`.
 
 The input capture lifecycle cold-retained the older two menu images from
 `reports/checks/20261126T084058031606Z` after the later input driver exited.

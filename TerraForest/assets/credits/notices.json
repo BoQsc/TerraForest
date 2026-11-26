@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "homestead_07",
+      "title": "Homestead 07 living room and leisure pack",
+      "license": "CC0 1.0 assets / 0BSD code",
+      "source": "addons/structures/packs/homestead_07/ASSET_LICENSE.md",
+      "summary": "Ten original living-room furnishings, rounded upholstery, detailed chess pieces, original record/newspaper artwork and matching icons. Includes editable geometry; music, storage, board play and fire behavior remain unimplemented.",
+      "text": "# Homestead 07 — original living room and leisure furnishings\n\nNew original assets in this pack are contributed by TerraForest contributors\nunder **CC0-1.0**, to the extent copyright or related rights exist and are held\nby the contributors. This follows the repository contribution terms and does\nnot purport to license third-party rights.\n\nCC0 legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nCovered assets: `pack.json`, `models/armchair.tres`, `models/coffee_table.tres`,\n`models/bookcase.tres`, `models/sideboard.tres`, `models/record_player.tres`,\n`models/record_crate.tres`, `models/chessboard.tres`, `models/newspapers.tres`,\n`models/floor_lamp.tres`, `models/fireplace.tres`, their embedded materials and\ntextures, and `icons.trtex`.\n\nThese original parametric models were authored with Codex for TerraForest on\n2026-11-26. The user requested a separate Homestead 07 pack and a picture of\nits actual models, accepting the proposed ten-object Living Room & Leisure\nroster. The brief specifies warm timber, muted upholstery and brass details.\nNo external models, images, fonts, branding, music, newspaper articles, book\ntext or third-party reference artwork were supplied or copied. Book spines,\nrecord labels, newspaper column marks and abstract artwork are original\ngeometry or procedural pixels. Chess pieces are independently authored\ntraditional geometric silhouettes, with no copied model inputs.\n\n`author.gd` retains editable geometry and print artwork. It reuses the project's\noriginal 0BSD mesh/tube helpers and CC0 procedural materials from Homestead 02\nand 04; their terms and provenance remain intact. Runtime meshes embed their\nown geometry/materials/textures. `provenance.json` records exact output and\nlocal source hashes, including both inherited helper source hashes.\n\nGodot's primitives, SurfaceTool and image APIs are external authoring tools,\nnot new vendored dependencies or material covered by this dedication. Pack\nauthoring, catalog, integration and test code is original **0BSD**. Asset\ndedication is separate from visual review and gameplay/performance acceptance."
+    },
+    {
       "id": "homestead_06",
       "title": "Homestead 06 study and communications pack",
       "license": "CC0 1.0 assets / 0BSD code",
