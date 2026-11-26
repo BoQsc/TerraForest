@@ -50,7 +50,7 @@ def planned_report_bytes(command):
     }:
         return 2 * 2**20  # Lifecycle assertions and bounded timing rows only.
     if scripts == {"physics_residency_world.gd"}:
-        return 16 * 2**20  # Bounded cadence JSON, no captures, worlds or exports.
+        return (17 if "--capture-replay-view" in command else 16) * 2**20  # Optional capped 1 MiB post-route framebuffer; no worlds/exports.
     if (scripts == {"manual_save_ordering.gd"} or
             (scripts == {"terrain_placement_preview.gd"} and any(flag in command for flag in ("--measure-hand-edits", "--no-preview-captures")))):
         return 2 * 2**20  # Log and receipt only; the hand-edit route exits before captures.

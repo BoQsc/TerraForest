@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from maintain_physics_captures import candidates
+from maintain_physics_captures import candidates, capture_files
 from analyze_physics_residency import read_capture, summarize, workload_differences
 from run_godot_check import planned_report_bytes
 
@@ -12,8 +12,10 @@ from run_godot_check import planned_report_bytes
 class PhysicsCaptureTests(unittest.TestCase):
     def test_only_audited_drivers_receive_bounded_output_allowance(self):
         self.assertEqual(planned_report_bytes(['godot', '--script', 'res://tests/physics_residency_world.gd']), 16 * 2**20)
+        self.assertEqual(planned_report_bytes(['godot', '--script', 'res://tests/physics_residency_world.gd', '--capture-replay-view']), 17 * 2**20)
         self.assertEqual(planned_report_bytes(['godot', '--headless', '--script', 'res://tests/zombie_residency_lifecycle.gd']), 2 * 2**20)
         self.assertEqual(planned_report_bytes(['godot', '--headless', '--script', 'res://tests/zombie_collision_cloud.gd']), 2 * 2**20)
+        self.assertEqual(planned_report_bytes(['godot', '--headless', '--script', 'res://tests/structure_exclusion_paging.gd']), 2 * 2**20)
         self.assertEqual(planned_report_bytes(['godot', '--script', 'res://tests/zombie_ragdoll_reactivation.gd']), 256 * 2**20)
 
     def test_retention_requires_completed_owned_output_and_preserves_two_and_pins(self):
@@ -35,6 +37,15 @@ class PhysicsCaptureTests(unittest.TestCase):
             self.assertEqual(candidates(root), [folders[0], folders[5]])
             (folders[0] / 'physics_residency.json').unlink()
             self.assertEqual(candidates(root), [folders[5]])
+
+    def test_framebuffer_retirement_requires_its_explicit_capture_receipt(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            flagged = dict(command=['--capture-replay-view'])
+            self.assertEqual(capture_files(folder, flagged), ['physics_residency.json'])
+            (folder / 'replay_view.jpg').write_bytes(b'fixture')
+            self.assertEqual(capture_files(folder, dict(command=[])), ['physics_residency.json'])
+            self.assertEqual(capture_files(folder, flagged), ['physics_residency.json', 'replay_view.jpg'])
 
     def test_cadence_counts_hitches_and_distinguishes_work_from_admission_latency(self):
         data = dict(source='fixture', source_sha256='hash', seed=1703, scope='test', route=[],
@@ -77,6 +88,9 @@ class PhysicsCaptureTests(unittest.TestCase):
         self.assertEqual(workload_differences(first, dict(first, route=[dict(living=4, corpses=11)])), ['route'])
         self.assertEqual(workload_differences(first, dict(first, physics_hz=30)), ['physics_hz'])
         self.assertEqual(workload_differences(first, dict(first, source_sha256='changed')), ['source_sha256'])
+        first['population_checkpoints'] = [dict(phase='idle', residents=[(12, True)], corpse_ids=[3])]
+        self.assertEqual(workload_differences(first, dict(first, population_checkpoints=[
+            dict(phase='idle', residents=[(13, True)], corpse_ids=[3])])), ['population_checkpoints'])
         first['diagnostics'] = False
         self.assertEqual(workload_differences(first, dict(first, diagnostics=True)), ['diagnostics'])
         first['manual_no_present'] = False

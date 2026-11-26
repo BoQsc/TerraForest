@@ -99,7 +99,12 @@ completed batch. No compression, scanning or retention runs inside timed gamepla
 
 The rendered `physics_residency_world` check reuses an explicitly selected player
 save read-only and allocates no export or world copy. The shared runner admits
-16 MiB for its bounded cadence JSON and logs. `maintain_physics_captures.py`
+16 MiB for its bounded cadence JSON and logs. The optional `--capture-replay-view`
+adds one additional
+MiB, enforced by the driver, for `replay_view.jpg` captured after timing ends.
+Only receipts containing that flag authorize archiving/retiring the image along
+with their cadence; an unowned image is left untouched. The same two-ready-run
+retention applies. `maintain_physics_captures.py` otherwise
 archives only `physics_residency.json` from completed matching driver/output
 receipts, verifies reconstruction before retiring loose bytes, and retains two
 ordinary ready runs plus `.retain`/`RETAIN_READY` pins. Each cold run keeps

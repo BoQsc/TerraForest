@@ -104,6 +104,7 @@ class Observer extends Node:
 				known_transitions[corpse.get_instance_id()]=true
 				var event:Dictionary=corpse.ragdoll_profile.duplicate();event.phase=phase;event.frame=Engine.get_process_frames()
 				event.corpse_id=corpse.get_meta("corpse_identity",0);event.resident_id=corpse.get_meta("world_zombie_id",0)
+				event.initialization_us=corpse.initialization_us.duplicate()
 				transitions.append(event)
 				if phase!="setup":
 					for part:String in corpse.collision_clouds:
@@ -243,8 +244,10 @@ func compare_clouds()->Array[Dictionary]:
 	var reducer:RefCounted=ClassDB.instantiate("NativeZombieAnatomy")
 	for index in observer.clouds.size():
 		var captured:Dictionary=observer.clouds[index];var points:PackedVector3Array=captured.points
+		var unique:Dictionary={}
+		for point:Vector3 in points:unique[point]=true
 		var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256);hash.update(points.to_byte_array())
-		var row:={"part":captured.part,"corpse_id":captured.corpse_id,"phase":captured.phase,"input_points":points.size(),"sha256":hash.finish().hex_encode(),"pairs":[]}
+		var row:={"part":captured.part,"corpse_id":captured.corpse_id,"phase":captured.phase,"input_points":points.size(),"exact_unique_points":unique.size(),"sha256":hash.finish().hex_encode(),"pairs":[]}
 		for repeat in 3:
 			var pair:Dictionary={}
 			for reduced:bool in ([false,true] if (repeat+index)%2==0 else [true,false]):pair["reduced" if reduced else "original"]=construct_cloud(stage,reducer,points,reduced)
@@ -266,6 +269,7 @@ func ready()->bool:
 		await process_frame
 	return false
 func walk(phase:String,key:int,ticks:int)->void:
+	DisplayServer.window_set_title("TerraForest — performance replay: "+phase)
 	observer.phase=phase
 	var start:Vector3=game.player.position
 	var blocked_ticks:=0
@@ -283,6 +287,7 @@ func walk(phase:String,key:int,ticks:int)->void:
 	observer.phase="setup"
 func run()->void:
 	if not check(DisplayServer.get_name()!="headless","Rendered frame cadence is available"):quit(1);return
+	DisplayServer.window_set_title("TerraForest — performance replay: loading saved world")
 	if OS.get_cmdline_user_args().has("--windowed-probe"):
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 		DisplayServer.window_set_size(Vector2i(1920,1080))
@@ -302,6 +307,15 @@ func run()->void:
 	game.lakes._render_pages.set_draw_pages(not OS.get_cmdline_user_args().has("--unbatched-water"))
 	root.add_child(game)
 	if not check(await ready(),"Player world loads read-only"):game.free();quit(1);return
+	# Foreground activation is a setup action, never a per-frame focus override.
+	# Windows may leave a background-launched fullscreen window unfocused.
+	var previous_process_mode:int=game.process_mode;game.process_mode=Node.PROCESS_MODE_DISABLED
+	var interactive:=not OS.get_cmdline_user_args().has("--isolated-render")
+	if interactive:root.grab_focus()
+	await process_frame;await process_frame
+	game.process_mode=previous_process_mode
+	if interactive and not check(root.has_focus(),"Visible replay has focus before measurement"):
+		game.shutdown_requested=true;game.terrain.shutdown();game.free();quit(1);return
 	if OS.get_cmdline_user_args().has("--no-occlusion-probe"):root.use_occlusion_culling=false
 	if OS.get_cmdline_user_args().has("--no-vsync-probe"):DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	game.player_view.entry.finish();game.session_menu.set_open(false)
@@ -311,6 +325,7 @@ func run()->void:
 	if OS.get_cmdline_user_args().has("--residency-diagnostics"):
 		game.ground_cover.profiling_enabled=true;game.vegetation.renderer.profiling_enabled=true
 		game.structures.blocks.set_process_profiling_enabled(true)
+	if OS.get_cmdline_user_args().has("--residency-work-diagnostics"):game.ground_cover.profiling_enabled=true
 	observer=Observer.new();observer.host=game;root.add_child(observer)
 	game.terrain.stage_measured.connect(observer.stage)
 	RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
@@ -327,6 +342,11 @@ func run()->void:
 	check(observer.residency_events.size()<4096,"Bounded identity events retained without truncation")
 	check(not observer.cloud_overflow and not observer.clouds.is_empty(),"Bounded posed collision corpus retained without truncation")
 	observer.phase="setup";game.process_mode=Node.PROCESS_MODE_DISABLED
+	if OS.get_cmdline_user_args().has("--capture-replay-view"):
+		await RenderingServer.frame_post_draw
+		var pixels:Image=root.get_texture().get_image();var capture:=pixels.save_jpg_to_buffer(.8)
+		if check(capture.size()<=1024*1024,"Replay framebuffer fits its admitted 1 MiB output"):
+			FileAccess.open(evidence.path_join("replay_view.jpg"),FileAccess.WRITE).store_buffer(capture)
 	water_render_coverage()
 	var inventory:=render_inventory() if observer.diagnostics or OS.get_cmdline_user_args().has("--render-ablation") else {}
 	var ablation:Array=[]
@@ -335,9 +355,9 @@ func run()->void:
 	check(FileAccess.get_sha256(source)==original,"Original player save is unchanged")
 	FileAccess.open(evidence.path_join("physics_residency.json"),FileAccess.WRITE).store_string(JSON.stringify({
 		"schema":1,"source":slot,"source_sha256":original,"seed":1703,"route":route,"samples":observer.rows,"ragdoll_transitions":observer.transitions,"clock_anchor":observer.clock_anchor,
-		"residency_events":observer.residency_events,"population_legs":population_legs,
+		"residency_events":observer.residency_events,"population_legs":population_legs,"admission_trace":game.zombies.population.admission_trace,
 		"collision_comparison":collision_comparison,
-		"render_inventory":inventory,"render_ablation":ablation,"diagnostics":observer.diagnostics,"manual_no_present":observer.manual_draw,"detached_present":observer.detached_present,"fps_cap":Engine.max_fps,"water_render_pages":game.lakes._render_pages.statistics(),
+		"render_inventory":inventory,"render_ablation":ablation,"diagnostics":observer.diagnostics or OS.get_cmdline_user_args().has("--residency-work-diagnostics"),"manual_no_present":observer.manual_draw,"detached_present":observer.detached_present,"fps_cap":Engine.max_fps,"water_render_pages":game.lakes._render_pages.statistics(),
 		"viewport":root.size,"window_mode":DisplayServer.window_get_mode(),"physics_hz":Engine.physics_ticks_per_second,"vsync":DisplayServer.window_get_vsync_mode(),
 		"engine_settings":{"workers":ProjectSettings.get_setting("threading/worker_pool/max_threads",-1),"logical_processors":OS.get_processor_count(),"occlusion_rays_per_thread":ProjectSettings.get_setting("rendering/occlusion_culling/occlusion_rays_per_thread",512),"occlusion_enabled":root.use_occlusion_culling,"threaded_cull_minimum_instances":ProjectSettings.get_setting("rendering/limits/spatial_indexer/threaded_cull_minimum_instances",1000)},
 		"scope":"Fixed physics-tick inputs on two saved-world hotspots; setup teleports are outside measurement. Physics tail includes engine queues and stepping. Actual source is read-only; this is a representative workload, not reconstruction of unrecorded human inputs."}))

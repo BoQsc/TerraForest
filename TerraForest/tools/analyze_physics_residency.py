@@ -60,6 +60,10 @@ def summarize(data):
     if 'fps_cap' in data: result['fps_cap'] = data['fps_cap']
     if 'engine_settings' in data: result['engine_settings'] = data['engine_settings']
     result['water_render_pages'] = data.get('water_render_pages', {})
+    if 'population_legs' in data:
+        result['population_checkpoints'] = [dict(phase=leg['phase'],
+            residents=sorted((int(identity), row['alive']) for identity, row in leg['residents'].items()),
+            corpse_ids=sorted(leg['corpse_ids'])) for leg in data['population_legs']]
     boundaries = ('physics_ms', 'physics_tail_ms', 'process_ms', 'pre_draw_ms', 'draw_ms',
                   'render_setup_ms', 'render_cpu_ms', 'gpu_ms', 'draw_calls', 'render_primitives',
                   'thread_cycles', 'draw_cycles', 'process_draw_cycles')
@@ -95,7 +99,7 @@ def summarize(data):
         result['collision_shapes']['bodies'][bone] = dict(
             count=len(shapes), plan_builds=(sum(row.get('plan_built', False) for row in shapes)
                                            if any('plan_built' in row for row in shapes) else None),
-            **{key: distribution([row[key] for row in shapes if key in row]) for key in ('input_points', 'points')},
+            **{key: distribution([row[key] for row in shapes if key in row]) for key in ('input_points', 'points', 'duplicate_points')},
             **{key.replace('_us', '_ms'): distribution([row[key] / 1000 for row in shapes if key in row])
                for key in ('sample_us', 'cloud_us', 'resource_us', 'install_us', 'total_us')})
     events = data.get('residency_events', [])
@@ -118,7 +122,7 @@ def summarize(data):
 
 def workload_differences(first, other):
     required = ('source_sha256', 'seed', 'route')
-    settings = ('viewport', 'physics_hz', 'vsync', 'fps_cap', 'diagnostics', 'manual_no_present', 'detached_present', 'engine_settings', 'presentation_surface', 'window_mode', 'window_focus')
+    settings = ('viewport', 'physics_hz', 'vsync', 'fps_cap', 'diagnostics', 'manual_no_present', 'detached_present', 'engine_settings', 'presentation_surface', 'window_mode', 'window_focus', 'population_checkpoints')
     return [key for key in required if first[key] != other[key]] + [
         key for key in settings if key in first and key in other and first[key] != other[key]]
 
@@ -140,6 +144,8 @@ def main():
             if differences:
                 raise SystemExit('Workload differs (' + ', '.join(differences) + '): inspect state, endpoints, populations and settings before comparing timing.')
         print('MATCH source hash, seed, route endpoints and end-of-leg populations. This is not a deterministic full-world state check; verify input/settings provenance in run.json.')
+        print('MATCH resident/alive and corpse identity checkpoints.' if all('population_checkpoints' in item for item in summaries)
+              else 'Historical capture lacks identity checkpoints; matching population counts alone cannot certify the same residents.')
         missing = [key for key in ('viewport', 'physics_hz', 'vsync') if any(key not in item for item in summaries)]
         if missing: print('Earlier capture lacks explicit settings: ' + ', '.join(missing))
 

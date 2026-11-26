@@ -25,6 +25,13 @@ def candidates(root=ROOT):
     return ready[:-2]
 
 
+def capture_files(folder, run):
+    files = ['physics_residency.json']
+    if '--capture-replay-view' in run.get('command', []) and (folder / 'replay_view.jpg').is_file():
+        files.append('replay_view.jpg')
+    return files
+
+
 def maintain(apply=False, root=ROOT):
     selected = candidates(root)
     result = dict(candidates=[str(p) for p in selected], reclaimed_bytes=0, manifests=[])
@@ -37,7 +44,8 @@ def maintain(apply=False, root=ROOT):
         for folder in selected:
             no_game_processes()
             receipt = folder / 'physics.archive.json'
-            record = archive(folder, ['physics_residency.json'], receipt, store,
+            run = json.loads((folder / 'run.json').read_text(encoding='utf-8'))
+            record = archive(folder, capture_files(folder, run), receipt, store,
                              dict(kind='completed-physics-cadence', run_sha256=digest(folder / 'run.json')))
             result['reclaimed_bytes'] += retire(record, store, folder)
             result['manifests'].append(str(receipt))
