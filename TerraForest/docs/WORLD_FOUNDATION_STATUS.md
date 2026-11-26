@@ -23,12 +23,30 @@ support, reactivation and lifecycle regressions pass. Broader draw/physics
 variability, simultaneous combat deaths and uncapped headroom remain unqualified.
 Return with retained worst windows and recorder-off/uncapped equivalent workloads
 before closing overall performance. The repeatable driver checks save hashes,
-endpoints and populations; it is not deterministic full-world replay. Existing
-AI randomness uses transient scene IDs, and a repetition produced different
-population outcomes that the analyzer rejected. Arbitrary human input replay
-still needs retained initial state/settings, tick-indexed actions, stable actor
-random streams and replay state checks. Normal-exit capture acknowledgement also
+endpoints and populations; it is not deterministic full-world replay. Persistent
+awareness random streams now use saved actor identity and world seed (`8d5f4bd1`),
+with a regression across different scene IDs and global random seeds. Asynchronous
+navigation still produces population drift that the analyzer rejects. Arbitrary
+human input replay still needs retained initial state/settings, tick-indexed
+actions and full replay state checks. Normal-exit capture acknowledgement also
 remains open; position breadcrumbs alone cannot reconstruct player actions.
+
+The [frame-tail investigation](../issues/runtime-performance/frame-tail-2026-11-26.md)
+decouples water's simulation owners from bounded draw pages (`c41183eb`). Exact
+fixed-scene comparisons reduce submissions from 4,974 to 3,928 and draw-thread
+cycles by 12.5–19.0%, with immediate current-geometry fallback during edits.
+Geometry, stale publication, reload and integrated water regressions pass.
+Normal-desktop route p99 remains about 21–22 ms; the ordinary before/after pairs
+have population drift, and the fully matched isolated pair shows no p99 gain.
+Large isolated presentation waits disappear in a no-presentation diagnostic and
+are absent from focused fullscreen controls, but their driver call is unproven.
+No product pacing or population setting was reduced. The replay now prevents
+physical-input interference, asserts movement, and records presentation/focus
+provenance. Remaining corpse restoration, terrain surface publication and engine
+wait costs require further attribution and actual-work reduction. Return with
+deterministic state checks, equivalent normal-desktop runs and an uncapped
+headroom check before closing the existing 60 FPS gate; reduced draw count alone
+does not close it.
 
 The [collision-work follow-up](../issues/runtime-performance/physics-residency-2026-11-26.md#collision-work-reduction-follow-up)
 now removes only proven interior points from dense convex inputs. On two repeats,

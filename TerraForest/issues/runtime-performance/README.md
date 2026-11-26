@@ -1,5 +1,32 @@
 # Runtime performance
 
+## Frame tail and render ownership — 2026-11-26
+
+The [frame-tail investigation](frame-tail-2026-11-26.md) separates actual CPU work
+from presentation waits and corrects the replay comparison criteria. Water's 4 m
+simulation owners now share bounded 16 m draw pages (`c41183eb`), with exact
+geometry and immediate individual-mesh fallback on edits. A valid replay followed
+by a frozen-scene comparison in both orders reduces 4,974 submissions to 3,928 and
+main-thread draw cycles by 12.5–19.0%. Geometry, stale-job, reload, water-edit and
+publication checks pass. Extra retained mesh memory is bounded and documented.
+
+**Overall p99 is still open.** A matched isolated pair shows less CPU work without
+a p99 gain. Normal-desktop replays measure about 21–22 ms p99; focused fullscreen
+runs have no intervals over 33.333 ms, whereas later isolated-desktop runs had
+repeated 50–120 ms stalls. Removing presentation also removes those large stalls
+in a diagnostic. This is a test-environment finding, not a game-side stall fix.
+The normal before/after route pairs have population drift and are rejected as
+matched timing comparisons. Corpse restoration and terrain surface publication
+remain contributors to the normal frame tail.
+
+Stable persistent actor random streams (`8d5f4bd1`) remove scene-allocation order
+from awareness decisions, but asynchronous navigation still varies outcomes.
+The replay now blocks physical-input interference and checks movement; the
+analyzer distinguishes desktop, window mode, focus and diagnostic settings.
+Failed and adverse controls remain linked in the report. Return with deterministic
+state checks, normal-desktop equivalent timing and uncapped headroom evidence
+before closing overall performance or arbitrary human replay.
+
 ## Physics and corpse residency — 2026-11-26
 
 The [collision construction follow-up](physics-residency-2026-11-26.md#collision-work-reduction-follow-up)
