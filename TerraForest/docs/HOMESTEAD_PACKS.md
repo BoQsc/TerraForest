@@ -1,6 +1,6 @@
 # Homestead household object packs
 
-Eight separate original asset packs extend the existing table/chair/shelf/chest
+Nine separate original asset packs extend the existing table/chair/shelf/chest
 set. They use stable pack, item and native model identities, with committed
 baked meshes, icon atlases, editable source and exact hash provenance.
 
@@ -14,8 +14,9 @@ baked meshes, icon atlases, editable source and exact hash provenance.
 | [Homestead 06 — Study & Communications](../addons/structures/packs/homestead_06/README.md) | Writing desk, desk chair, typewriter, radio, telephone, fan, documents, calendar, briefcase, wastebasket | 770–779 |
 | [Homestead 07 — Living Room & Leisure](../addons/structures/packs/homestead_07/README.md) | Armchair, coffee table, bookcase, sideboard, record player, record crate, chessboard/pieces, newspapers, floor lamp, fireplace/logs | 780–789 |
 | [Homestead 08 — Entryway & Porch](../addons/structures/packs/homestead_08/README.md) | Hall console, bench, shoe rack/shoes, umbrella stand, doormat, key rack, mailbox, muddy boots, planter/foliage, watering can | 790–799 |
+| [Homestead 09 — Bedroom & Personal Effects](../addons/structures/packs/homestead_09/README.md) | Chest of drawers, dressing table, stool, tabletop mirror, folding screen, open suitcase, blankets, alarm clock, hot-water bottle, jewellery box | 800–809 |
 
-All eight appear independently in the Objects pack filter and Dev Bag categories.
+All nine appear independently in the Objects pack filter and Dev Bag categories.
 Normal placement, recipes, partial salvage, durability, native history, model
 streaming and structure save/reload remain shared. Inventory drops use the
 universal parcel fallback and existing bounded physical pool. No new per-item
@@ -87,6 +88,16 @@ Homestead 08 authoring preview: open timber/metal furniture, eight shoes, folded
 umbrellas with curved handles, original coir weave, wall hardware, muddy boots,
 opaque foliage, and a hollow watering can with rose and handles. Both wall pieces
 share existing support-point placement. No external art or plant cards are used.
+
+![Homestead 09 bedroom and personal effects](../reports/checks/20261126T102822419886Z/homestead_09.png)
+
+Homestead 09 authoring preview: padded fabrics, open-knee furniture, an oval
+tabletop mirror, three angled screen panels, a packed suitcase, fringed blankets,
+twin-bell clock, ribbed bottle and lined jewellery box. The mirror has a simple
+finish without live reflections. The first sheet at
+`reports/checks/20261126T102625456922Z/homestead_09.png` is retained as a bell-support
+comparison; longer supports connect the clock stems to their bell crowns in the
+final bake. Original helpers from Homestead 02/04/07 retain their source hashes.
 
 ## Scope and return triggers
 
@@ -162,6 +173,18 @@ with interaction and fresh-provider reload evidence before adding each behavior.
 Decorative keys grant no usable inventory keys. The planter uses opaque static
 foliage geometry, without transparent cards or wind simulation.
 
+Homestead 09 storage, moving drawers/lids/screen panels, sitting, wearable packed
+clothes, live reflections, clock/alarm behavior and bottle filling/heat remain
+unimplemented. Storage needs cross-collection identities, transfer/lock rules and
+nonempty-removal protection. Moving parts need shared saved state and collision
+checks. Seating needs actor/seat ownership; clothes need shared equipment and
+visual/durability state without duplicate decorative/inventory quantities. Live
+mirrors need a bounded reflection experiment, sparse/dense timings and fallback.
+Clocks need shared world time, bounded alarm audio and saved state. The bottle
+needs shared capacity, volume/heat conservation and native transfers. Return with
+interaction and fresh-provider reload evidence before adding behavior. Mirror
+highlights, screen angles and clock hands are authored static details.
+
 Headless density fixtures cover 1,000 mixed placements per pack, native ownership
 and byte-exact reopen. They do not establish graphical frame rate, transparent
 overdraw cost, dense-house navigation quality, total RAM/VRAM or 60 FPS headroom.
@@ -171,6 +194,18 @@ furnishing is outside this milestone; the rejected district layout is unchanged.
 
 ## Verification
 
+- Homestead 09: 98 assertions covering paid placement, no unpaid duplicates,
+  shared damage/salvage, icons, byte-exact reopen, pre-pack save admission and
+  1,000 mixed placements: `reports/checks/20261126T102911146629Z/run.json`.
+  The first bake passed at `reports/checks/20261126T102458552962Z/run.json`;
+  the final clock-support rebake and sheet passed at
+  `reports/checks/20261126T102822419886Z/run.json`. The earlier geometry also
+  passed 98 checks (`reports/checks/20261126T102721760416Z/run.json`); its visual
+  comparison remains linked above, separate from user visual acceptance.
+- Expanded Homestead 09 catalog: universal drops/recollection pass 1,133 checks
+  (`reports/checks/20261126T102950587126Z/run.json`) and physical drops pass 176
+  (`reports/checks/20261126T103045987792Z/run.json`). Actual-world rendered
+  G/input checks pass 35 (`reports/checks/20261126T103135133781Z/run.json`).
 - Homestead 08: 124 assertions covering paid placement, no unpaid duplicates,
   shared damage/salvage, icons, byte-exact reopen, pre-pack save admission,
   1,000 mixed placements and real key-rack/mailbox supports on all four sides:
@@ -285,6 +320,8 @@ Homestead 07 identities were generated at
 `reports/checks/homestead07_uid_import_20261126T100826666261Z/run.json`.
 Homestead 08 identities were generated at
 `reports/checks/homestead08_uid_import_20261126T101933368289Z/run.json`.
+Homestead 09 identities were generated at
+`reports/checks/homestead09_uid_import_20261126T103345017630Z/run.json`.
 
 The input capture lifecycle cold-retained the older two menu images from
 `reports/checks/20261126T084058031606Z` after the later input driver exited.

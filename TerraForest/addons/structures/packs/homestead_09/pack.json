@@ -1,0 +1,210 @@
+{
+  "schema": 1,
+  "id": "terraforest.homestead_09",
+  "name": "Homestead 09",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {
+      "id": "chest_of_drawers",
+      "item": 800,
+      "name": "Homestead chest of drawers",
+      "recipe": [
+        102,
+        16,
+        104,
+        2,
+        227,
+        4
+      ],
+      "salvage": [
+        102,
+        8,
+        104,
+        1
+      ],
+      "health": 160,
+      "material": "wood"
+    },
+    {
+      "id": "dressing_table",
+      "item": 801,
+      "name": "Homestead dressing table",
+      "recipe": [
+        102,
+        14,
+        227,
+        3
+      ],
+      "salvage": [
+        102,
+        7
+      ],
+      "health": 140,
+      "material": "wood"
+    },
+    {
+      "id": "vanity_stool",
+      "item": 802,
+      "name": "Homestead padded vanity stool",
+      "recipe": [
+        102,
+        5,
+        225,
+        5,
+        227,
+        2
+      ],
+      "salvage": [
+        102,
+        2,
+        225,
+        2
+      ],
+      "health": 90,
+      "material": "wood"
+    },
+    {
+      "id": "tabletop_mirror",
+      "item": 803,
+      "name": "Homestead tabletop mirror",
+      "recipe": [
+        102,
+        3,
+        104,
+        3,
+        227,
+        2
+      ],
+      "salvage": [
+        102,
+        1,
+        104,
+        1
+      ],
+      "health": 65,
+      "material": "other"
+    },
+    {
+      "id": "folding_screen",
+      "item": 804,
+      "name": "Homestead three panel folding screen",
+      "recipe": [
+        102,
+        12,
+        225,
+        8,
+        227,
+        4
+      ],
+      "salvage": [
+        102,
+        6,
+        225,
+        3
+      ],
+      "health": 120,
+      "material": "wood"
+    },
+    {
+      "id": "open_suitcase",
+      "item": 805,
+      "name": "Homestead open suitcase with clothes",
+      "recipe": [
+        102,
+        4,
+        225,
+        9,
+        104,
+        2
+      ],
+      "salvage": [
+        102,
+        2,
+        225,
+        4
+      ],
+      "health": 80,
+      "material": "other"
+    },
+    {
+      "id": "blankets",
+      "item": 806,
+      "name": "Homestead folded blanket stack",
+      "recipe": [
+        225,
+        7,
+        204,
+        2
+      ],
+      "salvage": [
+        225,
+        3
+      ],
+      "health": 45,
+      "material": "other"
+    },
+    {
+      "id": "alarm_clock",
+      "item": 807,
+      "name": "Homestead mechanical alarm clock",
+      "recipe": [
+        104,
+        3,
+        226,
+        1,
+        227,
+        3
+      ],
+      "salvage": [
+        104,
+        1,
+        227,
+        1
+      ],
+      "health": 65,
+      "material": "other"
+    },
+    {
+      "id": "hot_water_bottle",
+      "item": 808,
+      "name": "Homestead hot water bottle",
+      "recipe": [
+        225,
+        4,
+        204,
+        2
+      ],
+      "salvage": [
+        225,
+        2
+      ],
+      "health": 40,
+      "material": "other"
+    },
+    {
+      "id": "jewellery_box",
+      "item": 809,
+      "name": "Homestead small jewellery box",
+      "recipe": [
+        102,
+        3,
+        225,
+        2,
+        104,
+        1,
+        226,
+        1
+      ],
+      "salvage": [
+        102,
+        1,
+        225,
+        1
+      ],
+      "health": 55,
+      "material": "wood"
+    }
+  ]
+}

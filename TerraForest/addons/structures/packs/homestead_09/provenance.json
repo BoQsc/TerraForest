@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "pack": "terraforest.homestead_09",
+  "version": "1.0.0",
+  "creator": "TerraForest contributors, authored with Codex",
+  "date": "2026-11-26",
+  "origin": "Original parametric geometry and procedural materials; no external asset inputs",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
+  "authoring_tool": "Existing Godot 4.7.2 Steam; external engine, not vendored by this pack",
+  "brief": "A separate recognizable household pack with the user-approved roster and a rendered preview of its actual meshes",
+  "author_command": "python tools/run_godot_check.py homestead_09_pack --require \"failures=0\" -- --author-pack",
+  "icon_command": "python tools/run_godot_check.py homestead_09_pack --isolated-render --require \"failures=0\" -- --preview-only",
+  "source_sha256": {
+    "addons/structures/packs/homestead_02/author.gd": "44569d6b3e354ae1b940e5af5e43a6ab3027e4a44c6b3c34bf56fc43428411bf",
+    "addons/structures/packs/homestead_04/author.gd": "faa1d9431f6361274d4efd169844c4b70dc184bb39d0ed2a0376c39b4713560d",
+    "addons/structures/packs/homestead_07/author.gd": "a0aff6dcdb61348d61b5e257dbec06d286065e23e3d941c3c9e4c017c663b475",
+    "addons/structures/packs/homestead_09/author.gd": "dcaca8d1e9ff9b64ef1457e80828bcdf4c23eeacece424c292d1f6c597f3e63c",
+    "addons/structures/packs/homestead_09/catalog.gd": "397821ef366bb11afb40af8b9efbbcf4ff4ea68d322baf0d6a45ef1cc44fbc93",
+    "tests/homestead_09_pack.gd": "3c20d6b44e6fcb35b517c7b39294505e73ab99d70a1ec641fcee9aeae808bae6"
+  },
+  "asset_sha256": {
+    "addons/structures/packs/homestead_09/icons.trtex": "a55afa25e19fcd757bb3f15b76a77f3c62f62b364f5c7e57a1ffa1c0bd6a2f16",
+    "addons/structures/packs/homestead_09/models/alarm_clock.tres": "d1a4609d17829494fccc18510b2e0716b42e79daea538bfb3fbe6d7f5091fd45",
+    "addons/structures/packs/homestead_09/models/blankets.tres": "d19029b70328e11aa954b57954adf036a9cb4f755e8ed6aa2c7e48de19e90235",
+    "addons/structures/packs/homestead_09/models/chest_of_drawers.tres": "7cb7eabae10ab79938cb886ff08ea93c71b2fae6bd820695b9bb9e0d587297a3",
+    "addons/structures/packs/homestead_09/models/dressing_table.tres": "acb28998c5cf663ef16688efeeeaf9445c4bd3749028c25456d39a61a59b0395",
+    "addons/structures/packs/homestead_09/models/folding_screen.tres": "859a2890d529dd86814db9cf02c42463f80896829a3248b4591f65c2d86c44b2",
+    "addons/structures/packs/homestead_09/models/hot_water_bottle.tres": "72e12fd41f02606af7ff335e01f9d818f7fd5cb755215d43b16785ec2276c0a5",
+    "addons/structures/packs/homestead_09/models/jewellery_box.tres": "ab1b31cbd54dbaf113695f47241ba1670ada1b28ad47813aefa6292794ead183",
+    "addons/structures/packs/homestead_09/models/open_suitcase.tres": "f2efc22f814e886897e278634cbe644cd8c55730e8aaca64095a21e91d067ad6",
+    "addons/structures/packs/homestead_09/models/tabletop_mirror.tres": "be77e8ec7401a21827c33e508380e7c0fa9782630984fb0b09abe79cf88724ae",
+    "addons/structures/packs/homestead_09/models/vanity_stool.tres": "1ae63c50e548c4827754a4aa1903b9aa1188769498c400668ef68dcaed47ba69",
+    "addons/structures/packs/homestead_09/pack.json": "5efc025ca2894de2de6287d046efc45e1152765b5c44df28d2d6cca2bd6d44f2"
+  }
+}

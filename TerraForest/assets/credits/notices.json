@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "homestead_09",
+      "title": "Homestead 09 bedroom and personal effects pack",
+      "license": "CC0 1.0 assets / 0BSD code",
+      "source": "addons/structures/packs/homestead_09/ASSET_LICENSE.md",
+      "summary": "Ten original bedroom furnishings, padded fabrics, an angled screen, packed suitcase, clock details and jewellery. Includes editable geometry and matching icons; storage, moving parts, live mirrors and time/heat behavior remain unimplemented.",
+      "text": "# Homestead 09 — original bedroom and personal-effect furnishings\n\nNew original assets in this pack are contributed by TerraForest contributors\nunder **CC0-1.0**, to the extent copyright or related rights exist and are held\nby the contributors. This follows the repository contribution terms and does\nnot purport to license third-party rights.\n\nCC0 legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nCovered assets: `pack.json`, `models/chest_of_drawers.tres`,\n`models/dressing_table.tres`, `models/vanity_stool.tres`,\n`models/tabletop_mirror.tres`, `models/folding_screen.tres`,\n`models/open_suitcase.tres`, `models/blankets.tres`, `models/alarm_clock.tres`,\n`models/hot_water_bottle.tres`, `models/jewellery_box.tres`, their embedded\nmaterials/textures, and `icons.trtex`.\n\nThese original parametric models were authored with Codex for TerraForest on\n2026-11-26. The user requested a separate Homestead 09 pack and a picture of\nits actual models, accepting the proposed ten-object Bedroom & Personal Effects\nroster. The brief specifies warm timber, dusty blue fabric, cream linen and\nbrass. No external models, images, textile patterns, fonts, branding, jewellery\ndesign assets or third-party reference artwork were supplied or copied. Screen\nmotifs, packed clothes, clock marks, blanket stripes/fringe and jewellery details\nare original generated geometry and procedural materials.\n\n`author.gd` retains editable geometry. It reuses the project's original 0BSD\nmesh/tube helpers and CC0 materials from Homestead 02/04, and the original\n0BSD cushion helper from Homestead 07. Their terms/provenance remain intact.\nRuntime meshes embed their own geometry/materials/textures. `provenance.json`\nrecords exact output and local source hashes, including all three helper sources.\n\nGodot's primitives and SurfaceTool are external authoring tools, not new\nvendored dependencies or material covered by this dedication. Pack authoring,\ncatalog, integration and test code is original **0BSD**. Asset dedication is\nseparate from visual review and gameplay/performance acceptance."
+    },
+    {
       "id": "homestead_08",
       "title": "Homestead 08 entryway and porch pack",
       "license": "CC0 1.0 assets / 0BSD code",
