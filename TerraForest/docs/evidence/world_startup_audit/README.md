@@ -65,3 +65,13 @@ creating-phase and full loading-barrier timings. It is original AI-assisted
 CC0-1.0 analysis of local runs; source/test/tool changes are 0BSD. Raw receipts
 and source witnesses remain in the linked startup benchmark directories under
 the existing two-ready world retention lifecycle.
+
+
+`planning_overlap_20261126.json` records the cached-recipe/resource-overlap
+follow-up against the retained optimized outdoor baseline. Original AI-assisted
+CC0-1.0 analysis of local runs; new source/test/tool changes are 0BSD, with no
+external material imported. It retains exact source hashes, warm-cache timings,
+identity/equivalence and cancellation results, memory scope, and links to the
+failed initial probe and index-freshness correction. Native terrain equality is
+separate from volatile save metadata and water observation counters. Raw receipts
+remain in the existing two-ready startup benchmark lifecycle.

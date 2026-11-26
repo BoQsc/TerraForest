@@ -9546,7 +9546,8 @@ brief 10.64-core bursts. Saves remain unchanged. This is direct diagnostic entry
 with existing caches and no ordinary map-ready gate, not normal Play timing.
 The diagnostic construction wait is fixed and the rerun passes; the initial
 failed receipt is retained. The follow-up below implements support-query batching.
-Return for plan-cache/setup overlap and object-horizon throughput work;
+Cached recipe reuse/setup overlap is implemented below. Return for remaining
+first-recipe/identity cost and object-horizon throughput work;
 require equivalent layouts/snapshots, cancellation, bounded resources and matched
 normal generation/loading measurements before claiming improvement. Post-reboot
 cold launch and foreground/exported-package acceptance remain open separately.
@@ -9564,7 +9565,27 @@ candidates match. Fifty support requests replace at least 684 individual ones.
 Eleven focused checks and both normal generation/publication/reopen paths pass;
 RAM/VRAM remain within budget. [Evidence and limits](WORLD_STARTUP_ARCHITECTURE.md#batched-outdoor-support-queries--2026-11-26).
 This closes batching for the tested recipe, not multi-seed/cold-cache performance,
-generation UI cadence or visual acceptance. Remaining: plan-cache/setup overlap,
-object-horizon throughput and save/map work; return to their recorded closure
+generation UI cadence or visual acceptance. Cached planning/setup is improved
+below. Remaining: object-horizon throughput and save/map work; return to their recorded closure
 criteria when implementing those stages. Existing player saves remain outside
 benchmark ownership; two ready test worlds use the verified archive lifecycle.
+
+
+### Cached planning and resource overlap — 2026-11-26
+
+Repeated furnished recipes now hydrate once per kind within a verified plan read;
+reused districts receive independent resource copies. Bounded independent art and
+audio prefetch overlaps planning and drains on cancellation. A normal warm-cache
+pair observes planning **26.707 → 16.809 s**, generation **129.840 → 121.050 s**,
+and Generate to loading complete **176.133 → 163.333 s**. Plan/key, all 50 prefab
+fingerprints, 684 outdoor placements and generated content records match; expanded
+native terrain snapshots are byte-identical. Verification leaves both fixture
+worlds unchanged (5,590 files). Thirteen resource/cancellation checks pass with
+the refreshed dependency index; source preparation refreshes the startup cache.
+[Measurements, failed trials and limits](WORLD_STARTUP_ARCHITECTURE.md#cached-planning-and-resource-overlap--2026-11-26).
+This completes the measured duplicate hydration/safe asset overlap change, not
+universal loading or UI responsiveness qualification. Remaining first-recipe and
+identity cost, object-horizon throughput, save/map overlap and foreground/package
+acceptance retain their closure gates. Return with matched normal flow timings,
+equivalence, cancellation and memory checks when implementing those stages.
+The post-reboot launch check remains dependent on the user's Windows restart.

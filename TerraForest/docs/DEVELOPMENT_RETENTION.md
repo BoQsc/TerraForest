@@ -377,3 +377,13 @@ normal publication lifecycle. Existing player saves are never benchmark targets.
 The small source witness, exact placement transforms and receipts remain loose;
 no export, full source copy or storage-budget increase is allocated. The focused
 `outdoor_support_batches` check needs only 2 MiB of admitted logs, no saved world.
+
+
+The `planning` comparison mode reuses the outdoor generation runner's existing
+12 MiB reports / 128 MiB world admission and two-ready `StartupBench_` lifecycle.
+It preserves only three small source witnesses and the measured dependency index.
+`cached_world_plan`, `startup_resources` and the read-only
+`generation_saved_equivalence` checks admit 2 MiB each; the combined final check
+bundle admits 4 MiB. They allocate no saved world or export. Final source
+preparation admits 2 MiB of small logs/receipts in the same comparison directory,
+using the existing checkout/import cache. No storage limits are increased.

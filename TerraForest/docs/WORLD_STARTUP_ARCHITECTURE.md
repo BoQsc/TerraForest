@@ -715,10 +715,11 @@ contains CPU samples, commands, logs and original-world hashes.
    exact accepted placements and unchanged save/reload behavior, then repeat the
    same generation/options with stage timings and memory limits.
 2. **Remove plan-cache reconstruction overhead and overlap independent setup.**
-   Attribute fingerprinting/expansion/cache hydration before adding workers.
-   Planning currently loads prefab resources/shared caches, so prepare immutable
-   inputs and audit that ownership before overlapping resource prefetch with it.
+   Repeated recipe reconstruction and independent presentation-asset overlap are
+   implemented in the [follow-up below](#cached-planning-and-resource-overlap--2026-11-26).
    Preserve cache invalidation, deterministic plans and cancellation teardown.
+   First recipe construction and identity hashing still cost time; wider overlap
+   needs an ownership audit and matched measurements before expanding it.
 3. **Improve object-horizon loading throughput.** Measure its two-read window,
    native record preparation and per-frame publication separately. Bound extra
    in-flight memory; keep scene/GPU ownership and interactive frame budgets.
@@ -795,5 +796,87 @@ The benchmark uses the existing two-ready startup-world archive lifecycle and
 bounded admission; no source tree copy, native build or export is allocated.
 
 This closes the per-object terrain-query batching item for the tested recipe.
-Plan-cache hydration/setup overlap, object-horizon throughput and save/map
-parallelism from the audit remain separate work with their original closure gates.
+Plan-cache hydration/setup overlap is addressed in the follow-up below.
+Object-horizon throughput and save/map parallelism retain their closure gates.
+
+
+## Cached planning and resource overlap — 2026-11-26
+
+A cache hit previously rebuilt the complete furnished recipe for every district.
+The headless baseline attributed 17.084 of 19.095 seconds to this hydration.
+`custom_world_plan.gd` now builds each distinct recipe once per validated cache
+read: four builds and two reuses for the default six districts. Reused sites get
+deep copies of their asset resources, preserving aliases inside a recipe without
+introducing shared mutable assets across repeated districts. Cached origins,
+grades, variants and roads remain authoritative. Recipe version 52, key,
+checksum validation and serialized plan payload are unchanged; profiling fields
+are observations added only to the returned result and generation report.
+
+During the existing planning worker, `startup_resources.gd` loads independent
+player art, authored audio and two standalone textures, bounded to four pending
+requests. Scripts, structure/exploration assets and prefab factories stay outside
+this overlap. Ordered preparation then uses the retained resources. Cancellation
+joins planning and drains every submitted resource handle before releasing the
+job; unsubmitted assets are left for ordinary preparation. The normal rendered
+run completes 59 independent requests, at least 55 during the planning loop.
+
+[Machine-readable evidence](evidence/world_startup_audit/planning_overlap_20261126.json)
+records one retained warm-cache baseline and one optimized normal Generate & play
+run, seed 1703 / generator 29, untouched Frontier expedition defaults, fresh
+processes, Godot 4.7.2, Forward+, RTX 4050, isolated 1920×1080 / 60 FPS.
+
+| Measurement | Before | After | Time reduction |
+| --- | ---: | ---: | ---: |
+| Cached planning stage | 26.707 s | 16.809 s | 9.898 s / 37.1% |
+| Planning plus initialization | 42.517 s | 34.252 s | 8.265 s / 19.4% |
+| Coordinator creating phase | 129.840 s | 121.050 s | 8.791 s / 6.8% |
+| Generate to loading barrier release | 176.133 s | 163.333 s | 12.800 s / 7.3% |
+
+Initialization alone rises 15.810 → 17.442 s. This is a combined change with stage
+variation, not an isolated proof of the prefetch benefit. The corrected headless
+comparison observes worker 19.095 → 11.756 s and recipe hydration 17.084 → 9.497 s.
+First-ready includes normal map readiness but precedes intro completion; it does
+not measure time to player control or walking performance. Peak private commit
+is 4.169 → 4.165 GB; dedicated GPU memory stays 1.775 GB, within recorded budgets.
+
+The plan digest/key and all 50 hydrated lot-prefab fingerprints match. The normal
+run retains all 684 exact outdoor transforms, model keys, native IDs and order,
+plus 919 skipped candidates. Parking, locks, door reinforcement, exploration,
+lights, sleepers, original locations and reported generated-water content match
+when only observation timings and water iteration count are excluded. Existing
+native saved-terrain comparison expands both regional snapshots and compares
+the complete TerrainCore snapshot bytes: zero differences. Hashes of all 5,590
+root/sidecar files across both benchmark worlds remain unchanged by verification.
+This does not assert byte equality of volatile save metadata or simulated water.
+Both normal creation/save/validation/publication/reopen flows pass. The final
+resource/cancellation regression passes 13 checks on the refreshed dependency
+index, including cancellation of the actual generation task during planning.
+
+The initial optimized probe `reports/checks/20261126T205036122625Z` remains failed:
+its harness compared JSON float types to live integer types and incorrectly
+required resource isolation between different recipe factories. The corrected
+comparison normalizes JSON numeric types and checks newly reused recipe kinds;
+`20261126T205234142487Z` passes without changing production behavior. An initial
+index-freshness check also failed: moving a declaration reordered three direct
+preloads. The full benchmark ran with the prior index; its exact snapshot/hash
+is preserved. The regenerated index has identical nodes/dependency sets, and
+the reordered loader was already cached by SceneJob. Final focused checks and
+source preparation use the refreshed index. The runner now gates launch on index
+freshness before admitting storage. Neither failed check is counted as passing.
+
+Reproduce with `python tools/benchmark_outdoor_generation.py --family planning
+--label after --compare <baseline-report-directory>`. Labels do not change code.
+The committed baseline is `6d051bb9`; its retained timing receipt predates that
+commit while the outdoor batching change was dirty. The new receipt preserves
+production source witnesses and hashes. Use `cached_world_plan --headless` with
+`--overlap-resources` and `--plan-reference=<baseline cached_plan.json>` through
+the existing check runner for exact cache identity; run `startup_resources` for
+cancellation. The native terrain comparison reads the two existing owned worlds.
+No additional world copy, native build or export is needed for these checks.
+
+Repeated cache hydration and safe presentation-asset overlap are implemented for
+the tested recipe. Remaining first-recipe/identity cost, object-horizon throughput
+and save/map work require their own measurements. Broader seeds, OS-cold caches,
+UI frame cadence, foreground/package qualification and visual acceptance remain
+outside this pair. The separately tracked post-reboot launch check still awaits
+the user's Windows restart.

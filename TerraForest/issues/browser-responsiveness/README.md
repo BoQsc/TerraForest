@@ -312,8 +312,9 @@ harness failure is retained in the same admitted bundle.
 
 Status remains improved-partial: no production scheduling changed in this
 review. Outdoor support batching is now implemented in the follow-up below. Remaining
-work is to reduce plan-cache hydration, overlap independent initialization, and
-measure and tune object-horizon loading. Require deterministic layouts/snapshots, cancellation,
+work now includes measuring and tuning object-horizon loading; repeated cached
+recipe hydration and independent asset overlap are implemented below. Require
+deterministic layouts/snapshots, cancellation,
 bounded memory and matched normal generation/Play-to-control measurements before
 closing those items. Post-reboot launch and foreground/package acceptance above
 remain separately pending. No new visual acceptance claim is made.
@@ -331,6 +332,25 @@ checks and both normal generation/publication/reopen flows pass. RAM/VRAM stay
 within recorded budgets. [Implementation, receipts and limits](../../docs/WORLD_STARTUP_ARCHITECTURE.md#batched-outdoor-support-queries--2026-11-26).
 
 This is a single warm-cache pair, before intro completion, not universal loading
-performance or visual acceptance. Plan/cache setup, object-horizon loading,
-save/map overlap, post-reboot launch and foreground/package qualification remain
-open. No existing player world was used as a writable benchmark fixture.
+performance or visual acceptance. Plan/cache setup is improved below;
+object-horizon loading, save/map overlap, post-reboot launch and foreground/package
+qualification remain open. No existing player world was used as a writable benchmark fixture.
+
+
+## Cached planning and resource overlap — 2026-11-26
+
+Cached district recipes are built once per kind and copied for repeated sites;
+independent art/audio loads overlap the planner with four requests in flight.
+One normal warm-cache generation comparison reduces planning **26.707 → 16.809 s**,
+creation **129.840 → 121.050 s**, and Generate to loading complete
+**176.133 → 163.333 s**. No separate prefetch-only gain is claimed. All 50 hydrated
+lot fingerprints, the plan, 684 outdoor placements and generated content records
+match. Native expanded terrain snapshots are byte-identical; verification leaves
+all 5,590 fixture files unchanged. Thirteen resource/cancellation checks pass,
+and final source preparation refreshes the startup cache and Godot test identity.
+
+[Evidence, retained failed probe/index check and scope](../../docs/WORLD_STARTUP_ARCHITECTURE.md#cached-planning-and-resource-overlap--2026-11-26).
+RAM/VRAM remain within budget. This closes the measured repeated-recipe and safe
+asset-overlap change; it does not close remaining first-recipe/identity cost,
+object-horizon throughput, save/map work, cold launch or foreground/package
+acceptance. No new visual acceptance claim is made.

@@ -31,7 +31,8 @@ static func canonical_value(value:Variant)->Variant:
   return ordered
  if value is StringName:return str(value)
  return value
-static func read_plan(path:String,key:String)->Dictionary:
+static func read_plan(path:String,key:String,profile:Dictionary={})->Dictionary:
+ var began:=Time.get_ticks_usec()
  var file:=FileAccess.open(path,FileAccess.READ)
  if file==null or file.get_length()<40 or file.get_length()>LIMIT:return {}
  var checksum:=file.get_buffer(32);var bytes:=file.get_buffer(file.get_length()-32)
@@ -39,18 +40,39 @@ static func read_plan(path:String,key:String)->Dictionary:
  var value=bytes_to_var(bytes)
  if not value is Dictionary or value.get("recipe_key")!=key or value.get("recipe_version")!=VERSION or not value.get("ok",false):return {}
  if not value.get("sites") is Array or value.sites.is_empty() or value.sites.size()>9:return {}
+ profile["decode_ms"]=(Time.get_ticks_usec()-began)/1000.0
+ began=Time.get_ticks_usec()
+ var recipes:Dictionary={}
  for site:Dictionary in value.sites:
   if site.recipe_kind not in ["market","neighborhood","city","civic"]:return {}
   var legacy:bool=value.get("legacy_civic_review",false)
-  var source:Array=Civic.recipe(site.center,legacy,site.get("introduction_home",false)) if site.recipe_kind=="civic" else City.recipe(site.center) if site.recipe_kind=="city" else (Market.recipe(site.center,legacy) if site.recipe_kind=="market" else Lots.recipe(site.center,true,legacy))
+  var recipe_id:String="%s:%d:%d"%[site.recipe_kind,int(legacy),int(site.get("introduction_home",false))]
+  var reused:bool=recipes.has(recipe_id)
+  if not reused:
+   # Only the asset definitions are reused. Origins, grades, roads and variants
+   # remain those of the validated cache; these factories use center for placement.
+   recipes[recipe_id]=Civic.recipe(site.center,legacy,site.get("introduction_home",false)) if site.recipe_kind=="civic" else City.recipe(site.center) if site.recipe_kind=="city" else (Market.recipe(site.center,legacy) if site.recipe_kind=="market" else Lots.recipe(site.center,true,legacy))
+   profile["recipe_builds"]=int(profile.get("recipe_builds",0))+1
+  else:profile["recipe_reuses"]=int(profile.get("recipe_reuses",0))+1
+  var source:Array=recipes[recipe_id]
   if site.lots.size()!=source.size():return {}
-  for index in site.lots.size():site.lots[index].asset=source[(index+int(site.get("variant",0)))%source.size()].asset
+  var copies:Dictionary={}
+  for index in site.lots.size():
+   var asset:Resource=source[(index+int(site.get("variant",0)))%source.size()].asset
+   if reused:
+    # Preserve within-recipe aliases but isolate mutable Resources across sites.
+    var identity:int=asset.get_instance_id()
+    if not copies.has(identity):copies[identity]=asset.duplicate(true)
+    asset=copies[identity]
+   site.lots[index].asset=asset
  value.plan=value.sites[0];value.market=value.sites[1] if value.options.settlements>1 else {}
  value["plan_digest"]=checksum.hex_encode();value["cache_hit"]=true
  value["mineral_plan_ms"]=0.0
+ profile["hydrate_ms"]=(Time.get_ticks_usec()-began)/1000.0
  return value
 static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null,civic_review:bool=false,rejected_intro_sites:Array=[])->Dictionary:
  var started:=Time.get_ticks_usec()
+ var cache_profile:Dictionary={}
  var encoded:=Recipe.encode(options)
  if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31]:return {"ok":false,"reason":"Unsupported world recipe"}
  if progress!=null:progress.record("Checking the binary placement-plan cache",0,0,"Seed %d / terrain %d / recipe v%d"%[seed_value,generator,VERSION])
@@ -69,8 +91,9 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  if civic_review:
   for id:String in Civic.IDS:key+="|"+prefab_fingerprint(load("res://addons/structures/prefabs/civic_review_"+id+".tres"))
  var path:=folder.path_join("recipe_%d_%s.bin"%[VERSION,Survey.digest(key.to_utf8_buffer()).hex_encode()])
- var cached:=read_plan(path,key)
- if not cached.is_empty():cached["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0;return cached
+ cache_profile["identity_ms"]=(Time.get_ticks_usec()-started)/1000.0
+ var cached:=read_plan(path,key,cache_profile)
+ if not cached.is_empty():cached["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0;cached["cache_profile"]=cache_profile;return cached
  if not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {"ok":false,"reason":"Native terrain initialization failed"}
  var layout:=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
  var sites:Array=[];var occupied:Array=[];var works:Dictionary={"ok":true,"segments":[],"bounds":AABB()}

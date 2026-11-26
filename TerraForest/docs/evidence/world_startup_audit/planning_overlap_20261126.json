@@ -1,0 +1,227 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted analysis of local TerraForest engine runs for the user request to optimize cached world planning and overlap independent resource loading while preserving the world. No imported material; new code/tests/tools are 0BSD.",
+  "date": "2026-11-26",
+  "scope": "One retained baseline and one optimized normal Frontier expedition Generate & play run, seed 1703 / generator 29 / default recipe. Fresh processes; retained OS/import/plan/derived caches; Godot 4.7.2, Forward+, RTX 4050, isolated 1920x1080 at 60 FPS. First-ready is the normal loading barrier, before intro completion.",
+  "baseline_implementation": "6d051bb9: prior outdoor batching optimization. Its timing receipt was recorded while those changes were dirty, before that commit; the raw recorded revision is preserved below.",
+  "runs": [
+    {
+      "path": "reports/startup_optimization/outdoor_after_20261126T203629566583Z",
+      "receipt_sha256": "201d67d495100ed1c3faf7e274ce36cb89a6c4d34078c4760ebfcdd5eddd8a59",
+      "recorded_revision": "35cd2af3637de7c35e02cdb21412313896f11a71",
+      "slot": "StartupBench_07044e5517ac476b",
+      "generation_report": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\generation_reports\\7ce00aa09cb4ec28b5c9ed35d9c6dfad",
+      "passed": true,
+      "outdoor_source_sha256": "48b889c915887ee340b3bf92d59657c0eb609b2fe389e82fbbe3cbf06f2a59d4",
+      "driver_sha256": "aa3a78be23f4fd239053698408325a9e1d0b617c197ae863a62a5ee0e4b272d2",
+      "planning_sources": {},
+      "peak_private_commit_bytes": 4168806400,
+      "peak_dedicated_gpu_bytes": 1775484928,
+      "memory_checks": {
+        "ram": {
+          "bytes": 4168806400,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1775484928,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "path": "reports/startup_optimization/planning_after_20261126T205713180178Z",
+      "receipt_sha256": "67ceb56a9d4a83a56de9e5d41c735f9d12dc61c3547c87cde1aaad78adba8c23",
+      "recorded_revision": "6d051bb9a6b2562c28f0c92bd01c144b666bbd4e",
+      "slot": "StartupBench_9efd9c49bbe54d45",
+      "generation_report": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\generation_reports\\856c2f4afcfe1f4a1c4bb587ad059f5a",
+      "passed": true,
+      "outdoor_source_sha256": "48b889c915887ee340b3bf92d59657c0eb609b2fe389e82fbbe3cbf06f2a59d4",
+      "driver_sha256": "aa3a78be23f4fd239053698408325a9e1d0b617c197ae863a62a5ee0e4b272d2",
+      "planning_sources": {
+        "custom_world_plan": "463bc7375ac6663d01465c89b8970ad8a572b8f468f3a38529335f3d89f62563",
+        "generate_world_task": "f3d34b29b7b5ce31313b3995dde06eec4abb7b0a1ae37a5c827bc7d86af7df41",
+        "startup_resources": "627a5f55f62e77a24dadf43f585cfc2ef3c87c44b75e2c330f769bc2cd45743b",
+        "startup_index": "e7397f7f4df5094e83c11cc697889f1821b0242d5192a9472f3cf37b3b2e99fa"
+      },
+      "peak_private_commit_bytes": 4164956160,
+      "peak_dedicated_gpu_bytes": 1775484928,
+      "memory_checks": {
+        "ram": {
+          "bytes": 4164956160,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1775484928,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    }
+  ],
+  "measurements": {
+    "planning_seconds": {
+      "before": 26.707275,
+      "after": 16.809419,
+      "seconds_saved": 9.897856,
+      "percent_reduction": 37.06052377114476
+    },
+    "initialization_seconds": {
+      "before": 15.809759,
+      "after": 17.442293,
+      "seconds_saved": -1.6325339999999997,
+      "percent_reduction": -10.326115660586602
+    },
+    "planning_and_initialization_seconds": {
+      "before": 42.517033999999995,
+      "after": 34.251712,
+      "seconds_saved": 8.265321999999998,
+      "percent_reduction": 19.44002490860486
+    },
+    "creating_seconds": {
+      "before": 129.840462,
+      "after": 121.049931,
+      "seconds_saved": 8.790531000000001,
+      "percent_reduction": 6.770255484765604
+    },
+    "first_ready_seconds": {
+      "before": 176.133382,
+      "after": 163.33335,
+      "seconds_saved": 12.800032000000016,
+      "percent_reduction": 7.267237961739708
+    }
+  },
+  "headless_comparison": [
+    {
+      "path": "reports/checks/20261126T204731215286Z/cached_plan.json",
+      "sha256": "1120fe57b56a0d284ac53818f10dab27e2875666c5f252ff6545ee30f0966d25",
+      "passed": true,
+      "worker_ms": 19094.869,
+      "cache_profile": {
+        "decode_ms": 98.087,
+        "hydrate_ms": 17084.134,
+        "identity_ms": 1911.51
+      },
+      "lots": 50,
+      "independent_started": 0,
+      "independent_completed": 0
+    },
+    {
+      "path": "reports/checks/20261126T205234142487Z/cached_plan.json",
+      "sha256": "f152c9dd32728fb5e75e408af3888fd582736b80d07415cfd774ed07d98641ed",
+      "passed": true,
+      "worker_ms": 11756.156,
+      "cache_profile": {
+        "decode_ms": 104.125,
+        "hydrate_ms": 9497.417,
+        "identity_ms": 2153.445,
+        "recipe_builds": 4,
+        "recipe_reuses": 2
+      },
+      "lots": 50,
+      "independent_started": 59,
+      "independent_completed": 59
+    }
+  ],
+  "equivalence": {
+    "plan_digest": "90782f2c363d7dce16622a511062ba5203de58c4e855464be4a907ce3aad5738",
+    "same_cache_key_and_all_50_prefab_fingerprints": true,
+    "outdoor_count": 684,
+    "outdoor_order_native_ids_models_float32_transforms_identical": true,
+    "skipped_count": 919,
+    "skipped_identical": true,
+    "generated_content_matches": {
+      "building_parking": true,
+      "container_locks": true,
+      "door_reinforcement": true,
+      "exploration": true,
+      "house_lights": true,
+      "house_sleepers": true,
+      "location_originals": true,
+      "plan": true,
+      "generated_water": true
+    },
+    "excluded_observations": [
+      "elapsed_us",
+      "capture_us",
+      "scene_us",
+      "water milliseconds",
+      "water steps",
+      "plan cache/resource profiling"
+    ],
+    "native_expanded_terrain_snapshot_bytes_identical": true,
+    "unchanged_fixture_files": true,
+    "fixture_files_checked": 5590,
+    "scope_limit": "No claim of whole-save byte equality: volatile metadata and simulated water state are not compared byte-for-byte."
+  },
+  "planning_profile": {
+    "decode_ms": 98.653,
+    "hydrate_ms": 13202.5,
+    "identity_ms": 3479.22,
+    "recipe_builds": 4,
+    "recipe_reuses": 2
+  },
+  "independent_resources": {
+    "completed": 59,
+    "peak_pending": 4,
+    "started": 59
+  },
+  "overlap_scope": "Player presentation art, authored audio and two standalone textures; four pending handles maximum. Excludes scripts, dynamic structure/exploration factory resources and scene construction. At least 55 of 59 loads complete during the planning loop; at most four can remain for final drain.",
+  "checks": {
+    "final_checks_receipt": "reports/startup_optimization/planning_after_20261126T205713180178Z/final_checks/run.json",
+    "runs": [
+      {
+        "test": "startup_resources",
+        "exit_code": 0,
+        "elapsed_seconds": 16.979645499988692,
+        "errors": [],
+        "passed": true
+      },
+      {
+        "test": "generation_saved_equivalence",
+        "exit_code": 0,
+        "elapsed_seconds": 0.7449172000051476,
+        "errors": [],
+        "passed": true
+      }
+    ],
+    "startup_resource_assertions": 13,
+    "preparation_receipt": "reports/startup_optimization/planning_after_20261126T205713180178Z/preparation/run.json",
+    "preparation_passed": true,
+    "preparation_seconds": 36.45385689998511,
+    "preparation_ready_recorded": true,
+    "godot_uid_generated": true,
+    "startup_index_current": true,
+    "production_source_hashes_match_measured_witnesses": true
+  },
+  "retained_failed_checks": [
+    {
+      "path": "reports/checks/20261126T205036122625Z",
+      "result": "Failed initial optimized harness: JSON numeric type comparison and overbroad isolation expectation across different recipe factories. Production plan/key/prefab fingerprints already matched; corrected harness passes at 205234142487Z."
+    },
+    {
+      "check": "Initial startup index freshness",
+      "result": "Failed on three direct preload declarations changing order. Full benchmark used previous index, whose snapshot/hash is retained. Refreshed index has identical nodes/dependency sets; final focused checks/preparation use it. Benchmark runner now requires freshness before admission/launch.",
+      "index_refresh": {
+        "dependency_sets_identical": true,
+        "change": "Reordered startup_resources declaration in generation task; loader is already cached by SceneJob.",
+        "measured_sha256": "e7397f7f4df5094e83c11cc697889f1821b0242d5192a9472f3cf37b3b2e99fa",
+        "refreshed_sha256": "af96652d1215836810267cc7b5baf849c9c078eeacbdaac57a820fe630ceab56"
+      }
+    }
+  ],
+  "limits": [
+    "Single local warm-cache pair; no statistical or OS-cold speed guarantee.",
+    "Combined recipe/prefetch change; no isolated prefetch-only A/B. Initialization alone increased 15.810 to 17.442 seconds.",
+    "No UI frame-cadence, player-control/walking, visual acceptance, multi-seed or final-package qualification.",
+    "Remaining first-recipe/identity cost, object-horizon throughput and save/map work retain their separate closure gates.",
+    "Post-reboot full-launch qualification remains pending the user restart."
+  ],
+  "lifecycle": "Existing startup benchmark admission/verified archive lifecycle keeps two owned ready worlds. Focused checks and source preparation allocate small admitted logs only; no player-world edits, source-tree copies, native builds or exports."
+}

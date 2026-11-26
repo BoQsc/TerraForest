@@ -96,15 +96,24 @@ func run()->void:
  planning_worker=Thread.new()
  var arguments:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
  var plan_progress:=preload("res://addons/world_runtime/world_plan_progress.gd").new()
+ var resources:=preload("res://addons/world_runtime/startup_resources.gd").new()
+ var independent_ok:bool=resources.begin_independent("res://demo/world.gd")
  var build:=preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(seed_value,generator,"--central-market" in arguments,"--regional-connection" in arguments,"user://generation_plans",world_options,plan_progress,"--civic-review" in arguments)
- if planning_worker.start(build)!=OK:planning_worker=null;print("WORLD_PLAN_WORKER_FAILED");quit(1);return
+ if planning_worker.start(build)!=OK:
+  planning_worker=null;await resources.finish_independent(self);print("WORLD_PLAN_WORKER_FAILED");quit(1);return
  var planning_frames:=0
  var observed:Dictionary={}
  while planning_worker.is_alive():
+  if cancelled():resources.cancelled=true
+  if independent_ok:independent_ok=resources.advance_independent()
   var current:Dictionary=plan_progress.snapshot()
   if not current.is_empty() and current!=observed:progress("Planning terrain, streets and building sites",current.completed,current.total,current);observed=current
   await process_frame;planning_frames+=1
  var prepared:Dictionary=planning_worker.wait_to_finish();planning_worker=null
+ progress("Initializing generated terrain data",0,0,{"activity":"Finishing independent resource loads"})
+ var independent_finished:bool=await resources.finish_independent(self)
+ if cancelled():quit(2);return
+ if not independent_ok or not independent_finished:print("GENERATION_RESOURCE_PREFETCH_FAILED");quit(1);return
  if not prepared.get("ok",false):print("WORLD_PLAN_FAILED ",prepared);quit(1);return
  var plan:Dictionary=prepared.plan
  var works:Dictionary=prepared.works
@@ -115,10 +124,9 @@ func run()->void:
  var connection:Dictionary=prepared.connection
  var sites:Array=prepared.get("sites",[plan,market])
  print("WORLD_PLAN digest=",prepared.plan_digest," cache_hit=",prepared.cache_hit," ms=",prepared.worker_ms," planning_frames=",planning_frames)
- FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"options":world_options}))
+ FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"options":world_options,"cache_profile":prepared.get("cache_profile",{}),"independent_resources":{"started":resources.independent_started,"completed":resources.independent_completed,"peak_pending":resources.peak_pending}}))
 
  if cancelled():quit(2);return
- var resources:=preload("res://addons/world_runtime/startup_resources.gd").new()
  if not await resources.prepare(self,"res://demo/world.gd",func(done:int,total:int):progress("Initializing generated terrain data",done,total,{"activity":"Loading game resources · %d / %d"%[done,total]})):quit(1);return
  if cancelled():quit(2);return
  var game=load("res://demo/world.tscn").instantiate()
