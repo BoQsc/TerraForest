@@ -31,12 +31,14 @@ Dictionary NativeZombieAnatomy::prepare_collision_cloud(const PackedVector3Array
     auto began=std::chrono::steady_clock::now();
     const auto cloud=prepare_convex_cloud(points,witnesses);
     Dictionary result;result["points"]=cloud.points;result["input_points"]=points.size();result["cells"]=cloud.cells;
+    result["duplicate_points"]=cloud.duplicate_points;
     result["prepare_us"]=int64_t(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-began).count());
     if(witnesses){
         PackedInt32Array supports;for(int index:cloud.supports)supports.push_back(index);result["supports"]=supports;
         Array certificates;
         for(const auto &w:cloud.witnesses){Array row;row.push_back(w.point);row.push_back(w.a);row.push_back(w.b);row.push_back(w.c);row.push_back(w.u);row.push_back(w.v);row.push_back(w.w);certificates.push_back(row);}
         result["witnesses"]=certificates;
+        Array duplicates;for(const auto &pair:cloud.duplicates){Array row;row.push_back(pair[0]);row.push_back(pair[1]);duplicates.push_back(row);}result["duplicates"]=duplicates;
     }
     return result;
 }

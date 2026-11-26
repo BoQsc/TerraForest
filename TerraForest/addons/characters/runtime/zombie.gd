@@ -351,7 +351,7 @@ func _pose_shape_spec(part: String, pelvis: bool = false) -> Dictionary:
 	shape.margin = 0.003
 	if ProjectSettings.get_setting("physics/3d/physics_engine","")!="Jolt Physics":shape.custom_solver_bias = CONTACT_RECOVERY_BIAS
 	info.shape = shape
-	info.profile={"sample_us":sampled-measured,"cloud_us":prepared-sampled,"cloud_mode":"spatial","input_points":cloud.input_points,"resource_us":Time.get_ticks_usec()-prepared,"points":points.size()}
+	info.profile={"sample_us":sampled-measured,"cloud_us":prepared-sampled,"cloud_mode":"spatial_unique","input_points":cloud.input_points,"duplicate_points":cloud.duplicate_points,"resource_us":Time.get_ticks_usec()-prepared,"points":points.size()}
 	return info
 
 

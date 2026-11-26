@@ -5,6 +5,7 @@
 #include <array>
 #include <cmath>
 #include <vector>
+#include <unordered_map>
 
 namespace terraforest {
 // Removing a point strictly inside a tetrahedron of retained source points
@@ -16,6 +17,8 @@ struct ConvexCloudResult {
     godot::PackedVector3Array points;
     std::vector<int> supports;
     std::vector<ConvexCloudWitness> witnesses;
+    std::vector<std::array<int,2>> duplicates;
+    int duplicate_points=0;
     int cells=0;
 };
 namespace convex_cloud_detail {
@@ -28,6 +31,16 @@ struct D3 {
 };
 inline D3 wide(godot::Vector3 p){return {p.x,p.y,p.z};}
 struct Cell {int a,b,c;D3 u,v,w;};
+struct PointHash {
+    size_t operator()(const godot::Vector3 &point) const {
+        // std::hash preserves the equality of positive and negative zero.
+        const std::hash<decltype(point.x)> hash;
+        size_t value=hash(point.x);
+        value^=hash(point.y)+size_t(0x9e3779b9)+(value<<6)+(value>>2);
+        value^=hash(point.z)+size_t(0x9e3779b9)+(value<<6)+(value>>2);
+        return value;
+    }
+};
 }
 inline ConvexCloudResult prepare_convex_cloud(const godot::PackedVector3Array &input,bool witnesses=false){
     using namespace convex_cloud_detail;
@@ -97,6 +110,11 @@ inline ConvexCloudResult prepare_convex_cloud(const godot::PackedVector3Array &i
         for(int z=first[2];z<=last[2];z++)for(int y=first[1];y<=last[1];y++)for(int x=first[0];x<=last[0];x++)bins[x+8*y+64*z].push_back(index);
     }
     godot::PackedVector3Array reduced;reduced.resize(count);auto *out=reduced.ptrw();int retained=0;
+    // Render topology repeats positions at UV/normal seams. Convex collision
+    // needs each exact position once. Keep source order and retain a direct
+    // equality witness; no tolerance, snapping or approximate hull is involved.
+    std::unordered_map<godot::Vector3,int,PointHash> unique;
+    unique.reserve(count);
     for(int i=0;i<count;i++){
         bool inside=false;
         if(!keep_support[i]){
@@ -114,7 +132,14 @@ inline ConvexCloudResult prepare_convex_cloud(const godot::PackedVector3Array &i
                 }
             }
         }
-        if(!inside)out[retained++]=points[i];
+        if(!inside){
+            auto entry=unique.emplace(points[i],i);
+            if(entry.second)out[retained++]=points[i];
+            else {
+                ++result.duplicate_points;
+                if(witnesses)result.duplicates.push_back({i,entry.first->second});
+            }
+        }
     }
     reduced.resize(retained);result.points=reduced;return result;
 }

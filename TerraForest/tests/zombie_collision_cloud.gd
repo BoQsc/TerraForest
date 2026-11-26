@@ -19,6 +19,10 @@ func verify(points:PackedVector3Array,label:String)->Dictionary:
 		valid=valid and retained.has(points[index])
 		for axis in 3:center[axis]+=float(points[index][axis])/result.supports.size()
 	var removed:Dictionary={}
+	for pair:Array in result.duplicates:
+		var index:int=pair[0];var source:int=pair[1]
+		valid=valid and source<index and points[index]==points[source] and retained.has(points[source]) and not removed.has(index)
+		removed[index]=true
 	for row:Array in result.witnesses:
 		var index:int=row[0];var weights:Array=[1.0-float(row[4])-float(row[5])-float(row[6]),float(row[4]),float(row[5]),float(row[6])]
 		valid=valid and not removed.has(index) and weights.all(func(w:float):return w>0.0 and w<1.0)
@@ -33,7 +37,7 @@ func verify(points:PackedVector3Array,label:String)->Dictionary:
 		if removed.has(index):continue
 		valid=valid and cursor<result.points.size() and points[index]==result.points[cursor]
 		cursor+=1
-	check(valid and cursor==result.points.size(),label+": every discarded point has a positive retained-point convex certificate; output preserves order/bytes")
+	check(valid and cursor==result.points.size(),label+": every discarded point has a convex or exact-equality certificate; output preserves first-source order/bytes")
 	print("CLOUD ",label," input=",points.size()," retained=",result.points.size()," cells=",result.cells," prepare_us=",result.prepare_us)
 	return result
 func install(points:PackedVector3Array,position:Vector3)->Dictionary:
@@ -78,6 +82,18 @@ func actor_clouds(actor:Node3D,label:String)->void:
 		var cached:Dictionary=actor.anatomy.prepare_collision_cloud(points)
 		print("CLOUD_REVALIDATE ",label," ",part," input=",points.size()," retained=",cached.points.size()," prepare_us=",cached.prepare_us)
 		await contacts(points,cached.points,label+" "+part)
+		if part=="head" and OS.get_cmdline_user_args().has("--duplicate-cloud-probe"):
+			var distinct:Dictionary={}
+			for point:Vector3 in cached.points:distinct[point]=true
+			var unique:=PackedVector3Array(distinct.keys());var pairs:Array=[]
+			for repeat in 6:
+				var pair:Dictionary={}
+				for compact:bool in ([false,true] if repeat%2==0 else [true,false]):
+					var trial:=install(unique if compact else cached.points,Vector3.ZERO)
+					pair["unique_us" if compact else "original_us"]=trial.us;trial.body.free()
+				pairs.append(pair)
+			print("DUPLICATE_CLOUD_PROBE ",JSON.stringify({"pose":label,"input":cached.points.size(),"unique":unique.size(),"pairs":pairs,"scope":"Fresh engine hull installation; excludes duplicate detection"}))
+			await contacts(cached.points,unique,label+" exact duplicate removal")
 func run()->void:
 	stage=Node3D.new();root.add_child(stage);reducer=ClassDB.instantiate("NativeZombieAnatomy")
 	seed(1703)
@@ -89,6 +105,16 @@ func run()->void:
 	var reduced:=verify(cube,"cube")
 	check(reduced.points.size()<cube.size()/4,"dense interior cloud eliminates actual hull input")
 	await contacts(cube,reduced.points,"cube")
+	var repeated:=cube.duplicate()
+	for i in 40:
+		for corner in 8:repeated.append(cube[corner])
+	var duplicate_cloud:=verify(repeated,"repeated boundary positions")
+	check(duplicate_cloud.duplicate_points==320 and duplicate_cloud.points==reduced.points,"render seams remove duplicate boundary positions without changing collision topology")
+	await contacts(repeated,duplicate_cloud.points,"duplicate boundary positions")
+	var close:=repeated.duplicate();var distinct:=cube[0]+Vector3(.000001,0,0);close.append(distinct)
+	check(verify(close,"nearby distinct boundary point").points.has(distinct),"exact compaction never merges nearby distinct boundary vertices")
+	close.append(Vector3(0,1,1));close.append(Vector3(-0.0,1,1))
+	check(verify(close,"signed zero positions").duplicate_points==321,"signed zero positions share the same equality and hash")
 	var changed:=cube.duplicate();var moved:int=reduced.witnesses[0][0];changed[moved]=Vector3(3,.17,.21)
 	var revalidated:Dictionary=reducer.prepare_collision_cloud(changed)
 	check(revalidated.points.has(changed[moved]),"a newly exterior point is retained")
