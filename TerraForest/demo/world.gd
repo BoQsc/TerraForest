@@ -621,14 +621,16 @@ func _setup_prefabs() -> void:
 	prefab_library.load_library()
 	for path in ["res://addons/structures/prefabs/brick_cottage.tres","res://addons/structures/prefabs/stair_flight.tres","res://addons/structures/prefabs/doorway_wall.tres","res://addons/structures/prefabs/tower_floor.tres"]:
 		var asset: Resource = load(path)
+		if path.ends_with("brick_cottage.tres"):asset=preload("res://addons/structures/house_furnishings.gd").apply(asset,"cottage_legacy")
 		if asset != null and asset.get_cell_count()>0:
 			structure_prefabs.append(asset)
 			asset.changed.connect(_invalidate_prefab_preview)
-	var furnished: Resource=preload("res://addons/structures/furniture_catalog.gd").furnished_cottage(true)
+	var furnished: Resource=preload("res://addons/structures/furniture_catalog.gd").furnished_cottage(true,true)
 	if furnished!=null:
 		structure_prefabs.append(furnished);furnished.changed.connect(_invalidate_prefab_preview)
 	var frontage=ClassDB.instantiate("NativeBlockPrefab")
 	var cottage: Resource=load("res://addons/structures/prefabs/brick_cottage.tres")
+	cottage=preload("res://addons/structures/house_furnishings.gd").apply(cottage,"cottage_legacy")
 	if frontage.compose_frontage([cottage],2,8,3,1703):
 		frontage.resource_name="Street frontage · 4 cottages (ungraded)"
 		frontage.set_meta("frontage_version",1)

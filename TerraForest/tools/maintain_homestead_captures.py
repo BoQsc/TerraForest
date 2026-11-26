@@ -21,6 +21,8 @@ FAMILIES = {
     "homestead_10_pack": ("homestead_10.png",),
     "outdoor_01_pack": ("outdoor_01.png",),
     "homestead_mansion": ("mansion_exterior.png", "mansion_plan.png", "mansion_salon.png", "mansion_dining.png", "mansion_bedroom.png", "mansion_workshop.png"),
+    "house_population_world": ("outdoors.png", "outdoor_publication.json"),
+    "house_furnishings": ("cottage.png", "house.png", "apartments.png", "furnishings.bin", "house_furnishings.json"),
     "object_system_world": ("object_names.png", "outdoor_storage.png", "object_density.png", "object_state.bin", "object_performance.json"),
     "object_rendering_world": ("names_on_out.png", "names_on_return.png", "object_rendering.json"),
     "model_horizon": ("fixture.trw", "result.json"),

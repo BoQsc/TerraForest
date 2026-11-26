@@ -11,6 +11,10 @@ assertions. Character admission now spreads setup and hull preparation across
 frames, and character material batching reduces visible surfaces from 45 to 14.
 The final uncontended replay passes one of four strict frame gates. Investigation
 is closed out at the user's request; the remaining 60 FPS requirement stays open.
+The later future-house population adds pack furnishings to current house presets
+and bounded outdoor groups to newly generated settlements. Native placement,
+fresh-process restore and temporary gameplay checks pass; full-scale generation
+timing and complete furnished-room traversal remain separately unqualified.
 
 The 64 m dry and wet controls and the lake barrel missed the two-frame deadline. Both craters passed their bank contact checks. Suspended green patches appeared in one cut capture and were absent from the repeat. [Paired cameras and publication timings](../docs/REAL_TIME_TERRAIN_AND_WATER_EDITING.md#packaged-comparison-of-terrain-and-water)
 

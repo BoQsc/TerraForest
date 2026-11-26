@@ -9485,3 +9485,13 @@ torso-speed failure exactly on the committed baseline; it is not marked passed.
 Mansion visual
 approval, generated-site terrain fit and full circulation remain unaccepted;
 the new preset is not a generation default.
+
+The subsequent furnishing request explicitly selects **future houses only**.
+[Object pack integration](OBJECT_PACK_INTEGRATION.md#future-house-furnishings-and-outdoor-population)
+now connects the current cottage, large-house, residential-tower and apartment
+designs to populated construction/generation variants. Original building fabric,
+inherited objects and existing player saves remain intact. A bounded one-time
+generation pass adds supported outdoor service/garden groups around lots, with
+roads, approaches, trees, encounters and vehicle clearances protected. Engineering
+and image evidence are tracked in the existing Homestead integration issue;
+this does not close its separate mansion/terrain-quality or stable-60-FPS work.

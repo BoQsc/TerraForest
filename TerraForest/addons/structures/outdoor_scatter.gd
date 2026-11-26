@@ -32,7 +32,7 @@ static func near_road(point: Vector3, margin: float, roads: Array) -> bool:
 		if not a.is_finite() or not b.is_finite(): continue
 		var delta:=Vector2(b.x-a.x,b.z-a.z); var offset:=Vector2(point.x-a.x,point.z-a.z)
 		var t:=clampf(offset.dot(delta)/maxf(.0001,delta.length_squared()),0,1)
-		if (offset-delta*t).length()<float(road.get("width",8))*.5+margin: return true
+		if (offset-delta*t).length()<float(road.get("width",float(road.get("half_width",4))*2))*.5+margin: return true
 	return false
 
 func scatter_at_aim(game: Node) -> void:

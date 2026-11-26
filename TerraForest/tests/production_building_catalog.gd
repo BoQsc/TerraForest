@@ -21,7 +21,12 @@ func run()->void:
 	for index in E2.IDS.size():
 		var actual:Resource=public_assets[index]
 		var original:Resource=load("res://addons/structures/prefabs/expansion_"+E2.IDS[index]+"_e2.tres")
-		check(actual!=null and actual.get_records()==original.get_records() and actual.get_model_attachments()==original.get_model_attachments(),"normal catalog uses exact approved cells and attachments: "+E2.IDS[index])
+		var inherited:Array=original.get_model_attachments()
+		check(actual!=null and actual.get_records()==original.get_records() and actual.get_model_attachments().slice(0,inherited.size())==inherited,"normal catalog retains approved cells and original attachments: "+E2.IDS[index])
+		var envelope:=true
+		for turn in 4:envelope=envelope and actual.placement_bounds(Vector3i.ZERO,turn)==original.placement_bounds(Vector3i.ZERO,turn) and actual.foundation_samples(Vector3i.ZERO,turn,0)==original.foundation_samples(Vector3i.ZERO,turn,0)
+		check(envelope,"furnishing retains every terrain-planning footprint: "+E2.IDS[index])
+		if E2.IDS[index] in ["cottage_a2","house_c1"]:check(actual.has_meta("homestead_furnishings") and actual.get_model_attachments().size()>inherited.size(),"ordinary house catalog adds Homestead furnishings: "+E2.IDS[index])
 		check(not actual.get_meta("review_only",true) and actual.get_meta("approved_date","")=="2026-11-01","normal catalog exposes approved revision: "+E2.IDS[index])
 	var fingerprints:Dictionary={}
 	for index in E2.IDS.size():fingerprints[E2.IDS[index]]=Custom.prefab_fingerprint(public_assets[index])
@@ -37,6 +42,7 @@ func run()->void:
 	check(Custom.prefab_fingerprint(fingerprint_asset)!=original_fingerprint,"attachment edits invalidate placement cache")
 	check(Furniture.enclosed_cottage().resource_name=="Furnished cottage with door and windows","existing construction presets retain cottage identity")
 	var cases:Array=[Recipe.DEFAULTS.duplicate()]
+	if "--single-district" in OS.get_cmdline_user_args():cases[0].settlements=1;cases[0].districts=1
 	if "--all-recipes" in OS.get_cmdline_user_args():
 		cases.clear()
 		for style:Dictionary in preload("res://demo/world_creation_panel.gd").STYLES:

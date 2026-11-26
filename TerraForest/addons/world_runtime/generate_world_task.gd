@@ -305,6 +305,10 @@ func run()->void:
  if not lighting.ok:print("HOUSE_LIGHT_PUBLICATION_FAILED ",lighting);game.free();quit(1);return
  FileAccess.open(output_dir.path_join("house_lights.bin"),FileAccess.WRITE).store_var(lighting)
  FileAccess.open(output_dir.path_join("house_lights.json"),FileAccess.WRITE).store_string(JSON.stringify(lighting))
+ progress("Placing outdoor storage, garden and service-yard objects")
+ var outdoors:Dictionary=await preload("res://addons/structures/outdoor_generation.gd").publish(game,all_lots,parking_roads,seed_value)
+ if not outdoors.ok:print("OUTDOOR_PUBLICATION_FAILED ",outdoors);game.free();quit(1);return
+ FileAccess.open(output_dir.path_join("outdoor_objects.json"),FileAccess.WRITE).store_string(JSON.stringify(outdoors))
  var crossings:Array=prepared.get("bridges",[])
  for bridge_index in crossings.size():
   if cancelled():game.free();quit(2);return

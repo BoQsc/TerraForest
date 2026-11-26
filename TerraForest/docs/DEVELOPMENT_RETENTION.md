@@ -294,6 +294,16 @@ pixel/geometry results and logs (2 MiB headless), under the same two-ready polic
 rig comparisons and its small pixel/geometry JSON. The headless geometry-bake
 and mesh-bake regressions admit 2 MiB for assertions and receipts; they write no
 images, world copies or exports.
+`house_furnishings` admits 8 MiB headless or 32 MiB rendered for a native fixture
+capped at 4 MiB, small JSON/logs and three 1080p pictures. A fresh process
+can verify that fixture by its supplied SHA-256. `house_population_world` admits
+16 MiB for one 1080p outdoor picture and bounded publication JSON/logs; it reuses
+Hidden Meadow read-only and creates no saved world. Both families join the same
+two-ready receipt-owned capture lifecycle; a test name does not grant ownership
+over its source save. No output limit is increased.
+The audited headless `furnished_capture` library roundtrip declares 2 MiB for
+logs and its small temporary prefab; the driver removes only its exact owned
+library files after verifying capture, reopen, rejection and rotated placement.
 The headless-only `original_size_drops` check admits 2 MiB for its assertion log
 and receipt. Its tiny process-owned preference fixture is removed by the test;
 the headless branch writes no screenshot, save or export. Rendered variants keep

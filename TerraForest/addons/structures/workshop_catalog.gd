@@ -34,7 +34,7 @@ static func workshop()->Resource:
   models.append({"model":"storage/wooden_chest/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,-4))})
  if not asset.configure_model_attachments(models):return null
  asset.resource_name="Mine workshop and stores"
- return asset
+ return preload("res://addons/structures/house_furnishings.gd").apply(asset,"workshop")
 
 # Village service building: shares the workshop footprint/entrance contract, but
 # has its own roof silhouette and sales/storage circulation. Offline recipe only.

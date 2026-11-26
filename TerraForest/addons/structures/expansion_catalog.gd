@@ -14,7 +14,7 @@ static func asset(id:String)->Resource:
 	result.set_meta("review_only",false)
 	result.set_meta("approved_revision",id+"_e2")
 	result.set_meta("approved_date","2026-11-01")
-	return result
+	return preload("res://addons/structures/house_furnishings.gd").apply(result,id)
 static func assets()->Array[Resource]:
 	var result:Array[Resource]=[]
 	for id:String in IDS:

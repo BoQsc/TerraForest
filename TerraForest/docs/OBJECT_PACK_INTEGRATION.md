@@ -6,12 +6,74 @@ This task covers folder-based admission for all ten Homestead packs, an Outdoor
 01 pack (bird nest, duffel bag, cardboard boxes, tires, litter, trash cans and a
 large refuse container), selectable object-name inspection, a new mansion with
 rooms using every Homestead model, outdoor scattering and measured player-facing
-reliability/performance. Existing houses and saved worlds remain unchanged.
+reliability/performance. The later future-house furnishing pass below extends
+new construction and generation; existing saved worlds remain unchanged.
 
 Implemented: eleven discovered packs / 110 objects, seven native outdoor container
 types, a native spatial inspection query, selectable labels, explicit outdoor
 scattering and Homestead Manor R2. The mansion is an additional Building preset
 for review, not an approved generation default. Saved houses are not refurnished.
+
+## Future-house furnishings and outdoor population
+
+User direction, 26 November: populate the current house designs with the new
+objects, and add many outdoor objects. The user selected **future houses only**.
+Opening an existing save does not insert furnishings or refill removed objects.
+
+`house_furnishings.gd` adds bedrooms, kitchen fittings, sitting/study objects,
+workshop supplies, tabletop details and entry objects to the current cottages,
+large house, residential towers and sixteen-unit apartment building. Basic
+cottage and four-cottage frontage presets use the same path. Shops, the trader
+and workshop receive appropriate work-surface details. Homestead Manor already
+has its complete furnishing layout and remains a separate additional preset.
+
+The pass retains every original block and attachment. It checks collision parts,
+floor support, inherited furniture, door swings, stair/entry corridors and
+reserved spawn/sleeper positions before admitting a furnishing. Applying the
+same layout twice is idempotent. Original prefab files and saved object/model
+identities are preserved. Historical low-level cottage authoring remains
+available without the population pass. Normal construction selects the populated
+variants; generation receives them through the same catalogs. Content fingerprints
+and the legacy plan version prevent reusing a stale preview recipe.
+
+`outdoor_generation.gd` runs once during ordinary Generate & play after buildings,
+lighting, encounters and parked vehicles have been placed. It targets 16 outdoor
+objects per lot, using at most 48 seeded candidates and 4,096 objects per world.
+The mix includes boxes, bags, tires, bins, dumpsters, litter, crates, baskets and
+garden objects. Candidates form side/rear groups in the building's rotated frame.
+Road and entrance reservations, water, live tree roots, existing objects, quest
+areas, the initial player position and parked vehicles exclude unsafe positions.
+Terrain surface and footprint density scans reject slopes, unsupported feet and
+buried footprints. A crowded or unsuitable lot can receive fewer than 16 objects;
+generation never forces them through validation to meet the target.
+
+These are ordinary native batch placements, with the existing shared meshes,
+collision residency, container behavior, removal and compound persistence. No
+object script, ongoing scatter loop, refill or new save schema is introduced.
+No new third-party code or assets are imported; the new authoring and test code
+is original 0BSD and reuses the installed pack assets under their existing terms.
+Authoring was AI-assisted from the user's future-house furnishing request, with
+no external reference material copied into these new scripts.
+
+Validation uses the admitted `house_furnishings`, `house_population_world` and
+`production_building_catalog` checks. The first covers every residential variant,
+native placement in all rotations, sleeping spaces and exact restore. The second
+loads Hidden Meadow read-only, verifies the normal construction catalog and
+publishes outdoor objects only into that temporary session against actual terrain.
+Its saved-world hash must remain unchanged. Interior pictures use the actual
+native house fixture; they are separate from landscape-fit or user visual approval.
+Receipts and remaining scope are recorded in the linked integration issue.
+The earlier stable-60-FPS requirement remains open in
+[the rendering report](OBJECT_RENDERING_PERFORMANCE.md); these content checks do
+not qualify a new population's frame rate.
+
+Reproduce from `TerraForest` with the existing admitted runner:
+
+```text
+python tools/run_godot_check.py house_furnishings --isolated-render --require failures=0 --timeout 180
+python tools/run_godot_check.py house_population_world --isolated-render --require failures=0 --timeout 180
+python tools/run_godot_check.py production_building_catalog --headless --require failures=0 --timeout 180 -- --single-district
+```
 
 Hold Backtick, choose **2 / Objects / inspection** (or point at that card), then
 hold Alt to access **Show nearby object names**. Alt alone never selects the

@@ -147,6 +147,71 @@ Code: [mansion author](../../addons/structures/mansion/author.gd),
 
 ## Reproduce / history
 
+### Future-house population, 26 November
+
+The user selected **future houses only**. Ordinary new construction and generation
+now add pack furnishings to the existing residential designs, with original cells
+and inherited objects retained. Existing saves receive no automatic additions.
+
+| House preset | New pack objects |
+| --- | ---: |
+| Basic brick cottage | 18 |
+| Furnished basic / enclosed cottage | 19 |
+| Large two-storey house | 30 |
+| Residential tower | 26 per floor (52 / 78 / 104 for the current 2 / 3 / 4-floor variants) |
+| Sixteen-unit apartments | 153 |
+
+Shops, trader and workshop add 3–6 work-surface objects. The current mansion
+already has its full pack layout. Generate & play additionally targets 16 outdoor
+objects per lot through seeded side/rear proposals, with terrain footprint,
+tree-root, water, road/approach, parking and encounter exclusions. Unsuitable
+positions are skipped; removed objects do not refill.
+
+- `20261126T172449697845Z`: 98 checks pass across twelve catalog variants, all
+  four placement rotations, every apartment/tower sleeping space, native object
+  persistence and the ordinary upstairs introduction exit. Three actual interior
+  images were captured and inspected. They show the retained house designs with
+  added furnishings on a native fixture, separately from landscape acceptance.
+- `20261126T172604199876Z`: a fresh process restores the exact fixture and object
+  identities, SHA-256 `5d76733279a07444c38c1aad292bebe846c3735df766d34338aaa68bcc3fbfb6`.
+- `20261126T172654731486Z`: normal temporary gameplay passes nine checks. Forty-seven
+  outdoor objects of thirteen types pass actual terrain and clearance admission
+  around three transient lot probes; the native snapshot remains valid. Hidden
+  Meadow's canonical save stays byte-for-byte unchanged. The picture is a
+  temporary outdoor placement check in the existing world, not a refurnished save.
+- `20261126T172253885102Z`: 40 normal-catalog and complete single-district planning
+  checks pass, including unchanged terrain footprints and cached reconstruction.
+- `20261126T171654243044Z`: the full default multi-settlement plan reaches its
+  240-second timeout. This is retained as an unresolved full-scale check. The
+  larger new-world publication/reopen, complete room traversal and sustained
+  population performance remain unqualified. Resume those when full-world
+  generation/quality qualification is prioritized; require normal publication,
+  fresh-process reload, actual routes and frame traces before closing them.
+- `20261126T172839981722Z`: the existing prefab-library capture/reopen and rotated
+  placement regression passes with the new objects. Ten launcher/retention tests
+  pass, and admitted editor import `house_population_uid_import_20261126T173006617403Z`
+  generates all four new script UIDs without engine errors.
+
+Earlier failed checks remain retained: `20261126T170617470057Z` has a corrected
+test assertion-helper parse error; `20261126T171312897503Z` rejected a valid surface
+reply by comparing the publication and density revision counters. The outdoor
+pass now checks each counter against its corresponding captured source state;
+the final real-terrain replay passes. The full default planning timeout above
+remains unresolved.
+
+![Newly furnished cottage](../../reports/checks/20261126T172449697845Z/cottage.png)
+
+Same cottage fabric and original furniture; new sleeping, kitchen and household
+objects occupy the spare room edges. This is an inspected native fixture view.
+
+![Outdoor placement check](../../reports/checks/20261126T172654731486Z/outdoors.png)
+
+Actual terrain-supported boxes, storage, refuse and garden objects in a temporary
+read-only session. This does not claim stable 60 FPS or a saved-world retrofit.
+
+Implementation, reproducible commands and retention scope are in
+[Object pack integration](../../docs/OBJECT_PACK_INTEGRATION.md#future-house-furnishings-and-outdoor-population).
+
 The CPU follow-up stages character/corpse admission and prepares large saved
 head hulls on a worker. Lifecycle, collision-contact and rest checks pass;
 the uncontended replay `20261126T142559219408Z` passes all 36 gameplay assertions

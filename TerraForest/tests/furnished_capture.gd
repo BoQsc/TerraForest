@@ -10,6 +10,7 @@ func run() -> void:
 	var world=preload("res://addons/structures/structures_world.gd").new();root.add_child(world);world.prepare()
 	var catalog=preload("res://addons/structures/furniture_catalog.gd")
 	catalog.register(world)
+	preload("res://addons/structures/pack_registry.gd").register(world)
 	for c in [preload("res://addons/structures/storage_catalog.gd"),preload("res://addons/structures/door_catalog.gd"),preload("res://addons/structures/window_catalog.gd")]:c.register(world)
 	var source: Resource=catalog.enclosed_cottage()
 	var coordinator=preload("res://addons/player_runtime/construction_inventory.gd").new()
@@ -25,7 +26,7 @@ func run() -> void:
 	var captured: Dictionary=library.capture(world.blocks,"Captured furnished cottage",models.values())
 	check(captured.ok,"production library captures furnished selection: "+captured.get("reason",""))
 	if captured.ok:
-		check(captured.asset.get_model_attachments().size()==13 and captured.asset.get_cell_count()==source.get_cell_count(),"capture retains every window door and furnishing plus exact block count")
+		check(captured.asset.get_model_attachments().size()==source.get_model_attachments().size() and captured.asset.get_cell_count()==source.get_cell_count(),"capture retains every window door and furnishing plus exact block count")
 		var expected: Dictionary={}
 		for item in source.get_model_attachments():
 			if not expected.has(item.model):expected[item.model]=[]

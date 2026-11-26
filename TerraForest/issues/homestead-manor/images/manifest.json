@@ -169,6 +169,34 @@
       "run": "20261126T165138197821Z",
       "status": "inspected final full-game route; three of four strict frame gates fail",
       "source": "Actual Godot Forward+ 1920x1080; 1000 mixed-pack additions, normal gameplay, read-only Hidden_Meadow"
+    },
+    {
+      "path": "reports/checks/20261126T172449697845Z/cottage.png",
+      "sha256": "d000284042beba6e1224968d3b731825b590d760b52b009f5d0fb4e5df3cc8f5",
+      "run": "20261126T172449697845Z",
+      "status": "inspected future-house population / scoped engineering evidence",
+      "source": "Actual Godot Forward+ native house fixture; original building cells and inherited objects with future-house furnishings"
+    },
+    {
+      "path": "reports/checks/20261126T172449697845Z/house.png",
+      "sha256": "36c8c2a33002d9ee031d37b1a6060f39ffba9c33f1324f5547531e77a7a8df08",
+      "run": "20261126T172449697845Z",
+      "status": "inspected future-house population / scoped engineering evidence",
+      "source": "Actual Godot Forward+ native house fixture; original building cells and inherited objects with future-house furnishings"
+    },
+    {
+      "path": "reports/checks/20261126T172449697845Z/apartments.png",
+      "sha256": "b0cd05c0c76e48716952d57e1ccc4913a6642044dabf3f7af0ccabb14582b658",
+      "run": "20261126T172449697845Z",
+      "status": "inspected future-house population / scoped engineering evidence",
+      "source": "Actual Godot Forward+ native house fixture; original building cells and inherited objects with future-house furnishings"
+    },
+    {
+      "path": "reports/checks/20261126T172654731486Z/outdoors.png",
+      "sha256": "853e273e79ce7aa4c212cd2c8b7d8298e439ccc5697863b02934ae3627b4d5b0",
+      "run": "20261126T172654731486Z",
+      "status": "inspected future-house population / scoped engineering evidence",
+      "source": "Actual Godot Forward+ read-only Hidden Meadow; transient outdoor publication probes, unchanged canonical save"
     }
   ]
 }

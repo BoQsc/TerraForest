@@ -15,7 +15,7 @@ static func register(world: Node3D) -> Array[Dictionary]:
 static func recipes() -> Dictionary:
 	return {"furniture/table/v1":PackedInt64Array([102,6]),"furniture/chair/v1":PackedInt64Array([102,3]),"furniture/shelf/v1":PackedInt64Array([102,8])}
 
-static func furnished_cottage(with_storage: bool=false) -> Resource:
+static func furnished_cottage(with_storage: bool=false,decorate:bool=false) -> Resource:
 	var source: Resource=load("res://addons/structures/prefabs/brick_cottage.tres")
 	var asset: Resource=ClassDB.instantiate("NativeBlockPrefab")
 	if not asset.configure(source.get_records()): return null
@@ -28,7 +28,7 @@ static func furnished_cottage(with_storage: bool=false) -> Resource:
 		attachments.append({"model":"storage/wooden_chest/v1","transform":Transform3D(Basis.IDENTITY,Vector3(2.5,1,0))})
 		if not asset.configure_model_attachments(attachments): return null
 	asset.resource_name="Furnished cottage with storage" if with_storage else "Furnished cottage"
-	return asset
+	return preload("res://addons/structures/house_furnishings.gd").apply(asset,"cottage_legacy") if decorate else asset
 
 # Provisional dismantling yield: partial recovery, not a full construction refund.
 static func salvage_recipes() -> Dictionary:
@@ -45,7 +45,7 @@ static func large_house(legacy:bool=false) -> Resource:
 	return approved.duplicate() if approved!=null else null
 
 static func legacy_enclosed_cottage() -> Resource:
-	var asset: Resource=furnished_cottage(true)
+	var asset: Resource=furnished_cottage(true,false)
 	if asset==null:return null
 	var attachments: Array=asset.get_model_attachments()
 	# Existing one-metre-wide, two-metre-high doorway; retain its stair approach.
@@ -126,4 +126,4 @@ static func furnished_tower(floors: int=3) -> Resource:
 	var tower: Resource=ClassDB.instantiate("NativeBlockPrefab")
 	if not tower.compose(modules,placements):return null
 	tower.resource_name="Furnished tower · %d floors"%floors
-	return tower
+	return preload("res://addons/structures/house_furnishings.gd").apply(tower,"tower")

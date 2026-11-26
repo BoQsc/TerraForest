@@ -6,7 +6,8 @@ const TITLES:=["Storage warehouse","Police station","Medical centre","Pharmaceut
 static func asset(index:int)->Resource:
 	if index<0 or index>=IDS.size():return null
 	var source:Resource=load("res://addons/structures/prefabs/city_"+IDS[index]+".tres")
-	return source.duplicate() if source!=null else null
+	if source==null:return null
+	return preload("res://addons/structures/house_furnishings.gd").apply(source.duplicate(),IDS[index])
 
 static func recipe(center:Vector3)->Array:
 	var result:=[]
