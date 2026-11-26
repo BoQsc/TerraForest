@@ -1,5 +1,22 @@
 # Runtime performance
 
+## Corpse restoration and terrain publication - 2026-11-26
+
+The [latest investigation](corpse-publication-2026-11-26.md) removes discarded
+rest-pose corpse physics, shares placement exclusion work across collections,
+prunes existing spatial indexes and removes exactly duplicate collision positions.
+Admission now waits for the complete support footprint. The replay compares
+resident/corpse identities and pauses simulation during focus setup; the final
+run completed Hidden Meadow's six legs and its gameplay image was inspected.
+
+**Overall p99 did not improve: 21.200 to 21.633 ms.** Component regressions prove
+less construction/query work; the route does not show a net whole-frame CPU gain.
+The final repeat overlapped another Godot check and remains excluded from timing
+claims. Unfocused runs, startup failures and a rejected population-drift run are
+preserved. Process/draw bursts and engine waits remain open, with a stable build,
+exclusive test window and repeated matched/uncapped evidence required to close
+the performance gate. Full human-input replay remains unqualified.
+
 ## Frame tail and render ownership — 2026-11-26
 
 The [frame-tail investigation](frame-tail-2026-11-26.md) separates actual CPU work
@@ -11,16 +28,22 @@ main-thread draw cycles by 12.5–19.0%. Geometry, stale-job, reload, water-edit
 publication checks pass. Extra retained mesh memory is bounded and documented.
 
 **Overall p99 is still open.** A matched isolated pair shows less CPU work without
-a p99 gain. Normal-desktop replays measure about 21–22 ms p99; focused fullscreen
-runs have no intervals over 33.333 ms, whereas later isolated-desktop runs had
-repeated 50–120 ms stalls. Removing presentation also removes those large stalls
+a p99 gain. That investigation's normal-desktop replays measured about 21–22 ms
+p99; its focused fullscreen controls had no intervals over 33.333 ms, whereas
+later isolated-desktop runs had repeated 50–120 ms stalls. Removing presentation
+also removes those large stalls
 in a diagnostic. This is a test-environment finding, not a game-side stall fix.
-The normal before/after route pairs have population drift and are rejected as
-matched timing comparisons. Corpse restoration and terrain surface publication
-remain contributors to the normal frame tail.
+The earlier normal before/after route pairs had population drift and remain
+rejected as matched timing comparisons; the follow-up above fixes the observed
+admission/setup causes and obtains matching identity checkpoints. Corpse
+restoration and terrain surface publication remain contributors to the normal
+frame tail.
 
 Stable persistent actor random streams (`8d5f4bd1`) remove scene-allocation order
-from awareness decisions, but asynchronous navigation still varies outcomes.
+from awareness decisions. The [corpse/publication follow-up](corpse-publication-2026-11-26.md)
+traces population drift to mismatched admission coverage (`da6e5837`), and
+distinguishes a human session changing the source save from replay drift. Full
+world-state determinism remains unqualified.
 The replay now blocks physical-input interference and checks movement; the
 analyzer distinguishes desktop, window mode, focus and diagnostic settings.
 Failed and adverse controls remain linked in the report. Return with deterministic

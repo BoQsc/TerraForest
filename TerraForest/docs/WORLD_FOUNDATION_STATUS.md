@@ -25,19 +25,41 @@ Return with retained worst windows and recorder-off/uncapped equivalent workload
 before closing overall performance. The repeatable driver checks save hashes,
 endpoints and populations; it is not deterministic full-world replay. Persistent
 awareness random streams now use saved actor identity and world seed (`8d5f4bd1`),
-with a regression across different scene IDs and global random seeds. Asynchronous
-navigation still produces population drift that the analyzer rejects. Arbitrary
-human input replay still needs retained initial state/settings, tick-indexed
-actions and full replay state checks. Normal-exit capture acknowledgement also
-remains open; position breadcrumbs alone cannot reconstruct player actions.
+with a regression across different scene IDs and global random seeds. The
+[corpse/publication follow-up](../issues/runtime-performance/corpse-publication-2026-11-26.md)
+identifies and fixes mismatched admission coverage (`da6e5837`) and adds resident
+and corpse identity checkpoints. A later human save changed source positions;
+comparisons across those hashes are rejected. Full world-state determinism is
+still unqualified. Arbitrary human input replay needs retained initial state and
+settings, tick-indexed actions and full replay state checks. Normal-exit capture
+acknowledgement also remains open; position breadcrumbs alone cannot reconstruct
+player actions.
+
+The corpse/publication changes remove discarded rest-pose bodies/shapes/joints
+(`6d3304f8`), share per-call exclusion packets and prune the existing model index
+(`c5b5f63d`), and eliminate exact render-seam duplicates from dense collision inputs
+(`4b25ff19`). Geometry, contact, missing-anatomy and query regressions pass. The
+same six-leg replay now checks actor/corpse identities and pauses simulation during
+focus setup; its final Hidden Meadow gameplay image was inspected. Overall p99
+still does not improve: 21.200 to 21.633 ms, with no net whole-frame CPU gain.
+The final repeat overlapped another Godot check and is excluded from timing claims;
+unfocused and population-mismatched controls remain rejected. The clean final
+build also includes newly registered, unplaced house models, limiting attribution.
+The linked report preserves adverse maxima and startup failures. Return with a
+stable catalog and exclusive Godot test window to attribute remaining process/draw
+bursts and engine waits, then repeated matched normal-desktop and recorder-off/
+uncapped evidence before closing the existing 60 FPS gate. Work removed and a
+passing replay do not establish overall frame-tail resolution or visual acceptance.
 
 The [frame-tail investigation](../issues/runtime-performance/frame-tail-2026-11-26.md)
 decouples water's simulation owners from bounded draw pages (`c41183eb`). Exact
 fixed-scene comparisons reduce submissions from 4,974 to 3,928 and draw-thread
 cycles by 12.5–19.0%, with immediate current-geometry fallback during edits.
 Geometry, stale publication, reload and integrated water regressions pass.
-Normal-desktop route p99 remains about 21–22 ms; the ordinary before/after pairs
-have population drift, and the fully matched isolated pair shows no p99 gain.
+That investigation measured normal-desktop route p99 around 21–22 ms; its
+ordinary before/after pairs had population drift, and the fully matched isolated
+pair showed no p99 gain. The later corpse/publication results above supersede
+its admission-drift diagnosis without changing its timing limitations.
 Large isolated presentation waits disappear in a no-presentation diagnostic and
 are absent from focused fullscreen controls, but their driver call is unproven.
 No product pacing or population setting was reduced. The replay now prevents

@@ -5,6 +5,10 @@ unproven. Normal-desktop and same-scene verification are complete. Preserve
 the unfavorable repetitions below. This follows the
 [collision-work investigation](physics-residency-2026-11-26.md#collision-work-reduction-follow-up).
 
+The later [corpse/publication investigation](corpse-publication-2026-11-26.md)
+identifies the admission-footprint mismatch behind population drift, separates
+changed human saves by hash, and continues the work-removal and cadence checks.
+
 ## Why collision improvement did not move the frame percentile
 
 The route contains about 3,600 rendered frames and 26 corpse admissions spread
