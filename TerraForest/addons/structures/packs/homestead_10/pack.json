@@ -1,0 +1,198 @@
+{
+  "schema": 1,
+  "id": "terraforest.homestead_10",
+  "name": "Homestead 10",
+  "version": "1.0.0",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "objects": [
+    {
+      "id": "dining_table",
+      "item": 810,
+      "name": "Homestead round pedestal dining table",
+      "recipe": [
+        102,
+        18,
+        227,
+        4
+      ],
+      "salvage": [
+        102,
+        9
+      ],
+      "health": 170,
+      "material": "wood"
+    },
+    {
+      "id": "dining_chair",
+      "item": 811,
+      "name": "Homestead upholstered dining chair",
+      "recipe": [
+        102,
+        7,
+        225,
+        5,
+        227,
+        2
+      ],
+      "salvage": [
+        102,
+        3,
+        225,
+        2
+      ],
+      "health": 100,
+      "material": "wood"
+    },
+    {
+      "id": "china_cabinet",
+      "item": 812,
+      "name": "Homestead glass fronted china cabinet",
+      "recipe": [
+        102,
+        22,
+        104,
+        3,
+        201,
+        4,
+        227,
+        4
+      ],
+      "salvage": [
+        102,
+        11,
+        104,
+        1,
+        201,
+        2
+      ],
+      "health": 180,
+      "material": "wood"
+    },
+    {
+      "id": "serving_trolley",
+      "item": 813,
+      "name": "Homestead two tier serving trolley",
+      "recipe": [
+        102,
+        8,
+        104,
+        5,
+        227,
+        4
+      ],
+      "salvage": [
+        102,
+        4,
+        104,
+        2
+      ],
+      "health": 110,
+      "material": "other"
+    },
+    {
+      "id": "tea_set",
+      "item": 814,
+      "name": "Homestead teapot and teacup set",
+      "recipe": [
+        201,
+        6,
+        102,
+        2
+      ],
+      "salvage": [
+        201,
+        3,
+        102,
+        1
+      ],
+      "health": 55,
+      "material": "stone"
+    },
+    {
+      "id": "serving_platter",
+      "item": 815,
+      "name": "Homestead ceramic serving platter",
+      "recipe": [
+        201,
+        3
+      ],
+      "salvage": [
+        201,
+        1
+      ],
+      "health": 45,
+      "material": "stone"
+    },
+    {
+      "id": "cutlery_tray",
+      "item": 816,
+      "name": "Homestead cutlery tray",
+      "recipe": [
+        102,
+        2,
+        104,
+        3
+      ],
+      "salvage": [
+        102,
+        1,
+        104,
+        1
+      ],
+      "health": 55,
+      "material": "wood"
+    },
+    {
+      "id": "bread_basket",
+      "item": 817,
+      "name": "Homestead woven bread basket",
+      "recipe": [
+        204,
+        6,
+        225,
+        2
+      ],
+      "salvage": [
+        204,
+        3
+      ],
+      "health": 45,
+      "material": "other"
+    },
+    {
+      "id": "fruit_bowl",
+      "item": 818,
+      "name": "Homestead fruit bowl",
+      "recipe": [
+        201,
+        3,
+        204,
+        3
+      ],
+      "salvage": [
+        201,
+        1
+      ],
+      "health": 45,
+      "material": "stone"
+    },
+    {
+      "id": "table_linen",
+      "item": 819,
+      "name": "Homestead folded tablecloth and napkins",
+      "recipe": [
+        225,
+        7,
+        204,
+        2
+      ],
+      "salvage": [
+        225,
+        3
+      ],
+      "health": 45,
+      "material": "other"
+    }
+  ]
+}

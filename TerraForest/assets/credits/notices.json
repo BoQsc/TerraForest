@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "homestead_10",
+      "title": "Homestead 10 dining room and serving pack",
+      "license": "CC0 1.0 assets / 0BSD code",
+      "source": "addons/structures/packs/homestead_10/ASSET_LICENSE.md",
+      "summary": "Ten original dining furnishings, transparent cabinet panes, hollow tableware, cutlery, woven bread basket, fruit and linen. Includes editable geometry and matching icons; storage, trolley motion, serving and edible contents remain unimplemented.",
+      "text": "# Homestead 10 — original dining room and serving furnishings\n\nNew original assets in this pack are contributed by TerraForest contributors\nunder **CC0-1.0**, to the extent copyright or related rights exist and are held\nby the contributors. This follows the repository contribution terms and does\nnot purport to license third-party rights.\n\nCC0 legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nCovered assets: `pack.json`, `models/dining_table.tres`,\n`models/dining_chair.tres`, `models/china_cabinet.tres`,\n`models/serving_trolley.tres`, `models/tea_set.tres`,\n`models/serving_platter.tres`, `models/cutlery_tray.tres`,\n`models/bread_basket.tres`, `models/fruit_bowl.tres`,\n`models/table_linen.tres`, their embedded materials/textures, and `icons.trtex`.\n\nThese original parametric models were authored with Codex for TerraForest on\n2026-11-26. The user requested a separate Homestead 10 pack and a picture of\nits actual models, accepting the proposed ten-object Dining Room & Serving\nroster. The brief specifies warm oak, cream ceramics, muted green fabric and\nbrass. No external models, images, textile patterns, fonts, food photographs,\nbranding or third-party reference artwork were supplied or copied. Glass panes,\ntableware profiles, hollow spout, woven basket, bread grain/scoring, fruit,\ncutlery and linen details are original geometry or procedural pixels.\n\n`author.gd` retains editable geometry. It reuses the project's original 0BSD\nmesh/tube helpers and CC0 materials from Homestead 02/04, and the original\n0BSD cushion helper from Homestead 07. Their terms/provenance remain intact.\nRuntime meshes embed their own geometry/materials/textures. `provenance.json`\nrecords exact output and local source hashes, including all three helper sources.\n\nGodot's primitives and SurfaceTool are external authoring tools, not new\nvendored dependencies or material covered by this dedication. Pack authoring,\ncatalog, integration and test code is original **0BSD**. Asset dedication is\nseparate from visual review and gameplay/performance acceptance."
+    },
+    {
       "id": "homestead_09",
       "title": "Homestead 09 bedroom and personal effects pack",
       "license": "CC0 1.0 assets / 0BSD code",

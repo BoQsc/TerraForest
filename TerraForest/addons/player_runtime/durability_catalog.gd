@@ -32,6 +32,9 @@ const MODELS={
 }
 
 static func model_profile(asset:String,objects:Dictionary={})->Dictionary:
+	if asset.begins_with("packs/homestead_10/"):
+		var profile:Dictionary=preload("res://addons/structures/packs/homestead_10/catalog.gd").profile(asset)
+		if not profile.is_empty():return profile
 	if asset.begins_with("packs/homestead_09/"):
 		var profile:Dictionary=preload("res://addons/structures/packs/homestead_09/catalog.gd").profile(asset)
 		if not profile.is_empty():return profile

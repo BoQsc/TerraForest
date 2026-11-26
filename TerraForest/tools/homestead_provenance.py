@@ -21,7 +21,7 @@ def record(number):
     if number >= 5:
         source.append(ROOT / "addons/structures/packs/homestead_04/author.gd")
 
-    if number == 9:
+    if number in (9, 10):
         source.append(ROOT / "addons/structures/packs/homestead_07/author.gd")
 
     def hashes(paths):
@@ -46,7 +46,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    for number in (1, 2, 3, 4, 5, 6, 7, 8, 9):
+    for number in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
         value = record(number)
         output = ROOT / "addons/structures/packs" / f"homestead_{number:02}" / "provenance.json"
         content = json.dumps(value, indent=2) + "\n"
@@ -55,7 +55,7 @@ def main():
                 parser.exit(1, f"Stale Homestead {number:02} provenance; run tools/homestead_provenance.py\n")
         else:
             output.write_text(content, encoding="utf-8")
-    print("PASS Homestead 01/02/03/04/05/06/07/08/09 provenance " + ("verified" if args.check else "recorded"))
+    print("PASS Homestead 01/02/03/04/05/06/07/08/09/10 provenance " + ("verified" if args.check else "recorded"))
 
 
 if __name__ == "__main__":

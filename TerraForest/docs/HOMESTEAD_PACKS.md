@@ -1,6 +1,6 @@
 # Homestead household object packs
 
-Nine separate original asset packs extend the existing table/chair/shelf/chest
+Ten separate original asset packs extend the existing table/chair/shelf/chest
 set. They use stable pack, item and native model identities, with committed
 baked meshes, icon atlases, editable source and exact hash provenance.
 
@@ -15,8 +15,9 @@ baked meshes, icon atlases, editable source and exact hash provenance.
 | [Homestead 07 — Living Room & Leisure](../addons/structures/packs/homestead_07/README.md) | Armchair, coffee table, bookcase, sideboard, record player, record crate, chessboard/pieces, newspapers, floor lamp, fireplace/logs | 780–789 |
 | [Homestead 08 — Entryway & Porch](../addons/structures/packs/homestead_08/README.md) | Hall console, bench, shoe rack/shoes, umbrella stand, doormat, key rack, mailbox, muddy boots, planter/foliage, watering can | 790–799 |
 | [Homestead 09 — Bedroom & Personal Effects](../addons/structures/packs/homestead_09/README.md) | Chest of drawers, dressing table, stool, tabletop mirror, folding screen, open suitcase, blankets, alarm clock, hot-water bottle, jewellery box | 800–809 |
+| [Homestead 10 — Dining Room & Serving](../addons/structures/packs/homestead_10/README.md) | Pedestal table, dining chair, china cabinet, serving trolley, tea set, platter, cutlery tray, bread basket, fruit bowl, table linen | 810–819 |
 
-All nine appear independently in the Objects pack filter and Dev Bag categories.
+All ten appear independently in the Objects pack filter and Dev Bag categories.
 Normal placement, recipes, partial salvage, durability, native history, model
 streaming and structure save/reload remain shared. Inventory drops use the
 universal parcel fallback and existing bounded physical pool. No new per-item
@@ -98,6 +99,14 @@ finish without live reflections. The first sheet at
 `reports/checks/20261126T102625456922Z/homestead_09.png` is retained as a bell-support
 comparison; longer supports connect the clock stems to their bell crowns in the
 final bake. Original helpers from Homestead 02/04/07 retain their source hashes.
+
+![Homestead 10 dining room and serving](../reports/checks/20261126T104145552833Z/homestead_10.png)
+
+Homestead 10 authoring preview: pedestal furniture, upholstered chair, transparent
+cabinet panes with dishes, a two-tier trolley, hollow tableware/spout, compartmented
+cutlery, an open-weave bread basket, fruit and folded linen. All contents are fixed
+parts of their parent furnishing. Original helpers from Homestead 02/04/07 retain
+their source hashes; runtime assets embed their own geometry/materials.
 
 ## Scope and return triggers
 
@@ -185,6 +194,19 @@ needs shared capacity, volume/heat conservation and native transfers. Return wit
 interaction and fresh-provider reload evidence before adding behavior. Mirror
 highlights, screen angles and clock hands are authored static details.
 
+Homestead 10 seating, cabinet storage, moving doors, trolley motion, pouring,
+drinking, edible contents, usable cutlery and cloth simulation remain unimplemented.
+Seating needs shared actor/seat ownership. Storage needs cross-collection identities,
+transfer/lock rules and nonempty-removal protection. Moving parts need shared state
+and collision checks. Trolleys need one physics owner, bounded residency and saved
+motion/support checks. Serving needs shared capacity/volume/heat conservation and
+native transfers; edible contents need consumption rules avoiding duplicate
+decorative/inventory quantities. Cutlery needs explicit interaction permissions;
+cloth needs a bounded effects/state contract. Return with interaction and fresh
+provider reload evidence before adding behavior. Cabinet glazing is simple alpha
+transparency, without live reflection/refraction effects. Matched sparse/dense
+house captures are needed before making a graphical performance claim.
+
 Headless density fixtures cover 1,000 mixed placements per pack, native ownership
 and byte-exact reopen. They do not establish graphical frame rate, transparent
 overdraw cost, dense-house navigation quality, total RAM/VRAM or 60 FPS headroom.
@@ -194,6 +216,14 @@ furnishing is outside this milestone; the rejected district layout is unchanged.
 
 ## Verification
 
+- Homestead 10: 98 assertions covering paid placement, no unpaid duplicates,
+  shared damage/salvage, icons, byte-exact reopen, pre-pack save admission and
+  1,000 mixed placements: `reports/checks/20261126T104301441833Z/run.json`.
+  All ten meshes baked cleanly at `reports/checks/20261126T104023382679Z/run.json`.
+- Expanded Homestead 10 catalog: universal drops/recollection pass 1,203 checks
+  (`reports/checks/20261126T104400785585Z/run.json`) and physical drops pass 186
+  (`reports/checks/20261126T104459772253Z/run.json`). Actual-world rendered
+  G/input checks pass 35 (`reports/checks/20261126T104555980127Z/run.json`).
 - Homestead 09: 98 assertions covering paid placement, no unpaid duplicates,
   shared damage/salvage, icons, byte-exact reopen, pre-pack save admission and
   1,000 mixed placements: `reports/checks/20261126T102911146629Z/run.json`.
@@ -322,6 +352,8 @@ Homestead 08 identities were generated at
 `reports/checks/homestead08_uid_import_20261126T101933368289Z/run.json`.
 Homestead 09 identities were generated at
 `reports/checks/homestead09_uid_import_20261126T103345017630Z/run.json`.
+Homestead 10 identities were generated at
+`reports/checks/homestead10_uid_import_20261126T104749085767Z/run.json`.
 
 The input capture lifecycle cold-retained the older two menu images from
 `reports/checks/20261126T084058031606Z` after the later input driver exited.

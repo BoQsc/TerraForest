@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "pack": "terraforest.homestead_10",
+  "version": "1.0.0",
+  "creator": "TerraForest contributors, authored with Codex",
+  "date": "2026-11-26",
+  "origin": "Original parametric geometry and procedural materials; no external asset inputs",
+  "asset_license": "CC0-1.0",
+  "code_license": "0BSD",
+  "terms_evidence": "CONTRIBUTING.md and adjacent ASSET_LICENSE.md",
+  "authoring_tool": "Existing Godot 4.7.2 Steam; external engine, not vendored by this pack",
+  "brief": "A separate recognizable household pack with the user-approved roster and a rendered preview of its actual meshes",
+  "author_command": "python tools/run_godot_check.py homestead_10_pack --require \"failures=0\" -- --author-pack",
+  "icon_command": "python tools/run_godot_check.py homestead_10_pack --isolated-render --require \"failures=0\" -- --preview-only",
+  "source_sha256": {
+    "addons/structures/packs/homestead_02/author.gd": "44569d6b3e354ae1b940e5af5e43a6ab3027e4a44c6b3c34bf56fc43428411bf",
+    "addons/structures/packs/homestead_04/author.gd": "faa1d9431f6361274d4efd169844c4b70dc184bb39d0ed2a0376c39b4713560d",
+    "addons/structures/packs/homestead_07/author.gd": "a0aff6dcdb61348d61b5e257dbec06d286065e23e3d941c3c9e4c017c663b475",
+    "addons/structures/packs/homestead_10/author.gd": "8e26073ace9db3bc16f0c9b9fb820b35d67ee2b3628e159f2d2c7b2bd16a648a",
+    "addons/structures/packs/homestead_10/catalog.gd": "9e95c75e686c16e90eadd650ba04bbac5b25301c076fba9c177c8cfbafe8489d",
+    "tests/homestead_10_pack.gd": "cdd3d07fa7e634a48a2753b7b6461f4f4c4dae197a15ef2dabb197b78d7167cc"
+  },
+  "asset_sha256": {
+    "addons/structures/packs/homestead_10/icons.trtex": "1de98295b73ce0d93f4a4fb1f86126902d8afe59ba3e0c9a9508a8977b1d66b6",
+    "addons/structures/packs/homestead_10/models/bread_basket.tres": "51f58d081d7bbd9526c2e9f09fa1c7371180d982a99e61ff735241ac43052d64",
+    "addons/structures/packs/homestead_10/models/china_cabinet.tres": "7336bc2654c92157d762b9bf547f765f5edbf6cd66272d729b66b37688954c60",
+    "addons/structures/packs/homestead_10/models/cutlery_tray.tres": "bfd680e61141f95eecb35fe872030de4b5290b4b979985e4665abb91a90e9ec2",
+    "addons/structures/packs/homestead_10/models/dining_chair.tres": "c31bfc8b61f1ee1be2d6529f95d61c633c4c5b95ce328bbaf668a9a5cf06058d",
+    "addons/structures/packs/homestead_10/models/dining_table.tres": "76513f00c9d91d310283a0ac97bc45630050f4f02d3a2c50b9191f13af632e51",
+    "addons/structures/packs/homestead_10/models/fruit_bowl.tres": "1a0bba210031f440289491db69079e777d4f113f6cf71852538a252fbb811456",
+    "addons/structures/packs/homestead_10/models/serving_platter.tres": "3b5db8f966cbd5dc7b1615edbde23df3550f490e0c0593bb92a0b2fbf33506e0",
+    "addons/structures/packs/homestead_10/models/serving_trolley.tres": "85cdf3642b276765a21ed840bff64de0df0a037e3af2ce78112d0e4ec9d02e4e",
+    "addons/structures/packs/homestead_10/models/table_linen.tres": "d550aad4273d0b26d552b42bba96aea3e59ec991ed2fad00a05a3179841116d2",
+    "addons/structures/packs/homestead_10/models/tea_set.tres": "7a5a9c8ebb5d259cf3ac4d56e351cb2b53a7ce3a111ac4706236daba877d6dd3",
+    "addons/structures/packs/homestead_10/pack.json": "2a5b80f7428257fcd63300a7fbfc6b4461b876dc0a82b6b2d50bcdbd3a6e7b38"
+  }
+}
