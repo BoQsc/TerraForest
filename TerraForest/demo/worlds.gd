@@ -464,8 +464,7 @@ func start_preview()->void:
 	plan_progress=preload("res://addons/world_runtime/world_plan_progress.gd").new()
 	# Load native helper initializers on the owner thread, only when requested.
 	var job:Callable=load("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET,true,true,"user://cartography/generation",selected_options(),plan_progress)
-	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;show_preview_failure("Could not start the terrain preview worker.")
-	preview_resources=null
+	if preview_worker.start(job)!=OK:preview_worker=null;preview_resources=null;preview_button.disabled=false;show_preview_failure("Could not start the terrain preview worker.")
 func poll_preview()->void:
 	if preview_worker==null:
 		if preview_due_ms>=0 and Time.get_ticks_msec()>=preview_due_ms and world_tabs.current_tab==1:start_preview()
@@ -476,7 +475,7 @@ func poll_preview()->void:
 			var current:Dictionary=plan_progress.snapshot()
 			if not current.is_empty():preview_status.text=current.activity+"\n"+current.work
 		return
-	var completed=preview_worker.wait_to_finish();preview_worker=null;preview_button.disabled=preparation_pid>=0
+	var completed=preview_worker.wait_to_finish();preview_worker=null;preview_resources=null;preview_button.disabled=preparation_pid>=0
 	if preview_key!=selected_preview_key():return # A debounced preview of the latest recipe is pending.
 	if not completed is Dictionary:show_preview_failure("The terrain preview worker did not return a plan. Check the generator log.");return
 	var result:Dictionary=completed
@@ -496,6 +495,7 @@ func poll_preview()->void:
 	else:preview_status.text="Terrain preview · north is up · 2 km × 2 km"
 func _exit_tree()->void:
 	if preview_worker!=null:preview_worker.wait_to_finish();preview_worker=null
+	preview_resources=null
 
 func refresh_photographs()->void:
 	if preparation_pid>=0 or photograph_pid>=0 or worlds.get_selected_items().is_empty():return

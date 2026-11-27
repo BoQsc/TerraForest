@@ -16,6 +16,10 @@ func _initialize()->void:
 func run()->void:
 	Engine.max_fps=60
 	var resources=preload("res://addons/world_runtime/startup_resources.gd").new()
+	var authoring_started:=Time.get_ticks_usec()
+	if "--retain-authoring-assets" in OS.get_cmdline_user_args():
+		if not await resources.prepare_authoring(root):quit(1);return
+	var authoring_ms:=(Time.get_ticks_usec()-authoring_started)/1000.0
 	var overlap:bool="--overlap-resources" in OS.get_cmdline_user_args()
 	var independent_ok:bool=resources.begin_independent("res://demo/world.gd") if overlap else true
 	var worker:=Thread.new();var frames:=0
@@ -60,6 +64,7 @@ func run()->void:
 			if owners[kind].has(id) and owners[kind][id]!=site_index:valid=false
 			owners[kind][id]=site_index
 	var observation:Dictionary={"ok":valid,"identity":identity,"reference_plan_digest":reference_digest,"worker_ms":result.get("worker_ms"),"cache_hit":result.get("cache_hit",false),"native_rekey_verified":rekey and valid,"cache_profile":result.get("cache_profile",{}),"frames":frames,"independent_started":resources.independent_started,"independent_completed":resources.independent_completed}
+	observation["authoring_resource_ms"]=authoring_ms;observation["authoring_resources"]=resources.authoring_count
 	FileAccess.open(folder.path_join("cached_plan.json"),FileAccess.WRITE).store_string(JSON.stringify(observation,"  "))
 	print("CACHED_WORLD_PLAN failures=",0 if valid else 1," worker_ms=",result.get("worker_ms")," profile=",result.get("cache_profile",{})," lots=",identity.lots.size())
 	quit(0 if valid else 1)

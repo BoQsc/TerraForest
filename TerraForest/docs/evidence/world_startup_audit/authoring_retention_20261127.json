@@ -1,0 +1,237 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted local analysis for the requested generation/loading optimization. New original implementation is 0BSD; no external material imported.",
+  "date": "2026-11-27",
+  "status": "Generation preparation improved; exact measured-world gates pass. Stable standalone loading gain remains unqualified.",
+  "implementation": "A scoped StartupResources owner retains all validated pack model inputs and four base furniture meshes before the planning worker starts, through generation startup. Preview retains the same owner until its worker joins. Uses the existing four-request window, UI yields and cancellation drain. Ordinary world loading keeps its previous path after a slower prefetch attempt was rejected. No permanent global input cache, recipe, readiness gate, water scheduling, terrain pipeline or save-format change.",
+  "scope": "Fresh source/debug Godot 4.7.2 processes, Forward+, RTX 4050, retained OS/import/plan/derived caches, normal seed 1703/generator 29/default Frontier expedition and actors. Offscreen 1920x1080, 60 FPS cap. Loading-ready precedes introduction completion/player control. One full generation pair and one final standalone loading pair; not a repeatability, cold-cache, packaged or foreground performance guarantee.",
+  "generation_before": {
+    "receipt": {
+      "path": "reports/startup_optimization/planning_after_20261127T084004646891Z/run.json",
+      "sha256": "537f862aca072a5423b6ff5abde00eec549325159932bdd9f9b20f5388a1e850"
+    },
+    "passed": true,
+    "metrics": {
+      "first_ready_seconds": 123.54949,
+      "creating_seconds": 91.783978,
+      "planning_seconds": 15.142978,
+      "initialization_seconds": 18.577074,
+      "outdoor_seconds": 15.431684,
+      "save_seconds": 10.568453,
+      "map_seconds": 4.931887,
+      "map_ready_seconds": 0.023069,
+      "map_cache_verified": true,
+      "placements_identical": true,
+      "skipped_identical": true,
+      "generated_content_matches": {
+        "building_parking": true,
+        "container_locks": true,
+        "door_reinforcement": true,
+        "exploration": true,
+        "house_lights": true,
+        "house_sleepers": true,
+        "location_originals": true,
+        "plan": true,
+        "generated_water": true
+      },
+      "map_pixels_match": {
+        "Blocks": true,
+        "Objects": true,
+        "Water": true,
+        "terrain": true
+      }
+    },
+    "resources": {
+      "peak_private_commit_bytes": 4099104768,
+      "peak_working_set_bytes": 2399125504,
+      "peak_dedicated_gpu_bytes": 1760243712,
+      "errors": []
+    }
+  },
+  "generation_after": {
+    "receipt": {
+      "path": "reports/startup_optimization/planning_after_20261127T091624927331Z/run.json",
+      "sha256": "4f79bfb3d85727cce073c2f79a33270ed019ba0f63cc568e2b7f6f9bde4032e7"
+    },
+    "passed": true,
+    "metrics": {
+      "first_ready_seconds": 102.811655,
+      "creating_seconds": 70.728598,
+      "planning_seconds": 2.710815,
+      "initialization_seconds": 8.161517,
+      "outdoor_seconds": 15.89774,
+      "save_seconds": 10.669932000000001,
+      "map_seconds": 5.068085,
+      "map_ready_seconds": 0.020461,
+      "map_cache_verified": true,
+      "placements_identical": true,
+      "skipped_identical": true,
+      "generated_content_matches": {
+        "building_parking": true,
+        "container_locks": true,
+        "door_reinforcement": true,
+        "exploration": true,
+        "house_lights": true,
+        "house_sleepers": true,
+        "location_originals": true,
+        "plan": true,
+        "generated_water": true
+      },
+      "map_pixels_match": {
+        "Blocks": true,
+        "Objects": true,
+        "Water": true,
+        "terrain": true
+      }
+    },
+    "resources": {
+      "peak_private_commit_bytes": 4099784704,
+      "peak_working_set_bytes": 2408755200,
+      "peak_dedicated_gpu_bytes": 1760239616,
+      "errors": []
+    }
+  },
+  "generation_measurement_revision": "The full generation measurement included a redundant early-input branch for ordinary loading. That branch was then removed. The generation preparation path and generated saved content are unchanged; the final standalone loading measurement and regressions verify the narrowed scope. No second world was allocated solely for that post-generation loading-path removal.",
+  "loading_before": {
+    "receipt": {
+      "path": "reports/startup_optimization/loading_before_20261127T085746064628Z/run.json",
+      "sha256": "8bb7df13bf24a5543b03786b5c7a736834c94a977ec7bacf5215e7b797c98b02"
+    },
+    "passed": true,
+    "metrics": {
+      "first_ready_seconds": 28.715398,
+      "map_ready_seconds": 1.313132,
+      "map_cache_verified": true,
+      "source_files_unchanged": true
+    },
+    "resources": {
+      "peak_private_commit_bytes": 3980169216,
+      "peak_working_set_bytes": 2127429632,
+      "peak_dedicated_gpu_bytes": 1760206848,
+      "errors": []
+    }
+  },
+  "loading_final": {
+    "receipt": {
+      "path": "reports/startup_optimization/loading_after_20261127T092040227762Z/run.json",
+      "sha256": "e11afa3bdcdf096b7983a58cdbb7015608a95012ef2e7d0d0ed26f9b380cb11c"
+    },
+    "passed": true,
+    "metrics": {
+      "first_ready_seconds": 27.404002000000002,
+      "map_ready_seconds": 1.324726,
+      "map_cache_verified": true,
+      "source_files_unchanged": true
+    },
+    "resources": {
+      "peak_private_commit_bytes": 3974455296,
+      "peak_working_set_bytes": 2122850304,
+      "peak_dedicated_gpu_bytes": 1760206848,
+      "errors": []
+    }
+  },
+  "factory_diagnostic": {
+    "receipt": {
+      "path": "reports/startup_optimization/asset_retention_20261127/factory_profile.json",
+      "sha256": "f1fb488f8cb94acb2d7af0fd81b100e0009b6e050bc0fc2f978277cc36cc6f4c"
+    },
+    "same_process_warm_cache": true,
+    "identities_equal": true,
+    "resources": 114,
+    "before_ms": 14186.246000000001,
+    "input_preparation_ms": 2538.45,
+    "retained_factories_ms": 241.13
+  },
+  "cached_plan": {
+    "receipt": {
+      "path": "reports/startup_optimization/asset_retention_20261127/cached_plan.json",
+      "sha256": "0f16382f70a564832a7e2c03dbb4ed5f934bf15347c63d0443176d565b4ac8df"
+    },
+    "worker_ms": 616.483,
+    "authoring_resource_ms": 2490.897,
+    "resources": 114,
+    "passed": true,
+    "prefab_identities": 50,
+    "digest": "dcb710218566c5db0a826f00f493f3284b9b2676c33e93babe5c8fb12b74189b",
+    "independent_presentation_loads": 59
+  },
+  "verification": {
+    "resources": {
+      "path": "reports/startup_optimization/asset_retention_20261127/final_resources.json",
+      "sha256": "22827f39f4807f701cb7a091d1a2f1bd06e684fb137e0ad9d1217be9af67f952"
+    },
+    "resource_log": {
+      "path": "reports/startup_optimization/asset_retention_20261127/final_resources.log",
+      "sha256": "b6995a3795b9adb792a1a5507146527bd14a70be3cc83b4d8fde84a1c5fb3dd1"
+    },
+    "resource_assertions": 20,
+    "saved_content": {
+      "path": "reports/startup_optimization/asset_retention_20261127/equivalence.json",
+      "sha256": "8a0c94ac3d2452fc0e5f513225b95d82034c19ae0e7d70280cf701724e0148a4"
+    },
+    "saved_content_log": {
+      "path": "reports/startup_optimization/asset_retention_20261127/equivalence.log",
+      "sha256": "c72cb91b7d4981b404e844f64524ad682a0c6c70f2442b80322e5cc3c4f86a87"
+    },
+    "file_count": 5592,
+    "files_unchanged": true,
+    "baseline_slot": "StartupBench_9c0924c896234f6d",
+    "candidate_slot": "StartupBench_32ab05dbedc345b0",
+    "saved_water_ml": 27362980416,
+    "allowed_difference": "The original comparator permits only empty above-sea ocean-cap records; this run has three extra candidate caps. All common water records, quantities, geometry, contacts, vacancies, terrain and structures match. Raw water byte identity is not claimed.",
+    "objects": 4750,
+    "collections": 136,
+    "pages": 826,
+    "outdoor_placements": 684,
+    "outdoor_skips": 919
+  },
+  "rejected_attempts": [
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/loading_before_20261127T085444767848Z/run.json",
+        "sha256": "6e95a70a9008437d2bbf4d4ae890581d95ef29916597ff580537086a6f6fa296"
+      },
+      "reason": "Older fixture has a stale terrain-map cache after the water native rebuild. Warm-map gate failed; baseline was replaced with the latest certified fixed-water fixture, without relaxing the assertion."
+    },
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/loading_after_20261127T091153598338Z/run.json",
+        "sha256": "2affabe56cbb10a3261f98c318c1e0941a6ad834e5ca9113327d4c814cce67c2"
+      },
+      "reason": "Broadening input prefetch to ordinary loading measured 31.743 s versus 28.715 s. Catalog render preparation already retains the mesh inputs. Removed this branch; no improvement claimed for it."
+    },
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/asset_retention_20261127/resource_lifetime.json",
+        "sha256": "5bd677921e2322e341ed5a449bb003f5aac171c8c2c67277581f9e5d9e81cdb8"
+      },
+      "reason": "Weak-reference assertion inside the same active coroutine failed, where iterator/other coroutine locals could still hold references. Preserved as an unsuccessful test design."
+    },
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/asset_retention_20261127/resource_lifetime_scoped.json",
+        "sha256": "26dc1e9067bc2f188c7355e2df8ea8c83b1a7d816c2eb26df777e659eb6c54bd"
+      },
+      "reason": "Moving only the iterator into a helper still checked lifetime within the long caller scope and failed. Final test verifies release after the complete independent asynchronous owner scope returns; it passes."
+    }
+  ],
+  "remaining": "Outdoor placement ~15.9 s, saving ~10.7 s, earthworks ~9.8 s and landscape loading ~13 s remain substantial. Further changes require matched repeated timings and unchanged generated/saved content. Broader seeds/cache states, first player control, foreground cadence, cold launch and final package acceptance remain separate gates.",
+  "retention": "Existing storage admission and receipt-owned archival lifecycle. Prior ordinary generation fixture archived and hash-verified; one new world, no export/source copy. Diagnostic folder admitted 4 MiB, zero world/scratch growth; benchmarks separately admitted. Failed evidence preserved.",
+  "sources": {
+    "addons/world_runtime/startup_resources.gd": "1d28a458045bcab5ee7db8c4e73824f2e57ef9935ef6404fec20695c9c4ceb1b",
+    "addons/world_runtime/generate_world_task.gd": "d8355d8f259efd11d0957012aacd19f1a1a82fa58d13e5676ecffa6b35f1f4d1",
+    "demo/worlds.gd": "bc99a76d0572d46d6c5e9763aa02f7b4f11dd799159a7cdd7711898351a5e76a",
+    "tests/startup_resources.gd": "6fb4ea3e3bf78ed2e28804cc1670456e2369197c0a6c63d4b7ab558d56b0aded",
+    "tests/cached_world_plan.gd": "f29ac0a5486f35f9645179857f8139451820959de29b04c08a748d0cc21a6521",
+    "addons/world_runtime/startup_index.json": "29b41d1d9032edc43adb4901cd2784542bf82fae17e5da0202cd1e8214906eff"
+  },
+  "source_preparation": {
+    "receipt": {
+      "path": "reports/startup_optimization/asset_retention_20261127/prepare.json",
+      "sha256": "52d72afd1a6ce68f872e4b3d74875f117cf791489d800c56772766e8e6ca1b02"
+    },
+    "seconds": 36.40514509999775,
+    "passed": true,
+    "ready_current": true
+  }
+}

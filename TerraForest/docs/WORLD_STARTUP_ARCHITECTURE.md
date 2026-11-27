@@ -1164,3 +1164,70 @@ post-reboot cold launch and package acceptance remain separate requirements.
 
 Final source preparation passes (37.3 s), its reusable ready record is current,
 and Godot generated the new regression UID. No engine error was reported.
+
+
+### Retaining prefab inputs during planning — 2026-11-27
+
+Prefab factories repeatedly loaded the same raw furniture meshes. Each factory
+released its inputs after producing native block/attachment records, and Godot's
+resource cache did not retain them. A scoped startup owner now loads the validated
+pack inputs plus four base furniture meshes before the planning worker starts.
+It retains them through generated-world initialization. Preview owns them until
+its worker joins. The existing four-request window, UI yields and cancellation
+drain remain in use; no global permanent input cache is added.
+
+| Warm-cache source measurement | Before | With scoped retention |
+| --- | ---: | ---: |
+| Planning, including input preparation | 15.143 s | 2.711 s |
+| Generated-world initialization | 18.577 s | 8.162 s |
+| World creation | 91.784 s | 70.729 s |
+| Generate to loading-ready | 123.549 s | 102.812 s |
+| Final standalone saved-world load | 28.715 s | 27.404 s |
+
+The full generation sample improves **16.8%**, about 20.7 seconds. A separate
+rendered factory diagnostic reduces 14.186 s to 2.780 s including input loading,
+with every factory fingerprint unchanged. Cached-plan verification takes 0.616 s
+plus 2.491 s of input preparation, preserves all 50 prefab identities and the
+original plan digest, and overlaps 59 independent presentation loads.
+
+A broader attempt also prefetched the inputs during ordinary loading. That run
+was slower (31.743 s); render preparation already retains its source meshes.
+The final code removes that branch and keeps ordinary loading's previous path.
+The full generation measurement predates this narrowing: generation preparation
+and saved content are unchanged, while final standalone loading and regressions
+verify the narrowed path. No second world was allocated just to repeat that
+post-generation loading change. The final 1.3 s loading difference is small
+relative to previous variability; **a reliable whole-load speedup is not claimed**.
+
+All 684 outdoor placements, 919 skips, generation metadata and four map layers
+match. Expanded saved terrain, structures and every common water record match,
+including quantities, density, geometry, contacts and vacancies. Water remains
+27,362,980,416 ml. The existing comparator permits three additional empty
+above-sea ocean-cap records in the candidate; raw water-byte identity is not
+claimed, and no lower/wet record is ignored. All 5,592 compared files remain
+unchanged, excluding locks only. The loaded world still has 4,750 objects,
+136 collections and 826 pages. Sampled RAM/VRAM remain within existing budgets.
+
+All 20 final startup checks pass, including cancellation during authoring and
+planning, bounded submitted handles, and release of raw meshes after the complete
+asynchronous preparation scope returns. Two earlier lifetime assertions inside
+an active caller scope failed and remain retained; the final independent scope
+checks actual owner lifetime. An older loading fixture failed its warm-map gate
+because terrain cache data was stale after the native rebuild. The comparison
+uses the latest certified fixed-water fixture instead; no cache assertion was
+weakened. The existing source-image export warning also remains in the generation
+log; these source checks do not establish package acceptance.
+
+[Receipts, source hashes, rejected attempts and exact scope](evidence/world_startup_audit/authoring_retention_20261127.json).
+Normal seed 1703/generator 29/default Frontier expedition and actors, fresh source
+processes, retained OS/import/plan/derived caches, offscreen Forward+ at 1920x1080
+and 60 FPS apply. Loading-ready precedes introduction completion/player control.
+This is one full generation pair, not a statistical throughput guarantee.
+
+Outdoor placement (~15.9 s), saving (~10.7 s), earthworks (~9.8 s) and landscape
+loading (~13 s) remain substantial. Further native scheduling changes require
+repeated matched timings and the same saved-content gates. Wider seeds/cache
+states, first control, foreground cadence, post-reboot cold launch and package
+acceptance remain open. Existing admission and verified archival retention
+preserve older/failed evidence; no player save, export or source copy is changed.
+Final source preparation passes (36.4 s) and its reusable ready record is current.

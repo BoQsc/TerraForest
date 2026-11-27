@@ -9667,3 +9667,28 @@ cold launch, first control, foreground cadence and final-package gates remain.
 All compared fixture files remain unchanged. No new visual acceptance is claimed.
 
 Final source preparation passes; its reusable ready record is current.
+
+
+### Scoped prefab-input retention — 2026-11-27
+
+Repeated raw-mesh loads across prefab factories are removed by a temporary
+startup owner, retained through planning and generated-world initialization.
+Planning improves **15.1 → 2.7 s**, initialization **18.6 → 8.2 s**, creation
+**91.8 → 70.7 s**, and the full warm-cache Generate-to-ready sample
+**123.5 → 102.8 s (16.8%)**. All 50 prefab identities, outdoor placements, maps,
+expanded terrain/structures and common water records match. The unchanged water
+comparison allows only three extra empty above-sea caps in the candidate;
+all 5,592 checked fixture files remain unchanged. Twenty startup/lifetime/
+cancellation checks and final source preparation pass.
+
+The slower broad ordinary-loading prefetch attempt was removed. Final saved-world
+loading is **27.4 s versus 28.7 s**, insufficient to establish a reliable total-load
+gain. The full generation timing predates that post-generation loading-path
+narrowing; the generation preparation path is unchanged and final loading is
+separately checked. Failed lifetime harness attempts and an older fixture's
+stale-map-cache failure remain retained.
+[Measurements, revision scope and receipts](WORLD_STARTUP_ARCHITECTURE.md#retaining-prefab-inputs-during-planning--2026-11-27).
+Outdoor placement, saving, earthworks and landscape loading remain the next
+measured costs. Revisit them with matched repeated timings and unchanged saved
+content; wider seeds/cache states, first control, foreground cadence, cold launch
+and final-package acceptance remain open. No world-quality acceptance is claimed.

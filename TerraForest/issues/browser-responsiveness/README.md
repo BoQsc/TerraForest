@@ -1,7 +1,7 @@
 # Startup and saved-world browser latency
 
 - Status: Improved-partial / complete source launch measured; post-reboot cold-cache test pending.
-- Updated: 2026-11-26. First-UI changes build on `09974c9a`; earlier fixes include `83f09d30` and `39f97200`.
+- Updated: 2026-11-27. First-UI changes build on `09974c9a`; earlier fixes include `83f09d30` and `39f97200`.
 - User review: Pending.
 - Symptom: Startup waits for save/photo work; filtering or changing worlds hitches.
 
@@ -432,3 +432,26 @@ first control, foreground cadence and packaged/cold launch remain open.
 This is an engineering improvement, not world-quality or final-package approval.
 
 Final source preparation passes; its reusable ready record is current.
+
+
+## Scoped prefab-input retention — 2026-11-27
+
+Planning now retains validated raw furniture inputs across its prefab factories,
+with bounded loading and explicit worker lifetime. The full warm-cache generation
+sample improves **123.5 → 102.8 s (16.8%)**; planning falls **15.1 → 2.7 s** and
+initialization **18.6 → 8.2 s**. Prefab identities, all outdoor placements, maps,
+expanded terrain/structures and common water records match. Three extra empty
+above-sea caps are allowed by the existing comparison; no wet record differs.
+All 5,592 checked fixture files remain unchanged. Twenty cancellation/lifetime/
+startup checks and final source preparation pass.
+
+A slower ordinary-loading prefetch attempt was removed. Final loading is
+**27.4 s versus 28.7 s**; a reliable whole-load gain remains unqualified. The full
+generation timing predates removal of that redundant post-generation loading
+branch; generation preparation remains unchanged and final loading is checked
+separately. Failed scope-lifetime assertions and the older fixture's stale map
+cache remain recorded. [Exact evidence and boundaries](../../docs/WORLD_STARTUP_ARCHITECTURE.md#retaining-prefab-inputs-during-planning--2026-11-27).
+Outdoor placement, saving, earthworks and landscape loading remain substantial.
+Return with repeated matched timings and saved-content checks before additional
+pipeline changes; broader seed/cache, first-control, foreground, cold and package
+gates remain open. Engineering evidence does not confer visual approval.

@@ -94,12 +94,17 @@ func run()->void:
  if not qualification and "--capture-generation-ui" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png(output_dir.path_join("generation_planning.png"))
- planning_worker=Thread.new()
  var arguments:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
  var plan_progress:=preload("res://addons/world_runtime/world_plan_progress.gd").new()
  var resources:=preload("res://addons/world_runtime/startup_resources.gd").new()
+ var authoring_ready:bool=await resources.prepare_authoring(self,func(done:int,total:int):
+  resources.cancelled=cancelled()
+  progress("Planning terrain, streets and building sites",0,0,{"activity":"Loading building resources · %d / %d"%[done,total]}))
+ if cancelled():quit(2);return
+ if not authoring_ready:print("GENERATION_AUTHORING_RESOURCES_FAILED");quit(1);return
  var independent_ok:bool=resources.begin_independent("res://demo/world.gd")
  var build:=preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(seed_value,generator,"--central-market" in arguments,"--regional-connection" in arguments,"user://generation_plans",world_options,plan_progress,"--civic-review" in arguments)
+ planning_worker=Thread.new()
  if planning_worker.start(build)!=OK:
   planning_worker=null;await resources.finish_independent(self);print("WORLD_PLAN_WORKER_FAILED");quit(1);return
  var planning_frames:=0

@@ -11,6 +11,23 @@ var independent_cursor:=0
 var independent_started:=0
 var independent_completed:=0
 var independent_ok:=true
+var authoring_prepared:=false
+var authoring_count:=0
+
+func prepare_authoring(owner:Node,report:Callable=Callable())->bool:
+	if authoring_prepared:return not cancelled
+	# These meshes are inputs to multiple prefab factories and render preparation.
+	# ResourceLoader's cache is weak: retain them for this preparation's lifetime,
+	# then release them with the job. Finish before starting a planning worker.
+	var packs=preload("res://addons/structures/pack_registry.gd")
+	if cancelled or not packs.discover():return false
+	var paths:Array[String]=[]
+	for row:Dictionary in packs.objects.values():paths.append(row.directory+"/models/"+row.id+".tres")
+	for name:String in ["table","chair","shelf","storage_chest"]:
+		paths.append("res://addons/structures/prefabs/"+name+"_model.tres")
+	authoring_prepared=await _prepare_ordered(owner,paths,report)
+	if authoring_prepared:authoring_count=paths.size()
+	return authoring_prepared
 
 static func independent_asset(path:String)->bool:
 	# Authored presentation assets only. Planner prefab factories and their
@@ -60,6 +77,10 @@ func finish_independent(owner:Node)->bool:
 	return drained and independent_ok and not cancelled
 
 func prepare(owner:Node,path:String,report:Callable=Callable())->bool:
+	# Ordinary world loading already owns pack inputs through render preparation.
+	# Retain early only for planning, before those render resources exist.
+	if path=="res://addons/world_runtime/world_generation_plan.gd":
+		if not await prepare_authoring(owner,report):return false
 	var decoded=JSON.parse_string(FileAccess.get_file_as_string("res://addons/world_runtime/startup_index.json"))
 	if not decoded is Dictionary:return false
 	var graph:Dictionary=decoded
@@ -69,6 +90,9 @@ func prepare(owner:Node,path:String,report:Callable=Callable())->bool:
 	for dependency:String in graph.get(path,[]):
 		if dependency.ends_with(".gd") and not ResourceLoader.has_cached(dependency):ordered.append(dependency)
 	ordered.append(path)
+	return await _prepare_ordered(owner,ordered,report)
+
+func _prepare_ordered(owner:Node,ordered:Array[String],report:Callable)->bool:
 	var pending:Dictionary={}
 	var deadline:=Time.get_ticks_usec()+8000
 	for index in ordered.size():
