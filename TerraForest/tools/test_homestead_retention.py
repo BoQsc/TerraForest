@@ -9,6 +9,14 @@ from maintain_homestead_captures import FAMILIES, candidates
 
 
 class PreviewOwnership(unittest.TestCase):
+    def test_one_ready_keeps_newest_and_preserves_pins(self):
+        first = self.preview(1, "grand_buildings")
+        pinned = self.preview(2, "grand_buildings")
+        (pinned / ".retain").write_text("comparison evidence")
+        latest = self.preview(3, "grand_buildings")
+        self.assertEqual([first], [folder for folder, _ in candidates(self.root, keep_ready=1)])
+        self.assertTrue((latest / "grand_buildings.json").exists())
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)

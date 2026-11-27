@@ -1,5 +1,12 @@
 # Visual issue tracker
 
+[Three grand buildings](grand-buildings/README.md) adds a 60-flat block, a
+cathedral with two cellar levels and twin bell towers, and a ten-storey street
+tower with 58 flats and eight shops. They are additional construction choices;
+user visual approval, terrain/site integration and dense-street performance
+remain separate from the prefab engineering checks.
+
+
 [Homestead Manor and outdoor object integration](homestead-manor/README.md)
 now also records the generation-timeout fix and the requested Homestead Valley
 with 52 buildings and 684 outdoor objects. It retains the first interior, contacts and cutaway,

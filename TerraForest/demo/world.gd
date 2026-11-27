@@ -668,6 +668,10 @@ func _setup_prefabs() -> void:
 	var manor: Resource=preload("res://addons/structures/mansion/catalog.gd").asset()
 	if manor!=null:
 		structure_prefabs.append(manor); manor.changed.connect(_invalidate_prefab_preview)
+	for index in preload("res://addons/structures/grand_buildings/catalog.gd").IDS.size():
+		var grand: Resource=preload("res://addons/structures/grand_buildings/catalog.gd").asset(index)
+		if grand!=null:
+			structure_prefabs.append(grand); grand.changed.connect(_invalidate_prefab_preview)
 	for index in preload("res://addons/structures/civic_catalog.gd").IDS.size():
 		var civic:Resource=preload("res://addons/structures/civic_catalog.gd").asset(index)
 		if civic!=null:

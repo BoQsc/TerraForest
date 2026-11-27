@@ -274,6 +274,24 @@ Logs and JSON remain loose. Restore `captures.archive.json` with the existing
 
 ## Object pack and mansion captures
 
+`grand_buildings` admits 8 MiB headless or 32 MiB rendered for three native
+snapshots capped at 1 MiB each, nine normalized 1280 × 720 RGB pictures and
+small logs/JSON. Bake-only and fresh-process restore runs admit 2 MiB. Its
+`grand_buildings_world` check admits 2 MiB and opens an existing player world
+read-only. Neither check allocates a save, export or source copy; their planned
+test-world growth is zero. Named snapshots, measurements and pictures join
+`maintain_homestead_captures.py`'s receipt-owned lifecycle. Default retention is
+two ready runs per family. Under report-budget pressure, explicit
+`--apply --keep-ready 1` keeps the newest ordinary run and cold-retains older
+receipt-owned output with reconstruction/hash verification. Pins, logs and
+unknown files stay protected; no storage budget is raised. The November 27
+admission failure was resolved by cold-retaining 59,814,706 bytes of older object
+captures and 6,859,494 bytes of water captures using this one-ready policy.
+If another player/game process is active, grand-building checks explicitly record
+pending archival and keep the exact output/receipts for the next idle maintenance
+invocation. They neither stop that process nor compress during gameplay; ordinary
+storage admission still blocks a launch if those retained bytes exhaust the budget.
+
 `run_godot_check.py` admits 2 MiB for registry/container/restore checks, 16 MiB
 for an Outdoor 01 sheet, 64 MiB for six mansion views, and 32 MiB for the ordinary
 object-system run (three PNGs, a native state fixture capped at 4 MiB, timing JSON

@@ -46,6 +46,8 @@ def planned_report_bytes(command):
     if any(str(value) == "res://tests/vegetation_shading.gd" for value in command):
         return 24 * 2**20  # Driver caps nine encoded frames at 20 MiB; no saved world.
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
+    if scripts == {"grand_buildings_world.gd"}:
+        return 2 * 2**20  # Read-only normal construction catalog assertions; no capture or saved world.
     if scripts in ({"outdoor_support_batches.gd"}, {"cached_world_plan.gd"}, {"startup_resources.gd"}, {"generation_saved_equivalence.gd"}):
         return 2 * 2**20  # Bounded assertions and logs; no new saved world or image.
     if scripts == {"world_browser_responsiveness.gd"}:
@@ -68,6 +70,10 @@ def planned_report_bytes(command):
         return (8 if "--headless" in command else 32) * 2**20  # Three 1080p pictures, <=4 MiB fixture and small JSON/log.
     if scripts == {"homestead_mansion.gd"}:
         return (2 if "--headless" in command else 64) * 2**20  # Six bounded views; no saved world/export.
+    if scripts == {"grand_buildings.gd"}:
+        if "--bake-only" in command or any(str(arg).startswith("--restore-from=") for arg in command):
+            return 2 * 2**20  # Assertions/logs only; baked source assets are outside report storage.
+        return (8 if "--headless" in command else 32) * 2**20  # Three <=1 MiB snapshots, nine 1280x720 RGB views, logs; no world/export.
     if scripts in ({"object_pack_registry.gd"}, {"object_pack_storage.gd"}, {"object_system_restore.gd"}):
         return 2 * 2**20  # Manifest/registration assertions; no images or world.
     if scripts in ({"homestead_pack.gd"}, {"homestead_02_pack.gd"}, {"homestead_03_pack.gd"}, {"homestead_04_pack.gd"}, {"homestead_05_pack.gd"}, {"homestead_06_pack.gd"}, {"homestead_07_pack.gd"}, {"homestead_08_pack.gd"}, {"homestead_09_pack.gd"}, {"homestead_10_pack.gd"}, {"outdoor_01_pack.gd"}):
@@ -120,6 +126,18 @@ def planned_report_bytes(command):
     return 256 * 2**20
 
 
+def retain_grand_building_captures():
+    from maintain_homestead_captures import maintain
+    try:
+        return maintain(apply=True)
+    except OSError as error:
+        if not str(error).startswith("Maintenance requires idle gameplay/builds:"):
+            raise
+        # Never stop a player session or compress evidence during gameplay.
+        # Admission still applies. The next idle invocation retries this receipt-owned lifecycle.
+        return {"pending": True, "reason": str(error), "retry": "Next idle object-capture maintenance"}
+
+
 def verify_pack_native(root=ROOT):
     def hashes(folder):
         return {str(path.relative_to(folder)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -160,7 +178,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
-                world_bytes = 0 if any(test in command for test in ("res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd")) else 128 * 2**20
+                world_bytes = 0 if any(test in command for test in ("res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
                 result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command), world_bytes=world_bytes)
             result['preflight_seconds'] = time.monotonic() - started
             started = time.monotonic()  # Storage admission is not engine startup timing.
@@ -297,9 +315,12 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
-    if args.test in {"vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         from maintain_homestead_captures import maintain
-        maintain(apply=True)
+        if args.test == "grand_buildings":
+            details["capture_retention_before"] = retain_grand_building_captures()
+        else:
+            maintain(apply=True)
     folder.mkdir(parents=True)
     manifest = folder / "run.json"
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
@@ -312,8 +333,14 @@ def main(argv=None):
         maintain(apply=True)
     if args.test == "physics_residency_world":
         maintain(apply=True)
-    if args.test in {"vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
-        maintain(apply=True)
+    if args.test in {"vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+        if args.test == "grand_buildings":
+            details["capture_retention_after"] = retain_grand_building_captures()
+            manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
+            if details["capture_retention_after"].get("pending"):
+                print("Capture archival pending: gameplay/builds are active; receipts and output retained.")
+        else:
+            maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1
 

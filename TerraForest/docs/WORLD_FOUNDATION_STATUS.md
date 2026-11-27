@@ -1,3 +1,26 @@
+## Three grand buildings — 2026-11-27
+
+Additional ordinary Building / Prefab choices now include Foundry Court (60
+flats), Saint Brigid (large two-level crypt, nave galleries and twin bell towers)
+and Needle Street (ten storeys, 58 flats and eight street shops). Each exceeds
+twice Homestead Manor's independently measured supported clear floor area; the
+cathedral also exceeds twice its full bounds in every axis. Native placement,
+independent-owner restore, single-block removal, landing headroom and physical
+up/down checks at each core's first/last flight pass the final 81-check rendered
+run, `20261127T103514993703Z`. Normal player-world catalog availability and an
+unchanged source-save hash also pass. Rendering exposed an open cathedral gable;
+the final inspected views show its closure, lancet windows and designed crypt
+chambers. Clear floor areas are 12,222 / 19,488 / 17,707 m² versus the mansion's
+1,592 m²; these are supported, headroom-clear cell columns before furnishing
+occupancy, rather than a net lettable-area claim. Exact receipts, review images
+and remaining work live in [the grand-building issue](../issues/grand-buildings/README.md).
+
+These additions do not replace approved assets or become generation defaults.
+User approval of the exact revision remains open. Terrain-fitting sites,
+street-to-interior traversal, excavation/contact and sustained crowded-street
+performance need a selected populated site and a requested integration pass;
+isolated engineering checks cannot close that acceptance requirement.
+
 ## Distant vegetation speckles — 2026-11-27
 
 The source-only normal correction is now followed by the requested moving

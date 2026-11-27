@@ -459,6 +459,7 @@
     "res://addons/structures/house_furnishings.gd",
     "res://addons/structures/expansion_catalog.gd"
   ],
+  "res://addons/structures/grand_buildings/catalog.gd": [],
   "res://addons/structures/guardrail_catalog.gd": [],
   "res://addons/structures/house_furnishings.gd": [],
   "res://addons/structures/ladder_catalog.gd": [],
@@ -1011,6 +1012,7 @@
     "res://addons/structures/bridge_catalog.gd",
     "res://addons/structures/workshop_catalog.gd",
     "res://addons/structures/mansion/catalog.gd",
+    "res://addons/structures/grand_buildings/catalog.gd",
     "res://addons/structures/civic_catalog.gd",
     "res://addons/structures/site_plan.gd",
     "res://addons/structures/construction_catalog.gd",

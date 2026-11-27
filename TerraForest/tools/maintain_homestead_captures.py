@@ -9,6 +9,10 @@ from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
 FAMILIES = {
+    "grand_buildings": ("courtyard_flats.bin", "grand_cathedral.bin", "street_tower.bin", "grand_buildings.json",
+                        "courtyard_flats_exterior.png", "courtyard_flats_interior.png", "courtyard_flats_plan.png",
+                        "grand_cathedral_exterior.png", "grand_cathedral_interior.png", "grand_cathedral_basement.png",
+                        "street_tower_exterior.png", "street_tower_interior.png", "street_tower_plan.png"),
     "vegetation_stability": ("vegetation_stability.json", "synthetic_before.frames", "synthetic_after.frames",
                              "world_before.frames", "world_after.frames", "synthetic_motion.webp", "world_motion.webp",
                              "synthetic_before.jpg", "synthetic_after.jpg", "world_before.jpg", "world_after.jpg",
@@ -43,7 +47,7 @@ FAMILIES = {
 }
 
 
-def candidates(root=ROOT):
+def candidates(root=ROOT, keep_ready=2):
     ready = {family: [] for family in FAMILIES}
     for receipt in sorted((root / "reports/checks").glob("*/run.json")):
         run = json.loads(receipt.read_text(encoding="utf-8"))
@@ -79,12 +83,14 @@ def candidates(root=ROOT):
             continue
         members = tuple(name for name in FAMILIES["startup_loading"] if (folder / name).is_file())
         if members:ready["startup_loading"].append((folder, members))
-    return [entry for entries in ready.values() for entry in entries[:-2]]
+    return [entry for entries in ready.values() for entry in entries[:-keep_ready]]
 
 
-def maintain(apply=False, root=ROOT):
-    selected = candidates(root)
-    result = dict(keep_ready=2, candidates=[str(folder) for folder, _ in selected], reclaimed_bytes=0, manifests=[])
+def maintain(apply=False, root=ROOT, keep_ready=2):
+    if keep_ready not in (1, 2):
+        raise ValueError("Keep one or two ready captures per family")
+    selected = candidates(root, keep_ready)
+    result = dict(keep_ready=keep_ready, candidates=[str(folder) for folder, _ in selected], reclaimed_bytes=0, manifests=[])
     if not apply or not selected:
         return result
     admit(root, report_bytes=1024 * 1024, world_bytes=0)
@@ -105,4 +111,6 @@ def maintain(apply=False, root=ROOT):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apply", action="store_true")
-    print(json.dumps(maintain(parser.parse_args().apply), indent=2))
+    parser.add_argument("--keep-ready", type=int, choices=(1, 2), default=2)
+    args = parser.parse_args()
+    print(json.dumps(maintain(args.apply, keep_ready=args.keep_ready), indent=2))

@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "date": "2026-11-27",
+  "source": "Godot 4.7.2 Steam isolated rendering of original TerraForest building prefabs",
+  "settings": "Forward Plus, 1280x720 retained RGB, same fixed daylight and cameras; flat fixture ground; no generated world",
+  "asset_provenance_sha256": "952dc2b5dc191705f1dd7080cad2ef820b997f3967fa012a827e0ba1d2ccac9a",
+  "images": [
+    {
+      "path": "reports/checks/20261127T103514993703Z/courtyard_flats_exterior.png",
+      "sha256": "3feed53afcb44876ee1aa404bf7fcb0666b2f66155551bb4a7f1957970be1b3d",
+      "caption": "courtyard flats exterior / final R1 isolated fixture / inspected",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "reports/checks/20261127T103514993703Z/courtyard_flats_interior.png",
+      "sha256": "353e85c49155e1cd576696231007abec162fd2a77614eff6798c83906cbbf65f",
+      "caption": "courtyard flats interior / final R1 isolated fixture / inspected",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "reports/checks/20261127T103514993703Z/courtyard_flats_plan.png",
+      "sha256": "2af593c88c2664810ffa9fdbb78903218b0a3f2f7d97a1fe846b1c0965e77ea9",
+      "caption": "courtyard flats plan / final R1 isolated fixture / inspected",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "reports/checks/20261127T103514993703Z/grand_cathedral_basement.png",
+      "sha256": "c7e9174c8dd5797bce154d776a8b6eebc2d85162de468e1074835ab2e41be6ff",
+      "caption": "grand cathedral basement / final R1 isolated fixture / inspected",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "reports/checks/20261127T103514993703Z/grand_cathedral_exterior.png",
+      "sha256": "6500c2a3958f6a6cf1130d960f0466d77ac3c526e74538ca96c6310763ac7675",
+      "caption": "grand cathedral exterior / final R1 isolated fixture / inspected",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "reports/checks/20261127T103514993703Z/grand_cathedral_interior.png",
+      "sha256": "a821bb6af4138b5bf10aeb435ca9494aea89109a86a779df5c333883c1b07443",
+      "caption": "grand cathedral interior / final R1 isolated fixture / inspected",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "reports/checks/20261127T103514993703Z/street_tower_exterior.png",
+      "sha256": "41371460eb20f08c72cab415e07a8bba73224082ed79adff0247a9f73b95d581",
+      "caption": "street tower exterior / final R1 isolated fixture / inspected",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "reports/checks/20261127T103514993703Z/street_tower_interior.png",
+      "sha256": "ca2561c760fe36b6d8eb6cab04ce29d7c7c7eb2f9dc5c79a79cbe398697ecaa3",
+      "caption": "street tower interior / final R1 isolated fixture / inspected",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "reports/checks/20261127T103514993703Z/street_tower_plan.png",
+      "sha256": "75acedab5ebec3fd684a0b7f7b65884afbc245ac4000292a5dce9a0281531e9b",
+      "caption": "street tower plan / final R1 isolated fixture / inspected",
+      "dimensions": [
+        1280,
+        720
+      ]
+    }
+  ],
+  "rejected_comparisons": [
+    {
+      "path": "reports/checks/20261127T103108609006Z/grand_cathedral_interior.png",
+      "caption": "Rejected initial cathedral nave: missing far gable. Same light/camera; final has stone floors, lancets and closed gable.",
+      "sha256": "2dced6be0a55d28fd5f5c2f501247408a7b6cbc81535a7adde529664c419d224",
+      "archive_manifest": "reports/checks/20261127T103108609006Z/homestead.archive.json"
+    }
+  ],
+  "user_visual_approval": "pending"
+}

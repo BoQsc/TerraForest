@@ -3,11 +3,21 @@
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
-from run_godot_check import command_for, execute, verify_pack_native, planned_report_bytes
+from run_godot_check import command_for, execute, verify_pack_native, planned_report_bytes, retain_grand_building_captures
 
 
 class CheckLauncherTests(unittest.TestCase):
+    def test_grand_capture_archival_waits_for_idle_but_preserves_real_failures(self):
+        with patch("maintain_homestead_captures.maintain", side_effect=OSError("Maintenance requires idle gameplay/builds: player")):
+            result = retain_grand_building_captures()
+        self.assertTrue(result["pending"])
+        self.assertIn("player", result["reason"])
+        with patch("maintain_homestead_captures.maintain", side_effect=OSError("archive checksum mismatch")):
+            with self.assertRaises(OSError):
+                retain_grand_building_captures()
+
     def test_report_growth_is_declared_only_for_audited_checks(self):
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/house_furnishings.gd"]), 32 * 2**20)
         self.assertEqual(planned_report_bytes(["godot", "--headless", "--script", "res://tests/house_furnishings.gd"]), 8 * 2**20)

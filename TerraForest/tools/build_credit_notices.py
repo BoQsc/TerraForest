@@ -85,6 +85,8 @@ def discovered_notices():
                             "Original object pack with editable authoring sources; see the retained notice for its scope and inputs."))
     entries.append(("homestead_manor", "Homestead Manor courtyard mansion", "CC0 1.0 arrangement / 0BSD code",
                     "addons/structures/mansion/ASSET_LICENSE.md", "Original furnished two-storey courtyard design; inherited models and materials retain their separate notices."))
+    entries.append(("grand_buildings", "Foundry Court, Saint Brigid and Needle Street", "CC0 1.0 arrangements / 0BSD code",
+                    "addons/structures/grand_buildings/ASSET_LICENSE.md", "Original apartment block, cathedral with crypts, and residential tower; inherited furnishings and building materials retain separate notices."))
     return entries
 
 
