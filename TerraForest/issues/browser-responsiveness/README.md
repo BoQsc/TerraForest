@@ -455,3 +455,21 @@ Outdoor placement, saving, earthworks and landscape loading remain substantial.
 Return with repeated matched timings and saved-content checks before additional
 pipeline changes; broader seed/cache, first-control, foreground, cold and package
 gates remain open. Engineering evidence does not confer visual approval.
+
+
+## Generation/loading stage review — 2026-11-27
+
+Audit complete, runtime unchanged. The latest retained observations are 102.8 s
+Generate-to-loading-ready and 27.4 s read-only load. Resource loading, planning,
+water and model saves already have bounded concurrency. Ordinary terrain loading
+still uses one owning mesh worker: the 64 coarse landscape roots cost 12.9 worker-
+seconds, including 10.9 s native construction. This is the next focused experiment
+candidate; GPU attachment and restore decoding are not the largest measured cost.
+
+[Flow, source hashes, measurements and decision gates](../../docs/WORLD_STARTUP_ARCHITECTURE.md#generation-loading-and-generate--play-flow--2026-11-27).
+Prototype private immutable readers only with identical geometry/collision and
+unchanged readiness, bounded memory, cancellation and repeated full-load results.
+Outdoor attribution and separate publication/first-control timestamps are still
+needed. Save/map overlap and live-scene transfer remain deferred architectural
+work. This review reuses evidence; no new speedup, visual or package acceptance is
+claimed. The existing warm-cache/read-only/intro and foreground limitations remain.

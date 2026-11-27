@@ -9692,3 +9692,24 @@ Outdoor placement, saving, earthworks and landscape loading remain the next
 measured costs. Revisit them with matched repeated timings and unchanged saved
 content; wider seeds/cache states, first control, foreground cadence, cold launch
 and final-package acceptance remain open. No world-quality acceptance is claimed.
+
+
+### Generation/loading flow review — 2026-11-27
+
+The stage and ownership audit is complete; runtime behavior is unchanged.
+Latest retained measurements are **102.8 s Generate-to-ready / 27.4 s read-only
+load**, before introduction completion/player control. Existing bounded resource,
+planning, water and save workers are confirmed. Initial terrain loading still
+serializes ordinary mesh jobs: 64 coarse roots account for **12.9 worker-seconds**,
+including **10.9 s native construction**. Save publication already uses four model
+workers; adding threads everywhere is not justified.
+
+[Current flow, attribution and acceptance gates](WORLD_STARTUP_ARCHITECTURE.md#generation-loading-and-generate--play-flow--2026-11-27).
+Next bounded experiment: two private immutable terrain readers with unchanged
+coverage/collision gates, exact geometry, cancellation and matched timings.
+Outdoor filtering/query/insertion attribution and explicit publication/first-control
+timestamps remain missing; collect them before further changes there. Save/map
+overlap and live generation-scene transfer are deferred until measured priorities
+and ownership/recovery contracts justify them. Existing read-only map, warm-cache,
+first-control, broader seeds, foreground and package limitations remain open.
+No additional world, native build, export or unchanged full benchmark was created.

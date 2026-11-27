@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC0-1.0 -->
 # World generation, loading and storage audit
 
-Current implementation and measurements: [26 November parallelism review](#parallelism-review--2026-11-26). The November 2 analysis below is historical; resource prefetch, local vegetation readiness and regional water storage have since changed.
+Current stage/ownership review: [27 November generation and loading flow](#generation-loading-and-generate--play-flow--2026-11-27). The earlier audits below are historical; use the latest measurements and scoped follow-ups before choosing another optimization.
 
 2026-11-02. Investigation and proposed architecture, **not a completed performance
 rewrite**. New original analysis/data are CC0-1.0; diagnostic code is 0BSD.
@@ -1231,3 +1231,130 @@ states, first control, foreground cadence, post-reboot cold launch and package
 acceptance remain open. Existing admission and verified archival retention
 preserve older/failed evidence; no player save, export or source copy is changed.
 Final source preparation passes (36.4 s) and its reusable ready record is current.
+
+
+## Generation, loading and Generate & Play flow — 2026-11-27
+
+**Audit outcome:** the dependency order is defensible and important work already
+uses workers, but initial landscape reconstruction still has a substantial serial
+path. Asynchronous operation keeps the UI responsive; it does not by itself make
+that work multicore. No runtime scheduling, readiness, save or recipe changes are
+made in this review. Reuse the latest captures instead of allocating another
+world to benchmark unchanged code. [Source hashes and derived measurements](evidence/world_startup_audit/stage_flow_20261127.json).
+
+```mermaid
+flowchart TD
+    A[Generate & Play] --> B[Plan with independent asset prefetch]
+    B --> C[Initialize staging world and build terrain]
+    C --> D[Place buildings, objects and population in stable order]
+    D --> E[Finish water and validate arrival]
+    E --> F[Publish durable save]
+    F --> G[Build and certify saved maps]
+    G --> H[Close staging world; verify and publish destination]
+    H --> I[Prepare playable resources and scene]
+    S[Play existing save] --> I
+    I --> J[Restore; stream landscape, objects, water and local services]
+    J --> K[Required coverage, collision, actors and map ready]
+    K --> L[Entry presentation and waking]
+    L --> M[Player control]
+```
+
+Normal loading overlaps map warming with visual restoration. The read-only
+fixture skips that writable gate and tests it separately after loading-ready.
+The staging scene is closed before destination verification/publication. The
+process/window stays alive and resources plus bounded, verified terrain mesh
+packets transfer; the entire scene and native residency do not transfer.
+
+| Current observation | Seconds | Interpretation |
+| --- | ---: | --- |
+| Full Generate to loading-ready | 102.812 | Latest measured generation path, down from earlier 123–130 s observations. |
+| Creating phase | 70.729 | Includes the ordered construction, save and map work below. |
+| Planning, including raw inputs | 2.711 | Background planner; bounded independent presentation loads overlap it. |
+| Generated-world initialization | 8.162 | Cooperative scene/catalog work and resource preparation. |
+| Roads/foundations | 9.762 | Background terrain work; some native batches use bounded helpers. |
+| Buildings/interiors | 6.950 | Ordered native publication and attachment integration. |
+| Outdoor placement | 15.898 | 50 density batches / 64,770 samples; filtering and insertion still need separate attribution. |
+| Save | 10.670 | Frozen capture and asynchronous durable publication; four model workers. |
+| Saved map preparation | 5.068 | Actual map pipeline; its 5.983 s UI stage also includes later work. |
+| Standalone saved-world load | 27.404 | Read-only fixture, before introduction completion/player control. |
+
+Do not add the generation sub-stages to the whole-generation total. The **32.083 s
+residual** between creation and loading-ready includes bootstrap/coordinator,
+verification, publication and playable loading; it is not an independently timed
+32-second load. Verification reports 0.836 s, but destination publication has no
+isolated duration in this receipt. That missing boundary should be recorded in
+the next capture, not guessed from the residual.
+
+Loading spends 5.140 s preparing resources and 6.554 s in cooperative scene setup
+(plus 0.019 s instantiation). Roughly 15.691 s remains for readiness and other
+boundaries. Terrain, objects and services overlap here. The observed landscape
+label lasts 12.999 s: **64 distinct coarse root jobs total 12.875 worker-seconds,
+including 10.870 s of native construction**. All 64 roots first appear ready in
+the 25.83 s sample; objects are also ready then. The full mesh trace additionally
+contains small jobs after the barrier, so its larger aggregate must not be called
+exclusive startup time. GPU mesh attachment totals only about 0.218 s in this
+capture; it is not the dominant identified mesh cost.
+
+### Concurrency and ordering decisions
+
+- Resources: four non-script loads in flight; script compilation, scene attachment
+  and GPU publication remain on the owner thread. The previous broad raw-input
+  prefetch experiment was slower and was removed. More requests are not a proven
+  gain. Planning is now a small part of the total and needs no further work first.
+- Terrain: one persistent owner executes ordinary mesh jobs. Native build methods
+  lock the mutable terrain core. The separate parallel edit/resident-field path
+  does not make ordinary cold landscape loading parallel. More threads calling
+  the same core would mostly contend on its lock.
+- Saves: the 5.7 ms main-thread capture is small. Model-store opening takes about
+  2.125 s; 136 asset publications take 7.061 s with four participating workers.
+  Those intervals include filesystem/metadata/durability work. Increasing threads
+  is not justified by the remaining wall time alone.
+- Maps and water: independent map layers already progress together, and normal
+  loading warms them during restoration. Generation certifies maps against the
+  durable save. Finishing water before saving and preserving stable insertion
+  order are correctness dependencies, including the recently repaired sea fill.
+- Generate & Play: the second playable scene takes about 6.360 s to initialize;
+  resource preparation is only 0.150 s because process caches survive. Handoff
+  supplies 14 terrain jobs while 260 builds are observed at readiness. This is
+  not a duplicated-work percentage: generation deliberately pauses general
+  landscape streaming, so much of that landscape was never built there.
+
+Process captures average 1.45 logical cores for generation and 1.84 for loading,
+with sample peaks of 8.84 and 9.99 on this 12-logical-processor machine. This
+includes renderer, post-ready work and teardown. It confirms multicore activity
+and uneven utilization, not that every unused core can safely reduce latency.
+The derived cache is only partially warm: 220 hits / 1,212 misses, incomplete
+accounting and optional writes disabled at observation. Reported limit usage is
+conservative while accounting is incomplete; do not assume physical fullness or
+raise its budget as an optimization.
+
+### Bounded next steps; larger work deferred
+
+1. **First performance experiment: coarse landscape mesh construction.** Try two
+   private readers of a frozen revision, bounded output/memory and unchanged
+   64-root/local-collision readiness. Require exact geometry/collision, stale-job
+   rejection, cancellation/shutdown and repeated end-to-end gains. Shared mutable
+   native caches cannot be handed to arbitrary threads. This is a promising,
+   measured target, not an implemented speedup.
+2. **First instrumentation improvement: outdoor attribution and phase boundaries.**
+   Split survey waits, filters and ordered insertion. Record verification,
+   publication, map readiness, loading release, intro end and first player control.
+   Only then choose another batching or CPU change. Keep identical candidate order,
+   IDs/transforms, support/conflict results and saved contents.
+3. **Defer save/map overlap and model-store opening changes.** Revisit if the first
+   two steps leave them dominant. Use independent frozen survey/store ownership;
+   publish maps only against the matching durable checkpoint. Preserve recovery,
+   cancellation, old saves and memory limits. Competing IO can erase the benefit.
+4. **Defer live scene transfer.** It needs explicit transfer of destination leases,
+   stores, services and recovery state. Keeping the generation scene, bypassing
+   verification, or pre-rendering everything during generation is not a small
+   scheduling fix; work can merely move earlier or compromise recovery.
+
+Do not reduce landscape readiness, collision guarantees, object/population counts
+or durability to produce a faster number. Current captures retain their original
+scope and failed attempts. They are warm-cache source/debug observations, not
+cold/package, full normal writable Play-to-control or foreground acceptance.
+The explicit read-only map check takes 1.325 s; do not add it mechanically to a
+normal load where it overlaps. The generation capture predates removal of the
+redundant ordinary-load prefetch branch, as documented in the prior section.
+No new speedup or universal regression result is claimed by this audit.

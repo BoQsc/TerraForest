@@ -1,0 +1,243 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted analysis of existing local source and retained measurements. No imported implementation, new runtime capture, world, build or export. Runtime code unchanged in this review.",
+  "date": "2026-11-27",
+  "revision": "f089612fe219110f7645b9474d5470daa03f8951",
+  "status": "Stage and ownership audit complete; further runtime optimization deliberately not attempted without a focused experiment.",
+  "sources": {
+    "addons/world_runtime/startup_resources.gd": "1d28a458045bcab5ee7db8c4e73824f2e57ef9935ef6404fec20695c9c4ceb1b",
+    "addons/world_runtime/world_session.gd": "4189a5020b5dcd8c6273fba9741d7b132854ee9a8d85250b3387726fdd538904",
+    "addons/world_runtime/generate_world_task.gd": "d8355d8f259efd11d0957012aacd19f1a1a82fa58d13e5676ecffa6b35f1f4d1",
+    "addons/world_runtime/generation_coordinator.gd": "860684043493912f6d2b8429b4c39fc25db6c110ac6a639d0eed26f814d16309",
+    "addons/world_runtime/generation_mesh_handoff.gd": "ebeb1772e050a26bfbe0d33515258cb5b53d2546f278bc092bafe93023320cb2",
+    "addons/world_runtime/world_map.gd": "c82aa5d22bd572d83cca2f01f18cd4df014b864e5d8659013fa5f206492746c4",
+    "addons/world_runtime/scene_job.gd": "3271e718a8e7bd0174123fdf2c0bf36cd150df4b631669dc3decda5c47b37d8f",
+    "addons/structures/outdoor_generation.gd": "48b889c915887ee340b3bf92d59657c0eb609b2fe389e82fbbe3cbf06f2a59d4",
+    "addons/structures/native/region_world_archive.cpp": "5ea4356bbc0035e519b319fd5568f38e8d3ca73651697bb6824f7d401af7f9fa",
+    "addons/volumetric_terrain/terrain_backend.gd": "d684ad6848add9a73e085fd2ec386f82c16fe5e17d66c95ba0dcfe7549a5fd0d",
+    "addons/volumetric_terrain/terrain_stream.gd": "7fa19f6618992575d1dff555fea5be1e252e2111589e67728aacb35a1834a133",
+    "addons/volumetric_terrain/derived_cache.gd": "9967bdd900bfc12cc37aab9ab8e566a13bd95b1081cf9c74d42b157584b4bec0",
+    "addons/volumetric_terrain/native/terrain_binding.cpp": "fc411464b5d62150891a722cf5055ea65563d1bfd9134f2abadc7717e52a30a9",
+    "addons/volumetric_terrain/native/generation_parallel.hpp": "59d2a6c9d262b84c456cb420b1732e37842d3c36e8bb561c67af10d59c180977",
+    "addons/volumetric_terrain/native/terrain_region_store.cpp": "c2394b5e9a0aa24e375c00d8dd38847578c84c0ca169f9ab2d4ead6d59848603",
+    "demo/world.gd": "737fd0d3cad0aff972ba79554f13dec8dfdaa5cf9ace5645ee6c84dad6e55717",
+    "demo/controller.gd": "09ee48cfaf2a42fd9e1de02a276dedf39348bbf4ef7035828706129bda4fe0cc",
+    "tests/startup_benchmark.gd": "31c5ce996f8568c744fb24739d8ca2c9d8c883335d353d4e9b36601a6e2d8b65"
+  },
+  "evidence": [
+    {
+      "path": "reports/startup_optimization/planning_after_20261127T091624927331Z/run.json",
+      "sha256": "4f79bfb3d85727cce073c2f79a33270ed019ba0f63cc568e2b7f6f9bde4032e7"
+    },
+    {
+      "path": "reports/startup_optimization/planning_after_20261127T091624927331Z/result.json",
+      "sha256": "9e9324989a03d6aa75c848060d3e23a0a22330ab8f231537a469c641bd02575a"
+    },
+    {
+      "path": "reports/startup_optimization/loading_after_20261127T092040227762Z/run.json",
+      "sha256": "e11afa3bdcdf096b7983a58cdbb7015608a95012ef2e7d0d0ed26f9b380cb11c"
+    },
+    {
+      "path": "reports/startup_optimization/loading_after_20261127T092040227762Z/result.json",
+      "sha256": "7e1fd6b23d8b93f6b895f23ba9ce3d66ccd2690bfc36d0159328fab72e33856e"
+    },
+    {
+      "path": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\generation_reports\\564e6c7aa2095206b4b2dfe0f108ac07\\generation_save_map.json",
+      "sha256": "fd988a73afbdd501871fe709d4cb5dfd3cb9484a00d8faa3e19444c7f8f6f9ff"
+    },
+    {
+      "path": "docs/evidence/world_startup_audit/authoring_retention_20261127.json",
+      "sha256": "22bb4cf94a9db475594cf0dba49728f824f9021224440b7b13e97ce859d4c8cc"
+    }
+  ],
+  "scope": "Reuses the latest measured generation and final scoped loading captures. Warm OS/import/plan/derived caches, source/debug, offscreen Forward+, 1920x1080, 60 FPS cap, seed1703/generator29/default recipe and normal actors. Generation capture predates removal of redundant ordinary-load input prefetch; final loading capture uses its removal. No new performance result or universal regression claim.",
+  "flow": {
+    "generation": [
+      "bounded raw input preparation",
+      "planning worker with independent presentation prefetch",
+      "scene/catalog initialization",
+      "ordered terrain earthworks and water bake",
+      "ordered buildings, population, objects and metadata",
+      "finish water contacts and starting-area validation",
+      "freeze and publish save",
+      "build and certify saved maps",
+      "shutdown staging scene",
+      "verify saved data",
+      "publish destination",
+      "ordinary playable-scene loading"
+    ],
+    "loading": [
+      "bounded resource prefetch and owner-thread script compilation",
+      "owner-thread catalog/services setup with cooperative yields",
+      "terrain/archive worker restore",
+      "terrain, structure/object visuals, water, local vegetation, actors and map preparation overlap",
+      "required coverage, collision and service readiness barrier",
+      "entry/fly-in/waking presentation",
+      "player control"
+    ]
+  },
+  "generation_seconds": {
+    "first_ready_seconds": 102.811655,
+    "creating_seconds": 70.728598,
+    "planning_seconds": 2.710815,
+    "initialization_seconds": 8.161517,
+    "outdoor_seconds": 15.89774,
+    "save_seconds": 10.669932000000001,
+    "map_seconds": 5.068085
+  },
+  "generation_stage_seconds": {
+    "Planning terrain, streets and building sites": 2.710815,
+    "Initializing generated terrain data": 8.161517,
+    "Baking roads, foundations and connected mineral veins before terrain loading": 0.001303,
+    "Building roads and foundations": 9.761931,
+    "Preparing water sources": 1.116603,
+    "Preparing generated world data": 0.350848,
+    "Loading water sources": 0.02461,
+    "Baking terrain overview": 0.016561,
+    "Placing buildings and interiors": 6.950142,
+    "Placing sleeping building residents": 0.231043,
+    "Placing off-road locations, supplies and sleepers": 0.767063,
+    "Stocking locked containers": 0.004436,
+    "Reinforcing occasional house doors": 0.007346,
+    "Parking vehicles in clear garages and warehouses": 0.299003,
+    "Furnishing rooms with breakable light objects": 0.319991,
+    "Placing outdoor storage, garden and service-yard objects": 15.89774,
+    "Placing destructible lake bridges": 0.009844,
+    "Baking streets and location metadata": 0.060199,
+    "Baking destructible sidewalk plates": 0.693144,
+    "Placing mineral-bearing stones and map markers": 0.001969,
+    "Placing town entrance signs": 0.863474,
+    "Finishing quest-location water contacts": 4.727332,
+    "Preserving original quest locations": 0.349531,
+    "Validating starting area": 0.08857,
+    "Finishing water preparation": 0.001106,
+    "Saving generated world": 10.67783,
+    "Caching the saved world map": 5.98305
+  },
+  "post_creation_residual_seconds": 32.083057,
+  "residual_warning": "Includes coordinator/bootstrap, verification, publication, handoff and playable loading. Not a separately timed 32-second load. Publication duration has no isolated timestamp in this receipt.",
+  "loading_seconds": {
+    "first_ready": 27.404002000000002,
+    "resources": 5.140166,
+    "scene_instantiation": 0.019314,
+    "startup_until_complete": 6.5539369999999995,
+    "remaining_barriers_and_overhead": 15.690585,
+    "landscape_stage_wall": 12.998963999999999,
+    "separate_map_gate": 1.324726
+  },
+  "loading_scope_warning": "The saved-world benchmark is read-only and temporary, so ordinary writable map warming is exercised separately after first-ready. Do not add its 1.325 s mechanically to a normal load, where it overlaps. first_ready is not first player control. UI stage wall times are overlapping observations, not per-stage CPU times.",
+  "coarse_landscape": {
+    "jobs": 64,
+    "distinct_regions": 64,
+    "worker_seconds": 12.875378999999999,
+    "native_build_seconds": 10.869924,
+    "substage_seconds": {
+      "build_us": 10.869924,
+      "decode_us": 0.269138,
+      "key_us": 0.473593,
+      "light_us": 0.030836,
+      "read_us": 0.35108,
+      "recipes_us": 0.009722,
+      "write_us": 0.167023
+    },
+    "coverage_zero_at_seconds": 11.781315000000001,
+    "first_sample_all_64_at_seconds": 25.829618,
+    "interpretation": "64 unique size-256 root jobs dominate mesh work. Whole capture also includes post-ready small mesh jobs; those are excluded from this root group. Ordered terrain worker executes ordinary mesh jobs; native build methods take the mutable-core mutex. Extra callers on the same core will serialize."
+  },
+  "cpu": {
+    "logical_processors": 12,
+    "generation": {
+      "sample_seconds": 106.66080419998616,
+      "process_cpu_seconds": 155.171875,
+      "average_logical_cores": 1.454816285737513,
+      "peak_sample_logical_cores": 8.844156486566172,
+      "scope": "Whole process capture including renderer, post-ready map verification and teardown. Not per-subsystem or click-to-ready CPU attribution."
+    },
+    "loading": {
+      "sample_seconds": 31.535078100016108,
+      "process_cpu_seconds": 58.109375,
+      "average_logical_cores": 1.8426900613881885,
+      "peak_sample_logical_cores": 9.992125608518343,
+      "scope": "Whole process capture including renderer, post-ready map verification and teardown. Not per-subsystem or click-to-ready CPU attribution."
+    }
+  },
+  "save": {
+    "capture_ms": 5.687,
+    "apply_ms": 143.573,
+    "async": true,
+    "regional": {
+      "blocks_us": 541689,
+      "compact_encode_us": 2235,
+      "model_jobs": 136,
+      "model_workers": 4,
+      "models_open_us": 2124906,
+      "models_us": 7061435,
+      "retire_after_us": 23383,
+      "retire_before_us": 1010,
+      "root_publish_us": 10542,
+      "validate_sections_us": 5612
+    },
+    "interpretation": "136 asset jobs already use four participating model workers. Store opening is sequential (~2.1s); publication (~7.1s) includes IO/durability work. Raising threads is not an established benefit."
+  },
+  "outdoors": {
+    "seconds": 15.89774,
+    "density_requests": 50,
+    "density_samples": 64770,
+    "placements": 684,
+    "interpretation": "Per-lot surface batches and bounded density batches already exist. Remaining time is not split between survey waits, tree/road/conflict tests and ordered publication. Do not attribute all 15.9s to IO or missing threads."
+  },
+  "handoff": {
+    "mesh_hits": 14,
+    "worker_builds": 260,
+    "input_resource_prepare_seconds": 0.149606,
+    "playable_scene_startup_seconds": 6.359884,
+    "interpretation": "Verified bounded terrain packets and process resource caches transfer; full scene/native residency does not. Generation deliberately pauses general landscape streaming. 14 hits / 260 worker builds is not a potential savings percentage: much landscape work was intentionally never generated."
+  },
+  "cache": {
+    "hits": 220,
+    "misses": 1212,
+    "accounting_complete": false,
+    "read_only_at_observation": true,
+    "interpretation": "Warm caches are not fully populated mesh caches. Incomplete accounting keeps optional writes disabled and reports the limit conservatively; it does not prove physical fullness. Do not raise the cache budget to hide this."
+  },
+  "decisions": [
+    {
+      "priority": 1,
+      "candidate": "Bounded parallel build of coarse landscape from a frozen terrain revision",
+      "next_step": "Prototype two private readers/tasks with bounded result memory and unchanged 64-root plus local collision release gates. Measure decode/publication/CPU/memory and first-control timing as well as load wall time.",
+      "gate": "Exact geometry/collision and saved-world identity; stale revision rejection, cancellation, shutdown and memory budgets; repeated matched normal-path comparisons.",
+      "risk": "Requires explicit immutable/private-reader ownership. Ordinary core mutex prevents useful parallel callers; shared LRU/read caches cannot be used concurrently."
+    },
+    {
+      "priority": 2,
+      "candidate": "Attribute outdoor stage before changing scheduling",
+      "next_step": "Add compact timing/count splits for surface and density waits, filtering and ordered insertions, then select one demonstrated waste.",
+      "gate": "Same accepted and skipped candidate order, stable IDs/transforms, support/conflict checks and saved-world comparisons.",
+      "risk": "Parallel insertion changes collisions/IDs and can change the generated world."
+    },
+    {
+      "priority": 3,
+      "candidate": "Save/map overlap and model-store startup",
+      "next_step": "Only after above: inspect a frozen survey product and parallel model-store open with private ownership; keep root/map publication tied to the same durable checkpoint.",
+      "gate": "Exact maps, failure recovery and cancelled/failed publication preserving old saves; repeated end-to-end gain.",
+      "risk": "Map source access may contend with store publication; durability and leases must remain intact."
+    },
+    {
+      "priority": 4,
+      "candidate": "Keep the generated scene alive for play",
+      "next_step": "Defer as architectural work; requires explicit transfer of destination lease, regional stores, services and recovery state.",
+      "gate": "Ordinary generate, publication, cancellation/failure and fresh reopen plus player-control/visual checks.",
+      "risk": "Skipping save/verify/reload or rendering the whole landscape during generation can merely shift work or undermine recoverability."
+    }
+  ],
+  "not_changed": [
+    "worker limits",
+    "landscape/object readiness radius",
+    "population and object counts",
+    "save durability",
+    "cache budgets",
+    "generation recipe",
+    "water scheduling"
+  ],
+  "measurement_followup": "Future capture should timestamp verification, publication, map readiness, loading barrier, intro completion and first player control separately. Reuse latest captures for this audit; no unchanged full generation was rerun."
+}
