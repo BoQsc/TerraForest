@@ -4,6 +4,8 @@ signal obstacles_changed(bounds:AABB)
 const Catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
 const Tokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
 const SURFACE_JOBS:=8
+# Same visibility reach; a broader outer band fades tiny coverage gradually.
+const DISTANCE_FADE_WIDTH:=32.0
 const RENDER_UPLOAD_BYTES:=64*1024
 var road_regions:RefCounted
 var terrain: Node3D
@@ -116,11 +118,11 @@ func _mesh(species: int) -> Mesh:
 	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species,true,true,false,species in [0,1,2,3,4,5])
 	var material:ShaderMaterial=mesh.surface_get_material(0)
 	material.set_shader_parameter("distance_fade_end",124.0)
-	material.set_shader_parameter("distance_fade_start",100.0)
+	material.set_shader_parameter("distance_fade_start",124.0-DISTANCE_FADE_WIDTH)
 	foliage_materials.append(material)
 	if species in [0,1,2,3,4,5]:
 		var far_material: ShaderMaterial=mesh.surface_get_material(1)
-		far_material.set_shader_parameter("distance_fade_start",100.0)
+		far_material.set_shader_parameter("distance_fade_start",124.0-DISTANCE_FADE_WIDTH)
 		far_material.set_shader_parameter("distance_fade_end",124.0)
 		foliage_materials.append(far_material)
 	if species==2:grass_material=material
@@ -236,7 +238,7 @@ func _measured_step(_delta:float)->void:
 		_view_range=view.range
 		for key in view.cells: _wanted[key]=true
 		for material in foliage_materials:
-			material.set_shader_parameter("distance_fade_start",maxf(48.0,_view_range-24.0))
+			material.set_shader_parameter("distance_fade_start",maxf(48.0,_view_range-DISTANCE_FADE_WIDTH))
 			material.set_shader_parameter("distance_fade_end",_view_range)
 		for batch in batches:batch.set_render_radius(_view_range+20.0)
 		# Invalidations also cover owners still awaiting first publication. They

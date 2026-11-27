@@ -1,14 +1,38 @@
 # ★ Extended vegetation LOD
 
 - Starred: [Notable investigation](../notable/README.md); [investigation lessons](LESSONS.md). Human playtest confirmed the flicker improvement on 2026-11-27; remaining requirements stay open.
-- Status: Flicker correction confirmed by human source playtest; snapshot requested. Far stone pop-ins, subtle LOD/distance fade, broader coverage and the detail GPU-tail target remain open.
-- Updated: 2026-11-27. Original LOD implementation `e2d0e548`; follow-ups below.
+- Status: Previous flicker fix human-approved and snapshotted. Stone proxy correction and broader distance fade pass lab and physical gameplay checks. The user accepted this result for commit/push on 2026-11-28; near handoffs, rectangular patches, broader coverage and the detail GPU-tail target remain open.
+- Updated: 2026-11-28. Original LOD implementation `e2d0e548`; follow-ups below.
 - Forests: existing 6592/192/12-triangle tiers retained; visibility 448 -> 576 m.
 - Native circular preload: 640 m, maximum 405 wanted owners, 441 admission cap;
   two jobs and one 36-candidate batch/frame unchanged. No density/identity changes.
 - Ferns: original distant 392 -> 154 triangles; final filtered far tier uses seven
   frond quads (14 triangles). Bushes 294 -> 154; twigs 136 -> 80.
   Nearby geometry, ordinary shadows and four grass tiers remain unchanged.
+
+## Distant stone transitions — 2026-11-28
+
+The [transition investigation](TRANSITIONS.md) proves two faults in our previous
+far-stone proxy: fragment-stage matrices lost the individual MultiMesh transform,
+misplacing reconstructed depth and lighting; projection orientation could also
+select the rear hemisphere. Fixed-resident moving controls exclude streaming and
+native surface selection as necessary causes. The opaque/proxy contrast step
+falls from 4.887× to 1.021×, versus 1.015× for ordinary approach with fixed opaque
+geometry. Independently submitted MeshInstances agree with the corrected proxy
+within one RGB byte per channel.
+
+The corrected proxy and a 32 m outer fade retain the same normal 124 m visibility
+endpoint. The full-frame comparison gives exact nearby pixel parity, +0.0021%
+ground / +0.0185% elevated mean brightness, and no added draw pass or texture.
+Paired GPU observations and failed tests are recorded in the investigation; they
+do not close the earlier detail-tail target. Final physical gameplay passes
+220.169 m, 2,162/2,162 grounded ticks and 192 independently hash-verified 1080p
+frames, including four witnessed stone LOD crossings. Normal actors, streaming,
+collision and source/save hashes are retained. [Moving review and limits](TRANSITIONS.md#normal-moving-gameplay).
+**Accepted for checkpoint/push on 2026-11-28**, tagged
+`playtest/stone-transitions-2026-11-28`. This does not close the new near-LOD and
+rectangular-patch complaint. Shared DLLs are excluded; source restoration needs
+a native rebuild.
 
 ## Human playtest and source snapshot — 2026-11-27
 
@@ -18,13 +42,15 @@ in that playtest; it is not universal coverage or performance approval. The shar
 shader SHA-256 is `a16616cfd6d2f15d73f8b894f9191047d9f85f0259aa754be2aa73ea839fbae1`.
 
 The user then reported small stones popping in farther away while approaching.
-Whether that is a regression or pre-existing is unproven. That symptom stays open,
+Its regression status was unproven at the snapshot; the later lab above identifies
+our proxy as a cause. Acceptance of the symptom's correction stays open,
 along with the requested subtle LOD/distance fade and the earlier GPU-tail target.
 No new fade or stone-pop-in changes are included in this snapshot. Next work must
 isolate transition, visibility and streaming causes, then repeat normal movement
 with nearby appearance and terrain brightness preserved.
 
-The user explicitly requested this snapshot before further work. It preserves
+The user explicitly requested snapshot `0fbcb895`, tagged
+`snapshot/vegetation-flicker-2026-11-27`, before further work. It preserves
 vegetation source, the lab and evidence. Shared native DLLs now include unrelated
 work and are excluded: **restoring this source snapshot requires rebuilding the
 native libraries before running**. The current checkout and running game retain

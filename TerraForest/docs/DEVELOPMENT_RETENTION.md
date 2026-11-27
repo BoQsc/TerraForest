@@ -534,3 +534,18 @@ capture/data cap.
 Full-frame vegetation counterfactuals use the admitted shared runner with a 20 MiB report ceiling and no new world. Raw 1080p pixels are streamed to a local analyzer in memory; saved metrics, four context PNGs, one mask and three review videos use a 16 MiB media allowance plus 1 MiB analysis allowance inside the unchanged 20 MiB total admission. Encoder flush and final metadata are checked before success. Receipt-owned vegetation_fullframe captures join Homestead verified cold retention (two ready by default). Videos illustrate; raw-pixel hashes and full-viewport measurements establish comparisons.
 
 The extended physical vegetation review captures 192 consecutive 1080p frames (3.2 seconds at 60 Hz). Its test-only RGBA buffer is bounded to about 1.48 GiB and is consumed one image at a time after cost measurement. The review movie uses H264 CRF22; raw RGB hashes and full-frame detector measurements remain independent of video compression. One lossless context PNG and the movie stay within the same 16 MiB media allowance. This capture buffer is not part of ordinary gameplay.
+
+The resident vegetation transition lab admits 12 MiB and creates no saved world,
+export or build. Lossless field-strip motion packets are capped at 9 MiB, with
+1 MiB for metadata/context and 1 MiB for analysis/review. Homestead receipt-owned
+retention keeps two ready runs and cold-retains older evidence after exit.
+
+The distant-stone follow-up's full-frame run `20261127T214627117571Z` is
+cold-retained through the same ownership/confinement/hash-verification library,
+with an explicit one-ready override restricted to that completed failed capture.
+It reclaims 26,235,129 bytes after the subsequent gameplay replay was denied
+admission. The successful full-frame comparison remains ready; other families,
+player saves, storage limits and evidence are unchanged. Dense-grass 192-frame
+gameplay movies now use CRF24 with a 16 Mbit/s maximum and 2 Mbit buffer, bounding
+the review movie below roughly 7 MiB. Raw-image hashes and metrics are independent
+of this review-only compression.

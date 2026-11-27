@@ -10,7 +10,7 @@ status and evidence. This index links to it so the history stays together.
 
 | Case | Why retain it | Current status | Lessons |
 | --- | --- | --- | --- |
-| [★ Vegetation flicker and invalid shader colours](../vegetation-lod/README.md) | A distance/LOD symptom hid a shared shader-domain fault; crop improvements did not establish whole-frame visual success | Human source playtest confirms flicker improvement. Far stone pop-ins, subtle fade, broader coverage and the GPU-tail target remain open | [Validated flicker case study](../vegetation-lod/LESSONS.md) |
+| [★ Vegetation flicker and invalid shader colours](../vegetation-lod/README.md) | A distance symptom hid a shared shader-domain fault; a subsequent stone proxy also lost its per-instance depth transform | Previous flicker fix human-approved. Stone transition/fade pass causal and physical gameplay checks; checkpoint accepted for commit/push; near handoffs/rectangular patches, broader coverage and earlier GPU-tail target remain open | [Validated flicker case study](../vegetation-lod/LESSONS.md), [transition investigation](../vegetation-lod/TRANSITIONS.md) |
 
 ## Adding and maintaining a case
 

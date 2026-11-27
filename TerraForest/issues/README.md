@@ -2,8 +2,10 @@
 
 **[★ Notable investigations](notable/README.md)** — unusual cases and reusable
 lessons, kept visible after resolution. The [vegetation flicker case](vegetation-lod/LESSONS.md)
-is starred; human source playtest confirmed the flicker improvement. Stone pop-ins,
-subtle LOD/distance fade and the separate GPU-tail target remain open.
+is starred; human source playtest confirmed the flicker improvement. The subsequent
+[stone-proxy regression and fade](vegetation-lod/TRANSITIONS.md) have causal lab
+evidence and a passing 220 m physical movement check; the user accepted that checkpoint for commit/push. Near-LOD handoffs, rectangular
+patches, broader coverage and the separate GPU-tail target remain open.
 
 [Native generation and binary inspection](../docs/NATIVE_GENERATION.md) now cover
 outdoor placement, ordinary main-building placement and generated-world storage
@@ -116,7 +118,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 | [Resource usage visibility](resource-usage/README.md) | Cached readings / storage retention corrected | Approved cleanup removes 12.67 GiB of verified generation duplicates and screenshot imports; ignores prevent report reimport and generation publication retires its working copy. Saves/evidence/history retained; 100 GB goal and broader test-world/worktree retention remain open |
 | [Runtime performance](runtime-performance/README.md) | Construction/query and draw-work reductions verified / whole-frame p99 open | [Corpse/publication follow-up](runtime-performance/corpse-publication-2026-11-26.md) removes discarded rest-pose physics, shares indexed exclusion queries and drops exact collision duplicates. Admission/setup drift fixed; final six-leg gameplay and identity checkpoints verified. Overall p99 does not improve: 21.200 to 21.633 ms. Contended repeat excluded; process/draw bursts, engine waits, uncapped headroom and full human replay remain open. Earlier water draw-work gains remain verified in scope |
 | [Long lakes and bridges](lakes-and-bridges/README.md) | Source lake checks / strict exit gate open | Three 360–480 m lakes; city/bridges and functional save/reload verified. Exit cleanup and high aerial visibility remain unqualified; installed baseline retained. |
-| [★ Extended vegetation LOD](vegetation-lod/README.md) | Flicker fix confirmed by human source playtest / follow-ups open | Full-frame causal controls and 194 m physical gameplay pass; nearby authored rendering retained. Far stone pop-ins, subtle fade, broader coverage and detail GPU-tail target remain open; source snapshot requested |
+| [★ Extended vegetation LOD](vegetation-lod/README.md) | Stone/distance-fade checkpoint accepted / near handoffs open | Stone proxy regression isolated; corrected handoff/fade pass nearby/brightness checks and 220 m physical gameplay. Near handoffs/rectangular patches, broader coverage and earlier detail GPU-tail target remain open |
 | [City buildings](city-buildings/README.md) | Approved designs / integration installed | Six exact approved designs on surveyed lots in larger recipes; populated-world player/NPC/vehicle routes, save/reopen, LOD and packed resources checked; site visuals and broader qualification remain |
 | [Building geometry LOD](building-lod/README.md) | Installed / scoped checks | Default-on native geometry LOD plus world-wide distant block rendering, including never-visited archives; edits/reload and populated-world coverage checked; player review and denser-world endurance remain open |
 | [Natural world-map presentation](natural-world-map/README.md) | Improved-partial / scoped checks | Cached water ready before first M; 1024² terrain, asphalt-first material ownership and unpainted shoulders; optional annotations; clustering/saves unchanged; finite zoom detail and shoulder geometry remain reviewable |

@@ -7,6 +7,7 @@ import struct
 import subprocess
 import sys
 import threading
+import time
 import uuid
 from pathlib import Path
 from PIL import Image, ImageChops, ImageFilter, ImageStat
@@ -53,7 +54,7 @@ def metrics(im):
 
 def serve(listener, token, state):
     writers = {}; baseline = {}; rows = []; output = None
-    planned_frames = 48
+    planned_frames = 48; variant='shader_domain'
     try:
         listener.settimeout(600)
         with listener.accept()[0] as sock:
@@ -64,7 +65,7 @@ def serve(listener, token, state):
                 meta = json.loads(receive(sock,length))
                 if meta['token'] != token: raise ValueError('Run identity mismatch')
                 if meta['kind'] == 'begin':
-                    planned_frames=meta['frames']
+                    planned_frames=meta['frames'];variant=meta.get('variant','gameplay' if planned_frames==192 else 'shader_domain')
                     if planned_frames not in (48,192): raise ValueError('Unbounded capture count')
                     output = Path(meta['output']).resolve()
                     if output.parent != (ROOT/'reports/checks').resolve(): raise ValueError('Unowned output')
@@ -76,10 +77,17 @@ def serve(listener, token, state):
                     if meta['bytes'] != 1920*1080*3 or output is None: raise ValueError('Wrong raw frame size')
                     raw = receive(sock,meta['bytes']); case=meta['case']; frame=meta['frame']
                     im = Image.frombytes('RGB',(1920,1080),raw)
+                    # Flush each video before beginning another case; deferred
+                    # encoder output must count against the same media ceiling.
+                    if writers and case not in writers:
+                        for writer in writers.values():
+                            writer.stdin.close()
+                            if writer.wait()!=0:raise RuntimeError('Review encoder failed')
+                        writers.clear();check_output_budget(output)
                     row, mask = metrics(im)
                     row.update(case=case,frame=frame,sha256=hashlib.sha256(raw).hexdigest(),camera=meta.get('camera'))
                     if case=='baseline': baseline[frame]=raw
-                    elif case in ('bounded_edge','bounded_interpolants','baseline_repeat'):
+                    elif case in ('bounded_edge','bounded_interpolants','baseline_repeat','stone_corrected','stone_fade'):
                         difference=ImageChops.difference(im,Image.frombytes('RGB',im.size,baseline[frame]))
                         channels=difference.split(); changed=ImageChops.lighter(ImageChops.lighter(channels[0],channels[1]),channels[2])
                         row['changed_pixels']=count(changed)
@@ -90,12 +98,16 @@ def serve(listener, token, state):
                         row['cover_bright_contrast']=count(ImageChops.subtract(covered,bare).point(lambda x:255 if x>=32 else 0))
                         row['cover_dark_contrast']=count(ImageChops.subtract(bare,covered).point(lambda x:255 if x>=32 else 0))
                     rows.append(row)
-                    if frame == 24 and case in ('baseline','bounded_interpolants','invalid_witness','no_cover'):
+                    if frame == 24 and case in (('baseline','stone_fade') if variant=='stone_transition' else ('baseline','bounded_interpolants','invalid_witness','no_cover')):
                         im.save(output/f'{case}_{frame}.png')
                         if case=='baseline':mask.save(output/f'impulses_{frame}.png')
-                    if case in ('baseline','bounded_edge','bounded_interpolants','gameplay'):
+                    if case in (('baseline','stone_fade') if variant=='stone_transition' else ('baseline','bounded_edge','bounded_interpolants','gameplay')):
                         if case not in writers:
-                            writers[case]=subprocess.Popen([str(FFMPEG),'-v','error','-f','rawvideo','-pixel_format','rgb24','-video_size','1920x1080','-framerate','60','-i','pipe:0','-an','-c:v','libx264','-preset','medium' if case=='gameplay' else 'veryfast','-crf','22' if case=='gameplay' else '18','-pix_fmt','yuv420p','-movflags','+faststart',str(output/(case+'.mp4'))],stdin=subprocess.PIPE)
+                            # Review only: cap the 3.2-second gameplay movie below
+                            # ~7 MiB even for dense grass; raw metrics are separate.
+                            rate_cap=['-maxrate','16M','-bufsize','2M'] if case=='gameplay' else []
+                            quality='24' if case=='gameplay' else ('22' if variant=='stone_transition' else '18')
+                            writers[case]=subprocess.Popen([str(FFMPEG),'-v','error','-f','rawvideo','-pixel_format','rgb24','-video_size','1920x1080','-framerate','60','-i','pipe:0','-an','-c:v','libx264','-preset','medium' if case=='gameplay' else 'veryfast','-crf',quality,*rate_cap,'-pix_fmt','yuv420p','-movflags','+faststart',str(output/(case+'.mp4'))],stdin=subprocess.PIPE)
                         writers[case].stdin.write(raw)
                     check_output_budget(output)
                 elif meta['kind']=='end':
@@ -104,6 +116,7 @@ def serve(listener, token, state):
                         if writer.wait()!=0: raise RuntimeError('Review encoder failed')
                     writers.clear()
                     expected={'gameplay':planned_frames} if rows and rows[0]['case']=='gameplay' else {**{case:48 for case in ('baseline','bounded_edge','bounded_interpolants','invalid_witness','bounded_witness','interpolant_witness','no_cover')},'baseline_repeat':1}
+                    if variant=='stone_transition':expected={**{case:48 for case in ('baseline','stone_corrected','stone_fade','no_cover')},'baseline_repeat':1,'near_baseline':1,'near_corrected':1}
                     if {case:sum(r['case']==case for r in rows) for case in {r['case'] for r in rows}}!=expected:
                         raise ValueError('Incomplete counterfactual frame inventory')
                     if any([r['frame'] for r in rows if r['case']==case]!=list(range(n)) for case,n in expected.items()):
@@ -132,6 +145,8 @@ def main():
     import argparse
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--gameplay',action='store_true')
+    parser.add_argument('--stone-transitions',action='store_true')
+    parser.add_argument('--approach-review',action='store_true')
     args=parser.parse_args()
     from run_vegetation_lab import active_render_jobs
     jobs=active_render_jobs()
@@ -143,9 +158,24 @@ def main():
         worker=threading.Thread(target=serve,args=(listener,token,state),daemon=True);worker.start()
         test='vegetation_gameplay' if args.gameplay else 'vegetation_fullframe'
         command=[sys.executable,str(ROOT/'tools/run_godot_check.py'),test,'--isolated-render','--timeout','600','--require',test.upper()+' failures=0','--','--fullframe-port='+str(listener.getsockname()[1]),'--lab-run-id='+token,'--lab-visual-only']
-        result=subprocess.run(command,cwd=ROOT)
+        if args.stone_transitions:command.append('--stone-transition-review')
+        if args.approach_review:command.append('--approach-review')
+        observed=[];monitor_started=time.time()
+        process=subprocess.Popen(command,cwd=ROOT)
+        while process.poll() is None:
+            try:process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                jobs=active_render_jobs(token)
+                if isinstance(jobs,dict):jobs=[jobs]
+                if len(observed)<120:observed.append(dict(unix_s=time.time(),jobs=jobs))
+        result=process
+        state['interference']=dict(started_unix_s=monitor_started,observations=observed,overlap_observed=any(x['jobs'] for x in observed),scope='Engine process inventory every five seconds; not an OS-wide GPU exclusivity proof.')
+        if state.get('output'):
+            (Path(state['output'])/'interference.json').write_text(json.dumps(state['interference'],indent=2)+'\n')
         worker.join(timeout=5)
-    print(json.dumps(state,indent=2))
+    printed={k:v for k,v in state.items() if k not in ('summary','interference')}
+    printed['cases']=list(state.get('summary',{}));printed['overlap_observed']=state.get('interference',{}).get('overlap_observed')
+    print(json.dumps(printed,indent=2))
     return result.returncode or (1 if 'error' in state or 'summary' not in state else 0)
 
 if __name__=='__main__':sys.exit(main())

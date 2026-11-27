@@ -9,7 +9,9 @@ uniform float cover_clock=0.0;
 uniform float distance_fade_start=100.0;
 uniform float distance_fade_end=124.0;
 const vec3 RADII=vec3(0.31,0.175,0.255);
-varying flat vec2 center_px;
+// Carry the individual MultiMesh transform from the vertex stage. The fragment
+// MODEL_MATRIX describes the draw batch, not the individual stone.
+varying flat mat3 stone_view_basis;
 varying flat vec3 inverse_shape;
 varying flat vec3 row_x;
 varying flat vec3 row_y;
@@ -22,6 +24,7 @@ varying flat float variation;
 varying vec2 point_px;
 
 void vertex(){
+    stone_view_basis=mat3(MODELVIEW_MATRIX);
     vec3 origin=MODEL_MATRIX[3].xyz;
     float distance_weight=1.0-smoothstep(distance_fade_start,distance_fade_end,distance(origin.xz,cover_eye.xz));
     float age=cover_clock-INSTANCE_CUSTOM.x;
@@ -46,21 +49,23 @@ void vertex(){
     determinant=max(xx*yy-xy*xy,0.000001);
     inverse_shape=vec3(yy,-xy,xx)/determinant;
     face_axis=normalize(cross(row_x,row_y));
+    // Projection Y orientation must not select the rear hemisphere.
+    if((MODELVIEW_MATRIX*vec4(face_axis*RADII,0.0)).z<0.0)face_axis=-face_axis;
     float bx=xx*0.25+0.25,by=yy*0.25+0.25,bxy=xy*0.25;
     float bd=max(bx*by-bxy*bxy,0.000001);
     blurred_inverse=vec3(by,-bxy,bx)/bd;
     blurred_amplitude=area/(6.28318530718*sqrt(bd));
     point_weight=1.0-smoothstep(0.6,1.0,sqrt(max(xx,yy)));
-    center_px=center.xy/center.w*VIEWPORT_SIZE*0.5;
+    vec2 center_px=center.xy/center.w*VIEWPORT_SIZE*0.5;
     vec2 extent=max(sqrt(vec2(xx,yy))+vec2(1.0),3.0*sqrt(vec2(bx,by))*point_weight);
-    point_px=center_px+(UV*2.0-1.0)*extent;
-    POSITION=vec4(point_px/(VIEWPORT_SIZE*0.5)*center.w,center.z,center.w);
+    point_px=(UV*2.0-1.0)*extent;
+    POSITION=vec4((center_px+point_px)/(VIEWPORT_SIZE*0.5)*center.w,center.z,center.w);
     variation=0.95+0.05*sin(dot(origin.xz,vec2(0.71,0.43))*3.7);
 }
 
 }
 void fragment(){
-    vec2 delta=point_px-center_px;
+    vec2 delta=point_px;
     vec2 weighted=vec2(inverse_shape.x*delta.x+inverse_shape.y*delta.y,inverse_shape.y*delta.x+inverse_shape.z*delta.y);
     float radius=sqrt(max(dot(delta,weighted),0.0));
     float gradient=max(length(weighted)/max(radius,0.00001),0.00001);
@@ -72,10 +77,10 @@ void fragment(){
     surface/=max(length(surface),1.0);
     surface+=face_axis*sqrt(max(0.0,1.0-dot(surface,surface)));
     vec2 stone_uv=vec2(atan(surface.z,surface.x)/6.28318530718,acos(clamp(surface.y,-1.0,1.0))/3.14159265359);
-    NORMAL=normalize(mat3(VIEW_MATRIX)*MODEL_NORMAL_MATRIX*(surface*RADII*vec3(1.0,2.3,1.0)));
+    NORMAL=normalize(stone_view_basis*(surface*RADII*vec3(1.0,2.3,1.0)));
     vec3 local_tangent=vec3(-surface.z*RADII.x,0.0,surface.x*RADII.z);
     if(dot(local_tangent,local_tangent)<0.00000001)local_tangent=vec3(1.0,0.0,0.0);
-    vec3 tangent=mat3(VIEW_MATRIX*MODEL_MATRIX)*local_tangent;
+    vec3 tangent=stone_view_basis*local_tangent;
     TANGENT=normalize(tangent-NORMAL*dot(tangent,NORMAL));
     BINORMAL=normalize(cross(NORMAL,TANGENT));
     ALBEDO=texture(stone_color,stone_uv).rgb*variation;
@@ -83,7 +88,7 @@ void fragment(){
     NORMAL_MAP_DEPTH=0.55;
     ROUGHNESS=0.94;SPECULAR=0.24;
     // Reconstructed surface depth preserves intersection with the actual terrain.
-    vec4 view_surface=VIEW_MATRIX*MODEL_MATRIX*vec4(surface*RADII,1.0);
+    vec4 view_surface=vec4(stone_view_basis*(surface*RADII)+VERTEX,1.0);
     LIGHT_VERTEX=view_surface.xyz;
     vec4 clip=PROJECTION_MATRIX*view_surface;
     DEPTH=clip.z/clip.w;

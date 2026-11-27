@@ -74,8 +74,16 @@ On 2026-11-27 the user played the latest source in Homestead Valley and said,
 and snapshot limitations are recorded in the [canonical issue](README.md#human-playtest-and-source-snapshot--2026-11-27).
 
 The same session identified small-stone pop-ins farther away while approaching.
-Their cause and regression status are not established. The requested next effect
-is a subtle LOD/distance fade, with nearby appearance and brightness preserved.
+Their cause and regression status were initially unproven. The subsequent
+[transition lab](TRANSITIONS.md) isolates a regression in our far-stone proxy:
+individual instance transforms were unavailable through fragment-stage batch
+matrices, and the projected hemisphere could face away from the camera. An
+independent MeshInstance comparison checks the correction. This adds another
+lesson: reconstructing filtered coverage must preserve depth and lighting across
+instancing and representation changes, not merely look stable at fixed distance.
+The requested next effect is a subtle LOD/distance fade, with nearby appearance
+and brightness preserved. That result was accepted for commit/push after the 2026-11-28 source playtest.
+The new near-LOD/rectangular-patch complaint remains open.
 The user requested a source snapshot before these further changes. Native binaries
 are shared with unrelated work and require rebuilding when restoring this snapshot.
 

@@ -1,0 +1,370 @@
+{
+  "license": "CC0-1.0",
+  "updated_local": "2026-11-28",
+  "status": "Stone/distance-fade checkpoint accepted for commit and push after source playtest on 2026-11-28; near-LOD handoffs and rectangular patches remain open.",
+  "approved_baseline_commit": "0fbcb895",
+  "baseline_tag": "snapshot/vegetation-flicker-2026-11-27",
+  "regression_cause": [
+    "Fragment-stage batch matrices omit the individual MultiMesh transform used by the vertex stage, corrupting reconstructed depth and lighting.",
+    "Projection orientation can select the rear sphere hemisphere."
+  ],
+  "causal_runs": [
+    "20261127T212603559729Z",
+    "20261127T212907779782Z",
+    "20261127T213355455733Z",
+    "20261127T213627904715Z"
+  ],
+  "handoff_contrast": {
+    "distances_m": [
+      32.4,
+      32.3
+    ],
+    "old": [
+      24402,
+      119251
+    ],
+    "corrected": [
+      116771,
+      119251
+    ],
+    "fixed_opaque": [
+      117513,
+      119251
+    ],
+    "scope": "Summed stone/background absolute RGB byte differences in lossless 1024x128 resident fixture. Includes normal approach growth; not full gameplay."
+  },
+  "independent_instances": {
+    "run": "20261127T215435218852Z",
+    "max_channel_delta": 1,
+    "max_rgb_abs_sum": 3,
+    "total_pixels_over_8": 0,
+    "poses": 9,
+    "scope": "16 individual MeshInstances versus one MultiMesh; yaw and uniform scale variation."
+  },
+  "fullframe": {
+    "run": "20261127T215018587021Z",
+    "checks": 208,
+    "failures": 0,
+    "raw_frames": 195,
+    "resolution": [
+      1920,
+      1080
+    ],
+    "near_scene_region": [
+      0,
+      320,
+      1920,
+      580
+    ],
+    "near_scene_exact": true,
+    "baseline_repeat_changed_pixels": 0,
+    "brightness": {
+      "ground": {
+        "mean_luma": {
+          "baseline": 0.27462124315389735,
+          "stone_corrected": 0.27462639837635155,
+          "stone_fade": 0.27462697905004335
+        },
+        "root_percent": 0.0018772118263621351,
+        "combined_percent": 0.0020886571192146874
+      },
+      "elevated": {
+        "mean_luma": {
+          "baseline": 0.37231540226526566,
+          "stone_corrected": 0.3723776658666939,
+          "stone_fade": 0.3723844092147533
+        },
+        "root_percent": 0.0167233482819773,
+        "combined_percent": 0.01853454062543669
+      }
+    },
+    "world_input": {
+      "camera_origin": "(1634.897, 44.71493, 1027.119)",
+      "materials": 13,
+      "pages_after": [
+        {
+          "bytes": 32448,
+          "pages": 282,
+          "shadows": 42
+        },
+        {
+          "bytes": 345920,
+          "pages": 392,
+          "shadows": 58
+        },
+        {
+          "bytes": 4697344,
+          "pages": 409,
+          "shadows": 15
+        },
+        {
+          "bytes": 5248,
+          "pages": 58,
+          "shadows": 7
+        },
+        {
+          "bytes": 4736,
+          "pages": 58,
+          "shadows": 6
+        },
+        {
+          "bytes": 4480,
+          "pages": 51,
+          "shadows": 6
+        },
+        {
+          "bytes": 40704,
+          "pages": 278,
+          "shadows": 40
+        },
+        {
+          "bytes": 29376,
+          "pages": 262,
+          "shadows": 38
+        },
+        {
+          "bytes": 24192,
+          "pages": 223,
+          "shadows": 25
+        }
+      ],
+      "pages_before": [
+        {
+          "bytes": 32448,
+          "pages": 282,
+          "shadows": 42
+        },
+        {
+          "bytes": 345920,
+          "pages": 392,
+          "shadows": 58
+        },
+        {
+          "bytes": 4697344,
+          "pages": 409,
+          "shadows": 15
+        },
+        {
+          "bytes": 5248,
+          "pages": 58,
+          "shadows": 7
+        },
+        {
+          "bytes": 4736,
+          "pages": 58,
+          "shadows": 6
+        },
+        {
+          "bytes": 4480,
+          "pages": 51,
+          "shadows": 6
+        },
+        {
+          "bytes": 40704,
+          "pages": 278,
+          "shadows": 40
+        },
+        {
+          "bytes": 29376,
+          "pages": 262,
+          "shadows": 38
+        },
+        {
+          "bytes": 24192,
+          "pages": 223,
+          "shadows": 25
+        }
+      ],
+      "population": 95010,
+      "sha256": "95db5df2e5c467e97516c07b6fb38fac1b8de46f609540d40551534dbf234244",
+      "slot": "Homestead_Valley"
+    }
+  },
+  "paired_gpu": {
+    "groups": [
+      {
+        "group": 0,
+        "observations": {
+          "baseline": {
+            "samples": 240,
+            "median_ms": 7.9674999713897705,
+            "p95_ms": 9.09200000762939
+          },
+          "stone_fade": {
+            "samples": 240,
+            "median_ms": 7.80700016021729,
+            "p95_ms": 8.80000019073486
+          }
+        },
+        "median_delta_ms": -0.1604998111724809,
+        "p95_delta_ms": -0.2919998168945295
+      },
+      {
+        "group": 1,
+        "observations": {
+          "baseline": {
+            "samples": 240,
+            "median_ms": 7.635499954223635,
+            "p95_ms": 8.83600044250488
+          },
+          "stone_fade": {
+            "samples": 240,
+            "median_ms": 7.537500143051145,
+            "p95_ms": 8.74899959564209
+          }
+        },
+        "median_delta_ms": -0.09799981117248979,
+        "p95_delta_ms": -0.08700084686278942
+      },
+      {
+        "group": 2,
+        "observations": {
+          "baseline": {
+            "samples": 240,
+            "median_ms": 7.58599996566772,
+            "p95_ms": 8.84799957275391
+          },
+          "stone_fade": {
+            "samples": 240,
+            "median_ms": 7.81349992752075,
+            "p95_ms": 8.8129997253418
+          }
+        },
+        "median_delta_ms": 0.22749996185303,
+        "p95_delta_ms": -0.034999847412109375
+      }
+    ],
+    "other_engine_overlap_observed": false,
+    "scope": "Uncapped ABBA after encoder/readback end; frozen local scene has 309 forest cells, not all 1024. Does not close earlier detail-vs-grass/fern GPU-tail target."
+  },
+  "current_source_sha256": {
+    "addons/world_ecosystem/filtered_stone.gdshader": "02c458ee0d095ba48f38b7663cfdd7b1724a8e7cbc8724c45acc4644a5f5dfa5",
+    "addons/world_ecosystem/filtered_grass.gdshader": "84bac82dc67bba22e43438072246093b2e0e2e466f5c28301ad6acda462485b5",
+    "addons/world_ecosystem/ground_cover.gd": "e4ba3de5caf187c4476c3b2a9f8cfe953bf26c429d01ebed038508919e34b120",
+    "addons/world_ecosystem/woodland.gdshader": "a16616cfd6d2f15d73f8b894f9191047d9f85f0259aa754be2aa73ea839fbae1",
+    "tests/fixtures/stone_pre_transition.gdshader": "5af308b5ca4755923f0db5b754a6939bc77bf60282b4124ed0b35c67a808efd1"
+  },
+  "source_format_note": "Original line endings restored in ground_cover.gd after first physical replay; normalized LF text was asserted identical. The final replay uses these exact hashes.",
+  "human_approved_followup": true,
+  "followup_committed": true,
+  "remaining": [
+    "Near-to-next-LOD transitions and distracting rectangular patches; new lab and human review before promotion",
+    "Broader FOV, light, terrain, overlap, nonuniform parents and devices",
+    "Earlier detail GPU p95 target against grass/fern renderer"
+  ],
+  "provenance": "Original investigation and code by OpenAI Codex on maintainer request; uses existing project resources and frozen 0fbcb895 shader, no third-party implementation imported.",
+  "physical_gameplay": {
+    "run": "20261127T221540936288Z",
+    "passed": true,
+    "travelled_m": 220.168637737632,
+    "grounded_ticks": [
+      2162,
+      2162
+    ],
+    "invalid_play_frames": 0,
+    "raw_frames": 192,
+    "unique_raw_frames": 192,
+    "independent_raw_hashes_match": true,
+    "capture_elapsed_ms": 4050,
+    "capture_interval_ms": {
+      "median": 19,
+      "p95": 37
+    },
+    "captured_lod_crossings": [
+      {
+        "aabb_distance": 31.6328506469727,
+        "capture_index": 121,
+        "center": "(1702.64, 54.36044, 1676.852)",
+        "current": "opaque",
+        "frame": 2126,
+        "position": "(1728.881, 48.97351, 1695.376)",
+        "previous": "proxy",
+        "threshold": 31.6683750101589
+      },
+      {
+        "aabb_distance": 31.543478012085,
+        "capture_index": 126,
+        "center": "(1697.446, 53.80217, 1686.874)",
+        "current": "opaque",
+        "frame": 2131,
+        "position": "(1728.289, 48.93851, 1695.131)",
+        "previous": "proxy",
+        "threshold": 31.6683750101589
+      },
+      {
+        "aabb_distance": 31.4629764556885,
+        "capture_index": 156,
+        "center": "(1687.7, 58.32909, 1686.762)",
+        "current": "opaque",
+        "frame": 2161,
+        "position": "(1724.567, 48.72589, 1693.59)",
+        "previous": "proxy",
+        "threshold": 31.6683750101589
+      },
+      {
+        "aabb_distance": 31.6198844909668,
+        "capture_index": 176,
+        "center": "(1691.749, 59.56763, 1674.835)",
+        "current": "opaque",
+        "frame": 2181,
+        "position": "(1721.686, 48.70075, 1692.399)",
+        "previous": "proxy",
+        "threshold": 31.6683750101589
+      }
+    ],
+    "forest": {
+      "enabled": true,
+      "owners": 1024,
+      "pending": 0,
+      "ready": true,
+      "reconcile": 0,
+      "rejected": 0,
+      "resample": 0,
+      "total": 1024
+    },
+    "route_setup": "One pre-measurement normal teleport/floor-snap to (1740,0,1700); settle with normal pause menu; select clear departure away from resident enemies; no position changes during measurement",
+    "runtime_hashes": {
+      "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "5fd4f5acf7c8d27af2b339952eb1b749754b1d0403670c4f5c3f969e4e9bb8ac",
+      "res://addons/world_ecosystem/filtered_detail.gd": "4496e24ccad732c472373d8549b72034d666388efbb1cd604f6c731fbee72342",
+      "res://addons/world_ecosystem/filtered_fern.gd": "ab1bafb4835e88f8f271816f5bbfdde1b16688f04ae7f4693b3c09108242a7c5",
+      "res://addons/world_ecosystem/filtered_fern.gdshader": "467f2fa3b97e976150e43432234d4cb73446a83a307aa3f17113e0a415f86ea7",
+      "res://addons/world_ecosystem/filtered_grass.gd": "ae668d50b3a27d486670404b6d51f9b2c20efd129a4f475c58f552b29f008c3d",
+      "res://addons/world_ecosystem/filtered_grass.gdshader": "84bac82dc67bba22e43438072246093b2e0e2e466f5c28301ad6acda462485b5",
+      "res://addons/world_ecosystem/filtered_stone.gdshader": "02c458ee0d095ba48f38b7663cfdd7b1724a8e7cbc8724c45acc4644a5f5dfa5",
+      "res://addons/world_ecosystem/ground_cover.gd": "e4ba3de5caf187c4476c3b2a9f8cfe953bf26c429d01ebed038508919e34b120",
+      "res://addons/world_ecosystem/woodland.gdshader": "a16616cfd6d2f15d73f8b894f9191047d9f85f0259aa754be2aa73ea839fbae1",
+      "res://addons/world_ecosystem/woodland_mesh.gd": "257e3a370dff7d7774caa1d1a4ae647840c7e21531e7f8aad2c1e4026deb9f22",
+      "res://tests/fixtures/vegetation_capture.gd": "210f4ebc067cdc524dca4b15dd5e2ccd6e1c73d6d5f75570222cb70d1e2f4689",
+      "res://tests/vegetation_gameplay.gd": "02715df6994ff820c7e304666059fa5c0ccd5fdc507cc8bfbe0d616788ff3869"
+    },
+    "canonical_save_sha256": "95db5df2e5c467e97516c07b6fb38fac1b8de46f609540d40551534dbf234244",
+    "capture_excluded_gpu_observation": {
+      "samples": 1800,
+      "median_ms": 5.26300001144409,
+      "p95_ms": 6.26200008392334,
+      "scope": "Unpaired full-world gameplay observation; not incremental cost attribution."
+    },
+    "other_engine_overlap_observed": false,
+    "media": {
+      "walking.png": "78ac37e7f6e53155d05ef3057e7ccd731144e77a3e2bd04787562e61f984da9c",
+      "gameplay.mp4": "c083336e15d3d3cb134e6d93091022c7d26a1a1a377d98fb88949bf56f777902",
+      "motion-review.png": "ee70e5bdc3e5a773b18e78fae1ac1ee9da26494986bf93c719f0929472e89997",
+      "end.png": "21433b434393d221b91692c5308128fa49dddb52ebfc8ed1a72edfdac3342939"
+    },
+    "review_scope": "192 consecutive frames captured over 4.05 seconds; review encoded at 60 fps (3.2s). Walking PNG lossless; movie, sampled contact sheet and last captured frame derive from compressed review. Inspected full context, sampled motion and last captured frame. Human motion review remains required."
+  },
+  "failed_attempts": [
+    "20261127T212054966090Z",
+    "20261127T212300471313Z",
+    "20261127T212432187491Z",
+    "20261127T213142083769Z",
+    "20261127T214337002006Z",
+    "20261127T214627117571Z",
+    "20261127T215537784134Z",
+    "20261127T220521967827Z",
+    "20261127T220816122408Z",
+    "20261127T221304109221Z"
+  ],
+  "approval_scope": "Accepted for checkpoint/push, not universal visual or performance closure",
+  "milestone_tag": "playtest/stone-transitions-2026-11-28"
+}

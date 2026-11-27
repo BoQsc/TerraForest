@@ -1,5 +1,5 @@
 {
-  "status": "Human source playtest confirms visible flicker improvement; source snapshot explicitly requested. Stone pop-ins while approaching, subtle fade, broader coverage and GPU-tail target remain open.",
+  "status": "Stone/distance-fade checkpoint accepted for commit and push after source playtest on 2026-11-28; near-LOD handoffs and rectangular patches remain open.",
   "matrix_cases": 67,
   "unit_negative_controls_passed": 9,
   "engine_parser": "Godot 4.7.2 check-only passed for final gameplay driver; final rendered lab and production gameplay both pass",
@@ -16,7 +16,7 @@
   "human_approved": true,
   "block": null,
   "remaining": [
-    "Small stones pop in farther away while approaching; cause/regression status unproven. Subtle LOD/distance fade requested; preserve nearby appearance and brightness.",
+    "Near-to-next-LOD transitions and distracting rectangular patches; new lab and human review before promotion",
     "Incremental detail GPU p95 target <=.3ms: one clean group measured +.4005ms; no universal cost-pass claim",
     "Broader views, FOV, resolution, light, terrain and other-species coverage before universal issue closure"
   ],
@@ -100,6 +100,27 @@
     "scope": "Visible flicker in latest source Homestead Valley playtest; not universal scene or cost approval",
     "snapshot_requested": true,
     "native_binaries_in_snapshot": false,
-    "restore_requires_native_rebuild": true
+    "restore_requires_native_rebuild": true,
+    "snapshot_commit": "0fbcb895",
+    "approved_snapshot": true
+  },
+  "transition_followup": {
+    "evidence": "transition-evidence.json",
+    "investigation": "TRANSITIONS.md",
+    "human_approved": true,
+    "committed": true,
+    "fullframe_lab": "20261127T215018587021Z",
+    "independent_instance_lab": "20261127T215435218852Z",
+    "gameplay_run": "20261127T221540936288Z",
+    "gameplay_passed": true,
+    "current_production_sha256": {
+      "addons/world_ecosystem/filtered_stone.gdshader": "02c458ee0d095ba48f38b7663cfdd7b1724a8e7cbc8724c45acc4644a5f5dfa5",
+      "addons/world_ecosystem/filtered_grass.gdshader": "84bac82dc67bba22e43438072246093b2e0e2e466f5c28301ad6acda462485b5",
+      "addons/world_ecosystem/ground_cover.gd": "e4ba3de5caf187c4476c3b2a9f8cfe953bf26c429d01ebed038508919e34b120",
+      "addons/world_ecosystem/woodland.gdshader": "a16616cfd6d2f15d73f8b894f9191047d9f85f0259aa754be2aa73ea839fbae1",
+      "tests/fixtures/stone_pre_transition.gdshader": "5af308b5ca4755923f0db5b754a6939bc77bf60282b4124ed0b35c67a808efd1"
+    },
+    "approval_scope": "Accepted for checkpoint/push, not universal visual or performance closure",
+    "milestone_tag": "playtest/stone-transitions-2026-11-28"
   }
 }

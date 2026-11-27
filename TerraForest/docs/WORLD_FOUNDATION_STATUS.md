@@ -53,7 +53,16 @@ Starred for future learning: [investigation lessons](../issues/vegetation-lod/LE
 are listed in [Notable investigations](../issues/notable/README.md). The human
 source playtest confirmed the visible flicker correction on 2026-11-27, followed
 by an explicit source snapshot request. Small-stone pop-ins farther away while
-approaching, subtle LOD/distance fade and the GPU-tail target remain open.
+approaching are now isolated to a regression in our far proxy's individual-instance
+depth/lighting transform and hemisphere orientation. The correction
+and 32 m outer fade pass exact nearby parity and full-frame brightness checks.
+Final gameplay `20261127T221540936288Z` passes 220.169 m, all 2,162 ticks grounded,
+full forest/live actors and 192 raw-hash-verified frames with four stone LOD
+crossings. The user accepted this result for commit/push on 2026-11-28. Near-to-next-LOD
+handoffs and distracting rectangular vegetation patches now need an isolated
+comparison and human review before promotion. The earlier
+detail GPU-tail target and broader coverage remain open.
+[Transition causes, controls, failures and acceptance](../issues/vegetation-lod/TRANSITIONS.md).
 [Current scope and native rebuild requirement](../issues/vegetation-lod/README.md#human-playtest-and-source-snapshot--2026-11-27).
 The stage-by-stage measurements and earlier rejection below remain historical.
 
@@ -124,10 +133,13 @@ open; no paired performance improvement is claimed. All changes are uncommitted.
 
 **Earlier user rejection:** sampled residual and crop results did not establish whole-frame improvement. That rejection prompted the full-viewport attribution and shared shader correction above; the later human playtest confirmed its visible improvement.
 
-The issue remains open for stone pop-ins, subtle distance/LOD fade and broader
-FOV, resolution, lighting/terrain and other-species coverage. Return trigger: after
-the requested snapshot, reproduce approach pop-ins, isolate transition/streaming
-causes and validate any change in normal movement before human review. Closure requires acceptable
+The issue remains open for acceptance of the stone transition/fade follow-up and
+broader FOV, resolution, lighting/terrain and other-species coverage. The requested
+snapshot is `0fbcb895`; the follow-up lab isolates the approach regression and
+records the correction and passing normal movement in the linked transition
+investigation. Return trigger: controlled near-LOD/batch-patch comparison, then normal movement
+and human validation of any new transition candidate.
+Closure requires acceptable
 motion and terrain tone with nearby parity and paired cost preserved. The
 expensive per-triangle fern candidate, invalid/wrong-crop tests, contended GPU
 runs, resource failures and legacy lossy previews remain recorded in the lab.

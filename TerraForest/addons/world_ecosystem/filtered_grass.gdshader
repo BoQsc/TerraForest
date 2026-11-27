@@ -5,6 +5,8 @@ render_mode cull_disabled, diffuse_burley;
 // Area is normalized before opacity clamping and the finite 3-sigma crop.
 uniform vec3 cover_eye;
 uniform float cover_clock = 0.0;
+uniform float distance_fade_start = 100.0;
+uniform float distance_fade_end = 124.0;
 varying flat vec2 center_px;
 varying flat vec3 inverse_cov;
 varying flat float amplitude;
@@ -42,7 +44,7 @@ void vertex() {
     vec4 clip=mvp*vec4(VERTEX,1.0);
     POSITION=vec4(point_px/(VIEWPORT_SIZE*0.5)*clip.w,clip.z,clip.w);
     float distance_to_eye=distance(origin.xz,cover_eye.xz);
-    visibility=1.0-smoothstep(100.0,124.0,distance_to_eye);
+    visibility=1.0-smoothstep(distance_fade_start,distance_fade_end,distance_to_eye);
     float age=cover_clock-INSTANCE_CUSTOM.x;
     visibility*=INSTANCE_CUSTOM.y>0.5?smoothstep(0.0,0.65,max(0.0,age)):1.0;
     float root_shade=mix(0.64,1.0,smoothstep(0.015,0.19,(CUSTOM0.y+CUSTOM1.y+CUSTOM2.y)/3.0));
