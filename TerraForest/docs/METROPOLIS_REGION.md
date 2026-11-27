@@ -174,3 +174,11 @@ crypt/bridge walks and user visual approval remain unaccepted. Some landmark
 captures show sub-60 FPS HUD values; these uncontrolled frames do not qualify
 sustained populated-world performance. Do not promote this source recipe into a
 finished world-quality or installed-build claim.
+
+Post-verification retention is recorded in `reports/metropolis_final_retention.json`.
+Besides the owned world, verified cold archives hold **163,868,044 bytes** of the
+focused native scratch build and **137,430,473 bytes** of remaining QA captures.
+The owning manifests are `reports/metropolis_clean_native.archive.json` and the
+production report's `all_captures.archive.json`. Logs, completion receipts and
+selected versioned issue images remain ready. Image provenance identifies its
+own archive; cold evidence is recoverable rather than discarded.
