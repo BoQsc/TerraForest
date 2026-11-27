@@ -94,6 +94,12 @@ original-size regression when changing that layout.
 For world generation, settlement, road, POI or landscape changes, read
 `docs/WORLD_BUILDING_STANDARD.md` before choosing the implementation.
 
+User direction, 2026-11-27: move generation processing into native jobs and
+compact, versioned binary records. Follow `docs/NATIVE_GENERATION.md`. Keep
+JSON for authoring/inspection and GDScript bridges for scene/UI coordination;
+do not add per-cell or per-object GDScript generation loops. Preserve existing
+save compatibility and verify equivalent output plus measured cost reductions.
+
 For entity navigation, traversal, pursuit or world-interaction changes, read
 `docs/NAVIGATION_STANDARD.md` before choosing the implementation. Reuse the native
 route core, declare movement capabilities and interaction permissions, keep one

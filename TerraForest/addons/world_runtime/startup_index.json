@@ -508,9 +508,7 @@
   "res://addons/structures/object_mesh.gd": [],
   "res://addons/structures/outdoor_generation.gd": [
     "res://addons/structures/pack_registry.gd",
-    "res://addons/structures/outdoor_scatter.gd",
-    "res://addons/volumetric_terrain/surface_tokens.gd",
-    "res://addons/vehicle_runtime/building_parking.gd"
+    "res://addons/volumetric_terrain/surface_tokens.gd"
   ],
   "res://addons/structures/outdoor_scatter.gd": [
     "res://addons/structures/pack_registry.gd"
@@ -885,9 +883,7 @@
     "res://addons/world_runtime/town_sign_plan.gd",
     "res://addons/volumetric_terrain/surface_tokens.gd"
   ],
-  "res://addons/world_runtime/verify_generated_world.gd": [
-    "res://addons/world_runtime/survey_cache.gd"
-  ],
+  "res://addons/world_runtime/verify_generated_world.gd": [],
   "res://addons/world_runtime/world_building_quality.gd": [],
   "res://addons/world_runtime/world_generation_plan.gd": [
     "res://addons/volumetric_terrain/mesh_codec.gd",

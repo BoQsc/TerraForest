@@ -9796,8 +9796,9 @@ workers; adding threads everywhere is not justified.
 [Current flow, attribution and acceptance gates](WORLD_STARTUP_ARCHITECTURE.md#generation-loading-and-generate--play-flow--2026-11-27).
 Next bounded experiment: two private immutable terrain readers with unchanged
 coverage/collision gates, exact geometry, cancellation and matched timings.
-Outdoor filtering/query/insertion attribution and explicit publication/first-control
-timestamps remain missing; collect them before further changes there. Save/map
+Outdoor filtering/query/insertion attribution is now supplied by the native
+generation entry below; explicit publication/first-control timestamps remain
+missing. Save/map
 overlap and live generation-scene transfer are deferred until measured priorities
 and ownership/recovery contracts justify them. Existing read-only map, warm-cache,
 first-control, broader seeds, foreground and package limitations remain open.
@@ -9834,3 +9835,52 @@ player saves were excluded. Normal storage-limit admission and closure are in
 `reports/extensive_lakes_final_verification.json`. Earlier failed/rejected evidence
 and the timed-out legacy bridge check remain recorded in
 [Extensive lakes](EXTENSIVE_LAKES.md) and the [lake issue](../issues/lakes-and-bridges/README.md).
+
+## Native generation processing and binary inspector — 2026-11-27
+
+The requested architecture is now explicit in [NATIVE_GENERATION.md](NATIVE_GENERATION.md):
+native processing jobs and compact versioned binary storage, with JSON for
+authoring/inspection. Outdoor placement and generated-world verification have
+been converted; the remaining pipeline has **not** all been converted.
+
+`NativeOutdoorGeneration` owns typed candidates, road indexing, cached model/tree
+data, support packing, validation and ordered insertion. The previous algorithm
+is test-only. All 4,024 proposals across 84 ordinary Metropolis lots match exactly
+(178 focused assertions); proposal comparison observed 39.569 s script versus
+0.929 s native. The complete city trial produced the same 1,230 object IDs and
+transform bytes, 1,156 skips and 117,464 density samples. Its outdoor pass was
+5.993 s versus the earlier 82.565 s; creation was 109.224 s versus 172.605 s.
+These are individual observations, not a controlled repeated throughput claim.
+Most remaining outdoor time is asynchronous surface/density query delivery.
+
+The [binary inspector](BINARY_WORLD_FORMAT.md) reads `TFWORLD1`, validates known
+metadata, exports/compiles recipe JSON and edits labels under the native save
+lease. Its native verifier traverses current terrain, structure/model, water and
+baseline references. Eight Python tests and 21 native checks pass, including
+exact comparison with the previous verifier and unchanged hashes for all 2,793
+content files of the existing source world. Native debug and release builds match
+their sources. No dependency or license exception was added.
+
+Earlier trials remain visible: the first native outdoor run differed by one float
+ULP and was rejected; using the engine's native Basis constructor restored exact
+parity. A subsequent full trial exposed an empty-section hash error, now corrected
+and covered by the verifier comparison. Their reports and cold fixture archives
+remain under `reports/metropolis_world/20261127T172740088308Z` and
+`20261127T175150794080Z`. Corrected full-flow report
+`reports/metropolis_world/20261127T175949980230Z/run.json` completes 6 creation,
+73 interaction and 30 fresh-restore assertions. Creation and restore pass strictly;
+interaction repeats the inherited zero-reference ObjectDB exit warning, so the
+overall strict result remains false and functional result true. RAM warnings are
+4.18 / 4.55 / 4.35 GiB; this is not memory/FPS acceptance. The launcher cold-retires
+its owned fixture under the explicitly approved temporary QA headroom; protected
+saves and normal limits remain intact. No export or full source copy was created.
+
+Remaining requirements are tracked with owners, prerequisites and closure evidence
+in the migration contract: native cold-plan compilation, building/foundation and
+population jobs, terrain scheduling, save/map coordination, remaining Variant
+payload schemas and complete inspector semantic coverage. They require distinct
+compatibility/ordering contracts and exact-output comparisons before replacement;
+the completed passes do not remove those requirements. Return trigger: continue
+at the compiled-plan and native job boundaries using the new stage counters.
+Existing clean-exit, dense-world memory/frame pacing, broader seeds, installed
+scope and world-quality/user acceptance remain open independently.

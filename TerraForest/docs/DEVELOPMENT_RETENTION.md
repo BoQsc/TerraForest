@@ -1,5 +1,15 @@
 # Development artifact retention
 
+The native world inspector's `native-check` admits 2 MiB of reports and zero
+world/scratch bytes, then records a headless check under `reports/world_inspector/`.
+It retains small completed/failed logs and JSON with the receipt and verifies that
+the input root stayed unchanged. It creates no world clone, export or source copy.
+The native outdoor and inspector regression fixtures reserve zero saved-world
+bytes; synthetic inspector roots and label backups together stay below 128 KiB.
+Explicit operator label edits retain their adjacent recovery backup and are not
+eligible for automatic developer-evidence retirement. See
+[BINARY_WORLD_FORMAT.md](BINARY_WORLD_FORMAT.md).
+
 Original tooling is 0BSD. Archives preserve the licenses and bytes of existing
 material; storage transformation does not relicense it or change runtime assets.
 

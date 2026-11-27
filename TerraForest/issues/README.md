@@ -1,5 +1,10 @@
 # Visual issue tracker
 
+[Native generation and binary inspection](../docs/NATIVE_GENERATION.md) now cover
+outdoor placement and generated-world storage verification. Migration of the
+remaining generation passes and component schemas is open; scoped timing and
+exact-output checks do not establish whole-world quality or clean exit acceptance.
+
 [Metropolis and inhabited-region generation](world-generator/README.md#metropolis-recipe--2026-11-27)
 adds a 36-building city, six communities and three required bridges. Source
 planning, preview, final contacts, normal publication/trading and fresh restoration

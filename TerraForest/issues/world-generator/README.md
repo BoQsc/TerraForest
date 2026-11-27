@@ -6,6 +6,13 @@
 
 ## Metropolis recipe — 2026-11-27
 
+Native processing migration is in progress under
+[NATIVE_GENERATION.md](../../docs/NATIVE_GENERATION.md). Outdoor placement and
+generated-world storage verification now run in native code. The binary inspector
+provides JSON recipe authoring and restricted label management while retaining
+native authoritative storage. This does not close the remaining script-driven
+planning, building/population orchestration, component format or world-quality work.
+
 Source integration and final-terrain checks pass for a city of 36 buildings,
 six eight-building communities, 52 m / 40 m lake bridges and a 28 m seasonal-gully
 footbridge. The ordinary starting recipe is **Metropolis & inhabited region**.
