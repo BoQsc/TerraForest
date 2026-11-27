@@ -140,8 +140,15 @@ int64_t NativeWaterTerrainPatch::prepare_structures(){
             WaterSolidClip::Pieces pieces;
             if(general){
                 if(!water_density_air(d,pieces))return status=-2;
+                if(!solids.empty()&&coord.y<10){
+                    WaterSolidProfile terrain_shape;if(!terrain_shape.prepare(pieces))return status=-2;
+                    terrain_ocean_capacity[i]=uint64_t(std::floor(terrain_shape.capacity()*1000000+1e-7));
+                }
                 for(const auto &solid:solids){WaterSolidClip::Pieces next;if(!WaterSolidClip::subtract(pieces,solid,next))return status=-2;pieces=std::move(next);}
-            }else if(!base.solid_remainder(500,solids,pieces))return status=-2;
+            }else{
+                if(!solids.empty()&&coord.y<10)terrain_ocean_capacity[i]=base.capacity();
+                if(!base.solid_remainder(500,solids,pieces))return status=-2;
+            }
             if(general||std::abs(WaterSolidClip::volume(pieces)*1000000-base.volume(500))>.001){
                 auto cache=std::make_shared<WaterSolidProfile>();if(!cache->prepare(pieces))return status=-2;
                 structures->bytes+=cache->bytes();if(structures->bytes>4*1024*1024)return status=-2;structures->cells[i]=cache;
@@ -777,7 +784,12 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
     if(patch.is_null()||patch->status!=1)return false;Key k=key(patch->coord);auto it=regions.find(k);if(it==regions.end())return false;
     const bool retained=patch->retained_edit>=0;
     if(retained&&(it->second.valid_before_edit!=patch->retained_edit||!it->second.has_density||it->second.valid))return false;
-    const bool seed_ocean=it->second.ocean_state==1&&!it->second.has_density;
+    // Construction can claim a newly admitted ocean region before its first
+    // terrain sample arrives. Edited ownership does not mean that its initial
+    // sea quantity has been installed. Preserve existing water/removal history.
+    const auto &initial=static_cast<const Region&>(it->second);
+    const bool seed_ocean=initial.ocean_state!=0&&!initial.has_density&&initial.vacancies.empty()&&
+        std::none_of(initial.water.begin(),initial.water.end(),[](uint64_t ml){return ml!=0;});
     uint64_t old_bytes=it->second.structures?it->second.structures->bytes:0,new_bytes=retained?old_bytes:(patch->structures?patch->structures->bytes:0);
     if(solid_cache_bytes-old_bytes+new_bytes>64*1024*1024)return false;
     // Resampling a region is not an edit of all its cells. Compare the exact
@@ -815,7 +827,7 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
         }
         if(different)changed_owners_mask|=mesh_owner_mask(i);
     }
-    invalidate_snapshot(!seed_ocean);preserve_mesh_region(k);if(restored_cache.count(k))++cache_rebuilds;
+    invalidate_snapshot(!seed_ocean||it->second.ocean_state!=1);preserve_mesh_region(k);if(restored_cache.count(k))++cache_rebuilds;
     // Occupancy edits never own water destruction. Quantities remain in their
     // cells until conservative displacement can find receiving capacity.
     if(!retained){
@@ -834,9 +846,12 @@ bool NativeRegionalWater::accept_patch(const Ref<NativeWaterTerrainPatch> &patch
         for(int i=0;i<512;++i){
             const int y=base.y+(i/8)%8;
             const auto shape=profile(it->second,i);
-            // Initial quantities must fit the same integral capacity used by the
-            // conservative solver. Rounding a full cell up could exceed it by 1 ml.
-            const uint64_t amount=std::min(shape.capacity(),uint64_t(std::max(0.0,std::round(shape.volume(std::clamp(40000-y*500,0,500))))));
+            // Preserve the terrain-only integral capacity even when a building
+            // arrived first. Its displaced water remains owned, just as when
+            // the same hull is added after initial sampling.
+            const auto terrain_capacity=patch->terrain_ocean_capacity.find(i);
+            const uint64_t amount=terrain_capacity!=patch->terrain_ocean_capacity.end()?terrain_capacity->second:
+                std::min(shape.capacity(),uint64_t(std::max(0.0,std::round(shape.volume(std::clamp(40000-y*500,0,500))))));
             it->second.water[i]=amount;total+=amount;
         }
     }

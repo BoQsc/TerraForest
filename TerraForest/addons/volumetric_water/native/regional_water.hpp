@@ -72,6 +72,9 @@ class NativeWaterTerrainPatch : public godot::RefCounted {
     std::array<uint16_t,512> floor{},ceiling{};
     std::vector<std::vector<WaterSolidClip::Plane>> structure_hulls;
     std::shared_ptr<StructureWaterContacts> structures;
+    // Initial sea volume belongs to terrain. Buildings displace that volume;
+    // arriving before the first sample must not silently reduce the reservoir.
+    std::map<int,uint64_t> terrain_ocean_capacity;
     std::atomic<bool> cached_cancelled{false};
     uint64_t cached_started_us=0,cached_worker_us=0;
     bool terrain_prepared=false,structure_only=false,general_terrain=false;

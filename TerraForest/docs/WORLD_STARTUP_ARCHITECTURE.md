@@ -1071,26 +1071,19 @@ first-player-control measurements. The loading pair is an observation, not a
 stable throughput guarantee. The later control reverses the whole-generation
 timing result, so **an overall generation speedup is not established**.
 
-The saved-water gate remains **partially unqualified**. The first optimized run
-matches terrain, structures, placements, baked lake definitions and map pixels,
-but its expanded snapshot has 27,360,855,499 ml versus 27,362,980,416 ml. Twelve
-shared regions differ in water quantity; their geometry, density, contacts,
-structures and vacancies match. This is not the allowed empty ocean-cap
-variation. Its water-map cache also misses, taking 13.198 s versus 4.915 s.
-The original-code control matches the old baseline. The optimized repeat matches
-the control's complete shared water records, catalog and total, with eight
-additional empty ocean caps allowed by the unchanged existing test. **The first
-failure is retained, not converted to a pass.** Timing-sensitive ocean admission
-or settlement is suspected; its exact cause and whether the optimization exposes
-it are not proven. A passing repeat does not establish deterministic generation.
+The saved-water gate was **partially unqualified** in this measurement set.
+The first optimized run matched terrain, structures, placements, baked lake
+definitions and map pixels, but retained 27,360,855,499 ml versus 27,362,980,416 ml.
+Twelve shared coastal regions differed only in water quantities. The original
+control and optimized repeat passed; that did not erase the failed run or prove
+determinism. Its water-map miss and 13.198 s map preparation remain recorded.
 
-Before qualifying generation as regression-free, reproduce the water discrepancy
-under controlled scheduling, resolve its cause, and pass repeated expanded-water
-comparisons including quantities, contacts and vacancies. Do not relax the gate
-or silently normalize wet regions. Wider seeds, foreground cadence, first control
-and packaged/cold launch retain their separate requirements; no visual approval
-is implied. The measured render-preparation improvement is complete; this water
-consistency requirement remains open.
+The subsequent [initial sea-fill fix](#fixing-initial-sea-fill-ordering--2026-11-27)
+reproduces two sampling-order errors and closes this consistency requirement for
+the measured recipe with two full saved-content comparisons. The failed earlier
+attempt remains failed. Wider seeds, foreground cadence, first control and
+packaged/cold launch retain their separate gates. The mixed historical timings
+still do not establish a mesh-only whole-generation speedup.
 
 [Measurements, control, repeat, archived failure and verification receipts](evidence/world_startup_audit/mesh_preparation_20261127.json).
 Reproduce mesh comparisons with `tests/object_pack_render_mesh.gd` and
@@ -1101,3 +1094,73 @@ fixtures were hash-verified and cold-retained through the existing lifecycle;
 no player save or native build was changed.
 
 Final source preparation passes; its reusable ready record is current.
+
+
+### Fixing initial sea-fill ordering — 2026-11-27
+
+Construction could claim an ocean region before its first terrain sample, which
+prevented initial filling. Even after correcting that ownership check, a building
+hull arriving before the sample reduced the capacity used to create the initial
+sea quantity. Both cases depended on worker/construction ordering.
+
+Initial filling now recognizes uninitialized edited ocean regions while retaining
+existing water and removal history. A bounded, temporary per-patch map preserves
+the terrain-only capacity beneath the sea surface before hull subtraction. An
+early building therefore receives the same owned water as a building added after
+sampling. Occupancy still includes its hull, and conservative displacement keeps
+ownership of any excess. No generation wait, equilibrium scheduling change,
+recipe change or save-format change is retained.
+
+| Matched fixed-water run | Original mesh code | Optimized mesh code |
+| --- | ---: | ---: |
+| Generate to loading-ready | 126.518 s | 123.549 s |
+| World creation | 94.105 s | 91.784 s |
+| Saving | 11.046 s | 10.568 s |
+| Generation map preparation | 5.548 s | 4.932 s |
+| Explicit renderer surface reads | 2,404 | 882 |
+
+Both runs pass the unchanged full saved-world comparison against the protected
+pre-optimization fixture. Terrain, structures, catalog and all common water
+records (quantities, geometry, density, contacts and vacancies) match. Both retain
+27,362,980,416 ml. The baseline contains four/five additional empty above-sea
+caps, allowed by the existing comparison; raw snapshot-byte identity is not
+claimed. No wet or lower ocean record is ignored. Each verification leaves all
+5,592 compared fixture files unchanged, excluding locks only. All 684 outdoor
+placements, 919 skips, plan identities, ordinary generation metadata and map
+pixels match; the loaded world contains 4,750 objects, 136 collections and 826
+pages. Sampled RAM/VRAM stay within their existing budgets.
+
+The optimized 123.549 s run is **26.8% faster** than the earlier 168.847 s
+pre-save/map baseline. This is a cumulative warm-cache observation, including
+previous saving/map improvements. The 3.0 s difference in the matched mesh
+control is smaller than the earlier variability; a stable mesh-only generation
+gain remains unqualified. First loading-ready precedes introduction completion
+and player control. These are ordinary source runs, not cold/package results.
+
+The new native regression first fails on each reproduced race, then passes exact
+saved-byte comparisons across admission budgets 1, 16 and 32, early/late building
+notification, actual building hulls, pending restore and existing owned water.
+All 166 focused water assertions pass, and cached planning preserves all 50
+prefab identities and the original plan digest. Debug and release libraries are
+rebuilt; runtime checks exercise the debug library.
+
+Rejected attempts remain in the evidence: a full initial preparation wait and a
+sampling-only wait with settlement deferred both preserved total volume but
+changed shared lake cells by 1 ml and retained additional lower ocean records.
+The ownership-only native fix passed two worlds but failed a third with the
+original 2,124,917 ml deficit. None is accepted or used in the final code. An
+`ocean_edit_reopen` harness attempt omitted its required `--ocean-record` argument;
+it failed before world creation and is not counted as passed.
+
+[Measurements, negative controls, rejected approaches and verification receipts](evidence/world_startup_audit/water_initial_fill_20261127.json).
+Reproduce the focused case with `tests/generation_water_preparation.gd`; use
+`tools/benchmark_outdoor_generation.py --family planning` for ordinary creation
+and `tests/generation_saved_equivalence.gd` for the separate full-content gate.
+The original-mesh control restores optimized source in a `finally` block. All
+worlds use existing admission/receipt-owned archival retention; failed worlds
+remain inspectable through their archives. No player save, export or source copy
+is changed. Wider seed/cache coverage, foreground cadence, first control,
+post-reboot cold launch and package acceptance remain separate requirements.
+
+Final source preparation passes (37.3 s), its reusable ready record is current,
+and Godot generated the new regression UID. No engine error was reported.

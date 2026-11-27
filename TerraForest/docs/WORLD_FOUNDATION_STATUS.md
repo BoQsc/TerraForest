@@ -9645,15 +9645,23 @@ The scoped mesh improvement is complete: explicit renderer reads **1,202 to
 checks pass. Full generation timing remains variable, including a slower
 optimized repeat, so a stable total-generation speedup is not established.
 
-**Still open:** one optimized generation differs in saved coastal-water quantity
-although terrain, structures and map pixels match. The original-code control and
-optimized repeat pass the unchanged water test; this does not close the retained
-failure or establish causality. Water admission/settlement timing needs a
-controlled reproduction and repeated expanded-snapshot equality before claiming
-deterministic, regression-free generation. This is deferred from the bounded
-mesh change because its trigger is not isolated, not because its acceptance
-standard changed. Do not ignore wet regions or weaken quantity/contact/vacancy
-checks. Existing cold-launch, first-control, foreground and package gates remain.
+**Water consistency closed for the measured recipe:** the native initial sea fill
+now survives construction claiming an unsampled region and preserves terrain-only
+volume when a building hull arrives before that first sample. Two full normal
+seed-1703/generator-29 generations match the original terrain, structures, water
+quantities/contacts/vacancies, placements and map pixels. The existing test still
+allows only empty above-sea caps; no quantity or occupancy check was relaxed.
+All 166 focused water assertions and 50 prefab identities pass. Both native
+configurations are rebuilt; each full comparison leaves 5,592 fixture files
+unchanged. The rejected waits and the insufficient ownership-only fix remain
+recorded with their failed comparisons.
+
+Optimized Generate-to-ready is **123.5 s**, versus **126.5 s** with original mesh
+code and the same water fix. Against the earlier pre-save/map **168.8 s** baseline,
+this is a cumulative **26.8%** improvement. The small matched control difference
+does not establish a stable mesh-only generation gain. Wider seeds/cache states,
+cold launch, first control, foreground cadence and final-package gates remain.
+[Fix, full comparisons and retained failures](WORLD_STARTUP_ARCHITECTURE.md#fixing-initial-sea-fill-ordering--2026-11-27).
 
 [Receipts, failed attempt, control and repeat](WORLD_STARTUP_ARCHITECTURE.md#reusing-object-mesh-source-reads--2026-11-27).
 All compared fixture files remain unchanged. No new visual acceptance is claimed.

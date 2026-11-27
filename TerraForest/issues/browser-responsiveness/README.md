@@ -411,14 +411,22 @@ reads from 1,202 to 441. The rendered preparation sample improves **10.1 to
 buffer/LOD fingerprints and four comparison PNGs match exactly; 238 checks pass.
 Saved-world files remain unchanged and all 4,750 objects load.
 
-Whole generation remains variable: **135.9/123.4 s** in the first pair and
-**117.5/130.5 s** in the original-code control/optimized repeat. No reliable
-end-to-end generation gain is claimed. The first optimized save has a real
-coastal-water quantity mismatch; its terrain, structures and map pixels match.
-The optimized repeat passes the unchanged saved-water comparison, but the first
-failure remains unresolved and retained. Do not describe generation as fully
-regression-free. Return to controlled water admission/settlement reproduction
-and repeated full snapshot comparisons before closing that requirement.
+The first generation comparisons were variable (**135.9/123.4 s** and
+**117.5/130.5 s**) and included a real coastal-water quantity failure. That
+historical failure remains retained. The subsequent native fix makes initial sea
+volume independent of construction claiming a region or supplying its hulls
+before the first terrain sample. Two full generations now pass the unchanged
+saved-water, terrain and structure comparison, including contacts and vacancies.
+All placements and map pixels match, and all 166 focused water assertions pass.
+Rejected waits and an insufficient ownership-only fix remain documented.
+
+With the same fixed water code, optimized generation takes **123.5 s**, versus
+**126.5 s** with original mesh code. The optimized run is **26.8% faster** than the
+earlier **168.8 s** pre-save/map baseline, a cumulative warm-cache observation.
+The 3.0 s control difference is smaller than earlier variability, so a stable
+mesh-only generation speedup remains unqualified. Wider seeds/cache states,
+first control, foreground cadence and packaged/cold launch remain open.
+[Water fix and exact comparison evidence](../../docs/WORLD_STARTUP_ARCHITECTURE.md#fixing-initial-sea-fill-ordering--2026-11-27).
 
 [Evidence, precise scope and remaining gates](../../docs/WORLD_STARTUP_ARCHITECTURE.md#reusing-object-mesh-source-reads--2026-11-27).
 This is an engineering improvement, not world-quality or final-package approval.

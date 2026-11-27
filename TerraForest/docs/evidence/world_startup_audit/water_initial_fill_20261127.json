@@ -1,0 +1,331 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted local analysis for the requested water-state consistency fix and generation retest. New original code is 0BSD; no imported material.",
+  "date": "2026-11-27",
+  "status": "Verified for the measured ordinary recipe and focused native sampling schedules",
+  "implementation": "Initial ocean seeding recognizes uninitialized edited regions, preserves existing quantities and removal history, and uses terrain-only capacity when building hulls arrive before the first sample. The temporary per-patch capacity map is bounded by 512 cells. No generation-wide wait or settlement scheduling change is retained.",
+  "scope": "Fresh source processes with retained OS/import/plan/derived caches, Godot 4.7.2 Forward+, RTX 4050. Normal seed 1703/generator 29/default Frontier expedition, ordinary actors, 1920x1080 and 60 FPS limit. Generate-to-loading-ready includes generation, saving, map preparation and opening the new world; it precedes introduction completion/player control. Native runtime checks exercise the debug library; both native configurations are built.",
+  "negative_controls": [
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/race_before.json",
+        "sha256": "2b2199b397a61579df970757008da4f4e49352c049e9cfec09064e7615d659f2"
+      },
+      "failure": "Construction claiming an unsampled ocean region prevented initial fill.",
+      "early_ml": 14921363571,
+      "prepared_ml": 14951408187
+    },
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/terrain_seed/run.json",
+        "sha256": "eadf5032e5704b7b4bca9f9e763c07ad0c5c7258b98904d53f04c61f0fd01cab"
+      },
+      "log": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/terrain_seed/before.log",
+        "sha256": "01c6089315d0b261be4fbfb4d63099abf33146533e2ec5ea2654e198671a6a7f"
+      },
+      "failure": "Even after the ownership fix, building hulls present during first sampling reduced the initial terrain-owned reservoir.",
+      "early_ml": 14793363571,
+      "prepared_ml": 14951408187
+    }
+  ],
+  "rejected_attempts": [
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/planning_after_20261127T073641358644Z/run.json",
+        "sha256": "8b550a6695bafdd05d679ad643a1ba394772880b68a5398a159d427ed87fe939"
+      },
+      "verification": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/equivalence.log",
+        "sha256": "76149f6594e52a3ef9104e142bbcce01bed99e984a4029844555073034d65e64"
+      },
+      "reason": "Waiting for full water preparation before construction matched total volume but changed per-cell rounding and additional lower ocean records."
+    },
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/water_order_retest_20261127/run.json",
+        "sha256": "48d3079feaa548e5fb83d2a67228e6a388b6211ffe1cc226614ce8217a87c11c"
+      },
+      "reason": "Ownership-only fix passed two full generations but the third retained the 2,124,917 ml coastal deficit; not accepted as complete."
+    },
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/sampling_gate/integrated_1.json",
+        "sha256": "37e7fab9e0e921c45baa2c0922f0042a1c029fdcf3607c4ab21f0653612c7d9d"
+      },
+      "reason": "Sampling before construction with equilibrium deferred also matched total volume but changed shared lake cells by 1 ml and added lower ocean records; rejected."
+    },
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/native_checks.json",
+        "sha256": "4d4e5875752a1c799573831fa9ca9f99f359404ab8802c000277da40a5623554"
+      },
+      "reason": "ocean_edit_reopen was invoked without its required --ocean-record argument. This harness attempt failed before creating a world and is not counted as a passed check."
+    }
+  ],
+  "checks": {
+    "receipt": {
+      "path": "reports/startup_optimization/water_order_verification_20261127/terrain_seed/final/checks.json",
+      "sha256": "4aad7c6307b33456a498c435abae595f6a7b7c162002aa72d42a92aa0cec4920"
+    },
+    "water_assertions": 166,
+    "all_passed": true,
+    "plan": {
+      "path": "reports/startup_optimization/water_order_verification_20261127/terrain_seed/final/cached_plan.json",
+      "sha256": "7ac8591f622b8c1ce5768e25b4738cfe3094cfa36a58fd637afc6633cb185e24"
+    },
+    "plan_digest": "dcb710218566c5db0a826f00f493f3284b9b2676c33e93babe5c8fb12b74189b"
+  },
+  "native_builds": [
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/terrain_seed/final/volumetric_water_build_template_debug.json",
+        "sha256": "634b15c1aeaa02a2ec24811ed551b54832f9341eca8762b2e91388b8b0a5098f"
+      },
+      "sha256": "86668d800cd7eeabbff0247437c9b165842e00e0402f68f86179ef020cac3c0a"
+    },
+    {
+      "receipt": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/terrain_seed/final/volumetric_water_build_template_release.json",
+        "sha256": "ad18db45433385bacb115847ca15695ab8c5e16e50fbd77ea42587c94a118aa5"
+      },
+      "sha256": "6bd1b4a8d509970a5fc1e17bce1c8e5f729bf3b1a055c380367465423a32403d"
+    }
+  ],
+  "runs": [
+    {
+      "label": "optimized_1",
+      "receipt": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/terrain_seed/final/optimized_1.json",
+        "sha256": "6c391aff8a107055fcefb79e9317d345f7e48cd46ba79fffa50eab6f7d5816bb"
+      },
+      "benchmark": {
+        "path": "reports/startup_optimization/planning_after_20261127T084004646891Z/run.json",
+        "sha256": "537f862aca072a5423b6ff5abde00eec549325159932bdd9f9b20f5388a1e850"
+      },
+      "mesh_sha256": "e459b92ad0c7c9972365f9011bc3d88b2c22d63df0326e6c89e3ef190a453dee",
+      "water_sources": {
+        "regional_water.cpp": "1ea2c33bf7d0d0c3353ac57b10a0d57813c12a8e4aa9929b9406e9f20208f89f",
+        "regional_water.hpp": "805dc5a17d399b268743e3c0f416a611211959e575e738d1ae2087e846efdafc"
+      },
+      "water_libraries": {
+        "volumetric_water.windows.template_debug.x86_64.dll": "86668d800cd7eeabbff0247437c9b165842e00e0402f68f86179ef020cac3c0a",
+        "volumetric_water.windows.template_release.x86_64.dll": "6bd1b4a8d509970a5fc1e17bce1c8e5f729bf3b1a055c380367465423a32403d"
+      },
+      "measurements": {
+        "passed": true,
+        "first_ready_seconds": 123.54949,
+        "creating_seconds": 91.783978,
+        "initialization_seconds": 18.577074,
+        "outdoor_seconds": 15.431684,
+        "save_seconds": 10.568453,
+        "map_seconds": 4.931887,
+        "generated_content_matches": {
+          "building_parking": true,
+          "container_locks": true,
+          "door_reinforcement": true,
+          "exploration": true,
+          "house_lights": true,
+          "house_sleepers": true,
+          "location_originals": true,
+          "plan": true,
+          "generated_water": true
+        },
+        "map_pixels_match": {
+          "Blocks": true,
+          "Objects": true,
+          "Water": true,
+          "terrain": true
+        },
+        "pack_mesh_profile": {
+          "lod_calls": 218,
+          "lod_us": 3028440,
+          "surface_read_us": 1892900,
+          "surface_reads": 882
+        },
+        "errors": []
+      },
+      "verification": {
+        "command": [
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+          "--headless",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\startup_optimization\\water_order_verification_20261127\\terrain_seed\\final\\optimized_1_equivalence_engine.log",
+          "--script",
+          "res://tests/generation_saved_equivalence.gd",
+          "--",
+          "--baseline-world=StartupBench_9c0924c896234f6d",
+          "--candidate-world=StartupBench_e480f658cd4942ce"
+        ],
+        "exit_code": 0,
+        "lines": [
+          "SAVED_TERRAIN_EQUAL true",
+          "SAVED_STRUCTURES_EQUAL true",
+          "SAVED_WATER_EQUIVALENCE {\"empty_ocean_caps_after\":[],\"empty_ocean_caps_before\":[7667229137,7667229138,7835001297,7835001298],\"ok\":true,\"raw_bytes_equal\":false}",
+          "GENERATION_SAVED_EQUIVALENCE failures=0"
+        ],
+        "files_unchanged": {
+          "StartupBench_9c0924c896234f6d": true,
+          "StartupBench_e480f658cd4942ce": true
+        },
+        "files_checked": 5592,
+        "manifest_sha256": {
+          "StartupBench_9c0924c896234f6d": "089a2fd670010cd7aea782f5f446ddb80a15f6c41a0444784e894c47d5cae94e",
+          "StartupBench_e480f658cd4942ce": "f9b8d23a5121ec74e99f34920e5870eac526021ca209f4603d9916cca75fecb5"
+        },
+        "errors": []
+      },
+      "resources": {
+        "peak_private_commit_bytes": 4099104768,
+        "peak_dedicated_gpu_bytes": 1760243712,
+        "within_sampled_limits": true,
+        "checks": {
+          "ram": {
+            "bytes": 4099104768,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1760243712,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        }
+      }
+    },
+    {
+      "label": "original_control",
+      "receipt": {
+        "path": "reports/startup_optimization/water_order_verification_20261127/terrain_seed/final/original_control.json",
+        "sha256": "410fb28d05632da2fc0062467f4f536b6a16874a5525879dfae2b1c98452ce86"
+      },
+      "benchmark": {
+        "path": "reports/startup_optimization/planning_before_20261127T084434308026Z/run.json",
+        "sha256": "c2fde7f4f8da8be6410f2339e76c24ff93f67af8bf2805f5d55d485f199d937c"
+      },
+      "mesh_sha256": "4d19b1288590d62251429bfcf05750548ec5f176711c633313e54cf0b9c1898f",
+      "water_sources": {
+        "regional_water.cpp": "1ea2c33bf7d0d0c3353ac57b10a0d57813c12a8e4aa9929b9406e9f20208f89f",
+        "regional_water.hpp": "805dc5a17d399b268743e3c0f416a611211959e575e738d1ae2087e846efdafc"
+      },
+      "water_libraries": {
+        "volumetric_water.windows.template_debug.x86_64.dll": "86668d800cd7eeabbff0247437c9b165842e00e0402f68f86179ef020cac3c0a",
+        "volumetric_water.windows.template_release.x86_64.dll": "6bd1b4a8d509970a5fc1e17bce1c8e5f729bf3b1a055c380367465423a32403d"
+      },
+      "measurements": {
+        "passed": true,
+        "first_ready_seconds": 126.518469,
+        "creating_seconds": 94.104525,
+        "initialization_seconds": 14.917549,
+        "outdoor_seconds": 16.366452,
+        "save_seconds": 11.045675,
+        "map_seconds": 5.54845,
+        "generated_content_matches": {
+          "building_parking": true,
+          "container_locks": true,
+          "door_reinforcement": true,
+          "exploration": true,
+          "house_lights": true,
+          "house_sleepers": true,
+          "location_originals": true,
+          "plan": true,
+          "generated_water": true
+        },
+        "map_pixels_match": {
+          "Blocks": true,
+          "Objects": true,
+          "Water": true,
+          "terrain": true
+        },
+        "pack_mesh_profile": {
+          "lod_calls": 218,
+          "lod_us": 1091194,
+          "surface_read_us": 739260,
+          "surface_reads": 2404
+        },
+        "errors": []
+      },
+      "verification": {
+        "command": [
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+          "--headless",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\startup_optimization\\water_order_verification_20261127\\terrain_seed\\final\\original_control_equivalence_engine.log",
+          "--script",
+          "res://tests/generation_saved_equivalence.gd",
+          "--",
+          "--baseline-world=StartupBench_9c0924c896234f6d",
+          "--candidate-world=StartupBench_59852609a0a84809"
+        ],
+        "exit_code": 0,
+        "lines": [
+          "SAVED_TERRAIN_EQUAL true",
+          "SAVED_STRUCTURES_EQUAL true",
+          "SAVED_WATER_EQUIVALENCE {\"empty_ocean_caps_after\":[],\"empty_ocean_caps_before\":[7667229137,7667229138,7835001296,7835001297,7835001298],\"ok\":true,\"raw_bytes_equal\":false}",
+          "GENERATION_SAVED_EQUIVALENCE failures=0"
+        ],
+        "files_unchanged": {
+          "StartupBench_9c0924c896234f6d": true,
+          "StartupBench_59852609a0a84809": true
+        },
+        "files_checked": 5592,
+        "manifest_sha256": {
+          "StartupBench_9c0924c896234f6d": "089a2fd670010cd7aea782f5f446ddb80a15f6c41a0444784e894c47d5cae94e",
+          "StartupBench_59852609a0a84809": "55d1f3b2c4c931e26b27b4d6cb35c3a6dad7ee8f1ea0a09e349e258b26c4355d"
+        },
+        "errors": []
+      },
+      "resources": {
+        "peak_private_commit_bytes": 4103524352,
+        "peak_dedicated_gpu_bytes": 1766596608,
+        "within_sampled_limits": true,
+        "checks": {
+          "ram": {
+            "bytes": 4103524352,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1766596608,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        }
+      }
+    }
+  ],
+  "baseline": {
+    "receipt": {
+      "path": "reports/startup_optimization/planning_before_20261127T054806375002Z/run.json",
+      "sha256": "e7c71db83480f16a58149ee78607b836222840fa9b78a162a33a8cab423e5127"
+    },
+    "scope": "Earlier pre-save/map optimization baseline; cumulative comparison, not attribution to the mesh change alone.",
+    "first_ready_seconds": 168.846654
+  },
+  "remaining": [
+    "Whole-generation mesh-only speedup is not established by the earlier mixed timings.",
+    "Wider seeds/cache states, foreground cadence, first player control, packaged and post-reboot cold launch keep their separate gates. No world-quality approval is implied."
+  ],
+  "retention": "Every full benchmark uses storage admission and receipt-owned archiving. Earlier failed worlds remain hash-verified in their owning archives. No player save, export or full source copy is allocated; verification hashes both fixtures before and after and excludes lock files only.",
+  "cumulative_improvement_percent": 26.827398072099196,
+  "source_preparation": {
+    "receipt": {
+      "path": "reports/startup_optimization/water_order_verification_20261127/terrain_seed/final/source_preparation/run.json",
+      "sha256": "ef0f5c8275056f225c15066ed683711fd32828126105edb9e378815321415c91"
+    },
+    "passed": true,
+    "seconds": 37.280716099980054,
+    "ready_current": true,
+    "ready_sha256": "e95afde113887c77b521e59e7f7fb3c832704a046b03599464bd1f459da737d5",
+    "test_uid": "uid://c7yh5kuag31b8"
+  },
+  "saved_water_total_ml": 27362980416
+}
