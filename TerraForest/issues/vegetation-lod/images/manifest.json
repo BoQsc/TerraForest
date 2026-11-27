@@ -55,5 +55,32 @@
     "license": "CC0-1.0",
     "scope": "Synthetic 1920x1080 meadow, 9984 production foliage instances; fixed wind and camera, no cast shadows. Duplicate normal inversion removed; visible clump speckling remains. Inspected, not user-approved; not the supplied overview.",
     "provenance": "Original tests/vegetation_shading.gd (0BSD); Godot 4.7.2 ed1daf0bf Forward+ on RTX 4050 Laptop. No external content imported."
+  },
+  {
+    "file": "stability-world-before.jpg",
+    "source": "reports/checks/20261127T102434433909Z/world_before.jpg",
+    "sha256": "5d2d35d4dd194fed54604348738c085882f05808881760bf31e6ab9eb2a4c643",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms remain unchanged",
+    "scope": "Read-only Homestead Valley, matched moving camera and deterministic wind. Left baseline/right trial in the lossless 15 FPS motion crop. Context stills are JPEG; measurements use raw 60 Hz frames. Inspected, not user-approved. GPU tail gate failed.",
+    "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets."
+  },
+  {
+    "file": "stability-world-after.jpg",
+    "source": "reports/checks/20261127T102434433909Z/world_after.jpg",
+    "sha256": "d291409bed01674dfbe25f750b6c32844e2b5f59c48e711789809d52652dc697",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms remain unchanged",
+    "scope": "Read-only Homestead Valley, matched moving camera and deterministic wind. Left baseline/right trial in the lossless 15 FPS motion crop. Context stills are JPEG; measurements use raw 60 Hz frames. Inspected, not user-approved. GPU tail gate failed.",
+    "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets."
+  },
+  {
+    "file": "stability-world-motion.webp",
+    "source": "reports/checks/20261127T102434433909Z/world_motion.webp",
+    "sha256": "d43f4ec752b113b2be9fa0ddd398c1d5e90c3e4b43b1a865052f6497bc4207c1",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms remain unchanged",
+    "scope": "Read-only Homestead Valley, matched moving camera and deterministic wind. Left baseline/right trial in the lossless 15 FPS motion crop. Context stills are JPEG; measurements use raw 60 Hz frames. Inspected, not user-approved. GPU tail gate failed.",
+    "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets."
   }
 ]

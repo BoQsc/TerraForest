@@ -1,12 +1,107 @@
 # Extended vegetation LOD
 
-- Status: Improved-partial; installed LOD work plus source-only lighting correction. Speckling, driving-speed continuity and player review remain open.
+- Status: Improved-partial; installed LOD work plus source-only lighting/stability trial. Distant motion improves in scoped checks; GPU tail gate, remaining speckling, driving-speed continuity and player review remain open.
 - Updated: 2026-11-27. Original LOD implementation `e2d0e548`; follow-ups below.
 - Forests: existing 6592/192/12-triangle tiers retained; visibility 448 -> 576 m.
 - Native circular preload: 640 m, maximum 405 wanted owners, 441 admission cap;
   two jobs and one 36-candidate batch/frame unchanged. No density/identity changes.
 - Ferns: distant 392 -> 154 triangles; bushes 294 -> 154; twigs 136 -> 80.
   Nearby geometry, ordinary shadows and four grass tiers remain unchanged.
+
+## Moving distant-cover trial — 2026-11-27
+
+The requested experiment is enabled in source. At 1080p and 75-degree FOV,
+woodland foliage gradually loses unresolved wind, fine shading and leaf-normal
+contrast from 32 to 80 metres. The transition uses squared distance and scales
+with projection size for zoom/resolution. Fully distant foliage uses a simple
+ground-facing normal and a calibrated 0.65 color multiplier. This is a visual
+approximation, not terrain-color sampling or translucency. Stones retain their
+existing shader path. Existing coverage/dither fade remains unchanged.
+
+Nearby grass retains its original geometry, shading and wind: the isolated near
+render is byte-identical, and near-band motion measurements match exactly. There
+are no new textures, geometry, draw passes or per-instance script loops. Existing
+native pages, shadow pages, transform bytes, plant identities and densities remain
+unchanged. Projection parameters update through the existing view-change path.
+The `distant_stability` shader uniform can disable the trial for comparison.
+
+Final source replay: `reports/checks/20261127T102434433909Z`, Godot 4.7.2
+`ed1daf0bf`, Forward+, RTX 4050 Laptop, 1920x1080, 60 FPS cap. Baseline is the
+shader after normal correction `6e87ed07`, frozen in
+`tests/fixtures/woodland_pre_stability.gdshader`. Both shaders run the same
+120-frame continuous camera path: 1.2 m/s sideways and 0.6 m/s forward, with
+deterministic wind time, repeated in ABBA order. Measurements sample every frame;
+lossless previews retain every fourth frame at 15 FPS. Timings exclude readback.
+
+| Check | Synthetic field | Read-only Homestead Valley |
+| --- | --- | --- |
+| Far temporal residual, baseline → trial | 0.13703 → 0.08098 (40.9% lower) | 0.05365 → 0.03947 (26.4% lower) |
+| Median of GPU p50 windows, baseline → trial | 5.532 → 5.605 ms | 6.952 → 6.977 ms |
+| Worst paired GPU p95 increase; gate ≤0.3 ms | **+0.615 ms, failed** | **+0.397 ms, failed** |
+
+**23 of 25 checks pass; both conservative GPU-tail gates fail.** Do not claim a
+performance-qualified fix or zero GPU cost. Eight short ABBA timing groups retain
+the adverse windows; no threshold was relaxed. Native instance buffers and draw
+counts pass the synthetic check. The real world retains all 58,829 ground-cover
+instances, page/shadow/transform allocations and persistent edits, and its
+canonical save hash is unchanged. No world copy, save write, native rebuild or
+installed-package export was performed.
+
+The metric is display-luminance change at fixed anchors around actual grass
+roots, using true 3D distance bands (near 8–28 m, middle 28–80 m, far 80–120 m),
+320 anchors per band. It includes wind, silhouette coverage, lighting and possible
+occlusion by nearer objects. It is not a pure aliasing measurement or a percentage
+of all visible flicker. Actors/publication are frozen during the rendering replay;
+the camera moves. This is not a physical driving or streaming/endurance test.
+
+![Matched moving vegetation comparison](images/stability-world-motion.webp)
+Left: pre-trial shader. Right: stability trial. Lossless 1:1 crops, matched camera
+and wind time; no resizing/interpolation. The crop contains the densest tile of
+projected distant-root anchors plus intervening nearer plants. Six evenly spaced
+frame pairs and the full context stills were inspected. Distant dark speckles
+soften, but clumps and color contrast remain; the transition is not seamless or
+user-approved. [Before context](images/stability-world-before.jpg) and
+[trial context](images/stability-world-after.jpg) are JPEG stills, not the metric
+inputs. Frozen metrics/hashes: [stability-evidence.json](stability-evidence.json).
+
+Retained earlier attempts (cold captures remain recoverable through their
+`homestead.archive.json`; logs and run receipts remain at their original paths):
+
+- `20261127T100346328273Z` and `20261127T100602937537Z`: oversized motion crops
+  exceeded the declared 5 MiB limit. Reduced crop dimensions, not the budget.
+- `20261127T100904585253Z`: visually rejected bright distant color band and failed
+  long-window GPU gates; also an invalid global draw-count assertion during
+  publication. Frozen trial shader/driver and rejected captures are retained.
+- `20261127T101521899054Z`: storage admission stopped before engine launch.
+  Receipt-owned archival subsequently freed space without changing limits or saves.
+- `20261127T101738641573Z`: corrected color, short interleaved timings and frozen
+  publication; synthetic tail gate still failed. Its global draw comparison was
+  incorrectly across camera poses, and its flat-plane motion sampler misclassified
+  hillside distances. Those distance claims are superseded by the final true-root
+  sampler and within-pose draw check, not reclassified as passing evidence.
+
+Reproduce (requires the existing saved world; never generates a replacement):
+
+```powershell
+python tools/run_godot_check.py vegetation_stability --isolated-render --timeout 300 --require "VEGETATION_STABILITY failures=0" -- --stability-source-slot=Homestead_Valley
+python tools/analyze_vegetation_stability.py reports/checks/<run>
+```
+
+The current final run intentionally reports failure for its two unmet cost gates.
+The runner admits 16 MiB (5 MiB motion packets, 6 MiB paired previews, 3 MiB context
+stills, 2 MiB metadata/logs), zero saved worlds. After process exit,
+`tools/maintain_homestead_captures.py --apply` owns only declared report members and
+cold-retains older runs with hashes/receipts under the two-ready-run policy.
+Versioned tracker images stay outside Godot imports/exports. Original code is
+0BSD; original capture contributions are CC0-1.0, with underlying project-asset
+terms preserved. No external implementation, dependency or asset was imported.
+
+Remaining: isolate and reduce the worst GPU/frame-tail cost before qualifying the
+minimal-cost requirement; inspect the exact supplied camera, other light/terrain
+colors, zoom/resolution transitions and shadowed slopes; compare real driving and
+longer/weak-hardware travel. Return with matched repeated timings and moving
+captures showing both stable silhouettes and acceptable terrain contrast, then
+obtain player visual acceptance. Installed-package qualification remains open.
 
 ## Distant grass speckles — 2026-11-27
 
@@ -78,13 +173,11 @@ After the owned process exits, `tools/maintain_homestead_captures.py` owns these
 members and cold-retains older runs under the existing two-ready-run policy.
 Tracker images remain versioned outside Godot imports/exports.
 
-Remaining: reproduce the supplied overview using its saved world/camera, identify
-which species and LODs contribute the remaining dark points, and compare continuous
-camera motion with normal zoom. Then test far-silhouette coverage and terrain/foliage
-lighting contrast at unchanged population, using the existing dither fade. A wider
-fade may soften the outer boundary but is not established as a solution for these
-speckles. Actual-world regression, GPU/frame tails and user acceptance are pending;
-return when that view or a representative populated-world camera is available.
+Follow-up: the moving distant-cover trial above now supplies a representative
+populated-world camera, motion comparison and unchanged-population/save checks.
+The exact supplied view, species/LOD attribution, GPU/frame tails and user
+acceptance remain open. Its shading approximation improves the measured residual
+without changing the existing dither fade; a wider fade remains unqualified.
 Original diagnostic code is 0BSD; no external implementation or asset was imported.
 
 ## Ground draw-page backlog — 2026-11-01

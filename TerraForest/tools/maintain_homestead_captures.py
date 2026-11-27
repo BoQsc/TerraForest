@@ -9,6 +9,10 @@ from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
 FAMILIES = {
+    "vegetation_stability": ("vegetation_stability.json", "synthetic_before.frames", "synthetic_after.frames",
+                             "world_before.frames", "world_after.frames", "synthetic_motion.webp", "world_motion.webp",
+                             "synthetic_before.jpg", "synthetic_after.jpg", "world_before.jpg", "world_after.jpg",
+                             "trial_shader.gdshader", "driver.gd"),
     "vegetation_shading": ("vegetation_shading.json", "baseline.png", "corrected.png", "baseline_repeat.png",
                            "motion_0_before.png", "motion_0_after.png", "motion_1_before.png", "motion_1_after.png",
                            "motion_2_before.png", "motion_2_after.png"),

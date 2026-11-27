@@ -41,6 +41,8 @@ BOUNDED_CONTRACT_REPORTS = {
 }
 
 def planned_report_bytes(command):
+    if "res://tests/vegetation_stability.gd" in command:
+        return 16 * 2**20  # <=5 MiB lossless crops, 6 MiB previews, 3 MiB stills, metadata/logs; no world copy.
     if any(str(value) == "res://tests/vegetation_shading.gd" for value in command):
         return 24 * 2**20  # Driver caps nine encoded frames at 20 MiB; no saved world.
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
@@ -158,7 +160,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
-                world_bytes = 0 if "res://tests/vegetation_shading.gd" in command else 128 * 2**20
+                world_bytes = 0 if any(test in command for test in ("res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd")) else 128 * 2**20
                 result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command), world_bytes=world_bytes)
             result['preflight_seconds'] = time.monotonic() - started
             started = time.monotonic()  # Storage admission is not engine startup timing.
@@ -295,7 +297,7 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         from maintain_homestead_captures import maintain
         maintain(apply=True)
     folder.mkdir(parents=True)
@@ -310,7 +312,7 @@ def main(argv=None):
         maintain(apply=True)
     if args.test == "physics_residency_world":
         maintain(apply=True)
-    if args.test in {"homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         maintain(apply=True)
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1

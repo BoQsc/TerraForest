@@ -1,17 +1,26 @@
 ## Distant vegetation speckles — 2026-11-27
 
-Source-only woodland shader correction removes a duplicate back-face normal
-inversion already performed by Godot for double-sided materials. A red/green
-render probe and 9,984-instance comparison pass seven checks, with unchanged
-placement buffers, density, meshes and dither fade. No new rendering pass, texture
-or geometry; no measured performance gain is claimed. Inspected synthetic images
-still show distant clump speckling, so the user's overview complaint remains open.
-The exact supplied world/camera was unavailable. Return with that view or a
-representative populated-world comparison to identify species/LOD contributions,
-test continuous motion and terrain/foliage contrast, and measure frame/GPU costs
-before claiming seamless blending. Actual-world regression, installed package and
-user visual acceptance are pending. Earlier rejected fade, self-shade and MSAA
-comparisons remain preserved. [Evidence, images and remaining work](../issues/vegetation-lod/README.md#distant-grass-speckles--2026-11-27).
+The source-only normal correction is now followed by the requested moving
+distant-cover trial: wind and fine lighting fade toward stable ground-facing
+shading over 32–80 apparent metres. Nearby grass pixels are unchanged; no new
+textures, geometry or draw passes. Repeated matched camera motion reduces the
+far-root temporal residual 40.9% in the synthetic field and 26.4% in read-only
+Homestead Valley. This metric includes coverage/occlusion and wind, not just
+aliasing. All 58,829 ground-cover instances, native pages/bytes and the save hash
+remain unchanged. Full context stills and motion frame pairs were inspected;
+dark speckles soften but visible clumping/contrast remains.
+
+Final run `20261127T102434433909Z`: **23/25 checks pass; both conservative GPU-tail
+gates fail** (+0.615 ms synthetic, +0.397 ms world versus a ≤0.3 ms limit). Median
+GPU windows change by +0.073/+0.025 ms respectively; this is not a zero-cost or
+performance-qualified fix. The representative-world/moving-camera prerequisite
+is now covered, but exact supplied viewpoint, physical driving, zoom/resolution,
+other light/terrain conditions, long sessions and weak hardware remain open.
+Return with isolated matched timings resolving the tail gate and further moving
+captures showing acceptable contrast/coverage, followed by player approval and
+installed-package validation. No export was made. Earlier rejected bright-band,
+flat-plane sampler, storage-cap and timing attempts remain receipt-retained; no
+gate or storage limit was raised. [Evidence, images and remaining work](../issues/vegetation-lod/README.md#moving-distant-cover-trial--2026-11-27).
 
 ## Human performance capture on the latest save
 
