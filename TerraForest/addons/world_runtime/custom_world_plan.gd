@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=56
+const VERSION:=58
 const Watchtowers=preload("res://addons/exploration/watchtower_sites.gd")
 const Exploration=preload("res://addons/exploration/cave_layouts.gd")
 const Civic=preload("res://addons/structures/civic_catalog.gd")
@@ -76,7 +76,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var cache_profile:Dictionary={}
  var encoded:=Recipe.encode(options)
  if int(options.get("profile",0))==1 and int(options.get("introduction",0))!=0:return {"ok":false,"reason":"Metropolis uses its city start; the trader introduction belongs to the expedition recipe"}
- if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31]:return {"ok":false,"reason":"Unsupported world recipe"}
+ if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35]:return {"ok":false,"reason":"Unsupported world recipe"}
  if progress!=null:progress.record("Checking the binary placement-plan cache",0,0,"Seed %d / terrain %d / recipe v%d"%[seed_value,generator,VERSION])
  var core=ClassDB.instantiate("TerrainCore")
  var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
@@ -100,6 +100,12 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var cached:=read_plan(path,key,cache_profile)
  if not cached.is_empty():cached["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0;cached["cache_profile"]=cache_profile;return cached
  if not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {"ok":false,"reason":"Native terrain initialization failed"}
+ var lake_audit:Dictionary={}
+ if generator>=32:
+  var lakes:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(core,generator)
+  lake_audit=core.survey_generated_lake_surfaces(lakes.records)
+  lake_audit.erase("points")
+  if not lake_audit.get("ok",false) or int(lake_audit.get("extensive_count",0))<3:return {"ok":false,"reason":"The landscape could not fit three connected long lakes","lake_audit":lake_audit}
  var layout:=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
  var sites:Array=[];var occupied:Array=[];var works:Dictionary={"ok":true,"segments":[],"bounds":AABB()}
  var distributed:=generator>=24
@@ -233,6 +239,16 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    works.segments.append_array(normalized_works.segments)
  if not network.links.is_empty():works.segments=network.segments+works.segments;works.bounds=works.bounds.merge(network.bounds)
  var result:Dictionary={"ok":true,"version":3,"recipe_version":VERSION,"legacy_civic_review":civic_review,"recipe_key":key,"seed":seed_value,"generator":generator,"options":options.duplicate(),"sites":sites,"connection":network if not network.links.is_empty() else {},"works":works,"building_count":building_count,"network":network}
+ result["lake_audit"]=lake_audit
+ if generator>=32:
+  var paving_inputs:Array=[]
+  for site:Dictionary in sites:paving_inputs.append(site.block_paving.records)
+  var paving:Dictionary=Recipe.codec().coalesce_paving(paving_inputs)
+  if not paving.get("ok",false):return {"ok":false,"reason":paving.get("reason","Invalid shared sidewalks")}
+  for index in sites.size():
+   sites[index].block_paving.records=paving.regions[index]
+   sites[index].block_paving.tiles=int(paving.regions[index].size()/4)
+  paving.erase("regions");result["paving_audit"]=paving
  result["layout_variant"]=layout_variant
  result["road_normalization"]=normalization
  var bridge_navigation:=[]

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/civic_world.gd"
+const LakeCodec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const E2=preload("res://addons/structures/expansion_catalog.gd")
 var metropolis:=false
 var capture_prefix:=""
@@ -11,6 +12,7 @@ func _physics_process(delta:float)->bool:
 	# terrain while their parent world's physics callback is suspended.
 	if metropolis and is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn" and current_scene.startup_complete and not current_scene.is_physics_processing():
 		var game:Node=current_scene
+		game.terrain.focus=game.player.global_position
 		game.zombies.update(delta,game.player.global_position,false,false)
 		game.actors.update_simulation(delta,game.terrain.focus,false,game._actor_collision_ready)
 	return false
@@ -95,12 +97,45 @@ func run()->void:
 	if not restoration:await verify_approved_records(game)
 	var trader_lots:Array=planned.sites[0].lots.filter(func(lot:Dictionary):return lot.asset.has_meta("trader_anchor"))
 	if check(trader_lots.size()==1,"exactly one trader building is identifiable"):await trade_world(game,trader_lots[0])
+	if metropolis:await inspect_lakes(game)
 	if not restoration:
 		for lot:Dictionary in planned.sites[0].lots:
 			if lot.asset.has_meta("civic_id"):await inspect_detail(game,lot)
 		if metropolis:await inspect_metropolis(game)
 	FileAccess.open(folder.path_join("restore.json" if restoration else "result.json"),FileAccess.WRITE).store_string(JSON.stringify({"slot":selected_slot,"checks":checks,"failures":failures,"generation":"normal UI, no review flags","recipe":settings,"plan_digest":planned.plan_digest}))
 	await finish()
+
+func inspect_lakes(game:Node)->void:
+	var lake_core=ClassDB.instantiate("TerrainCore");lake_core.execute(LakeCodec.command(6,[1703,game.terrain.backend.world_generator]))
+	var definitions:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(lake_core,game.terrain.backend.world_generator)
+	var audit:Dictionary=planned.get("lake_audit",{})
+	check(game.terrain.backend.world_generator==33 and int(audit.get("extensive_count",0))>=3,"normal UI publishes the coast profile with three audited long lakes")
+	for index in mini(3,audit.get("lakes",[]).size()):
+		var lake:Dictionary=audit.lakes[index];var center:Vector3=lake.center
+		game.teleport(center+Vector3(0,5,0),center.y+5);game.set_physics_process(false);game._clear_motion();game.fly=true
+		game.camera.cull_mask&=~((1<<18)|(1<<19))
+		game.camera.global_position=center+Vector3(6,5,6);game.camera.look_at(center)
+		check(await wait_for(func():return not game.loading_active and game.lakes.water.depth_at(center-Vector3(0,.5,0))>.1,90),"restored real water fills long lake "+str(index))
+		var owner:=Vector3i((center/4).floor())
+		check(await wait_for(func():return game.lakes._meshes.has(owner),90),"actual water render geometry reaches long lake "+str(index))
+		if index==0 and not restoration:
+			var bounds:=AABB(center,Vector3.ZERO)
+			for section:Dictionary in definitions.records:
+				if absf(section.level-center.y)<.001:bounds=bounds.merge(AABB(section.origin,Vector3(section.cells)*section.spacing))
+			var along:=Vector3.RIGHT if bounds.size.x>bounds.size.z else Vector3.BACK
+			var across:=Vector3.BACK if bounds.size.x>bounds.size.z else Vector3.RIGHT
+			var low_view:Vector3=center-along*(float(lake.length_m)*.35)+Vector3.UP*3
+			game.teleport(low_view,low_view.y);game.set_physics_process(false);game._clear_motion();game.fly=true
+			await wait_for(func():return not game.loading_active,90)
+			game.camera.global_position=low_view;game.camera.look_at(center+along*float(lake.length_m)*.3)
+			for frame in 90:await process_frame
+			var view:Dictionary={"player":str(game.player.global_position),"focus":str(game.terrain.focus),"camera":str(game.camera.global_position),"render_pages":game.lakes.statistics().render_pages,"native":game.lakes.water.runtime_state()}
+			FileAccess.open(folder.path_join("lake_view.json"),FileAccess.WRITE).store_string(JSON.stringify(view,"  "))
+			await photograph("long_lake_generated_shore")
+			game.camera.global_position=center+Vector3(240,220,240);game.camera.look_at(center)
+			for frame in 45:await process_frame
+			await photograph("long_lake_generated_overview")
+	game.set_physics_process(true)
 
 func inspect_metropolis(game:Node)->void:
 	var landmarks:=0
@@ -159,6 +194,12 @@ func finish()->void:
 	if is_instance_valid(current_scene):current_scene.free()
 	# Let deferred native reference releases and the awaiting run() unwind before
 	# engine teardown; immediate quit can leave a zero-reference object queued.
-	for frame in 2:await process_frame
+	await RenderingServer.frame_post_draw
+	for frame in 8:await process_frame
 	print("PRODUCTION_BUILDINGS checks=",checks," failures=",failures," slot=",selected_slot)
-	quit.call_deferred(1 if failures else 0)
+	_quit_after_finish.call_deferred(1 if failures else 0)
+
+func _quit_after_finish(code:int)->void:
+	# Resume on a fresh frame after run()/finish() have released their locals.
+	await process_frame
+	quit(code)

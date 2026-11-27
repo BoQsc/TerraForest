@@ -9802,3 +9802,35 @@ overlap and live generation-scene transfer are deferred until measured prioritie
 and ownership/recovery contracts justify them. Existing read-only map, warm-cache,
 first-control, broader seeds, foreground and package limitations remain open.
 No additional world, native build, export or unchanged full benchmark was created.
+
+## Extensive lakes — 2026-11-27
+
+New source worlds use immutable terrain IDs 32–35. Three connected long lakes
+measure about 360–480 m in the checked seeds (1703: 478 / 418 / 362 m), with
+smaller water bodies, the required 84 buildings and all three bridges retained.
+Native catalog sections keep the existing 128 MiB bake-state / 64 MiB snapshot
+caps and 0.5 m water volume resolution. Legacy IDs 1–31 retain their fields.
+
+Scoped engineering passes: 62 frozen legacy fingerprints, sixteen new seed/profile
+surveys, real restored water across every section seam, safe shared-sidewalk
+ownership, 295 final contact/publication assertions and the ordinary preview.
+Production report `reports/metropolis_world/20261127T163022033235Z/run.json`
+completed 6 creation, 73 interaction and 30 fresh-restore assertions, including
+actual render owners at all three lakes. Its `functional_passed` is true, but
+strict `passed` remains false: creation/restoration reproduce the inherited
+zero-reference ObjectDB exit warning. Diagnostic continuation preserves every
+failed phase and the overall failure. It is not a clean-exit qualification.
+
+The low water view is inspected; user visual approval is pending. The high aerial
+view is rejected as full-lake visibility evidence. Remaining work: overview/distant
+water rendering, full shore/bridge/entrance walks, populated-world frame pacing
+and weak hardware. Return trigger: distance/render publication work and ordinary
+world-quality playtesting. Closure requires full-extent views and traversal at the
+required quality/performance. Native lifetime closure separately needs repeatable
+clean exits. Do not promote these source checks to an installed/export milestone.
+
+The owned staging/published fixture is cold-retained (77,737,140 bytes); protected
+player saves were excluded. Normal storage-limit admission and closure are in
+`reports/extensive_lakes_final_verification.json`. Earlier failed/rejected evidence
+and the timed-out legacy bridge check remain recorded in
+[Extensive lakes](EXTENSIVE_LAKES.md) and the [lake issue](../issues/lakes-and-bridges/README.md).

@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-27",
+  "license": "CC0-1.0",
+  "license_scope": "New original captures; underlying project materials retain their existing notices",
+  "creator": "TerraForest project; AI-assisted capture tooling",
+  "capture": "Actual Godot Forward+ render / native map preview. No image editing. Tool hidden in low view; ordinary fog/shaders retained. Cameras differ; not a matched performance comparison.",
+  "seed": 1703,
+  "generator": 33,
+  "world": "Metropolis_1703_4d6d4224",
+  "source_receipt": "reports/metropolis_world/20261127T163022033235Z/run.json",
+  "preview_receipt": "reports/checks/20261127T164120235932Z/run.json",
+  "test_sha256": "f6a513990b633af3f7001059e0d8ca4f6f5dc28eaf2e715753012abd64795473",
+  "native_sha256": {
+    "addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll": "896dc37b2614a25df8106af9173b8072d6bc9e20d81c6341c5ed081529251a0a",
+    "addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll": "ca32604e5cc50d0766a8fd928d4f4099d2485509a0ae9ace2913a008b05e94a3",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "4a4120382e918ff575b6ad6a9415a0d325602df71e3974afe2a8f1449ff145d0",
+    "addons/structures/bin/structures.windows.template_release.x86_64.dll": "113631463097c8449f460919d6b3b4e4d8bfb439f6d8ac57893b3f56f419562a",
+    "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "ccf98df29514b63514d7f2f7e4e63ec2b565b43b944a4dd39f7f88bae0242b80",
+    "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll": "fb9f05c326c46a8c65309d32dcb013e2737d7998fa3da2388fd5c0592d35f89b",
+    "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "f0e3e9953689294f1080fe7856ec80ef97629b8684ce4c454da2459ed246bc72",
+    "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "79498abdedb70e4696cce5f9afdda5204f1625ab88431355bbaa3699080af702",
+    "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": "805cf0adf4022d62ae77a7c854bb889aa5f4b7abe92758baf7f36a754bc73c2b",
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "f5b6f5c0a2e40b0a209379538ffecdcd41e5a85c6da032bd83c5b898805ee1e2",
+    "addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll": "86668d800cd7eeabbff0247437c9b165842e00e0402f68f86179ef020cac3c0a",
+    "addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll": "6bd1b4a8d509970a5fc1e17bce1c8e5f729bf3b1a055c380367465423a32403d",
+    "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "7c4feabed6ba2815a3746ab16533a0e5527c4eba9c31208081312440bbb01258",
+    "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "674316320a21644e4894acead3ee2d1c85a01978997a6cccc75f249d5b8cbfa6"
+  },
+  "images": [
+    {
+      "file": "long_lake_length.png",
+      "source": "reports/metropolis_world/20261127T163022033235Z/long_lake_generated_shore.png",
+      "sha256": "fa5b7a3182b493ff0b3c066509150805b1e62343a4968e6c10a72b1c0f78a2ec",
+      "review": "Reviewed: low view confirms the continuous extended water surface; user approval pending"
+    },
+    {
+      "file": "long_lakes_map.png",
+      "source": "reports/checks/20261127T164120235932Z/map.png",
+      "sha256": "371d534b11fc2e3fc2b3251aa7a78f0999379bb56643439d5b548f138dc8f177",
+      "review": "Reviewed: native complete-region preview; world-quality acceptance pending"
+    }
+  ],
+  "rejected_overview": {
+    "source": "reports/metropolis_world/20261127T163022033235Z/long_lake_generated_overview.png",
+    "sha256": "31160b011163a703f1fcbfdb5ee2b5cfda762e1e607af308ea797dff109e0e64",
+    "reason": "Does not establish full water-surface visibility from a high aerial camera; retained as unqualified evidence"
+  },
+  "strict_passed": false,
+  "functional_passed": true,
+  "checkout_scope": "Captured in the shared working checkout, which also contained unrelated uncommitted vegetation and structures-renderer work excluded from this commit. Recorded native/driver hashes identify the run; mutable visual scripts were not frozen. These images qualify lake geometry/local visibility, not clean-export appearance or frame pacing."
+}

@@ -24,10 +24,11 @@ constexpr u32 DISTRIBUTED_COAST_GENERATOR_ID=25;
 constexpr u32 DISTRIBUTED_NATURAL_GENERATOR_ID=26;
 constexpr u32 DISTRIBUTED_NATURAL_COAST_GENERATOR_ID=27;
 constexpr u32 VARIED_LAKES_GENERATOR_ID=28;
-constexpr u32 MAX_GENERATOR_ID=31;
+constexpr u32 EXTENSIVE_LAKES_GENERATOR_ID=32;
+constexpr u32 MAX_GENERATOR_ID=35;
 inline bool distributed_region(u32 generator){return generator>=DISTRIBUTED_REGION_GENERATOR_ID&&generator<=MAX_GENERATOR_ID;}
-inline bool surrounding_coast(u32 generator){return generator==SURROUNDING_COAST_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID||generator==EMBED_COAST_GENERATOR_ID||generator==DISTRIBUTED_COAST_GENERATOR_ID||generator==DISTRIBUTED_NATURAL_COAST_GENERATOR_ID||generator==29||generator==31;}
-inline bool buildable_ground(u32 generator){return (generator>=BUILDABLE_REGION_GENERATOR_ID&&generator<=DISTRIBUTED_COAST_GENERATOR_ID)||generator==28||generator==29;}
+inline bool surrounding_coast(u32 generator){return generator==SURROUNDING_COAST_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID||generator==EMBED_COAST_GENERATOR_ID||generator==DISTRIBUTED_COAST_GENERATOR_ID||generator==DISTRIBUTED_NATURAL_COAST_GENERATOR_ID||generator==29||generator==31||generator==33||generator==35;}
+inline bool buildable_ground(u32 generator){return (generator>=BUILDABLE_REGION_GENERATOR_ID&&generator<=DISTRIBUTED_COAST_GENERATOR_ID)||generator==28||generator==29||generator==32||generator==33;}
 constexpr u32 COASTAL_REGION_GENERATOR_ID=18; // First western coastal inlet; prior fields immutable.
 constexpr u32 UNGRADED_REGION_GENERATOR_ID=17; // Natural regional field; roads and lots must be baked as edits.
 constexpr u32 SITED_REGION_GENERATOR_ID=16; // Surveyed outer settlements with preserved approach corridors.
@@ -160,6 +161,7 @@ struct World {
  void index_cave_columns();
  void init_generator(int seed,u32 generator);
  void scatter_lakes(bool varied=false);
+ void scatter_extensive_lakes();
  V3 road_points[4][25]{}; // Immutable derived routes; reconstructed from seed/version.
  void plan_roads();
  u8 buildable_weights[65*65]{};

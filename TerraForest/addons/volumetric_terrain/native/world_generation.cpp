@@ -129,7 +129,33 @@ Dictionary survey_generated_lake_surfaces(const World &world,const Array &record
    }
   }
  }
- Dictionary out;out["ok"]=true;out["points"]=points;out["samples"]=samples;out["spacing_m"]=2;return out;
+ Dictionary out;out["ok"]=true;out["points"]=points;out["samples"]=samples;out["spacing_m"]=2;
+ if(world.generator_id>=EXTENSIVE_LAKES_GENERATOR_ID){
+  Array lakes;int extensive=0;
+  for(int basin=0;basin<world.basin_count;basin++){
+   const auto &b=world.basins[basin];std::set<std::pair<int,int>> cells;
+   int x0=2000,z0=2000,x1=0,z1=0;
+   for(int i=0;i<points.size();i++){
+    Vector3 p=points[i];double dx=std::abs(p.x-b.x),dz=std::abs(p.z-b.z);
+    if(std::abs(p.y-b.level)>.001||dx>(b.along_x?b.half_length:b.half_width)*1.5||dz>(b.along_x?b.half_width:b.half_length)*1.5)continue;
+    int x=int(std::floor(p.x/2)),z=int(std::floor(p.z/2));cells.insert({x,z});x0=std::min(x0,x);x1=std::max(x1,x);z0=std::min(z0,z);z1=std::max(z1,z);
+   }
+   size_t count=cells.size(),largest=0;int components=0;
+   while(!cells.empty()){
+    std::vector<std::pair<int,int>> queue{*cells.begin()};cells.erase(queue[0]);++components;
+    for(size_t at=0;at<queue.size();at++)for(int d=0;d<4;d++){
+     std::pair<int,int> next{queue[at].first+(d==0)-(d==1),queue[at].second+(d==2)-(d==3)};
+     if(cells.erase(next))queue.push_back(next);
+    }
+    largest=std::max(largest,queue.size());
+   }
+   int length=count?2*std::max(x1-x0+1,z1-z0+1):0;
+   Dictionary lake;lake["basin"]=basin;lake["length_m"]=length;lake["area_m2"]=int(count)*4;lake["components"]=components;lake["largest_component_cells"]=int(largest);lake["surface_cells"]=int(count);lake["center"]=Vector3(b.x,b.level,b.z);lakes.append(lake);
+   if(length>=330&&components==1)++extensive;
+  }
+  out["lakes"]=lakes;out["extensive_count"]=extensive;
+ }
+ return out;
 }
 Dictionary plan_lake_crossings(const World &world,bool metropolis){
  Dictionary result;result["ok"]=true;Array candidates,diagnostics;Survey survey{world};survey.cache=true;

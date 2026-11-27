@@ -6,7 +6,7 @@ func run()->void:
  DirAccess.make_dir_recursive_absolute("res://reports/lake_landscape")
  var reports:=[]
  var launch=preload("res://demo/world_launch.gd")
- check(launch.terrain_generator(true,true)==29 and launch.terrain_generator(false,true)==28 and launch.terrain_generator(true,false)==31 and launch.terrain_generator(false,false)==30,"new default keeps independent ocean and terrain-grid options")
+ check(launch.terrain_generator(true,true)==33 and launch.terrain_generator(false,true)==32 and launch.terrain_generator(true,false)==35 and launch.terrain_generator(false,false)==34,"new default keeps independent ocean and terrain-grid options")
  check(Crossings.Catalog.footbridge().get_cell_count()==92,"existing twelve-metre bridge remains unchanged")
  for span in range(24,45,2):
   var asset:=Crossings.Catalog.lake_crossing(span)

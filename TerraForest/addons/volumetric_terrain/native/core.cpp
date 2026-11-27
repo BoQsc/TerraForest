@@ -293,7 +293,8 @@ float World::inland_height(float x,float z,bool developed)const{
     float transverse=(b.along_x?dz:dx)/b.half_width;
     if(ab(transverse)>=1.5f)continue;
     if(b.kind==1)transverse-=.28f*mx(0.f,1.f-longitudinal*longitudinal);
-    float width=b.kind==2?.22f+.78f*smooth(clampf(ab(longitudinal)*1.4f,0,1)):1.f;
+    float neck=generator_id>=EXTENSIVE_LAKES_GENERATOR_ID?.45f:.22f;
+    float width=b.kind==2?neck+(1.f-neck)*smooth(clampf(ab(longitudinal)*1.4f,0,1)):1.f;
     float irregular=.94f+.045f*noise(x/27.f,z/27.f,u32(seed)+i*71u+617u);
     float radial=(longitudinal*longitudinal+transverse*transverse/(width*width))/(irregular*irregular);
     if(radial>=1.5625f)continue;
@@ -413,6 +414,55 @@ void World::scatter_lakes(bool varied){
   for(int row=top;row<=bottom;row++)for(int column=left;column<=right;column++)basin_cells[column+8*row]|=u16(1u<<lake);
  }
 }
+// Versioned separately: IDs 1..31 retain their exact field and catalog bytes.
+void World::scatter_extensive_lakes(){
+ for(int tile=0;tile<9;tile++){
+  u32 shape_key=hash32(u32(seed)^u32(tile*613)^0x6c17e92bu);
+  Basin shape{};
+  shape.half_length=tile==0?340.f:(tile==1?300.f:(tile==2?260.f:16.f+float(shape_key%8)));
+  shape.half_width=tile==0?20.f:(tile==1?19.f:(tile==2?13.f:9.f+float((shape_key>>8)%5)));
+  shape.depth=tile<3?2.6f:2.f;
+  shape.kind=tile==0?1:(tile==2?2:0);
+  shape.along_x=int((shape_key>>16)&1);
+  float ex=(shape.along_x?shape.half_length:shape.half_width)*1.5f;
+  float ez=(shape.along_x?shape.half_width:shape.half_length)*1.5f;
+  float best_cost=1e20f;V3 best{};
+  // Narrow, long envelopes reserve far less land than circular exclusion radii.
+  // All surveys run once during field initialization, never during sampling.
+  for(int attempt=0;attempt<256;attempt++){
+   u32 key=hash32(u32(seed)^0xda51c783u^u32(tile*991+attempt*7919));
+   V3 p{220.f+ex+float(key%65536)/65535.f*(1560.f-2*ex),0,220.f+ez+float(key>>16)/65535.f*(1560.f-2*ez)};
+   p.x=float(fl(p.x*.5f))*2;p.z=float(fl(p.z*.5f))*2;
+   bool clear=true;
+   for(int site=0;site<site_count;site++){
+    float dx=mx(ab(p.x-sites[site].position.x)-ex,0.f),dz=mx(ab(p.z-sites[site].position.z)-ez,0.f),radius=sites[site].radius+24.f;
+    if(dx*dx+dz*dz<radius*radius)clear=false;
+   }
+   for(int lake=0;lake<basin_count;lake++){
+    const auto &b=basins[lake];float bx=(b.along_x?b.half_length:b.half_width)*1.5f,bz=(b.along_x?b.half_width:b.half_length)*1.5f;
+    if(ab(p.x-b.x)<ex+bx+24&&ab(p.z-b.z)<ez+bz+24)clear=false;
+   }
+   for(int cave=0;cave<caves.n;cave++){
+    const auto &c=caves[cave];
+    if(p.x+ex>mn(c.a.x,c.b.x)-c.r-16&&p.x-ex<mx(c.a.x,c.b.x)+c.r+16&&p.z+ez>mn(c.a.z,c.b.z)-c.r-16&&p.z-ez<mx(c.a.z,c.b.z)+c.r+16)clear=false;
+   }
+   if(!clear)continue;
+   float low=256,high=0;
+   for(int along=-5;along<=5;along++)for(int across=-1;across<=1;across++){
+    float a=along*shape.half_length/5.f,c=across*shape.half_width;
+    float h=height(p.x+(shape.along_x?a:c),p.z+(shape.along_x?c:a));low=mn(low,h);high=mx(high,h);
+   }
+   float cost=high-low+mx(high-75.f,0.f)*.2f;
+   if(cost<best_cost){best_cost=cost;best=p;}
+  }
+  if(best_cost<1e20f){shape.x=best.x;shape.z=best.z;shape.level=height(best.x,best.z)-2.f;basins[basin_count++]=shape;}
+ }
+ for(int lake=0;lake<basin_count;lake++){
+  const auto &b=basins[lake];float ex=(b.along_x?b.half_length:b.half_width)*1.5f,ez=(b.along_x?b.half_width:b.half_length)*1.5f;
+  int left=int(clampf((b.x-ex)/250.f,0,7)),right=int(clampf((b.x+ex)/250.f,0,7)),top=int(clampf((b.z-ez)/250.f,0,7)),bottom=int(clampf((b.z+ez)/250.f,0,7));
+  for(int row=top;row<=bottom;row++)for(int column=left;column<=right;column++)basin_cells[column+8*row]|=u16(1u<<lake);
+ }
+}
 void World::index_cave_columns(){
  indexed_caves=-1;
  if(caves.n>64)return;
@@ -496,7 +546,8 @@ void World::init_generator(int p_seed,u32 generator){
   V3 workings=hall+V3{-45.f,0,20.f},secret=hall+V3{0,0,-40.f};
   caves.push({end,workings+V3{0,5,0},6.f,5.f});caves.push({workings,workings,12.f,0.f});
   caves.push({end,secret+V3{0,5,0},6.f,5.f});caves.push({secret,secret,10.f,0.f});
-  if(distributed_region(generator))scatter_lakes(generator>=VARIED_LAKES_GENERATOR_ID);
+  if(generator>=EXTENSIVE_LAKES_GENERATOR_ID)scatter_extensive_lakes();
+  else if(distributed_region(generator))scatter_lakes(generator>=VARIED_LAKES_GENERATOR_ID);
   if(buildable_ground(generator))prepare_buildable_ground(surrounding_coast(generator));
   generator_id=generator;return;
  }
@@ -2708,9 +2759,27 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==27){
   if(n!=4){out.p[8]=1;return;}
-  out.u(w.basin_count);
+  int record_count=0;
+  for(int i=0;i<w.basin_count;i++)record_count+=w.generator_id>=EXTENSIVE_LAKES_GENERATOR_ID?int(__builtin_ceilf((2*__builtin_ceilf((w.basins[i].half_length*1.05f+2)/2)*2)/256.f)):1;
+  out.u(record_count);
   for(int i=0;i<w.basin_count;i++){
    const auto &b=w.basins[i];
+   if(w.generator_id>=EXTENSIVE_LAKES_GENERATOR_ID){
+    // Adjacent even-aligned slices share one regional water store and level.
+    // Catalog pages stay bounded; the physical lake is never shortened to fit.
+    int half=int(__builtin_ceilf((b.half_length*1.05f+2)/2))*2;
+    int across=int(__builtin_ceilf((b.half_width*1.05f+2)/2))*2;
+    int parts=int(__builtin_ceilf(float(half*2)/256.f));float bottom=float(fl(b.level-b.depth))-1.f;
+    for(int part=0;part<parts;part++){
+     int start=-half+2*((half*part)/parts),end=-half+2*((half*(part+1))/parts),length=end-start;
+     int spacing=int(__builtin_ceilf(float(mx(length,across*2))/128.f));
+     float s=clampf(0.f,float(start+2),float(end-2)),bend=b.kind==1?.28f*mx(0.f,1.f-s*s/(b.half_length*b.half_length))*b.half_width:0;
+     out.vec({b.x+(b.along_x?start:-across),bottom,b.z+(b.along_x?-across:start)});
+     out.u(int(__builtin_ceilf(float(b.along_x?length:across*2)/spacing)));out.u(int(mx(3.f,__builtin_ceilf((b.level-bottom+1.f)/spacing))));out.u(int(__builtin_ceilf(float(b.along_x?across*2:length)/spacing)));out.f(float(spacing));out.f(b.level);
+     out.vec({b.x+(b.along_x?s:bend),b.level-.5f,b.z+(b.along_x?bend:s)});
+    }
+    continue;
+   }
    if(b.half_length>0){
     int extent_x=int(__builtin_ceilf((b.along_x?b.half_length:b.half_width)*1.05f+2));
     int extent_z=int(__builtin_ceilf((b.along_x?b.half_width:b.half_length)*1.05f+2));

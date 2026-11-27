@@ -1,12 +1,46 @@
-# Varied lakes and generated bridges
+# Long lakes and generated bridges
 
-- Status: Installed / scoped engineering checks passed.
-- Updated: 2026-10-28. User visual review: pending.
+- Status: Source lake checks passed; strict exit/overview gates remain open.
+- Updated: 2026-11-27. User visual review: pending.
 - Request: larger, less repetitive water bodies and real bridges in generated worlds.
 
-## Implementation
+## Longer source lakes — 2026-11-27
 
-- New profiles 28–31 preserve existing saved generators. New worlds select them by default; ocean and terrain-grid preferences remain independent.
+Newly created source worlds use profiles 32–35: three long, connected lakes and
+six smaller water bodies. Seed 1703 measures **478 m, 418 m and 362 m**, compared
+with the earlier largest lake at 190–196 m. Existing saves keep their terrain.
+Ocean and buildable-ground choices remain independent.
+
+The [extensive-lake contract](../../docs/EXTENSIVE_LAKES.md) records native bounds,
+water continuity and persistence checks, failed trials, shared-sidewalk ownership
+and the remaining world-quality gates. The three long basins use nine adjacent
+catalog sections within the existing water caps. Full source city/contact and
+combined cell-publication checks pass. Ordinary creation, interaction and fresh
+restoration pass 6 / 73 / 30 functional assertions; the inherited zero-reference
+exit warning remains a strict failed gate. Shared sidewalks retain one owner.
+
+The installed export still has the earlier profile. The images and engineering
+records below belong to that installed baseline, not the new long-lake profile.
+
+## Source images
+
+![Long water surface](images/long_lake_length.png)
+Low inspection view 3 m above the first lake, ordinary shader and fog. The tool
+is hidden; no image editing. This confirms local continuous water, not whole-world
+performance or user visual approval.
+
+![Regional long-lake map](images/long_lakes_map.png)
+Native 2 × 2 km preview with three long lakes, 84 city/village buildings, lookouts
+and three required crossings. Source and hashes: [manifest](images/long_lakes_manifest.json).
+
+High aerial rendering remains unqualified; the retained production overview does
+not show the full water surface. Return trigger: overview/distance publication
+work. Closure requires full-extent water views and bank traversal at the required
+quality and frame pacing. Native exit cleanup also requires repeatable clean exits.
+
+## Installed baseline (28–31)
+
+- New profiles 28–31 preserve existing saved generators. The 2026-10-28 installed build selects them by default; ocean and terrain-grid preferences remain independent.
 - Native elongated, curved and two-lobed basins, plus smaller ponds. Twelve lakes in each tested seed; the largest measured wet extent is 190–196 m.
 - Reuses static 0.5 m volumetric water, cached maps and binary storage. No per-frame script water simulation or new river system.
 - Existing manually placed 12 m footbridge stays unchanged. New 24–44 m timber footbridges consist of individual destructible grid cells, including deck, beams, rails and abutments.

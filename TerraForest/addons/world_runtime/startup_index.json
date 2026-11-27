@@ -695,6 +695,7 @@
     "res://addons/structures/lake_crossings.gd",
     "res://addons/structures/metropolis_catalog.gd",
     "res://addons/structures/expansion_catalog.gd",
+    "res://addons/volumetric_terrain/generated_lakes.gd",
     "res://addons/volumetric_terrain/generated_layout.gd",
     "res://addons/world_runtime/introduction_spawn.gd",
     "res://addons/world_runtime/road_normalization.gd",

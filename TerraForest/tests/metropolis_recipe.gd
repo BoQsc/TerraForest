@@ -5,7 +5,7 @@ const Metro=preload("res://addons/structures/metropolis_catalog.gd")
 const Plan=preload("res://addons/world_runtime/world_generation_plan.gd")
 const Contact=preload("res://addons/structures/terrain_contact.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
-const GENERATOR:=29
+const GENERATOR:=33
 var checks:=0
 var failures:=0
 var folder:=""
@@ -128,10 +128,43 @@ func run()->void:
 			var independent:Dictionary=identity_worker.wait_to_finish()
 			check(independent.get("ok",false) and independent.get("plan_digest","")==plan.plan_digest,"independent native rebuild has identical geometry identity despite different worker timings")
 		check(float(plan.road_normalization.max_shift)<=.555,"complete road curves retain the original displacement limit")
+		if "--publication-cells" in OS.get_cmdline_user_args():summary["publication_cells"]=verify_publication_cells(plan)
 		if "--preview" in OS.get_cmdline_user_args():summary["preview"]=await normal_preview(plan)
 		if "--contacts" in OS.get_cmdline_user_args():summary["contacts"]=await verify_contacts(plan)
 	FileAccess.open(folder.path_join("metropolis_recipe.json"),FileAccess.WRITE).store_string(JSON.stringify(summary,"  "))
 	finish()
+func verify_publication_cells(plan:Dictionary)->Dictionary:
+	var blocks=ClassDB.instantiate("NativeBlockWorld")
+	var result:Dictionary={"ok":true,"placed_buildings":0,"placed_bridges":0,"paving_cells":0}
+	for site:Dictionary in plan.sites:
+		for lot:Dictionary in site.lots:
+			var cells=ClassDB.instantiate("NativeBlockPrefab");cells.configure(lot.asset.get_records())
+			if not blocks.place_prefab(cells,lot.origin,lot.rotation,false):
+				result={"ok":false,"phase":"building","label":lot.label,"stats":blocks.stats()};break
+			result.placed_buildings+=1
+		if not result.ok:break
+	if result.ok:
+		for crossing:Dictionary in plan.bridges:
+			var asset:Resource=preload("res://addons/structures/lake_crossings.gd").asset(crossing)
+			if not blocks.place_prefab(asset,crossing.origin,crossing.rotation,false):result={"ok":false,"phase":"bridge","stats":blocks.stats()};break
+			result.placed_bridges+=1
+	if result.ok:
+		for site:Dictionary in plan.sites:
+			var records:PackedInt32Array=site.block_paving.records
+			if records.is_empty():continue
+			var cells=ClassDB.instantiate("NativeBlockPrefab");cells.configure(records)
+			if not blocks.place_prefab(cells,Vector3i.ZERO,0,false):
+				var overlaps:Array=[];var overlap_count:=0
+				for at in range(0,records.size(),4):
+					var p:=Vector3i(records[at],records[at+1],records[at+2]);var existing:int=blocks.get_cell(p)
+					if existing!=0:
+						overlap_count+=1
+						if overlaps.size()<8:overlaps.append({"position":str(p),"old":existing,"new":records[at+3]})
+				result={"ok":false,"phase":"paving","site":site.title,"overlaps":overlaps,"overlap_count":overlap_count,"stats":blocks.stats()};break
+			result.paving_cells+=records.size()/4
+	check(result.ok,"all building, bridge and paving cells publish without overlap or capacity failure")
+	print("METROPOLIS_PUBLICATION_CELLS ",JSON.stringify(result));blocks.free();return result
+
 func finish()->void:
 	print("METROPOLIS_RECIPE checks=",checks," failures=",failures);quit(1 if failures else 0)
 
@@ -199,6 +232,9 @@ func verify_contacts(plan:Dictionary)->Dictionary:
 	check(baked.get("ok",false),"normal final terrain bake for all metropolis sites")
 	if not baked.get("ok",false):field.free();return {"ok":false,"reason":baked.get("reason","")}
 	field.density_revision=baked.revision
+	var lake_definitions:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(field.core,GENERATOR)
+	var lake_audit:Dictionary=field.core.survey_generated_lake_surfaces(lake_definitions.records)
+	check(lake_audit.get("extensive_count",0)>=3,"all three long lakes stay connected after city, roads and bridges are baked")
 	var passed:=0;var rejected:Array=[]
 	var inspected_sites:Array=[] if "--bridges-only" in OS.get_cmdline_user_args() else plan.sites
 	for site:Dictionary in inspected_sites:
@@ -247,7 +283,8 @@ func verify_contacts(plan:Dictionary)->Dictionary:
 		check(supported,"both real bridge end footings have deep terrain support: %d m"%bridge.span)
 		if not supported:bridge_failures+=1
 	field.free()
-	return {"ok":rejected.is_empty() and bridge_failures==0,"buildings_passed":passed,"rejected":rejected,"bridge_failures":bridge_failures}
+	lake_audit.erase("points")
+	return {"ok":rejected.is_empty() and bridge_failures==0,"buildings_passed":passed,"rejected":rejected,"bridge_failures":bridge_failures,"lakes":lake_audit}
 
 func trace_contacts(plan:Dictionary)->void:
 	var works=preload("res://addons/world_runtime/generation_earthworks.gd")

@@ -5,7 +5,8 @@ medium type and smaller buildings; at least two large bridges and one small
 bridge; more lived-in locations across the map and better organization.
 
 Choose **Create world → Starting recipe → Metropolis & inhabited region**.
-Seed **1703** is the verified source planning/contact case. This is an additional
+Seed **1703** is the verified source planning/contact case. New source worlds
+use the [long-lake profile](EXTENSIVE_LAKES.md), with three 360–480 m lakes. This is an additional
 recipe; the existing default and saved recipe formats remain available. The
 installed export has not been rebuilt for this work.
 
@@ -32,15 +33,17 @@ separate. The three grand buildings and all communities receive named map
 places. City-quarter centers remain within 750 m of the civic quarter.
 
 Publication planning requires two **32–96 m** bridges and a separate **12–28 m**
-bridge, each connected at both banks. Seed 1703 has **52 m and 40 m lake bridges**
-and a **28 m seasonal-gully footbridge**. The latter spans a real depression;
-there is no fabricated water or midspan terrain fill. The new recipe uses
+bridge, each connected at both banks. The current long-lake profile-33 case has
+**32 m and 32 m lake bridges** and a **24 m small lake crossing**. The earlier
+profile-29 case had 52 m / 40 m lake bridges and a 28 m seasonal-gully footbridge.
+That older small crossing spans a real depression. Neither case fabricates water
+or fills the middle of a bridge. The new recipe uses
 continuous timber decks over their beams and abutments, with the same native
 exposed-surface clearance used for buildings. Older bridge designs retain their
 original deck geometry.
 
-The 100 m regional grid reports **75.9% within 400 m of a community or quarter center**, with
-a maximum of **735.6 m**. Its hard maximum is 750 m. This distribution measure
+The 100 m regional grid reports **75.6% within 400 m of a community or quarter center**, with
+a maximum of **735.0 m**. Its hard maximum is 750 m. This distribution measure
 includes intentional natural gaps; it does not establish ground-level design
 quality. Other seeds can fail their bounded survey. Required buildings or
 bridges are never silently omitted to produce a passing preview.
@@ -79,7 +82,7 @@ omits exploration/lookout worker timings from the serialized geometry digest.
 Independent builds therefore have the same identity, including under concurrent
 preview requests. Existing saved worlds are not regenerated.
 
-## Evidence and remaining work
+## Profile-29 baseline evidence and remaining work
 
 - `reports/checks/20261127T133018334105Z`: **297 source checks passed**, including
   all 84 buildings, all nine sidewalk sets, all three bridge exposed surfaces
@@ -182,3 +185,16 @@ The owning manifests are `reports/metropolis_clean_native.archive.json` and the
 production report's `all_captures.archive.json`. Logs, completion receipts and
 selected versioned issue images remain ready. Image provenance identifies its
 own archive; cold evidence is recoverable rather than discarded.
+
+## Long-lake source update
+
+Profiles 32–35 add three substantially longer lakes. The source profile-33 case
+has two **32 m** lake crossings and a **24 m** small lake crossing; all required
+building types, 84 buildings and six outlying communities remain present. Adjacent
+city quarters now share 119 identical sidewalk cells under one owner, leaving
+6,616 unique destructible paving cells. Different blocks at the same coordinate
+reject instead of overwriting. Final contact and combined publication checks pass.
+
+The new evidence and remaining quality/exit gates are recorded in
+[Extensive lakes](EXTENSIVE_LAKES.md). Older installed/profile-29 images and
+performance limitations above remain historical evidence, not long-lake approval.

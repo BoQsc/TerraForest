@@ -52,6 +52,8 @@ def main():
         raise ValueError('Native inputs changed; the old publication is not this fixture')
     interaction = None
     previous_path = folder / 'recheck.json'
+    if not previous_path.exists():
+        previous_path = folder / 'run.json'
     if args.restore_only:
         previous = json.loads(previous_path.read_text())
         phases = previous.get('phases', [])
@@ -66,7 +68,7 @@ def main():
     admission = creation.storage.admit(creation.ROOT, report_bytes=(16 if args.restore_only else 160)*2**20, world_bytes=0)
     stamp = 'recheck_' + datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     # Keep the earlier failed run's tiny inventory evidence as well as its images.
-    for name in ('expected_player.bin', 'expected_stock.bin'):
+    for name in ('expected_player.bin', 'expected_stock.bin', 'lake_view.json'):
         path = folder / name
         if path.exists():
             destination = folder / stamp / name

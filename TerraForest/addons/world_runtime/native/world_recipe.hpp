@@ -4,6 +4,8 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
+#include <map>
+#include <tuple>
 namespace terraforest {
 class NativeWorldRecipe : public godot::RefCounted {
     GDCLASS(NativeWorldRecipe,godot::RefCounted)
@@ -12,12 +14,39 @@ protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("encode","options"),&NativeWorldRecipe::encode);
         godot::ClassDB::bind_method(godot::D_METHOD("decode","data"),&NativeWorldRecipe::decode);
+        godot::ClassDB::bind_method(godot::D_METHOD("coalesce_paving","regions"),&NativeWorldRecipe::coalesce_paving);
         godot::ClassDB::bind_method(godot::D_METHOD("validate_snapshot","data"),&NativeWorldRecipe::validate_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("capture_snapshot"),&NativeWorldRecipe::capture_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("restore_snapshot","data"),&NativeWorldRecipe::restore_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("render_biomes","pixels","seed","profile","origin","width","size"),&NativeWorldRecipe::render_biomes,DEFVAL(godot::Vector2i()),DEFVAL(256),DEFVAL(256));
     }
 public:
+    // Original 0BSD: adjacent districts share one destructible sidewalk cell.
+    // Keep first ownership, reject different blocks, and expose no partial result.
+    godot::Dictionary coalesce_paving(const godot::Array &regions) const {
+        using namespace godot;
+        Dictionary result;result["ok"]=false;
+        if(regions.size()>256)return result;
+        std::map<std::tuple<int,int,int>,int> seen;Array output;int input=0,duplicates=0;
+        for(int region=0;region<regions.size();region++){
+            if(regions[region].get_type()!=Variant::PACKED_INT32_ARRAY)return result;
+            PackedInt32Array records=regions[region],unique;
+            if(records.size()%4||records.size()/4>262144-input)return result;
+            input+=records.size()/4;
+            for(int at=0;at<records.size();at+=4){
+                int x=records[at],y=records[at+1],z=records[at+2],word=records[at+3];
+                if(x<0||x>=2000||z<0||z>=2000||y<0||y>=255||word<=0)return result;
+                auto [entry,added]=seen.emplace(std::make_tuple(x,y,z),word);
+                if(!added){
+                    if(entry->second!=word){result["reason"]="Conflicting sidewalk cells";result["position"]=Vector3i(x,y,z);return result;}
+                    ++duplicates;continue;
+                }
+                for(int offset=0;offset<4;offset++)unique.push_back(records[at+offset]);
+            }
+            output.append(unique);
+        }
+        result["ok"]=true;result["regions"]=output;result["unique_cells"]=input-duplicates;result["shared_cells"]=duplicates;return result;
+    }
     godot::PackedByteArray encode(const godot::Dictionary &options) const {
         godot::PackedByteArray bytes;
         const char *names[]={"biome","settlements","districts","network","trails","road_grid","material_veins","introduction","profile"};

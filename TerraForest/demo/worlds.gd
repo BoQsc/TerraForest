@@ -217,7 +217,7 @@ func _saved_details_ready(slot:String,data:Dictionary,picture:Texture2D)->void:
 	if data.has("seed"):lines.append("Seed: "+str(int(data.seed)))
 	if data.has("generator"):
 		var id:int=int(data.generator)
-		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",22:"Grid-preferred inland",23:"Grid-preferred coast",28:"Varied lakes / build-friendly inland",29:"Varied lakes / build-friendly coast",30:"Varied lakes / natural inland",31:"Varied lakes / natural coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
+		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",22:"Grid-preferred inland",23:"Grid-preferred coast",28:"Varied lakes / build-friendly inland",29:"Varied lakes / build-friendly coast",30:"Varied lakes / natural inland",31:"Varied lakes / natural coast",32:"Long lakes / build-friendly inland",33:"Long lakes / build-friendly coast",34:"Long lakes / natural inland",35:"Long lakes / natural coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
 	if data.has("settlement_layout"):lines.append("Layout: "+str(data.settlement_layout).capitalize())
 	var options:Dictionary=data.get("world_options",{})
 	if int(options.get("profile",0))==1:lines.append("Metropolis · 3 city quarters and 6 outlying communities · required bridge crossings")

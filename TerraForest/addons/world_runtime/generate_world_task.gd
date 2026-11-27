@@ -79,12 +79,12 @@ func run()->void:
   if arg.begins_with("--progress-file="):progress_path=arg.trim_prefix("--progress-file=")
   if arg.begins_with("--cancel-file="):generation_cancel_path=arg.trim_prefix("--cancel-file=")
   if arg.begins_with("--preparation-output="):output_dir=arg.trim_prefix("--preparation-output=")
- if generator not in [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31] or seed_value<0 or seed_value>2147483647:quit(1);return
+ if generator not in [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35] or seed_value<0 or seed_value>2147483647:quit(1);return
  var recipe:=preload("res://addons/world_runtime/world_recipe.gd").from_arguments(PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
  if not recipe.ok:print("INVALID_WORLD_RECIPE");quit(1);return
  world_options=recipe.options
  if "--civic-review" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) and world_options.is_empty():world_options=preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.duplicate()
- var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27,28,29,30,31]
+ var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35]
  DirAccess.make_dir_recursive_absolute(output_dir)
  if not qualification:
   generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=generation_cancel_path;root.add_child(generation_screen)

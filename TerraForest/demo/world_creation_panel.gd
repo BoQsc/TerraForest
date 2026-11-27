@@ -10,7 +10,7 @@ const STYLES:=[
  {"name":"City region · experimental","detail":"Three connected districts around one center. Existing approved buildings; not a finished urban design.","values":[1,0,2,2,1,true]},
  {"name":"Regional belt · experimental","detail":"Nine terrain-fitted districts among woodland and clearings, linked by long roads and offroads. Some seeds may not fit.","values":[0,2,2,2,2,true]},
  {"name":"Frontier expedition","detail":"Six connected districts, a trader introduction and coal-mine expedition. Includes wilderness locations, sleepers, supplies, lakes and material veins.","values":[0,2,1,2,2,true]},
- {"name":"Metropolis & inhabited region","detail":"A 36-building city with Foundry Court, Saint Brigid Cathedral, Needle Street Tower and every medium building type. Six outlying communities, two large bridges and one small crossing are required; impossible sites fail the survey.","values":[1,3,3,2,1,true],"profile":1}
+ {"name":"Metropolis & inhabited region","detail":"A 36-building city with Foundry Court, Saint Brigid Cathedral, Needle Street Tower and every medium building type. Three long lakes, six outlying communities, two large bridges and one small crossing are required; impossible sites fail the survey.","values":[1,3,3,2,1,true],"profile":1}
 ]
 static func apply_style(host:Control,index:int)->void:
  if index<0:return

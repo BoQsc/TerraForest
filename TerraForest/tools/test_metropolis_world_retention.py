@@ -93,5 +93,29 @@ class FixtureRetention(unittest.TestCase):
         self.assertTrue(self.payload.exists())
 
 
+
+class ExitWarningScope(unittest.TestCase):
+    def test_diagnostic_continuation_cannot_accept_real_failures(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            phase = Path(temporary)
+            complete = ('PRODUCTION_BUILDINGS checks=30 failures=0 slot=Metropolis_test\n'
+                        'Leaked instance: RefCounted:123 - Reference count: 0\n')
+            log = phase / 'console.log'
+            log.write_text(complete)
+            result = {'exit_code': 0, 'timed_out': False, 'diagnostics': [
+                'WARNING: 1 ObjectDB instance was leaked at exit (run with --verbose for details).']}
+            self.assertTrue(target.zero_reference_exit_only(result, phase))
+            for changes in ({'exit_code': 1}, {'timed_out': True},
+                            {'diagnostics': result['diagnostics'] + ['FAIL water']},
+                            {'diagnostics': ['ERROR: Water failed']}):
+                with self.subTest(changes=changes):
+                    self.assertFalse(target.zero_reference_exit_only(dict(result, **changes), phase))
+            for rejected in (complete.replace('count: 0', 'count: 1'),
+                             complete.replace('failures=0', 'failures=1'),
+                             complete.replace('checks=30', 'checks=0')):
+                log.write_text(rejected)
+                self.assertFalse(target.zero_reference_exit_only(result, phase))
+
+
 if __name__ == '__main__':
     unittest.main()

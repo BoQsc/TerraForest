@@ -4,6 +4,10 @@
 --approved-headroom records an explicit maintainer decision for this process only:
 256 MiB additional reports and 256 MiB additional owned-world capacity. It does
 not change repository limits. Never supply it without that explicit decision.
+
+--diagnostic-exit-warning preserves strict failed results and the nonzero exit;
+it only permits remaining functional assertions after the known zero-reference
+cleanup warning. It does not qualify a clean process exit.
 """
 import argparse
 from contextlib import ExitStack
@@ -28,6 +32,7 @@ CAPTURE_NAMES.update(kind + '_' + view + '.png'
 CAPTURE_NAMES.update(kind + '_generated_' + view + '.png'
                      for kind in ('grand_cathedral', 'courtyard_flats', 'street_tower')
                      for view in ('street', 'overview'))
+CAPTURE_NAMES.update(('long_lake_generated_shore.png', 'long_lake_generated_overview.png'))
 CAPTURE_NAMES.update('metropolis_bridge_' + str(index) + '.png' for index in range(3))
 
 def retire_fixture(folder, record, completion_name='run.json'):
@@ -138,9 +143,23 @@ def retain_captures():
     return manifests
 
 
+def zero_reference_exit_only(result, phase):
+    """Diagnostic continuation only; never turns a rejected process into a pass."""
+    diagnostics = result.get('diagnostics', [])
+    if (result.get('exit_code') != 0 or result.get('timed_out') or len(diagnostics) != 1
+            or not diagnostics[0].startswith('WARNING: 1 ObjectDB instance was leaked at exit')):
+        return False
+    log = (phase / 'console.log').read_text(encoding='utf-8', errors='replace')
+    completed = re.search(r'(?m)^PRODUCTION_BUILDINGS checks=([0-9]+) failures=0 slot=', log)
+    return bool(completed and int(completed[1]) >= 6 and re.search(
+        r'(?m)^Leaked instance: RefCounted:[0-9]+ - Reference count: 0$', log))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot')
+    parser.add_argument('--verbose-engine', action='store_true')
+    parser.add_argument('--diagnostic-exit-warning', action='store_true', help='Continue after completed assertions plus the known zero-reference exit warning; strict result still fails')
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--approved-headroom', action='store_true')
     parser.add_argument('--archive-only', type=Path)
@@ -184,22 +203,30 @@ def main():
     for name, extra in [('create', ['--create-production']), ('interact', []), ('restore', ['--restore-production'])]:
         phase = folder / name
         phase.mkdir()
-        command = [str(engine), '--path', str(ROOT), '--windowed', '--resolution', '1920x1080',
+        command = [str(engine), *(['--verbose'] if args.verbose_engine else []), '--path', str(ROOT), '--windowed', '--resolution', '1920x1080',
                    '--max-fps', '60', '--log-file', str(phase / 'engine.log'), '--script',
                    'res://tests/production_buildings.gd', '--', *shared, *extra]
         result = execute(command, phase, 600, 'PRODUCTION_BUILDINGS checks=', isolated_render=True)
-        record['phases'].append({'phase': name, 'command': command, 'result': result})
+        cleanup_only = args.diagnostic_exit_warning and zero_reference_exit_only(result, phase)
+        record['phases'].append({'phase': name, 'command': command, 'result': result, 'cleanup_warning_only': cleanup_only})
         (folder / 'run.json').write_text(json.dumps(record, indent=2))
         storage.register_worlds(command, phase)
         print(('PASS ' if result['passed'] else 'FAIL ') + name, flush=True)
-        if not result['passed']:
+        if not result['passed'] and not cleanup_only:
             break
+        if cleanup_only:
+            print('Diagnostic continuation: completed assertions; zero-reference cleanup rejection preserved', flush=True)
     record['passed'] = len(record['phases']) == 3 and all(p['result']['passed'] for p in record['phases'])
+    record['functional_passed'] = len(record['phases']) == 3 and all(p['result']['passed'] or p.get('cleanup_warning_only') for p in record['phases'])
     (folder / 'run.json').write_text(json.dumps(record, indent=2))
-    try:
-        retention = retire_fixture(folder, record)
-    except (OSError, ValueError) as error:
-        retention = {'pending': True, 'reason': str(error), 'retry': 'Use --archive-only with this exact report'}
+    if not record['functional_passed'] and record['phases'] and record['phases'][0]['result']['passed']:
+        retention = {'pending': True, 'reason': 'Passed creation retained for correction and same-fixture recheck',
+                     'retry': 'Use recheck_metropolis_world.py with this exact report; --archive-only retires it explicitly'}
+    else:
+        try:
+            retention = retire_fixture(folder, record)
+        except (OSError, ValueError) as error:
+            retention = {'pending': True, 'reason': str(error), 'retry': 'Use --archive-only with this exact report'}
     (folder / 'retention.json').write_text(json.dumps(retention, indent=2))
     try:
         retain_captures()
