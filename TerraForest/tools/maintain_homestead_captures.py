@@ -9,6 +9,23 @@ from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
 FAMILIES = {
+    "vegetation_causes": (
+        'vegetation_causes.json', 'driver.gd', 'world_lod_tags.png',
+        'world_far_lod_moderate.png', 'world_far_lod_moderate_end.png', 'world_far_lod_early.png',
+        'world_far_lod_early_end.png', 'world_baseline.jpg', 'mask_low_0_0.png',
+        'mask_low_0_15.png', 'mask_low_1_0.png', 'mask_low_1_15.png',
+        'mask_low_3_0.png', 'mask_low_3_15.png', 'mask_near_0_0.png',
+        'mask_near_0_15.png', 'mask_near_1_0.png', 'mask_near_1_15.png',
+        'mask_near_3_0.png', 'mask_near_3_15.png', 'mask_eight_0_0.png',
+        'mask_eight_0_15.png', 'mask_eight_1_0.png', 'mask_eight_1_15.png',
+        'mask_eight_3_0.png', 'mask_eight_3_15.png', 'mask_three_0_0.png',
+        'mask_three_0_15.png', 'mask_three_1_0.png', 'mask_three_1_15.png',
+        'mask_three_3_0.png', 'mask_three_3_15.png', 'world_baseline_end.png',
+        'world_no_grass.png', 'world_no_grass_end.png', 'world_no_fade.png',
+        'world_no_fade_end.png', 'world_no_texture.png', 'world_no_texture_end.png',
+        'world_no_shadow_reception.png', 'world_no_shadow_reception_end.png', 'world_flat_grass.png',
+        'world_flat_grass_end.png', 'world_full_detail.png', 'world_full_detail_end.png',
+    ),
     "grand_buildings": ("courtyard_flats.bin", "grand_cathedral.bin", "street_tower.bin", "grand_buildings.json",
                         "courtyard_flats_exterior.png", "courtyard_flats_interior.png", "courtyard_flats_plan.png",
                         "grand_cathedral_exterior.png", "grand_cathedral_interior.png", "grand_cathedral_basement.png",

@@ -23,6 +23,29 @@ isolated engineering checks cannot close that acceptance requirement.
 
 ## Distant vegetation speckles — 2026-11-27
 
+User clarification preserves the liked softer distant-LOD appearance; the
+brightness mismatch and persistent shimmer are the rejected parts. The scope is
+far representation and terrain matching, with nearby grass retained.
+
+Cause isolation now confirms subpixel silhouette coverage instability without
+wind, textures, lighting, shadows, dither, terrain or LOD switching. At 90 m and
+2x MSAA, the 72-triangle tier covers 2.64 pixels at the median and varies 88.1%
+in covered area over subpixel phases; the eight-triangle tier varies 55.9%.
+Depth-tested tags verify visible far grass in the current world: 7,108 tagged
+pixels use 72 triangles and 3,025 use eight; none use the three-triangle horizon
+tier. The earlier hidden-root limitation is resolved for this new diagnostic view,
+not retroactively for prior measurements or the exact supplied screenshot.
+
+In matched world camera motion, disabling fade or shadow reception barely changes
+the descriptive screen-difference measure; extra detail/texturing removal worsens
+it. Earlier far LOD thresholds improve that measure 12–17% with only 0.2% average
+brightness change, but visible speckling remains. These are test-only controls,
+not enabled fixes. Runs 110001831123Z / 110233221983Z / 110629799826Z pass 53/9/30
+fixture assertions with unchanged world state; visual/performance gates remain
+open. Next investigate stable far coverage and terrain-calibrated light/color,
+then qualify transitions, nearby parity, timings and player review. Full records:
+[cause isolation](../issues/vegetation-lod/README.md#far-lod-cause-isolation--2026-11-27).
+
 The user rejected the source stability trial: the distant vegetation becomes
 visibly too bright relative to surrounding terrain and flicker remains strong.
 The 26.4% saved-world temporal-residual reduction was insufficient and must not
@@ -45,8 +68,8 @@ on projected root distances for world-quality claims.
 
 Strong moving-camera shimmer and a natural terrain blend remain unresolved.
 Return with coverage-focused, visible-surface motion evidence that also preserves
-luminance/terrain contrast, near grass and populations. Isolate wind from camera
-motion before choosing another representation, then validate GPU/frame tails,
+luminance/terrain contrast, near grass and populations. Wind and visible-LOD
+isolation are now covered above; validate the next representation, GPU/frame tails,
 zoom, light/terrain variation, actual travel and player review. Do not accept a
 lower aggregate flicker metric while the image is visibly wrong. See the
 [rejected trial and follow-up](../issues/vegetation-lod/README.md#moving-distant-cover-trial--2026-11-27).

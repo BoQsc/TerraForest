@@ -1,0 +1,557 @@
+{
+  "checks": 53,
+  "failures": 0,
+  "image_bytes": 3561966,
+  "mesh_sha256": "4e34240edfc98d76636ac8cd147f068c9e11d0fc6496094db47226e66aa1ee23",
+  "production_changed": false,
+  "shader_sha256": "e1e771a0c09d80fc6350fb170b4703417c2aae7c52e4224838ef693b8a289e20",
+  "silhouette": {
+    "distance_m": 90,
+    "measurements": [
+      {
+        "median_projected_area_px": 4.1875,
+        "median_relative_area_range": 1.03225806451613,
+        "mesh": "near",
+        "msaa_enum": 0,
+        "p95_relative_area_range": 1.6271186440678,
+        "triangles": 468
+      },
+      {
+        "median_projected_area_px": 4.20084994286299,
+        "median_relative_area_range": 0.48497537937866,
+        "mesh": "near",
+        "msaa_enum": 1,
+        "p95_relative_area_range": 0.636602625616156,
+        "triangles": 468
+      },
+      {
+        "median_projected_area_px": 4.36657432978973,
+        "median_relative_area_range": 0.215918463676129,
+        "mesh": "near",
+        "msaa_enum": 3,
+        "p95_relative_area_range": 0.346641978397464,
+        "triangles": 468
+      },
+      {
+        "median_projected_area_px": 2.6875,
+        "median_relative_area_range": 1.2972972972973,
+        "mesh": "eight",
+        "msaa_enum": 0,
+        "p95_relative_area_range": 1.77777777777778,
+        "triangles": 8
+      },
+      {
+        "median_projected_area_px": 2.69760265946388,
+        "median_relative_area_range": 0.559109753671824,
+        "mesh": "eight",
+        "msaa_enum": 1,
+        "p95_relative_area_range": 0.865939530951602,
+        "triangles": 8
+      },
+      {
+        "median_projected_area_px": 2.54943348560482,
+        "median_relative_area_range": 0.328764868088267,
+        "mesh": "eight",
+        "msaa_enum": 3,
+        "p95_relative_area_range": 0.484861283977652,
+        "triangles": 8
+      },
+      {
+        "median_projected_area_px": 3.0,
+        "median_relative_area_range": 1.2,
+        "mesh": "three",
+        "msaa_enum": 0,
+        "p95_relative_area_range": 1.48837209302326,
+        "triangles": 3
+      },
+      {
+        "median_projected_area_px": 3.01046346873045,
+        "median_relative_area_range": 0.487721752899292,
+        "mesh": "three",
+        "msaa_enum": 1,
+        "p95_relative_area_range": 0.668371701479782,
+        "triangles": 3
+      },
+      {
+        "median_projected_area_px": 2.8775534145534,
+        "median_relative_area_range": 0.222890344601557,
+        "mesh": "three",
+        "msaa_enum": 3,
+        "p95_relative_area_range": 0.347838953100889,
+        "triangles": 3
+      }
+    ],
+    "phases": 16,
+    "plants": 64,
+    "scope": "Fixed meshes, white unlit masks, black background. No wind, textures, shadows, dither, terrain, streaming or LOD switching. Linearized pixel sum per isolated plant measures projected-area instability under subpixel translation; MSAA8 is a diagnostic control, not a runtime recommendation."
+  },
+  "world": {
+    "camera": "(1498.941, 81.46824, 905.6166)",
+    "chosen": {
+      "best_tile": "(4, 3)",
+      "counts": [
+        0,
+        7108,
+        3025,
+        0
+      ],
+      "tile_pixels": 2384,
+      "visible_pixels": 10133,
+      "yaw": 4.71238898038469
+    },
+    "comparisons": [
+      {
+        "screen_difference": 0.012931343634142,
+        "variant": "baseline"
+      },
+      {
+        "screen_difference": 0.00504487583101104,
+        "variant": "no_grass"
+      },
+      {
+        "screen_difference": 0.0130947408404378,
+        "variant": "no_fade"
+      },
+      {
+        "screen_difference": 0.0177374027647291,
+        "variant": "no_texture"
+      },
+      {
+        "screen_difference": 0.0130096033594657,
+        "variant": "no_shadow_reception"
+      },
+      {
+        "screen_difference": 0.00884242221073812,
+        "variant": "flat_grass"
+      },
+      {
+        "screen_difference": 0.0172837843836973,
+        "variant": "full_detail"
+      }
+    ],
+    "crop": "[P: (1120, 300), S: (640, 240)]",
+    "direction": "(-0.990342, -0.138648, 0.0)",
+    "scope": "Actual visible grass tags prove LOD identity at 60\u2013124m with diagnostic camera elevation. Continuous matched 0.48m sideways travel; screen differences include expected motion/contrast and are descriptive, not visual acceptance or pure aliasing. Removing grass, detail, shadow reception or fade is diagnostic only. Unchanged native populations/pages and save are checked by the inherited loader.",
+    "views": [
+      {
+        "best_tile": "(0, 2)",
+        "counts": [
+          0,
+          2003,
+          0,
+          0
+        ],
+        "tile_pixels": 1381,
+        "visible_pixels": 2003,
+        "yaw": 0.0
+      },
+      {
+        "best_tile": "(1, 3)",
+        "counts": [
+          0,
+          2805,
+          582,
+          0
+        ],
+        "tile_pixels": 824,
+        "visible_pixels": 3387,
+        "yaw": 1.5707963267949
+      },
+      {
+        "best_tile": "(4, 5)",
+        "counts": [
+          0,
+          3147,
+          3793,
+          0
+        ],
+        "tile_pixels": 1034,
+        "visible_pixels": 6940,
+        "yaw": 3.14159265358979
+      },
+      {
+        "best_tile": "(4, 3)",
+        "counts": [
+          0,
+          7108,
+          3025,
+          0
+        ],
+        "tile_pixels": 2384,
+        "visible_pixels": 10133,
+        "yaw": 4.71238898038469
+      }
+    ]
+  },
+  "world_input": {
+    "camera_origin": "(1498.941, 81.46824, 905.6166)",
+    "materials": 9,
+    "pages_after": [
+      {
+        "bytes": 25472,
+        "pages": 229,
+        "shadows": 41
+      },
+      {
+        "bytes": 303680,
+        "pages": 390,
+        "shadows": 83
+      },
+      {
+        "bytes": 4134720,
+        "pages": 431,
+        "shadows": 47
+      },
+      {
+        "bytes": 3136,
+        "pages": 40,
+        "shadows": 7
+      },
+      {
+        "bytes": 4416,
+        "pages": 62,
+        "shadows": 9
+      },
+      {
+        "bytes": 3584,
+        "pages": 44,
+        "shadows": 3
+      },
+      {
+        "bytes": 35008,
+        "pages": 240,
+        "shadows": 50
+      },
+      {
+        "bytes": 25216,
+        "pages": 223,
+        "shadows": 30
+      },
+      {
+        "bytes": 21184,
+        "pages": 195,
+        "shadows": 40
+      }
+    ],
+    "pages_before": [
+      {
+        "bytes": 25472,
+        "pages": 229,
+        "shadows": 41
+      },
+      {
+        "bytes": 303680,
+        "pages": 390,
+        "shadows": 83
+      },
+      {
+        "bytes": 4134720,
+        "pages": 431,
+        "shadows": 47
+      },
+      {
+        "bytes": 3136,
+        "pages": 40,
+        "shadows": 7
+      },
+      {
+        "bytes": 4416,
+        "pages": 62,
+        "shadows": 9
+      },
+      {
+        "bytes": 3584,
+        "pages": 44,
+        "shadows": 3
+      },
+      {
+        "bytes": 35008,
+        "pages": 240,
+        "shadows": 50
+      },
+      {
+        "bytes": 25216,
+        "pages": 223,
+        "shadows": 30
+      },
+      {
+        "bytes": 21184,
+        "pages": 195,
+        "shadows": 40
+      }
+    ],
+    "population": 88725,
+    "sha256": "d4fb3582ec5cd7da45db27ef4e72842daefe7b25592ac50369beafc59171220a",
+    "slot": "Homestead_Valley"
+  },
+  "receipt": "reports/checks/20261127T110001831123Z/run.json",
+  "low_probe": {
+    "checks": 9,
+    "failures": 0,
+    "image_bytes": 5432,
+    "mesh_sha256": "4e34240edfc98d76636ac8cd147f068c9e11d0fc6496094db47226e66aa1ee23",
+    "production_changed": false,
+    "shader_sha256": "e1e771a0c09d80fc6350fb170b4703417c2aae7c52e4224838ef693b8a289e20",
+    "silhouette": {
+      "distance_m": 90,
+      "measurements": [
+        {
+          "median_projected_area_px": 2.625,
+          "median_relative_area_range": 1.6,
+          "mesh": "low",
+          "msaa_enum": 0,
+          "p95_relative_area_range": 2.35294117647059,
+          "triangles": 72
+        },
+        {
+          "median_projected_area_px": 2.63582427799702,
+          "median_relative_area_range": 0.881344506516208,
+          "mesh": "low",
+          "msaa_enum": 1,
+          "p95_relative_area_range": 1.29702850552712,
+          "triangles": 72
+        },
+        {
+          "median_projected_area_px": 2.53155910084024,
+          "median_relative_area_range": 0.40023724327373,
+          "mesh": "low",
+          "msaa_enum": 3,
+          "p95_relative_area_range": 0.538152908871484,
+          "triangles": 72
+        }
+      ],
+      "phases": 16,
+      "plants": 64,
+      "scope": "Fixed meshes, white unlit masks, black background. No wind, textures, shadows, dither, terrain, streaming or LOD switching. Linearized pixel sum per isolated plant measures projected-area instability under subpixel translation; MSAA8 is a diagnostic control, not a runtime recommendation."
+    },
+    "world_input": {},
+    "receipt": "reports/checks/20261127T110233221983Z/run.json"
+  },
+  "world_lod_trial": {
+    "checks": 30,
+    "failures": 0,
+    "image_bytes": 4444829,
+    "mesh_sha256": "4e34240edfc98d76636ac8cd147f068c9e11d0fc6496094db47226e66aa1ee23",
+    "production_changed": false,
+    "shader_sha256": "e1e771a0c09d80fc6350fb170b4703417c2aae7c52e4224838ef693b8a289e20",
+    "world": {
+      "camera": "(1498.941, 81.46824, 905.6166)",
+      "chosen": {
+        "best_tile": "(4, 3)",
+        "counts": [
+          0,
+          7081,
+          3032,
+          0
+        ],
+        "tile_pixels": 2384,
+        "visible_pixels": 10113,
+        "yaw": 4.71238898038469
+      },
+      "comparisons": [
+        {
+          "mean_luma": 0.42762458231539,
+          "screen_difference": 0.0129262048175655,
+          "variant": "baseline"
+        },
+        {
+          "mean_luma": 0.437126296498763,
+          "screen_difference": 0.00504831604848432,
+          "variant": "no_grass"
+        },
+        {
+          "mean_luma": 0.427170494902647,
+          "screen_difference": 0.0130909920328901,
+          "variant": "no_fade"
+        },
+        {
+          "mean_luma": 0.423206233850153,
+          "screen_difference": 0.0177271136956235,
+          "variant": "no_texture"
+        },
+        {
+          "mean_luma": 0.427789461669295,
+          "screen_difference": 0.013005540453588,
+          "variant": "no_shadow_reception"
+        },
+        {
+          "mean_luma": 0.445340415233639,
+          "screen_difference": 0.00884458813575665,
+          "variant": "flat_grass"
+        },
+        {
+          "mean_luma": 0.420953063494978,
+          "screen_difference": 0.0172764627759638,
+          "variant": "full_detail"
+        },
+        {
+          "mean_luma": 0.428484869790509,
+          "screen_difference": 0.0113976581206718,
+          "variant": "far_lod_moderate"
+        },
+        {
+          "mean_luma": 0.428364890555095,
+          "screen_difference": 0.0107630548863267,
+          "variant": "far_lod_early"
+        }
+      ],
+      "crop": "[P: (1120, 300), S: (640, 240)]",
+      "direction": "(-0.990342, -0.138648, 0.0)",
+      "scope": "Actual visible grass tags prove LOD identity at 60\u2013124m with diagnostic camera elevation. Continuous matched 0.48m sideways travel; screen differences include expected motion/contrast and are descriptive, not visual acceptance or pure aliasing. Removing grass, detail, shadow reception or fade is diagnostic only. Unchanged native populations/pages and save are checked by the inherited loader.",
+      "views": [
+        {
+          "best_tile": "(0, 2)",
+          "counts": [
+            0,
+            1981,
+            1,
+            0
+          ],
+          "tile_pixels": 1381,
+          "visible_pixels": 1982,
+          "yaw": 0.0
+        },
+        {
+          "best_tile": "(1, 3)",
+          "counts": [
+            0,
+            2829,
+            590,
+            0
+          ],
+          "tile_pixels": 838,
+          "visible_pixels": 3419,
+          "yaw": 1.5707963267949
+        },
+        {
+          "best_tile": "(4, 5)",
+          "counts": [
+            0,
+            3141,
+            3842,
+            0
+          ],
+          "tile_pixels": 1019,
+          "visible_pixels": 6983,
+          "yaw": 3.14159265358979
+        },
+        {
+          "best_tile": "(4, 3)",
+          "counts": [
+            0,
+            7081,
+            3032,
+            0
+          ],
+          "tile_pixels": 2384,
+          "visible_pixels": 10113,
+          "yaw": 4.71238898038469
+        }
+      ]
+    },
+    "world_input": {
+      "camera_origin": "(1498.941, 81.46824, 905.6166)",
+      "materials": 9,
+      "pages_after": [
+        {
+          "bytes": 25472,
+          "pages": 229,
+          "shadows": 41
+        },
+        {
+          "bytes": 303680,
+          "pages": 390,
+          "shadows": 83
+        },
+        {
+          "bytes": 4134720,
+          "pages": 431,
+          "shadows": 47
+        },
+        {
+          "bytes": 3136,
+          "pages": 40,
+          "shadows": 7
+        },
+        {
+          "bytes": 4416,
+          "pages": 62,
+          "shadows": 9
+        },
+        {
+          "bytes": 3584,
+          "pages": 44,
+          "shadows": 3
+        },
+        {
+          "bytes": 35008,
+          "pages": 240,
+          "shadows": 50
+        },
+        {
+          "bytes": 25216,
+          "pages": 223,
+          "shadows": 30
+        },
+        {
+          "bytes": 21184,
+          "pages": 195,
+          "shadows": 40
+        }
+      ],
+      "pages_before": [
+        {
+          "bytes": 25472,
+          "pages": 229,
+          "shadows": 41
+        },
+        {
+          "bytes": 303680,
+          "pages": 390,
+          "shadows": 83
+        },
+        {
+          "bytes": 4134720,
+          "pages": 431,
+          "shadows": 47
+        },
+        {
+          "bytes": 3136,
+          "pages": 40,
+          "shadows": 7
+        },
+        {
+          "bytes": 4416,
+          "pages": 62,
+          "shadows": 9
+        },
+        {
+          "bytes": 3584,
+          "pages": 44,
+          "shadows": 3
+        },
+        {
+          "bytes": 35008,
+          "pages": 240,
+          "shadows": 50
+        },
+        {
+          "bytes": 25216,
+          "pages": 223,
+          "shadows": 30
+        },
+        {
+          "bytes": 21184,
+          "pages": 195,
+          "shadows": 40
+        }
+      ],
+      "population": 88725,
+      "sha256": "d4fb3582ec5cd7da45db27ef4e72842daefe7b25592ac50369beafc59171220a",
+      "slot": "Homestead_Valley"
+    },
+    "receipt": "reports/checks/20261127T110629799826Z/run.json"
+  },
+  "user_direction": "Preserve the liked softer/different distant-LOD appearance; diagnose persistent pixel flicker and terrain brightness mismatch. Nearby grass is outside the requested visual change.",
+  "review": "One confirmed cause is subpixel silhouette coverage instability. Visible far-world grass includes 72/8 triangle LODs, not the 3-triangle horizon tier in this scene. Earlier LOD thresholds show a useful trend with little average brightness change but remaining speckling. No production changes or performance qualification."
+}

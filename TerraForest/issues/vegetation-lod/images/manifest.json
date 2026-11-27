@@ -85,5 +85,68 @@
     "scope": "Read-only Homestead Valley, matched moving camera and deterministic wind. Left baseline/right trial in the lossless 15 FPS motion crop. Context stills are JPEG; measurements use raw 60 Hz frames. Inspected, not user-approved. GPU tail gate failed.",
     "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets.",
     "review": "Rejected by the user on 2026-11-27: excessive brightness relative to terrain and persistent strong flicker. Kept as rejected evidence; the runtime trial is removed."
+  },
+  {
+    "file": "causes-world-context.jpg",
+    "source": "reports/checks/20261127T110001831123Z/world_baseline.jpg",
+    "sha256": "bf266f356551e7fc1234168073105b891f0422fba41abd17cdc25c85fa73ff77",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Diagnostic only. Yellow/blue tags identify visible 72/8 triangle grass at 60\u2013124m. White masks isolate fixed geometry at 90m, 2x MSAA. No-grass image isolates attribution; never a proposed density reduction. Inspected, not artwork or user acceptance.",
+    "provenance": "Original tests/vegetation_causes.gd (0BSD); Godot 4.7.2 ed1daf0bf. Existing project content, no imported assets."
+  },
+  {
+    "file": "causes-visible-lods.png",
+    "source": "reports/checks/20261127T110001831123Z/world_lod_tags.png",
+    "sha256": "c18ca5f106164ff9528b0e6899ad12ffe05a7dd7b0b5142cdfb2423b61c84033",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Diagnostic only. Yellow/blue tags identify visible 72/8 triangle grass at 60\u2013124m. White masks isolate fixed geometry at 90m, 2x MSAA. No-grass image isolates attribution; never a proposed density reduction. Inspected, not artwork or user acceptance.",
+    "provenance": "Original tests/vegetation_causes.gd (0BSD); Godot 4.7.2 ed1daf0bf. Existing project content, no imported assets."
+  },
+  {
+    "file": "causes-without-grass.png",
+    "source": "reports/checks/20261127T110001831123Z/world_no_grass.png",
+    "sha256": "ac4927c95c964c1f55e2ce95cea23154d345a0e6b0c0526f929272b2f870d6ee",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Diagnostic only. Yellow/blue tags identify visible 72/8 triangle grass at 60\u2013124m. White masks isolate fixed geometry at 90m, 2x MSAA. No-grass image isolates attribution; never a proposed density reduction. Inspected, not artwork or user acceptance.",
+    "provenance": "Original tests/vegetation_causes.gd (0BSD); Godot 4.7.2 ed1daf0bf. Existing project content, no imported assets."
+  },
+  {
+    "file": "causes-eight-mask-phase0.png",
+    "source": "reports/checks/20261127T110001831123Z/mask_eight_1_0.png",
+    "sha256": "cf51ada60e83617030999acea9c34bbf71ba2b42e61847406ab95fd7b7596ba6",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Diagnostic only. Yellow/blue tags identify visible 72/8 triangle grass at 60\u2013124m. White masks isolate fixed geometry at 90m, 2x MSAA. No-grass image isolates attribution; never a proposed density reduction. Inspected, not artwork or user acceptance.",
+    "provenance": "Original tests/vegetation_causes.gd (0BSD); Godot 4.7.2 ed1daf0bf. Existing project content, no imported assets."
+  },
+  {
+    "file": "causes-eight-mask-phase15.png",
+    "source": "reports/checks/20261127T110001831123Z/mask_eight_1_15.png",
+    "sha256": "60c03e68fa5e9662dea0b39002ee200b6a903963de11c567ed67577e7d399b71",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Diagnostic only. Yellow/blue tags identify visible 72/8 triangle grass at 60\u2013124m. White masks isolate fixed geometry at 90m, 2x MSAA. No-grass image isolates attribution; never a proposed density reduction. Inspected, not artwork or user acceptance.",
+    "provenance": "Original tests/vegetation_causes.gd (0BSD); Godot 4.7.2 ed1daf0bf. Existing project content, no imported assets."
+  },
+  {
+    "file": "causes-world-far-lod-moderate.png",
+    "source": "reports/checks/20261127T110629799826Z/world_far_lod_moderate.png",
+    "sha256": "803c9d85ddf9d56304579275eef82afc7c48dd09e3a911540bc32487cf8a80bc",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Exploratory LOD thresholds only; original lighting retained. Inspected: brightness band avoided, visible speckling remains. Test-only, not enabled in runtime or user-approved.",
+    "provenance": "Original tests/vegetation_causes.gd (0BSD), existing project assets. No external content imported."
+  },
+  {
+    "file": "causes-world-far-lod-early.png",
+    "source": "reports/checks/20261127T110629799826Z/world_far_lod_early.png",
+    "sha256": "3e80ebcf413fbf75f12f9467c7cc0efba907207c0ba531d27abf91b70bfc1bb2",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Exploratory LOD thresholds only; original lighting retained. Inspected: brightness band avoided, visible speckling remains. Test-only, not enabled in runtime or user-approved.",
+    "provenance": "Original tests/vegetation_causes.gd (0BSD), existing project assets. No external content imported."
   }
 ]

@@ -8,6 +8,116 @@
 - Ferns: distant 392 -> 154 triangles; bushes 294 -> 154; twigs 136 -> 80.
   Nearby geometry, ordinary shadows and four grass tiers remain unchanged.
 
+## Far-LOD cause isolation — 2026-11-27
+
+Clarified user direction: the softer/different distant-LOD appearance was liked.
+The excessive brightness, failure to match surrounding terrain, and persistent
+pixel flicker were the problems. Preserve that useful far-representation direction;
+this is not a request to redesign nearby grass or change the whole grass system.
+The rejected implementation remains removed, not the design objective.
+
+**Confirmed contributor: subpixel silhouette coverage.** The new
+`tests/vegetation_causes.gd` places 64 isolated production grass meshes at 90 m,
+with fixed rotations and fixed LODs. It renders white masks on black, removing
+wind, texture, lighting, shadows, terrain, dither and streaming. The camera samples
+16 quarter-pixel offsets. Stationary captures are byte-identical. Summed linearized
+pixel coverage should be constant under these translations, but the current 2x
+MSAA produces large changes:
+
+| Fixed mesh | Triangles | Median covered pixels | Median coverage range / mean |
+| --- | --- | --- | --- |
+| Full detail | 468 | 4.20 | 48.5% |
+| First reduced tier | 72 | 2.64 | 88.1% |
+| Far tier | 8 | 2.70 | 55.9% |
+| Horizon tier | 3 | 3.01 | 48.8% |
+
+These are per-plant coverage fluctuations over sample phases, not percentages of
+all gameplay flicker. They establish that the silhouette alone can shimmer; an
+LOD switch or animated wind is not necessary. The 8x MSAA diagnostic reduces the
+72/8-triangle coverage ranges to 40.0%/32.9%, but does not eliminate them. It is
+not proposed as a production setting. Adding triangles is not a reliable cure
+when individual blades remain unresolved.
+
+![Fixed eight-triangle masks, phase 0](images/causes-eight-mask-phase0.png)
+![Same masks at a subpixel offset](images/causes-eight-mask-phase15.png)
+Unscaled 160x160 probe crops, 90 m, 2x MSAA. No light/texture/fade changes.
+
+**Actual visible LODs were checked, not inferred from hidden roots.** Temporary
+fragment tags identify grass at true 60–124 m distance after depth testing. Four
+view directions were inspected from an elevated diagnostic camera. The selected
+view contains 7,108 tagged pixels from the 72-triangle tier and 3,025 from the
+eight-triangle tier; no full-detail or three-triangle tags occur. Pixel counts
+are not instance counts. Optimizing only the last/horizon tier would miss most
+of this visible far grass. The current saved-world hash is `d4fb3582ec5c...`;
+it is not the earlier coastal camera or a reconstruction of the user's screenshot.
+
+![Visible far LOD identities](images/causes-visible-lods.png)
+Yellow: 72-triangle tier; blue: eight triangles. Unlit colors and disabled fog/MSAA
+are diagnostic tags, not proposed artwork. [Context](images/causes-world-context.jpg).
+
+Matched 0.48 m sideways camera travel isolates individual features in the same
+visible region. Wind is frozen in all these comparisons. The descriptive screen
+difference includes expected image motion and contrast; it is not a pure shimmer
+score or a quality/performance acceptance gate.
+
+| Diagnostic override | Screen difference relative to baseline | Interpretation |
+| --- | --- | --- |
+| Grass hidden | 0.391 | Grass contributes much of this region's variation; remaining plants/terrain still contribute |
+| Grass distance fade disabled | 1.013 | Does not remove the main effect here |
+| Grass shadow reception disabled | 1.006 | Cast-shadow reception is not the main cause here |
+| Grass texture disabled | 1.371 | Higher contrast worsens this measure; the existing texture is not the explanation here |
+| Full-detail meshes forced | 1.337 | Extra geometry does not cure unresolved silhouettes |
+| Flat unlit grass | 0.684 | Lower difference but wrong brightness; explicitly not a fix |
+| Far LOD thresholds 0.08 / 0.14 | 0.882 | Useful LOD-only trend; visible speckling remains |
+| Far LOD thresholds 0.06 / 0.10 | 0.833 | Useful LOD-only trend; visible speckling remains |
+
+The threshold experiments preserve the original near/first-tier threshold 0.02,
+all vertex arrays and the original lighting. Average crop luminance changes only
++0.20% / +0.17%, avoiding the previous broad brightening in this view. Their
+[moderate](images/causes-world-far-lod-moderate.png) and
+[earlier](images/causes-world-far-lod-early.png) captures were inspected. These
+remain **test-only experiments**, not enabled runtime changes or user-approved
+results. Continuous-play transition quality, nearby pixel parity at relevant
+FOV/resolutions and isolated performance still need qualification before adoption.
+
+**Brightness is a separate mismatch.** Woodland foliage uses leaf normals,
+Burley lighting, ambient light and backlight. Terrain uses Lambert lighting,
+ambient-disabled custom sky fill, surface normals and material textures. The
+discarded upward-normal/full-AO/color-multiplier approximation reproduced none
+of that terrain calibration. Native ground placement uses support normals to
+reject steep slopes, but keeps upright instance bases; those bases do not encode
+the terrain normal. A new far blend must account for actual terrain light/color
+and slope, rather than merely choosing another global brightness multiplier.
+
+Evidence: [compact measurements, inputs and identities](causes-evidence.json).
+Runs `20261127T110001831123Z` (53 fixture assertions),
+`20261127T110233221983Z` (nine low-tier assertions), and
+`20261127T110629799826Z` (30 world/threshold assertions) all pass. Passing means
+diagnostic integrity, not that flicker or visual acceptance is solved. All 88,725
+ground-cover instances, native page/shadow/transform allocations and canonical
+save hash remain unchanged within each world run. Production source is unchanged.
+
+Reproduce using the existing save, read-only:
+
+```powershell
+python tools/run_godot_check.py vegetation_causes --isolated-render --timeout 300 --require "VEGETATION_CAUSES failures=0" -- --stability-source-slot=Homestead_Valley
+```
+
+`--probe-kind=low` restricts the silhouette probe; `--world-only` skips it.
+The runner admits 12 MiB, with an enforced 8 MiB image ceiling and bounded
+JSON/logs, zero new worlds/builds/exports. Receipt-owned retention archives older
+members after exit, keeping two ordinary ready runs. The first full run is now
+cold-retained; its manifest and versioned selected evidence remain available.
+Original diagnostic code is 0BSD, original capture contributions CC0-1.0, with
+underlying project-asset terms preserved. No external content or dependency added.
+
+Next: improve far-LOD coverage/transition stability and terrain-calibrated contrast
+together, preserving the liked softer distant appearance and near grass. Require
+visible-surface motion evidence, brightness/terrain comparison and GPU/frame-tail
+checks; do not substitute fewer plants or a lower aggregate metric for acceptance.
+LOD-boundary popping, other species, exact supplied viewpoint, varied terrain/light,
+zoom, physical travel and broader hardware remain unqualified.
+
 ## Moving distant-cover trial — 2026-11-27
 
 **Rejected by the user:** the whole distant band becomes too bright relative to
