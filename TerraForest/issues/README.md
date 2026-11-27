@@ -1,5 +1,11 @@
 # Visual issue tracker
 
+[Metropolis and inhabited-region generation](world-generator/README.md#metropolis-recipe--2026-11-27)
+adds a 36-building city, six communities and three required bridges. Source
+planning, preview, final contacts, normal publication/trading and fresh restoration
+pass. Installed scope, intermittent exit cleanup, world-quality approval and the
+60 FPS target remain separately open.
+
 [Three grand buildings](grand-buildings/README.md) adds a 60-flat block, a
 cathedral with two cellar levels and twin bell towers, and a ten-storey street
 tower with 58 flats and eight shops. They are additional construction choices;

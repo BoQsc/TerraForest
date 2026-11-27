@@ -1,3 +1,29 @@
+## Metropolis and inhabited-region recipe — 2026-11-27
+
+The additional ordinary starting recipe plans a 36-building city containing all
+three grand buildings and every medium type, six eight-building communities,
+two large bridges and a small footbridge. The source 1703 plan, native preview,
+297 final-terrain/cache checks and focused native/source-release regressions
+pass; the complete [contract and evidence](METROPOLIS_REGION.md) retain failures.
+Deep generation variants add actual masonry roots; full road shoulders are
+reserved; existing city-to-village connections are reused. The three landmarks
+have named map destinations. The original catalog assets and existing saves
+remain intact.
+
+The user approved temporary QA headroom; normal generation/publication now passes.
+The first attempts caught cleared model attachments on footing variants and a
+large-room survey overflow. Exact attachment preservation, independent geometry
+proof and sparse, bounded room pages correct those failures; their stages and
+logs are cold-retained. The final same-world workflow passes creation (6 checks),
+interaction/landmark cells (66) and fresh restoration (23), with exact inventory
+and merchant stock. Its verified archive retires 68,116,532 owned bytes; earlier
+failed shutdown runs remain visible. The intermittent zero-reference exit warning
+and full headless catalog cleanup gate still need a lifetime investigation and
+repeatable clean exits before export qualification. Repository storage limits
+remain unchanged. This is source-checkout
+scope. Installed export, full-world visual/site approval and populated-world
+performance remain unqualified; preview/contact success does not close them.
+
 ## Three grand buildings — 2026-11-27
 
 Additional ordinary Building / Prefab choices now include Foundry Court (60

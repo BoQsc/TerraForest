@@ -7,12 +7,16 @@
 #include <algorithm>
 #include <cmath>
 namespace terraforest {
-Dictionary NativeBlockPrefab::interior_light_sites() const {
+Dictionary NativeBlockPrefab::interior_light_sites(int64_t room_offset) const {
     Dictionary result;result["ok"]=false;Array rooms;
-    if(bounds.size.x>128||bounds.size.y>128||bounds.size.z>128||cells.size()>200000)return result;
+    if(room_offset<0||room_offset>2048||bounds.size.x>128||bounds.size.y>128||bounds.size.z>128||cells.size()>200000)return result;
     using Key=std::tuple<int,int,int>;
-    std::map<Key,int> words;std::set<int> levels;
-    for(const auto &cell:cells){words[{cell.x,cell.y,cell.z}]=cell.word;levels.insert(cell.y+1);}
+    std::map<Key,int> words;
+    std::map<int,std::set<std::pair<int,int>>> supports;
+    for(const auto &cell:cells){
+        words[{cell.x,cell.y,cell.z}]=cell.word;
+        if(block_shape(cell.word)==1||block_shape(cell.word)==8)supports[cell.y+1].insert({cell.x,cell.z});
+    }
     auto solid=[&](Vector3 point){
         Vector3 floor=point.floor();auto found=words.find({int(floor.x),int(floor.y),int(floor.z)});
         if(found==words.end())return false;
@@ -25,15 +29,16 @@ Dictionary NativeBlockPrefab::interior_light_sites() const {
     for(int index=0;index<model_attachments.size();++index){Dictionary row=model_attachments[index];String name=row["model"];
         if(name.contains("door")){Transform3D pose=row["transform"];doors.push_back(pose.xform(AABB(Vector3(-.1,0,-.3),Vector3(1.2,2,.6))));}
     }
-    int low_x=int(std::floor(bounds.position.x)),high_x=int(std::ceil(bounds.get_end().x));
-    int low_z=int(std::floor(bounds.position.z)),high_z=int(std::ceil(bounds.get_end().z));
-    uint64_t probes=0;
-    for(int level:levels){
+    uint64_t probes=0;int64_t room_index=0;
+    // Only an authored support cell can be a room floor. Visiting those cells
+    // retains the exact walk set while avoiding empty tall-building envelopes.
+    // The existing cell, probe, room and candidate limits remain unchanged.
+    for(const auto &floor:supports){
+        int level=floor.first;
         std::set<std::pair<int,int>> walk;
-        for(int row=low_z;row<high_z;++row)for(int column=low_x;column<high_x;++column){
+        for(auto column_row:floor.second){
+            int column=column_row.first,row=column_row.second;
             if(++probes>200000)return result;
-            auto support=words.find({column,level-1,row});
-            if(support==words.end()||(block_shape(support->second)!=1&&block_shape(support->second)!=8))continue;
             Vector3 feet(column+.5,level,row+.5);
             if(!solid(feet-Vector3(0,.02,0))||solid(feet+Vector3(0,.03,0))||solid(feet+Vector3(0,1,0))||solid(feet+Vector3(0,2.15,0)))continue;
             bool doorway=false;for(const auto &door:doors)if(door.grow(.1).has_point(feet+Vector3(0,.5,0)))doorway=true;
@@ -64,10 +69,15 @@ Dictionary NativeBlockPrefab::interior_light_sites() const {
             PackedVector3Array candidates;
             for(const auto &choice:choices){if(candidates.size()==16)break;candidates.push_back(choice.point);}
             if(candidates.is_empty())continue;
-            if(rooms.size()==128)return result;
+            if(room_index++<room_offset)continue;
+            if(rooms.size()==128){
+                result["ok"]=true;result["rooms"]=rooms;result["probes"]=int64_t(probes);
+                result["complete"]=false;result["next_room"]=room_offset+rooms.size();return result;
+            }
             Dictionary room;room["floor"]=level;room["area"]=int(region.size());room["candidates"]=candidates;rooms.push_back(room);
         }
     }
-    result["ok"]=true;result["rooms"]=rooms;result["probes"]=int64_t(probes);return result;
+    result["ok"]=true;result["rooms"]=rooms;result["probes"]=int64_t(probes);
+    result["complete"]=true;result["next_room"]=room_offset+rooms.size();return result;
 }
 }

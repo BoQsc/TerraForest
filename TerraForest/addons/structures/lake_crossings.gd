@@ -3,11 +3,26 @@ extends RefCounted
 const Lots=preload("res://addons/structures/northern_lots.gd")
 const Catalog=preload("res://addons/structures/bridge_catalog.gd")
 
-static func build(core:RefCounted,roads:Array,reservations:Array)->Dictionary:
- var sampled:Dictionary=core.plan_lake_crossings()
+static func build(core:RefCounted,roads:Array,reservations:Array,metropolis:bool=false)->Dictionary:
+ var sampled:Dictionary=core.plan_lake_crossings(metropolis)
  if not sampled.get("ok",false):return sampled
+ if metropolis:
+  var gullies:Dictionary=core.plan_land_footbridges(roads,reservations,0)
+  if not gullies.get("ok",false):return gullies
+  sampled.crossings.append_array(gullies.crossings)
+  sampled.height_samples+=gullies.height_samples
+  if "--plan-diagnostics" in OS.get_cmdline_user_args():print("METROPOLIS_CROSSING_CANDIDATES water=",sampled.crossings.size()-gullies.crossings.size()," gully=",gullies.crossings.size())
  var crossings:=[];var segments:=[];var navigation:=[];var rejected:=[]
+ var large:=0;var small:=0
  for candidate:Dictionary in sampled.crossings:
+  var is_small:bool=candidate.get("kind","")=="small"
+  if metropolis and ((is_small and small>=1) or (not is_small and large>=2)):continue
+  var overlapping:=false
+  for previous:Dictionary in crossings:
+   var center:Vector3=(candidate.banks[0]+candidate.banks[1])*.5
+   var prior:Vector3=(previous.banks[0]+previous.banks[1])*.5
+   if center.distance_to(prior)<(float(candidate.span)+float(previous.span))*.5+16:overlapping=true
+  if overlapping:continue
   var connections:=[];var joins:=[]
   for anchor:Vector3 in candidate.anchors:
    var targets:=[]
@@ -35,8 +50,16 @@ static func build(core:RefCounted,roads:Array,reservations:Array)->Dictionary:
    connections.append(connection.points)
   if connections.size()!=2:
    rejected.append({"lake_id":candidate.lake_id,"reason":"No safe connection to both banks"});continue
-  candidate["connections"]=connections;crossings.append(candidate)
+  candidate["connections"]=connections
+  if metropolis:candidate["solid_deck"]=true
+  crossings.append(candidate)
+  if is_small:small+=1
+  else:large+=1
   segments.append_array(candidate.approaches)
+  if metropolis:
+   var contact:Dictionary=asset(candidate).terrain_surface_clearance(candidate.origin,candidate.rotation,4095)
+   if not contact.get("ok",false):return contact
+   segments.append_array(contact.segments)
   navigation.append({"a":candidate.banks[0],"b":candidate.banks[1],"width":6.0})
   for approach:Dictionary in candidate.approaches:navigation.append({"a":approach.start,"b":approach.finish,"width":5.0})
   for connection_index in connections.size():
@@ -48,10 +71,11 @@ static func build(core:RefCounted,roads:Array,reservations:Array)->Dictionary:
      finish=finish.lerp(points[index-1],minf(1.0,joins[connection_index]/length))
     if finish.distance_squared_to(points[index-1])>1:segments.append(Lots._segment(points[index-1],finish,2.5,3,4,1,1))
     navigation.append({"a":points[index-1],"b":points[index],"width":5.0})
+ if metropolis and "--plan-diagnostics" in OS.get_cmdline_user_args():print("METROPOLIS_CROSSING_CONNECTIONS ",JSON.stringify({"large":large,"small":small,"rejected":rejected}))
  return {"ok":true,"bridges":crossings,"segments":segments,"navigation":navigation,"rejected":rejected,"height_samples":sampled.height_samples}
 
 static func asset(crossing:Dictionary)->Resource:
- return Catalog.lake_crossing(int(crossing.span))
+ return Catalog.lake_crossing(int(crossing.span),bool(crossing.get("solid_deck",false)))
 
 static func compatible_crossings(points:PackedVector3Array,roads:Array)->bool:
  for index in range(1,points.size()):

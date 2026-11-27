@@ -50,6 +50,12 @@ def planned_report_bytes(command):
     if any(str(value) == "res://tests/vegetation_shading.gd" for value in command):
         return 24 * 2**20  # Driver caps nine encoded frames at 20 MiB; no saved world.
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
+    if len(scripts) == 1 and scripts <= {"generation_contact_policy.gd", "terrain_block_contract.gd", "terrain_block_catalog.gd", "production_building_catalog.gd"}:
+        return 2 * 2**20  # Native/cold-plan assertions and JSON; no saved world or captures.
+    if scripts == {"production_buildings.gd"} and "--metropolis" in command:
+        return (16 if "--restore-production" in command else 160) * 2**20  # Restore has one counter view; creation/interact include site views.
+    if scripts == {"metropolis_recipe.gd"}:
+        return (16 if "--browser-capture" in command else 2) * 2**20  # 1920x1080 browser, 256-square map, JSON/logs; no world.
     if scripts == {"grand_buildings_world.gd"}:
         return 2 * 2**20  # Read-only normal construction catalog assertions; no capture or saved world.
     if scripts in ({"outdoor_support_batches.gd"}, {"cached_world_plan.gd"}, {"startup_resources.gd"}, {"generation_saved_equivalence.gd"}):
@@ -130,7 +136,7 @@ def planned_report_bytes(command):
     return 256 * 2**20
 
 
-def retain_grand_building_captures():
+def retain_object_captures():
     from maintain_homestead_captures import maintain
     try:
         return maintain(apply=True)
@@ -182,7 +188,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
-                world_bytes = 0 if any(test in command for test in ("res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
+                world_bytes = 0 if any(test in command for test in ("res://tests/generation_contact_policy.gd", "res://tests/terrain_block_contract.gd", "res://tests/terrain_block_catalog.gd", "res://tests/production_building_catalog.gd", "res://tests/metropolis_recipe.gd", "res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
                 result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command), world_bytes=world_bytes)
             result['preflight_seconds'] = time.monotonic() - started
             started = time.monotonic()  # Storage admission is not engine startup timing.
@@ -319,10 +325,10 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
-    if args.test in {"vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         from maintain_homestead_captures import maintain
-        if args.test == "grand_buildings":
-            details["capture_retention_before"] = retain_grand_building_captures()
+        if args.test in {"grand_buildings", "metropolis_recipe"}:
+            details["capture_retention_before"] = retain_object_captures()
         else:
             maintain(apply=True)
     folder.mkdir(parents=True)
@@ -337,9 +343,9 @@ def main(argv=None):
         maintain(apply=True)
     if args.test == "physics_residency_world":
         maintain(apply=True)
-    if args.test in {"vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
-        if args.test == "grand_buildings":
-            details["capture_retention_after"] = retain_grand_building_captures()
+    if args.test in {"vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+        if args.test in {"grand_buildings", "metropolis_recipe"}:
+            details["capture_retention_after"] = retain_object_captures()
             manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
             if details["capture_retention_after"].get("pending"):
                 print("Capture archival pending: gameplay/builds are active; receipts and output retained.")

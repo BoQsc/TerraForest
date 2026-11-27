@@ -435,3 +435,29 @@ retains two ordinary ready runs, verifies older chunks before retirement, and
 keeps failed logs/receipts. `analyze_vegetation_reconstruction.py` validates a
 completed admitted receipt before creating its bounded lossless motion previews.
 Selected versioned issue images retain original capture/underlying-asset terms.
+
+## Metropolis recipe verification — 2026-11-27
+
+`check_metropolis_world.py` declares 160 MiB of reports and a 224 MiB peak for
+its single new ordinary-UI fixture. `recheck_metropolis_world.py` reuses an
+unretired publication with matching native inputs, admitting 160 MiB for full
+interaction or 16 MiB for restore only, and no additional world. Restore-only
+reuse also requires the exact driver hash and a passed interaction. Failed
+receipts stay intact; capture groups have separate completion records. Successful
+rechecks verify/cold-retire the exact creation-receipt-owned staging and published
+slots. `--archive-only --completion recheck.json` retries deferred retirement.
+Capture retention selects declared filenames, never arbitrary report files.
+
+This session's explicitly approved `--approved-headroom` adds 256 MiB each for
+reports and owned worlds in that Python process only; repository limits remain
+unchanged. It is not a standing permission for later work. Selected versioned
+issue images keep their capture provenance and inherited asset terms.
+
+One admitted 224 MiB scratch allowance freezes only the structures native module
+and its retained notices for focused binary integration, plus tiny room-API
+fixtures. It uses committed inputs and the three room-planner edits, preserving
+parallel uncommitted renderer work in the main checkout. The report allowance is
+4 MiB; 128 MiB of existing compiler headroom is reserved. No full project copy,
+world or export is made. `reports/metropolis_clean_native.json` owns this input
+hash/build; its scratch tree is verified and cold-retired after the exact DLL
+objects have been stored for the focused commit.

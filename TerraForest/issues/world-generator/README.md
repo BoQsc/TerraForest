@@ -4,6 +4,59 @@
 - User review: New UI and larger layouts not yet reviewed. Existing house approvals stay separate.
 - Request: Professional creation UI, controllable towns/cities, connected roads, offroads and biome choices; distributed lakes/settlements and faster generation/loading.
 
+## Metropolis recipe — 2026-11-27
+
+Source integration and final-terrain checks pass for a city of 36 buildings,
+six eight-building communities, 52 m / 40 m lake bridges and a 28 m seasonal-gully
+footbridge. The ordinary starting recipe is **Metropolis & inhabited region**.
+Its three grand buildings are named map destinations. Blocks must connect to
+existing streets before acceptance; the regional network reuses those streets.
+
+[Recipe contract, retained failures and exact evidence](../../docs/METROPOLIS_REGION.md).
+The final 297-check source run validates all 84 buildings, sidewalks, bridge decks/end
+supports, normal preview and independent cache identity. It does not establish
+normal saved-world publication, fresh restoration, installed scope, user visual
+approval or populated performance. Temporary QA headroom is explicitly approved;
+normal generation/publication now passes after model-preservation and room-survey
+corrections. The final source workflow passes 6 creation, 66 interaction and 23
+fresh-restoration assertions; its exact test world is verified and cold-retired.
+Earlier intermittent exit-cleanup warnings remain tracked in the contract and
+are not universally resolved. Earlier Shuffle fixes and their installed evidence
+below are retained.
+
+![Metropolis recipe in the ordinary creation screen](images/metropolis-preview-2026-11-27.png)
+
+Inspected source preview, seed 1703: three city quarters, six outlying communities,
+86 buildings including two lookouts and three bridges. The regional road count
+excludes embedded block streets. This overview does not approve street-level
+terrain fit or populated-world performance. Exact capture provenance is in
+[`images/manifest.json`](images/manifest.json).
+
+![Saint Brigid in the generated civic quarter](images/metropolis-cathedral-world-2026-11-27.png)
+
+Saint Brigid on its surveyed coastal street. The original fabric and attached
+objects survive normal publication/reopening; the deep crypt is excavated below
+the street. This is placement evidence, not approval of every entrance or route.
+
+![Foundry Court against the hillside](images/metropolis-foundry-world-2026-11-27.png)
+
+The sixty-flat court fits a separate street frontage beside the natural hillside.
+The city grows through connected, individually fitted blocks rather than one
+large flattened rectangle.
+
+![Needle Street and its neighboring buildings](images/metropolis-needle-world-2026-11-27.png)
+
+The ten-storey tower shares its frontage with medium and smaller buildings.
+Green intervals between quarters remain visible; urban cohesion and density
+remain subjects for ground-level and user review.
+
+![The second large lake bridge](images/metropolis-large-bridge-world-2026-11-27.png)
+
+The 40 m lake crossing joins both banks; the other large crossing is 52 m. A
+separate 28 m footbridge spans a shallow seasonal gully near a community. These
+uncontrolled captures are not a 60 FPS qualification. The original capture
+paths and hashes remain in the image manifest, including after cold retention.
+
 ## Shuffle failures — 2026-11-13
 
 Reported seeds **474546765** and **1729662740**, **Frontier expedition**; the ordinary UI enables buildable terrain (generator 29).

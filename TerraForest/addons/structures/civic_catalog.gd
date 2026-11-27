@@ -44,11 +44,11 @@ static func metadata(site:Dictionary)->Array:
 			result.append({"id":MERCHANT_PLACE,"title":"Resident trader","detail":"Supplies bought and sold for coins. Finite stock and purse.","position":Vector3(lot.origin)+anchor.origin})
 	return result
 
-static func prepare_landscape(game:Node,site:Dictionary)->bool:
+static func prepare_landscape(game:Node,site:Dictionary,all_lots:bool=false)->bool:
 	# Generation only: retain the forest between lots, but keep mature crowns
 	# off civic roofs and the public approach. Native stable exclusions persist.
 	for lot:Dictionary in site.lots:
-		if not lot.asset.has_meta("civic_id"):continue
+		if not all_lots and not lot.asset.has_meta("civic_id"):continue
 		var bounds:AABB=lot.asset.placement_bounds(lot.origin,lot.rotation)
 		var footprint:=Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(2.5)
 		var path:Dictionary=lot.entrance.segment

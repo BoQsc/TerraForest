@@ -3,6 +3,7 @@ extends RefCounted
 
 const Catalog=preload("res://addons/structures/expansion_catalog.gd")
 const City=preload("res://addons/structures/city_catalog.gd")
+const FoundationGeometry=preload("res://addons/structures/foundation_geometry.gd")
 const HOMES={"cottage_a2":Vector3(1.1,2.002,2.8),"house_c1":Vector3(2,5.002,1)}
 const LARGE={
 	"house_c1":[Vector3(2,5.002,1),Vector3(8,5.002,2),Vector3(8,5.002,8)],
@@ -35,7 +36,7 @@ static func plan(lots:Array,seed_value:int)->Dictionary:
 		if not HOMES.has(id) and not LARGE.has(id) and id!="church_c1":continue
 		if not checked.has(asset):
 			var reference:Resource=Catalog.asset(id) if Catalog.IDS.has(id) else City.asset(City.IDS.find(id))
-			if reference==null or asset.get_records()!=reference.get_records() or asset.get_model_attachments()!=reference.get_model_attachments():return {"ok":false,"reason":"Sleeper anchors require the reviewed house geometry: "+id}
+			if not FoundationGeometry.retains_authored_geometry(asset,reference):return {"ok":false,"reason":"Sleeper anchors require the reviewed house geometry: "+id}
 			checked[asset]=true
 		var origin:Vector3i=lot.origin
 		var rotation:int=lot.rotation

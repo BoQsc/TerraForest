@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=52
+const VERSION:=56
 const Watchtowers=preload("res://addons/exploration/watchtower_sites.gd")
 const Exploration=preload("res://addons/exploration/cave_layouts.gd")
 const Civic=preload("res://addons/structures/civic_catalog.gd")
@@ -13,6 +13,7 @@ const Survey=preload("res://addons/world_runtime/survey_cache.gd")
 const Routes=preload("res://addons/structures/regional_route_planner.gd")
 const City=preload("res://addons/structures/city_catalog.gd")
 const Crossings=preload("res://addons/structures/lake_crossings.gd")
+const Metropolis=preload("res://addons/structures/metropolis_catalog.gd")
 # Hash loaded content: exported .tres paths are remapped to binary resources.
 # Include planning metadata (entrances, surface offsets, trader anchor), not just cells.
 static func prefab_fingerprint(asset:Resource)->String:
@@ -44,14 +45,14 @@ static func read_plan(path:String,key:String,profile:Dictionary={})->Dictionary:
  began=Time.get_ticks_usec()
  var recipes:Dictionary={}
  for site:Dictionary in value.sites:
-  if site.recipe_kind not in ["market","neighborhood","city","civic"]:return {}
+  if site.recipe_kind not in ["market","neighborhood","city","civic","metropolis"]:return {}
   var legacy:bool=value.get("legacy_civic_review",false)
-  var recipe_id:String="%s:%d:%d"%[site.recipe_kind,int(legacy),int(site.get("introduction_home",false))]
+  var recipe_id:String="%s:%d:%d:%d"%[site.recipe_kind,int(legacy),int(site.get("introduction_home",false)),int(site.get("metro_block",-1))]
   var reused:bool=recipes.has(recipe_id)
   if not reused:
    # Only the asset definitions are reused. Origins, grades, roads and variants
    # remain those of the validated cache; these factories use center for placement.
-   recipes[recipe_id]=Civic.recipe(site.center,legacy,site.get("introduction_home",false)) if site.recipe_kind=="civic" else City.recipe(site.center) if site.recipe_kind=="city" else (Market.recipe(site.center,legacy) if site.recipe_kind=="market" else Lots.recipe(site.center,true,legacy))
+   recipes[recipe_id]=Metropolis.recipe(site.center,int(site.metro_block)) if site.recipe_kind=="metropolis" else Civic.recipe(site.center,legacy,site.get("introduction_home",false)) if site.recipe_kind=="civic" else City.recipe(site.center) if site.recipe_kind=="city" else (Market.recipe(site.center,legacy) if site.recipe_kind=="market" else Lots.recipe(site.center,true,legacy))
    profile["recipe_builds"]=int(profile.get("recipe_builds",0))+1
   else:profile["recipe_reuses"]=int(profile.get("recipe_reuses",0))+1
   var source:Array=recipes[recipe_id]
@@ -74,6 +75,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var started:=Time.get_ticks_usec()
  var cache_profile:Dictionary={}
  var encoded:=Recipe.encode(options)
+ if int(options.get("profile",0))==1 and int(options.get("introduction",0))!=0:return {"ok":false,"reason":"Metropolis uses its city start; the trader introduction belongs to the expedition recipe"}
  if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31]:return {"ok":false,"reason":"Unsupported world recipe"}
  if progress!=null:progress.record("Checking the binary placement-plan cache",0,0,"Seed %d / terrain %d / recipe v%d"%[seed_value,generator,VERSION])
  var core=ClassDB.instantiate("TerrainCore")
@@ -88,6 +90,9 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  key+="|"+prefab_fingerprint(Watchtowers.asset())
  if not civic_review:
   for id:String in preload("res://addons/structures/expansion_catalog.gd").IDS:key+="|"+prefab_fingerprint(preload("res://addons/structures/expansion_catalog.gd").asset(id))
+ if int(options.get("profile",0))==1:
+  for block in 3:
+   for asset:Resource in Metropolis.sources(block):key+="|"+prefab_fingerprint(asset)
  if civic_review:
   for id:String in Civic.IDS:key+="|"+prefab_fingerprint(load("res://addons/structures/prefabs/civic_review_"+id+".tres"))
  var path:=folder.path_join("recipe_%d_%s.bin"%[VERSION,Survey.digest(key.to_utf8_buffer()).hex_encode()])
@@ -103,7 +108,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var primary_civic:bool=civic_review or int(options.districts)==1
  var hints:Array=[3,4,2 if seed_value%2 else 1] if distributed else [3,0,1]
  if distributed and layout_variant%2==1:hints[2]=3-hints[2]
- for town in options.settlements:
+ for town in (0 if int(options.get("profile",0))==1 else options.settlements):
   if progress!=null:progress.record("Fitting settlement %d of %d"%[town+1,options.settlements],sites.size(),options.settlements*options.districts,"Native streets, foundation samples and entrances / layout pass %d / maximum fill 2 m, cut 3 m"%[layout_variant+1])
   var hint:Vector3=layout.sites[hints[town]].position
   var shift:=144 if distributed else 96
@@ -124,7 +129,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   occupied.append(earthworks.bounds);sites.append(site)
   works.bounds=earthworks.bounds if sites.size()==1 else works.bounds.merge(earthworks.bounds)
   works.segments.append_array(earthworks.segments)
- for expansion in options.settlements*(options.districts-1):
+ for expansion in (0 if int(options.get("profile",0))==1 else options.settlements*(options.districts-1)):
   var town:int=expansion%options.settlements
   var district:int=1+expansion/options.settlements
   if progress!=null:progress.record("Expanding settlement %d of %d"%[town+1,options.settlements],sites.size(),options.settlements*options.districts,"Relocating independent districts around terrain, occupied lots, water and protected sites")
@@ -160,13 +165,17 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   var earthworks:=Planner.earthworks(site)
   if not earthworks.get("ok",false):return earthworks
   occupied.append(earthworks.bounds);sites.append(site);works.bounds=works.bounds.merge(earthworks.bounds);works.segments.append_array(earthworks.segments)
+ if int(options.get("profile",0))==1:
+  var metropolitan:=Metropolis.locate(core,road_grid,layout_variant,progress)
+  if not metropolitan.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,metropolitan,progress,civic_review,rejected_intro_sites)
+  sites=metropolitan.sites;occupied=metropolitan.occupied;works=metropolitan.works
  if introduction_home:
   var spawn:=preload("res://addons/world_runtime/introduction_spawn.gd").select(sites)
   if not spawn.ok:return retry(seed_value,generator,options,folder,layout_variant,started,spawn,progress,civic_review,rejected_intro_sites)
  var protected:=Planner.reservations(core,layout.sites[hints[0]].position)
  if not protected.get("ok",false):return {"ok":false,"reason":"Native route reservations unavailable"}
  var reserved:Array=protected.areas.duplicate()
- for town in options.settlements:
+ for town in mini(int(options.settlements),hints.size()):
   var hint:Dictionary=layout.sites[hints[town]]
   reserved.erase(Rect2(Vector2(hint.position.x,hint.position.z)-Vector2.ONE*(hint.radius+32),Vector2.ONE*(hint.radius+32)*2))
  if options.districts==3 or distributed:
@@ -186,7 +195,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    if not points.has(point):points.append(point)
   exits.append(points);streets.append_array(site.roads)
  if progress!=null:progress.record("Connecting %d districts and planning offroads"%sites.size(),0,0,"Native A* / shared crossing grades / up to %d wilderness trails"%[options.trails*sites.size()])
- var network:Dictionary=core.plan_region_network(exits,reserved,options.network,options.trails,seed_value,streets)
+ var network:Dictionary=core.plan_region_network(exits,reserved,options.network,options.trails,seed_value,streets,7.5 if int(options.get("profile",0))==1 else 5.0)
  if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review,rejected_intro_sites)
  var normalization:Dictionary={"enabled":false}
  if int(options.get("road_grid",0))>0:
@@ -197,6 +206,9 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   for attempt in range(9):
    normalization=preload("res://addons/world_runtime/road_normalization.gd").apply(core,sites,network,connected,int(options.road_grid)==3)
    if normalization.get("ok",false):break
+   if "--plan-diagnostics" in OS.get_cmdline_user_args():
+    var failed_road:Dictionary=normalization.get("failed_road",{})
+    print("REGION_GRADE_REJECTION ",JSON.stringify({"reason":normalization.get("reason",""),"position":str(normalization.get("position","")),"owner":failed_road.get("normalization_owner",0),"start":str(failed_road.get("start","")),"finish":str(failed_road.get("finish","")),"reroute":normalization.has("reroute_position")}))
    if not connected:return normalization
    if not normalization.has("reroute_position") or attempt%3==2:
     if network_mode==0:return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review,rejected_intro_sites)
@@ -206,7 +218,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
     var failed:Vector3=normalization.reroute_position
     exclusions.append(Rect2(Vector2(failed.x-4,failed.z-4),Vector2(8,8)))
     if progress!=null:progress.record("Replanning a road that failed its terrain limits",attempt+1,9,"Connected grades / alternate native corridor / no silent fallback")
-   network=core.plan_region_network(exits,exclusions,network_mode,options.trails,seed_value,streets)
+   network=core.plan_region_network(exits,exclusions,network_mode,options.trails,seed_value,streets,7.5 if int(options.get("profile",0))==1 else 5.0)
    if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review,rejected_intro_sites)
   if not normalization.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review,rejected_intro_sites)
   network["accepted_network_mode"]=network_mode
@@ -225,14 +237,19 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  result["road_normalization"]=normalization
  var bridge_navigation:=[]
  if generator>=28:
-  if progress!=null:progress.record("Surveying lake crossings and bank paths",0,0,"Native dry-bank and slope checks / at most two destructible timber crossings")
+  if progress!=null:progress.record("Surveying bridges and bank paths",0,0,"Two large crossings and one small footbridge required" if int(options.get("profile",0))==1 else "Native dry-bank and slope checks / at most two destructible timber crossings")
   var bridge_roads:Array=network.segments.duplicate()
   for site:Dictionary in sites:bridge_roads.append_array(site.roads)
-  var bridge_plan:=Crossings.build(core,bridge_roads,reserved)
+  var bridge_plan:=Crossings.build(core,bridge_roads,reserved,int(options.get("profile",0))==1)
   if not bridge_plan.get("ok",false):return bridge_plan
   result["bridges"]=bridge_plan.bridges;result["bridge_rejections"]=bridge_plan.rejected
   bridge_navigation=bridge_plan.navigation
   for path_segment:Dictionary in bridge_plan.segments:works.segments.append(path_segment);works.bounds=works.bounds.merge(path_segment.bounds)
+ if int(options.get("profile",0))==1:
+  result["metropolis_audit"]=Metropolis.audit(sites,result.get("bridges",[]))
+  if not result.metropolis_audit.ok:
+   if "--plan-diagnostics" in OS.get_cmdline_user_args():print("METROPOLIS_AUDIT_REJECTION ",JSON.stringify(result.metropolis_audit))
+   return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"Metropolis content, bridge or regional coverage requirements were not met","metropolis_audit":result.metropolis_audit},progress,civic_review,rejected_intro_sites)
  if generator>=29:
   if progress!=null:progress.record("Fitting small mines and caves",0,0,"Native bounded hillside search / authored rooms / roof cover and dry approaches")
   var layouts:=Exploration.load_catalog()
@@ -331,11 +348,15 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  for location:Dictionary in result.get("exploration",{}).get("sites",[]):
    navigation.places.append({"id":400+navigation.places.size(),"title":location.title,"detail":"Coal workings, looping rails and a deep loading station with ten inhabitants." if location.id=="coal_mine" else "Small underground exploration site with supplies and sleeping inhabitants.","position":location.approach.start})
    if location.has("road_access"):navigation.roads.append({"a":location.road_access.start,"b":location.road_access.finish,"width":4.0})
- for bridge:Dictionary in result.get("bridges",[]):navigation.places.append({"id":200+int(bridge.lake_id),"title":"Timber lake crossing","detail":"Destructible grid-block footbridge with connected bank paths.","position":(bridge.banks[0]+bridge.banks[1])*.5})
+ for bridge_index in result.get("bridges",[]).size():
+  var bridge:Dictionary=result.bridges[bridge_index]
+  navigation.places.append({"id":201+bridge_index,"title":"Seasonal gully footbridge" if bridge.get("crossing_type","")=="seasonal_gully" else ("Small" if bridge.get("kind","")=="small" else "Large")+" timber crossing","detail":"%d m of destructible grid-block bridge with connected bank paths."%bridge.span,"position":(bridge.banks[0]+bridge.banks[1])*.5})
  if not ClassDB.instantiate("NativeGeneratedRegion").set_plan(seed_value,generator,navigation.places,navigation.roads):return {"ok":false,"reason":"Regional navigation exceeds native storage limits"}
  result["navigation"]=navigation
  var packed:Dictionary=result.duplicate(true)
  packed.erase("mineral_plan_ms")
+ if packed.has("watchtowers"):packed.watchtowers.erase("worker_ms")
+ if packed.has("exploration"):packed.exploration.erase("worker_ms")
  if progress!=null:progress.record("Validating and caching the placement plan",sites.size(),sites.size(),"%d buildings / %d districts / native binary navigation validation"%[building_count,sites.size()])
  for site:Dictionary in packed.sites:
   for lot:Dictionary in site.lots:lot.erase("asset")
@@ -368,9 +389,13 @@ static func navigation_metadata(sites:Array,network:Dictionary,seed_value:int=0)
  var metadata:Dictionary={"places":[],"roads":[]}
  for index in sites.size():
   var site:Dictionary=sites[index]
-  var district:=preload("res://addons/world_runtime/generated_region.gd").neighborhood_metadata(site,30+index,"%s / District %d"%[preload("res://addons/world_runtime/town_sign_plan.gd").town_name(seed_value,site.town),site.district+1],"Terrain-fitted buildings and individually destructible sidewalk plates.")
+  var district:=preload("res://addons/world_runtime/generated_region.gd").neighborhood_metadata(site,30+index,site.get("title","%s / District %d"%[preload("res://addons/world_runtime/town_sign_plan.gd").town_name(seed_value,site.town),site.district+1]),"Terrain-fitted buildings and individually destructible sidewalk plates.")
   metadata.places.append_array(district.places);metadata.roads.append_array(district.roads)
-  if site.recipe_kind=="civic":metadata.places.append_array(Civic.metadata(site))
+  if site.recipe_kind=="civic" or (site.recipe_kind=="metropolis" and int(site.get("metro_block",-1))==0):metadata.places.append_array(Civic.metadata(site))
+  if site.recipe_kind=="metropolis":
+   for lot:Dictionary in site.lots:
+    var landmark:int=Metropolis.Grand.IDS.find(lot.asset.get_meta("grand_building_id",""))
+    if landmark>=0:metadata.places.append({"id":3000+landmark,"title":["Foundry Court - 60 flats","Saint Brigid Cathedral","Needle Street Tower"][landmark],"detail":"City landmark / "+site.title,"position":lot.entrance.segment.finish})
  if network.has("grid_navigation"):metadata.roads.append_array(network.grid_navigation)
  else:
   for link:Dictionary in network.links:

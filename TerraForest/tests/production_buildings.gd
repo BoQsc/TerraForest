@@ -1,21 +1,45 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/civic_world.gd"
 const E2=preload("res://addons/structures/expansion_catalog.gd")
+var metropolis:=false
+var capture_prefix:=""
+
+func _physics_process(delta:float)->bool:
+	# Camera/capsule inspection suspends the player controller, not streaming.
+	# Keep the normal NPC residency owner running while those helpers await
+	# collision at another location; otherwise old bodies fall through unloaded
+	# terrain while their parent world's physics callback is suspended.
+	if metropolis and is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn" and current_scene.startup_complete and not current_scene.is_physics_processing():
+		var game:Node=current_scene
+		game.zombies.update(delta,game.player.global_position,false,false)
+		game.actors.update_simulation(delta,game.terrain.focus,false,game._actor_collision_ready)
+	return false
 
 func run()->void:
-	folder="res://reports/production_buildings";DirAccess.make_dir_recursive_absolute(folder)
+	metropolis="--metropolis" in OS.get_cmdline_user_args()
+	for argument:String in OS.get_cmdline_user_args():
+		if argument.begins_with("--metropolis-capture-prefix="):capture_prefix=argument.trim_prefix("--metropolis-capture-prefix=")
+	if not capture_prefix.is_empty() and not capture_prefix.is_valid_identifier():quit(2);return
+	folder="res://reports/production_buildings"
+	if metropolis:
+		for argument:String in OS.get_cmdline_user_args():
+			if argument.begins_with("--metropolis-evidence="):folder=argument.trim_prefix("--metropolis-evidence=")
+		if not folder.is_absolute_path() or not folder.contains("/reports/metropolis_world/"):push_error("Use the admitted metropolis launcher");quit(2);return
+	DirAccess.make_dir_recursive_absolute(folder)
 	restoration="--restore-production" in OS.get_cmdline_user_args()
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed
 	await wait_for(browser_catalog_ready)
 	var browser=current_scene
 	if "--create-production" in OS.get_cmdline_user_args():
-		selected_slot="CivicTown_1703_"+Crypto.new().generate_random_bytes(4).hex_encode()
+		selected_slot=("Metropolis_1703_" if metropolis else "CivicTown_1703_")+Crypto.new().generate_random_bytes(4).hex_encode()
 		browser.name_field.text=selected_slot;browser.seed_field.value=1703;browser.world_tabs.current_tab=1
-		check(browser.world_style.get_item_text(browser.world_style.selected)=="Connected countryside","normal default recipe is Connected countryside")
-		check(browser.selected_options()==Recipe.DEFAULTS,"unchanged normal UI settings reach generation")
+		if metropolis:preload("res://demo/world_creation_panel.gd").apply_style(browser,6)
+		check(browser.world_style.get_item_text(browser.world_style.selected)==("Metropolis & inhabited region" if metropolis else "Connected countryside"),"normal selected recipe has its public UI identity")
+		check(browser.selected_options()==(Recipe.METROPOLIS if metropolis else Recipe.DEFAULTS),"unchanged normal UI settings reach generation")
 		await photograph("create_world")
 		browser.generate_button.pressed.emit()
 		var status_path:String=browser.preparation_status
+		if metropolis:FileAccess.open(folder.path_join("request.json"),FileAccess.WRITE).store_string(JSON.stringify({"slot":selected_slot,"status":status_path,"pid":OS.get_process_id()}))
 		await wait_for(func():
 			if game_ready():return true
 			if browser_ready() and current_scene.preparation_pid<0 and FileAccess.file_exists(status_path):
@@ -30,12 +54,14 @@ func run()->void:
 		for phase:Dictionary in receipt.phases:
 			for argument:String in phase.arguments:ordinary=ordinary and argument not in ["--civic-review","--building-expansion-review","--review-generation"]
 		check(ordinary,"production generation uses no review-only flags")
-		FileAccess.open(folder.path_join("slot.json"),FileAccess.WRITE).store_string(JSON.stringify({"slot":selected_slot,"status":status_path,"report":state.report}))
+		var identity:Dictionary={"slot":selected_slot,"status":status_path,"report":state.report}
+		FileAccess.open(folder.path_join("slot.json"),FileAccess.WRITE).store_string(JSON.stringify(identity))
+		if metropolis:identity["created"]=true;FileAccess.open(folder.path_join("world.json"),FileAccess.WRITE).store_string(JSON.stringify(identity))
 		check(current_scene.generated_region.store.get_plan().places.any(func(place:Dictionary):return int(place.id)==Civic.MERCHANT_PLACE),"normal generated world persists resident trader location")
 		await photograph("first_play")
 		await finish();return
 	var saved=JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("slot.json")))
-	if not check(saved is Dictionary and str(saved.get("slot","")).begins_with("CivicTown_1703_"),"integration owns its new world only"):await finish();return
+	if not check(saved is Dictionary and str(saved.get("slot","")).begins_with("Metropolis_1703_" if metropolis else "CivicTown_1703_"),"integration owns its new world only"):await finish();return
 	selected_slot=saved.slot
 	var selected:=-1
 	for index in browser.worlds.item_count:
@@ -50,7 +76,7 @@ func run()->void:
 	while worker.is_alive():await process_frame
 	planned=worker.wait_to_finish()
 	if not check(planned.get("ok",false),"normal recipe reconstructs the generated plan"):await finish();return
-	check(planned.cache_hit and planned.sites[0].recipe_kind=="civic","preview and generation reuse the same approved civic plan")
+	check(planned.cache_hit and planned.sites[0].recipe_kind==("metropolis" if metropolis else "civic"),"preview and generation reuse the same approved civic plan")
 	var markers:Array=game.generated_region.store.get_plan().places.filter(func(place:Dictionary):return int(place.id)==Civic.MERCHANT_PLACE)
 	check(markers.size()==1,"exactly one resident trader map destination persists")
 	var available:={}
@@ -65,19 +91,74 @@ func run()->void:
 			var transformed:Resource=ClassDB.instantiate("NativeBlockPrefab")
 			transformed.compose([lot.asset],PackedInt32Array([0,lot.origin.x,lot.origin.y,lot.origin.z,lot.rotation]))
 			approved_records[id]=transformed.get_records();approved_lots[id]=lot
-	check(approved_records.size()==8,"default civic and market plan includes all five civic and three small-building E2 types")
+	check(approved_records.size()==(9 if metropolis else 8),"default civic and market plan includes all five civic and three small-building E2 types")
 	if not restoration:await verify_approved_records(game)
-	await trade_world(game,planned.sites[0].lots[0])
+	var trader_lots:Array=planned.sites[0].lots.filter(func(lot:Dictionary):return lot.asset.has_meta("trader_anchor"))
+	if check(trader_lots.size()==1,"exactly one trader building is identifiable"):await trade_world(game,trader_lots[0])
 	if not restoration:
-		for lot:Dictionary in planned.sites[0].lots:await inspect_detail(game,lot)
+		for lot:Dictionary in planned.sites[0].lots:
+			if lot.asset.has_meta("civic_id"):await inspect_detail(game,lot)
+		if metropolis:await inspect_metropolis(game)
 	FileAccess.open(folder.path_join("restore.json" if restoration else "result.json"),FileAccess.WRITE).store_string(JSON.stringify({"slot":selected_slot,"checks":checks,"failures":failures,"generation":"normal UI, no review flags","recipe":settings,"plan_digest":planned.plan_digest}))
 	await finish()
+
+func inspect_metropolis(game:Node)->void:
+	var landmarks:=0
+	for site:Dictionary in planned.sites:
+		for lot:Dictionary in site.lots:
+			if not lot.asset.has_meta("grand_building_id"):continue
+			landmarks+=1
+			var id:String=lot.asset.get_meta("grand_building_id")
+			var bounds:AABB=lot.asset.placement_bounds(lot.origin,lot.rotation)
+			game.teleport(lot.entrance.segment.finish+Vector3.UP)
+			var local_bounds:=AABB(lot.entrance.segment.finish-Vector3(3,1,3),Vector3(6,4,6))
+			if not check(await wait_for(func():return not game.loading_active and game.structures.is_collision_region_ready(local_bounds),90),id+" local entrance collision and landscape resident"):continue
+			var transformed:Resource=ClassDB.instantiate("NativeBlockPrefab")
+			transformed.compose([lot.asset],PackedInt32Array([0,lot.origin.x,lot.origin.y,lot.origin.z,lot.rotation]))
+			var cells:PackedInt32Array=transformed.get_records();var exact:=true
+			for at in range(0,cells.size(),4):
+				if game.structures.blocks.get_cell(Vector3i(cells[at],cells[at+1],cells[at+2]))!=cells[at+3]:exact=false;break
+			check(exact,id+" every authored and footing cell survives normal save/reopen")
+			game.set_physics_process(false);game._clear_motion();game.fly=true
+			game.camera.cull_mask&=~((1<<18)|(1<<19))
+			game.camera.global_position=lot.entrance.segment.finish+Vector3(4,1.7,2)
+			game.camera.look_at(bounds.get_center())
+			for frame in 45:await process_frame
+			await photograph(id+"_generated_street")
+			game.camera.global_position=bounds.get_center()+Vector3(bounds.size.x*.8,bounds.size.y*.65,bounds.size.z*.85)
+			game.camera.look_at(bounds.get_center())
+			for frame in 30:await process_frame
+			await photograph(id+"_generated_overview")
+			if id=="grand_cathedral":
+				game.player.position=point(lot,Vector3(50,1.05,20))
+				game.camera.global_position=point(lot,Vector3(50,2.7,20));game.camera.look_at(point(lot,Vector3(50,2.7,60)))
+				for frame in 45:await process_frame
+				await photograph("grand_cathedral_generated_crypt")
+	check(landmarks==3,"all three grand buildings are present in the ordinary generated city")
+	for index in planned.bridges.size():
+		var crossing:Dictionary=planned.bridges[index]
+		var middle:Vector3=(crossing.banks[0]+crossing.banks[1])*.5
+		game.teleport(middle+Vector3.UP)
+		if not check(await wait_for(func():return not game.loading_active,90),"bridge "+str(index)+" generated landscape resident"):continue
+		game.set_physics_process(false);game._clear_motion();game.fly=true
+		game.camera.global_position=middle+Vector3(24,18,20);game.camera.look_at(middle)
+		for frame in 45:await process_frame
+		await photograph("metropolis_bridge_"+str(index))
+	game.set_physics_process(true)
+
+func photograph(name:String)->void:
+	var destination:String=folder if capture_prefix.is_empty() else folder.path_join(capture_prefix)
+	DirAccess.make_dir_recursive_absolute(destination)
+	await RenderingServer.frame_post_draw
+	root.get_texture().get_image().save_png(destination.path_join(name+".png"))
 
 func finish()->void:
 	if is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn":
 		current_scene.trader.ui.close();current_scene.shutdown_requested=true
 		check(await current_scene.terrain.shutdown_after_edits(),"normal generated world durably saves after interaction")
 	if is_instance_valid(current_scene):current_scene.free()
-	await process_frame
+	# Let deferred native reference releases and the awaiting run() unwind before
+	# engine teardown; immediate quit can leave a zero-reference object queued.
+	for frame in 2:await process_frame
 	print("PRODUCTION_BUILDINGS checks=",checks," failures=",failures," slot=",selected_slot)
-	quit(1 if failures else 0)
+	quit.call_deferred(1 if failures else 0)

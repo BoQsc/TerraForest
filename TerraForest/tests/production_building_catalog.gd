@@ -59,7 +59,7 @@ func run()->void:
 		cases.clear()
 		for style:Dictionary in preload("res://demo/world_creation_panel.gd").STYLES:
 			var values:Array=style.values
-			cases.append({"biome":values[0],"settlements":values[1]+1,"districts":values[2]+1,"network":values[3],"trails":values[4],"road_grid":3,"material_veins":1})
+			cases.append(Recipe.METROPOLIS.duplicate() if int(style.get("profile",0))==1 else {"biome":values[0],"settlements":values[1]+1,"districts":values[2]+1,"network":values[3],"trails":values[4],"road_grid":3,"material_veins":1})
 	for settings:Dictionary in cases:
 		var progress:=preload("res://addons/world_runtime/world_plan_progress.gd").new()
 		var worker:=Thread.new();var began:=Time.get_ticks_msec();var next_profile:=began;var previous:=""
@@ -73,13 +73,13 @@ func run()->void:
 		print("PLAN_COMPLETED milliseconds=",Time.get_ticks_msec()-began," cache_hit=",result.get("cache_hit",false)," digest=",result.get("plan_digest",""))
 		check(result.get("ok",false),"normal recipe fits: "+str(settings)+" / "+str(result.get("reason","ok")))
 		if not result.get("ok",false):continue
-		var civic_sites:Array=result.sites.filter(func(site:Dictionary):return site.recipe_kind=="civic")
+		var civic_sites:Array=result.sites.filter(func(site:Dictionary):return site.recipe_kind=="civic" or (site.recipe_kind=="metropolis" and int(site.get("metro_block",-1))==0))
 		check(civic_sites.size()==1 and civic_sites[0].lots.filter(func(lot:Dictionary):return lot.asset.has_meta("civic_id")).size()==5,"one civic district includes all five civic buildings")
 		if int(settings.get("introduction",0))==1:
 			check(civic_sites[0].lots.size()==6 and preload("res://addons/world_runtime/introduction_spawn.gd").select(result.sites).get("ok",false),"introduction adds the approved nearby house without replacing a civic building")
 		var merchants:Array=result.navigation.places.filter(func(place:Dictionary):return int(place.id)==Civic.MERCHANT_PLACE)
 		check(merchants.size()==1,"each normal recipe provides exactly one resident trader destination")
-		check(civic_sites[0].lots.all(func(lot:Dictionary):return lot.asset.get_meta("expansion_revision","")=="E2"),"generation selects E2 before fitting terrain and basements")
+		check(civic_sites[0].lots.filter(func(lot:Dictionary):return lot.asset.has_meta("civic_id")).all(func(lot:Dictionary):return lot.asset.get_meta("expansion_revision","")=="E2"),"generation selects E2 before fitting terrain and basements")
 		var warm:=Plan.build(1703,29,true,true,"user://generation_plans",settings)
 		check(warm.cache_hit and warm.plan_digest==result.plan_digest and warm.sites[0].lots[0].asset.get_records()==result.sites[0].lots[0].asset.get_records(),"cached preview reconstructs the same approved prefab content")
 	print("PRODUCTION_BUILDING_CATALOG checks=",checks," failures=",failures)

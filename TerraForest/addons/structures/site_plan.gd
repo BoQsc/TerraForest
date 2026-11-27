@@ -7,6 +7,26 @@ const Contact=preload("res://addons/structures/terrain_contact.gd")
 static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -> Dictionary:
 	var plan:=foundation(asset,origin,rotation,grade)
 	if not plan.ok: return plan
+	# Sparse authored deep interiors share the same subtraction-only master phase.
+	# Keep their real footprint, rather than excavating the enclosing city block.
+	var volumes:Variant=asset.get_meta("cellar_volumes",[])
+	if not volumes is Array or volumes.size()>8:return {"ok":false,"reason":"Invalid interior excavation volumes"}
+	var local_bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
+	for volume:Variant in volumes:
+		if not volume is AABB or not volume.position.is_finite() or not volume.size.is_finite() or volume.size.x<1 or volume.size.z<1 or volume.size.x>128 or volume.size.z>128 or volume.size.y<=0 or volume.size.y>8 or volume.position.y<1 or volume.end.y>9:
+			return {"ok":false,"reason":"Invalid interior excavation volume"}
+		if not local_bounds.encloses(volume):return {"ok":false,"reason":"Interior excavation leaves the authored building envelope"}
+		var rows:=ceili(volume.size.x/16.0)
+		for row in rows:
+			var width:float=volume.size.x/rows
+			var a:=Vector3(volume.position.x+(row+.5)*width,volume.position.y-Contact.SURFACE_REVEAL,volume.position.z)
+			var b:=a+Vector3(0,0,volume.size.z)
+			for turn in rotation:a=Vector3(1-a.z,a.y,a.x);b=Vector3(1-b.z,b.y,b.x)
+			a+=Vector3(plan.target);b+=Vector3(plan.target)
+			var bounds:=AABB(a.min(b)-Vector3(width*.5,1,width*.5),a.max(b)-a.min(b)+Vector3(width,volume.size.y+1,width))
+			if bounds.position.x<5 or bounds.position.z<5 or bounds.end.x>1995 or bounds.end.z>1995 or plan.segments.size()>=MAX_SEGMENTS:return {"ok":false,"reason":"Interior excavation exceeds site limits"}
+			plan.segments.append({"start":a,"finish":b,"half_width":width*.5,"depth":1.0,"clearance":volume.size.y,"shoulder":0.0,"material":1,"bounds":bounds,"phase":"excavation","rectangular":true,"cut_only":true})
+			plan.bounds=plan.bounds.merge(bounds)
 	var profiles:Array=[]
 	if asset.get_meta("cellar_clearance",false):
 		profiles.append({"sections":asset.get_meta("cellar_sections",[Vector2(-2,-3),Vector2(0,-3),Vector2(2,-3)]),"end":asset.get_meta("cellar_end",3.0),"height":asset.get_meta("cellar_height",5.0),"floor":asset.get_meta("cellar_floor",1.0-Contact.SURFACE_REVEAL),"width":1.5})

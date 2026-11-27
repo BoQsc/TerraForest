@@ -169,6 +169,16 @@ Dictionary fit_generated_road_network(const World &world,const Array &source,con
      double norm=36*(!first.fixed)+36*(!last.fixed)+near_weight*near_weight*(!near_fixed)+far_weight*far_weight*(!far_fixed);
      if(norm>0){if(!first.fixed)first.height-=error*first_weight/norm;if(!last.fixed)last.height-=error*last_weight/norm;if(!near_fixed)near-=error*near_weight/norm;if(!far_fixed)far-=error*far_weight/norm;clamp_station(first);clamp_station(last);}
     }
+    // Station bounds alone do not bound a Hermite curve between stations:
+    // contact optimization also changes its tangents. Bound the two interior
+    // Bezier controls of the correction to the original curve. Its convex hull
+    // then keeps the entire grade within the existing 0.55 m displacement cap.
+    const double divisions=double(edge.nodes.size()-1);
+    const double first_fraction=double(station-1)/divisions,last_fraction=double(station)/divisions;
+    const double first_delta=first.height-value(edge.original,first_fraction),last_delta=last.height-value(edge.original,last_fraction);
+    const double original_near=derivative(edge.original,first_fraction)/divisions,original_far=derivative(edge.original,last_fraction)/divisions;
+    if(!near_fixed){double bounded=std::clamp(near,original_near+3*(-.55-first_delta),original_near+3*(.55-first_delta));residual=std::max(residual,std::abs(near-bounded));near=bounded;}
+    if(!far_fixed){double bounded=std::clamp(far,original_far+3*(last_delta-.55),original_far+3*(last_delta+.55));residual=std::max(residual,std::abs(far-bounded));far=bounded;}
    }
   }
   return residual;

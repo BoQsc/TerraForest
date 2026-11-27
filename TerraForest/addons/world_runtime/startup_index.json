@@ -10,7 +10,8 @@
   ],
   "res://addons/characters/runtime/house_sleepers.gd": [
     "res://addons/structures/expansion_catalog.gd",
-    "res://addons/structures/city_catalog.gd"
+    "res://addons/structures/city_catalog.gd",
+    "res://addons/structures/foundation_geometry.gd"
   ],
   "res://addons/characters/runtime/human_view.gd": [
     "res://addons/characters/runtime/px9_aim_layer.gd",
@@ -455,6 +456,7 @@
     "res://addons/volumetric_terrain/surface_tokens.gd",
     "res://addons/structures/terrain_contact.gd"
   ],
+  "res://addons/structures/foundation_geometry.gd": [],
   "res://addons/structures/furniture_catalog.gd": [
     "res://addons/structures/house_furnishings.gd",
     "res://addons/structures/expansion_catalog.gd"
@@ -472,6 +474,18 @@
     "res://addons/structures/textures/arrays/original.res",
     "res://addons/structures/textures/arrays/terraforest.res",
     "res://addons/structures/textures/arrays/expansion_v2.res"
+  ],
+  "res://addons/structures/metropolis_catalog.gd": [
+    "res://addons/structures/grand_buildings/catalog.gd",
+    "res://addons/structures/civic_catalog.gd",
+    "res://addons/structures/city_catalog.gd",
+    "res://addons/structures/furniture_catalog.gd",
+    "res://addons/structures/workshop_catalog.gd",
+    "res://addons/structures/central_market.gd",
+    "res://addons/structures/northern_lots.gd",
+    "res://addons/structures/terrain_lot_planner.gd",
+    "res://addons/structures/regional_route_planner.gd",
+    "res://addons/structures/mansion/catalog.gd"
   ],
   "res://addons/structures/mine_catalog.gd": [],
   "res://addons/structures/mine_rail_catalog.gd": [],
@@ -679,6 +693,7 @@
     "res://addons/structures/regional_route_planner.gd",
     "res://addons/structures/city_catalog.gd",
     "res://addons/structures/lake_crossings.gd",
+    "res://addons/structures/metropolis_catalog.gd",
     "res://addons/structures/expansion_catalog.gd",
     "res://addons/volumetric_terrain/generated_layout.gd",
     "res://addons/world_runtime/introduction_spawn.gd",

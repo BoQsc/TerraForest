@@ -42,6 +42,11 @@ not replace existing buildings, migrate saves, or become settlement generation
 defaults. Terrain-fit review and crowded-street performance need a separately
 selected populated site; isolated checks do not certify those outcomes.
 
+The additional **Metropolis & inhabited region** starting recipe now provides
+that separately selected source-world integration. See its [recipe contract and
+generated-site evidence](../../../docs/METROPOLIS_REGION.md). Existing starting
+recipes and saved buildings are not replaced.
+
 The cathedral's mostly empty bounding volume exceeds the existing 262,144-cell
 corner-selection capture volume. Its sparse authored prefab stays within the
 native occupied-cell budget and is reusable from the catalog; whole-building

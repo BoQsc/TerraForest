@@ -23,11 +23,11 @@ static func footbridge(metal_rails: bool=false) -> Resource:
  asset.resource_name="Timber footbridge · 12 m span"
  return asset
 
-static func lake_crossing(span:int)->Resource:
- if span<24 or span>44 or span%2!=0:return null
+static func lake_crossing(span:int,solid_deck:bool=false)->Resource:
+ if span<12 or span>96 or span%2!=0:return null
  var records:=PackedInt32Array()
  for along in span:
-  for across in 6:records.append_array(PackedInt32Array([across,0,along,33 if across in [0,5] else 160]))
+  for across in 6:records.append_array(PackedInt32Array([across,0,along,33 if solid_deck or across in [0,5] else 160]))
   if along not in [0,span-1]:
    for across in [1,4]:records.append_array(PackedInt32Array([across,-1,along,33]))
   for across in [0,5]:

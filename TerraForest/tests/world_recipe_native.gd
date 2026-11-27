@@ -14,6 +14,13 @@ func run()->void:
  var options:Dictionary={"biome":1,"settlements":3,"districts":2,"network":1,"trails":2}
  var bytes:PackedByteArray=codec.encode(options)
  check(bytes.size()==28 and codec.decode(bytes)==options and codec.restore_snapshot(bytes),"native recipe storage round trip")
+ var metropolis:Dictionary={"biome":1,"settlements":7,"districts":1,"network":2,"trails":1,"road_grid":3,"material_veins":1,"introduction":0,"profile":1}
+ var metropolitan:PackedByteArray=codec.encode(metropolis)
+ check(metropolitan.size()==44 and metropolitan.decode_u32(4)==8 and codec.decode(metropolitan)==metropolis,"separate metropolis profile preserves seven communities within nine regional nodes")
+ var bad_profile:=metropolitan.duplicate();bad_profile.encode_u32(40,2)
+ check(not codec.validate_snapshot(bad_profile),"unknown generation profiles reject atomically")
+ var truncated_profile:=metropolitan.slice(0,40)
+ check(not codec.validate_snapshot(truncated_profile),"truncated metropolis cannot masquerade as an older recipe")
  var modern:=options.duplicate();modern["road_grid"]=1
  var modern_bytes:PackedByteArray=codec.encode(modern)
  check(modern_bytes.size()==32 and codec.decode(modern_bytes)==modern,"native road preference roundtrip retains v1 compatibility")

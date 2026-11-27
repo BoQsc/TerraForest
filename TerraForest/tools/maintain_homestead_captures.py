@@ -9,6 +9,7 @@ from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
 FAMILIES = {
+    "metropolis_recipe": ("map.png", "browser.png"),
     "vegetation_reconstruction": (
         'vegetation_reconstruction.json',
         'driver.gd',

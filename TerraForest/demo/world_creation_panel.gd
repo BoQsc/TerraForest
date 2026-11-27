@@ -9,21 +9,30 @@ const STYLES:=[
  {"name":"Market towns","detail":"A civic town with a resident trader, market shops and additional town districts, with alternative routes and trails.","values":[1,1,1,1,2,true]},
  {"name":"City region · experimental","detail":"Three connected districts around one center. Existing approved buildings; not a finished urban design.","values":[1,0,2,2,1,true]},
  {"name":"Regional belt · experimental","detail":"Nine terrain-fitted districts among woodland and clearings, linked by long roads and offroads. Some seeds may not fit.","values":[0,2,2,2,2,true]},
- {"name":"Frontier expedition","detail":"Six connected districts, a trader introduction and coal-mine expedition. Includes wilderness locations, sleepers, supplies, lakes and material veins.","values":[0,2,1,2,2,true]}
+ {"name":"Frontier expedition","detail":"Six connected districts, a trader introduction and coal-mine expedition. Includes wilderness locations, sleepers, supplies, lakes and material veins.","values":[0,2,1,2,2,true]},
+ {"name":"Metropolis & inhabited region","detail":"A 36-building city with Foundry Court, Saint Brigid Cathedral, Needle Street Tower and every medium building type. Six outlying communities, two large bridges and one small crossing are required; impossible sites fail the survey.","values":[1,3,3,2,1,true],"profile":1}
 ]
 static func apply_style(host:Control,index:int)->void:
- if index<0 or index>=STYLES.size():return
+ if index<0:return
+ if index>=STYLES.size():
+  if host.generation_profile==1:
+   host.generation_profile=0;host.settlement_count.select(2);host.district_count.select(1)
+   host.settlement_count.disabled=false;host.district_count.disabled=false;host.introduction.disabled=false;host.invalidate_preview()
+  return
+ host.generation_profile=int(STYLES[index].get("profile",0))
  var values:Array=STYLES[index].values
  var controls:Array=[host.biome,host.settlement_count,host.district_count,host.road_network,host.offroads]
  for field in controls.size():controls[field].select(values[field])
  host.ocean.set_pressed_no_signal(values[5])
  host.introduction.set_pressed_no_signal(index==5)
+ host.settlement_count.disabled=host.generation_profile==1;host.district_count.disabled=host.generation_profile==1
+ host.introduction.disabled=host.generation_profile==1
  host.invalidate_preview()
 static func sync_style(host:Control)->void:
  if host.world_style==null:return
  var values:Array=[host.biome.selected,host.settlement_count.selected,host.district_count.selected,host.road_network.selected,host.offroads.selected,host.ocean.button_pressed]
  for index in STYLES.size():
-  if values==STYLES[index].values and host.introduction.button_pressed==(index==5):
+  if values==STYLES[index].values and host.introduction.button_pressed==(index==5) and host.generation_profile==int(STYLES[index].get("profile",0)):
    host.world_style.select(index);host.style_description.text=STYLES[index].detail;return
  host.world_style.select(STYLES.size())
  host.style_description.text="Custom recipe. Adjust landscape and settlement controls; the survey shows the actual result."
@@ -112,15 +121,15 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.buildable_roads=CheckBox.new();host.buildable_roads.text="Roads & shoulders";host.buildable_roads.button_pressed=true;grid_settings.add_child(host.buildable_roads)
  host.buildable_roads.tooltip_text="Plan roads and their support beds against building-block footprints before baking. Protect entrances and terrain-fit budgets. No terrain changes when placing blocks; gaps or deeper embedding can still occur on transitions."
  settings=category(categories,"Settlements");section(settings,"","Places & connections")
- host.settlement_count=choice(settings,"Settlements",["1 · isolated community","2 · linked communities","3 · regional network"]);host.settlement_count.select(2)
- host.district_count=choice(settings,"Settlement scale",["Village · 1 district each","Town · 2 districts each","City layout · 3 districts (experimental)"])
+ host.settlement_count=choice(settings,"Settlements",["1 · isolated community","2 · linked communities","3 · regional network","7 · city and six communities"]);host.settlement_count.select(2)
+ host.district_count=choice(settings,"Settlement scale",["Village · 1 district each","Town · 2 districts each","City layout · 3 districts (experimental)","Metropolis · 3 city districts + 6 villages"])
  host.district_count.select(1)
  host.road_network=choice(settings,"Regional roads",["Direct connections","One alternate route","Interconnected network"])
  host.road_network.select(2)
  host.offroads=choice(settings,"Unpaved offroads",["None","Up to 1 per district","Up to 2 per district"]);host.offroads.select(2)
  paragraph(settings,"All districts connect. Additional routes and trails depend on safe terrain. Roads remain editable; sidewalks remain individual flat plates.")
  var future:=PanelContainer.new();future.add_theme_stylebox_override("panel",box(Color("1b2b30")));settings.add_child(future)
- paragraph(future,"City layouts assemble larger connected groups of approved buildings, not new skyscrapers or a finished city design. Sites must still fit the terrain; impossible plans fail clearly rather than flattening the landscape.",15)
+ paragraph(future,"Metropolis includes all three grand buildings and the medium catalogs, with smaller homes and outlying villages. The survey must fit buildings, entrances and bridges together before publication; existing worlds stay unchanged.",15)
  var map_panel:=PanelContainer.new();map_panel.size_flags_horizontal=Control.SIZE_EXPAND_FILL;map_panel.add_theme_stylebox_override("panel",box(Color("14282d")));body.add_child(map_panel)
  var map_column:=VBoxContainer.new();map_column.add_theme_constant_override("separation",14);map_panel.add_child(map_column)
  var map_heading:=HBoxContainer.new();map_column.add_child(map_heading)
@@ -146,7 +155,10 @@ static func build(host:Control,tabs:TabContainer)->void:
  var actions:HBoxContainer=host.generate_button.get_parent()
  host.preview_button=host.generate_button.duplicate(0);host.preview_button.text="Refresh preview";host.preview_button.pressed.connect(host.start_preview)
  actions.add_child(host.preview_button);actions.move_child(host.preview_button,host.generate_button.get_index())
- for option:OptionButton in [host.preset,host.biome,host.settlement_count,host.district_count,host.road_network,host.offroads]:option.item_selected.connect(func(_index:int):host.invalidate_preview())
+ for option:OptionButton in [host.preset,host.biome,host.settlement_count,host.district_count,host.road_network,host.offroads]:option.item_selected.connect(func(_index:int):
+  if host.settlement_count.selected==3 or host.district_count.selected==3:
+   if host.generation_profile!=1:apply_style(host,6);return
+  host.invalidate_preview())
  host.ocean.toggled.connect(func(_value:bool):host.invalidate_preview())
  host.material_veins.toggled.connect(func(_value:bool):host.invalidate_preview())
  host.buildable_ground.toggled.connect(func(_value:bool):host.invalidate_preview())

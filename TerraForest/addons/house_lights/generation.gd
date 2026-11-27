@@ -5,6 +5,18 @@ const Catalog = preload("res://addons/house_lights/catalog.gd")
 const Parking = preload("res://addons/vehicle_runtime/building_parking.gd")
 const LIMIT := 2048
 
+static func room_plan(asset:Resource)->Dictionary:
+	var rooms:Array=[];var probes:=0
+	for page in 17:
+		var part:Dictionary=asset.interior_light_sites(rooms.size())
+		if not part.get("ok",false):return {"ok":false}
+		probes=maxi(probes,int(part.probes))
+		rooms.append_array(part.rooms)
+		if rooms.size()>LIMIT:return {"ok":false}
+		if part.complete:return {"ok":true,"rooms":rooms,"probes":probes,"pages":page+1}
+		if part.rooms.size()!=128 or int(part.next_room)!=rooms.size():return {"ok":false}
+	return {"ok":false}
+
 static func publish(game: Node, lots: Array) -> Dictionary:
 	var started := Time.get_ticks_usec()
 	var catalog := Catalog.new()
@@ -21,7 +33,7 @@ static func publish(game: Node, lots: Array) -> Dictionary:
 		var digest := HashingContext.new(); digest.start(HashingContext.HASH_SHA256)
 		digest.update(asset.get_records().to_byte_array()); digest.update(var_to_bytes(asset.get_model_attachments()))
 		var identity := digest.finish().hex_encode()
-		if not plans.has(identity): plans[identity] = asset.interior_light_sites()
+		if not plans.has(identity): plans[identity] = room_plan(asset)
 		var plan: Dictionary = plans[identity]
 		if not plan.ok: return {"ok": false, "reason": "Room survey exceeds authoring budget", "lot": lot.label}
 		var basis := Basis(Vector3.UP, -int(lot.rotation) * PI * .5)

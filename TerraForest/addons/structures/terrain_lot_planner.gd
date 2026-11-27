@@ -61,6 +61,7 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
   lot.entrance_local=entrance
   lot.access_points=PackedVector3Array()
   lot.separate_access=lot.asset.has_meta("vehicle_entrances")
+  lot.garage_access_planned=lot.get("general_access",false) and lot.asset.has_meta("garage_entrance")
   for access:Vector3 in lot.asset.get_meta("vehicle_entrances",PackedVector3Array()):
    for turn in lot.rotation:access=Vector3(1-access.z,access.y,access.x)
    lot.access_points.append(access)
@@ -103,7 +104,7 @@ static func _access_quality(core,lot:Dictionary)->Dictionary:
 
 static func access_segments(lot:Dictionary)->Array:
  var paths:Array=[lot.entrance.segment]+lot.get("vehicle_paths",[])
- if lot.asset.has_meta("garage_entrance"):
+ if lot.asset.has_meta("garage_entrance") and not lot.get("garage_access_planned",false):
   var start:Vector3=lot.asset.get_meta("garage_entrance")
   for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
   paths.append({"start":start+Vector3(lot.origin),"finish":lot.entrance.segment.finish,"half_width":2.5})
@@ -166,12 +167,13 @@ static func footprint_clear(bounds:AABB,reserved:Array)->bool:
   if footprint.intersects(area):return false
  return true
 
-static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2(),recipe_provider:Callable=Callable(),street_provider:Callable=Callable(),envelope:Vector2=Vector2(150,200),road_grid:int=0,global_search:bool=false)->Dictionary:
+static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2(),recipe_provider:Callable=Callable(),street_provider:Callable=Callable(),envelope:Vector2=Vector2(150,200),road_grid:int=0,global_search:bool=false,site_gate:Callable=Callable())->Dictionary:
  var protected:Dictionary=reservations(core,center)
  if not protected.ok:return {"ok":false,"reason":"Native region reservations unavailable","attempts":0}
  for bounds:AABB in occupied:
   protected.areas.append(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(12))
  var attempts:=0;var reasons:Dictionary={};var best_missing:=12;var grid_rejections:=0
+ var lot_rejections:Dictionary={}
  var candidates:Array=[]
  var offsets:Array=[0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]
  if protected.distributed:
@@ -208,14 +210,27 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
   for variant in range(1 if recipe_provider.is_valid() else (12 if protected.distributed else 4)):
    var lots:Dictionary=plan(core,candidate.center,candidate.roads.segments,variant,recipe,not recipe_provider.is_valid())
    best_missing=mini(best_missing,lots.rejected.size())
+   for rejected:Variant in lots.rejected:
+    var label:String=str(rejected.get("label",rejected)) if rejected is Dictionary else str(rejected)
+    lot_rejections[label]=int(lot_rejections.get(label,0))+1
+   for label:Variant in lots.get("rejection_reasons",{}):
+    for reason:Variant in lots.rejection_reasons[label]:
+     var key:=str(label)+" / "+str(reason)
+     lot_rejections[key]=int(lot_rejections.get(key,0))+int(lots.rejection_reasons[label][reason])
    if lots.ok:
     var checked:Dictionary={"ok":true,"lots":lots.lots,"roads":candidate.roads.segments}
     if not grid_roads_fit(core,checked,road_grid):grid_rejections+=1;continue
     var works:Dictionary=earthworks(checked)
     if not works.ok or not footprint_clear(works.bounds,protected.areas):continue
-    return {"ok":true,"center":candidate.center,"lots":lots.lots,"roads":candidate.roads.segments,"attempts":attempts,"variant":variant,"reservation_owner":protected.owner,
+    var accepted:Dictionary={"ok":true,"center":candidate.center,"lots":lots.lots,"roads":candidate.roads.segments,"attempts":attempts,"variant":variant,"reservation_owner":protected.owner,
     "site_cost":candidate.cost,"mean_earthwork":candidate.roads.mean_earthwork,"max_cut":candidate.roads.max_cut,"max_fill":candidate.roads.max_fill,"ranked_candidates":candidates.size()}
- return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"best_missing":best_missing,"grid_rejections":grid_rejections,"street_candidates":candidates.size()}
+    if site_gate.is_valid():
+     var connection:Dictionary=site_gate.call(accepted)
+     if not connection.get("ok",false):
+      reasons["No safe connection to accepted city streets"]=int(reasons.get("No safe connection to accepted city streets",0))+1;continue
+     accepted["site_connection"]=connection
+    return accepted
+ return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"lot_rejections":lot_rejections,"best_missing":best_missing,"grid_rejections":grid_rejections,"street_candidates":candidates.size()}
 
 # Validate the same support envelope used by final regional normalization while
 # alternative site candidates are still available. Never weaken cut/fill limits.
@@ -259,7 +274,7 @@ static func earthworks(plan:Dictionary)->Dictionary:
  var access:Array=[]
  for lot:Dictionary in plan.lots:
   var paths:Array=[lot.entrance.segment]+lot.get("vehicle_paths",[])
-  if lot.asset.has_meta("garage_entrance"):
+  if lot.asset.has_meta("garage_entrance") and not lot.get("garage_access_planned",false):
    var start:Vector3=lot.asset.get_meta("garage_entrance")
    for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
    paths.append({"start":start+Vector3(lot.origin),"finish":lot.entrance.segment.finish,"half_width":2.5})
@@ -275,7 +290,7 @@ static func earthworks(plan:Dictionary)->Dictionary:
  # Underground clearance is part of the master plan, after all surface grading
  # and before any building is published. Later road support must not refill it.
  for lot:Dictionary in plan.lots:
-  if not lot.asset.get_meta("cellar_clearance",false):continue
+  if not lot.asset.get_meta("cellar_clearance",false) and lot.asset.get_meta("cellar_volumes",[]).is_empty():continue
   var site=preload("res://addons/structures/site_plan.gd")
   var foundation:Dictionary=site.foundation(lot.asset,lot.origin,lot.rotation,int(lot.survey.grade))
   var complete:Dictionary=site.prepare(lot.asset,lot.origin,lot.rotation,int(lot.survey.grade))

@@ -13,6 +13,13 @@ and twin bell towers), and Needle Street (eight shops/workrooms and 58 flats).
 The ordinary construction catalog registers all three. No existing building or
 save is replaced; generation defaults retain their approved designs.
 
+The separately selected [Metropolis & inhabited region recipe](../../docs/METROPOLIS_REGION.md)
+now places all three in the ordinary generated city, with bounded surface grading,
+explicit crypt excavation and additive buried support cells. Its source checks
+cover publication, exact saved landmark fabric, trading and fresh restoration.
+Generated views are in the [world-generator tracker](../world-generator/README.md#metropolis-recipe--2026-11-27).
+These scoped checks do not close user visual/site or populated-performance review.
+
 Initial headless check
 [`20261127T102401660912Z`](../../reports/checks/20261127T102401660912Z/console.log)
 passed strict apartment/tower placement and restoration but rejected cathedral

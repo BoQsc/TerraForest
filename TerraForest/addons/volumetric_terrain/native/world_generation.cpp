@@ -30,7 +30,7 @@ Dictionary segment(Vector3 a,Vector3 b,double width,double depth,double clearanc
 }
 struct Survey {
  const World &world;std::vector<Rect2> reserved;int64_t samples=0;
- bool cache=false;std::map<std::pair<float,float>,double> heights;
+ bool cache=false;std::map<std::pair<float,float>,double> heights;double corridor_extent=5;
  double height(Vector3 p){
   auto key=std::make_pair(float(p.x),float(p.z));
   if(cache){auto found=heights.find(key);if(found!=heights.end())return found->second;}
@@ -58,7 +58,9 @@ struct Survey {
  bool corridor(Vector3 a,Vector3 b){
   double length=horizontal(b-a);if(length<1||length>128||std::abs(b.y-a.y)>length*.12||!clear(a,b))return false;
   Vector3 across=Vector3(-(b-a).z,0,(b-a).x).normalized();int n=int(std::ceil(length/2));
-  for(int i=0;i<=n;i++)for(double side:{-5.,0.,5.}){
+  const int cross_samples=corridor_extent>5?int(std::ceil(corridor_extent*4)):2;
+  for(int i=0;i<=n;i++)for(int lateral=0;lateral<=cross_samples;++lateral){
+   const double side=-corridor_extent+2*corridor_extent*lateral/cross_samples;
    Vector3 p=a.lerp(b,double(i)/n)+across*side;if(!inside(p))return false;
    double fill=p.y-height(p);if(fill>2||fill< -3)return false;
   }return true;
@@ -129,33 +131,42 @@ Dictionary survey_generated_lake_surfaces(const World &world,const Array &record
  }
  Dictionary out;out["ok"]=true;out["points"]=points;out["samples"]=samples;out["spacing_m"]=2;return out;
 }
-Dictionary plan_lake_crossings(const World &world){
+Dictionary plan_lake_crossings(const World &world,bool metropolis){
  Dictionary result;result["ok"]=true;Array candidates,diagnostics;Survey survey{world};survey.cache=true;
- for(int lake=0;lake<world.basin_count&&candidates.size()<2;lake++){
-  const Basin &basin=world.basins[lake];if(basin.half_length<48)continue;
+ // The metropolis requests two substantial crossings and one shorter crossing.
+ // Return bounded alternatives so connection rejection can try another basin.
+ for(int pass=0;pass<(metropolis?2:1);++pass){
+ const bool small=pass==1;
+ for(int lake=0;lake<world.basin_count&&candidates.size()<(metropolis?(small?16:8):2);lake++){
+  const Basin &basin=world.basins[lake];if(basin.half_length<(small?12:(metropolis?20:48)))continue;
   Vector3 across=basin.along_x?Vector3(0,0,1):Vector3(1,0,0);
   Vector3 along=basin.along_x?Vector3(1,0,0):Vector3(0,0,1);
   double grade=std::ceil(basin.level+2.5);
   bool placed=false;
-  for(double section:{0.,.65,-.65}){
+  const std::vector<double> sections=small?std::vector<double>{.88,-.88,.94,-.94,.8,-.8,.65,-.65,.4,-.4,0.}:(metropolis?std::vector<double>{0.,.4,-.4,.65,-.65,.8,-.8}:std::vector<double>{0.,.65,-.65});
+  for(double section:sections){
    Vector3 center=Vector3(basin.x,0,basin.z)+along*(section*basin.half_length);
    if(basin.kind==1)center+=across*(.28*(1-section*section)*basin.half_width);
    center.x=std::round(center.x);center.z=std::round(center.z);
    if(survey.height(center)>basin.level-.5)continue;
-  for(int half=12;half<=22;half+=2){
+  for(int half=small?6:(metropolis?16:12);half<=(small?14:(metropolis?48:22));half+=small?1:2){
+   for(int ramp_shift:small?std::vector<int>{0,24,-24,48,-48,72,-72}:std::vector<int>{0}){
    bool valid=true;Array approaches;PackedVector3Array banks,anchors;double maximum_fill=-256,maximum_cut=-256,maximum_slope=0,minimum_dry=256;
    for(int side:{-1,1}){
     Vector3 bank=center+across*double(side*half);bank.y=grade;
     Vector3 approach_start=bank;approach_start.y-=.06;
     for(int lateral=-3;lateral<=3;lateral++)if(survey.height(bank+along*double(lateral))<basin.level+.75)valid=false;
     Vector3 anchor=center+across*(side*(std::ceil(basin.half_width*1.05+2)+32));anchor.y=survey.height(anchor);
+    if(ramp_shift){anchor+=along*double(ramp_shift*side);anchor.y=survey.height(anchor);}
     double length=horizontal(anchor-bank);
+    Vector3 ramp_direction=anchor-bank;ramp_direction.y=0;ramp_direction=ramp_direction.normalized();
+    Vector3 ramp_across(-ramp_direction.z,0,ramp_direction.x);
     if(length<8||length>128){valid=false;break;}
     std::vector<Vector3> stations{approach_start};std::vector<double> lower{approach_start.y},upper{approach_start.y};
     for(double distance=4;;distance=std::min(length,distance+8)){
-     Vector3 point=approach_start+across*(side*distance);point.y=survey.height(point);
+     Vector3 point=approach_start+ramp_direction*distance;point.y=survey.height(point);
      double low=-256,high=256;
-     for(int lateral=-3;lateral<=3;lateral++){double height=survey.height(point+along*double(lateral));low=std::max(low,height-3);high=std::min(high,height+2);}
+     for(int lateral=-3;lateral<=3;lateral++){double height=survey.height(point+ramp_across*double(lateral));low=std::max(low,height-3);high=std::min(high,height+2);}
      if(distance==4)low=high=approach_start.y;
      if(distance>=length)low=high=anchor.y;
      stations.push_back(point);lower.push_back(low);upper.push_back(high);if(distance>=length)break;
@@ -173,7 +184,7 @@ Dictionary plan_lake_crossings(const World &world){
      next.y=std::clamp(double(next.y),low,high);
      double slope=std::abs(next.y-previous.y)/span;maximum_slope=std::max(maximum_slope,slope);if(slope>.120001)valid=false;
      for(int step=0;step<=int(std::ceil(span));step++)for(int lateral=-3;lateral<=3;lateral++){
-      Vector3 point=previous.lerp(next,std::min(1.,step/span))+along*double(lateral);
+      Vector3 point=previous.lerp(next,std::min(1.,step/span))+ramp_across*double(lateral);
       double height=survey.height(point),fill=point.y-height;
       maximum_fill=std::max(maximum_fill,fill);maximum_cut=std::max(maximum_cut,-fill);minimum_dry=std::min(minimum_dry,height-basin.level);
       if(fill>2||fill< -3)valid=false;
@@ -191,21 +202,73 @@ Dictionary plan_lake_crossings(const World &world){
     }
     banks.push_back(bank);anchors.push_back(anchor);
    }
-   if(!valid){Dictionary detail;detail["lake_id"]=lake+1;detail["half_span"]=half;detail["fill"]=maximum_fill;detail["cut"]=maximum_cut;detail["slope"]=maximum_slope;detail["dry"]=minimum_dry;diagnostics.append(detail);continue;}
+   if(!valid){Dictionary detail;detail["lake_id"]=lake+1;detail["half_span"]=half;detail["fill"]=maximum_fill;detail["cut"]=maximum_cut;detail["slope"]=maximum_slope;detail["dry"]=minimum_dry;if(diagnostics.size()<4096)diagnostics.append(detail);continue;}
    Dictionary crossing;crossing["lake_id"]=lake+1;crossing["span"]=half*2;crossing["grade"]=grade;crossing["level"]=basin.level;
+   crossing["kind"]=small?"small":"large";
    crossing["origin"]=basin.along_x?Vector3i(int(center.x)-3,int(grade)-1,int(center.z)-half):Vector3i(int(center.x)+half-1,int(grade)-1,int(center.z)-3);
    crossing["rotation"]=basin.along_x?0:1;crossing["banks"]=banks;crossing["anchors"]=anchors;crossing["approaches"]=approaches;
    candidates.append(crossing);placed=true;break;
+   }
+   if(placed)break;
   }
   if(placed)break;
   }
  }
+ }
  result["crossings"]=candidates;result["rejected"]=diagnostics;result["height_samples"]=survey.samples;return result;
 }
+// Short pedestrian bridges may serve a real dry/seasonal gully near a community.
+// No fabricated water, full-lot leveling or midspan support fill is authored.
+Dictionary plan_land_footbridges(const World &world,const Array &roads,const Array &reservations,int64_t seed){
+ if(roads.is_empty()||roads.size()>8192||reservations.size()>4096||seed<0||seed>0x7fffffff)return failure("Invalid footbridge survey inputs");
+ Survey survey{world};survey.cache=true;
+ for(int i=0;i<reservations.size();++i){if(reservations[i].get_type()!=Variant::RECT2)return failure("Invalid footbridge reservation");survey.reserved.push_back(Rect2(reservations[i]).grow(6));}
+ struct Road{Vector3 a,b;};std::vector<Road> parsed;
+ for(int i=0;i<roads.size();++i){if(roads[i].get_type()!=Variant::DICTIONARY)return failure("Invalid footbridge road");Dictionary r=roads[i];if(!r.has("start")||!r.has("finish"))return failure("Missing road endpoints");Vector3 a=r["start"],b=r["finish"];if(!inside(a)||!inside(b))return failure("Invalid road endpoint");if(horizontal(b-a)>4)parsed.push_back({a,b});}
+ if(parsed.empty())return failure("No footbridge road corridors");
+ Array candidates;
+ const int attempts=std::min<int>(8192,int(parsed.size())*12);
+ for(int attempt=0;attempt<attempts&&candidates.size()<8;++attempt){
+  const auto &road=parsed[(uint64_t(seed)+uint64_t(attempt))%parsed.size()];
+  const int variant=attempt/int(parsed.size());
+  Vector3 tangent=road.b-road.a;tangent.y=0;tangent=tangent.normalized();Vector3 normal(-tangent.z,0,tangent.x);
+  Vector3 center=road.a.lerp(road.b,.25+.25*(variant%3))+normal*double((variant/3%2?-1:1)*(variant/6?44:28));
+  center.x=std::round(center.x);center.z=std::round(center.z);if(center.x<32||center.z<32||center.x>1968||center.z>1968)continue;
+  Vector3 axis=std::abs(tangent.x)>std::abs(tangent.z)?Vector3(1,0,0):Vector3(0,0,1),across(-axis.z,0,axis.x);
+  bool near_road=false;
+  for(const auto &other:parsed){Vector3 span=other.b-other.a;span.y=0;double t=std::clamp(double(Vector3(center.x-other.a.x,0,center.z-other.a.z).dot(span))/span.length_squared(),0.,1.);if(horizontal(center-(other.a+span*t))<12){near_road=true;break;}}
+  if(near_road)continue;
+  for(int half:{6,8,10,12,14}){
+   Vector3 first=center-axis*half,last=center+axis*half;
+   if(!survey.clear(first,last))continue;
+   double lo=-256,hi=256;
+   for(Vector3 bank:{first,last})for(int lateral=-3;lateral<=3;++lateral){double height=survey.height(bank+across*lateral);lo=std::max(lo,height-3);hi=std::min(hi,height+2);}
+   if(std::ceil(lo)>std::floor(hi))continue;
+   const double grade=std::clamp(std::round((survey.height(first)+survey.height(last))*.5),std::ceil(lo),std::floor(hi));
+   const double gap=grade-survey.height(center);if(gap<.9||gap>3)continue;
+   bool clear_span=true;
+   for(int along=-half+2;along<=half-2;++along)for(int lateral=-3;lateral<=3;++lateral)if(survey.height(center+axis*along+across*lateral)>grade-.2)clear_span=false;
+   if(!clear_span)continue;
+   Array approaches;PackedVector3Array banks,anchors;bool valid=true;
+   for(int side:{-1,1}){
+    Vector3 bank=center+axis*(side*half);bank.y=grade;
+    Vector3 landing=bank+axis*(side*4),anchor=bank+axis*(side*16);anchor.y=survey.height(anchor);
+    Vector3 bed=bank-axis*side;bed.y=grade-.06;landing.y=grade-.06;
+    if(!survey.corridor(bed,landing)||!survey.corridor(landing,anchor)){valid=false;break;}
+    Dictionary step=segment(bed,landing,2.5,3,4,1,1);step["rectangular"]=true;approaches.append(step);approaches.append(segment(landing,anchor,2.5,3,4,1,1));banks.push_back(bank);anchors.push_back(anchor);
+   }
+   if(!valid)continue;
+   Dictionary candidate;candidate["kind"]="small";candidate["crossing_type"]="seasonal_gully";candidate["lake_id"]=0;candidate["span"]=half*2;candidate["grade"]=grade;candidate["level"]=survey.height(center);candidate["gap_m"]=gap;
+   candidate["origin"]=axis.z>0?Vector3i(int(center.x)-3,int(grade)-1,int(center.z)-half):Vector3i(int(center.x)+half-1,int(grade)-1,int(center.z)-3);
+   candidate["rotation"]=axis.z>0?0:1;candidate["banks"]=banks;candidate["anchors"]=anchors;candidate["approaches"]=approaches;candidates.append(candidate);break;
+  }
+ }
+ Dictionary result;result["ok"]=true;result["crossings"]=candidates;result["height_samples"]=survey.samples;return result;
+}
 struct RegionalRouteWorkspace{Ref<AStar3D> graph;Vector3 low;int width=0,depth=0;std::vector<Vector3> points;};
-static Dictionary route_with_workspace(const World &world,Vector3 start,Vector3 finish,const Array &reservations,RegionalRouteWorkspace *shared,const std::function<bool(const PackedVector3Array &)> *compatible=nullptr){
+static Dictionary route_with_workspace(const World &world,Vector3 start,Vector3 finish,const Array &reservations,RegionalRouteWorkspace *shared,const std::function<bool(const PackedVector3Array &)> *compatible=nullptr,double corridor_extent=5){
  if(!inside(start)||!inside(finish)||reservations.size()>4096)return failure("Invalid route input");
- Survey survey{world};
+ Survey survey{world};survey.corridor_extent=corridor_extent;
  auto corridor=[&](Vector3 a,Vector3 b){
   if(!survey.corridor(a,b))return false;
   if(!compatible)return true;
@@ -299,9 +362,10 @@ Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,c
  return route_with_workspace(world,start,finish,reservations,nullptr);
 }
 
-Dictionary plan_region_network(const World &world,const Array &districts,const Array &reservations,int loops,int trails,int64_t seed,const Array &streets){
- if(districts.is_empty()||districts.size()>9||loops<0||loops>2||reservations.size()>4096||streets.size()>4096||trails<0||trails>2||seed<0||seed>0x7fffffff)return failure("Invalid regional network settings");
- struct FittedEdge{Vector3 start,finish;bool curved;};
+Dictionary plan_region_network(const World &world,const Array &districts,const Array &reservations,int loops,int trails,int64_t seed,const Array &streets,double corridor_extent){
+ if(districts.is_empty()||districts.size()>9||loops<0||loops>2||reservations.size()>4096||streets.size()>4096||trails<0||trails>2||seed<0||seed>0x7fffffff||!std::isfinite(corridor_extent)||corridor_extent<5||corridor_extent>8)return failure("Invalid regional network settings");
+ struct FittedEdge{Vector3 start,finish;bool curved;std::array<double,4> curve{};};
+ auto edge_height=[](const FittedEdge &edge,double fraction){return edge.curved?((edge.curve[0]*fraction+edge.curve[1])*fraction+edge.curve[2])*fraction+edge.curve[3]:edge.start.y+(edge.finish.y-edge.start.y)*fraction;};
  std::vector<FittedEdge> graded;
  for(int index=0;index<streets.size();++index){
   if(streets[index].get_type()!=Variant::DICTIONARY)return failure("Invalid fitted street");
@@ -310,6 +374,12 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
   Vector3 start=street["start"],finish=street["finish"];
   if(!inside(start)||!inside(finish)||horizontal(finish-start)<.01)return failure("Invalid fitted street endpoints");
   graded.push_back({start,finish,street.has("coefficients")});
+  if(graded.back().curved){
+   if(street["coefficients"].get_type()!=Variant::PACKED_FLOAT64_ARRAY)return failure("Invalid fitted street curve");
+   PackedFloat64Array curve=street["coefficients"];const int part=street.get("curve_index",0);
+   if(part<0||curve.size()%4||curve.size()>256||part*4+4>curve.size())return failure("Invalid fitted street curve index");
+   for(int coefficient=0;coefficient<4;++coefficient){double value=curve[part*4+coefficient];if(!std::isfinite(value))return failure("Nonfinite fitted street curve");graded.back().curve[coefficient]=value;}
+  }
  }
  int crossing_rejections=0;
  std::function<bool(const PackedVector3Array &)> compatible=[&](const PackedVector3Array &points){
@@ -319,8 +389,7 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
    for(const auto &edge:graded){
     const Vector2 other(edge.start.x,edge.start.z),span(edge.finish.x-edge.start.x,edge.finish.z-edge.start.z),offset=other-origin;
     auto heights_match=[&](double fraction,double other_fraction){
-     const double eased=edge.curved?other_fraction*other_fraction*(3-2*other_fraction):other_fraction;
-     return std::abs(start.y+(finish.y-start.y)*fraction-edge.start.y-(edge.finish.y-edge.start.y)*eased)<=.25;
+     return std::abs(start.y+(finish.y-start.y)*fraction-edge_height(edge,other_fraction))<=.25;
     };
     const double denominator=axis.cross(span);
     if(std::abs(denominator)>.0001){
@@ -355,6 +424,34 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
  }
  std::stable_sort(pairs.begin(),pairs.end(),[](const Pair &left,const Pair &right){return left.distance<right.distance;});
  int owners[9]={0,1,2,3,4,5,6,7,8};bool connected[9][9]={};
+ // Existing fitted streets can already connect several requested districts.
+ // Seed their real surface components before adding a spanning network; do not
+ // duplicate the accepted city-to-village roads just because nodes were grouped.
+ std::vector<int> components(graded.size());for(size_t edge=0;edge<graded.size();++edge)components[edge]=int(edge);
+ auto component=[&](int edge){while(components[edge]!=edge){components[edge]=components[components[edge]];edge=components[edge];}return edge;};
+ for(size_t first=0;first<graded.size();++first)for(size_t second=0;second<first;++second){
+  if(component(int(first))==component(int(second)))continue;
+  const auto &a=graded[first],&b=graded[second];Vector2 origin(a.start.x,a.start.z),axis(a.finish.x-a.start.x,a.finish.z-a.start.z),other(b.start.x,b.start.z),span(b.finish.x-b.start.x,b.finish.z-b.start.z),offset=other-origin;
+  if(std::max(a.start.x,a.finish.x)+.001<std::min(b.start.x,b.finish.x)||std::max(b.start.x,b.finish.x)+.001<std::min(a.start.x,a.finish.x)||std::max(a.start.z,a.finish.z)+.001<std::min(b.start.z,b.finish.z)||std::max(b.start.z,b.finish.z)+.001<std::min(a.start.z,a.finish.z))continue;
+  double along=-1,across=-1,denominator=axis.cross(span);
+  if(std::abs(denominator)>.0001){along=offset.cross(span)/denominator;across=offset.cross(axis)/denominator;}
+  else if(std::abs(offset.cross(axis))<.001){
+   double low=std::max(0.,std::min(double(offset.dot(axis)/axis.length_squared()),double((offset+span).dot(axis)/axis.length_squared()))),high=std::min(1.,std::max(double(offset.dot(axis)/axis.length_squared()),double((offset+span).dot(axis)/axis.length_squared())));
+   if(low<=high){along=(low+high)*.5;across=(origin+axis*along-other).dot(span)/span.length_squared();}
+  }
+  if(along>=-.00001&&along<=1.00001&&across>=-.00001&&across<=1.00001&&std::abs(edge_height(a,along)-edge_height(b,across))<=.25)components[component(int(first))]=component(int(second));
+ }
+ std::vector<std::set<int>> district_components(exits.size());
+ for(size_t district=0;district<exits.size();++district)for(int point=0;point<exits[district].size();++point){
+  Vector3 position=exits[district][point];
+  for(size_t edge=0;edge<graded.size();++edge){const auto &street=graded[edge];Vector2 origin(street.start.x,street.start.z),axis(street.finish.x-street.start.x,street.finish.z-street.start.z),p(position.x,position.z);double fraction=(p-origin).dot(axis)/axis.length_squared();if(fraction<0||fraction>1||(p-origin-axis*fraction).length()>.001||std::abs(position.y-edge_height(street,fraction))>.25)continue;district_components[district].insert(component(int(edge)));}
+ }
+ int existing_connections=0;
+ for(size_t first=0;first<exits.size();++first)for(size_t second=0;second<first;++second){
+  if(owners[first]==owners[second])continue;bool shared=false;
+  for(int id:district_components[first])if(district_components[second].count(id)){shared=true;break;}
+  if(shared){int previous=owners[first],replacement=owners[second];for(size_t district=0;district<exits.size();++district)if(owners[district]==previous)owners[district]=replacement;++existing_connections;}
+ }
  Array links,segments;AABB bounds;bool first_bounds=true;double road_length=0,trail_length=0;int attempts=0,loop_count=0;
  std::set<std::tuple<float,float,float,float,float,float,double,double,int>> emitted;
  auto append=[&](Dictionary route,int source,int target,bool trail){
@@ -383,7 +480,7 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
   std::stable_sort(choices.begin(),choices.end(),[](const Pair &left,const Pair &right){return left.distance<right.distance;});
   for(size_t choice=0;choice<std::min(size_t(64),choices.size());++choice){
    const auto &pair=choices[choice];++attempts;
-   Dictionary route=route_with_workspace(world,exits[source][pair.source],exits[target][pair.target],reservations,distributed_region(world.generator_id)?&workspace:nullptr,&compatible);
+   Dictionary route=route_with_workspace(world,exits[source][pair.source],exits[target][pair.target],reservations,distributed_region(world.generator_id)?&workspace:nullptr,&compatible,corridor_extent);
    if(!bool(route.get("ok",false))||!compatible(route["points"]))continue;
    if(optional&&distributed_region(world.generator_id)){
     PackedVector3Array points=route["points"];double novel=0,total=0;
@@ -425,13 +522,14 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
    Vector3 finish=start+Vector3(std::cos(angle)*240,0,std::sin(angle)*240);
    if(finish.x<32||finish.x>1968||finish.z<32||finish.z>1968)continue;
    finish.y=world.height(finish.x,finish.z,false);++attempts;
-   Dictionary route=route_with_workspace(world,start,finish,reservations,distributed_region(world.generator_id)?&workspace:nullptr);
+   Dictionary route=route_with_workspace(world,start,finish,reservations,distributed_region(world.generator_id)?&workspace:nullptr,nullptr,corridor_extent);
    if(!bool(route.get("ok",false))||!compatible(route["points"]))continue;
    append(route,source,-1,true);++trail_count;break;
   }
  }
  Dictionary result;result["ok"]=true;result["links"]=links;result["segments"]=segments;result["bounds"]=bounds;
  result["district_count"]=int(exits.size());result["road_length_m"]=road_length;result["trail_length_m"]=trail_length;
+ result["existing_connections"]=existing_connections;
  result["trail_count"]=trail_count;result["requested_trails"]=desired_trails;result["loop_count"]=loop_count;result["route_attempts"]=attempts;
  result["crossing_rejections"]=crossing_rejections;
  if(!links.is_empty()){Dictionary link=links[0];result["points"]=link["points"];}
@@ -532,7 +630,7 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
 namespace terraforest {
 namespace {
 struct LotRoad {Vector3 start,finish;Vector2 a,axis;double denominator;double half_width=4;bool curved=false;std::array<double,4> coefficients{};};
-Dictionary regional_entrance_path(Survey &survey,Vector3 entrance,Vector3 outward,const std::vector<LotRoad> &roads){
+Dictionary regional_entrance_path(Survey &survey,Vector3 entrance,Vector3 outward,const std::vector<LotRoad> &roads,double width=.75){
  struct Candidate {Vector3 finish,join;double distance,width;};
  std::vector<Candidate> candidates;
  for(const auto &road:roads){
@@ -552,14 +650,14 @@ Dictionary regional_entrance_path(Survey &survey,Vector3 entrance,Vector3 outwar
  for(size_t index=0;index<std::min<size_t>(8,candidates.size());++index){
   const auto &candidate=candidates[index];const Vector3 axis=candidate.finish-entrance;
   const Vector3 across=Vector3(-axis.z,0,axis.x).normalized();const int count=int(std::ceil(candidate.distance*2));bool supported=true;
-  for(int step=0;step<=count&&supported;++step)for(double side:{-.75,0.,.75}){
+  for(int step=0;step<=count&&supported;++step)for(double side:{-width,0.,width}){
    const Vector3 point=entrance.lerp(candidate.finish,double(step)/count)+across*side;
    if(!inside(point)){supported=false;break;}
    const double fill=point.y-survey.height(point);
    if(fill>2||fill< -3){supported=false;break;}
   }
   if(!supported)continue;
-  Dictionary result;result["ok"]=true;result["segment"]=segment(entrance,candidate.finish,.75,1,4,0,1);result["road_join"]=candidate.join;result["road_half_width"]=candidate.width;return result;
+  Dictionary result;result["ok"]=true;result["segment"]=segment(entrance,candidate.finish,width,1,4,0,1);result["road_join"]=candidate.join;result["road_half_width"]=candidate.width;return result;
  }
  return failure("No terrain-fitting regional approach");
 }
@@ -617,18 +715,21 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
   }
   if(l.has("general_access")&&l["general_access"].get_type()!=Variant::BOOL)return failure("Invalid lot access mode");
  }
- Survey survey{world};survey.cache=true;Array fitted,rejected;std::vector<AABB> reserved;
+ Survey survey{world};survey.cache=true;Array fitted,rejected;Dictionary rejection_reasons;std::vector<AABB> reserved;
  const int offsets[]={0,-3,3,-6,6,-9,9};
  for(int index=0;index<lots.size();index++){
   Dictionary lot=lots[index],best;double best_cost=1e30;
+  int overlap_failures=0,relief_failures=0,access_failures=0;
   const bool general_access=bool(lot.get("general_access",false));
   Vector3i base=lot["origin"];AABB original=lot["bounds"];PackedVector3Array points=lot["samples"];
   for(int dx:offsets)for(int dz:offsets){
    Vector3 shift(dx,0,dz);Vector3i origin=base+Vector3i(dx,0,dz);AABB bounds(original.position+shift,original.size);bool blocked=false;
    Rect2 footprint(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z));
    for(const auto &occupied:reserved)if(footprint.grow(2).intersects(Rect2(Vector2(occupied.position.x,occupied.position.z),Vector2(occupied.size.x,occupied.size.z)))){blocked=true;break;}
-   if(world.generator_id>=EMBED_REGION_GENERATOR_ID&&int(lot["surface_offset"])>0&&!blocked){
-    Rect2 corridor=footprint.grow(6.5);
+   if(world.generator_id>=EMBED_REGION_GENERATOR_ID&&(general_access||int(lot["surface_offset"])>0)&&!blocked){
+    // Independently fitted city frontages must clear the complete 7.5 m road
+    // support/shoulder plus a lattice transition, including zero-datum houses.
+    Rect2 corridor=footprint.grow(general_access?8.5:6.5);
     for(const auto &road:road_geometry){
      double enter=0,leave=1;
      for(int axis=0;axis<2&&enter<=leave;++axis){
@@ -639,7 +740,7 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
      if(enter<=leave){blocked=true;break;}
     }
    }
-   if(blocked)continue;
+   if(blocked){++overlap_failures;continue;}
    double low=1e30,high=-1e30;
    for(int i=0;i<points.size();i++){
     Vector3 p=points[i]+shift;
@@ -652,7 +753,7 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
      if(p.x<std::min(road.start.x,road.finish.x)-6.5||p.x>std::max(road.start.x,road.finish.x)+6.5||
         p.z<std::min(road.start.z,road.finish.z)-6.5||p.z>std::max(road.start.z,road.finish.z)+6.5)continue;
      Vector2 q(p.x,p.z);double t=std::clamp(double((q-road.a).dot(road.axis))/road.denominator,0.,1.);
-     if(q.distance_to(road.a+road.axis*t)<6.5){blocked=true;break;}
+     if(q.distance_to(road.a+road.axis*t)<(general_access?8.5:6.5)){blocked=true;break;}
     }
     if(blocked)break;double h=survey.height(p);low=std::min(low,h);high=std::max(high,h);
    }
@@ -661,7 +762,7 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
     if(!inside(sample)){blocked=true;break;}
     double height=survey.height(sample);low=std::min(low,height);high=std::max(high,height);
    }
-   if(blocked)continue;int minimum=int(std::ceil(high-3)),maximum=int(std::floor(low+2));if(minimum>maximum)continue;
+   if(blocked){++overlap_failures;continue;}int minimum=int(std::ceil(high-3)),maximum=int(std::floor(low+2));if(minimum>maximum){++relief_failures;continue;}
    double mid=(low+high)*.5;int grade=std::clamp(int(std::round(mid)),minimum,maximum),surface_offset=lot["surface_offset"];Dictionary entrance;Array vehicle_paths;
    if(!roads.is_empty()){
     bool found=false;Vector3 local=lot["entrance_local"];
@@ -676,24 +777,28 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
       for(int point=0;point<access.size();point++){
        Vector3 doorway=access[point]+Vector3(origin.x,candidate-surface_offset,origin.z);
        const bool separate=bool(lot.get("separate_access",false));
-       Dictionary driveway=entrance_path(survey,doorway,double(lot["street_z"]),road_geometry,2.5,separate?NAN:double(target.x));
+       Vector3 access_outward=access[point]-(original.position+original.size*.5-Vector3(base));access_outward.y=0;
+       Dictionary driveway=general_access?regional_entrance_path(survey,doorway,access_outward,road_geometry,2.5):entrance_path(survey,doorway,double(lot["street_z"]),road_geometry,2.5,separate?NAN:double(target.x));
        if(!bool(driveway["ok"])){path["ok"]=false;break;}
-       if(separate)candidate_paths.append(driveway["segment"]);
+       if(separate||general_access)candidate_paths.append(driveway["segment"]);
       }
      }
      if(bool(path["ok"])&&(!found||std::abs(candidate-mid)<std::abs(grade-mid))){grade=candidate;entrance=path;vehicle_paths=candidate_paths;found=true;}
-    }if(!found)continue;
+    }if(!found){++access_failures;continue;}
    }
    double cost=high-low+.04*(std::abs(dx)+std::abs(dz));if(cost>=best_cost)continue;
    origin.y=grade-surface_offset;bounds.position.y+=origin.y-base.y;
    Dictionary measure;measure["ok"]=true;measure["min_height"]=low;measure["max_height"]=high;measure["grade"]=grade;
    best["asset"]=lot["asset"];best["origin"]=origin;best["rotation"]=lot["rotation"];best["label"]=lot["label"];best["street_z"]=lot["street_z"];
    best["survey"]=measure;best["sample_count"]=points.size();best["bounds"]=bounds;best["entrance"]=entrance;best_cost=cost;
-   if(bool(lot.get("separate_access",false)))best["vehicle_paths"]=vehicle_paths;
+   if(bool(lot.get("separate_access",false))||general_access)best["vehicle_paths"]=vehicle_paths;
+   if(general_access&&bool(lot.get("garage_access_planned",false)))best["garage_access_planned"]=true;
   }
-  if(best.is_empty())rejected.push_back(lot["label"]);else{fitted.push_back(best);reserved.push_back(best["bounds"]);}
+  if(best.is_empty()){
+   rejected.push_back(lot["label"]);Dictionary counts;counts["overlap"]=overlap_failures;counts["terrain_relief"]=relief_failures;counts["entrance"]=access_failures;rejection_reasons[lot["label"]]=counts;
+  }else{fitted.push_back(best);reserved.push_back(best["bounds"]);}
  }
- Dictionary d;d["ok"]=rejected.is_empty();d["lots"]=fitted;d["rejected"]=rejected;d["reason"]=rejected.is_empty()?"":"Frontage zones require relocation or a different street layout";d["height_samples"]=survey.samples;d["planner_version"]=1;return d;
+ Dictionary d;d["ok"]=rejected.is_empty();d["lots"]=fitted;d["rejected"]=rejected;d["rejection_reasons"]=rejection_reasons;d["reason"]=rejected.is_empty()?"":"Frontage zones require relocation or a different street layout";d["height_samples"]=survey.samples;d["planner_version"]=1;return d;
 }
 }
 namespace terraforest {
