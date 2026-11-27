@@ -9,6 +9,7 @@ from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
 FAMILIES = {
+    "startup_loading": ("ready.png", "result.json"),
     "full_launch": ("first_ui.png", "first_ui.json"),
     "world_browser_responsiveness": ("first_ui.png", "first_ui.json"),
     "homestead_pack": ("homestead_01.png",),
@@ -57,6 +58,20 @@ def candidates(root=ROOT):
         members = tuple(name for name in FAMILIES[family] if (folder / name).is_file())
         if members:
             ready[family].append((folder, members))
+    for receipt in sorted((root / "reports/startup_optimization").glob("loading_*/run.json"), key=lambda p: p.parent.name.rsplit("_", 1)[-1]):
+        run = json.loads(receipt.read_text(encoding="utf-8"))
+        command = run.get("command", [])
+        folder = confined(receipt.parent, root / "reports/startup_optimization")
+        if (run.get("result", {}).get("exit_code") is None or
+                "res://tests/startup_benchmark.gd" not in command or
+                "--benchmark-output=" + str(folder) not in command or
+                "--benchmark-profile" not in command or
+                any(flag in command for flag in ("--benchmark-generate", "--benchmark-normal-load"))):
+            continue
+        if any((folder / pin).exists() for pin in (".retain", "RETAIN_READY", "homestead.archive.json")):
+            continue
+        members = tuple(name for name in FAMILIES["startup_loading"] if (folder / name).is_file())
+        if members:ready["startup_loading"].append((folder, members))
     return [entry for entries in ready.values() for entry in entries[:-2]]
 
 

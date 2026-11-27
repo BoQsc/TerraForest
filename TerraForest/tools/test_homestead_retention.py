@@ -97,6 +97,20 @@ class PreviewOwnership(unittest.TestCase):
         first = self.preview(2); self.preview(3); self.preview(4)
         self.assertEqual([first], [folder for folder, _ in candidates(self.root)])
 
+    def test_loading_captures_keep_latest_two_without_retiring_source_worlds(self):
+        folders = []
+        for number, label in enumerate(("before", "after", "after", "before", "after", "after")):
+            folder = self.root / "reports/startup_optimization" / f"loading_{label}_{number:03}"
+            folder.mkdir(parents=True);folders.append(folder)
+            for name in ("ready.png", "result.json", "source.trw"):(folder / name).write_bytes(b"fixture")
+            command = ["godot", "--script", "res://tests/startup_benchmark.gd", "--benchmark-profile", "--benchmark-output=" + str(folder)]
+            if number == 3:command[-1] = "--benchmark-output=elsewhere"
+            if number == 4:command.append("--benchmark-normal-load")
+            if number == 5:(folder / ".retain").touch()
+            (folder / "run.json").write_text(json.dumps({"command": command, "result": {"exit_code": 0}}))
+        self.assertEqual([(folders[0], ("ready.png", "result.json"))], candidates(self.root))
+        self.assertTrue(all((folder / "source.trw").exists() for folder in folders))
+
     def test_incomplete_and_unowned_captures_survive(self):
         manual = self.preview(0)
         record = json.loads((manual / "run.json").read_text())

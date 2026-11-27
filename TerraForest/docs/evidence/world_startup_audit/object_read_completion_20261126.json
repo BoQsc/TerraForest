@@ -1,0 +1,279 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted analysis of local TerraForest runs for the user request to improve generation/loading speed without regression. New code/test/tool changes are 0BSD; no external material imported.",
+  "measurement_date": "2026-11-26",
+  "documentation_completed_date": "2026-11-27",
+  "implementation": "NativeModelHorizon consumes the first record of a completed read immediately, removing a no-progress frame delay. Read window remains two; normal limits remain 1024 records, two uploads, 1500 usec; unchanged memory accounting, checkpoints and mutation precedence.",
+  "scope": "Fresh source processes, retained OS/import/derived caches; Godot 4.7.2, Forward+, RTX 4050, isolated 1920x1080 at 60 FPS. Same owned furnished fixture for read-only load. Normal Frontier expedition generation: seed 1703, generator 29, default options, ordinary actors enabled. Loading barrier precedes intro completion/player control.",
+  "runs": [
+    {
+      "path": "reports/startup_optimization/loading_before_20261126T211757903584Z",
+      "receipt_sha256": "e738085bf011a801f64388319a07111228dfb35043c557bf548cc5395825e677",
+      "slot": "StartupBench_9efd9c49bbe54d45",
+      "recorded_revision": "7f82734be9ffeb88834aff11de727d18f230ecbe",
+      "passed": true,
+      "first_ready_seconds": 41.838252999999995,
+      "creating_seconds": null,
+      "memory_checks": {
+        "ram": {
+          "bytes": 3986210816,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1778012160,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "native_sources": {
+        "model_horizon.cpp": "7040c773d25229830b02cc54fa1d5f27ef3589329f6be2c0643465c1d31c2371",
+        "model_horizon.hpp": "1f845a953e13c73bc2b56c9fcb0f5e72a4be5cd1ba72af3ff5bd6d92b157806c"
+      },
+      "structures_native_sha256": {
+        "structures.windows.template_debug.x86_64.dll": "533832d6cabf94ab736d55c60ee3ba4f9a1fbf78abf93484c4695e0298b1db05",
+        "structures.windows.template_release.x86_64.dll": "1cb9bf5082f0ee37a855908bc4bcdbf17f44c03a6d15c7bfc00a4f3e90fb67bc"
+      },
+      "driver_sha256": "4a1745138ac2a14955619c13ae6692e089e68e0a265c6327338f38108a378aa1",
+      "source_files_unchanged": true,
+      "files_checked": 2796,
+      "model_horizon": {
+        "active": true,
+        "byte_limit": 134217728,
+        "charged_bytes": 15324304,
+        "collections": 136,
+        "error": "",
+        "gpu_transform_bytes": 228000,
+        "last_records": 0,
+        "last_uploads": 0,
+        "last_usec": 71,
+        "pages": 826,
+        "pending_changes": 0,
+        "pending_regions": 0,
+        "pending_uploads": 0,
+        "reads": 1614,
+        "ready": true,
+        "records": 4750,
+        "rendered": 4750,
+        "uploaded_bytes": 464112,
+        "uploads": 1685
+      }
+    },
+    {
+      "path": "reports/startup_optimization/loading_after_20261126T212300144972Z",
+      "receipt_sha256": "ba75aecd3ab09b997aacf4dc0b3c43486f820f305ac70dcefa7cf7b144a4a03f",
+      "slot": "StartupBench_9efd9c49bbe54d45",
+      "recorded_revision": "7f82734be9ffeb88834aff11de727d18f230ecbe",
+      "passed": true,
+      "first_ready_seconds": 33.947591,
+      "creating_seconds": null,
+      "memory_checks": {
+        "ram": {
+          "bytes": 3938312192,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1778012160,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "native_sources": {
+        "model_horizon.cpp": "451b6b836c73e583e1502359b84d0e5518341f5b1645a4fa63e360ab0c4ece47",
+        "model_horizon.hpp": "1f845a953e13c73bc2b56c9fcb0f5e72a4be5cd1ba72af3ff5bd6d92b157806c"
+      },
+      "structures_native_sha256": {
+        "structures.windows.template_debug.x86_64.dll": "8ddbaf0ef942cdf3e7802c16bd6fd4ce6e438a1767fcbdc57c2cf6108d23e1f2",
+        "structures.windows.template_release.x86_64.dll": "1cb9bf5082f0ee37a855908bc4bcdbf17f44c03a6d15c7bfc00a4f3e90fb67bc"
+      },
+      "driver_sha256": "4a1745138ac2a14955619c13ae6692e089e68e0a265c6327338f38108a378aa1",
+      "source_files_unchanged": true,
+      "files_checked": 2796,
+      "model_horizon": {
+        "active": true,
+        "byte_limit": 134217728,
+        "charged_bytes": 15324304,
+        "collections": 136,
+        "error": "",
+        "gpu_transform_bytes": 228000,
+        "last_records": 0,
+        "last_uploads": 0,
+        "last_usec": 88,
+        "pages": 826,
+        "pending_changes": 0,
+        "pending_regions": 0,
+        "pending_uploads": 0,
+        "reads": 1625,
+        "ready": true,
+        "records": 4750,
+        "rendered": 4750,
+        "uploaded_bytes": 356592,
+        "uploads": 1317
+      }
+    },
+    {
+      "path": "reports/startup_optimization/planning_after_20261126T205713180178Z",
+      "receipt_sha256": "67ceb56a9d4a83a56de9e5d41c735f9d12dc61c3547c87cde1aaad78adba8c23",
+      "slot": "StartupBench_9efd9c49bbe54d45",
+      "recorded_revision": "6d051bb9a6b2562c28f0c92bd01c144b666bbd4e",
+      "passed": true,
+      "first_ready_seconds": 163.33335,
+      "creating_seconds": 121.049931,
+      "memory_checks": {
+        "ram": {
+          "bytes": 4164956160,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1775484928,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "native_sources": {},
+      "structures_native_sha256": {},
+      "driver_sha256": "aa3a78be23f4fd239053698408325a9e1d0b617c197ae863a62a5ee0e4b272d2",
+      "generation_report": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\generation_reports\\856c2f4afcfe1f4a1c4bb587ad059f5a"
+    },
+    {
+      "path": "reports/startup_optimization/outdoor_after_20261126T212832560816Z",
+      "receipt_sha256": "abd93e3fbfedfef7f0ce87d77126e6e42b3d3e79dd6157138feb6e323c642a99",
+      "slot": "StartupBench_e90491e8accd4c77",
+      "recorded_revision": "7f82734be9ffeb88834aff11de727d18f230ecbe",
+      "passed": true,
+      "first_ready_seconds": 149.57989999999998,
+      "creating_seconds": 116.760253,
+      "memory_checks": {
+        "ram": {
+          "bytes": 4107689984,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1775484928,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "native_sources": {
+        "model_horizon.cpp": "451b6b836c73e583e1502359b84d0e5518341f5b1645a4fa63e360ab0c4ece47",
+        "model_horizon.hpp": "1f845a953e13c73bc2b56c9fcb0f5e72a4be5cd1ba72af3ff5bd6d92b157806c"
+      },
+      "structures_native_sha256": {
+        "structures.windows.template_debug.x86_64.dll": "8ddbaf0ef942cdf3e7802c16bd6fd4ce6e438a1767fcbdc57c2cf6108d23e1f2",
+        "structures.windows.template_release.x86_64.dll": "1cb9bf5082f0ee37a855908bc4bcdbf17f44c03a6d15c7bfc00a4f3e90fb67bc"
+      },
+      "driver_sha256": "4a1745138ac2a14955619c13ae6692e089e68e0a265c6327338f38108a378aa1",
+      "generation_report": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\generation_reports\\5bdfd764b2215ce613ab9a2fd05519a9"
+    }
+  ],
+  "measurements": {
+    "read_only_load": {
+      "before_seconds": 41.838252999999995,
+      "after_seconds": 33.947591,
+      "seconds_saved": 7.890661999999992,
+      "percent_reduction": 18.859922282127776
+    },
+    "creating": {
+      "before_seconds": 121.049931,
+      "after_seconds": 116.760253,
+      "seconds_saved": 4.289677999999995,
+      "percent_reduction": 3.5437261009260674
+    },
+    "generate_to_loading_complete": {
+      "before_seconds": 163.33335,
+      "after_seconds": 149.57989999999998,
+      "seconds_saved": 13.753450000000015,
+      "percent_reduction": 8.420478732604222
+    }
+  },
+  "loading_equivalence": {
+    "represented_objects": 4750,
+    "collections": 136,
+    "pages": 826,
+    "gpu_transform_bytes": 228000,
+    "charged_bytes": 15324304,
+    "all_source_files_unchanged": true,
+    "read_rate_observation": "About 60 to 120 regions/second in sampled steady sections. Archive reads differ 1614 to 1625 because local residency overlaps; complete rendered identities/counts and memory limits do not change.",
+    "cold_build_scope": "Structures DLL identity changed; retained caches may invalidate by native hash. Scene registration varied 4.674 to 8.537 s. No independent cache-temperature or multi-run statistical claim."
+  },
+  "generation_equivalence": {
+    "matches": {
+      "building_parking": true,
+      "container_locks": true,
+      "door_reinforcement": true,
+      "exploration": true,
+      "house_lights": true,
+      "house_sleepers": true,
+      "location_originals": true,
+      "plan": true,
+      "generated_water": true
+    },
+    "plan_digest_change_verified_by": "../loading_after_20261126T212300144972Z/plan_rekey_verified/cached_plan.json",
+    "scope": "Plan key/observational timing change verified independently; every other reported generated content field matches using the established timing exclusions."
+  },
+  "outdoor_equivalence": {
+    "placements": 684,
+    "skipped": 919,
+    "exact_native_transforms_ids_models_order": true,
+    "skipped_identical": true
+  },
+  "plan_rekey": {
+    "receipt": "reports/startup_optimization/loading_after_20261126T212300144972Z/plan_rekey_verified/run.json",
+    "passed": true,
+    "cache_hit": true,
+    "hydrated_prefab_fingerprints": 50,
+    "new_digest": "53051630f6b42d6716b36e1cdaf72aaf1a6251136302d776c20f197afe8a6ed9",
+    "old_digest": "90782f2c363d7dce16622a511062ba5203de58c4e855464be4a907ce3aad5738",
+    "comparison": "Cache key differs only in structures DLL hash. Entire decoded serialized plan payload matches after excluding recipe_key, exploration.worker_ms and watchtowers.worker_ms. All hydrated lot identity/fingerprint rows match; cache-hit resource isolation passes. Production cache validation unchanged."
+  },
+  "verification": {
+    "native_object_checks": 70,
+    "native_object_receipt": "reports/checks/20261126T212029830156Z/run.json",
+    "retention_tests": 7,
+    "retention_command": "python -m unittest discover -s TerraForest/tools -p test_homestead_retention.py -v",
+    "final_receipt": "reports/startup_optimization/outdoor_after_20261126T212832560816Z/final_checks/run.json",
+    "native_expanded_terrain_snapshot_bytes_identical": true,
+    "startup_resource_checks": 13,
+    "unchanged_world_files": true,
+    "world_files_checked": 5592,
+    "release_build_compiled": [
+      "model_horizon.cpp"
+    ],
+    "release_dll_sha256": "5958964d83d38f58450d484ef1391ca02fab4edbbadf964192265d098fdaf4fe",
+    "debug_dll_sha256": "8ddbaf0ef942cdf3e7802c16bd6fd4ce6e438a1767fcbdc57c2cf6108d23e1f2",
+    "source_preparation": true,
+    "source_preparation_seconds": 43.094602099998156,
+    "preparation_record_current": true,
+    "startup_index_current": true
+  },
+  "retained_failed_checks": [
+    {
+      "path": "reports/startup_optimization/loading_after_20261126T212300144972Z/plan_rekey",
+      "result": "Extended plan comparison failed on stored exploration/watchtower worker_ms observations; these exact timing fields are now excluded. Cache resource isolation applies to cache hits, including the passing final proof; cold priming does not claim cache-hit isolation."
+    },
+    {
+      "path": "reports/startup_optimization/loading_after_20261126T212300144972Z/plan_rekey_warm",
+      "result": "Extended plan comparison failed on stored exploration/watchtower worker_ms observations; these exact timing fields are now excluded. Cache resource isolation applies to cache hits, including the passing final proof; cold priming does not claim cache-hit isolation."
+    }
+  ],
+  "limits": [
+    "One before/after load pair and one current normal generation versus the retained prior baseline; no universal speed/no-regression guarantee.",
+    "Read-only load skips writable map preparation; full generation exercises ordinary save/map/publication/reopen.",
+    "Creating-phase saving includes stage variation; this native loading change alone does not explain it.",
+    "Exact terrain/content checks do not assert byte equality of volatile save metadata or simulated-water state.",
+    "Debug/source runtime verified. Release DLL incrementally rebuilt, but no export/final-package runtime qualification.",
+    "No new visual acceptance, foreground cadence, walking or post-reboot launch claim. Wider throughput/save-map work retains its recorded gates."
+  ],
+  "lifecycle": "Existing two-ready owned startup worlds; older previous fixture verified/archived. Read-only loads allocate no world; two-ready image/profile capture lifecycle retains logs/receipts. Native builds reuse incremental cache; final checks admitted 6 MiB reports/64 MiB replacement scratch; no full source copy or export."
+}

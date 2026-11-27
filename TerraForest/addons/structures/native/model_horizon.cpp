@@ -166,7 +166,10 @@ bool NativeModelHorizon::advance_seed(Seed &seed,Collection &collection,NativeSt
         if(result.is_empty())return false;
         seed.ticket=0;
         if(!bool(result.get("ok",false))||!data){--read_slots;error="Model visual checkpoint read failed";return false;}
-        seed.data=std::move(data);return false;
+        // A ready read can publish its first record in this same budgeted step.
+        // Returning no progress here rotates every seed and can end the frame
+        // with both read slots occupied by already-completed pages.
+        seed.data=std::move(data);return advance_seed(seed,collection,batch);
     }
     if(batch->admission&&!(batch->admission->key<seed.region)&&!(seed.region<batch->admission->key))return false;
     auto missing=batch->unloaded_regions.find(seed.region);

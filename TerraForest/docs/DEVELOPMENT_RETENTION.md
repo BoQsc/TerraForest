@@ -387,3 +387,21 @@ It preserves only three small source witnesses and the measured dependency index
 bundle admits 4 MiB. They allocate no saved world or export. Final source
 preparation admits 2 MiB of small logs/receipts in the same comparison directory,
 using the existing checkout/import cache. No storage limits are increased.
+
+
+`benchmark_outdoor_generation.py --load-slot StartupBench_<id>` uses an existing
+owned fixture read-only: 12 MiB of admitted logs, hashes, source witnesses, one
+image and timing/profile JSON, with zero world/scratch allocation. Before/after
+hashes cover its root and all sidecars. `maintain_homestead_captures.py` keeps two
+ready `startup_loading` image/profile captures by timestamp, archives older
+receipt-owned `ready.png`/`result.json` after process exit, and retains small logs,
+source hashes and receipts. It excludes writable-load commands, mismatched output
+paths and pins; it never retires the source save through capture ownership.
+Incremental native builds reuse the existing build cache; this follow-up admits
+2 MiB reports / 64 MiB scratch per variant before replacing the changed object and
+DLL. Plan-rekey checks admit 2 MiB each and reuse the bounded production plan cache.
+No full source copy, new test family world or export is needed.
+
+The combined final terrain/cancellation, release-build and preparation bundle
+admits 6 MiB reports / 64 MiB scratch once; it reuses both owned worlds read-only
+and the existing incremental build/import caches.

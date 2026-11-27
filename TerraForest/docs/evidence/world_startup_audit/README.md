@@ -75,3 +75,13 @@ identity/equivalence and cancellation results, memory scope, and links to the
 failed initial probe and index-freshness correction. Native terrain equality is
 separate from volatile save metadata and water observation counters. Raw receipts
 remain in the existing two-ready startup benchmark lifecycle.
+
+
+`object_read_completion_20261126.json` records the same-frame native read
+consumption follow-up, one read-only furnished-world load pair and the normal
+generation/save/reopen comparison. Original AI-assisted CC0-1.0 analysis of local
+runs; source/test/tool changes are 0BSD. It retains exact native/source hashes,
+content/cache-rekey checks, bounded-resource observations and the failed extended
+plan-comparison attempts. No external material was imported. Loading image/profile
+captures use the existing verified archive format with two ready copies; normal
+generation keeps the existing two-ready owned-world lifecycle.

@@ -720,11 +720,11 @@ contains CPU samples, commands, logs and original-world hashes.
    Preserve cache invalidation, deterministic plans and cancellation teardown.
    First recipe construction and identity hashing still cost time; wider overlap
    needs an ownership audit and matched measurements before expanding it.
-3. **Improve object-horizon loading throughput.** Measure its two-read window,
-   native record preparation and per-frame publication separately. Bound extra
-   in-flight memory; keep scene/GPU ownership and interactive frame budgets.
-   Recheck normal Play-to-control with visible distant objects, local collision,
-   water, vehicles, actors, map readiness and first movement intact.
+3. **Improve object-horizon loading throughput.** The completed-read frame delay
+   is removed in the [follow-up below](#object-read-completion-without-an-extra-frame--2026-11-26),
+   retaining the two-read window and existing publication/memory limits. Wider
+   throughput changes still require attribution and bounded memory. Normal
+   Play-to-control, foreground cadence and first movement remain separate gates.
 4. **Parallelize independent restore/mesh work and overlap save/map preparation
    where measured.** Use private immutable inputs and stable ordered publication;
    do not share mutable terrain caches or bypass native locking. Map data may be
@@ -880,3 +880,76 @@ and save/map work require their own measurements. Broader seeds, OS-cold caches,
 UI frame cadence, foreground/package qualification and visual acceptance remain
 outside this pair. The separately tracked post-reboot launch check still awaits
 the user's Windows restart.
+
+
+## Object read completion without an extra frame — 2026-11-26
+
+The native object visual loader previously returned “no progress” after taking a
+completed archive read. With both read slots holding decoded pages, its round-robin
+stall guard could end the frame before consuming either page. The furnished-world
+trace showed an idle archive worker and about 60 regions completed per second,
+with only 0.14–0.34 ms of owner-thread work in most sampled steps.
+
+`NativeModelHorizon::advance_seed` now consumes the first record immediately when
+its read completes. The ordinary caller still limits every advance to 1,024
+records, two uploads and 1.5 ms; the read window stays at two. Checkpoint checking,
+mutation precedence, memory charging, collision residency and scene/GPU ownership
+are unchanged. The resulting trace sustains roughly 120 regions per second. This
+removes an unnecessary frame boundary without adding workers or raising budgets.
+
+[Machine-readable results](evidence/world_startup_audit/object_read_completion_20261126.json)
+retain before/after source and DLL hashes, exact commands, memory and verification
+scope. One fresh-process read-only browser-load pair on the same owned furnished
+fixture improves first-ready **41.838 → 33.948 s (18.9%)**. Both represent exactly
+4,750 objects across 136 collections and 826 render pages, with 228,000 GPU
+transform bytes and 15,324,304 charged bytes. Peak private commit is 3.986 →
+3.938 GB; dedicated GPU memory stays 1.778 GB. Every root and sidecar hash is
+unchanged. The scene-registration stage varies 4.674 → 8.537 s, so the end-to-end
+saving is smaller than the removed object-visual wait. These are local samples,
+not a repeated or cold-cache guarantee. Read-only loading skips the writable
+map-preparation gate; the normal generation flow below exercises that gate.
+
+All 70 existing object-horizon regressions pass, including exact transforms,
+in-flight mutation/removal, snapshot reset, cancellation/lease release, 100,000
+objects, capacity recovery and teardown. Seven capture-retention tests pass,
+including two-ready selection, pins, mismatched output ownership and source-save
+protection. The new profiling records are bounded developer output only.
+
+Rebuilding the structures DLL correctly invalidates the plan cache. The rekey
+check verifies that only the structures-library hash changes in the cache key,
+all 50 hydrated prefab fingerprints match, and the complete binary plan payload
+matches after removing the key and the two stored `exploration.worker_ms` /
+`watchtowers.worker_ms` observations. The first cold and warm comparison attempts
+failed because the extended harness compared these elapsed values; their receipts
+remain under the optimized load's `plan_rekey` and `plan_rekey_warm` directories.
+The corrected `plan_rekey_verified` run passes and retains ordinary cache-hit
+resource-isolation checks. This does not weaken production cache validation.
+
+Reproduce read-only timing with `python tools/benchmark_outdoor_generation.py
+--family planning --label before --load-slot StartupBench_<existing-owned-slot>`,
+then `--label after` against the same fixture after rebuilding. Labels do not
+select source/native binaries. The normal generation comparison uses the existing
+runner and two-ready world lifecycle. Existing player saves are never writable
+targets. No export or full source copy is created.
+
+The subsequent normal Generate & play run improves the creating phase
+**121.050 → 116.760 s** and Generate-to-loading-barrier time
+**163.333 → 149.580 s (8.4%)**. All 684 ordered outdoor transforms/IDs and 919
+skipped candidates match, along with parking, locks, door reinforcement,
+exploration, lights, sleepers, original locations and generated-water records.
+The separate rekey proof accounts for the changed plan digest. Stage variation
+also contributes: this loader change is not an isolated explanation of the
+4.290-second creating-phase saving. Peak private commit falls from 4.165 to
+4.108 GB; GPU memory remains 1.775 GB. Normal saving, verification, publication
+and reopening pass with all ordinary actors enabled, before intro completion.
+The final native expanded-terrain snapshots are byte-identical; all 5,592 fixture
+root/sidecar hashes remain unchanged by verification. Thirteen resource/cancellation
+checks pass. Both debug and release libraries rebuild incrementally; runtime
+verification uses the source/debug library. Final source preparation passes and
+its ready record is current. No export or packaged-runtime acceptance is claimed.
+
+Remaining work: wider throughput changes, save/map preparation, normal
+Play-to-control/first movement, foreground frame cadence, broader seeds and
+final-package qualification keep their earlier closure criteria. This change
+claims the measured loading improvement and scoped correctness, not universal
+regression freedom or world-quality approval.

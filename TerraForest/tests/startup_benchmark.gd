@@ -43,7 +43,7 @@ func wait_for(predicate:Callable,seconds:int)->bool:
     game.terrain.stage_measured.connect(func(label:String,ms:float):stream_stages[label]=float(stream_stages.get(label,0))+ms)
    if profile and game.startup_complete and Time.get_ticks_msec()>=next_sample:
     next_sample=Time.get_ticks_msec()+1000
-    timeline.append({"elapsed_ms":(Time.get_ticks_usec()-started)/1000.0,"state":preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(game)})
+    timeline.append({"elapsed_ms":(Time.get_ticks_usec()-started)/1000.0,"state":preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(game),"model_horizon":game.structures.model_horizon_stats(),"archive_reads":game.terrain.backend.snapshot_codec.region_read_stats()})
    var stage:String=game.startup_stage if not game.startup_complete else game.loading_stage_text
    var now:=Time.get_ticks_usec()
    if previous>0:stages[stage]=float(stages.get(stage,0))+(now-previous)/1000.0
@@ -80,6 +80,7 @@ func run()->void:
   result.startup=game.startup_timings
   result.resources=root.get_node("WorldSession").stage_timings
   result.readiness=preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(game)
+  result.model_horizon=game.structures.model_horizon_stats()
   if ready:
    if through_control:
     var controlled:bool=await wait_for(func():return not game.loading_active and not game.waiting_spawn and not game.needs_floor_spawn and not game.player_view.entry.pending and not game.player_view.entry.blocks_actions(),60)

@@ -354,3 +354,26 @@ RAM/VRAM remain within budget. This closes the measured repeated-recipe and safe
 asset-overlap change; it does not close remaining first-recipe/identity cost,
 object-horizon throughput, save/map work, cold launch or foreground/package
 acceptance. No new visual acceptance claim is made.
+
+
+## Object-read completion delay — 2026-11-26
+
+Completed native object reads now consume their first record immediately within
+the existing time/record/upload budgets. The two-read window, memory limits,
+checkpoint checks and mutation precedence are unchanged. The same furnished
+fixture loads read-only in **33.948 s versus 41.838 s**; its 4,750 objects, 826
+render pages and every saved file remain intact. The normal Generate & play
+comparison improves creation **121.050 → 116.760 s** and loading complete
+**163.333 → 149.580 s**. All 684 exact outdoor placements and reported generated
+content match; the native-library rekey is independently verified against the
+complete plan payload and 50 prefab fingerprints. Seventy native object checks
+and seven retention tests pass; RAM/VRAM remain within budget. Expanded native
+terrain snapshots are byte-identical, and final verification leaves all 5,592
+fixture files unchanged. Thirteen resource/cancellation checks and final source
+preparation also pass; debug/release native libraries are rebuilt.
+
+[Exact receipts, retained failed harness attempts and limits](../../docs/WORLD_STARTUP_ARCHITECTURE.md#object-read-completion-without-an-extra-frame--2026-11-26).
+Single warm-cache samples establish a scoped improvement. Read-only load excludes
+the writable map gate, while normal generation exercises it. Wider seed/cache
+coverage, frame cadence, first player control, final package and post-reboot
+launch acceptance remain separate requirements. No visual approval is implied.

@@ -9547,7 +9547,8 @@ with existing caches and no ordinary map-ready gate, not normal Play timing.
 The diagnostic construction wait is fixed and the rerun passes; the initial
 failed receipt is retained. The follow-up below implements support-query batching.
 Cached recipe reuse/setup overlap is implemented below. Return for remaining
-first-recipe/identity cost and object-horizon throughput work;
+first-recipe/identity cost and further object-horizon throughput work (the
+completed-read frame delay is fixed below);
 require equivalent layouts/snapshots, cancellation, bounded resources and matched
 normal generation/loading measurements before claiming improvement. Post-reboot
 cold launch and foreground/exported-package acceptance remain open separately.
@@ -9589,3 +9590,25 @@ identity cost, object-horizon throughput, save/map overlap and foreground/packag
 acceptance retain their closure gates. Return with matched normal flow timings,
 equivalence, cancellation and memory checks when implementing those stages.
 The post-reboot launch check remains dependent on the user's Windows restart.
+
+
+### Object-read completion delay — 2026-11-26
+
+The native object loader now consumes already-completed reads in the same bounded
+advance, retaining the two-read window and existing memory/record/upload/time
+limits. A furnished-world read-only load improves **41.838 → 33.948 s**, with
+all 4,750 objects represented and every source file unchanged. Normal generation
+improves **121.050 → 116.760 s**; Generate to loading complete improves
+**163.333 → 149.580 s**. All 684 outdoor placements and generated-content records
+match. Native DLL rekeying correctly invalidates the cache; complete plan content
+and 50 prefab fingerprints still match after excluding the two elapsed-time
+observations. Seventy native object checks and seven retention tests pass.
+Expanded native terrain snapshots are byte-identical; all 5,592 fixture files
+remain unchanged. Thirteen resource/cancellation checks and source preparation
+pass. Debug/release libraries are rebuilt; package-runtime acceptance is separate.
+[Evidence and failed harness attempts](WORLD_STARTUP_ARCHITECTURE.md#object-read-completion-without-an-extra-frame--2026-11-26).
+This closes the unnecessary completed-read frame delay, not general loading or
+visual acceptance. Further throughput, save/map preparation, foreground cadence,
+first player control and final-package qualification require their existing
+matched-flow, equality, cancellation and memory gates. The separate post-reboot
+launch check remains dependent on the user's restart.

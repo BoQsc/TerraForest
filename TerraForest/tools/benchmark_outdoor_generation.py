@@ -14,12 +14,21 @@ import uuid
 from development_storage import ROOT, admit, register_worlds
 from isolated_render_process import IsolatedRenderProcess
 from maintain_performance_artifacts import maintain
+from maintain_homestead_captures import maintain as maintain_captures
 from resource_limits import ResourceMonitor
 from build_startup_index import build as startup_index, TARGET as INDEX
 
 
 def read(path):
     return json.loads(Path(path).read_text(encoding='utf-8'))
+
+
+def world_files(worlds, slot):
+    files = []
+    for path in worlds.glob(slot + '.*'):
+        files.extend(path.rglob('*') if path.is_dir() else [path])
+    return {str(p.relative_to(worlds)): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in files if p.is_file() and p.suffix != '.lock'}
 
 
 def generated_content(report):
@@ -46,23 +55,30 @@ def main():
     parser.add_argument('--label', choices=['before', 'after'], required=True)
     parser.add_argument('--compare', type=Path)
     parser.add_argument('--family', choices=['outdoor','planning'], default='outdoor')
+    parser.add_argument('--load-slot', help='Read-only browser load of an existing StartupBench fixture; creates no world')
     args = parser.parse_args()
-    if args.family=='planning' and not args.compare:
+    if args.family=='planning' and not args.compare and not args.load_slot:
         parser.error('Planning comparison requires an existing baseline receipt')
     if INDEX.read_text(encoding='utf-8')!=startup_index():
         parser.error('Refresh the dependency index with tools/build_startup_index.py before benchmarking')
-    retention = maintain(apply=True, keep=2)
+    worlds = Path(os.environ['APPDATA'])/'Godot/app_userdata/TerraForest/worlds'
+    if args.load_slot and (not re.fullmatch(r'StartupBench_[A-Za-z0-9_]+', args.load_slot) or not (worlds/(args.load_slot+'.trw')).is_file()):
+        parser.error('Load requires an existing StartupBench fixture')
+    if args.load_slot:maintain_captures(apply=True)
+    retention = maintain(apply=True, keep=2) if not args.load_slot else {'errors': []}
     if retention['errors']:
         raise RuntimeError('Retention failed: ' + str(retention['receipt']))
-    admission = admit(report_bytes=12*2**20, world_bytes=128*2**20, scratch_bytes=0)
+    admission = admit(report_bytes=12*2**20, world_bytes=0 if args.load_slot else 128*2**20, scratch_bytes=0)
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
-    folder = ROOT / 'reports/startup_optimization' / (args.family + '_' + args.label + '_' + stamp)
+    folder = ROOT / 'reports/startup_optimization' / (('loading' if args.load_slot else args.family) + '_' + args.label + '_' + stamp)
     folder.mkdir(parents=True, exist_ok=False)
-    slot = 'StartupBench_' + uuid.uuid4().hex[:16]
+    slot = args.load_slot or 'StartupBench_' + uuid.uuid4().hex[:16]
     command = [str(ROOT/'TerraForest.exe'), '--path', str(ROOT), '--windowed',
                '--resolution', '1920x1080', '--max-fps', '60', '--log-file', str(folder/'engine.log'),
-               '--script', 'res://tests/startup_benchmark.gd', '--', '--benchmark-generate',
+               '--script', 'res://tests/startup_benchmark.gd', '--',
                '--benchmark-output=' + str(folder), '--benchmark-slot=' + slot]
+    command.append('--benchmark-profile' if args.load_slot else '--benchmark-generate')
+    original_files = world_files(worlds, slot) if args.load_slot else {}
     source = ROOT/'addons/structures/outdoor_generation.gd'
     record = {'command': command, 'slot': slot, 'label': args.label, 'admission': admission,
               'revision': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -71,6 +87,16 @@ def main():
               'cache_scope': 'Retained OS/import/plan/derived caches; fresh process, ordinary default browser recipe.',
               'lifecycle': 'Existing startup retention keeps two ready owned worlds; verified archives preserve older fixtures. Small logs/JSON/one ready image remain with receipts; no export or source-tree copy.'}
     (folder/'outdoor_source.gd.txt').write_bytes(source.read_bytes())
+    record['native_sources'] = {}
+    for name in ('model_horizon.cpp','model_horizon.hpp'):
+        path=ROOT/'addons/structures/native'/name
+        record['native_sources'][name]=hashlib.sha256(path.read_bytes()).hexdigest()
+        (folder/(name+'.txt')).write_bytes(path.read_bytes())
+    record['structures_native_sha256'] = {p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'addons/structures/bin').glob('*.dll')}
+    if args.load_slot:
+        record['source_files'] = original_files
+        record['cache_scope'] += ' Read-only load skips the writable map-preparation gate; generation comparisons exercise that ordinary gate separately.'
+        record['lifecycle'] = 'No new world, export or source copy. Two ready loading captures; older ready.png/result.json cold-retained by maintain_homestead_captures after exit. Small logs, hashes and receipts stay loose. Source world remains protected.'
     if args.family=='planning':
         record['planning_sources'] = {}
         for name in ('custom_world_plan','generate_world_task','startup_resources'):
@@ -80,7 +106,7 @@ def main():
         record['planning_sources']['startup_index']=hashlib.sha256(INDEX.read_bytes()).hexdigest()
         (folder/'startup_index.benchmark.json').write_bytes(INDEX.read_bytes())
     (folder/'run.json').write_text(json.dumps(record, indent=2)+'\n')
-    register_worlds(command, folder)
+    if not args.load_slot:register_worlds(command, folder)
     print('OUTDOOR_BENCHMARK ' + str(folder), flush=True)
     began = time.perf_counter()
     result = {'timed_out': False}
@@ -111,6 +137,7 @@ def main():
     if (folder/'result.json').exists():
         metrics = read(folder/'result.json')
         result['first_ready_seconds'] = metrics['first_ready_ms']/1000
+        result['model_horizon'] = metrics.get('model_horizon', {})
         if metrics.get('generation', {}).get('report'):
             report = Path(metrics['generation']['report'])
             generation = read(report/'run.json')
@@ -136,12 +163,15 @@ def main():
                     result['generated_content_matches']={k:before_content[k]==after_content[k] for k in before_content}
                     result['passed']=result['passed'] and all(result['generated_content_matches'].values())
                     (folder/'generated_content.json').write_text(json.dumps(after_content,indent=2)+'\n')
+    if args.load_slot:
+        result['source_files_unchanged'] = original_files == world_files(worlds, slot)
+        result['passed'] = result['passed'] and result['source_files_unchanged']
     record['result'] = result
     (folder/'run.json').write_text(json.dumps(record, indent=2)+'\n')
-    worlds = Path(os.environ['APPDATA'])/'Godot/app_userdata/TerraForest/worlds'
-    if (worlds/(slot+'.trw')).exists():
+    if not args.load_slot and (worlds/(slot+'.trw')).exists():
         (worlds/(slot+'.diagnostic.json')).write_text(json.dumps({'diagnostic': True, 'source': str(folder/'run.json')})+'\n')
-    retention = maintain(apply=True, keep=2)
+    if not args.load_slot:retention = maintain(apply=True, keep=2)
+    else:maintain_captures(apply=True)
     print(json.dumps({k:v for k,v in result.items() if k not in ('resources','stages')}, indent=2), flush=True)
     if retention['errors'] or not result['passed']:
         raise SystemExit(1)
