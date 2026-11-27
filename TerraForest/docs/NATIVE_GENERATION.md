@@ -161,18 +161,19 @@ zero-reference ObjectDB shutdown warning, so the launcher correctly records
 `functional_passed: true` and `passed: false`. RAM warnings are 4.21 / 4.55 /
 4.39 GiB. Neither clean-exit nor dense-world memory/FPS acceptance is closed.
 Both native configurations match final source. The first trial's 77,730,951-byte
-fixture is cold-retired. Final fixture/capture retirement is recorded as pending
-in its receipt while another game process is active; it must be retried through
-the same launcher's `--archive-only` and capture-maintenance paths when idle,
-without stopping gameplay. Temporary QA limits apply only to the approved child
+fixture is cold-retired. Final fixture/capture retirement initially waited for
+another game process to exit. Once idle, the same launcher's `--archive-only` and
+capture maintenance retired 77,529,967 owned world bytes and the older ordinary
+captures, preserving their verified cold archives. Gameplay was not stopped.
+Temporary QA limits apply only to the approved child
 launcher; normal limits and protected saves remain unchanged. Final storage/build
 receipts are retained under `reports/generation_building_native_20261127/`.
-Normal-limit admission currently rejects reports by about 25.4 MiB while that
-retirement is pending (`normal_storage.json`). Do not launch further developer
-captures on that allowance. After gameplay exits, run the final receipt's
-`--archive-only` with its already-approved QA headroom, then capture maintenance
-and normal-limit admission again. This is pending cleanup, not an increased
-permanent budget or permission to evict protected evidence.
+The intermediate normal-limit rejection by about 25.4 MiB is retained in
+`normal_storage.json`. After archival, normal admission passes: reports 4,043.4
+MiB, owned worlds 2,956.7 MiB, archive 9,690.9 MiB and compiler cache 3,755.8 MiB,
+all within their unchanged limits. `final_verification.json` records that closure,
+both source-matching native builds, the functional/strict distinction and the
+separate failed C1 fixture. No storage allowance remains elevated.
 
 ## Thirty-second target and reusable pieces
 

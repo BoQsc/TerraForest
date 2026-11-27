@@ -9893,12 +9893,12 @@ creation hashes match 127/128 sections with only the expected random baseline
 identity difference. Full run `reports/metropolis_world/20261127T184548795600Z`
 completes all 109 functional assertions, but its interaction process repeats the
 known shutdown warning, leaving strict acceptance false. Final fixture retention
-is pending while another game process is active; retry the receipt-owned archival
-when idle. The preceding trial is already archived. Do not stop gameplay or
-raise normal storage budgets to clear that pending receipt.
-Normal-limit admission currently rejects reports by about 25.4 MiB until the
-receipt-owned captures can retire. Retry archival using this run's existing
-approved temporary allowance, then verify normal admission before more captures.
+initially waited for active gameplay; once it exited, receipt-owned archival
+retired 77,529,967 world bytes and the older ordinary captures. The preceding
+trial is also archived. The intermediate 25.4 MiB report-budget rejection remains
+recorded; final admission now passes under unchanged normal limits. See
+`reports/generation_building_native_20261127/final_verification.json`. No player
+process was stopped, protected save evicted or permanent budget raised.
 
 The historical C1 regression currently fails before exercising the new native
 publication adapter: its C1 R1/default-neighborhood assumptions no longer match
