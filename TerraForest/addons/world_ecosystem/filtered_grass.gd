@@ -1,15 +1,30 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
+const FAR_ERROR := 0.045
 # Startup-only construction. Native pages retain ownership of instance buffers.
 # Near/low geometry and its opaque material are preserved. Far triangles become
 # analytic coverage quads; no atlas, temporal history or per-instance CPU updates.
-static func apply(mesh: ArrayMesh, authored: Array, original_lods: Dictionary, material: ShaderMaterial, far_error := 0.06, horizon_error := 0.10) -> ShaderMaterial:
+static func apply(mesh: ArrayMesh, authored: Array, original_lods: Dictionary, material: ShaderMaterial, far_error := FAR_ERROR, horizon_error := 0.10) -> ShaderMaterial:
+	# Empty custom_aabb means automatic bounds. Freeze the original automatic box
+	# before splitting surfaces so every variant has exactly the same LOD distance.
+	mesh.custom_aabb=mesh.get_aabb()
+	var inactive := PackedInt32Array([0,0,0])
+	var opaque_lods := {0.02:original_lods[0.02],far_error:inactive,horizon_error:inactive}
 	var shadow := ArrayMesh.new()
 	shadow.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,authored,[],original_lods)
 	shadow.custom_aabb=mesh.custom_aabb
+	var near_only := ArrayMesh.new()
+	# The shadow pass selects a LOD index through the main surface too. Retain its
+	# thresholds even where the color surface is inactive, or zoom changes casters.
+	near_only.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,authored,[],opaque_lods)
+	near_only.surface_set_material(0,material)
+	near_only.custom_aabb=mesh.custom_aabb
+	var near_shadow := ArrayMesh.new()
+	near_shadow.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,authored,[],original_lods)
+	near_shadow.custom_aabb=mesh.custom_aabb
+	near_only.shadow_mesh=near_shadow
 	mesh.clear_surfaces()
-	var inactive := PackedInt32Array([0,0,0])
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,authored,[],{0.02:original_lods[0.02],far_error:inactive,horizon_error:inactive})
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,authored,[],opaque_lods)
 	mesh.surface_set_material(0,material)
 	var vertices := PackedVector3Array(); var normals := PackedVector3Array(); var colors := PackedColorArray(); var uvs := PackedVector2Array()
 	var custom := [PackedFloat32Array(),PackedFloat32Array(),PackedFloat32Array()]
@@ -39,6 +54,13 @@ static func apply(mesh: ArrayMesh, authored: Array, original_lods: Dictionary, m
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],lods,flags)
 	var filtered := ShaderMaterial.new(); filtered.shader=preload("res://addons/world_ecosystem/filtered_grass.gdshader")
 	mesh.surface_set_material(1,filtered)
+	var far_only := ArrayMesh.new()
+	far_only.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],lods,flags)
+	far_only.surface_set_material(0,filtered)
+	far_only.custom_aabb=mesh.custom_aabb
+	mesh.set_meta("surface_lod_near",near_only)
+	mesh.set_meta("surface_lod_far",far_only)
+	mesh.set_meta("surface_lod_error",far_error)
 	# Camera LOD and shadow-map LOD differ. Preserve the original nearby casters.
 	# Godot requires a matching shadow surface for each main surface, including
 	# transparent ones. The filtered coverage never creates another grass caster.
@@ -47,3 +69,8 @@ static func apply(mesh: ArrayMesh, authored: Array, original_lods: Dictionary, m
 	shadow.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,empty_shadow)
 	mesh.shadow_mesh=shadow
 	return filtered
+
+static func configure_batch(batch: Node, mesh: ArrayMesh, enabled := true) -> bool:
+	if enabled and mesh.get_surface_count()==2 and mesh.has_meta("surface_lod_near"):
+		return batch.configure_surface_lod(mesh.get_meta("surface_lod_near"),mesh.get_meta("surface_lod_far"),mesh.get_meta("surface_lod_error"))
+	return batch.configure_surface_lod(null,null,0.0)

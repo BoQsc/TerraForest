@@ -61,6 +61,8 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("stats"),&NativeStaticBatch::stats);
     ClassDB::bind_method(D_METHOD("configure_render_streaming","enabled","radius","batch_limit","byte_limit","uploads_per_tick","bytes_per_tick"),&NativeStaticBatch::configure_render_streaming);
     ClassDB::bind_method(D_METHOD("set_render_focus","focus"),&NativeStaticBatch::set_render_focus);
+    ClassDB::bind_method(D_METHOD("configure_surface_lod","near_mesh","far_mesh","error"),&NativeStaticBatch::configure_surface_lod);
+    ClassDB::bind_method(D_METHOD("update_surface_lod"),&NativeStaticBatch::update_surface_lod);
     ClassDB::bind_method(D_METHOD("set_render_radius","radius"),&NativeStaticBatch::set_render_radius);
     ClassDB::bind_method(D_METHOD("set_minimum_paging_radius","radius"),&NativeStaticBatch::set_minimum_paging_radius);
     ClassDB::bind_method(D_METHOD("placement_neighborhood_ready","world_point","radius"),&NativeStaticBatch::placement_neighborhood_ready);
@@ -133,6 +135,7 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
     if(!unloaded_regions.empty()&&(id!=asset_id||mesh!=source_mesh))return false;
     if(!valid_asset(id)||mesh.is_null()||((asset_locked||!placements.empty())&&!asset_id.is_empty()&&asset_id!=id))return false;
     bool changed=asset_id!=id||source_mesh!=mesh;
+    if(changed){surface_lod_near.unref();surface_lod_far.unref();surface_lod_error=0;}
     asset_id=id;source_mesh=mesh;
     std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
     for(auto &e:batches){auto multi=e.second->get_multimesh();multi->set_mesh(mesh);update_render_bounds(e.first,multi);}
@@ -444,7 +447,9 @@ bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32A
     }
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);for(auto &e:staged_groups)touched.insert(e.first);
     clear_proxies();visual_hidden.clear();collision_bounds.clear();collision_index.clear();collision_dirty=true;
-    placements=std::move(staged);groups=std::move(staged_groups);slots.clear();source_mesh=mesh;
+    placements=std::move(staged);groups=std::move(staged_groups);slots.clear();
+    if(source_mesh!=mesh){surface_lod_near.unref();surface_lod_far.unref();surface_lod_error=0;}
+    source_mesh=mesh;
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
     rebuild(touched);reset_world_render();publish_change();return true;
 }

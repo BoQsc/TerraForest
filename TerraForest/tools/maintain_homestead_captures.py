@@ -9,6 +9,9 @@ from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
 FAMILIES = {
+    "vegetation_fullframe": ("bounded_interpolants_24.png","bounded_interpolants.mp4","bounded_witness_24.png",'vegetation_fullframe.gd', 'vegetation_fullframe.json', 'run_vegetation_fullframe.py', 'woodland.gdshader', 'analysis.json', 'baseline.mp4', 'bounded_edge.mp4', 'baseline_0.png', 'baseline_24.png', 'bounded_edge_0.png', 'bounded_edge_24.png', 'invalid_witness_0.png', 'invalid_witness_24.png', 'no_cover_0.png', 'no_cover_24.png', 'impulses_0.png', 'impulses_24.png'),
+    "vegetation_lab": ("stone_filtered.gdshader","filtered_detail.gd","filtered_stone.gdshader", "detail_speckles.gd", "stone_present.png", "stone_removed.png", "flower_present.png", "flower_removed.png", "lab.json", "lab.frames", "interference.live.json", "interference.live.pending", "context.jpg", "field.png", "field_no_grass.png", "fern_present.png", "fern_removed.png", "vegetation_lab.gd", "vegetation_lab.json", "vegetation_stability.gd", "grass_filtered.gd", "fern_filtered.gd", "filtered_fern.gd", "filtered_fern.gdshader", "woodland_mesh.gd", "woodland.gdshader", "filtered_grass.gd", "filtered_grass.gdshader", "ground_cover.gd", "interference.json", "analysis.json", "review.webp"),
+    "vegetation_gameplay": ("gameplay.mp4","gameplay_0.png","gameplay_24.png","run_vegetation_fullframe.py","motion-review.png","filtered_detail.gd","filtered_stone.gdshader", "vegetation_gameplay.json", "vegetation_gameplay.gd", "vegetation_capture.gd", "fern_filtered.gd", "filtered_fern.gd", "filtered_fern.gdshader", "start.png", "walking.png", "end.png", "gameplay.frames", "motion.webp", "analysis.json", "interference.json"),
     "metropolis_recipe": ("map.png", "browser.png"),
     "vegetation_reconstruction": (
         'vegetation_reconstruction.json',
@@ -19,6 +22,8 @@ FAMILIES = {
         'analysis.json', 'grass_filtered.gd', 'grass_filtered.gdshader',
         'filtered_grass.gd', 'filtered_grass.gdshader',
         'source_enabled.png', 'baseline_route.frames', 'filtered_route.frames',
+        'surface_before.png', 'surface_after.png',
+        'surface_before.jpg', 'surface_after.jpg',
         'near_baseline.png', 'near_filtered.png',
         'filtered_still.png', 'filtered_end.png', 'filtered.frames',
         'early_opaque_still.png', 'early_opaque_end.png', 'early_opaque.frames',
@@ -31,6 +36,8 @@ FAMILIES = {
         'attribution_no_grass.png',
         'attribution_no_cover.png',
         'attribution_no_texture.png',
+        'attribution_no_ferns.png', 'attribution_no_bushes.png', 'attribution_no_twigs.png',
+        'attribution_no_opaque_grass.png', 'attribution_no_filtered_grass.png',
         'baseline_still.png',
         'baseline_end.png',
         'baseline.frames',

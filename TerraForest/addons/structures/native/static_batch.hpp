@@ -141,6 +141,13 @@ class NativeStaticBatch : public Node3D {
     void upload_batch(RenderKey key,uint64_t limit=uint64_t(-1));
     void select_render_batches();
     Ref<Mesh> source_mesh;
+    Ref<Mesh> surface_lod_near,surface_lod_far;
+    double surface_lod_error=0;
+    bool surface_lod_dirty=true;
+    Vector3 surface_lod_eye;
+    Transform3D surface_lod_transform;
+    double surface_lod_metric=-1;
+    uint64_t surface_lod_uploads=0;
     String asset_id;
     bool asset_locked=false;
     uint64_t uploads=0;
@@ -246,6 +253,8 @@ public:
     void _process(double delta) override;
     bool configure_render_streaming(bool enabled,double radius,int64_t batch_limit,int64_t byte_limit,int64_t uploads_per_tick,int64_t bytes_per_tick);
     void set_render_focus(Vector3 focus);
+    bool configure_surface_lod(const Ref<Mesh> &near_mesh,const Ref<Mesh> &far_mesh,double error);
+    void update_surface_lod();
     bool set_render_radius(double radius);
     bool set_minimum_paging_radius(double radius);
     bool placement_neighborhood_ready(Vector3 world_point,double radius) const;

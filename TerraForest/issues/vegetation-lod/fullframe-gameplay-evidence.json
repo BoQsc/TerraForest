@@ -1,0 +1,73 @@
+{
+  "run": "20261127T194802773430Z",
+  "travelled_m": 194.160825148225,
+  "grounded_ticks": 2162,
+  "physics_ticks": 2162,
+  "frames": 192,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "all_renderer_to_analyzer_raw_hashes_match": true,
+  "runtime_hashes": {
+    "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "497e0ef92158f6eef9587e68ef45bca5b0d754df3191ccf3a3c0bb61ab54e2da",
+    "res://addons/world_ecosystem/filtered_detail.gd": "4496e24ccad732c472373d8549b72034d666388efbb1cd604f6c731fbee72342",
+    "res://addons/world_ecosystem/filtered_fern.gd": "ab1bafb4835e88f8f271816f5bbfdde1b16688f04ae7f4693b3c09108242a7c5",
+    "res://addons/world_ecosystem/filtered_fern.gdshader": "467f2fa3b97e976150e43432234d4cb73446a83a307aa3f17113e0a415f86ea7",
+    "res://addons/world_ecosystem/filtered_grass.gd": "ae668d50b3a27d486670404b6d51f9b2c20efd129a4f475c58f552b29f008c3d",
+    "res://addons/world_ecosystem/filtered_grass.gdshader": "d2f2098d4a67ca43f84e9a35ff0cdc9143af2807e9fd24d9208ce8e6888c7e90",
+    "res://addons/world_ecosystem/filtered_stone.gdshader": "5af308b5ca4755923f0db5b754a6939bc77bf60282b4124ed0b35c67a808efd1",
+    "res://addons/world_ecosystem/ground_cover.gd": "410ff6b30b23ecb46ff72f13eb49a3550a627e3152a78dea60cbf2c2bb4abc2d",
+    "res://addons/world_ecosystem/woodland.gdshader": "a16616cfd6d2f15d73f8b894f9191047d9f85f0259aa754be2aa73ea839fbae1",
+    "res://addons/world_ecosystem/woodland_mesh.gd": "257e3a370dff7d7774caa1d1a4ae647840c7e21531e7f8aad2c1e4026deb9f22",
+    "res://tests/fixtures/vegetation_capture.gd": "210f4ebc067cdc524dca4b15dd5e2ccd6e1c73d6d5f75570222cb70d1e2f4689",
+    "res://tests/vegetation_gameplay.gd": "afd2c73da880e77c3f14bda2698433efba56db3f995b2392723e42102fe1e3f1"
+  },
+  "save_sha256": "6ce6e4acaffc6cfa7f3a0f8af14fc1d7feda3febb27cf2c9d77e78a24a7986ee",
+  "forest": {
+    "enabled": true,
+    "owners": 1024,
+    "pending": 0,
+    "ready": true,
+    "reconcile": 0,
+    "rejected": 0,
+    "resample": 0,
+    "total": 1024
+  },
+  "scope": "Actual held-input source gameplay, normal actors/streaming, full viewport asynchronous consecutive capture. H264 review is lossy, all measurements use raw RGB. No paired GPU performance claim or human approval.",
+  "media": {
+    "gameplay.mp4": {
+      "sha256": "2a48f428bf37bdf163ab250cfde32aeb57d4ba226d2a8703b73e7f6affe14fe4",
+      "bytes": 9652317
+    },
+    "walking.png": {
+      "sha256": "b42ddaf1564f80667cdf51872b5c4bb0a52a9aaff703f98432891ee35fdb4ed8",
+      "bytes": 3176392
+    }
+  },
+  "gpu_observation_ms": {
+    "measure_walk": {
+      "median": 5.79099988937378,
+      "p95": 6.36800003051758
+    },
+    "measure_turn": {
+      "median": 5.91200017929077,
+      "p95": 6.7519998550415
+    },
+    "measure_strafe": {
+      "median": 6.030999898910525,
+      "p95": 6.84800004959106
+    }
+  },
+  "previous_short_run": "20261127T194151130183Z",
+  "capture_cadence_ms": {
+    "median": 16,
+    "p95": 26
+  },
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "duration": "3.200000",
+    "nb_frames": "192"
+  }
+}

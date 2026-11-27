@@ -1,0 +1,126 @@
+{
+  "run": "20261127T193738421329Z",
+  "status": "Causal render comparison passes; normal gameplay and user approval separately required",
+  "render_frames": 337,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "baseline_repeat_changed_pixels": 0,
+  "negative_marker_max_before": 1983,
+  "negative_marker_max_edge_only": 4,
+  "negative_marker_max_bounded": 0,
+  "summary": {
+    "ground": {
+      "baseline": {
+        "mean_luma": 0.45318001254803614,
+        "dark_impulses": 2435.7083333333335,
+        "bright_impulses": 2821.75,
+        "negative_witness_pixels": 0.0
+      },
+      "bounded_edge": {
+        "mean_luma": 0.4540121811456064,
+        "dark_impulses": 614.125,
+        "bright_impulses": 2820.4166666666665,
+        "negative_witness_pixels": 0.0
+      },
+      "bounded_interpolants": {
+        "mean_luma": 0.454011288898597,
+        "dark_impulses": 613.7916666666666,
+        "bright_impulses": 2820.375,
+        "negative_witness_pixels": 0.0
+      },
+      "no_cover": {
+        "mean_luma": 0.4548208118525831,
+        "dark_impulses": 619.6666666666666,
+        "bright_impulses": 2822.75,
+        "negative_witness_pixels": 0.0
+      },
+      "invalid_witness": {
+        "mean_luma": 0.3975985612625323,
+        "dark_impulses": 17820.083333333332,
+        "bright_impulses": 2813.3333333333335,
+        "negative_witness_pixels": 1893.2083333333333
+      },
+      "bounded_witness": {
+        "mean_luma": 0.3972600485940904,
+        "dark_impulses": 17712.916666666668,
+        "bright_impulses": 2813.3333333333335,
+        "negative_witness_pixels": 1.5416666666666667
+      },
+      "interpolant_witness": {
+        "mean_luma": 0.3972598007695877,
+        "dark_impulses": 17712.333333333332,
+        "bright_impulses": 2813.3333333333335,
+        "negative_witness_pixels": 0.0
+      }
+    },
+    "elevated": {
+      "baseline": {
+        "mean_luma": 0.45545231304970546,
+        "dark_impulses": 966.4583333333334,
+        "bright_impulses": 2793.9166666666665,
+        "negative_witness_pixels": 0.0
+      },
+      "bounded_edge": {
+        "mean_luma": 0.4555454297379317,
+        "dark_impulses": 634.875,
+        "bright_impulses": 2793.3333333333335,
+        "negative_witness_pixels": 0.0
+      },
+      "bounded_interpolants": {
+        "mean_luma": 0.45554484953703706,
+        "dark_impulses": 634.875,
+        "bright_impulses": 2793.3333333333335,
+        "negative_witness_pixels": 0.0
+      },
+      "no_cover": {
+        "mean_luma": 0.4556149861564996,
+        "dark_impulses": 634.875,
+        "bright_impulses": 2793.75,
+        "negative_witness_pixels": 0.0
+      },
+      "invalid_witness": {
+        "mean_luma": 0.4467472445382474,
+        "dark_impulses": 3713.4583333333335,
+        "bright_impulses": 2793.6666666666665,
+        "negative_witness_pixels": 240.54166666666666
+      },
+      "bounded_witness": {
+        "mean_luma": 0.4466992300183319,
+        "dark_impulses": 3695.9166666666665,
+        "bright_impulses": 2793.7083333333335,
+        "negative_witness_pixels": 0.6666666666666666
+      },
+      "interpolant_witness": {
+        "mean_luma": 0.446699147909228,
+        "dark_impulses": 3695.75,
+        "bright_impulses": 2793.7083333333335,
+        "negative_witness_pixels": 0.0
+      }
+    }
+  },
+  "elevated_frame24_excess_impulses_over_no_cover": {
+    "before": {
+      "dark": 328,
+      "bright": 1
+    },
+    "after": {
+      "dark": 0,
+      "bright": 0
+    }
+  },
+  "scope": "Full viewport raw RGB, two 24-frame deterministic paths, fixed simulation and source population. Extreme pixel impulses are not every kind of visual shimmer. Magenta negative markers have zero baseline/no-cover false positives; yellow/cyan colour counts are not reliable shader-value counts without background subtraction. No timing qualification.",
+  "provenance": {
+    "original_code": "0BSD",
+    "capture_contribution": "CC0-1.0; depicted existing assets retain their own terms",
+    "analysis_sha256": "5614e072a39491eb2c5e6c2c8b6b103cb1349086b9758a73b6cdea1cce5cb985",
+    "save_sha256": "6ce6e4acaffc6cfa7f3a0f8af14fc1d7feda3febb27cf2c9d77e78a24a7986ee"
+  },
+  "bounds": {
+    "report_admission_bytes": 20971520,
+    "media_bytes": 16731717,
+    "analysis_bytes": 700380,
+    "note": "Final aggregate guard must include encoder flush and metadata; actual media <16MiB and total <20MiB. The initial combined 16MiB post-check did not include late metadata."
+  }
+}

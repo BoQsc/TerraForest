@@ -1,0 +1,630 @@
+{
+  "schema": 1,
+  "license": "0BSD",
+  "baseline": {
+    "coverage": "opaque",
+    "far_error": 0.12,
+    "horizon_error": 0.2,
+    "fixed_lod": "automatic",
+    "wind": true,
+    "texture": true,
+    "specular": true,
+    "backlight": true,
+    "receive_shadows": true,
+    "fade_discard": true,
+    "self_shade": true,
+    "hide": [],
+    "msaa": 2,
+    "taa": false,
+    "surface_removal": false,
+    "lit": true,
+    "normal_mode": "authored",
+    "fern_coverage": false,
+    "fern_error": 0.08,
+    "fern_removal": false,
+    "fern_cluster": false,
+    "fern_shader": "original",
+    "detail_probe": "none",
+    "flower_groups": false,
+    "stone_lookup": false,
+    "stone_early": false,
+    "detail_runtime": false
+  },
+  "cases": [
+    {
+      "id": "reference",
+      "parent": null,
+      "change": {},
+      "question": "Original opaque LOD pipeline, with deterministic wind and source lighting."
+    },
+    {
+      "id": "no_grass",
+      "parent": "reference",
+      "change": {
+        "hide": [
+          2
+        ]
+      },
+      "question": "Which visible pixels are actually contributed by grass?"
+    },
+    {
+      "id": "no_ferns",
+      "parent": "reference",
+      "change": {
+        "hide": [
+          1
+        ]
+      },
+      "question": "How much residual instability belongs to ferns?"
+    },
+    {
+      "id": "no_stones",
+      "parent": "reference",
+      "change": {
+        "hide": [
+          0
+        ]
+      },
+      "question": "Are bright points small ground-cover stones?"
+    },
+    {
+      "id": "no_bushes",
+      "parent": "reference",
+      "change": {
+        "hide": [
+          6,
+          8
+        ]
+      },
+      "question": "How much instability belongs to bushes?"
+    },
+    {
+      "id": "no_flowers",
+      "parent": "reference",
+      "change": {
+        "hide": [
+          3,
+          4,
+          5
+        ]
+      },
+      "question": "Are bright points authored flowers?"
+    },
+    {
+      "id": "no_twigs",
+      "parent": "reference",
+      "change": {
+        "hide": [
+          7
+        ]
+      },
+      "question": "How much dark contrast belongs to twigs?"
+    },
+    {
+      "id": "frozen_wind",
+      "parent": "reference",
+      "change": {
+        "wind": false
+      },
+      "question": "Does grass still flicker when its wind stops?"
+    },
+    {
+      "id": "no_texture",
+      "parent": "reference",
+      "change": {
+        "texture": false
+      },
+      "question": "Does the imported blade texture contribute minification noise?"
+    },
+    {
+      "id": "no_specular",
+      "parent": "reference",
+      "change": {
+        "specular": false
+      },
+      "question": "Are white points specular highlights?"
+    },
+    {
+      "id": "no_backlight",
+      "parent": "reference",
+      "change": {
+        "backlight": false
+      },
+      "question": "Does backlighting cause the bright points?"
+    },
+    {
+      "id": "unlit",
+      "parent": "reference",
+      "change": {
+        "lit": false
+      },
+      "question": "What instability survives removing lighting while retaining authored albedo, texture and geometry? Diagnostic brightness change is recorded."
+    },
+    {
+      "id": "up_normals",
+      "parent": "reference",
+      "change": {
+        "normal_mode": "up"
+      },
+      "question": "Do varying blade normals cause the contrast or temporal changes? This rejected-looking normal treatment is a diagnostic control, not a candidate."
+    },
+    {
+      "id": "no_received_shadows",
+      "parent": "reference",
+      "change": {
+        "receive_shadows": false
+      },
+      "question": "Does shadow reception cause the dark instability? Casters remain."
+    },
+    {
+      "id": "no_fade_discard",
+      "parent": "reference",
+      "change": {
+        "fade_discard": false
+      },
+      "question": "What changes when the distance/birth coverage discard is removed? This changes visibility, so it is diagnostic only."
+    },
+    {
+      "id": "no_self_shade",
+      "parent": "reference",
+      "change": {
+        "self_shade": false
+      },
+      "question": "Does the shader's canopy darkening contribute? Brightness change is measured separately."
+    },
+    {
+      "id": "fixed_low",
+      "parent": "reference",
+      "change": {
+        "fixed_lod": "low"
+      },
+      "question": "Does instability persist without color-geometry LOD switching?"
+    },
+    {
+      "id": "fixed_eight",
+      "parent": "reference",
+      "change": {
+        "fixed_lod": "eight"
+      },
+      "question": "How stable is the eight-triangle geometry at the same positions?"
+    },
+    {
+      "id": "fixed_three",
+      "parent": "reference",
+      "change": {
+        "fixed_lod": "three"
+      },
+      "question": "How stable is the three-triangle geometry at the same positions?"
+    },
+    {
+      "id": "msaa8",
+      "parent": "reference",
+      "change": {
+        "msaa": 8
+      },
+      "question": "Does additional geometric sampling reduce the instability? Diagnostic cost control only."
+    },
+    {
+      "id": "taa",
+      "parent": "reference",
+      "change": {
+        "taa": true
+      },
+      "question": "Does temporal reconstruction help, and at what cost or motion blur? Diagnostic only."
+    },
+    {
+      "id": "opaque_06",
+      "parent": "reference",
+      "change": {
+        "far_error": 0.06
+      },
+      "question": "What does earlier coarsening alone achieve? Horizon threshold stays fixed."
+    },
+    {
+      "id": "opaque_045",
+      "parent": "opaque_06",
+      "change": {
+        "far_error": 0.045
+      },
+      "question": "What does another earlier opaque transition achieve?"
+    },
+    {
+      "id": "filtered_12",
+      "parent": "reference",
+      "change": {
+        "coverage": "filtered"
+      },
+      "question": "What does filtered coverage achieve with original LOD thresholds?"
+    },
+    {
+      "id": "filtered_06",
+      "parent": "opaque_06",
+      "change": {
+        "coverage": "filtered"
+      },
+      "question": "Does filtering improve on matched early opaque geometry?"
+    },
+    {
+      "id": "filtered_previous",
+      "parent": "filtered_06",
+      "change": {
+        "horizon_error": 0.1
+      },
+      "question": "Reconstruct the previous 0.06/0.10 filtered source for a direct comparison with the remaining-flicker candidate."
+    },
+    {
+      "id": "filtered_045",
+      "parent": "opaque_045",
+      "change": {
+        "coverage": "filtered"
+      },
+      "question": "Does filtering improve on matched 0.045 opaque geometry?"
+    },
+    {
+      "id": "filtered_candidate",
+      "parent": "filtered_045",
+      "change": {
+        "horizon_error": 0.1
+      },
+      "question": "What is the additional effect of the earlier horizon tier?"
+    },
+    {
+      "id": "filtered_optimized",
+      "parent": "filtered_candidate",
+      "change": {
+        "surface_removal": true
+      },
+      "question": "Does removing inactive surfaces preserve pixels and reduce submission cost?"
+    },
+    {
+      "id": "residual_no_grass",
+      "parent": "filtered_optimized",
+      "change": {
+        "hide": [
+          2
+        ]
+      },
+      "question": "How much remaining candidate noise is still grass?"
+    },
+    {
+      "id": "residual_no_ferns",
+      "parent": "filtered_optimized",
+      "change": {
+        "hide": [
+          1
+        ]
+      },
+      "question": "Do ferns explain remaining candidate points?"
+    },
+    {
+      "id": "residual_no_stones",
+      "parent": "filtered_optimized",
+      "change": {
+        "hide": [
+          0
+        ]
+      },
+      "question": "Do stones explain remaining candidate bright points?"
+    },
+    {
+      "id": "residual_no_bushes",
+      "parent": "filtered_optimized",
+      "change": {
+        "hide": [
+          6,
+          8
+        ]
+      },
+      "question": "Do bushes explain remaining candidate points?"
+    },
+    {
+      "id": "residual_no_flowers",
+      "parent": "filtered_optimized",
+      "change": {
+        "hide": [
+          3,
+          4,
+          5
+        ]
+      },
+      "question": "Do flowers explain remaining candidate bright points?"
+    },
+    {
+      "id": "residual_no_twigs",
+      "parent": "filtered_optimized",
+      "change": {
+        "hide": [
+          7
+        ]
+      },
+      "question": "Do twigs explain remaining candidate dark points?"
+    },
+    {
+      "id": "fern_filtered",
+      "parent": "filtered_optimized",
+      "change": {
+        "fern_coverage": true
+      },
+      "question": "Does area-filtering only the far fern tier stabilize its coverage while retaining authored normals and woodland lighting?"
+    },
+    {
+      "id": "fern_early",
+      "parent": "fern_filtered",
+      "change": {
+        "fern_error": 0.04
+      },
+      "question": "Does an earlier far-fern transition address the remaining opaque fern tier?"
+    },
+    {
+      "id": "fern_optimized",
+      "parent": "fern_early",
+      "change": {
+        "fern_removal": true
+      },
+      "question": "Does removing inactive fern surfaces preserve the trial's pixels and reduce its submission cost?"
+    },
+    {
+      "id": "fern_cluster",
+      "parent": "fern_optimized",
+      "change": {
+        "fern_cluster": true
+      },
+      "question": "Can seven area/moment frond groups preserve stability and tone with less fragment work than 154 per-triangle filters?"
+    },
+    {
+      "id": "fern_vertex",
+      "parent": "fern_cluster",
+      "change": {
+        "fern_shader": "vertex"
+      },
+      "question": "Does far-only vertex lighting reduce cost while retaining acceptable tone?"
+    },
+    {
+      "id": "fern_trim",
+      "parent": "fern_cluster",
+      "change": {
+        "fern_shader": "trim"
+      },
+      "question": "Does rejecting sub-8-bit alpha before lighting reduce fragment work without visible changes?"
+    },
+    {
+      "id": "fern_unlit",
+      "parent": "fern_cluster",
+      "change": {
+        "fern_shader": "unlit"
+      },
+      "question": "How much distant fern cost is lighting rather than geometry/coverage? Diagnostic only."
+    },
+    {
+      "id": "stone_removed",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "stone_removed"
+      },
+      "question": "Does changing only removed explain distant stone speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "stone_no_specular",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "stone_no_specular"
+      },
+      "question": "Does changing only no_specular explain distant stone speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "stone_no_normal",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "stone_no_normal"
+      },
+      "question": "Does changing only no_normal explain distant stone speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "stone_flat_color",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "stone_flat_color"
+      },
+      "question": "Does changing only flat_color explain distant stone speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "stone_no_fade",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "stone_no_fade"
+      },
+      "question": "Does changing only no_fade explain distant stone speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "stone_unlit",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "stone_unlit"
+      },
+      "question": "Does changing only unlit explain distant stone speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "stone_fixed_low",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "stone_fixed_low"
+      },
+      "question": "Does changing only fixed_low explain distant stone speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "flower_removed",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_removed"
+      },
+      "question": "Does changing only removed explain distant flower speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "flower_no_specular",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_no_specular"
+      },
+      "question": "Does changing only no_specular explain distant flower speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "flower_no_wind",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_no_wind"
+      },
+      "question": "Does changing only no_wind explain distant flower speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "flower_flat_color",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_flat_color"
+      },
+      "question": "Does changing only flat_color explain distant flower speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "flower_no_fade",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_no_fade"
+      },
+      "question": "Does changing only no_fade explain distant flower speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "flower_unlit",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_unlit"
+      },
+      "question": "Does changing only unlit explain distant flower speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "flower_fixed_low",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_fixed_low"
+      },
+      "question": "Does changing only fixed_low explain distant flower speckles with grass/fern rendering fixed? Diagnostic, not a production candidate."
+    },
+    {
+      "id": "stone_filtered",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "stone_filtered"
+      },
+      "question": "Does a far-only analytic silhouette with the authored projected low-mesh area and original stone textures/shading reduce stone coverage noise without changing nearby pixels or field tone?"
+    },
+    {
+      "id": "flower_filtered",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_filtered"
+      },
+      "question": "Do area-filtered authored petal/stem triangles reduce flower coverage flicker while preserving near pixels and terrain tone?"
+    },
+    {
+      "id": "combined_filtered",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "combined_filtered"
+      },
+      "question": "Does the combined far stone/flower coverage candidate preserve nearby pixels, terrain tone and GPU headroom?"
+    },
+    {
+      "id": "flower_bounded_edge",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_bounded_edge"
+      },
+      "question": "Does only bounded_edge suppress petal shading noise? Tests procedural extrapolation separately from geometric coverage."
+    },
+    {
+      "id": "flower_bounded_canopy",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_bounded_canopy"
+      },
+      "question": "Does only bounded_canopy suppress petal shading noise? Tests procedural extrapolation separately from geometric coverage."
+    },
+    {
+      "id": "flower_no_ribs",
+      "parent": "fern_cluster",
+      "change": {
+        "detail_probe": "flower_no_ribs"
+      },
+      "question": "Does only no_ribs suppress petal shading noise? Tests procedural extrapolation separately from geometric coverage."
+    },
+    {
+      "id": "detail_clustered",
+      "parent": "combined_filtered",
+      "change": {
+        "flower_groups": true
+      },
+      "question": "Do four area/moment groups per flower preserve motion and tone while removing the per-triangle GPU penalty?"
+    },
+    {
+      "id": "detail_lookup",
+      "parent": "detail_clustered",
+      "change": {
+        "stone_lookup": true
+      },
+      "question": "Can one shared 33KiB projected-area table remove repeated 48-face sums while preserving stone coverage to within 0.5 percent?"
+    },
+    {
+      "id": "flower_clustered",
+      "parent": "flower_filtered",
+      "change": {
+        "flower_groups": true
+      },
+      "question": "Isolate the four-group flower cost from the analytic stone cost."
+    },
+    {
+      "id": "detail_early",
+      "parent": "detail_clustered",
+      "change": {
+        "stone_early": true
+      },
+      "question": "Does skipping invisible stone vertices reduce cost without changing visible pixels?"
+    },
+    {
+      "id": "detail_runtime",
+      "parent": "detail_early",
+      "change": {
+        "detail_runtime": true
+      },
+      "question": "Does the actual production helper preserve the tested geometry, motion, near pixels and GPU cost?"
+    }
+  ],
+  "paths": [
+    "hold",
+    "strafe",
+    "approach_turn"
+  ],
+  "capture_cases": [
+    "reference",
+    "opaque_045",
+    "filtered_previous",
+    "filtered_candidate",
+    "filtered_optimized",
+    "msaa8",
+    "taa",
+    "fern_early",
+    "fern_optimized",
+    "fern_cluster",
+    "fern_vertex",
+    "fern_trim",
+    "fern_unlit",
+    "stone_removed",
+    "flower_removed",
+    "stone_filtered",
+    "flower_filtered",
+    "combined_filtered",
+    "detail_clustered",
+    "detail_lookup",
+    "flower_clustered",
+    "detail_early",
+    "detail_runtime"
+  ],
+  "promotion": "No automatic promotion. Repeatability, verified grass framing, near parity, brightness/terrain fit, uncontended GPU cost, normal physical gameplay, and human review are separate gates."
+}

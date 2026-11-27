@@ -238,5 +238,174 @@
     "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
     "scope": "Inspected pixel attribution only. No specular removes no candidate bright points in this tile; removing grass removes 80 of 118. The tile excludes sky/buildings/large rocks/reticle; small stones remain.",
     "provenance": "Original 0BSD reconstruction diagnostic; unscaled 360x140 crop of its lossless output. Existing project assets."
+  },
+  {
+    "file": "residual-before.png",
+    "source": "reports/checks/20261127T132623323188Z/attribution_baseline.png",
+    "source_crop": [
+      590,
+      240,
+      360,
+      140
+    ],
+    "sha256": "3420e4dfe42c043edfaa71e493a0eae9155a254cea5faeb31e7cab9a46263673",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Unscaled residual-speckle tile: filtered threshold 0.06 before, 0.045 after. Not human-approved. The after run failed a separate whole-frame zoom assertion; its 75-degree field assertions passed. Later scene-only verification is recorded separately.",
+    "provenance": "Original 0BSD source-world diagnostic; lossless crop of retained original output. No rescaling, retouching or generated texture."
+  },
+  {
+    "file": "residual-after.png",
+    "source": "reports/checks/20261127T133051578543Z/filtered_still.png",
+    "source_crop": [
+      590,
+      240,
+      360,
+      140
+    ],
+    "sha256": "efe65f15c7dfbb0202e6eda78bb2e2b0fd9b22788d7edcf6fe70b2e36c5736da",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Unscaled residual-speckle tile: filtered threshold 0.06 before, 0.045 after. Not human-approved. The after run failed a separate whole-frame zoom assertion; its 75-degree field assertions passed. Later scene-only verification is recorded separately.",
+    "provenance": "Original 0BSD source-world diagnostic; lossless crop of retained original output. No rescaling, retouching or generated texture."
+  },
+  {
+    "file": "lab-previous-candidate.webp",
+    "source": "reports/checks/20261127T150753233981Z/review.webp",
+    "sha256": "13b98b5620779e47dc0d488aba2794d897c2e3e59d63466302de6101fd4a8d17",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Left: previous 0.06/0.10 filter. Right: complete candidate. Matched deterministic strafe, native pixels, nominal simulation cadence; not normal physical gameplay.",
+    "provenance": "Exact copy of retained diagnostic output. No rescaling, retouching or generated texture. Human approval pending.",
+    "capture_correction": "Source packet was lossy WebP despite the derived animation using a lossless container. Retained historical illustration only; not pixel-faithful motion evidence. Raw temporal/near/reference checks are separate and unaffected."
+  },
+  {
+    "file": "lab-grounded-context.jpg",
+    "source": "reports/checks/20261127T150753233981Z/context.jpg",
+    "sha256": "2fc4950fea1b01c6d6b528c371335c5389003db899c6adb7debb98149177377c",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Full context for verified 60-120m grass framing. Frozen source-scene lab, not gameplay.",
+    "provenance": "Exact copy of retained diagnostic output. No rescaling, retouching or generated texture. Human approval pending."
+  },
+  {
+    "file": "gameplay-consecutive.webp",
+    "source": "reports/checks/20261127T152408336218Z/motion.webp",
+    "sha256": "68f4dead40de9b15186a836cdde05ccb0085787f1e90e988f8b04f33e26f052f",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Native 320x128 far-hillside crop, 48 frames, rendered-frame stride 1; recorded capture intervals (legacy packets use nominal 10 fps). Physics/actors/streaming active. Full 640x240 frames remain in packet. Readback overhead is excluded from GPU timing phases.",
+    "provenance": "Exact copy of retained source-gameplay output; no rescaling, retouching or generated texture. Human review pending.",
+    "capture_correction": "Source packet was lossy WebP despite the derived animation using a lossless container. Retained historical illustration only; not pixel-faithful motion evidence. Raw temporal/near/reference checks are separate and unaffected."
+  },
+  {
+    "file": "gameplay-context.png",
+    "source": "reports/checks/20261127T152408336218Z/walking.png",
+    "sha256": "e65308228151a254beee15d3f3985176a92c6dedb0eaf89a195aa8fb21b33d53",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Actual physical gameplay, full forest, ordinary source settings. Scripted W/D and yaw input. No camera position replay.",
+    "provenance": "Exact copy of retained source-gameplay output; no rescaling, retouching or generated texture. Human review pending."
+  },
+  {
+    "file": "lab-fern-trial.webp",
+    "source": "reports/checks/20261127T153745399552Z/review.webp",
+    "sha256": "e0eabec148def961f8d98e096deed906ae824790473fde6bf0986ba2acfe992c",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Left: current grass-only candidate. Right: laboratory far-fern filter. Matched deterministic strafe, native pixels; not normal physical gameplay or a promoted production change.",
+    "provenance": "Exact native-pixel paired diagnostic output. Human approval pending; in-memory fern trial only.",
+    "capture_correction": "Source packet was lossy WebP despite the derived animation using a lossless container. Retained historical illustration only; not pixel-faithful motion evidence. Raw temporal/near/reference checks are separate and unaffected."
+  },
+  {
+    "file": "lab-fern-cluster.webp",
+    "source": "reports/checks/20261127T160820998898Z/review.webp",
+    "sha256": "53b774e9d5130a3869ca79c85af6691a30ec4067ac81479747fcaf5a36576caf",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Left: current grass-only candidate. Right: laboratory seven-frond fern filter. Matched deterministic strafe, native pixels, nominal simulation cadence. Not normal physical gameplay or human-approved.",
+    "provenance": "Exact native-pixel paired diagnostic output; no rescaling, retouching or generated texture.",
+    "capture_correction": "Source packet was lossy WebP despite the derived animation using a lossless container. Retained historical illustration only; not pixel-faithful motion evidence. Raw temporal/near/reference checks are separate and unaffected."
+  },
+  {
+    "file": "gameplay-fern-lossless.webp",
+    "source": "reports/checks/20261127T164348288633Z/motion.webp",
+    "sha256": "bd985053b61fcd569662a6605cbe27dd69b87715069abbc22554db2eca1b6c5b",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Actual physical gameplay, in-memory seven-frond trial, full forest. Pixel-verified lossless consecutive captures at 16ms median and 25ms p95 intervals. Human approval pending.",
+    "provenance": "Exact diagnostic output copy. Asynchronous RGBA8 viewport readback, decoded RGB hashes verified; no rescaling, retouching or generated texture."
+  },
+  {
+    "file": "gameplay-fern-context.png",
+    "source": "reports/checks/20261127T164348288633Z/walking.png",
+    "sha256": "8dd9858854da0c58a7d9fd610907b2d79ae5aa35ae844aef2b10270a1bbee452",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Actual physical gameplay, in-memory seven-frond trial, full forest. Pixel-verified lossless consecutive captures at 16ms median and 25ms p95 intervals. Human approval pending.",
+    "provenance": "Exact diagnostic output copy. Asynchronous RGBA8 viewport readback, decoded RGB hashes verified; no rescaling, retouching or generated texture."
+  },
+  {
+    "file": "lab-fern-verified.webp",
+    "source": "reports/checks/20261127T164801248443Z/review.webp",
+    "sha256": "e70ac2f150313050e76cd00afca67bd2d5e9e5ae0bcafc1fec0ceec00c47728d",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Left: current grass-only candidate. Right: laboratory seven-frond filter. Matched deterministic strafe, native pixels; not normal physical gameplay or a promoted production change.",
+    "provenance": "Exact paired output of source-RGB-hash verified lossless captures; native pixels, no rescaling or retouching. Human review pending."
+  },
+  {
+    "file": "lab-integrated-fern.webp",
+    "source": "reports/checks/20261127T170227179839Z/review.webp",
+    "sha256": "aa508a316e8388741655ecff11bde4892d7a78366d5b47399480888d6f7a8c41",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Left: grass-only renderer. Right: integrated production seven-frond fern filter. Matched deterministic strafe, native pixels, source RGB hashes verified; lab simulation, not physical gameplay.",
+    "provenance": "Exact copy of admitted diagnostic output. Lossless capture and decoded RGB hashes verified; no retouching or generated imagery. Versioned issue evidence; raw packets use receipt-owned retention."
+  },
+  {
+    "file": "gameplay-runtime.webp",
+    "source": "reports/checks/20261127T171249751501Z/motion.webp",
+    "sha256": "dbec4eb2491f06221d41e221a379414f75acb2abbcc7fa79a3cc261814fbd8b4",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Normal production source, no trial override. Physical walking/turning, full forest, 48 consecutive lossless frames. Recorded capture cadence 16 ms median / 32 ms p95; no rescaling. Human review pending.",
+    "provenance": "Exact copy of admitted diagnostic output. Lossless capture and decoded RGB hashes verified; no retouching or generated imagery. Versioned issue evidence; raw packets use receipt-owned retention."
+  },
+  {
+    "file": "gameplay-runtime-context.png",
+    "source": "reports/checks/20261127T171249751501Z/walking.png",
+    "sha256": "ccd5384a179a8377c12f9c13e82a170035ee83994a48194c10d122af184cfcd2",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Unedited full-resolution normal production gameplay context: full forest, live actors, normal terrain/grass lighting. Human review pending.",
+    "provenance": "Exact copy of admitted diagnostic output. Lossless capture and decoded RGB hashes verified; no retouching or generated imagery. Versioned issue evidence; raw packets use receipt-owned retention."
+  },
+  {
+    "file": "lab-stones-flowers.webp",
+    "source": "reports/checks/20261127T183409513441Z/review.webp",
+    "sha256": "2bdc9017b2cf4096c77d963daf02aa8566da2367de99da4bd1fbf4eedd2cbcbd",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Left: grass/fern baseline. Right: integrated far stone/flower filtering. Matched deterministic strafe, native lossless pixels, decoded RGB hashes verified. Human approval pending.",
+    "provenance": "Exact admitted output copy. No retouching or generated imagery. Versioned review retained while raw packet is cold-archived by verified receipt."
+  },
+  {
+    "file": "gameplay-stones-flowers.webp",
+    "source": "reports/checks/20261127T190137324274Z/motion.webp",
+    "sha256": "acf1e1d916e0968448e757bdc74665b71e5a8e95eb5c2a935498c12bceec709a",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Normal source gameplay with integrated far stones/flowers, no trial override. 194.182m physical movement, all 1024 forest cells, 8461 trees and live actors. 48 consecutive pixel-verified frames; measured intervals 15ms median / 32ms p95. Human review pending.",
+    "provenance": "Exact admitted output copy. Native capture pixels, no rescaling/retouching or generated imagery. Full context and frames 0/15/31/47 inspected; raw evidence retained by receipt."
+  },
+  {
+    "file": "gameplay-stones-flowers-context.png",
+    "source": "reports/checks/20261127T190137324274Z/walking.png",
+    "sha256": "c2d7c8a286b1377076d979997b04fa60d1df0d5c9b63b632a36317b80ea604b1",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Normal source gameplay with integrated far stones/flowers, no trial override. 194.182m physical movement, all 1024 forest cells, 8461 trees and live actors. 48 consecutive pixel-verified frames; measured intervals 15ms median / 32ms p95. Human review pending.",
+    "provenance": "Exact admitted output copy. Native capture pixels, no rescaling/retouching or generated imagery. Full context and frames 0/15/31/47 inspected; raw evidence retained by receipt."
   }
 ]

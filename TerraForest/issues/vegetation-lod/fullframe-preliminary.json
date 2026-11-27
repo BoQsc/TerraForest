@@ -1,0 +1,62 @@
+{
+  "run": "20261127T192804297481Z",
+  "status": "Partial failed capture; causal stills only, movement acceptance incomplete",
+  "rows": [
+    {
+      "frame": 0,
+      "baseline": {
+        "mean_luma": 0.45219044458061003,
+        "low_pixels": 3219,
+        "high_pixels": 4750,
+        "dark_impulses": 2370,
+        "bright_impulses": 2811,
+        "local_dark_contrast": 24400,
+        "local_bright_contrast": 37826,
+        "negative_witness_pixels": 0
+      },
+      "bounded": {
+        "mean_luma": 0.4530127144607843,
+        "low_pixels": 1453,
+        "high_pixels": 4750,
+        "dark_impulses": 609,
+        "bright_impulses": 2811,
+        "local_dark_contrast": 22236,
+        "local_bright_contrast": 39091,
+        "negative_witness_pixels": 0
+      },
+      "negative_witness": 1825,
+      "witness_also_dark": 1104,
+      "witness_changed": 1825,
+      "changed_pixels": 51096,
+      "brightness_relative": 0.00181841498428148
+    },
+    {
+      "frame": 24,
+      "baseline": {
+        "mean_luma": 0.4552449580912612,
+        "low_pixels": 1771,
+        "high_pixels": 4777,
+        "dark_impulses": 965,
+        "bright_impulses": 2796,
+        "local_dark_contrast": 5763,
+        "local_bright_contrast": 11011,
+        "negative_witness_pixels": 0
+      },
+      "bounded": {
+        "mean_luma": 0.4553371327311789,
+        "low_pixels": 1443,
+        "high_pixels": 4776,
+        "dark_impulses": 637,
+        "bright_impulses": 2795,
+        "local_dark_contrast": 5361,
+        "local_bright_contrast": 11018,
+        "negative_witness_pixels": 0
+      },
+      "negative_witness": 233,
+      "witness_also_dark": 152,
+      "witness_changed": 233,
+      "changed_pixels": 1443,
+      "brightness_relative": 0.0002024726211227179
+    }
+  ]
+}

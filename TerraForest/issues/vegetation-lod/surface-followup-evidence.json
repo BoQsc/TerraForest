@@ -1,0 +1,151 @@
+{
+  "status": "Far grass and seven-frond fern fix integrated in source, uncommitted. Scoped integration, motion, near equality and cost gates pass; human visual review remains open.",
+  "human_approved": false,
+  "far_error_before": 0.06,
+  "far_error_after": 0.045,
+  "patch_metrics": {
+    "residual-before": {
+      "dark": 970,
+      "bright": 97,
+      "mean": 0.3960894622782446
+    },
+    "residual-after": {
+      "dark": 350,
+      "bright": 45,
+      "mean": 0.39627073274198565
+    }
+  },
+  "patch_attribution": {
+    "dark_candidates": 970,
+    "bright_candidates": 97,
+    "opaque_grass": [
+      689,
+      60
+    ],
+    "filtered_grass": [
+      40,
+      0
+    ],
+    "ferns": [
+      199,
+      2
+    ],
+    "stones": [
+      4,
+      27
+    ],
+    "rule": "Removal >0.05 display luminance; candidate >0.10 contrast against 5x5 median; bright also >0.48. Counts can overlap."
+  },
+  "runs": [
+    {
+      "run": "20261127T130531463216Z",
+      "passed": false,
+      "launch_error": null,
+      "test_sha256": "864e3191234fc4aadf0a005ec6bd9fdba31cec62c1e12b9c9ab589f34a8f1a8f",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T130622405914Z",
+      "passed": false,
+      "launch_error": null,
+      "test_sha256": "864e3191234fc4aadf0a005ec6bd9fdba31cec62c1e12b9c9ab589f34a8f1a8f",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T130740896696Z",
+      "passed": true,
+      "launch_error": null,
+      "test_sha256": "938f0e15ee77f04f12fbe5bec4551410145a533c82912abe8b5f2540e09dd37d",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T130830871399Z",
+      "passed": true,
+      "launch_error": null,
+      "test_sha256": "938f0e15ee77f04f12fbe5bec4551410145a533c82912abe8b5f2540e09dd37d",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T131141824545Z",
+      "passed": true,
+      "launch_error": null,
+      "test_sha256": "1d4169ed2e09e3a782d636d4dee38cd556d2cec690318e3cc2a84e8d64d31672",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T131346639512Z",
+      "passed": true,
+      "launch_error": null,
+      "test_sha256": "1d4169ed2e09e3a782d636d4dee38cd556d2cec690318e3cc2a84e8d64d31672",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T131614749139Z",
+      "passed": false,
+      "launch_error": "Development output budget reached; verify backup and retire obsolete outputs before new work: {\"reports\": {\"bytes\": 4298995198, \"limit\": 4294967296}}",
+      "test_sha256": "6edaf4e2d803f7843a214945bff6f91938afbaa0fcc360d5b254a6762d42293d",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T132340050591Z",
+      "passed": true,
+      "launch_error": null,
+      "test_sha256": "b9927f435c2105244efa1353c8e4fd5e4638171bc62b05c7b74047966e7859c9",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T132623323188Z",
+      "passed": true,
+      "launch_error": null,
+      "test_sha256": "51af6f247549ef2c1ea72d7c21c6e3fd3dbd9483782207490d6c3bf3394163ad",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T133051578543Z",
+      "passed": false,
+      "launch_error": null,
+      "test_sha256": "c268f9d01684001b288d2959232ed46a00afdee92af548334451dbc44d7e7ab1",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T133611378456Z",
+      "passed": false,
+      "launch_error": "Development output budget reached; verify backup and retire obsolete outputs before new work: {\"reports\": {\"bytes\": 4301122256, \"limit\": 4294967296}}",
+      "test_sha256": "278eafd2b606962288c89a3c69d5b25904c0c43793a38152bbd8755c8e2691f8",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T133738573625Z",
+      "passed": false,
+      "launch_error": null,
+      "test_sha256": "13db165a0f31947dad3f9816417e42191c8493fd524739158214501d166fcac9",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T134142133478Z",
+      "passed": false,
+      "launch_error": null,
+      "test_sha256": "ab349b521b2a40d67cf65a0efb2366c841090950d580e70423b49f56cf80ab87",
+      "native_sha256": null
+    },
+    {
+      "run": "20261127T134356372384Z",
+      "passed": true,
+      "test_sha256": "d0dbaa30ea311d1132d844216dda87a294a05d9598d867eb65faf5acf3bd7bdb",
+      "scope": "Exact 1920x580 scene field at 75 and 35 degree FOV plus full-frame nearby parity; engine passed, post-run retention hit report budget"
+    }
+  ],
+  "pending": [
+    "Human visual review",
+    "Broader views/settings and remaining other-species bright points before universal closure"
+  ],
+  "source_sha256": {
+    "addons\\structures\\native\\static_surface_lod.cpp": "3893bd2749950ffd8a1e32fa97d45c776267aa5dafd955bb2090a5ea5c3d0dc4",
+    "addons\\world_ecosystem\\filtered_grass.gd": "ae668d50b3a27d486670404b6d51f9b2c20efd129a4f475c58f552b29f008c3d",
+    "addons\\world_ecosystem\\filtered_grass.gdshader": "d2f2098d4a67ca43f84e9a35ff0cdc9143af2807e9fd24d9208ce8e6888c7e90",
+    "tests\\vegetation_gameplay.gd": "0907ba91f823d4485e412daf0ce31316db8c57bb908dbeaea1462256de2cfafc"
+  },
+  "lab": "LAB.md",
+  "final_integration_run": "20261127T170227179839Z",
+  "final_gameplay_run": "20261127T171249751501Z"
+}

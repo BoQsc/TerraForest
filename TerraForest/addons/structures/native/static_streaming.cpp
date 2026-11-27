@@ -170,6 +170,7 @@ void NativeStaticBatch::set_render_focus(Vector3 focus) {
     if(focus.distance_squared_to(render_selection_focus)>=16)render_dirty=true;
 }
 void NativeStaticBatch::select_render_batches() {
+    surface_lod_dirty=true;
     render_dirty=false;render_selection_focus=render_focus;++render_queries;
     struct Candidate {double distance;BlockKey key;};
     std::vector<Candidate> candidates;
@@ -270,6 +271,7 @@ void NativeStaticBatch::_process(double) {
         render_pending.pop_back();upload_batch(key);uploaded+=cost;++count;
     }
     render_upload_us=Time::get_singleton()->get_ticks_usec()-upload_started;
+    update_surface_lod();
     render_process_us=Time::get_singleton()->get_ticks_usec()-started;
 }
 Dictionary NativeStaticBatch::render_frame_profile() const {
@@ -296,6 +298,7 @@ bool NativeStaticBatch::set_shadow_distance(double radius) {
     set_casts_shadows(casts_shadows);return true;
 }
 void NativeStaticBatch::set_casts_shadows(bool enabled) {
+    surface_lod_dirty=true;
     casts_shadows=enabled;
     for(auto &entry:batches)update_batch_shadows(entry.second,page_casts_shadows(entry.first));
 }

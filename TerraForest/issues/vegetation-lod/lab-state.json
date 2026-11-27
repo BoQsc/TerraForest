@@ -1,0 +1,105 @@
+{
+  "status": "Human source playtest confirms visible flicker improvement; source snapshot explicitly requested. Stone pop-ins while approaching, subtle fade, broader coverage and GPU-tail target remain open.",
+  "matrix_cases": 67,
+  "unit_negative_controls_passed": 9,
+  "engine_parser": "Godot 4.7.2 check-only passed for final gameplay driver; final rendered lab and production gameplay both pass",
+  "production_frozen_sha256": {
+    "addons/structures/native/static_batch.cpp": "b4fb83e559f8190c3493b8568f30d0857a3a81fd0fc9ec6eb7baca5673a52a20",
+    "addons/structures/native/static_batch.hpp": "f83b5f661ea7fafc90a9faf138dccca6a4dc3497e62600a27e4a981004d22b5e",
+    "addons/structures/native/static_streaming.cpp": "1e18b419129b0ea9edd038588ee7dd16527aaa4bbca4cf740b512a2ee781fa29",
+    "addons/structures/native/static_surface_lod.cpp": "3893bd2749950ffd8a1e32fa97d45c776267aa5dafd955bb2090a5ea5c3d0dc4",
+    "addons/world_ecosystem/filtered_grass.gd": "ae668d50b3a27d486670404b6d51f9b2c20efd129a4f475c58f552b29f008c3d",
+    "addons/world_ecosystem/filtered_grass.gdshader": "d2f2098d4a67ca43f84e9a35ff0cdc9143af2807e9fd24d9208ce8e6888c7e90",
+    "addons/world_ecosystem/ground_cover.gd": "e8ced3e21d6158233a46ced948c94eaded513cda4c6084b82c63e5bbf29cca13",
+    "addons/world_ecosystem/woodland.gdshader": "e1e771a0c09d80fc6350fb170b4703417c2aae7c52e4224838ef693b8a289e20"
+  },
+  "human_approved": true,
+  "block": null,
+  "remaining": [
+    "Small stones pop in farther away while approaching; cause/regression status unproven. Subtle LOD/distance fade requested; preserve nearby appearance and brightness.",
+    "Incremental detail GPU p95 target <=.3ms: one clean group measured +.4005ms; no universal cost-pass claim",
+    "Broader views, FOV, resolution, light, terrain and other-species coverage before universal issue closure"
+  ],
+  "production_unchanged_since_lab_started": false,
+  "integration_gate_run": "20261127T164801248443Z",
+  "final_integration_run": "20261127T170227179839Z",
+  "final_gameplay_run": "20261127T171249751501Z",
+  "validated_runtime_sha256": {
+    "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "4a4120382e918ff575b6ad6a9415a0d325602df71e3974afe2a8f1449ff145d0",
+    "res://addons/world_ecosystem/filtered_detail.gd": "4496e24ccad732c472373d8549b72034d666388efbb1cd604f6c731fbee72342",
+    "res://addons/world_ecosystem/filtered_fern.gd": "ab1bafb4835e88f8f271816f5bbfdde1b16688f04ae7f4693b3c09108242a7c5",
+    "res://addons/world_ecosystem/filtered_fern.gdshader": "467f2fa3b97e976150e43432234d4cb73446a83a307aa3f17113e0a415f86ea7",
+    "res://addons/world_ecosystem/filtered_grass.gd": "ae668d50b3a27d486670404b6d51f9b2c20efd129a4f475c58f552b29f008c3d",
+    "res://addons/world_ecosystem/filtered_grass.gdshader": "d2f2098d4a67ca43f84e9a35ff0cdc9143af2807e9fd24d9208ce8e6888c7e90",
+    "res://addons/world_ecosystem/filtered_stone.gdshader": "5af308b5ca4755923f0db5b754a6939bc77bf60282b4124ed0b35c67a808efd1",
+    "res://addons/world_ecosystem/ground_cover.gd": "410ff6b30b23ecb46ff72f13eb49a3550a627e3152a78dea60cbf2c2bb4abc2d",
+    "res://addons/world_ecosystem/woodland.gdshader": "e1e771a0c09d80fc6350fb170b4703417c2aae7c52e4224838ef693b8a289e20",
+    "res://addons/world_ecosystem/woodland_mesh.gd": "257e3a370dff7d7774caa1d1a4ae647840c7e21531e7f8aad2c1e4026deb9f22",
+    "res://tests/fixtures/vegetation_capture.gd": "0996be7eb1f8410f98eca891064c709831be414e10d02af617e5b652ad6973a9",
+    "res://tests/vegetation_gameplay.gd": "2a9f8e2dafa3774809736cf913ddcd1a06e06b396290d576452cc1f11b0d743a"
+  },
+  "stone_flower_followup": {
+    "status": "Integrated, uncommitted. Source geometry/shader, nearby, tone, motion and physical gameplay gates pass; strict incremental GPU tail target and human validation remain open.",
+    "matrix_cases": 67,
+    "baseline_sha256": {
+      "addons/world_ecosystem/woodland_mesh.gd": "e67ffc572065b3d5f6e4501b32440fa93e58fd19dc311ae8401a715708f611ce",
+      "addons/world_ecosystem/woodland.gdshader": "e1e771a0c09d80fc6350fb170b4703417c2aae7c52e4224838ef693b8a289e20",
+      "addons/world_ecosystem/ground_cover.gd": "92e58d11959c34c569fd156bd96e0a0ec1f689c2e3d57c32cfa571fa32efbb6d",
+      "addons/world_ecosystem/filtered_grass.gd": "ae668d50b3a27d486670404b6d51f9b2c20efd129a4f475c58f552b29f008c3d",
+      "addons/world_ecosystem/filtered_fern.gd": "ab1bafb4835e88f8f271816f5bbfdde1b16688f04ae7f4693b3c09108242a7c5",
+      "addons/world_ecosystem/filtered_fern.gdshader": "467f2fa3b97e976150e43432234d4cb73446a83a307aa3f17113e0a415f86ea7"
+    },
+    "failed_framing_run": "20261127T172727787910Z",
+    "required": [
+      "separate species/lighting/texture/LOD/fade controls",
+      "far-only solution with nearby equality and tone preservation",
+      "quiet paired GPU windows",
+      "normal physical gameplay capture",
+      "human validation before any commit"
+    ],
+    "cost_target": "<=0.3ms incremental median and p95 in each of three quiet ABBA groups versus current grass/fern baseline; early-exit prototype worst tail +.3015ms is borderline, not declared passed.",
+    "latest_prototype": "20261127T182649130978Z",
+    "no_new_textures": true,
+    "human_approved": false,
+    "final_integration_run": "20261127T183409513441Z",
+    "quiet_cost_groups": [
+      0,
+      2,
+      3
+    ],
+    "gpu_median_deltas_ms": [
+      0.29275,
+      -0.013,
+      0.1535
+    ],
+    "gpu_p95_deltas_ms": [
+      0.4005,
+      0.0155,
+      0.136
+    ],
+    "cost_target_passed": false,
+    "final_gameplay_run": "20261127T190137324274Z",
+    "gameplay_travelled_m": 194.181695502251,
+    "gameplay_grounded_ticks": [
+      2162,
+      2162
+    ],
+    "gameplay_capture_pixels_verified": true,
+    "gameplay_capture_interval_ms": {
+      "median": 15.0,
+      "p95": 32
+    }
+  },
+  "fullframe_lab": "20261127T193738421329Z",
+  "fullframe_gameplay": "20261127T194802773430Z",
+  "production_domain_shader_sha256": "a16616cfd6d2f15d73f8b894f9191047d9f85f0259aa754be2aa73ea839fbae1",
+  "fullframe_capture_frames": 192,
+  "human_review": {
+    "date": "2026-11-27",
+    "feedback": "Yeah you seem to have solved it",
+    "scope": "Visible flicker in latest source Homestead Valley playtest; not universal scene or cost approval",
+    "snapshot_requested": true,
+    "native_binaries_in_snapshot": false,
+    "restore_requires_native_rebuild": true
+  }
+}

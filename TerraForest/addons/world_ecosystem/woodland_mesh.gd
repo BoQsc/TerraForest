@@ -268,4 +268,8 @@ static func build(species: int,with_lod: bool=true,extended_lod: bool=true,low_o
 	mesh.surface_set_material(0,material)
 	if filtered_far and with_lod and not low_only and species==2:
 		preload("res://addons/world_ecosystem/filtered_grass.gd").apply(mesh,arrays,lods,material)
+	if filtered_far and with_lod and extended_lod and not low_only and species==1:
+		preload("res://addons/world_ecosystem/filtered_fern.gd").apply(mesh,arrays,lods,material)
+	if filtered_far and with_lod and not low_only and species in [0,3,4,5]:
+		preload("res://addons/world_ecosystem/filtered_detail.gd").apply(mesh,arrays,lods,material,species)
 	return mesh

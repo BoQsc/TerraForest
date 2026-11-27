@@ -41,7 +41,7 @@ static func restore(mesh: ArrayMesh, saved: Dictionary) -> void:
 
 static func install(mesh: ArrayMesh, saved: Dictionary, early := false, single := false) -> ShaderMaterial:
 	if not single:
-		var material := preload("res://addons/world_ecosystem/filtered_grass.gd").apply(mesh,saved.arrays,saved.lods,saved.material,0.06 if early else 0.12,0.10 if early else 0.20)
+		var material := preload("res://addons/world_ecosystem/filtered_grass.gd").apply(mesh,saved.arrays,saved.lods,saved.material,preload("res://addons/world_ecosystem/filtered_grass.gd").FAR_ERROR if early else 0.12,0.10 if early else 0.20)
 		var shader := Shader.new();shader.code=material.shader.code.replace("shader_type spatial;","shader_type spatial;\nuniform float comparison_time=0.0;").replace("TIME","comparison_time")
 		material.shader=shader
 		return material

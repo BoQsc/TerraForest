@@ -53,12 +53,15 @@ void fragment() {
         ROUGHNESS = 0.94;
         SPECULAR = 0.24;
     } else {
-        float edge = abs(UV.x - 0.5) * 2.0;
+        // MSAA can shade a covered thin triangle at a pixel-center location
+        // outside that triangle. Bound the authored shading domain: extrapolated
+        // UVs made this multiplier negative and produced moving black pixels.
+        float edge = min(abs(UV.x - 0.5) * 2.0, 1.0);
         float width = max(fwidth(UV.x), 0.008);
         float vein = 1.0 - smoothstep(width, width * 2.0, abs(UV.x - 0.5));
         float ribs = 0.96 + 0.04 * sin((UV.y - abs(UV.x - 0.5) * 0.35) * 95.0);
         ALBEDO = COLOR.rgb * variation * mix(1.0, 0.79, edge * edge) * ribs + COLOR.rgb * vein * 0.16;
-        ALBEDO *= root_shade;
+        ALBEDO *= clamp(root_shade,0.64,1.0);
         AO = mix(0.62,1.0,smoothstep(0.0,0.30,UV.y));
         AO_LIGHT_AFFECT = 0.35;
         if (grass_detail_strength > 0.0) {
@@ -69,10 +72,10 @@ void fragment() {
             vec3 detail = texture(grass_detail, vec2(strip_start + UV.x * 0.20, 1.0 - UV.y)).rgb;
             vec3 modulation = detail / max(grass_detail_mean, vec3(0.01));
             // Textured mode softens the old painted central rib instead of stacking it.
-            vec3 textured = COLOR.rgb * variation * root_shade * modulation * 0.90;
+            vec3 textured = COLOR.rgb * variation * clamp(root_shade,0.64,1.0) * modulation * 0.90;
             ALBEDO = mix(ALBEDO, textured, grass_detail_strength);
         }
-        ALBEDO *= canopy_shade;
+        ALBEDO *= clamp(canopy_shade,1.0-distant_self_shade,1.0);
         ROUGHNESS = mix(0.84, 0.94, grass_detail_strength);
         SPECULAR = mix(0.2, 0.12, grass_detail_strength);
         BACKLIGHT = COLOR.rgb * mix(0.18, 0.10, grass_detail_strength);

@@ -445,6 +445,52 @@ retains two ordinary ready runs, verifies older chunks before retirement, and
 keeps failed logs/receipts. `analyze_vegetation_reconstruction.py` validates a
 completed admitted receipt before creating its bounded lossless motion previews.
 Selected versioned issue images retain original capture/underlying-asset terms.
+The `--surface-parity-only` mode reserves 10 MiB, enforces an 8 MiB image ceiling,
+and creates no motion packets or previews.
+
+`vegetation_gameplay` also admits 20 MiB, with an enforced 16 MiB combined
+capture/timing-JSON cap and a 3 MiB preview cap. It loads the existing source save
+read-only; it creates no world, source copy or export. Physics, actors and cover
+streaming remain active. Capture phases are excluded from GPU timing summaries.
+`maintain_homestead_captures.py` retains two ordinary ready runs and cold-retains
+older receipt-owned captures; failed logs and receipts remain available.
+
+`run_vegetation_lab.py` validates the one-factor matrix without allocating output
+when invoked with `--list`. Rendered runs use the shared Godot runner and a 20 MiB
+admission, no world copy, export or native rebuild. The driver caps all captured
+data/source snapshots at 16 MiB, including at most 8 MiB of lossless motion frames.
+Analysis may add a maximum 3 MiB review animation; remaining space covers logs,
+receipts and a bounded 128 KiB process-overlap witness. Timing windows exclude
+capture/analysis. The existing receipt-owned Homestead retention family lists
+every lab output, keeps two ready runs and cold-retains older completed evidence.
+The launcher refuses existing render jobs, samples other render jobs during a
+run, and preserves observed overlap for cost qualification. Storage limits stay
+unchanged. Laboratory validity and ordinary gameplay/human review are separate.
+
+2026-11-27 vegetation admission recovery: completed lab
+`20261127T183409513441Z` and prior gameplay `20261127T171249751501Z` were fully
+cold-retained after their native motion reviews, hashes/provenance and analysis
+were preserved in `issues/vegetation-lod/`. This explicitly leaves zero loose raw
+copies of those completed captures until replacement gameplay finishes; no save
+or regression evidence is deleted. The same archive/verify/retire library checks
+receipt ownership, pins, confinement and full reconstruction hashes, with recorded
+`completed-review-preserved-capture` provenance. 24,628,160 bytes were reclaimed;
+report/archive limits remain unchanged.
+
+`maintain_location_baseline_captures.py` cold-retains only the historical native
+baseline driver's 15–16 MiB `bulk/*.baseline` test payloads. It requires completed
+create/reopen commands, matching `--baseline-dir`/driver paths, the recorded
+source hash after reversing the launcher's two path substitutions, unchanged
+receipt/driver identities and pre-completion payload timestamps. Pins and the
+newest two eligible runs stay ready; logs, other fixtures and player saves remain.
+Recovery stages manifests inside the bounded archive category, verifies complete
+reconstruction, retires exact hash-checked paths, then publishes a much smaller
+manifest beside the original receipt. Thus it can shrink already-over-budget
+reports without increasing a limit or admitting a new capture. An interrupted
+stage remains under `reports/retained_artifacts/location_bulk_recovery` for
+inspection; it is evidence, not disposable scratch.
+The first recovery cold-retained 173,093,140 bytes across six completed November 2
+runs. Each owning folder retains `bulk.archive.json`; the newest two remain ready.
 
 ## Metropolis recipe verification — 2026-11-27
 
@@ -471,3 +517,20 @@ parallel uncommitted renderer work in the main checkout. The report allowance is
 world or export is made. `reports/metropolis_clean_native.json` owns this input
 hash/build; its scratch tree is verified and cold-retired after the exact DLL
 objects have been stored for the focused commit.
+
+Vegetation validation admission recovery also cold-retained 15,735,740 bytes from
+the receipt-proven 2026-11-02 bulk fixture with explicit `--keep-ready 1` (default
+remains two). Sixteen completed historical `gameplay_performance.gd` captures in
+`reports/runtime_performance` contributed 37,443,045 bytes of `frames.json` and
+`gameplay.json`. Each matched its successful temporary-game command, canonical
+`--profile-dir`, source hash receipt, pins and confined paths. Their data was
+reconstructed/hash-verified before retirement; screenshots/logs/saves and the
+newest ready legacy capture remain. Each folder records `legacy.archive.json`.
+Recovery manifests were staged in the separately admitted archive category and
+moved into loose reports only after more bytes had been retired. No storage limit
+was raised. The source gameplay check retains its 20MiB admission and 16MiB
+capture/data cap.
+
+Full-frame vegetation counterfactuals use the admitted shared runner with a 20 MiB report ceiling and no new world. Raw 1080p pixels are streamed to a local analyzer in memory; saved metrics, four context PNGs, one mask and three review videos use a 16 MiB media allowance plus 1 MiB analysis allowance inside the unchanged 20 MiB total admission. Encoder flush and final metadata are checked before success. Receipt-owned vegetation_fullframe captures join Homestead verified cold retention (two ready by default). Videos illustrate; raw-pixel hashes and full-viewport measurements establish comparisons.
+
+The extended physical vegetation review captures 192 consecutive 1080p frames (3.2 seconds at 60 Hz). Its test-only RGBA buffer is bounded to about 1.48 GiB and is consumed one image at a time after cost measurement. The review movie uses H264 CRF22; raw RGB hashes and full-frame detector measurements remain independent of video compression. One lossless context PNG and the movie stay within the same 16 MiB media allowance. This capture buffer is not part of ordinary gameplay.

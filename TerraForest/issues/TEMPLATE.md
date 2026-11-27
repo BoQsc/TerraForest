@@ -4,6 +4,7 @@
 - Updated: YYYY-MM-DD. Fix/build: commit, or not implemented.
 - User review: Not reviewed, or dated feedback with its actual scope.
 - Symptom: One sentence.
+- Notable (optional): Starred investigation / draft lessons / human-validated lessons; link the case from `issues/notable/README.md` and record review scope.
 
 ## Images
 

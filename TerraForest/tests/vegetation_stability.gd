@@ -276,6 +276,7 @@ func actual_world(slot: String) -> void:
 		if grass.get_surface_count()>1:
 			var legacy := preload("res://tests/fixtures/grass_filtered.gd")
 			legacy.restore(grass,legacy.capture(grass))
+			preload("res://addons/world_ecosystem/filtered_grass.gd").configure_batch(cover.batches[2],grass,false)
 	for material: ShaderMaterial in cover.foliage_materials:
 		if material.shader.code.contains("distant_self_shade"): materials.append(material)
 	camera = game.camera; camera.fov = 75; ground_y = center.y; base_eye = center + Vector3(0, 1.8, 0)

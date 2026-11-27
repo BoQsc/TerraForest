@@ -72,13 +72,11 @@ func _ready() -> void:
 	if native==null or terrain==null or camera==null:
 		push_error("Ground cover requires prepared persistence, terrain and camera")
 		set_process(false);return
-	var stone_geometry:Mesh
 	for species in range(Catalog.COUNT):
 		var batch: Node3D=ClassDB.instantiate("NativeStaticBatch")
 		add_child(batch)
 		var geometry:Mesh=_mesh(species)
 		preview_meshes.append(geometry)
-		if species==0:stone_geometry=geometry
 		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,geometry) or not batch.configure_render_streaming(true,maxf(144.0,Catalog.DISTANCES[species]),896 if species==2 else 192,7000000 if species==2 else (1600000 if species==1 else 200000),2,RENDER_UPLOAD_BYTES):
 			push_error("Ground cover renderer initialization failed");set_process(false);return
 		# Draw partitions are independent of 32 m storage/collision ownership.
@@ -87,10 +85,12 @@ func _ready() -> void:
 			push_error("Ground cover render partition initialization failed");set_process(false);return
 		batch.set_casts_shadows(true)
 		batch.set_shadow_distance(24.0 if species==2 else 48.0)
+		if species in [0,1,2,3,4,5] and not preload("res://addons/world_ecosystem/filtered_grass.gd").configure_batch(batch,geometry):
+			push_error("Foliage surface LOD initialization failed");set_process(false);return
 		batches.append(batch)
 	fractures=ClassDB.instantiate("NativeBoulderFracture");add_child(fractures)
 	var stone_material:ShaderMaterial=preload("res://addons/world_ecosystem/boulder_material.tres").duplicate()
-	var fracture_geometry:Mesh=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(0,false) if world_boulders else stone_geometry
+	var fracture_geometry:Mesh=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(0,false) if world_boulders else preload("res://addons/world_ecosystem/woodland_mesh.gd").build(0)
 	if not fractures.configure(fracture_geometry,stone_material,rock_damage):
 		push_error("Boulder fragment cache initialization failed");set_process(false);return
 	if world_boulders and not fractures.configure_horizon(preload("res://addons/world_ecosystem/woodland_mesh.gd").build(0,false,false,true)):
@@ -113,12 +113,16 @@ func _ready() -> void:
 	if water!=null: water.exclusion_changed.connect(_exclusion_changed)
 
 func _mesh(species: int) -> Mesh:
-	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species,true,true,false,species==2)
+	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species,true,true,false,species in [0,1,2,3,4,5])
 	var material:ShaderMaterial=mesh.surface_get_material(0)
 	material.set_shader_parameter("distance_fade_end",124.0)
 	material.set_shader_parameter("distance_fade_start",100.0)
 	foliage_materials.append(material)
-	if species==2:foliage_materials.append(mesh.surface_get_material(1))
+	if species in [0,1,2,3,4,5]:
+		var far_material: ShaderMaterial=mesh.surface_get_material(1)
+		far_material.set_shader_parameter("distance_fade_start",100.0)
+		far_material.set_shader_parameter("distance_fade_end",124.0)
+		foliage_materials.append(far_material)
 	if species==2:grass_material=material
 	return mesh
 

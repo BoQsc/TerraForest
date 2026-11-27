@@ -49,43 +49,91 @@ isolated engineering checks cannot close that acceptance requirement.
 
 ## Distant vegetation speckles — 2026-11-27
 
-The source now contains a far-grass coverage experiment, retaining nearby opaque
-geometry/shading and its original shadow casters. Projected triangle coverage is
-filtered into fractional alpha over the actual terrain; no global brightness or
-antialiasing change is used. Earlier far LOD thresholds replace more of the
-unresolved 72-triangle blades. Only ground-cover grass uses the new surface.
+Starred for future learning: [investigation lessons](../issues/vegetation-lod/LESSONS.md)
+are listed in [Notable investigations](../issues/notable/README.md). The human
+source playtest confirmed the visible flicker correction on 2026-11-27, followed
+by an explicit source snapshot request. Small-stone pop-ins farther away while
+approaching, subtle LOD/distance fade and the GPU-tail target remain open.
+[Current scope and native rebuild requirement](../issues/vegetation-lod/README.md#human-playtest-and-source-snapshot--2026-11-27).
+The stage-by-stage measurements and earlier rejection below remain historical.
 
-The root contributor is established by fixed unlit silhouette tests: at 90 m/2x
-MSAA, the 72-triangle tier's covered area varies 88.1% over subpixel phases.
-White-point isolation in the current source save removes 80/118 candidates by
-hiding grass, 26 by hiding small stones, and zero by disabling specular/backlight.
-Counts can overlap; this is not an attribution of every supplied screenshot pixel.
+Far grass and fern coverage filtering is integrated in the source, uncommitted.
+The [42-case diagnostic lab](../issues/vegetation-lod/LAB.md) establishes
+subpixel silhouette coverage as the dominant tested cause. Fixed LOD still
+flickers; changing wind, specular, received shadows or brightness does not solve
+that grass field. White-point removal controls also identify small stones and
+flowers, so not every bright point is vegetation shading.
 
-Final source run 20261127T121058080923Z passes 31 fixture assertions: normal startup
-surface/uniform wiring, exact near-image parity, unchanged 77,660 cover instances,
-removal state/native allocations and canonical save hash. Inspected matched
-sideways and 25.5 m forward/turn replays show softer coverage without the previous
-bright band. The measured crop has 79.3%/76.8% fewer bright/dark local-contrast
-pixels and +0.42% mean luminance. These statistics include real motion/contrast;
-they are not universal flicker reductions or user approval. Actors/streaming are
-paused, and the saved camera has moved since the supplied screenshot.
+The selected far-fern tier uses seven area/covariance-preserving frond quads
+instead of 154 tiny triangles. Nearby authored geometry/materials remain;
+existing lighting is retained, with no global brightness or AA change. Shared
+startup geometry/uniforms add no texture atlas, temporal buffers or per-instance
+CPU updates. Native inactive-surface selection retains boundary/shadow pages and
+unchanged instance buffers. The earlier brightening remains removed.
 
-Performance remains open: GPU median 12.865 -> 12.975 ms, p95 14.149 -> 14.873 ms,
-CPU render median 3.069 -> 3.208 ms and 150 added draw calls. Peak RAM/VRAM are
-within limits, but +0.724 ms pooled GPU p95 fails the prior 0.3 ms cost criterion.
-No cost limit was raised. A passing driver is not a passing cost/visual gate.
-The global TAA and combined alpha-prepass alternatives are not enabled; their
-blur, RAM failure and near-parity/cost rejection remain recorded.
+Integration run `20261127T170227179839Z` passes exact prototype/source geometry
+and shader equality, nearby/reference pixel equality, lossless capture hashes,
+source/save/population preservation and unchanged resource limits. Three accepted
+uncapped ABBA groups reduce GPU median by 0.195–0.295 ms and p95 by 0.163–0.252 ms
+versus the grass-only renderer. Whole-run overlap occurred during preparation;
+no other engine work was observed within the cost windows and six-second margins.
+The measured field's mean display luminance rises 0.56% versus grass-only.
+Earlier complete-candidate run `20261127T164801248443Z` reduces median by
+0.61–0.83 ms against the original opaque renderer. These are source-scene/laptop
+measurements, not guarantees for all scenes, devices or unobserved interference.
 
-The earlier upward-normal/full-AO brightening remains removed; the corrected
-woodland shader from 6e87ed07 is retained for nearby grass/other species. The
-previous rejected captures and diagnostic failures are preserved. No export or
-native build was made. Require player review, reduced/qualified GPU tails,
-normal travel/streaming, FOV/resolution/light/terrain variation and other-species
-attribution before closing the issue. Return to page/pass submission cost for the
-remaining overhead; do not hide density or accept a lower aggregate metric when
-the scene is visibly wrong. Full evidence and reproduction:
-[filtered far-grass coverage](../issues/vegetation-lod/README.md#filtered-far-grass-coverage--2026-11-27).
+Normal production gameplay `20261127T171249751501Z`, without trial flags, passes
+194.253 m of physical walking/turning with 1,024 forest cells, 8,461 trees, live
+actors and unchanged save/runtime hashes. All 48 captured frames are consecutive
+and lossless pixel-hash verified. Recorded capture cadence is 16 ms median / 32 ms
+p95, not a claim of constant 60 fps. Full gameplay context and sampled movement
+images were inspected; [matched comparison and normal gameplay footage](../issues/vegetation-lod/README.md#uncommitted-coverage-and-submission-follow-up--2026-11-27)
+are preserved for review. Eight harness negative-control tests pass.
+
+Stone/flower follow-up: the matrix now has 67 cases and nine harness checks.
+Controls establish undersampled stone coverage and the flower shader's unbounded
+edge multiplier as separate contributors. Source integration
+`20261127T183409513441Z` passes geometry/shader equality, nearby/reference pixel
+identity, lossless motion and unchanged source/save/population. Far stone and
+flower strafe residuals fall to .002893/.005133 from .012497/.097045; field mean
+brightness changes approximately -0.036%. No new textures/history or per-instance
+CPU work is introduced. Existing nearby vegetation and large boulders remain.
+Quiet incremental GPU medians are -.013–+.293 ms, tails +.016–+.401 ms. The .3ms
+tail target remains open; do not imply the earlier fern cost win qualifies this
+additional detail cost. Physical source gameplay `20261127T190137324274Z` now passes: 194.182 m, all
+2,162 movement ticks grounded, full forest/live actors and active far pages for
+all four species. Its 48 consecutive frames pass decoded RGB verification;
+cadence is 15 ms median / 32 ms p95. Source/save bytes are unchanged and no other
+engine job was observed during gameplay. Full context and sampled motion frames
+were inspected; human approval and the stated cost-tail target remain open.
+Source changes remain uncommitted; the packaged executable was not rebuilt.
+
+Current follow-up: the shared vegetation shader's unbounded edge calculation
+produced negative colour values on thin triangles outside the authored shading
+domain. Bounds on edge/root/canopy calculations now remove all visible negative
+markers in 48 matched full-frame views (up to 1,983 before); the baseline repeat
+is exact. Elevated frame 24 has zero extra extreme dark/white impulses versus
+no cover, down from 328/1. Brightness changes +0.183% ground / +0.020% elevated,
+with unchanged geometry, textures, lighting and LOD distances. Lab evidence is
+`20261127T193738421329Z`; normal source run `20261127T194802773430Z` passes
+194.161 m, 2,162/2,162 grounded ticks, full forest and 192 consecutive raw-hash-
+verified 1080p frames. [Full-frame review and limitations](../issues/vegetation-lod/README.md#shared-shader-domain-correction--2026-11-27)
+remain separate from human acceptance. The prior detail GPU-tail target is still
+open; no paired performance improvement is claimed. All changes are uncommitted.
+
+
+**Earlier user rejection:** sampled residual and crop results did not establish whole-frame improvement. That rejection prompted the full-viewport attribution and shared shader correction above; the later human playtest confirmed its visible improvement.
+
+The issue remains open for stone pop-ins, subtle distance/LOD fade and broader
+FOV, resolution, lighting/terrain and other-species coverage. Return trigger: after
+the requested snapshot, reproduce approach pop-ins, isolate transition/streaming
+causes and validate any change in normal movement before human review. Closure requires acceptable
+motion and terrain tone with nearby parity and paired cost preserved. The
+expensive per-triangle fern candidate, invalid/wrong-crop tests, contended GPU
+runs, resource failures and legacy lossy previews remain recorded in the lab.
+This lab/integration phase used existing source DLLs; no new export or native
+build was needed. A source snapshot was later explicitly requested by the user.
+Shared native DLLs are excluded; restoring the snapshot requires a native rebuild.
 
 ## Human performance capture on the latest save
 

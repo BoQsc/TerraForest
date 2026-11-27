@@ -41,7 +41,15 @@ BOUNDED_CONTRACT_REPORTS = {
 }
 
 def planned_report_bytes(command):
+    if "res://tests/vegetation_fullframe.gd" in command:
+        return 20 * 2**20
+    if "res://tests/vegetation_lab.gd" in command:
+        return 20 * 2**20  # <=16 MiB lab data, 3 MiB previews and logs; no world copy.
+    if "res://tests/vegetation_gameplay.gd" in command:
+        return 20 * 2**20  # <=16 MiB captures, 3 MiB preview, timing rows/logs; read-only source.
     if "res://tests/vegetation_reconstruction.gd" in command:
+        if "--surface-parity-only" in command:
+            return 10 * 2**20  # <=8 MiB bounded parity images, snapshots and logs; no motion previews.
         return 20 * 2**20  # <=16 MiB images/frames, 3 MiB preview, metadata/logs; read-only save.
     if "res://tests/vegetation_causes.gd" in command:
         return 12 * 2**20  # <=8 MiB diagnostic images, bounded JSON/logs; no saved world.
@@ -191,14 +199,39 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
-                world_bytes = 0 if any(test in command for test in ("res://tests/extensive_lakes.gd", "res://tests/outdoor_support_batches.gd", "res://tests/world_inspector.gd", "res://tools/world_inspector_native.gd", "res://tests/generation_buildings.gd", "res://tests/approved_large_house.gd", "res://tests/generation_contact_policy.gd", "res://tests/terrain_block_contract.gd", "res://tests/terrain_block_catalog.gd", "res://tests/production_building_catalog.gd", "res://tests/metropolis_recipe.gd", "res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
+                world_bytes = 0 if any(test in command for test in ("res://tests/vegetation_lab.gd", "res://tests/vegetation_gameplay.gd", "res://tests/extensive_lakes.gd", "res://tests/outdoor_support_batches.gd", "res://tests/world_inspector.gd", "res://tools/world_inspector_native.gd", "res://tests/generation_buildings.gd", "res://tests/approved_large_house.gd", "res://tests/generation_contact_policy.gd", "res://tests/terrain_block_contract.gd", "res://tests/terrain_block_catalog.gd", "res://tests/production_building_catalog.gd", "res://tests/metropolis_recipe.gd", "res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
                 result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command), world_bytes=world_bytes)
+            if any(str(arg).startswith('--lab-run-id=') for arg in command) and '--lab-visual-only' not in command and '--lab-wait-idle' not in command:
+                # Admission/retention can take time. Recheck immediately before
+                # launch rather than racing a job that started during preflight.
+                from run_vegetation_lab import active_render_jobs
+                jobs = active_render_jobs()
+                jobs = [jobs] if isinstance(jobs, dict) else jobs
+                if jobs and '--lab-wait-launch' in command:
+                    print('GAMEPLAY_WAIT_RENDER_SLOT', file=output, flush=True)
+                    deadline = time.monotonic() + 180
+                    quiet_since = None
+                    while time.monotonic() < deadline:
+                        jobs = active_render_jobs()
+                        jobs = [jobs] if isinstance(jobs, dict) else jobs
+                        if jobs:
+                            quiet_since = None
+                        elif quiet_since is None:
+                            quiet_since = time.monotonic()
+                        elif time.monotonic() - quiet_since >= 6:
+                            break
+                        time.sleep(2)
+                    else:
+                        raise OSError('Gameplay launch still waiting for a quiet render slot; no engine started')
+                if jobs:
+                    raise OSError('Vegetation launch deferred: another job started during preflight: ' + json.dumps(jobs))
             result['preflight_seconds'] = time.monotonic() - started
             started = time.monotonic()  # Storage admission is not engine startup timing.
             process_type = subprocess.Popen
             if isolated_render:
                 from isolated_render_process import IsolatedRenderProcess
                 process_type = IsolatedRenderProcess
+            result['engine_started_unix_s'] = time.time()
             process = process_type(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
                                        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             result["pid"] = process.pid
@@ -230,6 +263,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
                 if monitor:
                     result["resources"] = monitor.report()
                     monitor.close()
+                result['engine_ended_unix_s'] = time.time()
                 if isolated_render:process.close()
         except OSError as error:
             result.update(exit_code=None, launch_error=str(error))
@@ -328,9 +362,9 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
-    if args.test in {"vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"vegetation_fullframe", "vegetation_lab", "vegetation_gameplay", "vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         from maintain_homestead_captures import maintain
-        if args.test in {"grand_buildings", "metropolis_recipe"}:
+        if args.test in {"grand_buildings", "metropolis_recipe", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay"}:
             details["capture_retention_before"] = retain_object_captures()
         else:
             maintain(apply=True)
@@ -346,8 +380,8 @@ def main(argv=None):
         maintain(apply=True)
     if args.test == "physics_residency_world":
         maintain(apply=True)
-    if args.test in {"vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
-        if args.test in {"grand_buildings", "metropolis_recipe"}:
+    if args.test in {"vegetation_fullframe", "vegetation_lab", "vegetation_gameplay", "vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+        if args.test in {"grand_buildings", "metropolis_recipe", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay"}:
             details["capture_retention_after"] = retain_object_captures()
             manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
             if details["capture_retention_after"].get("pending"):
