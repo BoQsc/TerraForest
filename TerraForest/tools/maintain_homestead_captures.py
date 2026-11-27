@@ -9,6 +9,9 @@ from maintain_performance_artifacts import ROOT, no_game_processes, owned_lease
 from retained_artifacts import Store, archive, confined, digest, retire
 
 FAMILIES = {
+    "vegetation_shading": ("vegetation_shading.json", "baseline.png", "corrected.png", "baseline_repeat.png",
+                           "motion_0_before.png", "motion_0_after.png", "motion_1_before.png", "motion_1_after.png",
+                           "motion_2_before.png", "motion_2_after.png"),
     "startup_loading": ("ready.png", "result.json"),
     "full_launch": ("first_ui.png", "first_ui.json"),
     "world_browser_responsiveness": ("first_ui.png", "first_ui.json"),

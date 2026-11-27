@@ -1,12 +1,91 @@
 # Extended vegetation LOD
 
-- Status: Improved-partial / installed; driving-speed continuity and player review remain open.
-- Updated: 2026-11-01. Original LOD implementation `e2d0e548`; driving follow-ups below.
+- Status: Improved-partial; installed LOD work plus source-only lighting correction. Speckling, driving-speed continuity and player review remain open.
+- Updated: 2026-11-27. Original LOD implementation `e2d0e548`; follow-ups below.
 - Forests: existing 6592/192/12-triangle tiers retained; visibility 448 -> 576 m.
 - Native circular preload: 640 m, maximum 405 wanted owners, 441 admission cap;
   two jobs and one 36-candidate batch/frame unchanged. No density/identity changes.
 - Ferns: distant 392 -> 154 triangles; bushes 294 -> 154; twigs 136 -> 80.
   Nearby geometry, ordinary shadows and four grass tiers remain unchanged.
+
+## Distant grass speckles — 2026-11-27
+
+The user's supplied overview crop shows small dark flecks mixed with pale cover,
+including outside the building shadow. Its exact saved world, camera and distance
+are unknown; the synthetic comparison below is not a reconstruction of that view.
+
+Confirmed shading defect: `woodland.gdshader` manually inverted `NORMAL` on
+back-facing leaves after Godot's `cull_disabled` path had already inverted it.
+The production fragment therefore restored the wrong lighting direction. Removed
+that second inversion. This affects the shared woodland foliage material, including
+near leaves; stones keep their own path. Meshes, native batches, population,
+interaction, shadows, fade distances and save formats are unchanged. No blending
+pass, texture lookup or extra geometry is introduced; no GPU speedup is claimed.
+The engine behavior was checked against its
+[Forward+ shader](https://github.com/godotengine/godot/blob/ed1daf0bf/servers/rendering/renderer_rd/shaders/forward_clustered/scene_forward_clustered.glsl#L1168-L1175)
+and [double-sided mode definition](https://github.com/godotengine/godot/blob/ed1daf0bf/servers/rendering/renderer_rd/forward_clustered/scene_shader_forward_clustered.cpp#L786),
+then demonstrated on the installed Godot 4.7.2 `ed1daf0bf`.
+
+`tests/vegetation_shading.gd` first reproduced view-normal output 1/0 for the
+front/back of a double-sided leaf. With the correction both are 1/1. The original
+production shader failed this assertion; the corrected source passes all seven
+checks, including exact frozen-baseline repeat and unchanged buffers for 9,984
+instances. Three matched camera offsets retain the original mesh LODs and density.
+The simple fixture disables cast shadows to isolate material lighting; actual
+world shadow reception and terrain shape are not qualified by this check.
+
+The inspected meadow images retain obvious distant clumps and speckling after the
+correction. The count of very dark samples changes from 2,441 to 2,236 in the
+defined image region, but that threshold is descriptive, not an acceptance gate.
+This is a confirmed normal correction and partial visual improvement, **not a fix
+for all black spots or seamless grass**. Earlier
+[fade/self-shading](../../docs/evidence/vegetation_far_diagnostic/README.md) and
+[LOD/MSAA](../../docs/evidence/vegetation_lod_diagnostic/README.md) comparisons also
+failed to eliminate the speckling; those rejected trials remain intact.
+
+![Baseline double-sided grass lighting](images/shading-baseline.png)
+Synthetic 1080p meadow, 9,984 production foliage instances; old duplicate normal
+inversion, fixed wind, no cast shadows. The regular placement is diagnostic only.
+
+![Corrected double-sided grass lighting](images/shading-corrected.png)
+Same camera, instances and materials, with the duplicate inversion removed.
+Dark flecks are slightly reduced; sparse silhouettes remain visible. Neither
+image is the user's world or user-approved artwork. Provenance and hashes are in
+`images/manifest.json`; these original diagnostic captures are CC0-1.0.
+
+Retained receipts:
+- `reports/checks/20261127T094006354473Z/run.json`: initial generic storage
+  reservation rejected before the engine launched; no limits raised or evidence
+  evicted. The fixture now declares 24 MiB reports, a 20 MiB encoded-image ceiling,
+  and zero saved-world allocation. It creates no export or saved world.
+- `reports/checks/20261127T094139317069Z/run.json`: initial fixture parse failure;
+  fixed the explicit float type. This was not a production test result.
+- `reports/checks/20261127T094225737180Z/vegetation_shading.json`: expected original
+  production normal failure, with baseline/corrected image controls.
+- `reports/checks/20261127T094327665114Z/vegetation_shading.json`: seven checks pass;
+  paired camera-offset captures inspected. No frame-time benchmark or continuous
+  motion/shimmer acceptance. The matching run receipt records native/engine/source
+  hashes. The adjacent identity helper uses Godot's ResourceUID generator for the
+  new test sidecar; it changes no runtime assets.
+
+Reproduce:
+
+```powershell
+python tools/run_godot_check.py vegetation_shading --isolated-render --timeout 90 --require "VEGETATION_SHADING failures=0"
+```
+
+After the owned process exits, `tools/maintain_homestead_captures.py` owns these exact report
+members and cold-retains older runs under the existing two-ready-run policy.
+Tracker images remain versioned outside Godot imports/exports.
+
+Remaining: reproduce the supplied overview using its saved world/camera, identify
+which species and LODs contribute the remaining dark points, and compare continuous
+camera motion with normal zoom. Then test far-silhouette coverage and terrain/foliage
+lighting contrast at unchanged population, using the existing dither fade. A wider
+fade may soften the outer boundary but is not established as a solution for these
+speckles. Actual-world regression, GPU/frame tails and user acceptance are pending;
+return when that view or a representative populated-world camera is available.
+Original diagnostic code is 0BSD; no external implementation or asset was imported.
 
 ## Ground draw-page backlog — 2026-11-01
 

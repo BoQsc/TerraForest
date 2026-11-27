@@ -1,3 +1,18 @@
+## Distant vegetation speckles — 2026-11-27
+
+Source-only woodland shader correction removes a duplicate back-face normal
+inversion already performed by Godot for double-sided materials. A red/green
+render probe and 9,984-instance comparison pass seven checks, with unchanged
+placement buffers, density, meshes and dither fade. No new rendering pass, texture
+or geometry; no measured performance gain is claimed. Inspected synthetic images
+still show distant clump speckling, so the user's overview complaint remains open.
+The exact supplied world/camera was unavailable. Return with that view or a
+representative populated-world comparison to identify species/LOD contributions,
+test continuous motion and terrain/foliage contrast, and measure frame/GPU costs
+before claiming seamless blending. Actual-world regression, installed package and
+user visual acceptance are pending. Earlier rejected fade, self-shade and MSAA
+comparisons remain preserved. [Evidence, images and remaining work](../issues/vegetation-lod/README.md#distant-grass-speckles--2026-11-27).
+
 ## Human performance capture on the latest save
 
 The existing five-minute human recorder now accepts an explicit existing player

@@ -76,6 +76,6 @@ void fragment() {
         ROUGHNESS = mix(0.84, 0.94, grass_detail_strength);
         SPECULAR = mix(0.2, 0.12, grass_detail_strength);
         BACKLIGHT = COLOR.rgb * mix(0.18, 0.10, grass_detail_strength);
-        if (!FRONT_FACING) { NORMAL = -NORMAL; }
+        // Godot already faces double-sided normals toward the viewer.
     }
 }

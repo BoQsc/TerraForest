@@ -37,5 +37,23 @@
     "source": "reports/runtime_performance/20261029T093811677295Z_sweep160_pack/moving-end.png",
     "sha256": "b3d401144ae433cbfe34622f970e8c81dab5812c914a37ed43820c9c28c7f0d8",
     "scope": "160 km/h controlled sweep endpoint, before recovery; images inspected, not user-approved"
+  },
+  {
+    "file": "shading-baseline.png",
+    "source": "reports/checks/20261127T094327665114Z/baseline.png",
+    "sha256": "87c9c5750a1bc0c05a7ddad0ca13f7029a4af6ee7f3173692bc19a7b806d8cd3",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0",
+    "scope": "Synthetic 1920x1080 meadow, 9984 production foliage instances; fixed wind and camera, no cast shadows. Old duplicate normal inversion. Inspected, not user-approved; not the supplied overview.",
+    "provenance": "Original tests/vegetation_shading.gd (0BSD); Godot 4.7.2 ed1daf0bf Forward+ on RTX 4050 Laptop. No external content imported."
+  },
+  {
+    "file": "shading-corrected.png",
+    "source": "reports/checks/20261127T094327665114Z/corrected.png",
+    "sha256": "7b8fdb24406519edc360c5b507144c53432e0d468262eada38516b3879109cd8",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0",
+    "scope": "Synthetic 1920x1080 meadow, 9984 production foliage instances; fixed wind and camera, no cast shadows. Duplicate normal inversion removed; visible clump speckling remains. Inspected, not user-approved; not the supplied overview.",
+    "provenance": "Original tests/vegetation_shading.gd (0BSD); Godot 4.7.2 ed1daf0bf Forward+ on RTX 4050 Laptop. No external content imported."
   }
 ]

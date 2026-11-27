@@ -41,6 +41,8 @@ BOUNDED_CONTRACT_REPORTS = {
 }
 
 def planned_report_bytes(command):
+    if any(str(value) == "res://tests/vegetation_shading.gd" for value in command):
+        return 24 * 2**20  # Driver caps nine encoded frames at 20 MiB; no saved world.
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
     if scripts in ({"outdoor_support_batches.gd"}, {"cached_world_plan.gd"}, {"startup_resources.gd"}, {"generation_saved_equivalence.gd"}):
         return 2 * 2**20  # Bounded assertions and logs; no new saved world or image.
@@ -156,7 +158,8 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
-                result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command))
+                world_bytes = 0 if "res://tests/vegetation_shading.gd" in command else 128 * 2**20
+                result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command), world_bytes=world_bytes)
             result['preflight_seconds'] = time.monotonic() - started
             started = time.monotonic()  # Storage admission is not engine startup timing.
             process_type = subprocess.Popen
