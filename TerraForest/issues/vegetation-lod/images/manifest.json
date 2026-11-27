@@ -148,5 +148,95 @@
     "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
     "scope": "Exploratory LOD thresholds only; original lighting retained. Inspected: brightness band avoided, visible speckling remains. Test-only, not enabled in runtime or user-approved.",
     "provenance": "Original tests/vegetation_causes.gd (0BSD), existing project assets. No external content imported."
+  },
+  {
+    "file": "filter-before.png",
+    "source": "reports/checks/20261127T121058080923Z/baseline_still.png",
+    "sha256": "7d6fd96db1af61eece4170fe7410e4bd5c501155a1f7777d159d27db02531ef0",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Inspected source experiment, not user acceptance. Saved view differs from the supplied screenshot. Sideways and forward/turn camera replays freeze actors/streaming. Native resolution, no rescaling.",
+    "provenance": "Original 0BSD tests/vegetation_reconstruction.gd and tools/analyze_vegetation_reconstruction.py; Godot 4.7.2 ed1daf0bf; existing project assets, no imported material."
+  },
+  {
+    "file": "filter-after.png",
+    "source": "reports/checks/20261127T121058080923Z/filtered_still.png",
+    "sha256": "10785bafce506f48eb10266dd01d0e5115d552438cae75d55a560e75e88a3331",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Inspected source experiment, not user acceptance. Saved view differs from the supplied screenshot. Sideways and forward/turn camera replays freeze actors/streaming. Native resolution, no rescaling.",
+    "provenance": "Original 0BSD tests/vegetation_reconstruction.gd and tools/analyze_vegetation_reconstruction.py; Godot 4.7.2 ed1daf0bf; existing project assets, no imported material."
+  },
+  {
+    "file": "filter-source.png",
+    "source": "reports/checks/20261127T121058080923Z/source_enabled.png",
+    "sha256": "3f080ee166620c77d7b9394b2cd30ec4e04c0f45ef32d72afa85cab40b98191a",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Inspected source experiment, not user acceptance. Saved view differs from the supplied screenshot. Sideways and forward/turn camera replays freeze actors/streaming. Native resolution, no rescaling.",
+    "provenance": "Original 0BSD tests/vegetation_reconstruction.gd and tools/analyze_vegetation_reconstruction.py; Godot 4.7.2 ed1daf0bf; existing project assets, no imported material."
+  },
+  {
+    "file": "filter-motion.webp",
+    "source": "reports/checks/20261127T121058080923Z/motion.webp",
+    "sha256": "94e650973ad17bbc8bacdc1634158b3e782081c487babfc7bbba644adb781355",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Inspected source experiment, not user acceptance. Saved view differs from the supplied screenshot. Sideways and forward/turn camera replays freeze actors/streaming. Native resolution, no rescaling.",
+    "provenance": "Original 0BSD tests/vegetation_reconstruction.gd and tools/analyze_vegetation_reconstruction.py; Godot 4.7.2 ed1daf0bf; existing project assets, no imported material."
+  },
+  {
+    "file": "filter-route.webp",
+    "source": "reports/checks/20261127T121058080923Z/route.webp",
+    "sha256": "8a49c5ef776cae5eb7e8ea85f0688165c8c3d18c5eabafe27b9cef188e737952",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Inspected source experiment, not user acceptance. Saved view differs from the supplied screenshot. Sideways and forward/turn camera replays freeze actors/streaming. Native resolution, no rescaling.",
+    "provenance": "Original 0BSD tests/vegetation_reconstruction.gd and tools/analyze_vegetation_reconstruction.py; Godot 4.7.2 ed1daf0bf; existing project assets, no imported material."
+  },
+  {
+    "file": "white-points-baseline.png",
+    "source": "reports/checks/20261127T113415473543Z/attribution_baseline.png",
+    "source_crop": [
+      590,
+      240,
+      360,
+      140
+    ],
+    "sha256": "c4b141daa2c6ded3e96428ab4e375841ac34408233078ee79cfb86438b2a7e4a",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Inspected pixel attribution only. No specular removes no candidate bright points in this tile; removing grass removes 80 of 118. The tile excludes sky/buildings/large rocks/reticle; small stones remain.",
+    "provenance": "Original 0BSD reconstruction diagnostic; unscaled 360x140 crop of its lossless output. Existing project assets."
+  },
+  {
+    "file": "white-points-no-specular.png",
+    "source": "reports/checks/20261127T113415473543Z/attribution_no_specular.png",
+    "source_crop": [
+      590,
+      240,
+      360,
+      140
+    ],
+    "sha256": "70cf6651e0a99b15f8663377ca839feca1ee9fa581d9d140f9cf8d082b46bea3",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Inspected pixel attribution only. No specular removes no candidate bright points in this tile; removing grass removes 80 of 118. The tile excludes sky/buildings/large rocks/reticle; small stones remain.",
+    "provenance": "Original 0BSD reconstruction diagnostic; unscaled 360x140 crop of its lossless output. Existing project assets."
+  },
+  {
+    "file": "white-points-no-grass.png",
+    "source": "reports/checks/20261127T113415473543Z/attribution_no_grass.png",
+    "source_crop": [
+      590,
+      240,
+      360,
+      140
+    ],
+    "sha256": "80795f00ec68d329bc6eb830c27765ee1e38643e6034be1534d220ac74619f83",
+    "creator": "TerraForest project; original AI-assisted diagnostic capture",
+    "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
+    "scope": "Inspected pixel attribution only. No specular removes no candidate bright points in this tile; removing grass removes 80 of 118. The tile excludes sky/buildings/large rocks/reticle; small stones remain.",
+    "provenance": "Original 0BSD reconstruction diagnostic; unscaled 360x140 crop of its lossless output. Existing project assets."
   }
 ]

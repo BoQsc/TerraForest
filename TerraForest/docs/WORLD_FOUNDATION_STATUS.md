@@ -23,56 +23,43 @@ isolated engineering checks cannot close that acceptance requirement.
 
 ## Distant vegetation speckles — 2026-11-27
 
-User clarification preserves the liked softer distant-LOD appearance; the
-brightness mismatch and persistent shimmer are the rejected parts. The scope is
-far representation and terrain matching, with nearby grass retained.
+The source now contains a far-grass coverage experiment, retaining nearby opaque
+geometry/shading and its original shadow casters. Projected triangle coverage is
+filtered into fractional alpha over the actual terrain; no global brightness or
+antialiasing change is used. Earlier far LOD thresholds replace more of the
+unresolved 72-triangle blades. Only ground-cover grass uses the new surface.
 
-Cause isolation now confirms subpixel silhouette coverage instability without
-wind, textures, lighting, shadows, dither, terrain or LOD switching. At 90 m and
-2x MSAA, the 72-triangle tier covers 2.64 pixels at the median and varies 88.1%
-in covered area over subpixel phases; the eight-triangle tier varies 55.9%.
-Depth-tested tags verify visible far grass in the current world: 7,108 tagged
-pixels use 72 triangles and 3,025 use eight; none use the three-triangle horizon
-tier. The earlier hidden-root limitation is resolved for this new diagnostic view,
-not retroactively for prior measurements or the exact supplied screenshot.
+The root contributor is established by fixed unlit silhouette tests: at 90 m/2x
+MSAA, the 72-triangle tier's covered area varies 88.1% over subpixel phases.
+White-point isolation in the current source save removes 80/118 candidates by
+hiding grass, 26 by hiding small stones, and zero by disabling specular/backlight.
+Counts can overlap; this is not an attribution of every supplied screenshot pixel.
 
-In matched world camera motion, disabling fade or shadow reception barely changes
-the descriptive screen-difference measure; extra detail/texturing removal worsens
-it. Earlier far LOD thresholds improve that measure 12–17% with only 0.2% average
-brightness change, but visible speckling remains. These are test-only controls,
-not enabled fixes. Runs 110001831123Z / 110233221983Z / 110629799826Z pass 53/9/30
-fixture assertions with unchanged world state; visual/performance gates remain
-open. Next investigate stable far coverage and terrain-calibrated light/color,
-then qualify transitions, nearby parity, timings and player review. Full records:
-[cause isolation](../issues/vegetation-lod/README.md#far-lod-cause-isolation--2026-11-27).
+Final source run 20261127T121058080923Z passes 31 fixture assertions: normal startup
+surface/uniform wiring, exact near-image parity, unchanged 77,660 cover instances,
+removal state/native allocations and canonical save hash. Inspected matched
+sideways and 25.5 m forward/turn replays show softer coverage without the previous
+bright band. The measured crop has 79.3%/76.8% fewer bright/dark local-contrast
+pixels and +0.42% mean luminance. These statistics include real motion/contrast;
+they are not universal flicker reductions or user approval. Actors/streaming are
+paused, and the saved camera has moved since the supplied screenshot.
 
-The user rejected the source stability trial: the distant vegetation becomes
-visibly too bright relative to surrounding terrain and flicker remains strong.
-The 26.4% saved-world temporal-residual reduction was insufficient and must not
-be presented as visual acceptance. Both conservative GPU-tail gates also failed
-(+0.615 ms synthetic, +0.397 ms world against a 0.3 ms limit).
+Performance remains open: GPU median 12.865 -> 12.975 ms, p95 14.149 -> 14.873 ms,
+CPU render median 3.069 -> 3.208 ms and 150 added draw calls. Peak RAM/VRAM are
+within limits, but +0.724 ms pooled GPU p95 fails the prior 0.3 ms cost criterion.
+No cost limit was raised. A passing driver is not a passing cost/visual gate.
+The global TAA and combined alpha-prepass alternatives are not enabled; their
+blur, RAM failure and near-parity/cost rejection remain recorded.
 
-Runtime woodland shading and ground-cover view handling are restored exactly to
-`6e87ed07`, retaining the earlier double-sided-normal correction. Rejected
-captures, measurements and failed checks remain preserved. No installed export
-was made. The bright band came from replacing leaf lighting with an upward
-normal/full AO; terrain uses a different custom-fill lighting model, so the
-replacement did not actually match terrain.
-
-Wind-only isolation `20261127T104035438622Z` passes 20 fixture/preservation
-assertions, not visual/cost acceptance. Frozen wind changes the controlled-field
-far residual from 0.13703 to 0.13749: no material improvement. The actual saved
-world/camera changed; its rising foreground obscures distant roots, so its far
-metric is unqualified. Require visible-surface/depth validation before relying
-on projected root distances for world-quality claims.
-
-Strong moving-camera shimmer and a natural terrain blend remain unresolved.
-Return with coverage-focused, visible-surface motion evidence that also preserves
-luminance/terrain contrast, near grass and populations. Wind and visible-LOD
-isolation are now covered above; validate the next representation, GPU/frame tails,
-zoom, light/terrain variation, actual travel and player review. Do not accept a
-lower aggregate flicker metric while the image is visibly wrong. See the
-[rejected trial and follow-up](../issues/vegetation-lod/README.md#moving-distant-cover-trial--2026-11-27).
+The earlier upward-normal/full-AO brightening remains removed; the corrected
+woodland shader from 6e87ed07 is retained for nearby grass/other species. The
+previous rejected captures and diagnostic failures are preserved. No export or
+native build was made. Require player review, reduced/qualified GPU tails,
+normal travel/streaming, FOV/resolution/light/terrain variation and other-species
+attribution before closing the issue. Return to page/pass submission cost for the
+remaining overhead; do not hide density or accept a lower aggregate metric when
+the scene is visibly wrong. Full evidence and reproduction:
+[filtered far-grass coverage](../issues/vegetation-lod/README.md#filtered-far-grass-coverage--2026-11-27).
 
 ## Human performance capture on the latest save
 

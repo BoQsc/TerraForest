@@ -423,3 +423,15 @@ No full source copy, new test family world or export is needed.
 The combined final terrain/cancellation, release-build and preparation bundle
 admits 6 MiB reports / 64 MiB scratch once; it reuses both owned worlds read-only
 and the existing incremental build/import caches.
+
+
+`vegetation_reconstruction` admits 20 MiB of reports: an enforced 16 MiB
+combined image/frame ceiling, 3 MiB bounded motion previews and 1 MiB metadata/logs.
+It loads an existing player save read-only, with no world copy, build or export.
+White-point attribution, TAA controls and far-only coverage trials share this
+family. The receipt records source/native/engine identities; the driver freezes
+its code and helper shaders beside the results. `maintain_homestead_captures.py`
+retains two ordinary ready runs, verifies older chunks before retirement, and
+keeps failed logs/receipts. `analyze_vegetation_reconstruction.py` validates a
+completed admitted receipt before creating its bounded lossless motion previews.
+Selected versioned issue images retain original capture/underlying-asset terms.

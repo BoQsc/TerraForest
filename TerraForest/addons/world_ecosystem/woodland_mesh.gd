@@ -221,7 +221,7 @@ func grass_horizon() -> void:
 		var base:Vector3=direction*0.035
 		tri(base-side*0.09,base+side*0.09,base+direction*0.22+Vector3.UP*0.36,Color("64773f"),Vector2.ZERO,Vector2.RIGHT,Vector2(0.5,1))
 
-static func build(species: int,with_lod: bool=true,extended_lod: bool=true,low_only:bool=false) -> ArrayMesh:
+static func build(species: int,with_lod: bool=true,extended_lod: bool=true,low_only:bool=false,filtered_far:bool=false) -> ArrayMesh:
 	if species<0 or species>8:return null
 	var asset=load("res://addons/world_ecosystem/woodland_mesh.gd").new()
 	var method: String=["stone_mesh","fern","grass","white_flower","gold_flower","violet_flower","bush","twigs","woody_bush"][species]
@@ -266,4 +266,6 @@ static func build(species: int,with_lod: bool=true,extended_lod: bool=true,low_o
 			image.generate_mipmaps(channel=="normal")
 			material.set_shader_parameter("stone_"+channel,ImageTexture.create_from_image(image))
 	mesh.surface_set_material(0,material)
+	if filtered_far and with_lod and not low_only and species==2:
+		preload("res://addons/world_ecosystem/filtered_grass.gd").apply(mesh,arrays,lods,material)
 	return mesh

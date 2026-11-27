@@ -1,0 +1,536 @@
+{
+  "date": "2026-11-27",
+  "status": "Source far-grass coverage experiment implemented; issue remains open. Near parity/save/resources pass. GPU tail-cost gate and universal visual acceptance remain open.",
+  "world_input": {
+    "camera_origin": "(1772.481, 68.64458, 1684.51)",
+    "materials": 9,
+    "pages_after": [
+      {
+        "bytes": 20928,
+        "pages": 197,
+        "shadows": 32
+      },
+      {
+        "bytes": 261696,
+        "pages": 346,
+        "shadows": 73
+      },
+      {
+        "bytes": 3747264,
+        "pages": 386,
+        "shadows": 47
+      },
+      {
+        "bytes": 3136,
+        "pages": 41,
+        "shadows": 5
+      },
+      {
+        "bytes": 2432,
+        "pages": 33,
+        "shadows": 8
+      },
+      {
+        "bytes": 4032,
+        "pages": 50,
+        "shadows": 7
+      },
+      {
+        "bytes": 30528,
+        "pages": 218,
+        "shadows": 40
+      },
+      {
+        "bytes": 21056,
+        "pages": 196,
+        "shadows": 43
+      },
+      {
+        "bytes": 17920,
+        "pages": 170,
+        "shadows": 22
+      }
+    ],
+    "pages_before": [
+      {
+        "bytes": 20928,
+        "pages": 197,
+        "shadows": 32
+      },
+      {
+        "bytes": 261696,
+        "pages": 346,
+        "shadows": 73
+      },
+      {
+        "bytes": 3747264,
+        "pages": 386,
+        "shadows": 47
+      },
+      {
+        "bytes": 3136,
+        "pages": 41,
+        "shadows": 5
+      },
+      {
+        "bytes": 2432,
+        "pages": 33,
+        "shadows": 8
+      },
+      {
+        "bytes": 4032,
+        "pages": 50,
+        "shadows": 7
+      },
+      {
+        "bytes": 30528,
+        "pages": 218,
+        "shadows": 40
+      },
+      {
+        "bytes": 21056,
+        "pages": 196,
+        "shadows": 43
+      },
+      {
+        "bytes": 17920,
+        "pages": 170,
+        "shadows": 22
+      }
+    ],
+    "population": 77660,
+    "sha256": "b8f04e1d07b4f12d2d781c787e6352fa98a2607e1d369696d7b99c0173ce5a5d",
+    "slot": "Homestead_Valley"
+  },
+  "world_scope": "Loaded source player camera retained; read-only world. One-at-a-time material/species removal identifies white pixels. Matched 1.6m continuous camera travel with deterministic wind, 32 lossless frames. GPU timings exclude capture/analysis and interleave modes. TAA and the far-only Gaussian triangle approximation are diagnostic controls, not committed runtime settings.",
+  "checks": 31,
+  "failures": 0,
+  "attribution": {
+    "local_region": [
+      590,
+      240,
+      360,
+      140
+    ],
+    "candidate_count": 118,
+    "rule": "Display luma >0.48 and >0.10 above 5x5 median; removed means one-at-a-time luma reduction >0.05. Counts can overlap.",
+    "variants": {
+      "attribution_no_backlight": {
+        "removed": 0,
+        "mean_luma_delta": 0.0020691791292788424
+      },
+      "attribution_no_colored_flowers": {
+        "removed": 0,
+        "mean_luma_delta": 0.0
+      },
+      "attribution_no_cover": {
+        "removed": 117,
+        "mean_luma_delta": 0.1187292987703556
+      },
+      "attribution_no_grass": {
+        "removed": 80,
+        "mean_luma_delta": 0.07229730807577268
+      },
+      "attribution_no_specular": {
+        "removed": 0,
+        "mean_luma_delta": 0.004305968760385518
+      },
+      "attribution_no_stones": {
+        "removed": 26,
+        "mean_luma_delta": 0.032709511465603185
+      },
+      "attribution_no_texture": {
+        "removed": 5,
+        "mean_luma_delta": -0.006454862080425371
+      },
+      "attribution_no_white_flowers": {
+        "removed": 5,
+        "mean_luma_delta": 0.006796065137919575
+      }
+    }
+  },
+  "motion": {
+    "baseline": {
+      "mean_luma": 0.4009938733633004,
+      "bright_points": 355.5625,
+      "dark_points": 2668.90625,
+      "screen_difference": 0.026711190751502214,
+      "best_horizontal_residual": 0.02340323340556057
+    },
+    "early_opaque": {
+      "mean_luma": 0.40190380660472197,
+      "bright_points": 154.8125,
+      "dark_points": 1961.28125,
+      "screen_difference": 0.021590601033760277,
+      "best_horizontal_residual": 0.018252817458896727
+    },
+    "filtered": {
+      "mean_luma": 0.40266950227888515,
+      "bright_points": 73.71875,
+      "dark_points": 617.875,
+      "screen_difference": 0.014106369337049337,
+      "best_horizontal_residual": 0.012093479546309736
+    }
+  },
+  "preview": {
+    "file": "motion.webp",
+    "sha256": "94e650973ad17bbc8bacdc1634158b3e782081c487babfc7bbba644adb781355",
+    "bytes": 1395582,
+    "caption": "Top-to-bottom: baseline, filtered. Central 256x96 portion of matched 640x160 crops; 1:1 lossless, no rescaling. 1.6m sideways, 30fps. Full frames retained in packets."
+  },
+  "route_preview": {
+    "file": "route.webp",
+    "sha256": "8a49c5ef776cae5eb7e8ea85f0688165c8c3d18c5eabafe27b9cef188e737952",
+    "bytes": 1493474,
+    "caption": "Top-to-bottom: baseline, filtered. Central 256x96 portion of matched 640x160 crops; 1:1 lossless, no rescaling. 25.5m forward and 11.5-degree turn, captured every eighth rendered frame at 60Hz; actors/streaming paused. Full frames retained in packets."
+  },
+  "cost": {
+    "baseline": {
+      "gpu_median_ms": 12.8645000457764,
+      "gpu_p95_ms": 14.1490001678467,
+      "cpu_median_ms": 3.06850004196167,
+      "draw_calls": 2176.0
+    },
+    "early_opaque": {
+      "gpu_median_ms": 12.1929998397827,
+      "gpu_p95_ms": 14.3319997787476,
+      "cpu_median_ms": 3.04449999332428,
+      "draw_calls": 2176.0
+    },
+    "filtered": {
+      "gpu_median_ms": 12.97450017929075,
+      "gpu_p95_ms": 14.8730001449585,
+      "cpu_median_ms": 3.207499980926515,
+      "draw_calls": 2326.0
+    }
+  },
+  "cost_limit": {
+    "previous_conservative_gpu_tail_increment_ms": 0.3,
+    "observed_pooled_increment_ms": 0.7239999771118004,
+    "passed": false
+  },
+  "run_history": [
+    {
+      "run": "reports/checks/20261127T113126721930Z",
+      "label": "white-point attribution",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "ram": {
+          "bytes": 4192407552,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1760088064,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T113415473543Z",
+      "label": "TAA control; failed RAM limit",
+      "passed": false,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "ram": {
+          "bytes": 6553931776,
+          "status": "exceeded"
+        },
+        "vram": {
+          "bytes": 2032795648,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T114114418135Z",
+      "label": "invalid custom attribute type",
+      "passed": false,
+      "exit_code": 1,
+      "diagnostics": [
+        "ERROR: Condition \"err != OK\" is true.",
+        "ERROR: Condition \"p_arrays[ai].get_type() != Variant::PACKED_FLOAT32_ARRAY\" is true. Returning: ERR_INVALID_PARAMETER",
+        "ERROR: Index p_idx = 1 is out of bounds (surfaces.size() = 1).",
+        "ERROR: Invalid array format for surface.",
+        "FAIL near view including grass and lighting is byte-identical"
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 3991244800,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1761923072,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T114418981876Z",
+      "label": "invalid LOD index lengths",
+      "passed": false,
+      "exit_code": 1,
+      "diagnostics": [
+        "ERROR: Condition \"index_count >= (uint32_t)index_array_len\" is true. Continuing.",
+        "FAIL near view including grass and lighting is byte-identical"
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 4167639040,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1762185216,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T114704987530Z",
+      "label": "valid filter at original LOD thresholds; weak visible effect",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "ram": {
+          "bytes": 4047712256,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1762185216,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T114927977665Z",
+      "label": "valid earlier far filter prototype",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "ram": {
+          "bytes": 4062449664,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1762185216,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T115302041596Z",
+      "label": "invalid combined shader stage helper",
+      "passed": false,
+      "exit_code": 1,
+      "diagnostics": [
+        "ERROR: Shader compilation failed.",
+        "FAIL near view including grass and lighting is byte-identical"
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 4097855488,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1762185216,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T115541194640Z",
+      "label": "invalid combined shader variable name",
+      "passed": false,
+      "exit_code": 1,
+      "diagnostics": [
+        "ERROR: Shader compilation failed.",
+        "FAIL near view including grass and lighting is byte-identical"
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 4057079808,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1762185216,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T115812690664Z",
+      "label": "combined shader preflight",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "ram": {
+          "bytes": 1208008704,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 392491008,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T115921313568Z",
+      "label": "combined shader near parity/cost rejected",
+      "passed": false,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL near view including grass and lighting is byte-identical"
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 4118708224,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1762185216,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T120616823289Z",
+      "label": "source integration shadow surface + diagnostic time errors; stopped invalid run",
+      "passed": false,
+      "exit_code": 0,
+      "diagnostics": [
+        "ERROR: Index p_surface_index = 1 is out of bounds (mesh->surface_count = 1).",
+        "ERROR: Shader compilation failed."
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 4102295552,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1762185216,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T120931178630Z",
+      "label": "corrected source shader preflight",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "ram": {
+          "bytes": 1200148480,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 392486912,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "run": "reports/checks/20261127T121058080923Z",
+      "label": "source integration and motion qualification",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": [],
+      "resources": {
+        "ram": {
+          "bytes": 4076195840,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1760088064,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    }
+  ],
+  "source_hashes": {
+    "mesh_sha256": "80672eeac1d36d623c403f3f9d0eec57ed1c576581f22272ea958c098acd7f86",
+    "res://addons/world_ecosystem/filtered_grass.gd_sha256": "37e9341a08d5f25460b83fd53d8cb288e7151ebff66200497b540398b017b315",
+    "res://addons/world_ecosystem/filtered_grass.gdshader_sha256": "197d6563b98199016396278f1c659232e7ddc14cf281e16de6fd2c8bc8101a88",
+    "res://tests/fixtures/grass_filtered.gd_sha256": "4db1b53214d3b66349cff65aafe68334e398e807c805edb0e5f6fe72366c72fe",
+    "res://tests/fixtures/grass_filtered.gdshader_sha256": "d240ffd61cac39e79708db1e36070c5ff624dd27778ef1365a8113906d4828a1",
+    "shader_sha256": "e1e771a0c09d80fc6350fb170b4703417c2aae7c52e4224838ef693b8a289e20"
+  },
+  "limits": [
+    "Current saved source camera, not exact user screenshot or full editor residency.",
+    "Frozen actors/streaming; camera translation/turns, not real-car handling or streaming endurance.",
+    "Point counts and horizontal-alignment residual include real motion, contrast and other objects; not a universal flicker percentage.",
+    "Other vegetation and small stones retain their original rendering.",
+    "Two surfaces add 150 draw calls here; earlier LODs reduce geometry, but GPU p95 increases 0.724ms and fails the prior 0.3ms cost criterion."
+  ],
+  "legacy_regression": {
+    "run": "reports/checks/20261127T122513602769Z",
+    "passed": true,
+    "checks": 30,
+    "failures": 0,
+    "scope": "Historical wind/shading/cause loader explicitly restores the original opaque grass; reconstructed baseline cannot leave an independently animated far surface active."
+  },
+  "final_source_sha256": {
+    "addons/world_ecosystem/filtered_grass.gd": "37e9341a08d5f25460b83fd53d8cb288e7151ebff66200497b540398b017b315",
+    "addons/world_ecosystem/filtered_grass.gdshader": "d2f2098d4a67ca43f84e9a35ff0cdc9143af2807e9fd24d9208ce8e6888c7e90",
+    "addons/world_ecosystem/woodland_mesh.gd": "80672eeac1d36d623c403f3f9d0eec57ed1c576581f22272ea958c098acd7f86",
+    "addons/world_ecosystem/ground_cover.gd": "ca9523ce7d437ba73978a33a16faf82ddf789913c1709374415d91bb982c083b"
+  },
+  "post_render_changes": "Only shader comments changed after the final render; the inherited legacy-test hook was subsequently verified by the cause regression."
+}

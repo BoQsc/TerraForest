@@ -113,11 +113,12 @@ func _ready() -> void:
 	if water!=null: water.exclusion_changed.connect(_exclusion_changed)
 
 func _mesh(species: int) -> Mesh:
-	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species)
+	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species,true,true,false,species==2)
 	var material:ShaderMaterial=mesh.surface_get_material(0)
 	material.set_shader_parameter("distance_fade_end",124.0)
 	material.set_shader_parameter("distance_fade_start",100.0)
 	foliage_materials.append(material)
+	if species==2:foliage_materials.append(mesh.surface_get_material(1))
 	if species==2:grass_material=material
 	return mesh
 

@@ -22,6 +22,7 @@ var results: Dictionary = {}
 var diagnose_wind := false
 
 func _initialize() -> void: run.call_deferred()
+func retains_runtime_far_filter() -> bool: return false
 func check(ok: bool, label: String) -> bool:
 	checks += 1
 	if not ok: failures += 1
@@ -267,6 +268,14 @@ func actual_world(slot: String) -> void:
 	# Freeze publication/actors for a rendering comparison, while the external
 	# driver moves the real camera and advances deterministic foliage wind.
 	game.process_mode = Node.PROCESS_MODE_DISABLED
+	# Historical wind/shading controls require their original opaque mesh. A live
+	# far material would otherwise keep TIME-based wind outside their paired shader.
+	# The new reconstruction driver overrides this hook to inspect normal startup.
+	if not retains_runtime_far_filter():
+		var grass: ArrayMesh = cover.preview_meshes[2]
+		if grass.get_surface_count()>1:
+			var legacy := preload("res://tests/fixtures/grass_filtered.gd")
+			legacy.restore(grass,legacy.capture(grass))
 	for material: ShaderMaterial in cover.foliage_materials:
 		if material.shader.code.contains("distant_self_shade"): materials.append(material)
 	camera = game.camera; camera.fov = 75; ground_y = center.y; base_eye = center + Vector3(0, 1.8, 0)

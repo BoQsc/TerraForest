@@ -1,12 +1,130 @@
 # Extended vegetation LOD
 
-- Status: Open; the distant lighting/stability trial was rejected by the user and removed from runtime. Earlier normal correction and installed LOD work remain. Strong flickering, terrain contrast, driving continuity and performance qualification are unresolved.
+- Status: Open / far-grass coverage experiment implemented in source. Nearby pixel parity, save integrity and resource ceilings pass; the prior 0.3 ms GPU-tail cost criterion fails. Other vegetation, broader travel and user visual acceptance remain open. The rejected brightening stays removed.
 - Updated: 2026-11-27. Original LOD implementation `e2d0e548`; follow-ups below.
 - Forests: existing 6592/192/12-triangle tiers retained; visibility 448 -> 576 m.
 - Native circular preload: 640 m, maximum 405 wanted owners, 441 admission cap;
   two jobs and one 36-candidate batch/frame unchanged. No density/identity changes.
 - Ferns: distant 392 -> 154 triangles; bushes 294 -> 154; twigs 136 -> 80.
   Nearby geometry, ordinary shadows and four grass tiers remain unchanged.
+
+## Filtered far-grass coverage — 2026-11-27
+
+The user confirmed that the screenshots came from the source project. Earlier
+shading changes and aggregate measurements were insufficient: they did not isolate
+pixel coverage, and their viewpoints did not reproduce the supplied scene. The
+new test retains the currently saved camera (`b8f04e1d07b4...`, eye
+`1772.481, 68.63347, 1684.51`). This save has moved since the supplied screenshot;
+it is not an attribution of every circled pixel or the editor's full residency.
+
+**White points were traced separately.** In an inspected hillside tile, 118 pixels
+were brighter than 0.48 display luminance and 0.10 above their 5x5 local median.
+Removing specular or backlight removed **zero** candidates by the diagnostic's
+0.05-luminance criterion. Removing grass removed 80, small stones 26, and white
+flowers five; these one-at-a-time counts can overlap. Removing the grass texture
+removed only five and increased average candidate brightness. This rules out
+shininess as the main explanation in this tile; it does not identify every point
+in the original screenshot. Coupled with the isolated silhouette test below,
+unresolved lit/shaded blade coverage is a confirmed major contributor.
+
+![White-point baseline](images/white-points-baseline.png)
+![Specular removed: points persist](images/white-points-no-specular.png)
+![Grass removed for attribution only](images/white-points-no-grass.png)
+Unscaled, lossless crops of the same tile. Removing grass is diagnostic only.
+
+**The source experiment filters coverage instead of raising grass lighting.**
+`filtered_grass.gd` builds a second, far-only surface at startup. Each far triangle
+becomes a projected Gaussian coverage approximation using its area, centroid and
+covariance. A half-pixel reconstruction footprint suppresses subpixel on/off
+changes; fractional alpha blends over the actual shaded terrain behind it. This
+is an approximation, not exact integration of triangle occlusion or terrain light.
+Original blade normals/colors and conservative leaf shading remain; no upward
+normal/full-AO brightness substitution, new atlas, temporal history or per-instance
+CPU loop is introduced. Birth and outer-distance coverage fade continuously.
+
+The original near/low surface and original nearby shadow casters remain. Far
+LOD error thresholds change from 0.12/0.20 to 0.06/0.10; keeping the old thresholds
+missed much of the visibly distant 72-triangle tier. An earlier-LOD-only control
+separates that effect from filtering. This applies to ground-cover grass only;
+other vegetation, small stones, palette previews, density and world identity stay
+unchanged. No native build or export was made. Global antialiasing stays at 2x MSAA.
+
+![Baseline field](images/filter-before.png)
+![Filtered far grass](images/filter-after.png)
+Matched source camera, lighting, time and population. These inspected images show
+softer distant clumps without the rejected broad bright band. They are not user
+approval. [Normal source startup](images/filter-source.png) also exercises the
+production surface and uniform setup; its paused startup HUD is not an FPS result.
+
+![Sideways motion: baseline above, filtered below](images/filter-motion.webp)
+1.6 m continuous sideways camera travel, captured at 30 fps; unscaled 256x96
+portions of retained 640x160 frames. The [forward/turn comparison](images/filter-route.webp)
+covers 25.5 m with an 11.5-degree turn, sampled every eighth rendered frame at
+60 Hz. Actors and streaming are paused for matched rendering; this is not physical
+car handling, normal streaming or an endurance qualification. Selected frames
+across both replays and the source context were visually inspected.
+
+| Sideways crop measurement | Baseline | Earlier opaque LOD | Filtered far grass |
+| --- | ---: | ---: | ---: |
+| Mean display luminance | 0.400994 | 0.401904 | 0.402670 |
+| Bright local-contrast pixels / frame | 355.6 | 154.8 | 73.7 |
+| Dark local-contrast pixels / frame | 2668.9 | 1961.3 | 617.9 |
+| Best horizontal-alignment residual | 0.023403 | 0.018253 | 0.012093 |
+
+The filtered crop has 79.3% fewer bright and 76.8% fewer dark high-contrast pixels,
+with +0.42% mean luminance. These are descriptive crop statistics, **not a
+percentage of all gameplay flicker**. They include other plants/stones, real motion,
+occlusion and contrast. The near view, including lighting, is byte-identical.
+All 77,660 cover instances, removal state, native pages/transform allocations and
+the canonical save hash are preserved.
+
+**Cost remains an open requirement.** The final interleaved 1080p/RTX 4050 Laptop
+replay excludes image readback/analysis from timing:
+
+| Cost | Baseline | Filtered |
+| --- | ---: | ---: |
+| GPU median | 12.865 ms | 12.975 ms |
+| GPU p95 | 14.149 ms | 14.873 ms |
+| CPU render median | 3.069 ms | 3.208 ms |
+| Draw calls | 2176 | 2326 |
+
+Peak process RAM was 3.80 GiB and dedicated GPU allocation 1.64 GiB, within the
+existing limits. The extra surface adds 150 draws here; earlier LODs reduce geometry.
+The +0.724 ms pooled GPU-tail increase **fails the previous 0.3 ms criterion**.
+Paired tail increments were +0.260/+0.520/+1.325 ms. A passing runner means
+fixture/source/save/resource checks passed, not that the cost target passed.
+Do not advertise this as free, universally stable, or fully qualified performance.
+
+The TAA control also softened the image, but was global, visibly blurred motion,
+and its run exceeded the RAM ceiling (6.10 GiB). It is not enabled. A combined
+single-surface/alpha-prepass trial failed full near-image parity, retained the
+extra draw count and worsened timings; it is not used. Invalid custom-attribute,
+LOD-buffer and shader prototypes, plus the first source integration's missing
+shadow-surface entry, are retained as failed evidence. The corrected normal-source
+run `20261127T121058080923Z` passes 31 fixture assertions with no engine errors.
+See [inputs, measurements, failed runs and source identities](filter-evidence.json).
+The historical cause-loader regression `20261127T122513602769Z` also passes
+30 assertions after explicitly restoring its opaque baseline; the new far wind
+shader cannot silently contaminate those older paired controls.
+
+Remaining: qualify the GPU/frame tails, normal gameplay/streaming, close-to-far
+transitions at other FOVs/resolutions, terrain/light variation and weaker hardware;
+trace residual other-species/stone artifacts without hiding density. Return to
+per-page submission/pass costs if retaining this representation; the global
+alpha-prepass experiment did not remove them. Player review is pending. Earlier
+rejected comparisons below remain historical evidence, not accepted fixes.
+
+Reproduce the source comparison read-only:
+
+```powershell
+python tools/run_godot_check.py vegetation_reconstruction --isolated-render --timeout 300 --require "VEGETATION_RECONSTRUCTION failures=0" -- --stability-source-slot=Homestead_Valley --early
+python tools/analyze_vegetation_reconstruction.py reports/checks/<owned-run>
+```
+
+`--attribution-only` isolates white-point sources. `--shader-only --early` checks
+the production coverage shader; `--single` preserves the rejected alternative for
+diagnosis. The TAA control is selected without those mode flags. All outputs use
+the admitted/receipt-owned lifecycle; no player world is copied or written.
 
 ## Far-LOD cause isolation — 2026-11-27
 
