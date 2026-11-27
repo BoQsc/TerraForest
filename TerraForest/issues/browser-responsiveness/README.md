@@ -401,3 +401,26 @@ requires its own reproduction; no production-renderer leak was observed.
 
 Final source preparation passes and its ready record is current. Verification
 leaves all 5,592 fixture files unchanged (lock files excluded).
+
+
+## Object mesh preparation — 2026-11-27
+
+Reusing source bounds, arrays and texture images cuts explicit renderer surface
+reads from 1,202 to 441. The rendered preparation sample improves **10.1 to
+2.7 s**; a matched saved-world load improves **39.4 to 33.4 s**. All 110 mesh
+buffer/LOD fingerprints and four comparison PNGs match exactly; 238 checks pass.
+Saved-world files remain unchanged and all 4,750 objects load.
+
+Whole generation remains variable: **135.9/123.4 s** in the first pair and
+**117.5/130.5 s** in the original-code control/optimized repeat. No reliable
+end-to-end generation gain is claimed. The first optimized save has a real
+coastal-water quantity mismatch; its terrain, structures and map pixels match.
+The optimized repeat passes the unchanged saved-water comparison, but the first
+failure remains unresolved and retained. Do not describe generation as fully
+regression-free. Return to controlled water admission/settlement reproduction
+and repeated full snapshot comparisons before closing that requirement.
+
+[Evidence, precise scope and remaining gates](../../docs/WORLD_STARTUP_ARCHITECTURE.md#reusing-object-mesh-source-reads--2026-11-27).
+This is an engineering improvement, not world-quality or final-package approval.
+
+Final source preparation passes; its reusable ready record is current.

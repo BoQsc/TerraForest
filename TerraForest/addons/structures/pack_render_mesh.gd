@@ -10,6 +10,18 @@ static var shared_materials: Dictionary={}
 static var shared_layers: Dictionary={}
 static var shared_size:=Vector2i.ZERO
 static var shared_mipmaps:=false
+static var preparation_profile:Dictionary={"surface_reads":0,"surface_read_us":0,"lod_calls":0,"lod_us":0}
+
+static func read_surface(source:Mesh,index:int)->Dictionary:
+	var began:=Time.get_ticks_usec()
+	var data:=RenderingServer.mesh_get_surface(source.get_rid(),index)
+	preparation_profile.surface_reads+=1;preparation_profile.surface_read_us+=Time.get_ticks_usec()-began
+	return data
+
+static func source_image(texture:Texture2D,images:Dictionary)->Image:
+	if texture==null:return null
+	if not images.has(texture):images[texture]=texture.get_image()
+	return images[texture]
 const PARAMETERS:="""
 uniform sampler2DArray surfaces : source_color, filter_linear_mipmap, repeat_enable;
 void fragment() {
@@ -72,35 +84,44 @@ static func supported(material: Material, arrays: Array) -> bool:
 static func prepare(source: Mesh) -> Mesh:
 	if cache.has(source): return cache[source]
 	if not source is ArrayMesh or source.get_blend_shape_count()>0 or source.get_surface_count()<2 or source.shadow_mesh!=null: return source
+	# Renderer reads can synchronize with the GPU. Keep only the bounds from
+	# the existing LOD inspection; re-reading full buffers for bounds is wasteful.
+	var surface_bounds:Array[AABB]=[]
 	for index in source.get_surface_count():
-		if not RenderingServer.mesh_get_surface(source.get_rid(),index).get("lods",{}).is_empty(): return source
+		var data:=read_surface(source,index)
+		if not data.get("lods",{}).is_empty(): return source
+		surface_bounds.append(data.aabb)
 	# Coincident one-/two-sided authored surfaces rely on the original material
 	# ordering (for example the inner and outer fabric of a lamp shade). Shared
 	# materials change renderer sorting, so keep that mesh's materials intact.
 	for index in source.get_surface_count():
 		var material:=source.surface_get_material(index)
 		if not material is StandardMaterial3D: continue
-		var bounds: AABB=RenderingServer.mesh_get_surface(source.get_rid(),index).aabb
+		var bounds: AABB=surface_bounds[index]
 		for other in range(index+1,source.get_surface_count()):
 			var other_material:=source.surface_get_material(other)
 			if not other_material is StandardMaterial3D or material.cull_mode==other_material.cull_mode: continue
-			var other_bounds: AABB=RenderingServer.mesh_get_surface(source.get_rid(),other).aabb
+			var other_bounds: AABB=surface_bounds[other]
 			var overlap:=bounds.intersection(other_bounds).get_volume()
 			if overlap>0 and overlap>=.9*maxf(bounds.get_volume(),other_bounds.get_volume()): return finish_mesh(source,source as ArrayMesh)
 	var groups: Dictionary={};var retained: Array[int]=[]
+	# These caches live for this synchronous preparation call only. No new
+	# cross-call invalidation assumptions or persistent image copies are needed.
+	var arrays_by_surface:Array[Array]=[];var source_images:Dictionary={}
 	var width:=shared_size.x if shared_texture!=null else 0;var height:=shared_size.y if shared_texture!=null else 0;var mipmaps:=shared_mipmaps if shared_texture!=null else false
 	# Preserve image resolution, UV wrapping and filtering instead of resampling.
 	for index in source.get_surface_count():
 		if width!=0: break
 		var material: Material=source.surface_get_material(index)
 		if material is StandardMaterial3D and material.albedo_texture!=null:
-			var image: Image=material.albedo_texture.get_image()
+			var image: Image=source_image(material.albedo_texture,source_images)
 			if image!=null and not image.is_compressed(): width=image.get_width();height=image.get_height();mipmaps=image.has_mipmaps();break
 	if width==0: width=4;height=4
 	for index in source.get_surface_count():
 		var arrays:=source.surface_get_arrays(index);var material: Material=source.surface_get_material(index)
+		arrays_by_surface.append(arrays)
 		if source.surface_get_primitive_type(index)!=Mesh.PRIMITIVE_TRIANGLES or not supported(material,arrays): retained.append(index);continue
-		var image: Image=material.albedo_texture.get_image() if material.albedo_texture!=null else null
+		var image: Image=source_image(material.albedo_texture,source_images)
 		if material.albedo_texture!=null and (image==null or not (material.albedo_texture is ImageTexture or material.albedo_texture is CompressedTexture2D)): retained.append(index);continue
 		if image!=null and (image.is_compressed() or image.get_width()!=width or image.get_height()!=height or image.has_mipmaps()!=mipmaps or image.get_format() not in [Image.FORMAT_RGB8,Image.FORMAT_RGBA8]): retained.append(index);continue
 		var key: int=material.cull_mode
@@ -119,10 +140,10 @@ static func prepare(source: Mesh) -> Mesh:
 		if use_shared: layers=shared_layers
 		var vertices:=PackedVector3Array();var normals:=PackedVector3Array();var uv:=PackedVector2Array();var pbr:=PackedVector2Array();var colors:=PackedColorArray();var faces:=PackedInt32Array()
 		for surface: int in indices:
-			var arrays:=source.surface_get_arrays(surface);var material: StandardMaterial3D=source.surface_get_material(surface)
+			var arrays:=arrays_by_surface[surface];var material: StandardMaterial3D=source.surface_get_material(surface)
 			var texture: Texture2D=material.albedo_texture
 			if not layers.has(texture):
-				var image: Image=texture.get_image().duplicate() if texture!=null else Image.create(width,height,mipmaps,Image.FORMAT_RGBA8)
+				var image: Image=source_image(texture,source_images).duplicate() if texture!=null else Image.create(width,height,mipmaps,Image.FORMAT_RGBA8)
 				if texture==null: image.fill(Color.WHITE)
 				else: image.convert(Image.FORMAT_RGBA8) # RGB8 -> RGBA8 adds opaque alpha, retaining RGB bytes.
 				layers[texture]=images.size();images.append(image)
@@ -146,7 +167,7 @@ static func prepare(source: Mesh) -> Mesh:
 		if not use_shared: pbr_material.shader=common_shader(key);pbr_material.set_shader_parameter("surfaces",textures)
 		result.surface_set_material(result.get_surface_count()-1,pbr_material)
 	for index: int in retained:
-		result.add_surface_from_arrays(source.surface_get_primitive_type(index),source.surface_get_arrays(index));result.surface_set_material(result.get_surface_count()-1,source.surface_get_material(index))
+		result.add_surface_from_arrays(source.surface_get_primitive_type(index),arrays_by_surface[index]);result.surface_set_material(result.get_surface_count()-1,source.surface_get_material(index))
 	result.resource_name=source.resource_name;result.custom_aabb=source.custom_aabb
 	return finish_mesh(source,result)
 
@@ -159,6 +180,7 @@ static func finish_mesh(source: Mesh,mesh: ArrayMesh) -> Mesh:
 		var arrays:=mesh.surface_get_arrays(index)
 		if (material is ShaderMaterial and not shaders.values().has(material.shader)) or (arrays[Mesh.ARRAY_BONES]!=null and not arrays[Mesh.ARRAY_BONES].is_empty()):
 			cache[source]=mesh;return mesh
+	var began:=Time.get_ticks_usec()
 	var importer:=ImporterMesh.from_mesh(mesh)
 	importer.generate_lods(60,0,[])
 	var result:=importer.get_mesh()
@@ -167,4 +189,5 @@ static func finish_mesh(source: Mesh,mesh: ArrayMesh) -> Mesh:
 	var levels:=0
 	for index in importer.get_surface_count(): levels+=importer.get_surface_lod_count(index)
 	result.set_meta("pack_lod_levels",levels)
+	preparation_profile.lod_calls+=1;preparation_profile.lod_us+=Time.get_ticks_usec()-began
 	cache[source]=result;return result

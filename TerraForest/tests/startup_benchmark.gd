@@ -83,6 +83,7 @@ func run()->void:
   result.resources=root.get_node("WorldSession").stage_timings
   result.readiness=preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(game)
   result.model_horizon=game.structures.model_horizon_stats()
+  result.pack_mesh_profile=load("res://addons/structures/pack_render_mesh.gd").preparation_profile.duplicate()
   if ready:
    if through_control:
     var controlled:bool=await wait_for(func():return not game.loading_active and not game.waiting_spawn and not game.needs_floor_spawn and not game.player_view.entry.pending and not game.player_view.entry.blocks_actions(),60)

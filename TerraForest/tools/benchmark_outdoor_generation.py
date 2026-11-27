@@ -109,6 +109,9 @@ def main():
             (folder/(name+'.gd.txt')).write_bytes(path.read_bytes())
         record['planning_sources']['startup_index']=hashlib.sha256(INDEX.read_bytes()).hexdigest()
         (folder/'startup_index.benchmark.json').write_bytes(INDEX.read_bytes())
+    pack_mesh = ROOT/'addons/structures/pack_render_mesh.gd'
+    record['pack_mesh_sha256'] = hashlib.sha256(pack_mesh.read_bytes()).hexdigest()
+    (folder/'pack_render_mesh.gd.txt').write_bytes(pack_mesh.read_bytes())
     (folder/'run.json').write_text(json.dumps(record, indent=2)+'\n')
     if not args.load_slot:register_worlds(command, folder)
     print('OUTDOOR_BENCHMARK ' + str(folder), flush=True)
@@ -142,6 +145,7 @@ def main():
         metrics = read(folder/'result.json')
         result['first_ready_seconds'] = metrics['first_ready_ms']/1000
         result['model_horizon'] = metrics.get('model_horizon', {})
+        result['pack_mesh_profile'] = metrics.get('pack_mesh_profile', {})
         if 'map' in metrics:
             result['map_ready_seconds'] = metrics['map']['milliseconds']/1000
             result['map_cache_verified'] = metrics['map']['ok']

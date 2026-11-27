@@ -9635,3 +9635,27 @@ Post-reboot source-launch acceptance still depends on the user's restart.
 
 Final source preparation passes and its ready record is current. Verification
 leaves all 5,592 fixture files unchanged (lock files excluded).
+
+
+### Object mesh preparation and generation consistency — 2026-11-27
+
+The scoped mesh improvement is complete: explicit renderer reads **1,202 to
+441**, preparation **10.1 to 2.7 s**, and one matched saved-world load **39.4 to
+33.4 s**. All 110 mesh/LOD fingerprints and four PNG files match; 238 rendered
+checks pass. Full generation timing remains variable, including a slower
+optimized repeat, so a stable total-generation speedup is not established.
+
+**Still open:** one optimized generation differs in saved coastal-water quantity
+although terrain, structures and map pixels match. The original-code control and
+optimized repeat pass the unchanged water test; this does not close the retained
+failure or establish causality. Water admission/settlement timing needs a
+controlled reproduction and repeated expanded-snapshot equality before claiming
+deterministic, regression-free generation. This is deferred from the bounded
+mesh change because its trigger is not isolated, not because its acceptance
+standard changed. Do not ignore wet regions or weaken quantity/contact/vacancy
+checks. Existing cold-launch, first-control, foreground and package gates remain.
+
+[Receipts, failed attempt, control and repeat](WORLD_STARTUP_ARCHITECTURE.md#reusing-object-mesh-source-reads--2026-11-27).
+All compared fixture files remain unchanged. No new visual acceptance is claimed.
+
+Final source preparation passes; its reusable ready record is current.

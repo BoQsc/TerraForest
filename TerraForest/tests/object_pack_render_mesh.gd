@@ -6,9 +6,11 @@ var checks:=0
 var failures:=0
 var folder:=""
 var pixel_comparison: Dictionary={}
+var reference:=""
 func _initialize() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--check-evidence-dir="): folder=arg.trim_prefix("--check-evidence-dir=")
+		if arg.begins_with("--mesh-reference="): reference=arg.trim_prefix("--mesh-reference=")
 	run.call_deferred()
 func check(ok: bool,label: String) -> void:
 	checks+=1
@@ -22,11 +24,17 @@ func run() -> void:
 	check(Packs.discover(),"pack discovery succeeds")
 	var sources: Array=[]
 	for row: Dictionary in Packs.objects.values(): sources.append(load(row.directory+"/models/"+row.id+".tres"))
+	var configure_started:=Time.get_ticks_usec()
 	RenderMesh.configure(sources)
+	var configure_us:=Time.get_ticks_usec()-configure_started
+	var prepare_us:=0;var fingerprints:Dictionary={}
 	var before:=0;var after:=0;var lod_levels:=0
 	for row: Dictionary in Packs.objects.values():
 		var source: ArrayMesh=load(row.directory+"/models/"+row.id+".tres")
+		var began:=Time.get_ticks_usec()
 		var mesh: Mesh=RenderMesh.prepare(source)
+		prepare_us+=Time.get_ticks_usec()-began
+		fingerprints[row.key]=fingerprint(mesh)
 		before+=source.get_surface_count();after+=mesh.get_surface_count()
 		lod_levels+=int(mesh.get_meta("pack_lod_levels",0))
 		check(mesh.get_aabb().is_equal_approx(source.get_aabb()) and triangle_count(source)==triangle_count(mesh),"unchanged bounds and triangle count: "+row.key)
@@ -39,10 +47,24 @@ func run() -> void:
 			check(preserved,"unsupported material retained exactly: "+row.key+"/"+str(index))
 	check(after<before,"material surfaces are actually consolidated")
 	check(lod_levels>0,"distance-based index LODs are present without replacing full-detail surfaces")
+	if not reference.is_empty():
+		var prior=JSON.parse_string(FileAccess.get_file_as_string(reference))
+		check(prior is Dictionary and prior.get("fingerprints",{})==fingerprints,"all render buffers, indices and LODs match the baseline exactly")
 	print("PACK_RENDER_SURFACES before=",before," after=",after)
 	if DisplayServer.get_name()!="headless": await compare_views()
-	FileAccess.open(folder.path_join("render_mesh.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"source_surfaces":before,"render_surfaces":after,"lod_levels":lod_levels,"pixels":pixel_comparison}))
+	FileAccess.open(folder.path_join("render_mesh.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"source_surfaces":before,"render_surfaces":after,"lod_levels":lod_levels,"pixels":pixel_comparison,"configure_us":configure_us,"prepare_us":prepare_us,"profile":RenderMesh.preparation_profile,"fingerprints":fingerprints}))
 	print("OBJECT_PACK_RENDER_MESH checks=",checks," failures=",failures);quit(1 if failures else 0)
+func fingerprint(mesh:Mesh)->String:
+	var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256)
+	for index in mesh.get_surface_count():
+		var surface:Dictionary=RenderingServer.mesh_get_surface(mesh.get_rid(),index)
+		# Material RIDs are process-local. The existing visual/material checks
+		# cover them; compare all vertex/index/LOD/bounds data byte for byte here.
+		surface.erase("material")
+		var ordered:Dictionary={};var keys:Array=surface.keys();keys.sort()
+		for key in keys:ordered[key]=surface[key]
+		hash.update(var_to_bytes(ordered))
+	return hash.finish().hex_encode()
 func compare_views() -> void:
 	var examples:=["homestead_07/chessboard","homestead_10/bread_basket","homestead_10/china_cabinet","homestead_07/floor_lamp","outdoor_01/bird_nest","outdoor_01/trash_can"]
 	var original:=Image.create(1152,768,false,Image.FORMAT_RGB8);var combined:=Image.create(1152,768,false,Image.FORMAT_RGB8)

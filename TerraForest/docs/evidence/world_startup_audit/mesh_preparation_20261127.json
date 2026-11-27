@@ -1,0 +1,447 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted local analysis for the requested generation/loading optimization. New original code is 0BSD; no imported material.",
+  "date": "2026-11-27",
+  "implementation": "Reuse per-mesh surface bounds, arrays and source images during synchronous pack render preparation; release temporary data after the call. Existing persistent cache, materials, LOD algorithm, collision metadata and world generation rules are unchanged.",
+  "scope": "Fresh source processes with retained OS/import/plan/derived caches, Godot 4.7.2 Forward+, RTX 4050. Full world measurements use normal seed 1703, generator 29, default Frontier expedition and ordinary actors at 1920x1080/60 FPS on an isolated desktop. Loading-ready precedes introduction completion/player control.",
+  "runs": [
+    {
+      "path": "reports/startup_optimization/loading_before_20261127T062610444543Z/run.json",
+      "receipt_sha256": "18765febf5a27a7539ab4cedc8cb9944266f26f4671c0871bc8b87a69219a492",
+      "slot": "StartupBench_9c0924c896234f6d",
+      "pack_mesh_sha256": "4d19b1288590d62251429bfcf05750548ec5f176711c633313e54cf0b9c1898f",
+      "measurements": {
+        "passed": true,
+        "errors": [],
+        "first_ready_seconds": 39.398353,
+        "map_ready_seconds": 1.312108,
+        "map_cache_verified": true,
+        "pack_mesh_profile": {
+          "lod_calls": 109,
+          "lod_us": 2588556,
+          "surface_read_us": 4495962,
+          "surface_reads": 1202
+        },
+        "source_files_unchanged": true
+      },
+      "resources": {
+        "peak_private_commit_bytes": 3972620288,
+        "peak_dedicated_gpu_bytes": 1778012160,
+        "within_sampled_limits": true,
+        "checks": {
+          "ram": {
+            "bytes": 3972620288,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1778012160,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        }
+      }
+    },
+    {
+      "path": "reports/startup_optimization/loading_after_20261127T063014583277Z/run.json",
+      "receipt_sha256": "26d24920b7497445396deaa2ef52d57c31fa67c16915357bd352c8b28c44c131",
+      "slot": "StartupBench_9c0924c896234f6d",
+      "pack_mesh_sha256": "e459b92ad0c7c9972365f9011bc3d88b2c22d63df0326e6c89e3ef190a453dee",
+      "measurements": {
+        "passed": true,
+        "errors": [],
+        "first_ready_seconds": 33.393654999999995,
+        "map_ready_seconds": 1.306157,
+        "map_cache_verified": true,
+        "pack_mesh_profile": {
+          "lod_calls": 109,
+          "lod_us": 2279134,
+          "surface_read_us": 1492151,
+          "surface_reads": 441
+        },
+        "source_files_unchanged": true
+      },
+      "resources": {
+        "peak_private_commit_bytes": 3994558464,
+        "peak_dedicated_gpu_bytes": 1778012160,
+        "within_sampled_limits": true,
+        "checks": {
+          "ram": {
+            "bytes": 3994558464,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1778012160,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        }
+      }
+    },
+    {
+      "path": "reports/startup_optimization/planning_after_20261127T060224039905Z/run.json",
+      "receipt_sha256": "530da34a07811b2ba6bf7cf225cf63d19a58f503d9faea0c0f8562ebc081efa3",
+      "slot": "StartupBench_cfac2ce4695c43a7",
+      "pack_mesh_sha256": null,
+      "measurements": {
+        "passed": true,
+        "errors": [],
+        "first_ready_seconds": 135.871051,
+        "creating_seconds": 105.88469,
+        "planning_seconds": 16.124631,
+        "initialization_seconds": 30.745436,
+        "save_seconds": 10.803091,
+        "map_seconds": 4.9154409999999995,
+        "map_ready_seconds": 0.02092,
+        "map_cache_verified": true,
+        "placements_identical": true,
+        "skipped_identical": true,
+        "generated_content_matches": {
+          "building_parking": true,
+          "container_locks": true,
+          "door_reinforcement": true,
+          "exploration": true,
+          "house_lights": true,
+          "house_sleepers": true,
+          "location_originals": true,
+          "plan": true,
+          "generated_water": true
+        },
+        "map_pixels_match": {
+          "Blocks": true,
+          "Objects": true,
+          "Water": true,
+          "terrain": true
+        }
+      },
+      "resources": {
+        "peak_private_commit_bytes": 4122836992,
+        "peak_dedicated_gpu_bytes": 1775484928,
+        "within_sampled_limits": true,
+        "checks": {
+          "ram": {
+            "bytes": 4122836992,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1775484928,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        }
+      }
+    },
+    {
+      "path": "reports/startup_optimization/planning_after_20261127T063218350274Z/run.json",
+      "receipt_sha256": "544ecaa11a19c2b2a2e27b0112bcc0de4b5460daf0d5fe1f52ab4a613ffd5d32",
+      "slot": "StartupBench_537c92e020f34545",
+      "pack_mesh_sha256": "e459b92ad0c7c9972365f9011bc3d88b2c22d63df0326e6c89e3ef190a453dee",
+      "measurements": {
+        "passed": true,
+        "errors": [],
+        "first_ready_seconds": 123.430768,
+        "creating_seconds": 94.848373,
+        "planning_seconds": 15.705827,
+        "initialization_seconds": 11.569843,
+        "save_seconds": 10.707181,
+        "map_seconds": 13.198371,
+        "map_ready_seconds": 0.020132999999999998,
+        "map_cache_verified": true,
+        "pack_mesh_profile": {
+          "lod_calls": 218,
+          "lod_us": 1014474,
+          "surface_read_us": 278013,
+          "surface_reads": 882
+        },
+        "placements_identical": true,
+        "skipped_identical": true,
+        "generated_content_matches": {
+          "building_parking": true,
+          "container_locks": true,
+          "door_reinforcement": true,
+          "exploration": true,
+          "house_lights": true,
+          "house_sleepers": true,
+          "location_originals": true,
+          "plan": true,
+          "generated_water": true
+        },
+        "map_pixels_match": {
+          "Blocks": true,
+          "Objects": true,
+          "Water": true,
+          "terrain": true
+        }
+      },
+      "resources": {
+        "peak_private_commit_bytes": 4114407424,
+        "peak_dedicated_gpu_bytes": 1777975296,
+        "within_sampled_limits": true,
+        "checks": {
+          "ram": {
+            "bytes": 4114407424,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1777975296,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        }
+      }
+    },
+    {
+      "path": "reports/startup_optimization/planning_before_20261127T064406287893Z/run.json",
+      "receipt_sha256": "780aa4f9a1dcf61f6b54d77b3830d94e31c6b49702d6916cdff6405605d9edad",
+      "slot": "StartupBench_44d00100a07e4e8f",
+      "pack_mesh_sha256": "4d19b1288590d62251429bfcf05750548ec5f176711c633313e54cf0b9c1898f",
+      "measurements": {
+        "passed": true,
+        "errors": [],
+        "first_ready_seconds": 117.45200299999999,
+        "creating_seconds": 87.537942,
+        "planning_seconds": 15.529518,
+        "initialization_seconds": 11.995778,
+        "save_seconds": 11.256666,
+        "map_seconds": 4.898398,
+        "map_ready_seconds": 0.019861,
+        "map_cache_verified": true,
+        "pack_mesh_profile": {
+          "lod_calls": 218,
+          "lod_us": 1146173,
+          "surface_read_us": 853270,
+          "surface_reads": 2404
+        },
+        "placements_identical": true,
+        "skipped_identical": true,
+        "generated_content_matches": {
+          "building_parking": true,
+          "container_locks": true,
+          "door_reinforcement": true,
+          "exploration": true,
+          "house_lights": true,
+          "house_sleepers": true,
+          "location_originals": true,
+          "plan": true,
+          "generated_water": true
+        },
+        "map_pixels_match": {
+          "Blocks": true,
+          "Objects": true,
+          "Water": true,
+          "terrain": true
+        }
+      },
+      "resources": {
+        "peak_private_commit_bytes": 4119539712,
+        "peak_dedicated_gpu_bytes": 1777975296,
+        "within_sampled_limits": true,
+        "checks": {
+          "ram": {
+            "bytes": 4119539712,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1777975296,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        }
+      }
+    },
+    {
+      "path": "reports/startup_optimization/planning_after_20261127T072601994592Z/run.json",
+      "receipt_sha256": "8f338f44a8ce705e55c032dcc5e7771bdc60ecefb89533037ca82fbb01555846",
+      "slot": "StartupBench_d019f8fe43284175",
+      "pack_mesh_sha256": "e459b92ad0c7c9972365f9011bc3d88b2c22d63df0326e6c89e3ef190a453dee",
+      "measurements": {
+        "passed": true,
+        "errors": [],
+        "first_ready_seconds": 130.521028,
+        "creating_seconds": 90.211158,
+        "planning_seconds": 16.73427,
+        "initialization_seconds": 14.688275,
+        "save_seconds": 10.377972,
+        "map_seconds": 4.930461,
+        "map_ready_seconds": 0.019806999999999998,
+        "map_cache_verified": true,
+        "pack_mesh_profile": {
+          "lod_calls": 218,
+          "lod_us": 4329284,
+          "surface_read_us": 2692197,
+          "surface_reads": 882
+        },
+        "placements_identical": true,
+        "skipped_identical": true,
+        "generated_content_matches": {
+          "building_parking": true,
+          "container_locks": true,
+          "door_reinforcement": true,
+          "exploration": true,
+          "house_lights": true,
+          "house_sleepers": true,
+          "location_originals": true,
+          "plan": true,
+          "generated_water": true
+        },
+        "map_pixels_match": {
+          "Blocks": true,
+          "Objects": true,
+          "Water": true,
+          "terrain": true
+        }
+      },
+      "resources": {
+        "peak_private_commit_bytes": 4103516160,
+        "peak_dedicated_gpu_bytes": 1760243712,
+        "within_sampled_limits": true,
+        "checks": {
+          "ram": {
+            "bytes": 4103516160,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1760243712,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        }
+      }
+    }
+  ],
+  "mesh_comparison": [
+    {
+      "checks": 237,
+      "configure_us": 505986,
+      "failures": 0,
+      "lod_levels": 735,
+      "pixels": {
+        "max_channel_error": 1,
+        "mean_channel_error": 7.87428867669753e-05,
+        "samples": 2654208
+      },
+      "prepare_us": 10067891,
+      "profile": {
+        "lod_calls": 109,
+        "lod_us": 2210569,
+        "surface_read_us": 3880079,
+        "surface_reads": 1202
+      },
+      "render_surfaces": 208,
+      "source_surfaces": 442,
+      "mesh_count": 110,
+      "path": "reports/startup_optimization/mesh_before_20261127/render_mesh.json",
+      "sha256": "92e595f86a7960712b219ff0ca619662f4ee09fea713ef6d732b7bf94e54d64d",
+      "source_sha256": "4d19b1288590d62251429bfcf05750548ec5f176711c633313e54cf0b9c1898f",
+      "images_sha256": {
+        "combined_materials.png": "fd5a16f35c19c10f0126d78f8a69e1e7ff0c77c6eb14ea06a306b72e074238a5",
+        "lod_render.png": "58c3125ff3c825b15110f6e6f75e986a8bc7955d8bb034dd1b2ce593bbbaa707",
+        "lod_source.png": "d0aa49605f5b3ecb67e22fd49617876fa8120d96f6d4412f5838afb453272a71",
+        "source_materials.png": "63c50b2ffe2fcf1bd170dd9b9705617095d7394f38914bf5c7d2466b228c4165"
+      }
+    },
+    {
+      "checks": 238,
+      "configure_us": 90191,
+      "failures": 0,
+      "lod_levels": 735,
+      "pixels": {
+        "max_channel_error": 1,
+        "mean_channel_error": 7.87428867669753e-05,
+        "samples": 2654208
+      },
+      "prepare_us": 2730204,
+      "profile": {
+        "lod_calls": 109,
+        "lod_us": 1111716,
+        "surface_read_us": 534816,
+        "surface_reads": 441
+      },
+      "render_surfaces": 208,
+      "source_surfaces": 442,
+      "mesh_count": 110,
+      "path": "reports/startup_optimization/mesh_after_20261127/render_mesh.json",
+      "sha256": "ba54d587caf3decea385a1bd6cc0f361fcda7c2744de7bd6fda03b1f18e00a84",
+      "source_sha256": "e459b92ad0c7c9972365f9011bc3d88b2c22d63df0326e6c89e3ef190a453dee",
+      "images_sha256": {
+        "combined_materials.png": "fd5a16f35c19c10f0126d78f8a69e1e7ff0c77c6eb14ea06a306b72e074238a5",
+        "lod_render.png": "58c3125ff3c825b15110f6e6f75e986a8bc7955d8bb034dd1b2ce593bbbaa707",
+        "lod_source.png": "d0aa49605f5b3ecb67e22fd49617876fa8120d96f6d4412f5838afb453272a71",
+        "source_materials.png": "63c50b2ffe2fcf1bd170dd9b9705617095d7394f38914bf5c7d2466b228c4165"
+      }
+    }
+  ],
+  "verification": {
+    "render_buffers_and_lods_identical": true,
+    "all_four_png_files_identical": true,
+    "terrain_and_structures_identical": true,
+    "saved_water_gate": "First optimized generation failed; original-code control and optimized repeat passed against unchanged acceptance. The transient quantity mismatch remains unresolved.",
+    "first_failure_total_ml": [
+      27362980416,
+      27360855499
+    ],
+    "first_failure_changed_regions": 12,
+    "first_failure_geometry_density_contacts_structures_and_vacancies_equal": true,
+    "strict_water_acceptance_unchanged": true,
+    "diagnostic_receipt": "reports/startup_optimization/mesh_verification_20261127/control_verification.json",
+    "fixture_files_unchanged": true,
+    "repeat": {
+      "receipt": "reports/startup_optimization/mesh_verification_20261127/repeat_verification.json",
+      "exit_code": 0,
+      "files_checked": 5592,
+      "source_files_unchanged": {
+        "StartupBench_44d00100a07e4e8f": true,
+        "StartupBench_d019f8fe43284175": true
+      },
+      "water": {
+        "empty_ocean_caps_after": [
+          7667229137,
+          7667229138,
+          7667229139,
+          7667229140,
+          7835001296,
+          7835001297,
+          7835001298,
+          7835001299
+        ],
+        "empty_ocean_caps_before": [],
+        "ok": true,
+        "raw_bytes_equal": false
+      }
+    },
+    "first_failure_archive": "reports/startup_optimization/planning_after_20261127T063218350274Z/world.archive.json",
+    "overall_generation_no_regression_qualified": false,
+    "source_preparation": {
+      "receipt": "reports/startup_optimization/mesh_verification_20261127/preparation_verification.json",
+      "passed": true,
+      "current": true,
+      "seconds": 38.3056095999782
+    },
+    "startup_dependency_index_current": true,
+    "benchmark_python_syntax_valid": true
+  },
+  "limitations": [
+    "One matched saved-world load improved 39.398 to 33.394 s. End-to-end generation was 135.871/123.431 s in the first pair and 117.452/130.521 s in the control/repeat pair. A reliable whole-generation gain is not established.",
+    "First optimized generation rebuilt the water map cache (13.198 s versus baseline 4.915 s), although all four map pixel hashes matched.",
+    "Saved-water equality failed in the first optimized generation. This is a real amount difference, not the previously allowed empty ocean caps. The failure remains retained and the test acceptance was not relaxed.",
+    "No OS-cold, first-player-control, foreground-cadence, packaged-runtime or world-quality acceptance is claimed.",
+    "The optimized repeat matches all saved water content under the existing empty-cap rule (eight extra empty ocean caps), but does not erase the first failed quantity comparison or establish its cause. Ocean admission/settlement timing is a hypothesis, not a proven attribution."
+  ]
+}

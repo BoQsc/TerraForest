@@ -1040,3 +1040,64 @@ receipt; the earlier failures remain visible.
 
 Final source preparation passes and its ready record is current. Verification
 leaves all 5,592 fixture files unchanged (lock files excluded).
+
+
+### Reusing object mesh source reads — 2026-11-27
+
+Pack render preparation now retains surface bounds from its initial LOD scan,
+reuses each surface's arrays, and reads each source texture image once per mesh.
+These temporary caches expire when the synchronous call returns. Existing
+persistent cache behavior, surface eligibility, material ordering, full-detail
+geometry, LOD generation and collision metadata remain unchanged. No world
+recipe, native library or saved-world format changed.
+
+| Scoped measurement | Original | Optimized |
+| --- | ---: | ---: |
+| Rendered pack mesh preparation | 10.068 s | 2.730 s |
+| Explicit renderer surface reads | 1,202 | 441 |
+| Same saved world to loading-ready | 39.398 s | 33.394 s |
+| First Generate-to-ready pair | 135.871 s | 123.431 s |
+| Original-code control / optimized repeat | 117.452 s | 130.521 s |
+
+The rendered comparison passes 238 assertions: all 110 mesh buffer/LOD
+fingerprints match, as do all four comparison PNG files byte for byte. The
+442 authored surfaces still produce 208 render surfaces and 735 LOD levels.
+The load preserves all 4,750 objects, 136 collections, 826 pages and every
+fixture file. Map pixels match in every complete-world run; sampled RAM/VRAM
+remain within their existing budgets. These are fresh source processes with
+retained caches, normal seed 1703/generator 29/default Frontier expedition,
+ordinary actors and the first loading barrier. They are not cold/package or
+first-player-control measurements. The loading pair is an observation, not a
+stable throughput guarantee. The later control reverses the whole-generation
+timing result, so **an overall generation speedup is not established**.
+
+The saved-water gate remains **partially unqualified**. The first optimized run
+matches terrain, structures, placements, baked lake definitions and map pixels,
+but its expanded snapshot has 27,360,855,499 ml versus 27,362,980,416 ml. Twelve
+shared regions differ in water quantity; their geometry, density, contacts,
+structures and vacancies match. This is not the allowed empty ocean-cap
+variation. Its water-map cache also misses, taking 13.198 s versus 4.915 s.
+The original-code control matches the old baseline. The optimized repeat matches
+the control's complete shared water records, catalog and total, with eight
+additional empty ocean caps allowed by the unchanged existing test. **The first
+failure is retained, not converted to a pass.** Timing-sensitive ocean admission
+or settlement is suspected; its exact cause and whether the optimization exposes
+it are not proven. A passing repeat does not establish deterministic generation.
+
+Before qualifying generation as regression-free, reproduce the water discrepancy
+under controlled scheduling, resolve its cause, and pass repeated expanded-water
+comparisons including quantities, contacts and vacancies. Do not relax the gate
+or silently normalize wet regions. Wider seeds, foreground cadence, first control
+and packaged/cold launch retain their separate requirements; no visual approval
+is implied. The measured render-preparation improvement is complete; this water
+consistency requirement remains open.
+
+[Measurements, control, repeat, archived failure and verification receipts](evidence/world_startup_audit/mesh_preparation_20261127.json).
+Reproduce mesh comparisons with `tests/object_pack_render_mesh.gd` and
+`--mesh-reference=<prior render_mesh.json>`; compare complete saves separately
+with `tests/generation_saved_equivalence.gd`. The generation benchmark's ordinary
+content checks alone do not prove expanded saved-water equality. Older owned
+fixtures were hash-verified and cold-retained through the existing lifecycle;
+no player save or native build was changed.
+
+Final source preparation passes; its reusable ready record is current.

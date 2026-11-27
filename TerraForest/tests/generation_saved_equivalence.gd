@@ -32,6 +32,7 @@ func _initialize()->void:
   var water:Dictionary=compare_water(left_water,right_water)
   if not water.ok:failures+=1
   print("SAVED_WATER_EQUIVALENCE ",JSON.stringify(water))
+  if not water.ok:print("WATER_DIAGNOSTICS ",JSON.stringify(water_diagnostics(left_water,right_water)))
  print("GENERATION_SAVED_EQUIVALENCE failures=",failures)
  quit(1 if failures else 0)
 
@@ -104,3 +105,23 @@ func compare_water(a:PackedByteArray,b:PackedByteArray)->Dictionary:
    if not empty_ocean_cap(bb[key]):return result
    result.empty_ocean_caps_after.append(key)
  result.ok=true;return result
+
+func water_diagnostics(a:PackedByteArray,b:PackedByteArray)->Dictionary:
+ var aa:=water_records(a);var bb:=water_records(b);var changed:Array=[];var before:Array=[];var after:Array=[]
+ if aa.is_empty() or bb.is_empty():return {"error":"Water snapshot could not be decoded"}
+ for key in aa:
+  if not bb.has(key):before.append(key)
+  elif aa[key]!=bb[key] and changed.size()<16:
+   var parts:Dictionary={}
+   for part in aa[key]:parts[part]=aa[key][part]==bb[key][part]
+   var ar:PackedByteArray=aa[key].record;var br:PackedByteArray=bb[key].record
+   var quantities:=[0,0];var water_cells:=0;var geometry_cells:=0
+   for cell in 512:
+    var offset:=16+cell*12
+    quantities[0]+=ar.decode_u64(offset+4);quantities[1]+=br.decode_u64(offset+4)
+    if ar.decode_u64(offset+4)!=br.decode_u64(offset+4):water_cells+=1
+    if ar.decode_u32(offset)!=br.decode_u32(offset):geometry_cells+=1
+   changed.append({"key":key,"parts_equal":parts,"headers":[ar.slice(0,16).hex_encode(),br.slice(0,16).hex_encode()],"water_ml":quantities,"changed_water_cells":water_cells,"changed_geometry_cells":geometry_cells,"density_equal":ar.slice(6160)==br.slice(6160)})
+ for key in bb:
+  if not aa.has(key):after.append(key)
+ return {"total_ml":[a.decode_u64(16),b.decode_u64(16)],"catalog_equal":a.slice(32,32+a.decode_u32(8))==b.slice(32,32+b.decode_u32(8)),"changed":changed,"before_only":before,"after_only":after}
