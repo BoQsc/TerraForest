@@ -1,0 +1,161 @@
+{
+  "checks": 20,
+  "failures": 0,
+  "scope": "Diagnostic only: unchanged lighting/geometry, normal wind versus frozen wind while moving the camera. Projection anchors may be occluded. Cost/visual acceptance gates are not evaluated; passing assertions only verify the fixture and preserved source/save. Runtime uses neither the rejected brightening nor this frozen-wind override.",
+  "visual_review": {
+    "synthetic": "Inspected six motion frame pairs. Frozen wind does not improve distant camera-motion residual (ratio 1.00335). Wind is not a sufficient explanation in this fixture.",
+    "world": "Inspected context: changed player-save hash/camera versus earlier trial; nearby rising terrain occludes distant roots. Do not treat projected-root samples as visible far foliage or compare their magnitude with the old scene. World far-visual acceptance remains unqualified."
+  },
+  "world_input": {
+    "camera_origin": "(1498.941, 67.46824, 905.6166)",
+    "materials": 9,
+    "pages_after": [
+      {
+        "bytes": 25472,
+        "pages": 229,
+        "shadows": 41
+      },
+      {
+        "bytes": 303680,
+        "pages": 390,
+        "shadows": 83
+      },
+      {
+        "bytes": 4134720,
+        "pages": 431,
+        "shadows": 47
+      },
+      {
+        "bytes": 3136,
+        "pages": 40,
+        "shadows": 7
+      },
+      {
+        "bytes": 4416,
+        "pages": 62,
+        "shadows": 9
+      },
+      {
+        "bytes": 3584,
+        "pages": 44,
+        "shadows": 3
+      },
+      {
+        "bytes": 35008,
+        "pages": 240,
+        "shadows": 50
+      },
+      {
+        "bytes": 25216,
+        "pages": 223,
+        "shadows": 30
+      },
+      {
+        "bytes": 21184,
+        "pages": 195,
+        "shadows": 40
+      }
+    ],
+    "pages_before": [
+      {
+        "bytes": 25472,
+        "pages": 229,
+        "shadows": 41
+      },
+      {
+        "bytes": 303680,
+        "pages": 390,
+        "shadows": 83
+      },
+      {
+        "bytes": 4134720,
+        "pages": 431,
+        "shadows": 47
+      },
+      {
+        "bytes": 3136,
+        "pages": 40,
+        "shadows": 7
+      },
+      {
+        "bytes": 4416,
+        "pages": 62,
+        "shadows": 9
+      },
+      {
+        "bytes": 3584,
+        "pages": 44,
+        "shadows": 3
+      },
+      {
+        "bytes": 35008,
+        "pages": 240,
+        "shadows": 50
+      },
+      {
+        "bytes": 25216,
+        "pages": 223,
+        "shadows": 30
+      },
+      {
+        "bytes": 21184,
+        "pages": 195,
+        "shadows": 40
+      }
+    ],
+    "population": 88725,
+    "sha256": "d4fb3582ec5cd7da45db27ef4e72842daefe7b25592ac50369beafc59171220a",
+    "slot": "Homestead_Valley"
+  },
+  "woodland.gdshader": "e1e771a0c09d80fc6350fb170b4703417c2aae7c52e4224838ef693b8a289e20",
+  "woodland_pre_stability.gdshader": "e1e771a0c09d80fc6350fb170b4703417c2aae7c52e4224838ef693b8a289e20",
+  "receipt": "reports/checks/20261127T104035438622Z/run.json",
+  "synthetic_far_motion": [
+    {
+      "far": 0.137025559542529,
+      "middle": 0.187376791809254,
+      "name": "synthetic_before",
+      "near": 0.344053931081851,
+      "samples": {
+        "far": 38080,
+        "middle": 38080,
+        "near": 38080
+      }
+    },
+    {
+      "far": 0.137485218376957,
+      "middle": 0.188655042498015,
+      "name": "synthetic_after",
+      "near": 0.331817888201397,
+      "samples": {
+        "far": 38080,
+        "middle": 38080,
+        "near": 38080
+      }
+    },
+    {
+      "far": 0.137485218376957,
+      "middle": 0.188655042498015,
+      "name": "synthetic_after_repeat",
+      "near": 0.331817888201397,
+      "samples": {
+        "far": 38080,
+        "middle": 38080,
+        "near": 38080
+      }
+    },
+    {
+      "far": 0.137025559542529,
+      "middle": 0.187376791809254,
+      "name": "synthetic_before_repeat",
+      "near": 0.344053931081851,
+      "samples": {
+        "far": 38080,
+        "middle": 38080,
+        "near": 38080
+      }
+    }
+  ],
+  "synthetic_far_residual_ratio": 1.00335454812928,
+  "performance": "Not measured in wind diagnostic; cost and noise acceptance gates explicitly null."
+}

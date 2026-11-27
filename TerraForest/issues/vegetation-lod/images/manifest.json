@@ -63,7 +63,8 @@
     "creator": "TerraForest project; original AI-assisted diagnostic capture",
     "license": "CC0-1.0 for original capture contributions; underlying project asset terms remain unchanged",
     "scope": "Read-only Homestead Valley, matched moving camera and deterministic wind. Left baseline/right trial in the lossless 15 FPS motion crop. Context stills are JPEG; measurements use raw 60 Hz frames. Inspected, not user-approved. GPU tail gate failed.",
-    "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets."
+    "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets.",
+    "review": "Rejected by the user on 2026-11-27: excessive brightness relative to terrain and persistent strong flicker. Kept as rejected evidence; the runtime trial is removed."
   },
   {
     "file": "stability-world-after.jpg",
@@ -72,7 +73,8 @@
     "creator": "TerraForest project; original AI-assisted diagnostic capture",
     "license": "CC0-1.0 for original capture contributions; underlying project asset terms remain unchanged",
     "scope": "Read-only Homestead Valley, matched moving camera and deterministic wind. Left baseline/right trial in the lossless 15 FPS motion crop. Context stills are JPEG; measurements use raw 60 Hz frames. Inspected, not user-approved. GPU tail gate failed.",
-    "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets."
+    "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets.",
+    "review": "Rejected by the user on 2026-11-27: excessive brightness relative to terrain and persistent strong flicker. Kept as rejected evidence; the runtime trial is removed."
   },
   {
     "file": "stability-world-motion.webp",
@@ -81,6 +83,7 @@
     "creator": "TerraForest project; original AI-assisted diagnostic capture",
     "license": "CC0-1.0 for original capture contributions; underlying project asset terms remain unchanged",
     "scope": "Read-only Homestead Valley, matched moving camera and deterministic wind. Left baseline/right trial in the lossless 15 FPS motion crop. Context stills are JPEG; measurements use raw 60 Hz frames. Inspected, not user-approved. GPU tail gate failed.",
-    "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets."
+    "provenance": "Original tests/vegetation_stability.gd (0BSD); Godot 4.7.2 ed1daf0bf, RTX 4050 Laptop, 1920x1080 Forward+. No external content imported. See project license inventory for existing assets.",
+    "review": "Rejected by the user on 2026-11-27: excessive brightness relative to terrain and persistent strong flicker. Kept as rejected evidence; the runtime trial is removed."
   }
 ]

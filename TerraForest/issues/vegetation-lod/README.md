@@ -1,6 +1,6 @@
 # Extended vegetation LOD
 
-- Status: Improved-partial; installed LOD work plus source-only lighting/stability trial. Distant motion improves in scoped checks; GPU tail gate, remaining speckling, driving-speed continuity and player review remain open.
+- Status: Open; the distant lighting/stability trial was rejected by the user and removed from runtime. Earlier normal correction and installed LOD work remain. Strong flickering, terrain contrast, driving continuity and performance qualification are unresolved.
 - Updated: 2026-11-27. Original LOD implementation `e2d0e548`; follow-ups below.
 - Forests: existing 6592/192/12-triangle tiers retained; visibility 448 -> 576 m.
 - Native circular preload: 640 m, maximum 405 wanted owners, 441 admission cap;
@@ -10,7 +10,54 @@
 
 ## Moving distant-cover trial — 2026-11-27
 
-The requested experiment is enabled in source. At 1080p and 75-degree FOV,
+**Rejected by the user:** the whole distant band becomes too bright relative to
+its surroundings, and flicker remains strong. The measured residual improvement
+did not represent acceptable visuals. Runtime `woodland.gdshader` and
+`ground_cover.gd` have been restored exactly to `6e87ed07`, retaining the earlier
+double-sided-normal correction. The following records the rejected experiment,
+not the current runtime or an accepted partial fix. Its captures and failed cost
+gates are preserved.
+
+The brightness mismatch came from replacing original leaf normals/occlusion with
+upward normals, full AO and a constant color multiplier. Terrain instead uses
+its own ambient-disabled/custom-fill lighting model; an upward leaf normal does
+not reproduce that terrain shading. Simply lowering the color multiplier again
+does not solve silhouette coverage or establish a correct blend.
+
+Wind isolation after rejection: `reports/checks/20261127T104035438622Z` compares
+normal and frozen wind with identical original shading and camera movement.
+Twenty fixture/preservation assertions pass, including byte-identical restored
+near renders and unchanged canonical save. Noise/performance acceptance gates are
+explicitly **not evaluated** in this diagnostic. In the controlled field, far
+residual is 0.13703 with wind versus 0.13749 frozen (ratio 1.00335): removing wind
+does not materially improve it. Six motion pairs were inspected. This supports
+further silhouette/rasterization diagnosis, not a unique root-cause claim.
+
+The saved world changed before this run (hash `d4fb3582ec5c...`, camera
+`(1498.941, 67.46824, 905.6166)`, 88,725 ground-cover instances). Its inspected
+camera faces rising terrain that obscures projected far roots, so its far-band
+number is **unqualified**. Do not compare it with the prior coastal camera or
+call it visible far-foliage evidence. A root's geometric distance alone does not
+prove that it is the visible surface at its projected pixel. Add visibility/depth
+qualification before using that metric for actual-world acceptance. The input
+save hash is unchanged within the diagnostic; it is never rewritten or replaced.
+[Diagnostic summary and identities](wind-isolation-evidence.json).
+
+The initial diagnostic launch stopped before engine startup because another
+receipt-owned archive writer held the lease. After it exited, the normal admitted
+runner completed; no lease was bypassed or budget raised. The two newest ordinary
+vegetation runs remain ready; earlier rejected captures are cold-retained.
+
+Reproduce the diagnostic on current source:
+
+```powershell
+python tools/run_godot_check.py vegetation_stability --isolated-render --timeout 240 --require "VEGETATION_STABILITY failures=0" -- --stability-source-slot=Homestead_Valley --diagnose-wind
+```
+
+Frozen wind is a test-only override, not enabled in runtime. The subsequent
+historical measurements describe the rejected lighting trial.
+
+The rejected experiment used the following approach. At 1080p and 75-degree FOV,
 woodland foliage gradually loses unresolved wind, fine shading and leaf-normal
 contrast from 32 to 80 metres. The transition uses squared distance and scales
 with projection size for zoom/resolution. Fully distant foliage uses a simple
@@ -23,7 +70,7 @@ render is byte-identical, and near-band motion measurements match exactly. There
 are no new textures, geometry, draw passes or per-instance script loops. Existing
 native pages, shadow pages, transform bytes, plant identities and densities remain
 unchanged. Projection parameters update through the existing view-change path.
-The `distant_stability` shader uniform can disable the trial for comparison.
+The removed trial exposed `distant_stability` for comparison.
 
 Final source replay: `reports/checks/20261127T102434433909Z`, Godot 4.7.2
 `ed1daf0bf`, Forward+, RTX 4050 Laptop, 1920x1080, 60 FPS cap. Baseline is the
@@ -80,7 +127,9 @@ Retained earlier attempts (cold captures remain recoverable through their
   hillside distances. Those distance claims are superseded by the final true-root
   sampler and within-pose draw check, not reclassified as passing evidence.
 
-Reproduce (requires the existing saved world; never generates a replacement):
+Historical lighting-trial command, using source revision `29e3b360` and the
+recorded input save (current runtime has been restored and no longer contains
+that trial; never replace the player's save to recreate it):
 
 ```powershell
 python tools/run_godot_check.py vegetation_stability --isolated-render --timeout 300 --require "VEGETATION_STABILITY failures=0" -- --stability-source-slot=Homestead_Valley

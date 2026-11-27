@@ -1250,5 +1250,5 @@
     "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "54bd0c7133ed1189cdca5dec37677b84cab93ffb8d294db2e596c552fdf04247",
     "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "e393b9179d00a76154f450409181fed8b9ba34255d07be53cbb134b403cc9f36"
   },
-  "status": "Partial visual improvement; both conservative GPU-tail gates failed. Not user-approved or installed."
+  "status": "REJECTED by user: distant vegetation is too bright relative to terrain and flicker remains strong. Runtime trial removed; original 6e87ed07 shading/view handling restored. Both conservative GPU-tail gates also failed."
 }

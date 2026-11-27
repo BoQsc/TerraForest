@@ -23,27 +23,33 @@ isolated engineering checks cannot close that acceptance requirement.
 
 ## Distant vegetation speckles — 2026-11-27
 
-The source-only normal correction is now followed by the requested moving
-distant-cover trial: wind and fine lighting fade toward stable ground-facing
-shading over 32–80 apparent metres. Nearby grass pixels are unchanged; no new
-textures, geometry or draw passes. Repeated matched camera motion reduces the
-far-root temporal residual 40.9% in the synthetic field and 26.4% in read-only
-Homestead Valley. This metric includes coverage/occlusion and wind, not just
-aliasing. All 58,829 ground-cover instances, native pages/bytes and the save hash
-remain unchanged. Full context stills and motion frame pairs were inspected;
-dark speckles soften but visible clumping/contrast remains.
+The user rejected the source stability trial: the distant vegetation becomes
+visibly too bright relative to surrounding terrain and flicker remains strong.
+The 26.4% saved-world temporal-residual reduction was insufficient and must not
+be presented as visual acceptance. Both conservative GPU-tail gates also failed
+(+0.615 ms synthetic, +0.397 ms world against a 0.3 ms limit).
 
-Final run `20261127T102434433909Z`: **23/25 checks pass; both conservative GPU-tail
-gates fail** (+0.615 ms synthetic, +0.397 ms world versus a ≤0.3 ms limit). Median
-GPU windows change by +0.073/+0.025 ms respectively; this is not a zero-cost or
-performance-qualified fix. The representative-world/moving-camera prerequisite
-is now covered, but exact supplied viewpoint, physical driving, zoom/resolution,
-other light/terrain conditions, long sessions and weak hardware remain open.
-Return with isolated matched timings resolving the tail gate and further moving
-captures showing acceptable contrast/coverage, followed by player approval and
-installed-package validation. No export was made. Earlier rejected bright-band,
-flat-plane sampler, storage-cap and timing attempts remain receipt-retained; no
-gate or storage limit was raised. [Evidence, images and remaining work](../issues/vegetation-lod/README.md#moving-distant-cover-trial--2026-11-27).
+Runtime woodland shading and ground-cover view handling are restored exactly to
+`6e87ed07`, retaining the earlier double-sided-normal correction. Rejected
+captures, measurements and failed checks remain preserved. No installed export
+was made. The bright band came from replacing leaf lighting with an upward
+normal/full AO; terrain uses a different custom-fill lighting model, so the
+replacement did not actually match terrain.
+
+Wind-only isolation `20261127T104035438622Z` passes 20 fixture/preservation
+assertions, not visual/cost acceptance. Frozen wind changes the controlled-field
+far residual from 0.13703 to 0.13749: no material improvement. The actual saved
+world/camera changed; its rising foreground obscures distant roots, so its far
+metric is unqualified. Require visible-surface/depth validation before relying
+on projected root distances for world-quality claims.
+
+Strong moving-camera shimmer and a natural terrain blend remain unresolved.
+Return with coverage-focused, visible-surface motion evidence that also preserves
+luminance/terrain contrast, near grass and populations. Isolate wind from camera
+motion before choosing another representation, then validate GPU/frame tails,
+zoom, light/terrain variation, actual travel and player review. Do not accept a
+lower aggregate flicker metric while the image is visibly wrong. See the
+[rejected trial and follow-up](../issues/vegetation-lod/README.md#moving-distant-cover-trial--2026-11-27).
 
 ## Human performance capture on the latest save
 

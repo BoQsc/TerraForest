@@ -13,9 +13,6 @@ uniform float distance_fade_end = 11000.0;
 uniform vec3 cover_eye = vec3(0.0);
 uniform float cover_clock = 0.0;
 uniform float distant_self_shade : hint_range(0.0,1.0) = 0.28;
-uniform float distant_stability : hint_range(0.0,1.0) = 1.0;
-uniform float cover_projection_scale = 1.0;
-varying float stable_far;
 varying float canopy_shade;
 varying float coverage;
 varying float variation;
@@ -23,10 +20,6 @@ varying float root_shade;
 void vertex() {
     vec3 origin = MODEL_MATRIX[3].xyz;
     float view_distance=distance(origin.xz,cover_eye.xz);
-    // Match apparent size across zoom/resolution. Nearby foliage stays exact.
-    vec3 view_delta=origin-cover_eye;
-    float projection_squared=max(cover_projection_scale*cover_projection_scale,0.01);
-    stable_far=stone?0.0:distant_stability*smoothstep(1024.0,6400.0,dot(view_delta,view_delta)/projection_squared);
     float distance_weight = 1.0-smoothstep(distance_fade_start,distance_fade_end,view_distance);
     // Cheap canopy self-occlusion approximation, evaluated per vertex. It is
     // not a cast shadow and deliberately adds no shadow-map/depth/texture pass.
@@ -43,10 +36,7 @@ void vertex() {
         vec2 bend=(fract(sin(vec2(phase,phase+19.7))*vec2(43758.5453,19642.349))-0.5)*0.07;
         VERTEX.xz+=bend*weight*weight;
 
-        float sway = 0.0;
-        if (stable_far < 0.9999) {
-            sway = (sin(TIME * 1.35 + phase) * 0.009 + sin(TIME * 2.1 + phase * 1.7) * 0.003)*(1.0-stable_far);
-        }
+        float sway = sin(TIME * 1.35 + phase) * 0.009 + sin(TIME * 2.1 + phase * 1.7) * 0.003;
         VERTEX.x += sway * weight * weight * wind_strength;
         VERTEX.z += sway * weight * weight * 0.55 * wind_strength;
     }
@@ -62,14 +52,6 @@ void fragment() {
         NORMAL_MAP_DEPTH = 0.55;
         ROUGHNESS = 0.94;
         SPECULAR = 0.24;
-    } else if (stable_far >= 0.9999) {
-        // Unresolved foliage reads as stable cover, with ground-facing lighting.
-        // Keep ordinary light/shadow reception; no blending or texture lookup.
-        ALBEDO = COLOR.rgb * variation * 0.65;
-        NORMAL = VIEW_MATRIX[1].xyz;
-        AO = 1.0;
-        ROUGHNESS = 0.98;
-        SPECULAR = 0.0;
     } else {
         float edge = abs(UV.x - 0.5) * 2.0;
         float width = max(fwidth(UV.x), 0.008);
@@ -95,13 +77,5 @@ void fragment() {
         SPECULAR = mix(0.2, 0.12, grass_detail_strength);
         BACKLIGHT = COLOR.rgb * mix(0.18, 0.10, grass_detail_strength);
         // Godot already faces double-sided normals toward the viewer.
-        if (stable_far > 0.0) {
-            ALBEDO = mix(ALBEDO, COLOR.rgb * variation * 0.65, stable_far);
-            NORMAL = normalize(mix(NORMAL, VIEW_MATRIX[1].xyz, stable_far));
-            AO = mix(AO, 1.0, stable_far);
-            ROUGHNESS = mix(ROUGHNESS, 0.98, stable_far);
-            SPECULAR *= 1.0-stable_far;
-            BACKLIGHT *= 1.0-stable_far;
-        }
     }
 }

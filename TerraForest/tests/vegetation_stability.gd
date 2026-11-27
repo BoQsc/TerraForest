@@ -19,6 +19,7 @@ var sample_roots: Array[Vector3] = []
 var motion_crop := Rect2i(200, 500, 320, 96)
 var game: Node
 var results: Dictionary = {}
+var diagnose_wind := false
 
 func _initialize() -> void: run.call_deferred()
 func check(ok: bool, label: String) -> bool:
@@ -35,6 +36,9 @@ func settle(count: int = 12) -> void:
 func comparison_shader(path: String) -> Shader:
 	var shader := Shader.new()
 	shader.code = FileAccess.get_file_as_string(path).replace("void vertex()", "uniform float comparison_time = 0.0;\nvoid vertex()").replace("TIME", "comparison_time")
+	if diagnose_wind and path == AFTER:
+		# Test-only isolation: preserve lighting/geometry, freeze only wind offsets.
+		shader.code = shader.code.replace("* wind_strength", "* 0.0")
 	return shader
 func apply_shader(shader: Shader) -> void:
 	for material in materials:
@@ -164,8 +168,8 @@ func compare(label: String) -> void:
 	prepare_samples()
 	var rows: Array[Dictionary] = []
 	# ABBA: identical poses/times, no frame readbacks in the cost samples.
-	var cost_result := await paired_cost(before, after)
-	var costs: Array[Dictionary] = cost_result.raw
+	var cost_result: Dictionary = {"raw": [], "groups": [], "worst_gpu_p95_increment_ms": 0.0}
+	if not diagnose_wind: cost_result = await paired_cost(before, after)
 	results[label] = {"cost_interleaved": cost_result}
 	rows.append(await replay(before, label + "_before", true))
 	rows.append(await replay(after, label + "_after", true))
@@ -173,15 +177,19 @@ func compare(label: String) -> void:
 	rows.append(await replay(before, label + "_before_repeat", false))
 	var baseline := minf(rows[0].far, rows[3].far)
 	var candidate := maxf(rows[1].far, rows[2].far)
-	var noise_pass := check(candidate <= baseline * 0.85, label + " far temporal residual improves at least 15% in both repeats")
+	var noise_pass := false
+	if not diagnose_wind: noise_pass = check(candidate <= baseline * 0.85, label + " far temporal residual improves at least 15% in both repeats")
 	var gpu_delta: float = cost_result.worst_gpu_p95_increment_ms
-	var cost_pass := check(gpu_delta <= 0.3, label + " conservative GPU p95 increment <=0.3 ms")
-	if label == "synthetic":
+	var cost_pass := false
+	if not diagnose_wind: cost_pass = check(gpu_delta <= 0.3, label + " conservative GPU p95 increment <=0.3 ms")
+	if label == "synthetic" and not diagnose_wind:
 		var same_draws := true
 		for group: Dictionary in cost_result.groups:
 			for row: Dictionary in group.abba: same_draws = same_draws and row.draw_calls == group.abba[0].draw_calls
 		check(same_draws, label + " no additional draw calls")
 	results[label] = {"motion": rows, "crop": str(motion_crop), "sample_method": "fixed anchors around actual grass roots; true 3D distance bands", "cost_interleaved": cost_result, "far_residual_ratio": candidate / maxf(baseline, 0.000001), "worst_gpu_p95_increment_ms": gpu_delta, "noise_pass": noise_pass, "cost_pass": cost_pass}
+	if diagnose_wind:
+		results[label].merge({"diagnostic_only": true, "cost_interleaved": null, "worst_gpu_p95_increment_ms": null, "noise_pass": null, "cost_pass": null}, true)
 	FileAccess.open(output.path_join("vegetation_stability.json"), FileAccess.WRITE).store_string(JSON.stringify(results, "  "))
 func synthetic() -> void:
 	world = Node3D.new(); root.add_child(world)
@@ -216,7 +224,10 @@ func synthetic() -> void:
 	camera.position = Vector3(0.8, 0.6, 1.4); camera.look_at(Vector3(0, 0.2, 0)); close_material.set_shader_parameter("cover_eye", camera.position)
 	var near_images: Array[PackedByteArray] = []
 	for path in [BEFORE, AFTER]:
-		close_material.shader = comparison_shader(path); close_material.set_shader_parameter("comparison_time", 0.37); await settle()
+		# Near preservation still compares restored production, not the diagnostic override.
+		var diagnostic := diagnose_wind; diagnose_wind = false
+		close_material.shader = comparison_shader(path); diagnose_wind = diagnostic
+		close_material.set_shader_parameter("comparison_time", 0.37); await settle()
 		near_images.append(root.get_texture().get_image().get_data())
 	check(near_images[0] == near_images[1], "near grass pixels including wind are byte-identical")
 	close.free()
@@ -284,16 +295,20 @@ func run() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--check-evidence-dir="): output = argument.trim_prefix("--check-evidence-dir=")
 		if argument.begins_with("--stability-source-slot="): slot = argument.trim_prefix("--stability-source-slot=")
+		if argument == "--diagnose-wind": diagnose_wind = true
 	if output.is_empty(): push_error("Use the admitted check runner"); quit(1); return
 	Engine.max_fps = 60
 	for resource_path in [BEFORE, AFTER]:
 		results[resource_path.get_file()] = FileAccess.get_sha256(resource_path)
+	results["diagnose_wind"] = diagnose_wind
 	FileAccess.open(output.path_join("trial_shader.gdshader"), FileAccess.WRITE).store_string(FileAccess.get_file_as_string(AFTER))
 	FileAccess.open(output.path_join("driver.gd"), FileAccess.WRITE).store_string(FileAccess.get_file_as_string("res://tests/vegetation_stability.gd"))
 	RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(), true)
 	await synthetic()
 	if not slot.is_empty(): await actual_world(slot)
 	results.merge({"checks": checks, "failures": failures, "captured_frame_bytes": captured_bytes, "still_bytes": still_bytes, "scope": "Continuous deterministic camera/time replays, true-distance foliage-registered display-luma residual. Includes wind and coverage changes; not pure geometric aliasing, physical driving, thermal or universal visual acceptance."})
+	if diagnose_wind:
+		results["scope"] = "Diagnostic only: unchanged lighting/geometry, normal wind versus frozen wind while moving the camera. Projection anchors may be occluded. Cost/visual acceptance gates are not evaluated; passing assertions only verify the fixture and preserved source/save. Runtime uses neither the rejected brightening nor this frozen-wind override."
 	FileAccess.open(output.path_join("vegetation_stability.json"), FileAccess.WRITE).store_string(JSON.stringify(results, "  "))
 	# Let Godot assign resource identities for the new original test resources.
 	for resource_path in ["res://tests/vegetation_stability.gd", BEFORE]:

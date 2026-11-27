@@ -75,7 +75,8 @@ def analyze(folder):
         previews[family] = dict(file=output.name, frames=len(comparisons), duration_ms=67,
                                 sha256=hashlib.sha256(encoded).hexdigest(), bytes=len(encoded),
                                 source_sha256=[hashlib.sha256(p.read_bytes()).hexdigest() for p in (before, after)],
-                                caption='Left: pre-trial shader. Right: stability trial. Matched camera/time; 1:1 lossless 320x96 distant-band crops at 15 fps. No interpolation or rescaling.')
+                                caption=('Left: restored lighting, normal wind. Right: identical lighting, wind frozen for diagnosis. ' if report.get('diagnose_wind') else 'Left: pre-trial shader. Right: stability trial. ')
+                                + 'Matched camera/time; 1:1 lossless 320x96 crops at 15 fps. Projected distant roots may be occluded. No interpolation or rescaling.')
     report['previews'] = previews
     report_path.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
     summary = {family: {key: report[family][key] for key in (
