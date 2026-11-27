@@ -1341,8 +1341,11 @@ raise its budget as an optimization.
    publication, map readiness, loading release, intro end and first player control.
    Only then choose another batching or CPU change. Keep identical candidate order,
    IDs/transforms, support/conflict results and saved contents.
-3. **Defer save/map overlap and model-store opening changes.** Revisit if the first
-   two steps leave them dominant. Use independent frozen survey/store ownership;
+3. **Save/map overlap and model-store opening follow-up.** The November 27
+   Metropolis native-outdoor capture below satisfies the outdoor-attribution
+   prerequisite and leaves these stages dominant; their ownership design is now
+   the next investigation, rather than waiting for outdoor attribution again.
+   Use independent frozen survey/store ownership;
    publish maps only against the matching durable checkpoint. Preserve recovery,
    cancellation, old saves and memory limits. Competing IO can erase the benefit.
 4. **Defer live scene transfer.** It needs explicit transfer of destination leases,
@@ -1358,3 +1361,51 @@ The explicit read-only map check takes 1.325 s; do not add it mechanically to a
 normal load where it overlaps. The generation capture predates removal of the
 redundant ordinary-load prefetch branch, as documented in the prior section.
 No new speedup or universal regression result is claimed by this audit.
+
+### Large-city generation critical path — 2026-11-27
+
+The smaller-world numbers above remain historical evidence. The corrected
+Metropolis run `reports/metropolis_world/20261127T175949980230Z` records 109.224 s
+creation after native outdoor generation: 5.993 s for that job, with identical
+1,230 outdoor placements. See [native generation](NATIVE_GENERATION.md) for exact
+output evidence and the separate inherited cleanup warning.
+
+| Creation stage | Seconds |
+| --- | ---: |
+| Planning | 4.950 |
+| Generation scene initialization | 15.160 |
+| Roads/foundations | 21.792 |
+| Buildings/interiors | 16.730 |
+| Save | 16.864 |
+| Map stage | 18.051 |
+
+The earthworks job processes 12,202 commands, 192 checkpoints and 54,417,717
+written bytes across 383 files; native worker time is 21.719 s. These counters
+justify investigating checkpoint/region reuse, not blindly increasing threads
+around the same mutable terrain owner. Map work totals 16.681 s, with blocks
+ready at 15.381 s; model and water layers overlap it. Their individual times
+must not be added. The survey path already handles resident block regions without
+reopening their store; adding another resident fast path would duplicate it.
+Archived regions still travel through a request/next-frame/poll sequence in
+`survey_blocks.gd`, one region at a time. Visibility similarly submits 256-sample
+batches through the scene bridge. A native generation-only survey job should
+retain the checkpoint lease and source ordering while consuming these batches
+without a frame boundary per read. Compare every certified output pixel and
+source signature before replacing this path; asynchronous IO alone does not
+remove caller-imposed frame waits.
+
+Building publication now uses a native job that removes editor palette updates
+and per-page frame handoffs. Final-source Metropolis creation records 6.097 s
+for buildings and 96.088 s overall (`20261127T184548795600Z`), with the same
+creation-time section hashes except the deliberate random baseline identity.
+Save/map overlap still requires
+independent ownership: save can unload regions while maps read them. Closure
+requires frozen revision/lease handling, matching certified pixels and complete
+save/restore equivalence, bounded memory, cancellation and repeated end-to-end
+improvement. Generation-only scene preparation is another measured candidate;
+do not initialize editor services merely to publish authored templates.
+
+Less than 30 s remains an unverified target. Define and measure authoritative
+world creation, durable publication, map readiness and first player control
+separately. No readiness or persistence work may be excluded from the user-facing
+Generate-to-control measurement merely to meet that target.

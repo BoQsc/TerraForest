@@ -6,19 +6,6 @@ const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 class DataGeneration extends "res://addons/world_runtime/generate_world_task.gd":
 	func bake_photographs(_game:Node,_plan:Dictionary,_market:Dictionary,_connection:Dictionary)->bool:return true
 	func bake_map_layers(_game:Node)->bool:return true
-	func generate_prefab(game:Node,lot:Dictionary)->bool:
-		var placed:bool=await super.generate_prefab(game,lot)
-		if placed:return true
-		var probes:Array=[]
-		for offset in range(0,lot.asset.clearance_sample_count(),512):
-			var points:PackedVector3Array=lot.asset.clearance_samples(lot.origin,lot.rotation,offset,512,int(lot.asset.get_meta("site_sample_band",0)))
-			var query:=Codec.command(31,[game.terrain.density_revision,points.size()]);query.append_array(points.to_byte_array())
-			var reply:PackedByteArray=game.terrain.backend.native.execute(query)
-			if not Codec.reply_ok(reply):print("CLEARANCE_DIAGNOSTIC_QUERY ",reply);break
-			for index in points.size():
-				if reply.decode_float(20+index*4)<0 and probes.size()<16:probes.append({"point":points[index],"density":reply.decode_float(20+index*4)})
-		print("CLEARANCE_DIAGNOSTIC ",{"origin":lot.origin,"rotation":lot.rotation,"band":lot.asset.get_meta("site_sample_band",0),"checked_target":game.foundation_check.checked_target,"checked_rotation":game.foundation_check.checked_rotation,"checked_asset":game.foundation_check.checked_asset==lot.asset,"probes":probes})
-		return false
 
 var checks:=0
 var failures:=0

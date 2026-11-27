@@ -13,31 +13,23 @@ var failures := 0
 var output := "res://reports/approved_large_house"
 var reference := REVIEW_PATH
 
+class Backend extends RefCounted:
+	var native: RefCounted
+class DoorFacade extends RefCounted:
+	var collection: Node3D
 class FieldFacade extends Node:
-	var core: RefCounted
-	var validator: RefCounted
+	var backend := Backend.new()
+	var diagnostics_pause_streaming := true
 	var world_ready := true
 	var pending_edit := false
 	var stopping := false
 	var epoch := 0
 	var density_revision := 0
-	func request_density_scan(points: PackedVector3Array, token: int, support_depth: int, interpolated:bool=false) -> bool:
-		var values := PackedFloat32Array()
-		for offset in range(0, points.size(), 512):
-			var batch := points.slice(offset, mini(offset + 512, points.size()))
-			var query := Codec.command(31,[density_revision,batch.size()]) if interpolated else Codec.command(30, [density_revision, batch.size(), support_depth])
-			query.append_array(batch.to_byte_array())
-			var reply: PackedByteArray = core.execute(query)
-			if not Codec.reply_ok(reply):
-				return false
-			values.append_array(reply.slice(20).to_float32_array())
-		validator.receive.call_deferred({"status":"ok", "token":token, "epoch":epoch, "revision":density_revision, "values":values})
-		return true
-
 class GenerationFixture extends Node:
 	var terrain: Node
 	var structures: Node3D
-	var foundation_check: RefCounted
+	var doors := DoorFacade.new()
+	var shutdown_requested := false
 
 func _initialize() -> void:
 	run.call_deferred()
@@ -209,23 +201,23 @@ func inspect_site(core: RefCounted, plan: Dictionary, lot: Dictionary, revision:
 	var field := FieldFacade.new()
 	game.terrain = field
 	game.structures = structures
-	game.foundation_check = preload("res://addons/structures/foundation_check.gd").new()
-	field.validator = game.foundation_check
-	field.core = core
+	game.doors.collection = structures.model_collections()["architecture/wooden_door/v1"]
+	field.backend.native = core
 	field.epoch = core.execute(Codec.command(13)).decode_u32(12)
 	field.density_revision = revision
-	var generator := preload("res://addons/world_runtime/generate_world_task.gd").new()
-	generator.root = root
 	for fitted: Dictionary in plan.lots:
 		var placed: Dictionary
 		if fitted.asset.get_meta("approved_revision", "") == "C1 R1":
-			placed = {"ok":await generator.generate_prefab(game, fitted)}
+			var job: RefCounted = ClassDB.instantiate("NativeGenerationBuildings")
+			placed = {"ok":job.start(game,[fitted])}
+			if placed.ok:
+				while not job.advance():await process_frame
+				placed=job.get_result()
 		else:
 			placed = placement.place(structures.blocks, fitted.asset, fitted.origin, fitted.rotation, structures.model_collections(), [])
 		check(placed.get("ok", false), "native compound publication / " + fitted.label)
 		if not placed.get("ok", false):
 			print(placed)
-	generator.free()
 	field.free()
 	game.free()
 	check(structures.blocks.set_cells(plan.block_paving.records), "destructible street paving publishes beside fitted houses")

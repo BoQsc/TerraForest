@@ -7,11 +7,15 @@
 ## Metropolis recipe — 2026-11-27
 
 Native processing migration is in progress under
-[NATIVE_GENERATION.md](../../docs/NATIVE_GENERATION.md). Outdoor placement and
-generated-world storage verification now run in native code. The binary inspector
+[NATIVE_GENERATION.md](../../docs/NATIVE_GENERATION.md). Outdoor placement, the
+ordinary main-building pass and generated-world storage verification now run in
+native code. Main-building generation reuses private prefab definitions and no
+longer refreshes the construction palette. The binary inspector
 provides JSON recipe authoring and restricted label management while retaining
 native authoritative storage. This does not close the remaining script-driven
-planning, building/population orchestration, component format or world-quality work.
+planning, remaining foundation/population orchestration, component format or
+world-quality work. Thirty-second creation remains a measured target to pursue,
+not an achieved result; save/map and generation-scene costs remain substantial.
 
 Source integration and final-terrain checks pass for a city of 36 buildings,
 six eight-building communities, 52 m / 40 m lake bridges and a 28 m seasonal-gully

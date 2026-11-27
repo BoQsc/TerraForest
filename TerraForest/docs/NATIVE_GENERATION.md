@@ -88,6 +88,118 @@ Final normal-limit admission, native source/build identity and retirement of
 77,733,727 owned fixture bytes are recorded in
 `reports/native_generation_inspector_20261127/final_verification.json`.
 
+## Native building validation and publication
+
+`NativeGenerationBuildings` owns the ordinary main-building pass. It copies each
+distinct `NativeBlockPrefab` once into a private definition, validates all lots
+on a worker against the captured final native terrain revision, then publishes
+them in recipe order through the existing atomic native prefab transactions.
+The job admits only paused, ready terrain with no pending edit. It bounds the
+input to 256 lots and 2,097,152 unique definition cells, pages density queries at
+512 samples, and rejects cancellation, changed epochs/revisions and invalid
+contact metadata before publishing further lots. Worker code does not access
+scene nodes. Definition copies isolate lazy native probe caches from authoring.
+
+Foundation, grading-depth support, interior clearance and exposed surfaces keep
+the existing contact contract. Publication keeps original block words, model
+IDs/transforms and door-count checks. Cancellation cancels an unpublished
+transaction; already committed lots belong to the disposable generation stage,
+as before. Owner-thread preparation advances in 8 ms scheduling quanta; a native
+commit may exceed that quantum and is measured separately by the maximum advance
+counter. This is not a hard real-time guarantee.
+
+Normal generation no longer adds every composed lot to the construction palette,
+reconfigures that palette or invalidates editor previews. Explicit editor
+qualification keeps its editor route. GDScript submits the job and displays
+progress; it no longer loops over probes or building transactions in this pass.
+Exploration and sidewalk contact orchestration remain separate migration work.
+
+Focused final-source evidence: `reports/checks/20261127T184200550627Z` passes 68
+checks, including exact block/model snapshots across four rotations, shared
+definition reuse and source-edit isolation, cancellation, both scene and actual
+native-field revision changes, epoch changes and wide-integer admission rejection.
+The obsolete queued-generation single-building diagnostic override is removed;
+that fixture parses successfully against the new production job. The older C1
+fixture now calls the job directly, but its full run
+`reports/checks/20261127T184231006804Z` fails 7 of 17 checks **before reaching that
+call**: it expects the retired C1 R1 factory/default layout, whereas
+`Furniture.large_house()` now returns the expansion catalog and the current
+default recipe no longer fits its historical two-settlement assumption. This
+failure is retained, not waived. Repair its explicit historical inputs/default
+recipe expectations before claiming that old fixture is requalified; preserve
+its original reviewed geometry and traversal checks.
+
+The first 4 ms scheduling trial
+`reports/metropolis_world/20261127T183156604397Z` passes all 6 creation, 73
+interaction and 30 fresh-restore assertions with clean strict exits. It records
+7.301 s building-stage / 96.625 s creation, versus 16.730 / 109.224 s before this
+pass. Native clone/validation/publication total about 2.635 s; remaining job
+wall time includes frame delivery. This motivated the final 8 ms scheduling
+quantum. Another vegetation lab overlapped that first trial, so it is not a
+controlled throughput benchmark. Creation verifier hashes match 127 of 128
+sections; only the deliberately random location-baseline identity differs.
+Outdoor diagnostics match except timing counters. Post-interaction roots also
+differ in live survival/zombie state; they must not be confused with the
+creation-time equivalence check. Evidence is
+`reports/generation_building_native_20261127/first_trial.json`.
+
+Final-source ordinary creation, `reports/metropolis_world/20261127T184548795600Z`,
+records **6.097 s building stage / 96.088 s creation**. The job publishes 84
+buildings and 222,776 cells from 44 private definitions (192,446 definition cells).
+It checks 30,485 foundation probes, 30,485 depth-support columns, 552,404 interior
+samples and 322,087 exposed-surface samples. Validation takes 0.773 s, definition
+copying 0.072 s and owner-thread publication 2.384 s; maximum advance is 12.905 ms.
+Final creation hashes again match 127 of 128 sections, with the same random-identity
+exception; outdoor differences are timing counters only. See
+`reports/generation_building_native_20261127/final_comparison.json`. These are
+source-engine observations, not an installed build, a repeated benchmark or
+whole-world native completion. The 30-second target remains open.
+
+The final full workflow completes 6 creation, 73 interaction and 30 fresh-restore
+assertions. Creation and restore pass strictly; interaction repeats the known
+zero-reference ObjectDB shutdown warning, so the launcher correctly records
+`functional_passed: true` and `passed: false`. RAM warnings are 4.21 / 4.55 /
+4.39 GiB. Neither clean-exit nor dense-world memory/FPS acceptance is closed.
+Both native configurations match final source. The first trial's 77,730,951-byte
+fixture is cold-retired. Final fixture/capture retirement is recorded as pending
+in its receipt while another game process is active; it must be retried through
+the same launcher's `--archive-only` and capture-maintenance paths when idle,
+without stopping gameplay. Temporary QA limits apply only to the approved child
+launcher; normal limits and protected saves remain unchanged. Final storage/build
+receipts are retained under `reports/generation_building_native_20261127/`.
+Normal-limit admission currently rejects reports by about 25.4 MiB while that
+retirement is pending (`normal_storage.json`). Do not launch further developer
+captures on that allowance. After gameplay exits, run the final receipt's
+`--archive-only` with its already-approved QA headroom, then capture maintenance
+and normal-limit admission again. This is pending cleanup, not an increased
+permanent budget or permission to evict protected evidence.
+
+## Thirty-second target and reusable pieces
+
+Under 30 seconds is an engineering target, not a proven bound for this world or
+for Generate-to-player-control. Record these boundaries separately. The accepted
+109.224 s Metropolis creation baseline spends 21.792 s on roads/foundations,
+16.730 s on buildings, 16.864 s on save and 18.051 s in the map stage, plus
+15.160 s initializing the generation scene. Save plus maps already exceed 30 s.
+Language replacement alone cannot close that gap. These are wall-time stages,
+including waiting and IO; they must not be described as arithmetic CPU costs.
+
+Locations already use native typed prefab cells, model attachments, frontage and
+settlement composition, cached recipe definitions, bulk terrain stamps and
+atomic native placement. This is not a scene node or script operation per block.
+The current compiled-plan cache still has Variant payloads; full native cold-plan
+compilation and an explicit fixed-record schema remain required. Reusing a
+definition avoids rebuilding it, but final terrain support and overlap checks
+remain necessary for each placement.
+
+Prioritize measured critical-path work: final-terrain query delivery, checkpoint
+frequency and region IO during earthworks, generation-only scene preparation,
+native population jobs, and save/map scheduling. Save and maps may overlap only
+with independent frozen readers and certification against the matching durable
+checkpoint. Do not move required work after a timer or weaken player readiness
+to claim 30 seconds. GPU compute is a candidate for large independent field work,
+not a substitute for removing frame waits, editor refreshes or storage overhead.
+
 ## Native storage verification
 
 `NativeGeneratedWorldVerifier` replaces the generated-world verification script's
@@ -108,7 +220,7 @@ approve the rest as already native, or replace the world-quality/FPS standard.
 | Remaining work | Current owner / prerequisite | Evidence required for closure |
 | --- | --- | --- |
 | Recipe assembly and binary compiled-plan schema | `custom_world_plan.gd`, recipe/catalog factories, `world_generation_plan.gd`; freeze stable authoring schema and immutable loaded asset identities | Native compilation for cold seeds, source/pack identity, corruption rejection, cache invalidation and exact placement/content comparisons |
-| Building publication and foundation orchestration | `generate_world_task.gd`, foundation checker; retain existing native prefab atomic transactions and terrain contact contract | Native bounded batch state machine, same cells/attachments/doors, full final-field contact and cancellation checks |
+| Remaining foundation orchestration | Main-building pass moved to `NativeGenerationBuildings`; exploration and sidewalk callers still use the script foundation bridge | Native bounded jobs for the remaining callers, identical cells/attachments and final-field contact, cancellation and restore checks |
 | Resident, parking, lighting, locks and location population passes | Their generation modules; retain reservations and order between populations | Exact IDs, transforms, inventory/quest state and fresh restore for the ordinary recipe |
 | Terrain query scheduling and data preparation | Terrain backend/stream bridges around existing native cores; separate frozen readers from mutable caches | No per-sample script loops, revision isolation, bounded memory, cancellation/shutdown and repeated wall-time improvement |
 | Save and map publication coordination | `world_persistence.gd`, save/map stage; maintain native durable checkpoint ownership | Native provider/job registry, failure/recovery and matching certified map pixels with whole-save equivalence |

@@ -9840,8 +9840,9 @@ and the timed-out legacy bridge check remain recorded in
 
 The requested architecture is now explicit in [NATIVE_GENERATION.md](NATIVE_GENERATION.md):
 native processing jobs and compact versioned binary storage, with JSON for
-authoring/inspection. Outdoor placement and generated-world verification have
-been converted; the remaining pipeline has **not** all been converted.
+authoring/inspection. Outdoor placement, the ordinary main-building job and
+generated-world verification have been converted; the remaining pipeline has
+**not** all been converted.
 
 `NativeOutdoorGeneration` owns typed candidates, road indexing, cached model/tree
 data, support packing, validation and ordered insertion. The previous algorithm
@@ -9875,12 +9876,47 @@ overall strict result remains false and functional result true. RAM warnings are
 its owned fixture under the explicitly approved temporary QA headroom; protected
 saves and normal limits remain intact. No export or full source copy was created.
 
+The next native pass, `NativeGenerationBuildings`, clones each distinct prefab
+definition once and validates final-field foundation, deep-support, interior and
+exposed-surface contacts on a worker. It retains ordered atomic block/model
+publication and rejects cancellation or stale terrain. Ordinary creation no
+longer adds composed buildings to the construction palette or refreshes editor
+previews. The focused test compares exact blocks and model IDs/transforms across
+four rotations, including private-definition isolation and failed admission.
+Integrated measurement and final source/build identity are recorded in the linked
+migration contract; this does not claim the whole pipeline is native or below
+30 seconds.
+
+Final ordinary creation records 6.097 s for buildings and 96.088 s overall, versus
+16.730 / 109.224 s before this pass. All 84 buildings and 222,776 cells remain;
+creation hashes match 127/128 sections with only the expected random baseline
+identity difference. Full run `reports/metropolis_world/20261127T184548795600Z`
+completes all 109 functional assertions, but its interaction process repeats the
+known shutdown warning, leaving strict acceptance false. Final fixture retention
+is pending while another game process is active; retry the receipt-owned archival
+when idle. The preceding trial is already archived. Do not stop gameplay or
+raise normal storage budgets to clear that pending receipt.
+Normal-limit admission currently rejects reports by about 25.4 MiB until the
+receipt-owned captures can retire. Retry archival using this run's existing
+approved temporary allowance, then verify normal admission before more captures.
+
+The historical C1 regression currently fails before exercising the new native
+publication adapter: its C1 R1/default-neighborhood assumptions no longer match
+the expansion catalog and current default recipe. Keep
+`reports/checks/20261127T184231006804Z` as failed evidence (17 checks, 7 failures).
+Return trigger: explicitly restore the intended historical fixture inputs or
+separate current-recipe assertions, preserving reviewed geometry and traversal;
+then rerun the full fixture. The 68-check native building comparison and ordinary
+Metropolis workflow cover the current job independently; they do not waive C1.
+
 Remaining requirements are tracked with owners, prerequisites and closure evidence
-in the migration contract: native cold-plan compilation, building/foundation and
+in the migration contract: native cold-plan compilation, remaining foundation and
 population jobs, terrain scheduling, save/map coordination, remaining Variant
 payload schemas and complete inspector semantic coverage. They require distinct
 compatibility/ordering contracts and exact-output comparisons before replacement;
 the completed passes do not remove those requirements. Return trigger: continue
-at the compiled-plan and native job boundaries using the new stage counters.
+at the native job boundaries using the new stage counters. Outdoor attribution
+is complete, so the prior save/map investigation prerequisite is now satisfied;
+continue with frozen-reader/checkpoint ownership and generation-scene setup.
 Existing clean-exit, dense-world memory/frame pacing, broader seeds, installed
 scope and world-quality/user acceptance remain open independently.

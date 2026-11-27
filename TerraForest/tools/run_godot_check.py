@@ -50,7 +50,9 @@ def planned_report_bytes(command):
     if any(str(value) == "res://tests/vegetation_shading.gd" for value in command):
         return 24 * 2**20  # Driver caps nine encoded frames at 20 MiB; no saved world.
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
-    if len(scripts) == 1 and scripts <= {"extensive_lakes.gd", "world_inspector.gd", "world_inspector_native.gd", "generation_contact_policy.gd", "terrain_block_contract.gd", "terrain_block_catalog.gd", "production_building_catalog.gd"}:
+    if scripts == {"approved_large_house.gd"} and "--headless" in command:
+        return 6 * 2**20  # Two bounded native terrain/plan fixtures and logs; no saved world.
+    if len(scripts) == 1 and scripts <= {"extensive_lakes.gd", "world_inspector.gd", "world_inspector_native.gd", "generation_buildings.gd", "generation_contact_policy.gd", "terrain_block_contract.gd", "terrain_block_catalog.gd", "production_building_catalog.gd"}:
         return 2 * 2**20  # Native/cold-plan assertions and JSON; no saved world or captures.
     if scripts == {"production_buildings.gd"} and "--metropolis" in command:
         return (16 if "--restore-production" in command else 160) * 2**20  # Restore has one counter view; creation/interact include site views.
@@ -189,7 +191,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
-                world_bytes = 0 if any(test in command for test in ("res://tests/extensive_lakes.gd", "res://tests/outdoor_support_batches.gd", "res://tests/world_inspector.gd", "res://tools/world_inspector_native.gd", "res://tests/generation_contact_policy.gd", "res://tests/terrain_block_contract.gd", "res://tests/terrain_block_catalog.gd", "res://tests/production_building_catalog.gd", "res://tests/metropolis_recipe.gd", "res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
+                world_bytes = 0 if any(test in command for test in ("res://tests/extensive_lakes.gd", "res://tests/outdoor_support_batches.gd", "res://tests/world_inspector.gd", "res://tools/world_inspector_native.gd", "res://tests/generation_buildings.gd", "res://tests/approved_large_house.gd", "res://tests/generation_contact_policy.gd", "res://tests/terrain_block_contract.gd", "res://tests/terrain_block_catalog.gd", "res://tests/production_building_catalog.gd", "res://tests/metropolis_recipe.gd", "res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
                 result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command), world_bytes=world_bytes)
             result['preflight_seconds'] = time.monotonic() - started
             started = time.monotonic()  # Storage admission is not engine startup timing.

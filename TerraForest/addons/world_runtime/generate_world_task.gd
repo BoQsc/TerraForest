@@ -261,29 +261,43 @@ func run()->void:
   for packet:PackedByteArray in mineral_packets:
    if not game.terrain.edit(packet,Vector3.ZERO,Vector3.ZERO) or not await wait_until(func():return not game.terrain.pending_edit,60):
     print("MINERAL_CONNECTION_BAKE_FAILED");game.free();quit(1);return
- game.structure_mode=true;game.structure_rotation=0
  var all_lots:Array=[]
  for site:Dictionary in sites:all_lots.append_array(site.get("lots",[]))
- var completed_buildings:=0
  progress("Placing buildings and interiors",0,all_lots.size())
- for lot:Dictionary in all_lots:
-  if cancelled():game.free();quit(2);return
-  var index:int=game.structure_prefabs.find(lot.asset)
-  if index<0:
-   game._accept_composed_prefab({"ok":true,"asset":lot.asset});index=game.structure_prefab_index
-  game.structure_prefab_index=index;game.structure_rotation=lot.rotation
-  var doors:int=game.doors.collection.get_ids().size()
-  var expected_doors:=0
-  for attachment:Dictionary in lot.asset.get_model_attachments():
-   if attachment.model=="architecture/wooden_door/v1":expected_doors+=1
-  var placed:=false
-  if qualification:
+ if not qualification:
+  var buildings:RefCounted=ClassDB.instantiate("NativeGenerationBuildings")
+  if not buildings.start(game,all_lots):print("NATIVE_BUILDING_ADMISSION_FAILED");game.free();quit(1);return
+  var last_building_progress:Dictionary={}
+  while not buildings.advance():
+   if cancelled():buildings.cancel()
+   var state:Dictionary=buildings.progress()
+   if state!=last_building_progress:
+    progress("Placing buildings and interiors",state.completed,state.total,{"activity":"Checking final terrain contacts" if state.phase=="validating" else "Publishing native building templates","validated":state.validated})
+    last_building_progress=state
+   await process_frame
+  var building_result:Dictionary=buildings.get_result()
+  FileAccess.open(output_dir.path_join("building_generation.json"),FileAccess.WRITE).store_string(JSON.stringify(building_result,"  "))
+  if not building_result.get("ok",false):print("NATIVE_BUILDING_GENERATION_FAILED ",building_result);game.free();quit(2 if cancelled() else 1);return
+ else:
+  # Explicit editor qualification retains the editor's selection/feedback path.
+  game.structure_mode=true;game.structure_rotation=0
+  var completed_buildings:=0
+  for lot:Dictionary in all_lots:
+   if cancelled():game.free();quit(2);return
+   var index:int=game.structure_prefabs.find(lot.asset)
+   if index<0:
+    game._accept_composed_prefab({"ok":true,"asset":lot.asset});index=game.structure_prefab_index
+   game.structure_prefab_index=index;game.structure_rotation=lot.rotation
+   var doors:int=game.doors.collection.get_ids().size()
+   var expected_doors:=0
+   for attachment:Dictionary in lot.asset.get_model_attachments():
+    if attachment.model=="architecture/wooden_door/v1":expected_doors+=1
+   var placed:=false
    game._begin_frontage_placement(lot.asset,lot.origin,true)
    placed=await wait_until(func():return game._foundation_placement.is_empty(),20)
-  else:placed=await generate_prefab(game,lot)
-  if not placed or game.doors.collection.get_ids().size()!=doors+expected_doors:
-   print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
-  completed_buildings+=1;progress("Placing buildings and interiors",completed_buildings,all_lots.size())
+   if not placed or game.doors.collection.get_ids().size()!=doors+expected_doors:
+    print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
+   completed_buildings+=1;progress("Placing buildings and interiors",completed_buildings,all_lots.size())
  progress("Placing sleeping building residents")
  var sleepers:Dictionary=preload("res://addons/characters/runtime/house_sleepers.gd").populate(game,all_lots)
  if not sleepers.get("ok",false):print("HOUSE_SLEEPERS_FAILED ",sleepers);game.free();quit(1);return
@@ -649,22 +663,6 @@ func saved_map_certificates(backend:RefCounted)->Dictionary:
  if bytes.is_empty():return {}
  certificate["water_identity"]="snapshot-v1|"+preload("res://addons/world_runtime/survey_cache.gd").digest(bytes).hex_encode()
  return certificate if raw.read(path)==canonical else {}
-
-func generate_prefab(game:Node,lot:Dictionary)->bool:
- # Foundation/clearance checks sample the authoritative native field, independent
- # of terrain render meshes and physics residency. Placement uses the same native
- # atomic prefab transaction as the editor, without editor selection/input state.
- var foundation:RefCounted=game.foundation_check
- if not foundation.begin(game.terrain,lot.asset,lot.origin,lot.rotation):return false
- var deadline:=Time.get_ticks_msec()+10000
- while foundation.status=="checking" and Time.get_ticks_msec()<deadline and not cancelled():
-  foundation.tick(game.terrain)
-  await process_frame
- if foundation.status!="supported":print("GENERATION_FOUNDATION_REJECTED ",lot.label," ",foundation.status);return false
- var placement:RefCounted=ClassDB.instantiate("NativePrefabPlacement")
- var result:Dictionary=placement.place(game.structures.blocks,lot.asset,lot.origin,lot.rotation,game.structures.model_collections(),[])
- if not result.get("ok",false):print("GENERATION_PREFAB_REJECTED ",lot.label," ",result)
- return result.get("ok",false)
 
 func photograph_cover_status(game:Node)->Dictionary:
  var cover:Node=game.ground_cover
