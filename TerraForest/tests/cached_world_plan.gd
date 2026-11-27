@@ -6,6 +6,7 @@ const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 var folder:=""
 var reference:=""
 var rekey:=false
+var reference_digest:=""
 func _initialize()->void:
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--check-evidence-dir="):folder=argument.trim_prefix("--check-evidence-dir=")
@@ -32,6 +33,7 @@ func run()->void:
 			identity.lots.append({"kind":site.recipe_kind,"origin":str(lot.origin),"rotation":lot.rotation,"fingerprint":Custom.prefab_fingerprint(lot.asset)})
 	if not reference.is_empty():
 		var expected=JSON.parse_string(FileAccess.get_file_as_string(reference))
+		if expected is Dictionary:reference_digest=str(expected.get("identity",{}).get("plan_digest",""))
 		# JSON parses numeric fields as floats; normalize the observation too.
 		var normalized=JSON.parse_string(JSON.stringify(identity))
 		if rekey and expected is Dictionary:
@@ -57,7 +59,7 @@ func run()->void:
 			var id:int=lot.asset.get_instance_id()
 			if owners[kind].has(id) and owners[kind][id]!=site_index:valid=false
 			owners[kind][id]=site_index
-	var observation:Dictionary={"ok":valid,"identity":identity,"worker_ms":result.get("worker_ms"),"cache_hit":result.get("cache_hit",false),"native_rekey_verified":rekey and valid,"cache_profile":result.get("cache_profile",{}),"frames":frames,"independent_started":resources.independent_started,"independent_completed":resources.independent_completed}
+	var observation:Dictionary={"ok":valid,"identity":identity,"reference_plan_digest":reference_digest,"worker_ms":result.get("worker_ms"),"cache_hit":result.get("cache_hit",false),"native_rekey_verified":rekey and valid,"cache_profile":result.get("cache_profile",{}),"frames":frames,"independent_started":resources.independent_started,"independent_completed":resources.independent_completed}
 	FileAccess.open(folder.path_join("cached_plan.json"),FileAccess.WRITE).store_string(JSON.stringify(observation,"  "))
 	print("CACHED_WORLD_PLAN failures=",0 if valid else 1," worker_ms=",result.get("worker_ms")," profile=",result.get("cache_profile",{})," lots=",identity.lots.size())
 	quit(0 if valid else 1)

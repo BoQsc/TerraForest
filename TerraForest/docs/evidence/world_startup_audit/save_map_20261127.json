@@ -1,0 +1,373 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted local analysis for the requested save/map optimization. New original code is 0BSD; no imported material.",
+  "date": "2026-11-27",
+  "implementation": "At most four independent native collection-save workers (existing owner participates), joined before ordered root publication; warm map source ceiling 4 to 16 with existing 1000-usec yield check, interactive ceiling unchanged.",
+  "scope": "Single normal generation pair, seed 1703/generator 29/default Frontier expedition options, ordinary actors enabled, fresh source processes with retained OS/import/derived caches. Offscreen 1920x1080 60 FPS, Godot 4.7.2 Forward+, RTX 4050. Loading-ready precedes intro completion/player control.",
+  "runs": [
+    {
+      "path": "reports/startup_optimization/planning_before_20261127T054806375002Z/run.json",
+      "receipt_sha256": "e7c71db83480f16a58149ee78607b836222840fa9b78a162a33a8cab423e5127",
+      "slot": "StartupBench_9c0924c896234f6d",
+      "passed": true,
+      "first_ready_seconds": 168.846654,
+      "memory_checks": {
+        "ram": {
+          "bytes": 4118978560,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1775484928,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "structures_native_sha256": {
+        "structures.windows.template_debug.x86_64.dll": "8ddbaf0ef942cdf3e7802c16bd6fd4ce6e438a1767fcbdc57c2cf6108d23e1f2",
+        "structures.windows.template_release.x86_64.dll": "5958964d83d38f58450d484ef1391ca02fab4edbbadf964192265d098fdaf4fe"
+      },
+      "creating_seconds": 137.088646,
+      "generated_content_matches": {
+        "building_parking": true,
+        "container_locks": true,
+        "door_reinforcement": true,
+        "exploration": true,
+        "house_lights": true,
+        "house_sleepers": true,
+        "location_originals": true,
+        "plan": true,
+        "generated_water": true
+      },
+      "save_seconds": 25.402687,
+      "map_seconds": 16.631481,
+      "save_backend": {
+        "apply_us": 142966,
+        "async": true,
+        "stages": {
+          "archive_encode_us": 0,
+          "archive_publish_us": 24486235,
+          "regional": {
+            "blocks_us": 554808,
+            "compact_encode_us": 4108,
+            "models_us": 23875434,
+            "retire_after_us": 30996,
+            "retire_before_us": 1315,
+            "root_publish_us": 12437,
+            "validate_sections_us": 5791
+          },
+          "terrain_capture_us": 86,
+          "terrain_publish_us": 30136,
+          "terrain_regions": {
+            "capture": {
+              "dirty_pages": 0,
+              "legacy_block_bytes": 0,
+              "pages": 2848,
+              "reserved_bytes": 34432,
+              "revision": 7564,
+              "sample_bytes": 0,
+              "sealed": true
+            },
+            "region_reads": 0,
+            "reused_files": 1,
+            "reused_regions": 194,
+            "workers": 1,
+            "written_bytes": 0,
+            "written_files": 0
+          },
+          "water_publish_us": 705666
+        },
+        "success": true,
+        "write_us": 25222063
+      },
+      "map_layers": {
+        "Blocks": {
+          "cache_hits": 1,
+          "cache_writes": 0,
+          "max_source_us": 125,
+          "max_visibility_ms": 0.0,
+          "pixels_sha256": "441fc1f828a5a111fea663cb1eb08f10f893b33cec5b7b9e8e47579065a2c8e0",
+          "source_calls": 1360,
+          "visibility_calls": 0
+        },
+        "Objects": {
+          "cache_hits": 1,
+          "cache_writes": 0,
+          "max_source_us": 0,
+          "max_visibility_ms": 0.0,
+          "pixels_sha256": "acb3e86fec939798fc4c9a6b21153220eb291e356ffade5027e5b4fdfe4b3d17",
+          "source_calls": 3790,
+          "visibility_calls": 0
+        },
+        "Water": {
+          "cache_hits": 1,
+          "cache_writes": 0,
+          "max_source_us": 302,
+          "max_visibility_ms": 0.0,
+          "pixels_sha256": "d85f7c8a725d587000213b6172ef5d9a2564c32c8c34fde6a155a5d5fe0ed39e",
+          "source_calls": 1109,
+          "visibility_calls": 0
+        },
+        "terrain": {
+          "cache_hits": 0,
+          "cache_writes": 1,
+          "max_native_ms": 5.8643,
+          "patches": 726,
+          "pixels_sha256": "a676be92f7e784a47b4d93359f3d359adfa7b8c50b0fb3fc93fb7fb9a8a20e36"
+        }
+      }
+    },
+    {
+      "path": "reports/startup_optimization/planning_after_20261127T060224039905Z/run.json",
+      "receipt_sha256": "530da34a07811b2ba6bf7cf225cf63d19a58f503d9faea0c0f8562ebc081efa3",
+      "slot": "StartupBench_cfac2ce4695c43a7",
+      "passed": true,
+      "first_ready_seconds": 135.871051,
+      "memory_checks": {
+        "ram": {
+          "bytes": 4122836992,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1775484928,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "structures_native_sha256": {
+        "structures.windows.template_debug.x86_64.dll": "7b6795f6287bad325a8bc35ed4d0e836d1c5e5d54c184ffd1f39cd56ee4bb9e3",
+        "structures.windows.template_release.x86_64.dll": "14462191700375c1efa194a1bd779aadb8c4997a95e6232b81242859dbbcf90b"
+      },
+      "creating_seconds": 105.88469,
+      "map_ready_seconds": 0.02092,
+      "map_cache_verified": true,
+      "generated_content_matches": {
+        "building_parking": true,
+        "container_locks": true,
+        "door_reinforcement": true,
+        "exploration": true,
+        "house_lights": true,
+        "house_sleepers": true,
+        "location_originals": true,
+        "plan": true,
+        "generated_water": true
+      },
+      "map_pixels_match": {
+        "Blocks": true,
+        "Objects": true,
+        "Water": true,
+        "terrain": true
+      },
+      "native_plan_rekey_verified": true,
+      "save_seconds": 10.803091,
+      "map_seconds": 4.9154409999999995,
+      "save_backend": {
+        "apply_us": 147427,
+        "async": true,
+        "stages": {
+          "archive_encode_us": 0,
+          "archive_publish_us": 9896917,
+          "regional": {
+            "blocks_us": 583201,
+            "compact_encode_us": 2230,
+            "model_jobs": 136,
+            "model_workers": 4,
+            "models_open_us": 2125048,
+            "models_us": 7144670,
+            "retire_after_us": 25076,
+            "retire_before_us": 639,
+            "root_publish_us": 9830,
+            "validate_sections_us": 5717
+          },
+          "terrain_capture_us": 91,
+          "terrain_publish_us": 29771,
+          "terrain_regions": {
+            "capture": {
+              "dirty_pages": 0,
+              "legacy_block_bytes": 0,
+              "pages": 2848,
+              "reserved_bytes": 34432,
+              "revision": 7564,
+              "sample_bytes": 0,
+              "sealed": true
+            },
+            "region_reads": 0,
+            "reused_files": 1,
+            "reused_regions": 194,
+            "workers": 1,
+            "written_bytes": 0,
+            "written_files": 0
+          },
+          "water_publish_us": 696967
+        },
+        "success": true,
+        "write_us": 10623683
+      },
+      "map_layers": {
+        "Blocks": {
+          "cache_hits": 1,
+          "cache_writes": 0,
+          "max_source_us": 130,
+          "max_visibility_ms": 0.0,
+          "pixels_sha256": "441fc1f828a5a111fea663cb1eb08f10f893b33cec5b7b9e8e47579065a2c8e0",
+          "source_calls": 3006,
+          "visibility_calls": 0
+        },
+        "Objects": {
+          "cache_hits": 1,
+          "cache_writes": 0,
+          "max_source_us": 0,
+          "max_visibility_ms": 0.0,
+          "pixels_sha256": "acb3e86fec939798fc4c9a6b21153220eb291e356ffade5027e5b4fdfe4b3d17",
+          "source_calls": 3790,
+          "visibility_calls": 0
+        },
+        "Water": {
+          "cache_hits": 1,
+          "cache_writes": 0,
+          "max_source_us": 125,
+          "max_visibility_ms": 0.0,
+          "pixels_sha256": "d85f7c8a725d587000213b6172ef5d9a2564c32c8c34fde6a155a5d5fe0ed39e",
+          "source_calls": 1099,
+          "visibility_calls": 0
+        },
+        "terrain": {
+          "cache_hits": 0,
+          "cache_writes": 1,
+          "max_native_ms": 9.5963,
+          "patches": 726,
+          "pixels_sha256": "a676be92f7e784a47b4d93359f3d359adfa7b8c50b0fb3fc93fb7fb9a8a20e36"
+        }
+      }
+    },
+    {
+      "path": "reports/startup_optimization/loading_before_20261127T055630416355Z/run.json",
+      "receipt_sha256": "7ff16db1e2de1214eba06a2e2423d2cc04e100175e9eaf0ec36f75daf617f740",
+      "slot": "StartupBench_9c0924c896234f6d",
+      "passed": false,
+      "first_ready_seconds": 31.230165,
+      "memory_checks": {
+        "ram": {
+          "bytes": 4014743552,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1778012160,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "structures_native_sha256": {
+        "structures.windows.template_debug.x86_64.dll": "8ddbaf0ef942cdf3e7802c16bd6fd4ce6e438a1767fcbdc57c2cf6108d23e1f2",
+        "structures.windows.template_release.x86_64.dll": "5958964d83d38f58450d484ef1391ca02fab4edbbadf964192265d098fdaf4fe"
+      },
+      "map_ready_seconds": 4.730556,
+      "map_cache_verified": false,
+      "source_files_unchanged": true
+    },
+    {
+      "path": "reports/startup_optimization/loading_after_20261127T060620456483Z/run.json",
+      "receipt_sha256": "449ecf9ec7ef929a1f932f0f70ddd7c396f73c08f8fa6ab38fde6b1ceb3fd731",
+      "slot": "StartupBench_9c0924c896234f6d",
+      "passed": true,
+      "first_ready_seconds": 35.349485,
+      "memory_checks": {
+        "ram": {
+          "bytes": 3984293888,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1778012160,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "structures_native_sha256": {
+        "structures.windows.template_debug.x86_64.dll": "7b6795f6287bad325a8bc35ed4d0e836d1c5e5d54c184ffd1f39cd56ee4bb9e3",
+        "structures.windows.template_release.x86_64.dll": "14462191700375c1efa194a1bd779aadb8c4997a95e6232b81242859dbbcf90b"
+      },
+      "map_ready_seconds": 1.326039,
+      "map_cache_verified": true,
+      "source_files_unchanged": true
+    },
+    {
+      "path": "reports/startup_optimization/loading_after_20261127T060911122870Z/run.json",
+      "receipt_sha256": "7bee3652efd2c3e5bad1543b1c3632010f6b129ef667e454b179d564fe1b3d7b",
+      "slot": "StartupBench_9c0924c896234f6d",
+      "passed": true,
+      "first_ready_seconds": 28.40057,
+      "memory_checks": {
+        "ram": {
+          "bytes": 3995648000,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1778012160,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "structures_native_sha256": {
+        "structures.windows.template_debug.x86_64.dll": "7b6795f6287bad325a8bc35ed4d0e836d1c5e5d54c184ffd1f39cd56ee4bb9e3",
+        "structures.windows.template_release.x86_64.dll": "14462191700375c1efa194a1bd779aadb8c4997a95e6232b81242859dbbcf90b"
+      },
+      "map_ready_seconds": 1.300549,
+      "map_cache_verified": true,
+      "source_files_unchanged": true
+    }
+  ],
+  "regressions": {
+    "native_publication_checks": 95,
+    "archive_read_checks": 84,
+    "production_renderer_resource_cancellation_checks": 13,
+    "plan_proof": "reports/startup_optimization/save_map_checks_20261127/cached_world_plan_3/cached_plan.json",
+    "plan_cache_hit_resource_isolation": "reports/startup_optimization/save_map_checks_20261127/cached_world_plan_4/cached_plan.json",
+    "suite_receipt": "reports/startup_optimization/save_map_checks_20261127/run.json",
+    "equivalence_receipt": "reports/startup_optimization/save_map_verification_20261127/verified_run.json"
+  },
+  "limits": [
+    "Whole reload timing is variable: baseline 31.230 s; candidate 35.349 and 28.401 s. No reliable whole-load speedup is claimed. Explicit map gate improves 4.731 to 1.326/1.301 s.",
+    "Baseline load harness originally failed an overstrict zero-source-call condition on the valid water content-cache fallback. All four cache hits and pixel hashes matched; the original failed receipt is preserved.",
+    "The baseline load captured an unbuilt pending native source edit. Its executed DLL is the original 8ddbaf0e... build from 8e5b3895; binary hashes identify actual runtime behavior.",
+    "Headless startup_resources passed all 13 assertions but emitted a DummyTexture RID leak at exit; the full production-renderer repeat passed without errors. Headless teardown remains unqualified.",
+    "Raw water snapshots are not byte-identical. All common v13 region, contact, structure and vacancy bytes, lake catalog and total volume match. Baseline has nine additional zero-water ocean caps at y=40..44 m, flags=9, with no pending replacement/settling or removed-water vacancies. They are explicitly reported rather than treated as exact-byte equality.",
+    "No OS-cold, foreground cadence, first player movement, wider seed matrix, final export or package acceptance."
+  ],
+  "retention": "Existing checkout; no export/source copy. Admission unchanged. Receipt-verified older worlds archived with keep=1 for capacity; player saves/read-only inputs protected. Logs and failed checks remain retained; standard two-ready capture lifecycle.",
+  "final_verification": {
+    "receipt_sha256": "5a9dfeeee2d2c44b7840f061aa3828ffcef5ce7495822e99f6a86037780923f7",
+    "files_checked": 5592,
+    "source_files_unchanged": {
+      "StartupBench_9c0924c896234f6d": true,
+      "StartupBench_cfac2ce4695c43a7": true
+    },
+    "equivalence_passed": true,
+    "preparation": {
+      "exit_code": 0,
+      "seconds": 26.171105000015814,
+      "current": true,
+      "errors": []
+    }
+  },
+  "model_horizon": {
+    "records": 4750,
+    "collections": 136,
+    "pages": 826,
+    "gpu_transform_bytes": 228000,
+    "charged_bytes": 15324304
+  }
+}

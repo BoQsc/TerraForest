@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "region_world_archive.hpp"
+#include <atomic>
 #include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/file_access.hpp>
@@ -227,19 +228,45 @@ int64_t NativeRegionWorldArchive::publish_sections(const String &path,const Dict
     mark("blocks_us");
     Dictionary models=structure["models"];PackedStringArray ids;Array keys=models.keys();for(int64_t i=0;i<keys.size();++i)ids.push_back(keys[i]);
     std::map<String,PublishedModelIndex> model_indexes;
+    // Each job owns one asset store and its result. No worker mutates the shared
+    // Godot dictionaries or publishes the root. Drain every job before returning
+    // an error so current/backup checkpoint retention remains authoritative.
+    struct ModelJob {
+        String asset;Ref<NativeModelRegionStore> store;PackedByteArray snapshot;
+        PublishedModelIndex index;int64_t error=OK;
+    };
+    std::vector<ModelJob> jobs; jobs.reserve(keys.size());
     for(int64_t i=0;i<keys.size();++i) {
         String asset=keys[i];auto model=model_store(asset,true);if(model.is_null())return ERR_CANT_OPEN;
+        jobs.push_back({asset,model,models[asset],{},OK});
+    }
+    mark("models_open_us");
+    auto publish_model=[](ModelJob &job)->int64_t {
+        auto &model=job.store;
         String parsed_asset;Dictionary state;
-        Dictionary stored=NativeStructuresSnapshot::parse_model_storage(models[asset],parsed_asset,&state)?
-            model->publish_storage_state(state["resident"],state["unavailable_keys"],state["unavailable_checksums"]):model->publish_snapshot(models[asset]);
+        Dictionary stored=NativeStructuresSnapshot::parse_model_storage(job.snapshot,parsed_asset,&state)?
+            model->publish_storage_state(state["resident"],state["unavailable_keys"],state["unavailable_checksums"]):model->publish_snapshot(job.snapshot);
         if(!bool(stored["ok"]))return stored["error"];
         Dictionary model_pin=model->pin_checkpoint();if(!bool(model_pin["ok"]))return model_pin["error"];
         // Bake derived metadata only at explicit save publication. Read-only
         // startup may rebuild in memory but never writes checkpoint sidecars.
         Dictionary metadata=model->bake_metadata(model_pin["checkpoint"]);if(!bool(metadata["ok"]))return metadata["error"];
         Dictionary model_index=model->checkpoint_regions(model_pin["checkpoint"]);if(!bool(model_index["ok"]))return model_index["error"];
-        model_indexes.emplace(asset,PublishedModelIndex{model_index["keys"],model_index["checksums"],model_pin["checkpoint"]});
-        models[asset]=NativeStructuresSnapshot::model_reference(asset,model_pin["checkpoint"]);
+        job.index={model_index["keys"],model_index["checksums"],model_pin["checkpoint"]};
+        return OK;
+    };
+    const size_t worker_count=std::min<size_t>(jobs.size(),std::min<size_t>(4,std::max<size_t>(1,std::thread::hardware_concurrency()/2)));
+    publication_profile_["model_workers"]=int64_t(worker_count);
+    publication_profile_["model_jobs"]=int64_t(jobs.size());
+    std::atomic<size_t> next{0};std::vector<std::thread> workers;
+    auto run=[&](){for(;;){size_t i=next.fetch_add(1);if(i>=jobs.size())return;jobs[i].error=publish_model(jobs[i]);}};
+    // The existing save worker participates; at most three additional threads.
+    for(size_t i=1;i<worker_count;++i)workers.emplace_back(run);
+    run();for(auto &worker:workers)worker.join();
+    for(auto &job:jobs) {
+        if(job.error!=OK)return job.error;
+        model_indexes.emplace(job.asset,job.index);
+        models[job.asset]=NativeStructuresSnapshot::model_reference(job.asset,job.index.checkpoint);
     }
     mark("models_us");
     Ref<NativeStructuresSnapshot> subset;subset.instantiate();if(!subset->configure_assets(ids))return ERR_INVALID_DATA;

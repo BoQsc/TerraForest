@@ -56,6 +56,8 @@ def main():
     parser.add_argument('--compare', type=Path)
     parser.add_argument('--family', choices=['outdoor','planning'], default='outdoor')
     parser.add_argument('--load-slot', help='Read-only browser load of an existing StartupBench fixture; creates no world')
+    parser.add_argument('--verify-map', type=Path, help='Also run the normal map-ready gate and compare certified pixels against this generation profile')
+    parser.add_argument('--native-plan-proof', type=Path, help='Successful cached_world_plan native rekey proof linking the baseline and candidate plan digests')
     args = parser.parse_args()
     if args.family=='planning' and not args.compare and not args.load_slot:
         parser.error('Planning comparison requires an existing baseline receipt')
@@ -78,6 +80,8 @@ def main():
                '--script', 'res://tests/startup_benchmark.gd', '--',
                '--benchmark-output=' + str(folder), '--benchmark-slot=' + slot]
     command.append('--benchmark-profile' if args.load_slot else '--benchmark-generate')
+    if args.verify_map:
+        command.append('--benchmark-map-reference=' + str(args.verify_map.resolve()))
     original_files = world_files(worlds, slot) if args.load_slot else {}
     source = ROOT/'addons/structures/outdoor_generation.gd'
     record = {'command': command, 'slot': slot, 'label': args.label, 'admission': admission,
@@ -88,7 +92,7 @@ def main():
               'lifecycle': 'Existing startup retention keeps two ready owned worlds; verified archives preserve older fixtures. Small logs/JSON/one ready image remain with receipts; no export or source-tree copy.'}
     (folder/'outdoor_source.gd.txt').write_bytes(source.read_bytes())
     record['native_sources'] = {}
-    for name in ('model_horizon.cpp','model_horizon.hpp'):
+    for name in ('model_horizon.cpp','model_horizon.hpp','region_world_archive.cpp'):
         path=ROOT/'addons/structures/native'/name
         record['native_sources'][name]=hashlib.sha256(path.read_bytes()).hexdigest()
         (folder/(name+'.txt')).write_bytes(path.read_bytes())
@@ -99,7 +103,7 @@ def main():
         record['lifecycle'] = 'No new world, export or source copy. Two ready loading captures; older ready.png/result.json cold-retained by maintain_homestead_captures after exit. Small logs, hashes and receipts stay loose. Source world remains protected.'
     if args.family=='planning':
         record['planning_sources'] = {}
-        for name in ('custom_world_plan','generate_world_task','startup_resources'):
+        for name in ('custom_world_plan','generate_world_task','startup_resources','survey_overlay'):
             path=ROOT/'addons/world_runtime'/(name+'.gd')
             record['planning_sources'][name]=hashlib.sha256(path.read_bytes()).hexdigest()
             (folder/(name+'.gd.txt')).write_bytes(path.read_bytes())
@@ -138,6 +142,9 @@ def main():
         metrics = read(folder/'result.json')
         result['first_ready_seconds'] = metrics['first_ready_ms']/1000
         result['model_horizon'] = metrics.get('model_horizon', {})
+        if 'map' in metrics:
+            result['map_ready_seconds'] = metrics['map']['milliseconds']/1000
+            result['map_cache_verified'] = metrics['map']['ok']
         if metrics.get('generation', {}).get('report'):
             report = Path(metrics['generation']['report'])
             generation = read(report/'run.json')
@@ -150,6 +157,12 @@ def main():
             result['planning_seconds'] = next(t['microseconds']/1e6 for t in result['stages'] if t['stage']=='Planning terrain, streets and building sites')
             result['initialization_seconds'] = next(t['microseconds']/1e6 for t in result['stages'] if t['stage']=='Initializing generated terrain data')
             result['objects'] = len(outdoors['placements'])
+            save_map_path = report/'generation_save_map.json'
+            if save_map_path.exists():
+                save_map = read(save_map_path)
+                (folder/'generation_save_map.json').write_bytes(save_map_path.read_bytes())
+                result['save_seconds'] = save_map['save']['wall_ms']/1000
+                result['map_seconds'] = save_map['map_total_ms']/1000
             if args.compare:
                 before = read(args.compare/'outdoor_objects.json')
                 result['placements_identical'] = before['placements']==outdoors['placements']
@@ -161,8 +174,22 @@ def main():
                     before_content=generated_content(previous)
                     after_content=generated_content(report)
                     result['generated_content_matches']={k:before_content[k]==after_content[k] for k in before_content}
+                    if args.native_plan_proof and not result['generated_content_matches']['plan']:
+                        proof = read(args.native_plan_proof)
+                        old_plan, new_plan = before_content['plan'].copy(), after_content['plan'].copy()
+                        linked = (proof.get('ok') and proof.get('native_rekey_verified') and
+                                  proof.get('reference_plan_digest')==old_plan.pop('digest') and
+                                  proof.get('identity',{}).get('plan_digest')==new_plan.pop('digest'))
+                        result['native_plan_rekey_verified'] = bool(linked and old_plan==new_plan)
+                        result['generated_content_matches']['plan'] = result['native_plan_rekey_verified']
+                        (folder/'native_plan_proof.json').write_bytes(args.native_plan_proof.read_bytes())
                     result['passed']=result['passed'] and all(result['generated_content_matches'].values())
                     (folder/'generated_content.json').write_text(json.dumps(after_content,indent=2)+'\n')
+                    previous_map = Path(previous)/'generation_save_map.json'
+                    if previous_map.exists() and save_map_path.exists():
+                        old_layers = read(previous_map)['layers']
+                        result['map_pixels_match'] = {k:old_layers[k]['pixels_sha256']==v['pixels_sha256'] for k,v in save_map['layers'].items()}
+                        result['passed'] = result['passed'] and save_map['certified'] and all(result['map_pixels_match'].values())
     if args.load_slot:
         result['source_files_unchanged'] = original_files == world_files(worlds, slot)
         result['passed'] = result['passed'] and result['source_files_unchanged']

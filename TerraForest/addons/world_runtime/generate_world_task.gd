@@ -9,6 +9,7 @@ var progress_path:=""
 var generation_screen:CanvasLayer
 var generation_cancel_path:=""
 var saved_map_stamps:Dictionary={}
+var save_map_profile:Dictionary={}
 var planning_worker:Thread
 var world_options:Dictionary={}
 const Progress=preload("res://addons/world_runtime/generation_progress.gd")
@@ -511,8 +512,10 @@ func run()->void:
    saved_map_stamps={"blocks":game.world_map.block_survey.current_stamp(),"models":game.world_map.model_survey.current_stamp(),"water":game.world_map.water_survey.current_stamp(),"terrain":game.terrain.density_revision}
    var saved:Dictionary={"done":false,"ok":false}
    game.terrain.save_completed.connect(func(ok:bool):saved.done=true;saved.ok=ok,CONNECT_ONE_SHOT)
+   var save_started:=Time.get_ticks_usec()
    game.terrain.save_world()
    if not await wait_until(func():return saved.done,30) or not saved.ok:print("GENERATION_SAVE_FAILED");game.free();quit(1);return
+   save_map_profile["save"]={"wall_ms":(Time.get_ticks_usec()-save_started)/1000.0,"capture":game.persistence.last_capture,"backend":game.terrain.backend.save_profile()}
    progress("Caching the saved world map")
    if not await bake_map_layers(game):game.free();quit(1);return
   game.shutdown_requested=true
@@ -553,6 +556,8 @@ func prepare_arrival(game:Node,point:Vector3,fixed_height:bool)->bool:
  return not cancelled()
 
 func bake_map_layers(game:Node)->bool:
+ var map_started:=Time.get_ticks_usec()
+ var ready_times:Dictionary={}
  game.app_focused=true
  var atlas:Node=game.world_map
  # Cache data while loading; opening the interactive map is intentionally blocked.
@@ -564,6 +569,7 @@ func bake_map_layers(game:Node)->bool:
   if atlas.updates.image==null or not atlas.updates.cache_saved or atlas.updates.io!=null or not atlas.updates.dirty.is_empty() or not atlas.updates.pending.is_empty():pending.append("terrain")
   for layer:Node in [atlas.water_survey,atlas.block_survey,atlas.model_survey]:
    if not layer.complete or layer.io!=null or layer.cache_hits+layer.cache_writes==0:pending.append(str(layer.caption))
+   elif not ready_times.has(layer.caption):ready_times[layer.caption]=(Time.get_ticks_usec()-map_started)/1000.0
   ready=pending.is_empty()
   if Time.get_ticks_msec()>=next_poll:
    next_poll=Time.get_ticks_msec()+250
@@ -573,7 +579,17 @@ func bake_map_layers(game:Node)->bool:
  atlas.updates.in_flight_limit=1
  if not ready:print("WORLD_MAP_GENERATION_FAILED ",atlas.status.text)
  if not ready:return false
- return await cache_for_playback(game,atlas)
+ save_map_profile["map_layers_ms"]=(Time.get_ticks_usec()-map_started)/1000.0
+ save_map_profile["map_layer_ready_ms"]=ready_times
+ var certified:=await cache_for_playback(game,atlas)
+ save_map_profile["map_total_ms"]=(Time.get_ticks_usec()-map_started)/1000.0
+ save_map_profile["certified"]=certified
+ var observations:Dictionary={"terrain":{"patches":atlas.updates.patches,"max_native_ms":atlas.updates.max_native_ms,"cache_hits":atlas.updates.cache_hits,"cache_writes":atlas.updates.cache_writes,"pixels_sha256":preload("res://addons/world_runtime/survey_cache.gd").digest(atlas.updates.image.get_data()).hex_encode()}}
+ for layer:Node in [atlas.water_survey,atlas.block_survey,atlas.model_survey]:
+  observations[layer.caption]={"source_calls":layer.source_calls,"max_source_us":layer.max_source_us,"visibility_calls":layer.visibility_calls,"max_visibility_ms":layer.max_visibility_ms,"cache_hits":layer.cache_hits,"cache_writes":layer.cache_writes,"pixels_sha256":preload("res://addons/world_runtime/survey_cache.gd").digest(layer.texture.get_image().get_data()).hex_encode()}
+ save_map_profile["layers"]=observations
+ FileAccess.open(output_dir.path_join("generation_save_map.json"),FileAccess.WRITE).store_string(JSON.stringify(save_map_profile,"  "))
+ return certified
 
 func cache_for_playback(game:Node,atlas:Node)->bool:
  var block_stamp:String=atlas.block_survey.current_stamp()

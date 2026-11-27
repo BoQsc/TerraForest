@@ -70,6 +70,7 @@ func run() -> void:
 	check_adapter(path.path_join("world.trw"),original,newer,empty)
 	check_partial(path.path_join("partial.trw"))
 	check_models(path.path_join("models.trw"),empty)
+	check_parallel_models(path.path_join("parallel_models.trw"),empty)
 	check_partial_models(path.path_join("partial_models.trw"))
 	var file := FileAccess.open("res://reports/region_world_archive.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"scope":"Native full and partial structure envelopes, checkpoint references and world-root publication; automatic paging is not exercised."},"  "))
@@ -175,6 +176,40 @@ func check_models(path: String,blocks: PackedByteArray) -> void:
 	adapter.release();DirAccess.rename_absolute(model_dir+".held",model_dir)
 	check(adapter.acquire(path) and adapter.decode(adapter.read(path)).ok,"restoring original model sidecar recovers load")
 	adapter.release();batch.free()
+
+func check_parallel_models(path:String,blocks:PackedByteArray)->void:
+	var raw=ClassDB.instantiate("NativeWorldArchive")
+	var codec=ClassDB.instantiate("NativeStructuresSnapshot")
+	var names:=PackedStringArray();var models:Dictionary={};var batches:Array=[]
+	for i in 9:
+		var name:="test/parallel_%d"%i;names.append(name)
+		var batch=ClassDB.instantiate("NativeStaticBatch");batch.configure_collision_only();batch.configure_asset(name,BoxMesh.new())
+		batch.upsert_instances(PackedInt64Array([1]),PackedFloat32Array([1,0,0,i*65,0,1,0,0,0,0,1,0]))
+		models[name]=batch.capture_snapshot();batches.append(batch)
+	codec.configure_assets(names)
+	var adapter=ClassDB.instantiate("NativeRegionWorldArchive");adapter.configure(raw,codec)
+	var sections:Dictionary={"terrain":PackedByteArray([1]),"structures":codec.encode(blocks,models)}
+	var original:PackedByteArray=sections.structures
+	check(adapter.acquire(path) and adapter.publish_sections(path,sections)==OK,"multiple model jobs publish one compound root")
+	var profile:Dictionary=adapter.publication_profile()
+	check(profile.model_jobs==9 and profile.model_workers>=1 and profile.model_workers<=4,"model publication has a bounded worker count")
+	check(adapter.decode(adapter.read(path)).sections.structures==original,"concurrent model jobs preserve exact asset order and snapshot bytes")
+	var canonical:PackedByteArray=adapter.read(path)
+	for i in batches.size():
+		batches[i].upsert_instances(PackedInt64Array([1]),PackedFloat32Array([1,0,0,i*65+1,0,1,0,0,0,0,1,0]))
+		models[names[i]]=batches[i].capture_snapshot()
+	sections.structures=codec.encode(blocks,models)
+	# Deny one job's catalog replacement while the other independent jobs finish.
+	var guard:=FileAccess.open((path+".models").path_join(names[3].sha256_text()).path_join("catalog.tfrc"),FileAccess.READ)
+	check(guard!=null and adapter.publish_sections(path,sections)!=OK and adapter.read(path)==canonical,"one model write failure preserves the canonical compound root")
+	check(adapter.decode(canonical).sections.structures==original,"all previous model checkpoints survive a partially completed save")
+	guard.close()
+	check(adapter.publish_sections(path,sections)==OK and adapter.decode(adapter.read(path)).sections.structures==sections.structures,"retry after draining failed model jobs publishes exact state")
+	check(adapter.decode(adapter.read(path+".bak")).sections.structures==original,"parallel publication preserves exact backup state")
+	adapter.release()
+	check(adapter.acquire(path) and adapter.decode(adapter.read(path)).sections.structures==sections.structures,"parallel publication reopens with exact state")
+	adapter.release()
+	for batch:Node in batches:batch.free()
 
 func check_partial_models(path: String) -> void:
 	var scene=load("res://addons/structures/structures_world.gd").new();root.add_child(scene)

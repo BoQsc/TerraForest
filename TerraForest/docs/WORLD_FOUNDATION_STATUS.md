@@ -9608,7 +9608,30 @@ remain unchanged. Thirteen resource/cancellation checks and source preparation
 pass. Debug/release libraries are rebuilt; package-runtime acceptance is separate.
 [Evidence and failed harness attempts](WORLD_STARTUP_ARCHITECTURE.md#object-read-completion-without-an-extra-frame--2026-11-26).
 This closes the unnecessary completed-read frame delay, not general loading or
-visual acceptance. Further throughput, save/map preparation, foreground cadence,
+visual acceptance. Further throughput, foreground cadence,
 first player control and final-package qualification require their existing
 matched-flow, equality, cancellation and memory gates. The separate post-reboot
 launch check remains dependent on the user's restart.
+
+
+### Saving and map preparation — 2026-11-27
+
+The measured save/map follow-up is complete: bounded model-save workers reduce
+saving **25.4 → 10.8 s**, and map warming reduces preparation **16.6 → 4.9 s**.
+Normal Generate-to-ready improves **168.8 → 135.9 s** with identical terrain,
+structures, 684 outdoor placements and all four map pixel hashes. Water content
+and common occupancy match; nine additional empty baseline ocean caps are
+reported explicitly, so raw water bytes are not claimed identical. Ninety-five
+publication, 84 archive-read and 13 production-renderer cancellation checks pass.
+
+[Evidence, retained failures and boundaries](WORLD_STARTUP_ARCHITECTURE.md#bounded-saving-and-map-preparation--2026-11-27).
+Reload map preparation improves **4.7 → 1.3 s**, but whole-load timing varies and
+needs repeated controlled samples before claiming a total-load improvement.
+Wider seeds, foreground cadence, first player movement and final-package testing
+remain open under their existing gates. The headless cancellation check emitted
+a DummyTexture shutdown leak despite passing its assertions; the rendered repeat
+passed. Revisit with a headless reproduction before qualifying headless teardown.
+Post-reboot source-launch acceptance still depends on the user's restart.
+
+Final source preparation passes and its ready record is current. Verification
+leaves all 5,592 fixture files unchanged (lock files excluded).

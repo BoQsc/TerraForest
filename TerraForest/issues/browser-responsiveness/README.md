@@ -377,3 +377,27 @@ Single warm-cache samples establish a scoped improvement. Read-only load exclude
 the writable map gate, while normal generation exercises it. Wider seed/cache
 coverage, frame cadence, first player control, final package and post-reboot
 launch acceptance remain separate requirements. No visual approval is implied.
+
+
+## Saving and map preparation — 2026-11-27
+
+Bounded native collection-save workers reduce saving **25.4 → 10.8 s**. A larger
+warm-map source ceiling, with the existing time check, reduces generation map
+preparation **16.6 → 4.9 s**. Normal creation improves **137.1 → 105.9 s**;
+Generate-to-ready improves **168.8 → 135.9 s**. All outdoor placements, terrain,
+structures and map pixels match. Water content/common occupancy matches, while
+nine extra empty ocean-cap records in the baseline prevent a raw-water-byte
+identity claim. These are warm-cache source measurements, not visual acceptance.
+
+Reload map preparation improves **4.7 → 1.3 s**; whole read-only loading varies
+**31.2 s before / 35.3 and 28.4 s after**, so a total-load speedup is unconfirmed.
+Publication/read regressions and production-renderer cancellation checks pass.
+The earlier overstrict baseline map assertion, strict water-byte comparison and
+headless DummyTexture shutdown diagnostic remain retained and explained.
+[Measurements, proof and remaining gates](../../docs/WORLD_STARTUP_ARCHITECTURE.md#bounded-saving-and-map-preparation--2026-11-27).
+Further work needs repeated matched whole-load timings, wider seeds, foreground
+cadence, first control and final-package/cold-launch evidence. Headless teardown
+requires its own reproduction; no production-renderer leak was observed.
+
+Final source preparation passes and its ready record is current. Verification
+leaves all 5,592 fixture files unchanged (lock files excluded).

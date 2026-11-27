@@ -9,6 +9,7 @@ var stages:Dictionary={}
 var source_hash:String
 var profile:=false
 var through_control:=false
+var map_reference:=""
 var measured_game:Node
 var work:Array[Dictionary]=[]
 var stream_stages:Dictionary={}
@@ -30,6 +31,7 @@ func _initialize()->void:
   if arg=="--benchmark-generate":generate=true
   if arg=="--benchmark-profile":profile=true
   if arg=="--benchmark-through-control":through_control=true
+  if arg.begins_with("--benchmark-map-reference="):map_reference=arg.trim_prefix("--benchmark-map-reference=")
  run.call_deferred()
 func wait_for(predicate:Callable,seconds:int)->bool:
  var deadline:=Time.get_ticks_msec()+seconds*1000
@@ -89,6 +91,9 @@ func run()->void:
     var expected_waking:bool=game.player_view.entry.wake_starts==1 or "--benchmark-normal-load" in OS.get_cmdline_user_args()
     ready=ready and controlled and game.player_view.entry.starts==1 and expected_waking
    game.set_physics_process(false)
+   if not map_reference.is_empty():
+    result.map=await verify_map(game)
+    ready=ready and result.map.ok
    await RenderingServer.frame_post_draw
    root.get_texture().get_image().save_png(output.path_join("ready.png"))
    if "--benchmark-observe" in OS.get_cmdline_user_args():await observe(game,result)
@@ -112,6 +117,24 @@ func run()->void:
  FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify(result,"  "))
  print("STARTUP_BENCHMARK ok=",result.ok," first_ready_ms=",elapsed)
  quit(0 if result.ok else 1)
+
+func verify_map(game:Node)->Dictionary:
+ # Exercise the normal map-ready gate explicitly even on a protected read-only
+ # fixture. Every layer must reuse the saved certified pixels in this process.
+ var expected=JSON.parse_string(FileAccess.get_file_as_string(map_reference))
+ if not expected is Dictionary or not expected.get("certified",false):return {"ok":false}
+ var atlas:Node=game.world_map;var began:=Time.get_ticks_usec()
+ var ready:=await wait_for(func():return atlas.prepare_for_play(),120)
+ var rows:Dictionary={}
+ var digest=preload("res://addons/world_runtime/survey_cache.gd")
+ rows.terrain={"cache_hits":atlas.updates.cache_hits,"source_calls":atlas.updates.patches,"pixels_sha256":digest.digest(atlas.updates.image.get_data()).hex_encode() if atlas.updates.image!=null else ""}
+ for layer:Node in [atlas.water_survey,atlas.block_survey,atlas.model_survey]:
+  rows[layer.caption]={"cache_hits":layer.cache_hits,"source_calls":layer.source_calls,"pixels_sha256":digest.digest(layer.texture.get_image().get_data()).hex_encode() if layer.texture!=null else ""}
+ var ok:bool=ready and atlas.warm_error.is_empty()
+ # Water can use its content-key fallback after live equilibrium has advanced;
+ # that path enumerates sources before the cache hit. Pixels must still match.
+ for name:String in rows:ok=ok and rows[name].cache_hits>0 and (name=="Water" or rows[name].source_calls==0) and rows[name].pixels_sha256==expected.layers[name].pixels_sha256
+ return {"ok":ok,"milliseconds":(Time.get_ticks_usec()-began)/1000.0,"layers":rows}
 
 func observe(game:Node,result:Dictionary)->void:
  var local:Dictionary={}

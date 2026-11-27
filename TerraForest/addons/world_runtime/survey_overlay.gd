@@ -77,7 +77,9 @@ func _process(_delta:float)->void:
    else:return
  if not source_done:
   var began:=Time.get_ticks_usec()
-  for n in 4:
+  # Loading may consume more small source steps, still yielding after 1 ms.
+  # Interactive map updates retain their smaller work-count ceiling.
+  for n in (16 if atlas.warming else 4):
    var result:Dictionary=source_step()
    if not result.get("available",true):return
    if result.get("stale",false) or not result.get("ready",true):stamp="";return

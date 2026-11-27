@@ -953,3 +953,90 @@ Play-to-control/first movement, foreground frame cadence, broader seeds and
 final-package qualification keep their earlier closure criteria. This change
 claims the measured loading improvement and scoped correctness, not universal
 regression freedom or world-quality approval.
+
+
+### Bounded saving and map preparation — 2026-11-27
+
+The new phase profile identified 23.875 s in serial model publication and
+15.865 s in map source enumeration. Independent model stores now save through
+at most four native workers, including the existing publication owner. Each
+worker owns one store/result; shared dictionaries are merged only after every
+worker joins. Validation, checkpoint pins, canonical/backup protection and the
+single atomic root publication remain in place. An error drains all workers
+before returning. A nine-model failure/retry test verifies this behavior.
+
+Map warming now permits sixteen small source steps per frame instead of four,
+retaining the existing 1 ms yield check. The interactive-map ceiling remains
+four. Visibility, native terrain queries, cache identities, certification and
+pixels are unchanged. Save and map preparation remain sequential; this change
+does not introduce a save/map race or weaken the saved-identity barrier.
+
+| Measured stage | Baseline | Candidate |
+| --- | ---: | ---: |
+| Save completion | 25.403 s | 10.803 s |
+| Generation map preparation/certification | 16.631 s | 4.915 s |
+| Creating the world | 137.089 s | 105.885 s |
+| Generate to loading-ready | 168.847 s | 135.871 s |
+| Explicit reload map-ready gate | 4.731 s | 1.326 / 1.301 s |
+
+The two targeted generation stages save 26.316 s; total creation improves
+31.204 s (22.8%) and Generate-to-ready improves 32.976 s (19.5%). Other stage
+variation contributes to the totals. These are fresh source processes with
+retained OS/import/derived caches, one normal generation pair, default Frontier
+expedition options, seed 1703/generator 29, all ordinary actors and an offscreen
+1920x1080/60 FPS viewport. The loading barrier precedes intro/player control.
+
+Whole read-only reload timings are **31.230 s before, 35.349 and 28.401 s after**.
+Furniture registration varied substantially; do not claim a reliable total-load
+speedup from these samples. Both candidate reloads pass, reuse all four map
+layers and preserve every source file. Water can enumerate sources before using
+its content-key cache fallback; zero source calls are required only for terrain,
+blocks and models. The first baseline harness wrongly rejected that valid water
+fallback. Its original failed receipt remains retained, with matching pixels
+and cache hits visible; the corrected candidate assertions pass.
+
+All 684 ordered outdoor transforms/IDs and 919 skipped candidates match, together
+with parking, locks, reinforcement, exploration, lights, sleepers and original
+locations. Rebuilding the native library correctly changes the plan key/digest.
+The explicit rekey proof links both digests, compares the complete cached plan
+excluding only that key and two elapsed-time observations, and checks all 50
+prefab fingerprints. The benchmark requires this proof before accepting a rekey.
+Expanded terrain and all structures/object snapshot bytes match exactly. All
+four generation and reopened-map pixel hashes match exactly.
+
+The expanded water archives differ by nine extra baseline ocean-cap records at
+40–44 m elevation. They contain no water, pending replacement/settling or removed-
+water vacancies. Every common region's full record, contacts, structure occupancy
+and vacancy bytes matches, as do the lake catalog and total water. The semantic
+check reports these empty caps explicitly and rejects wet/lower-ocean overrides,
+changed common records or changed vacancy history. **Raw water archive equality
+is not claimed.** Earlier strict-byte failure and diagnostic logs remain under
+`reports/startup_optimization/save_map_verification_20261127/`.
+
+Ninety-five publication and 84 archive-read checks pass, including interrupted
+catalog/root publication, retry, backup and partial-region restoration. Thirteen
+resource/cancellation assertions pass with the production renderer. The headless
+attempt passed its assertions but emitted one DummyTexture RID leak on shutdown;
+that run remains failed. Headless cancellation teardown is unqualified: revisit
+it with a controlled headless reproduction before claiming that path is clean.
+Peak private commit is 4.119/4.123 GB and dedicated GPU allocation 1.775/1.775 GB,
+within the existing sampled budgets. Both native configurations were rebuilt;
+runtime tests use the source/debug library.
+
+[Machine-readable measurements, receipts and limitations](evidence/world_startup_audit/save_map_20261127.json).
+Reproduce with `tools/benchmark_outdoor_generation.py --family planning --label
+after --compare <baseline> --native-plan-proof <cached_plan.json> --verify-map
+<baseline generation_save_map.json>`. Read-only loading uses `--load-slot` with
+the same `--verify-map` profile. Labels do not select binaries. Storage admission
+and receipt-owned archiving remain mandatory; no player save, export or full
+source copy is allocated. An older ordinary startup/FPS fixture was cold-retained
+with verified archives to stay within the existing budget.
+
+This completes the measured saving/map work. Wider seed/cache coverage, stable
+whole-load timing, foreground cadence, first player movement and packaged/cold-
+launch acceptance retain their separate gates. No world-quality approval is
+implied. Final verification/source-preparation status is recorded in the linked
+receipt; the earlier failures remain visible.
+
+Final source preparation passes and its ready record is current. Verification
+leaves all 5,592 fixture files unchanged (lock files excluded).
