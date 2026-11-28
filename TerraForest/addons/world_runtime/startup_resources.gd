@@ -13,6 +13,28 @@ var independent_completed:=0
 var independent_ok:=true
 var authoring_prepared:=false
 var authoring_count:=0
+var render_sources:Array=[]
+var render_cursor:=0
+var render_configured:=false
+var render_prepare_us:=0
+
+func begin_render_preparation()->void:
+	# Authoring inputs are already strongly retained and remain read-only while
+	# the planner uses them. Only the main thread owns the render cache and RIDs.
+	render_sources.clear();render_cursor=0;render_configured=false
+	for row:Dictionary in preload("res://addons/structures/pack_registry.gd").objects.values():
+		render_sources.append(load(row.directory+"/models/"+row.id+".tres"))
+
+func advance_render_preparation()->void:
+	if cancelled or render_cursor>=render_sources.size():return
+	var began:=Time.get_ticks_usec()
+	var render=preload("res://addons/structures/pack_render_mesh.gd")
+	if not render_configured:render.configure(render_sources);render_configured=true
+	while render_cursor<render_sources.size():
+		render.prepare(render_sources[render_cursor]);render_cursor+=1
+		if Time.get_ticks_usec()-began>=8000:break
+	render_prepare_us+=Time.get_ticks_usec()-began
+
 
 func prepare_authoring(owner:Node,report:Callable=Callable())->bool:
 	if authoring_prepared:return not cancelled
@@ -35,6 +57,8 @@ static func independent_asset(path:String)->bool:
 	var extension:=path.get_extension().to_lower()
 	if path.begins_with("res://addons/player_runtime/art/"):
 		return extension in ["res","png","svg","trtex"]
+	if path.begins_with("res://addons/characters/runtime/assets/"):
+		return extension in ["res","png"]
 	if path.begins_with("res://addons/audio_runtime/packs/"):
 		return extension in ["wav","ogg","mp3"]
 	return path=="res://addons/volumetric_water/textures/water_ripples_normal.png" or path=="res://addons/world_ecosystem/art/boulder_granite_v1.png"

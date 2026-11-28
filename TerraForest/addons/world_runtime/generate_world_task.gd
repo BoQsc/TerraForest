@@ -106,6 +106,7 @@ func run()->void:
   progress("Planning terrain, streets and building sites",0,0,{"activity":"Loading building resources · %d / %d"%[done,total]}))
  if cancelled():quit(2);return
  if not authoring_ready:print("GENERATION_AUTHORING_RESOURCES_FAILED");quit(1);return
+ resources.begin_render_preparation()
  var independent_ok:bool=resources.begin_independent("res://demo/world.gd")
  var build:=preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(seed_value,generator,"--central-market" in arguments,"--regional-connection" in arguments,"user://generation_plans",world_options,plan_progress,"--civic-review" in arguments)
  planning_worker=Thread.new()
@@ -116,6 +117,7 @@ func run()->void:
  while planning_worker.is_alive():
   if cancelled():resources.cancelled=true
   if independent_ok:independent_ok=resources.advance_independent()
+  resources.advance_render_preparation()
   var current:Dictionary=plan_progress.snapshot()
   if not current.is_empty() and current!=observed:progress("Planning terrain, streets and building sites",current.completed,current.total,current);observed=current
   await process_frame;planning_frames+=1
@@ -134,7 +136,7 @@ func run()->void:
  var connection:Dictionary=prepared.connection
  var sites:Array=prepared.get("sites",[plan,market])
  print("WORLD_PLAN digest=",prepared.plan_digest," cache_hit=",prepared.cache_hit," ms=",prepared.worker_ms," planning_frames=",planning_frames)
- FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"cache_hit":prepared.cache_hit,"options":world_options,"cache_profile":prepared.get("cache_profile",{}),"planning_phases":plan_progress.timings(),"independent_resources":{"started":resources.independent_started,"completed":resources.independent_completed,"peak_pending":resources.peak_pending}}))
+ FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"cache_hit":prepared.cache_hit,"options":world_options,"cache_profile":prepared.get("cache_profile",{}),"planning_phases":plan_progress.timings(),"independent_resources":{"started":resources.independent_started,"completed":resources.independent_completed,"peak_pending":resources.peak_pending,"render_models":resources.render_cursor,"render_prepare_ms":resources.render_prepare_us/1000.0}}))
 
  if cancelled():quit(2);return
  if not await resources.prepare(self,"res://demo/world.gd",func(done:int,total:int):progress("Initializing generated terrain data",done,total,{"activity":"Loading game resources · %d / %d"%[done,total]})):quit(1);return

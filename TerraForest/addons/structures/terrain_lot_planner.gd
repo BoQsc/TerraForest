@@ -143,7 +143,7 @@ static func footprint_clear(bounds:AABB,reserved:Array)->bool:
   if footprint.intersects(area):return false
  return true
 
-static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2(),recipe_provider:Callable=Callable(),street_provider:Callable=Callable(),envelope:Vector2=Vector2(150,200),road_grid:int=0,global_search:bool=false,site_gate:Callable=Callable())->Dictionary:
+static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2(),recipe_provider:Callable=Callable(),street_provider:Callable=Callable(),envelope:Vector2=Vector2(150,200),road_grid:int=0,global_search:bool=false,site_gate:Callable=Callable(),translated_streets:bool=false)->Dictionary:
  var protected:Dictionary=reservations(core,center)
  if not protected.ok:return {"ok":false,"reason":"Native region reservations unavailable","attempts":0}
  for bounds:AABB in occupied:
@@ -153,33 +153,42 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
  var measured:=Time.get_ticks_usec()
  var lot_rejections:Dictionary={}
  var candidates:Array=[]
- var offsets:Array=[0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]
- if protected.distributed:
-  for distance in range(312,433,24):offsets.append(-distance);offsets.append(distance)
- var centers:Array=[]
- if global_search:
-  for x in range(120,1881,24):
-   for z in range(120,1881,24):centers.append(Vector3(x,0,z))
+ if translated_streets:
+  var source_roads:Array=street_provider.call(Vector3.ZERO)
+  if road_grid>=2:
+   for road:Dictionary in source_roads:road["planning_support_extent"]=7.5 if road_grid==3 else 6.5
+  var ranked:Dictionary=core.plan_street_candidates(center,protected.areas,search_area,envelope,source_roads,protected.distributed,global_search)
+  if not ranked.get("ok",false):return {"ok":false,"reason":"Native street candidate batch rejected","attempts":0}
+  candidates=ranked.candidates;attempts=ranked.attempts;reasons=ranked.reasons
+  timing.streets=Time.get_ticks_usec()-measured
  else:
-  for dx in offsets:
-   for dz in offsets:centers.append(center+Vector3(dx,0,dz))
- for candidate:Vector3 in centers:
-  if candidate.x<120 or candidate.z<120 or candidate.x>1880 or candidate.z>1880:continue
-  if search_area.has_area() and not search_area.has_point(Vector2(candidate.x,candidate.z)):continue
-  attempts+=1
-  # Conservative recipe envelope includes shifted plots, paths and shoulders.
-  if not footprint_clear(AABB(candidate-Vector3(envelope.x*.5,0,envelope.y*.5),Vector3(envelope.x,256,envelope.y)),protected.areas):
-   reasons["Reserved lake, POI or neighboring site"]=int(reasons.get("Reserved lake, POI or neighboring site",0))+1;continue
-  measured=Time.get_ticks_usec()
-  var roads:Dictionary=streets(core,candidate,street_provider.call(candidate) if street_provider.is_valid() else [],road_grid)
-  timing.streets+=Time.get_ticks_usec()-measured
-  if not roads.ok:
-   reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
-  # A permitted excavation is not necessarily a desirable location. Rank all
-  # bounded candidates before trying buildings; prefer little ground disturbance.
-  var cost:float=roads.mean_earthwork+0.3*(roads.max_cut+roads.max_fill)+0.001*center.distance_to(candidate)
-  candidates.append({"center":candidate,"roads":roads,"cost":cost,"order":attempts})
- candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost if a.cost!=b.cost else a.order<b.order)
+  var offsets:Array=[0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]
+  if protected.distributed:
+   for distance in range(312,433,24):offsets.append(-distance);offsets.append(distance)
+  var centers:Array=[]
+  if global_search:
+   for x in range(120,1881,24):
+    for z in range(120,1881,24):centers.append(Vector3(x,0,z))
+  else:
+   for dx in offsets:
+    for dz in offsets:centers.append(center+Vector3(dx,0,dz))
+  for candidate:Vector3 in centers:
+   if candidate.x<120 or candidate.z<120 or candidate.x>1880 or candidate.z>1880:continue
+   if search_area.has_area() and not search_area.has_point(Vector2(candidate.x,candidate.z)):continue
+   attempts+=1
+   # Conservative recipe envelope includes shifted plots, paths and shoulders.
+   if not footprint_clear(AABB(candidate-Vector3(envelope.x*.5,0,envelope.y*.5),Vector3(envelope.x,256,envelope.y)),protected.areas):
+    reasons["Reserved lake, POI or neighboring site"]=int(reasons.get("Reserved lake, POI or neighboring site",0))+1;continue
+   measured=Time.get_ticks_usec()
+   var roads:Dictionary=streets(core,candidate,street_provider.call(candidate) if street_provider.is_valid() else [],road_grid)
+   timing.streets+=Time.get_ticks_usec()-measured
+   if not roads.ok:
+    reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
+   # A permitted excavation is not necessarily a desirable location. Rank all
+   # bounded candidates before trying buildings; prefer little ground disturbance.
+   var cost:float=roads.mean_earthwork+0.3*(roads.max_cut+roads.max_fill)+0.001*center.distance_to(candidate)
+   candidates.append({"center":candidate,"roads":roads,"cost":cost,"order":attempts})
+  candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost if a.cost!=b.cost else a.order<b.order)
  var source_center:Vector3=candidates[0].center if not candidates.is_empty() else center
  var recipe_started:=Time.get_ticks_usec()
  var source:Array=recipe_provider.call(source_center) if recipe_provider.is_valid() else Lots.recipe(source_center,true)

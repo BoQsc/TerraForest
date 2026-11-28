@@ -524,6 +524,7 @@ func _ready() -> void:
 	ground_cover.shelter_source=ecosystem.ground_shelter
 	add_child(ground_cover);ground_cover.set_process(ground_enabled)
 	if ground_enabled and ecosystem.world_coverage:
+		ground_cover.boulders.loading_active=ecosystem.loading_active
 		ecosystem.additional_surface_candidates=ground_cover.boulders.candidates_for_page
 		ecosystem.additional_surface_ready=ground_cover.boulders.accept_surface_page
 		ground_cover.boulders.shared_surface_ready=func(key:Vector2i)->bool:return ecosystem.surface_owner_ready(key) if local_landscape_readiness and not lakes.offline_preparation else ecosystem.coverage_status().ready

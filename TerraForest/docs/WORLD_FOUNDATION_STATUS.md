@@ -1,3 +1,21 @@
+## Planning and startup overlap — 2026-11-28
+
+[Native street batches and overlapping preparation](COLD_GENERATION_REUSE.md#planning-and-startup-overlap--2026-11-28)
+reduce the complete cold Generate-to-play path to **64.241 s**, from 70.772 s,
+with vegetation enabled and the placement-plan cache cold. The **30 s gate remains
+failed**. All 129 creation/interaction/restore assertions pass with clean process
+exits in this run; the prior intermittent zero-reference warning is not reproduced
+and remains preserved without a root-cause resolution claim.
+
+The main gain is scene/data initialization (14.744 → 9.172 s), with render work
+overlapping planning. First-play loading remains 16.526 s: landscape readiness
+improves, exposing a longer object-visual tail. Native planning probes pass 53
+assertions, render reuse passes six, and all four complete-plan equivalence checks
+pass. Remaining closure requires further native
+planning/scene/loading work, unchanged content and readiness, complete cold time
+below 30 s and broader seed evidence. Lake/settlement quality, human approval and
+whole-frame performance remain open; see the linked evidence for exact scope.
+
 ## Startup native batches — 2026-11-28
 
 [COLD_GENERATION_REUSE.md](COLD_GENERATION_REUSE.md#startup-native-batches--2026-11-28)

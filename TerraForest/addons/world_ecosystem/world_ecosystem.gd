@@ -168,12 +168,15 @@ func _process(delta: float) -> void:
 func _step(_delta: float) -> void:
 	if not terrain.world_ready or not vegetation.ready_to_render:
 		return
-	# Coalesce edits; reconcile at most one 36-candidate owner per frame.
-	if not terrain.pending_edit and not _reconcile.is_empty():
-		var key: Vector2i = _reconcile.keys()[0]
-		_reconcile.erase(key)
-		if _samples.has(key) and _wanted.has(key):
-			_publish_samples(key)
+	# Startup may drain completed owners within a bounded CPU budget instead of
+	# imposing one full display frame between independent native publications.
+	var preparing:bool=loading_active.is_valid() and loading_active.call()
+	var reconcile_deadline:=Time.get_ticks_usec()+2000
+	if not terrain.pending_edit:
+		for key:Vector2i in _reconcile.keys().slice(0,8 if preparing else 1):
+			_reconcile.erase(key)
+			if _samples.has(key) and _wanted.has(key):_publish_samples(key)
+			if Time.get_ticks_usec()>=reconcile_deadline:break
 	var cell: Vector2i = _cell(camera.global_position)
 	if (cell != _last_cell and (not world_coverage or resident.size()<1024)) or _wanted.is_empty() or stream_radius != _last_radius or max_resident_cells != _last_limit:
 		_last_cell = cell
@@ -182,7 +185,7 @@ func _step(_delta: float) -> void:
 		_refresh(cell)
 	# Fill the existing bounded native terrain queue during loading. Gameplay
 	# retains its smaller admission window; no collision/readiness work is skipped.
-	var request_limit:=8 if loading_active.is_valid() and loading_active.call() else 2
+	var request_limit:=8 if preparing else 2
 	if terrain.pending_edit or _requests.size() >= request_limit:
 		return
 	if resident.size() == _wanted.size() and _resample.is_empty():

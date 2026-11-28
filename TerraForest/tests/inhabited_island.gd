@@ -42,6 +42,7 @@ func legacy_samples()->Dictionary:
 func run()->void:
  if folder.is_empty():quit(2);return
  if "--compare-plans" in OS.get_cmdline_user_args():compare_plans();finish();return
+ if "--planning-native-probe" in OS.get_cmdline_user_args():planning_native_probe();finish();return
  if "--startup-native-probe" in OS.get_cmdline_user_args():startup_native_probe();finish();return
  if "--cold-native-probe" in OS.get_cmdline_user_args():cold_native_probe();finish();return
  if "--lake-margin-probe" in OS.get_cmdline_user_args():lake_margin_probe();finish();return
@@ -359,3 +360,82 @@ func startup_native_probe()->void:
      check(parallel.build_owned_columns(origins,step,epoch+1).is_empty(),"stale startup batch rejected")
      check(parallel.build_owned_columns(PackedVector2Array([Vector2(0,0),Vector2(1,0)]),step,epoch).is_empty(),"unaligned startup batch rejected")
  FileAccess.open(folder.path_join("startup_native_probe.json"),FileAccess.WRITE).store_string(JSON.stringify(timings,"  "))
+
+# The old exhaustive search is an independent reference for ordering, full
+# grade geometry, rejection accounting and input immutability of native batches.
+func reference_candidates(core:RefCounted,center:Vector3,reserved:Array,area:Rect2,envelope:Vector2,provider:Callable,distributed:bool,global_search:bool)->Dictionary:
+ var planner=load("res://addons/structures/terrain_lot_planner.gd")
+ var offsets:Array=[0]
+ for distance in range(24,433 if distributed else 289,24):offsets.append(-distance);offsets.append(distance)
+ var centers:Array=[]
+ if global_search:
+  for x in range(120,1881,24):
+   for z in range(120,1881,24):centers.append(Vector3(x,0,z))
+ else:
+  for dx in offsets:
+   for dz in offsets:centers.append(center+Vector3(dx,0,dz))
+ var attempts:=0;var reasons:Dictionary={};var candidates:Array=[]
+ for candidate:Vector3 in centers:
+  if candidate.x<120 or candidate.z<120 or candidate.x>1880 or candidate.z>1880:continue
+  if area.has_area() and not area.has_point(Vector2(candidate.x,candidate.z)):continue
+  attempts+=1
+  if not planner.footprint_clear(AABB(candidate-Vector3(envelope.x*.5,0,envelope.y*.5),Vector3(envelope.x,256,envelope.y)),reserved):
+   reasons["Reserved lake, POI or neighboring site"]=int(reasons.get("Reserved lake, POI or neighboring site",0))+1;continue
+  var roads:Dictionary=planner.streets(core,candidate,provider.call(candidate),3)
+  if not roads.ok:reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
+  var cost:float=roads.mean_earthwork+0.3*(roads.max_cut+roads.max_fill)+0.001*center.distance_to(candidate)
+  candidates.append({"center":candidate,"roads":roads,"cost":cost,"order":attempts})
+ candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost if a.cost!=b.cost else a.order<b.order)
+ return {"ok":true,"candidates":candidates,"attempts":attempts,"reasons":reasons}
+
+func planning_native_probe()->void:
+ var metro=load("res://addons/structures/metropolis_catalog.gd")
+ var timings:Array=[]
+ for generator:int in [19,36,38]:
+  for seed_number:int in [1703,901]:
+   var core:RefCounted=ClassDB.instantiate("TerrainCore")
+   core.execute(Codec.command(6,[seed_number,generator]))
+   for heading in [0,1]:
+    var center:=Vector3(1080,0,960);var area:=Rect2(936,816,288,288);var envelope:=Vector2(128,150)
+    var reserved:Array=[Rect2(1070,1040,120,100)]
+    var provider:Callable=metro.mini_streets.bind(heading,0,0,2)
+    var roads:Array=provider.call(Vector3.ZERO)
+    for road:Dictionary in roads:road.planning_support_extent=7.5
+    var original:=var_to_bytes(roads)
+    core.configure_planning_cache(false)
+    var began:=Time.get_ticks_usec()
+    var expected:=reference_candidates(core,center,reserved,area,envelope,provider,true,false)
+    var serial_us:=Time.get_ticks_usec()-began
+    core.configure_planning_cache(true);began=Time.get_ticks_usec()
+    var actual:Dictionary=core.plan_street_candidates(center,reserved,area,envelope,roads,true,false)
+    var batch_us:=Time.get_ticks_usec()-began;began=Time.get_ticks_usec()
+    var repeated:Dictionary=core.plan_street_candidates(center,reserved,area,envelope,roads,true,false)
+    var repeated_us:=Time.get_ticks_usec()-began
+    check(var_to_bytes(actual)==var_to_bytes(expected),"native candidate order, rejection counts and exact street bytes %d/%d/%d"%[generator,seed_number,heading])
+    check(var_to_bytes(repeated)==var_to_bytes(expected) and core.planning_cache_stats().hits>0,"identical street surveys reused with independent returned values")
+    actual.reasons["mutated"]=1
+    if not actual.candidates.is_empty():actual.candidates[0].roads.segments.clear()
+    check(var_to_bytes(core.plan_street_candidates(center,reserved,area,envelope,roads,true,false))==var_to_bytes(expected) and var_to_bytes(roads)==original,"caller mutation cannot poison cache or authored template")
+    var epochs:Dictionary=core.planning_cache_stats()
+    core.execute(Codec.command(6,[seed_number+1,generator]))
+    core.plan_street_candidates(center,reserved,area,envelope,roads,true,false)
+    check(core.planning_cache_stats().misses>epochs.misses,"world reset cannot reuse old street surveys")
+    core.execute(Codec.command(6,[seed_number,generator]))
+    timings.append({"generator":generator,"seed":seed_number,"heading":heading,"serial_us":serial_us,"native_us":batch_us,"reused_us":repeated_us})
+ # Cover global candidate lattice, excluded boundary, and invalid input.
+ var core:RefCounted=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[1703,38]))
+ var provider:Callable=metro.mini_streets.bind(0,0,0,2);var roads:Array=provider.call(Vector3.ZERO)
+ for road:Dictionary in roads:road.planning_support_extent=7.5
+ var expected:=reference_candidates(core,Vector3(128,0,128),[],Rect2(0,0,250,250),Vector2(128,150),provider,false,true)
+ check(var_to_bytes(core.plan_street_candidates(Vector3(128,0,128),[],Rect2(0,0,250,250),Vector2(128,150),roads,false,true))==var_to_bytes(expected),"global lattice and world boundary preserve exact ordering")
+ var before:Dictionary=core.planning_cache_stats()
+ var height:PackedFloat32Array=ClassDB.instantiate("NativeGenerationEarthworks").heights(core,PackedVector3Array([Vector3(160,0,160)]))
+ core.execute(Codec.brush(Vector3(160,height[0],160),Vector3(164,height[0]+1,160),4.0,0,false,1))
+ var edited:Dictionary=core.plan_street_candidates(Vector3(128,0,128),[],Rect2(0,0,250,250),Vector2(128,150),roads,false,true)
+ check(core.planning_cache_stats().misses>before.misses,"terrain edits invalidate cached successful and rejected streets")
+ core.configure_planning_cache(false)
+ expected=reference_candidates(core,Vector3(128,0,128),[],Rect2(0,0,250,250),Vector2(128,150),provider,false,true)
+ check(var_to_bytes(edited)==var_to_bytes(expected),"post-edit street batch matches an uncached terrain survey")
+ check(not core.plan_street_candidates(Vector3.ZERO,[],Rect2(),Vector2.ZERO,roads,false,false).ok,"invalid candidate envelope rejected")
+ check(not core.plan_street_candidates(Vector3.ZERO,[1],Rect2(),Vector2.ONE,roads,false,false).ok,"invalid reservation rejected")
+ FileAccess.open(folder.path_join("planning_native_probe.json"),FileAccess.WRITE).store_string(JSON.stringify(timings,"  "))

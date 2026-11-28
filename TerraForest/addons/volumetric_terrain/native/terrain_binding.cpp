@@ -28,6 +28,7 @@
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 #include <optional>
 #include <algorithm>
 #include <cstdlib>
@@ -91,6 +92,13 @@ class TerrainCore : public godot::RefCounted {
     uint32_t storage_load_checksum_=0;
     int storage_load_revision_=0;
 
+    // Per-core preparation cache. Exact serialized requests/results, no shared
+    // mutable dictionaries; revisions and storage epochs fence reset/load/edit.
+    std::map<std::vector<uint8_t>,godot::PackedByteArray> street_cache_;
+    uint64_t street_cache_epoch_=0,street_cache_identity_=0;
+    int street_cache_revision_=-1;
+    int64_t street_cache_bytes_=0,street_cache_hits_=0,street_cache_misses_=0;
+    bool street_cache_enabled_=true;
     std::mutex mutex_;
     std::atomic<int64_t> active_command_{-1};
     std::atomic<u64> snapshot_epoch_{0};
@@ -139,6 +147,9 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("plan_lake_crossings","metropolis"), &TerrainCore::lake_crossings,DEFVAL(false));
         godot::ClassDB::bind_method(godot::D_METHOD("plan_land_footbridges","roads","reservations","seed"), &TerrainCore::land_footbridges);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_streets","roads","junctions"), &TerrainCore::plan_streets);
+        godot::ClassDB::bind_method(godot::D_METHOD("plan_street_candidates","center","reserved","area","envelope","roads","distributed","global_search"), &TerrainCore::plan_street_candidates);
+        godot::ClassDB::bind_method(godot::D_METHOD("planning_cache_stats"), &TerrainCore::planning_cache_stats);
+        godot::ClassDB::bind_method(godot::D_METHOD("configure_planning_cache","enabled"), &TerrainCore::configure_planning_cache);
         godot::ClassDB::bind_method(godot::D_METHOD("normalize_roads","roads","protected_areas"), &TerrainCore::normalize_roads);
         godot::ClassDB::bind_method(godot::D_METHOD("fit_road_network","roads","protected_areas","footprint_policy"), &TerrainCore::fit_road_network,DEFVAL(false));
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
@@ -276,8 +287,63 @@ public:
     godot::Dictionary plan_lots(godot::Vector3 center,const godot::Array &lots,const godot::Array &roads,bool default_streets){
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=plan_settlement_lots(world_,center,lots,roads,default_streets);return tr_oom?godot::Dictionary():result;
     }
+    void configure_planning_cache(bool enabled){
+        std::lock_guard<std::mutex> lock(mutex_);street_cache_enabled_=enabled;
+        street_cache_.clear();street_cache_bytes_=0;street_cache_hits_=street_cache_misses_=0;
+    }
+    godot::Dictionary planning_cache_stats(){
+        std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary d;
+        d["hits"]=street_cache_hits_;d["misses"]=street_cache_misses_;d["bytes"]=street_cache_bytes_;d["entries"]=int64_t(street_cache_.size());return d;
+    }
+    godot::Dictionary plan_streets_locked(const godot::Array &roads,const godot::PackedVector3Array &junctions){
+        if(street_cache_epoch_!=storage_epoch_||street_cache_revision_!=world_.revision||street_cache_identity_!=world_.immutable_height_identity){
+            street_cache_.clear();street_cache_bytes_=0;street_cache_epoch_=storage_epoch_;
+            street_cache_revision_=world_.revision;street_cache_identity_=world_.immutable_height_identity;
+        }
+        godot::Array request;request.push_back(roads);request.push_back(junctions);
+        const auto bytes=godot::UtilityFunctions::var_to_bytes(request);
+        const bool eligible=street_cache_enabled_&&roads.size()<=256&&junctions.size()<=1024&&bytes.size()<=65536;
+        std::vector<uint8_t> key;
+        if(eligible){key.assign(bytes.ptr(),bytes.ptr()+bytes.size());const auto found=street_cache_.find(key);
+            if(found!=street_cache_.end()){++street_cache_hits_;return godot::UtilityFunctions::bytes_to_var(found->second);}}
+        ++street_cache_misses_;tr_oom=false;auto result=plan_street_network(world_,roads,junctions);
+        if(tr_oom)return {};
+        if(eligible){auto encoded=godot::UtilityFunctions::var_to_bytes(result);const int64_t size=bytes.size()+encoded.size()+128;
+            if(size<=65536){if(street_cache_bytes_+size>8*1024*1024||street_cache_.size()>=8192){street_cache_.clear();street_cache_bytes_=0;}
+                street_cache_.emplace(std::move(key),encoded);street_cache_bytes_+=size;}}
+        return result;
+    }
     godot::Dictionary plan_streets(const godot::Array &roads,const godot::PackedVector3Array &junctions){
-        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=plan_street_network(world_,roads,junctions);return tr_oom?godot::Dictionary():result;
+        std::lock_guard<std::mutex> lock(mutex_);return plan_streets_locked(roads,junctions);
+    }
+    godot::Dictionary plan_street_candidates(godot::Vector3 center,const godot::Array &reserved,godot::Rect2 area,godot::Vector2 envelope,const godot::Array &roads,bool distributed,bool global_search){
+        using namespace godot;
+        Dictionary output;output["ok"]=false;
+        if(!center.is_finite()||!area.position.is_finite()||!area.size.is_finite()||!envelope.is_finite()||envelope.x<=0||envelope.y<=0||roads.is_empty()||roads.size()>256||reserved.size()>4096)return output;
+        std::vector<Rect2> exclusions;
+        for(int i=0;i<reserved.size();++i){if(reserved[i].get_type()!=Variant::RECT2)return output;Rect2 r=reserved[i];if(!r.position.is_finite()||!r.size.is_finite())return output;exclusions.push_back(r);}
+        for(int i=0;i<roads.size();++i){if(roads[i].get_type()!=Variant::DICTIONARY)return output;Dictionary r=roads[i];
+            for(const char *field:{"start","finish"}){if(r.get(field,Variant()).get_type()!=Variant::VECTOR3||!Vector3(r[field]).is_finite())return output;}}
+        struct Candidate{Vector3 center;Dictionary roads;double cost;int order;};std::vector<Candidate> candidates;
+        std::vector<int> offsets{0};for(int d=24;d<=(distributed?432:288);d+=24){offsets.push_back(-d);offsets.push_back(d);}
+        int attempts=0;Dictionary reasons;std::lock_guard<std::mutex> lock(mutex_);
+        auto inspect=[&](Vector3 point){
+            if(point.x<120||point.z<120||point.x>1880||point.z>1880||(area.has_area()&&!area.has_point(Vector2(point.x,point.z))))return;
+            ++attempts;Rect2 footprint(Vector2(point.x-envelope.x*.5f,point.z-envelope.y*.5f),envelope);
+            for(const auto &r:exclusions)if(footprint.intersects(r)){const char *why="Reserved lake, POI or neighboring site";reasons[why]=int(reasons.get(why,0))+1;return;}
+            Array translated;PackedVector3Array junctions;
+            for(int i=0;i<roads.size();++i){Dictionary r=Dictionary(roads[i]).duplicate();
+                for(const char *field:{"start","finish"}){Vector3 p=point+Vector3(r[field]);r[field]=p;if(!junctions.has(p))junctions.push_back(p);}translated.push_back(r);}
+            Dictionary fitted=plan_streets_locked(translated,junctions);
+            if(!bool(fitted.get("ok",false))){String why=fitted.get("reason","Native street survey failed");reasons[why]=int(reasons.get(why,0))+1;return;}
+            double cost=double(fitted["mean_earthwork"])+.3*(double(fitted["max_cut"])+double(fitted["max_fill"]))+.001*center.distance_to(point);
+            candidates.push_back({point,fitted,cost,attempts});
+        };
+        if(global_search){for(int x=120;x<=1880;x+=24)for(int z=120;z<=1880;z+=24)inspect(Vector3(x,0,z));}
+        else for(int dx:offsets)for(int dz:offsets)inspect(center+Vector3(dx,0,dz));
+        std::sort(candidates.begin(),candidates.end(),[](const Candidate&a,const Candidate&b){return a.cost!=b.cost?a.cost<b.cost:a.order<b.order;});
+        Array records;for(const auto &c:candidates){Dictionary r;r["center"]=c.center;r["roads"]=c.roads;r["cost"]=c.cost;r["order"]=c.order;records.push_back(r);}
+        output["ok"]=true;output["candidates"]=records;output["attempts"]=attempts;output["reasons"]=reasons;return output;
     }
     godot::Dictionary survey_water_visibility(const godot::PackedVector3Array &points){
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest_survey_water_visibility(world_,points);return tr_oom?godot::Dictionary():result;

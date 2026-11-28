@@ -388,6 +388,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    if FileAccess.get_file_as_bytes(temporary)==checksum+bytes:result.cache_persisted=DirAccess.rename_absolute(temporary,path)==OK
    if FileAccess.file_exists(temporary):DirAccess.remove_absolute(temporary)
  result["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0
+ cache_profile["street_surveys"]=core.planning_cache_stats()
  result["cache_profile"]=cache_profile
  result["cache_path"]=path
  return result

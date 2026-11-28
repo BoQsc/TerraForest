@@ -737,3 +737,24 @@ restoration data are unchanged. Seven completed focused-check log pairs use
 `startup_logs.archive.json`, leaving test receipts and compact summaries ready.
 `reports/startup_native_20261128/metadata_retention.json` records all exact paths,
 old/new hashes and the normal-limit admission. Pinned manifests were excluded.
+
+Planning/startup-overlap preparation (2026-11-28) uses normal storage limits.
+`reports/planning_startup_20261128/metadata_retention.json` records lossless
+whitespace compaction of six unpinned, receipt-matched metropolis archive
+manifests. Each original byte stream is retained in its adjacent
+`manifest_format.archive.json`, and decoded restore metadata is unchanged.
+This recovers 1,638,066 ready bytes; no save or regression content is removed.
+Two earlier candidates whose current run receipts did not match their archival
+provenance were excluded unchanged. Normal remaining report capacity is about
+2.34 MiB, owned-world capacity 86.77 MiB, and archive capacity 96.28 MiB.
+The user subsequently approved one-time +256 MiB report/+256 MiB owned-world
+headroom for the complete cold check. Run
+`reports/inhabited_island_world/20261128T182839716684Z` passes all 129 assertions
+and all three strict phases. Its exact fixture (60,158,794 bytes) and reviewed
+images/logs (17,863,170 bytes) are cold-retained; original world-manifest bytes
+remain recoverable alongside the compact ready manifest. Normal limits are
+restored, with approximately 0.66 MiB report, 86.77 MiB owned-world and 77.48 MiB
+archive headroom in `reports/planning_startup_20261128/full_check_retention.json`.
+All measured DLLs match, and the protected human playtest save matches its
+original 4,059 file hashes. Three older focused log pairs are cold through
+`focused_retention.json`; no failed evidence, existing save or pin was removed.

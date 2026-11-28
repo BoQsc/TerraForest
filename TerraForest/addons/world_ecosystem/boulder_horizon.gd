@@ -22,6 +22,7 @@ var _support:RefCounted
 var rejected:=0
 var unchanged_publications:=0
 var last_process_us:=0
+var loading_active:Callable
 var shared_surface_ready:Callable
 
 func _ready()->void:
@@ -68,8 +69,11 @@ func _step()->void:
 	if not cover.is_processing() or not terrain.world_ready or terrain.stopping:return
 	_ensure_seed()
 	if terrain.pending_edit:return
-	for key:Vector2i in _reconcile.keys().slice(0,2):
+	var preparing:bool=loading_active.is_valid() and loading_active.call()
+	var deadline:=Time.get_ticks_usec()+2000
+	for key:Vector2i in _reconcile.keys().slice(0,8 if preparing else 2):
 		if _samples.has(key):_publish(key)
+		if Time.get_ticks_usec()>=deadline:break
 	if _published.size()==1024 and _resample.is_empty():return
 	_request_pages()
 

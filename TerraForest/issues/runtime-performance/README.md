@@ -1,5 +1,15 @@
 # Runtime performance
 
+## Planning and startup overlap — 2026-11-28
+
+[Full evidence](../../docs/COLD_GENERATION_REUSE.md#planning-and-startup-overlap--2026-11-28)
+measures **64.241 s cold Generate-to-play**, down from 70.772 s with vegetation
+enabled. All 129 creation/interaction/fresh-restore checks pass and all three
+processes exit cleanly in this run. The **30 s gate remains failed**. Scene/data
+initialization improves 14.744 → 9.172 s; first-play loading remains about 16.5 s,
+with a longer object-visual tail after landscape readiness. The earlier sporadic
+zero-reference warning, broader world quality and 60 FPS remain open.
+
 ## Cold generation startup — 2026-11-28
 
 [Native startup batch evidence](../../docs/COLD_GENERATION_REUSE.md#startup-native-batches--2026-11-28)

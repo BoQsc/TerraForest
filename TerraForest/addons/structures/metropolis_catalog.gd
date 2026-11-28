@@ -212,16 +212,16 @@ static func locate(core:RefCounted,road_grid:int,variant:int,progress:RefCounted
 			var reach:=192 if block==0 and part==0 else 320
 			var area:=Rect2(Vector2(point.x-reach,point.z-reach),Vector2(reach*2,reach*2))
 			var gate:=connect_mini.bind(core,city_roads+all_roads,city_lots+all_lots)
-			var fitted:=Planner.locate(core,point,occupied,area,mini_recipe.bind(block,part,heading,profile),mini_streets.bind(heading,block,part,profile),mini_envelope(block,part,heading,profile),road_grid,false,gate)
+			var fitted:=Planner.locate(core,point,occupied,area,mini_recipe.bind(block,part,heading,profile),mini_streets.bind(heading,block,part,profile),mini_envelope(block,part,heading,profile),road_grid,false,gate,true)
 			if not fitted.get("ok",false) and not (block==0 and part==0):
 				for turn in range(1,4):
 					var facing:=(heading+turn)%4
-					fitted=Planner.locate(core,point,occupied,area,mini_recipe.bind(block,part,facing,profile),mini_streets.bind(facing,block,part,profile),mini_envelope(block,part,facing,profile),road_grid,false,gate)
+					fitted=Planner.locate(core,point,occupied,area,mini_recipe.bind(block,part,facing,profile),mini_streets.bind(facing,block,part,profile),mini_envelope(block,part,facing,profile),road_grid,false,gate,true)
 					if fitted.get("ok",false):break
 			if not fitted.get("ok",false) and block==0 and part==0:
 				if progress!=null:progress.record("Surveying a dry, gentle city anchor",0,1,"Bounded central-region search / preserve every requested landmark")
 				for direction in 4:
-					fitted=Planner.locate(core,point,occupied,Rect2(Vector2(128,128),Vector2(1744,1744)),mini_recipe.bind(block,part,direction,profile),mini_streets.bind(direction,block,part,profile),Vector2(204,204),road_grid,true)
+					fitted=Planner.locate(core,point,occupied,Rect2(Vector2(128,128),Vector2(1744,1744)),mini_recipe.bind(block,part,direction,profile),mini_streets.bind(direction,block,part,profile),Vector2(204,204),road_grid,true,Callable(),true)
 					if fitted.get("ok",false):heading=direction;break
 				if fitted.get("ok",false):
 					relocation=fitted.center-point;hint+=relocation

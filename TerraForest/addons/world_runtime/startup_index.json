@@ -875,7 +875,8 @@
   "res://addons/world_runtime/settlement_actors.gd": [],
   "res://addons/world_runtime/settlement_supplies.gd": [],
   "res://addons/world_runtime/startup_resources.gd": [
-    "res://addons/structures/pack_registry.gd"
+    "res://addons/structures/pack_registry.gd",
+    "res://addons/structures/pack_render_mesh.gd"
   ],
   "res://addons/world_runtime/survey_blocks.gd": [
     "res://addons/world_runtime/survey_overlay.gd"

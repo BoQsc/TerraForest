@@ -1,15 +1,15 @@
 # Native generation and binary world inspection
 
 Current performance evidence is in [COLD_GENERATION_REUSE.md](COLD_GENERATION_REUSE.md).
-The first-play Water rebuild is fixed: all map layers reuse certified caches
-without source or visibility queries. Native exact height reuse and planning
-input reuse reduce the measured cold Generate-to-play path from **99.469 to
-84.627 seconds**. All 129 functional checks pass, but the zero-reference shutdown
-warning still fails strict integration. The 30-second target remains open, with
-scene initialization, landscape reconstruction and water-contact settlement
-still material. This is one source-game comparison, not a universal timing claim.
-Terrain 38's quality/physical work remains in [SHORE_HABITATS.md](SHORE_HABITATS.md);
-older field identities remain frozen.
+The full cold Generate-to-play path is **64.241 seconds**, down from 70.772 s,
+with vegetation enabled. Native street batches reuse unchanged surveys; main-thread
+render preparation overlaps planning. All map layers reuse certified caches.
+All 129 creation/interaction/restore checks and clean exits pass in this run.
+The earlier intermittent shutdown failure remains documented without a root-cause
+resolution claim. The 30-second target is still failed: planning, scene preparation
+and first-play object/landscape work remain material. This is one source-game
+comparison, not a universal timing claim. Terrain 38's quality/physical work
+remains in [SHORE_HABITATS.md](SHORE_HABITATS.md); older field identities stay frozen.
 
 User direction, 2026-11-27: generation processing belongs in native code, with
 compact authoritative world storage and a readable inspector. JSON is an

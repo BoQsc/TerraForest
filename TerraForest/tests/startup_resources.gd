@@ -18,6 +18,7 @@ func temporary_authoring(owner:Node)->WeakRef:
 	if not await resources.prepare_authoring(owner):return null
 	return authoring_probe(resources)
 func run()->void:
+	if "--render-preparation-only" in OS.get_cmdline_user_args():await render_preparation_probe();return
 	Engine.max_fps=60
 	process_frame.connect(func():beats+=1)
 	var owner:=Node.new();root.add_child(owner)
@@ -73,3 +74,32 @@ func run()->void:
 	planning.free()
 	for frame in 3:await process_frame
 	print("STARTUP_RESOURCES checks=",checks," failures=",failures);quit(1 if failures else 0)
+
+func render_preparation_probe()->void:
+	var owner:=Node.new();root.add_child(owner)
+	var resources=preload("res://addons/world_runtime/startup_resources.gd").new()
+	check(await resources.prepare_authoring(owner),"render preparation retains source inputs before planning")
+	resources.begin_render_preparation()
+	var originals:Array=[]
+	for mesh:Mesh in resources.render_sources:
+		var metadata:Dictionary={}
+		for key:StringName in mesh.get_meta_list():metadata[key]=mesh.get_meta(key)
+		originals.append(var_to_bytes(metadata))
+	resources.cancelled=true;resources.advance_render_preparation()
+	check(resources.render_cursor==0 and not resources.render_configured,"cancel prevents unscheduled mesh work")
+	resources.cancelled=false
+	while resources.render_cursor<resources.render_sources.size():resources.advance_render_preparation();await process_frame
+	check(resources.render_cursor==preload("res://addons/structures/pack_registry.gd").objects.size(),"all render meshes prepared during cooperative window")
+	var renderer=preload("res://addons/structures/pack_render_mesh.gd")
+	var before:int=renderer.preparation_profile.lod_calls
+	renderer.configure(resources.render_sources)
+	var unchanged:=true
+	for index in resources.render_sources.size():
+		var mesh:Mesh=resources.render_sources[index];var metadata:Dictionary={}
+		for key:StringName in mesh.get_meta_list():metadata[key]=mesh.get_meta(key)
+		unchanged=unchanged and originals[index]==var_to_bytes(metadata)
+		renderer.prepare(mesh)
+	check(unchanged,"shared authored source metadata is read-only during preparation")
+	check(renderer.preparation_profile.lod_calls==before,"scene registration reuses completed native render work")
+	check(resources.independent_asset("res://addons/characters/runtime/assets/Human.crouch.res") and not resources.independent_asset("res://addons/structures/prefabs/house.tres"),"character prefetch remains separate from planning assets")
+	owner.free();print("STARTUP_RESOURCES checks=",checks," failures=",failures);quit(1 if failures else 0)

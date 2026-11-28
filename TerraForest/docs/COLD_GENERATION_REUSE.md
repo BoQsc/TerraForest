@@ -214,3 +214,102 @@ checked against its original 4,059 hashes in
 unpinned world manifests (original bytes remain in adjacent
 `manifest_format.archive.json`) and receipt-owned focused-log retention.
 `final_retention.json` confirms normal storage admission after QA.
+
+
+## Planning and startup overlap — 2026-11-28
+
+**Full cold Generate-to-play: 64.240994 s, down from 70.771693 s (9.23%).**
+The 30 s gate remains failed. Normal island creation, interaction and fresh-process
+restore all pass and exit cleanly in this run, with vegetation enabled. The
+placement-plan cache is cold (`plan_cache_hit=false`).
+Street-candidate enumeration, exclusion filtering, grading calls and stable ranking
+now run as one native batch for the translation-invariant metropolis/island
+street templates. Other providers keep their existing contract. A per-core cache
+stores exact request/result bytes, capped at 8 MiB/8,192 entries with 64 KiB rows;
+terrain revision, immutable field identity and load/reset epoch fence reuse.
+Returned dictionaries are independent, including rejected survey results.
+
+Render mesh preparation now advances on the main thread while planning owns its
+worker. Source meshes stay read-only; registration reuses the existing native
+merge/LOD cache. Character presentation resources join bounded independent
+prefetch. Startup forest and boulder publication drains up to eight ready owners
+within 2 ms instead of imposing a display frame per one/two owners. Gameplay
+limits, vegetation density, support/exclusion rules and readiness gates are
+unchanged. No terrain/world format or saved-world version changes.
+
+Verified evidence:
+
+- `reports/checks/20261128T175917399072Z`: 53 native assertions pass across two
+  seeds, three terrain versions and both street headings, plus global/boundary,
+  caller-mutation, edit/reset invalidation and malformed-input cases. Twelve
+  probe totals: old search 233.864 ms, fresh native batch 225.931 ms, reused
+  native batch 45.112 ms. The earlier 51-check pass at
+  `20261128T175440878013Z` measured 226.760 / 260.280 / 48.620 ms, so fresh-batch
+  improvement is not established from these small timings; retry reuse is the
+  intended benefit. These are not Generate-to-play measurements.
+- `reports/checks/20261128T175815247276Z`: six cooperative render-preparation
+  assertions pass, covering cancellation before submission, all pack models,
+  source metadata immutability and no repeated native LOD preparation on reuse.
+- Debug/release terrain DLLs rebuilt and checked from the current source.
+  Startup dependency index and runner syntax checks pass.
+
+Rejected development checks remain visible: `20261128T175258374478Z` exposed
+an untyped test Callable; `20261128T175545736680Z` exposed mixed indentation in
+the test extension. `20261128T175655163073Z` entered the existing full resource
+probe because the new flag branch had not matched a mixed line ending; it
+reported 20 assertions but script type errors and an exit leak, so it is not a
+pass. The branch and both runtime Boolean declarations are corrected. The final
+six-check probe is the bounded branch, not a full startup/cancellation verdict.
+
+Integrated evidence: `reports/inhabited_island_world/20261128T182839716684Z`
+and `reports/planning_startup_20261128/comparison.json`. The unchanged timer
+covers the Generate button through playable readiness, including durable
+publication and first loading. This is one source-game run, seed 1703/terrain 38.
+
+| Measured component | Previous (s) | Current (s) |
+| --- | ---: | ---: |
+| Complete Generate-to-play | 70.771693 | 64.240994 |
+| Generation task, including planning and save | 47.591743 | 41.092699 |
+| Planning phase | 12.399742 | 12.129285 |
+| Generation scene/data initialization | 14.744166 | 9.172415 |
+| First-play scene ready | 3.011517 | 2.927669 |
+| First-play loading | 16.495649 | 16.525555 |
+| Landscape readiness within loading | 10.385959 | 8.595007 |
+| Object-visual readiness within loading | 3.530466 | 5.250300 |
+
+Nested stages must not be added together. All 110 pack models prepare during
+planning (6.518 s main-thread work overlapped with the worker); the planning
+worker measures 10.012 s. Native street reuse records 3,463 hits/4,811 misses,
+2,748 retained entries and 7,718,972 charged bytes at completion. First-play
+retains 307 resources, loads resources in 4.078 ms and registers building parts
+in 25.167 ms. Water/Blocks/Objects each have one certified fast cache hit with
+zero source/visibility queries or writes; terrain has one cache hit and zero
+patches. Faster landscape readiness exposes more of the object-visual tail;
+first-play total is effectively unchanged in this comparison.
+
+`reports/checks/20261128T183735663488Z` passes four complete-plan comparison
+checks: all generated payload bytes are unchanged apart from native-library
+identity and observation timings.
+
+All 129 functional checks pass (8 creation, 89 interaction, 32 restore). Unlike
+the preceding run, no zero-reference shutdown rejection occurred in any phase.
+That earlier intermittent failure is preserved; this run does not establish its
+root cause or a universal fix. Private-commit warnings remain about 4.77/4.98/4.88
+GiB. All six final lake views, first play and the lake-2 pre-residency view were
+inspected: water, grass, ferns, trees and boulders are present. Broad plain terrain,
+simple settlements, transient collision-readiness notices and whole-frame FPS
+remain open; these captures do not confer human quality approval.
+
+Remaining: the 30 s complete-path requirement, planning/scene CPU work and the
+first-play object/landscape tail. Closure needs further native reuse/overlap,
+unchanged readiness/content, repeated clean exits and broader cold seed evidence.
+No new one-time storage allowance is implied for future iterations.
+
+The approved one-time +256 MiB report/+256 MiB owned-world allowance is complete.
+The exact new fixture (60,158,794 bytes) is cold in the run's `world.archive.json`;
+reviewed images/logs (17,863,170 bytes) use `review_and_logs.archive.json`. Original
+manifest formatting remains losslessly available through
+`manifest_format.archive.json`. `reports/planning_startup_20261128/full_check_retention.json`
+verifies normal storage limits, all measured DLL hashes and the protected human
+save's original 4,059 file hashes. Older focused logs use the three exact receipts
+listed in `focused_retention.json`; rejected checks remain recoverable.

@@ -168,7 +168,8 @@ static func prepare(source: Mesh) -> Mesh:
 static func finish_mesh(source: Mesh,mesh: ArrayMesh,known_arrays:Array[Array]=[]) -> Mesh:
 	# Godot's core mesh processor retains the full-detail surface and adds index
 	# LODs. Work runs once during catalog preparation, never during player frames.
-	for key: StringName in source.get_meta_list(): mesh.set_meta(key,source.get_meta(key))
+	if mesh!=source:
+		for key: StringName in source.get_meta_list(): mesh.set_meta(key,source.get_meta(key))
 	# Preserve the renderer's packed-normal roundtrip before native LODs. Read
 	# a newly merged mesh once; reuse that exact array for validation and LODs.
 	if known_arrays.is_empty():
