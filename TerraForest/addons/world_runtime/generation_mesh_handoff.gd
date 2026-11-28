@@ -5,6 +5,7 @@ extends RefCounted
 const LIMIT_BYTES:=192*1024*1024
 const LIMIT_ROWS:=512
 static var waiting:RefCounted
+static var waiting_resources:Array[Resource]=[]
 var rows:Dictionary={}
 var bytes:=0
 var epoch:=-1
@@ -28,6 +29,17 @@ func take(key:Vector3i)->Dictionary:
  var row:Dictionary=rows[key];rows.erase(key);bytes-=int(row.bytes);hits+=1
  row["worker_ms"]=0.0;row["region_stages"]={};row["handoff_cached"]=true
  return row
-static func publish(cache:RefCounted)->void:waiting=cache
+static func publish(cache:RefCounted)->void:
+ waiting=cache
+ if cache==null:waiting_resources.clear()
+static func retain_resources(resources:Array[Resource])->bool:
+ # ResourceLoader's cache is weak. Hold the already loaded authoring meshes
+ # and scripts across the scene transition so their native render caches survive.
+ # One handoff only; cancellation and the next launch explicitly release it.
+ waiting_resources.clear()
+ if resources.size()>2048:return false
+ waiting_resources=resources.duplicate();return true
+static func consume_resources()->Array[Resource]:
+ var resources:=waiting_resources;waiting_resources=[];return resources
 static func consume()->RefCounted:
  var cache:=waiting;waiting=null;return cache

@@ -9,6 +9,45 @@ func check(ok:bool,label:String)->void:
  print("PASS " if ok else "FAIL ",label)
 func _initialize()->void:run.call_deferred()
 func run()->void:
+ if "--metropolis-plan-only" in OS.get_cmdline_user_args():
+  var folder:=""
+  var expected:=""
+  for arg:String in OS.get_cmdline_user_args():
+   if arg.begins_with("--check-evidence-dir="):folder=arg.trim_prefix("--check-evidence-dir=")
+   if arg.begins_with("--expected-plan-digest="):expected=arg.trim_prefix("--expected-plan-digest=")
+  if folder.is_empty() or expected.is_empty():quit(2);return
+  var reference:Dictionary={}
+  for name:String in DirAccess.get_files_at("user://generation_plans"):
+   if not name.begins_with("recipe_") or not name.ends_with(".bin"):continue
+   var file:=FileAccess.open("user://generation_plans/"+name,FileAccess.READ)
+   if file.get_buffer(32).hex_encode()==expected:reference=bytes_to_var(file.get_buffer(file.get_length()-32));break
+  check(not reference.is_empty(),"original deterministic plan fixture found")
+  var trace:=preload("res://addons/world_runtime/world_plan_progress.gd").new()
+  var plan:Dictionary=Plan.build(1703,33,true,true,folder.path_join("plan"),preload("res://addons/world_runtime/world_recipe.gd").METROPOLIS,trace)
+  check(plan.get("ok",false) and not plan.get("cache_hit",true),"cold metropolis plan compiled")
+  var actual:Dictionary={}
+  for name:String in DirAccess.get_files_at(folder.path_join("plan")):
+   if name.ends_with(".bin"):actual=bytes_to_var(FileAccess.get_file_as_bytes(folder.path_join("plan").path_join(name)).slice(32));break
+  # Library fingerprints deliberately differ after a rebuild; compare every
+  # authored placement, grade, command, field and navigation record exactly.
+  actual.erase("recipe_key");reference.erase("recipe_key")
+  check(not actual.is_empty() and var_to_bytes(actual)==var_to_bytes(reference),"native exits and foundation surveys preserve complete metropolis plan content")
+  FileAccess.open(folder.path_join("cold_plan.json"),FileAccess.WRITE).store_string(JSON.stringify({"milliseconds":plan.get("worker_ms",-1),"digest":plan.get("plan_digest",""),"phases":trace.timings()}))
+  print("GENERATION_EARTHWORKS failures=",failures);quit(1 if failures else 0);return
+ if "--packets-only" in OS.get_cmdline_user_args():
+  var reference=preload("res://tests/fixtures/generation_earthworks_reference.gd")
+  for generator:int in [19,35]:
+   var options:Dictionary={} if generator==19 else preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.duplicate()
+   var plan:Dictionary=Plan.build(1703,generator,true,true,"user://generation_plans",options)
+   check(plan.get("ok",false),"packet parity plan admitted "+str(generator))
+   if not plan.get("ok",false):continue
+   var deposits:Array=plan.works.get("deposits",[])
+   var expected:Array=reference.packets(plan.works.segments,deposits)
+   var actual:Array=Earthworks.packets(plan.works.segments,deposits)
+   check(not expected.is_empty() and actual==expected,"native compiler preserves all ordered road, foundation, clearance and vein packet bytes "+str(generator))
+  for invalid:Array in [[{}],[{"phase":"unknown","material":1}],[{"material":1,"arched":true}]]:
+   check(Earthworks.packets(invalid).is_empty(),"malformed authoring rejected")
+  print("GENERATION_EARTHWORKS failures=",failures);quit(1 if failures else 0);return
  check_curve_prefix()
  var rows:Array=[]
  for seed_value in [0,42,1703]:

@@ -63,26 +63,29 @@ public:
         if(!bool(plan.get("present",false))||int64_t(plan.get("seed",-1))!=seed||int(plan.get("generator",-1))!=generator)return failure("Generated location metadata belongs to another world");
         auto codec=owner("NativeStructuresSnapshot"),archive=owner("NativeRegionWorldArchive");
         if(codec.is_null()||archive.is_null())return failure("Native structure storage codec is unavailable");
-        const Dictionary reference=codec->call("inspect_reference",sections["structures"]);
+        Dictionary reference=codec->call("inspect_reference",sections["structures"]);
+        const bool regional=reference.get("ok",false);
+        if(!regional)reference=codec->call("inspect_resident",sections["structures"]);
         if(!bool(reference.get("ok",false)))return failure("Generated building reference is invalid");
         const Array keys=Dictionary(reference["models"]).keys();PackedStringArray assets;
         for(int i=0;i<keys.size();i++)assets.push_back(keys[i]);
         // Generated regional worlds already own these stores. Verification must
         // never create missing companions just to attempt opening a corrupt save.
-        if(!DirAccess::dir_exists_absolute(path+String(".regions"))||!DirAccess::dir_exists_absolute(path+String(".terrain"))||!DirAccess::dir_exists_absolute(path+String(".water")))return failure("Generated companion storage is missing");
-        if(!bool(codec->call("configure_assets",assets))||!bool(archive->call("configure",raw,codec))||!bool(archive->call("acquire",path)))return failure("Generated building storage is unavailable or in use");
+        if((regional&&!DirAccess::dir_exists_absolute(path+String(".regions")))||!DirAccess::dir_exists_absolute(path+String(".terrain"))||!DirAccess::dir_exists_absolute(path+String(".water")))return failure("Generated companion storage is missing");
+        if(!bool(codec->call("configure_assets",assets)))return failure("Generated building schema is invalid");
+        if(regional?(!bool(archive->call("configure",raw,codec))||!bool(archive->call("acquire",path))):!raw->acquire(path))return failure("Generated building storage is unavailable or in use");
         if(raw->read(path)!=canonical)return failure("Generated world changed before verification acquired ownership");
         auto terrain=owner("NativeTerrainRegionStore");
         if(terrain.is_null()||!bool(terrain->call("open_store",path+String(".terrain"))))return failure("Generated terrain storage is unavailable");
         const Dictionary field=terrain->call("verify_snapshot",sections["terrain"]);terrain->call("close");
         if(!bool(field.get("ok",false))||int64_t(field.get("seed",-1))!=seed||int(field.get("generator",-1))!=generator)return failure("Generated terrain checkpoint or identity is invalid");
-        const Dictionary restored=archive->call("decode",canonical);
-        if(!bool(restored.get("ok",false)))return failure("Generated building region is missing or damaged");
+        const bool buildings_ok=regional?bool(Dictionary(archive->call("decode",canonical)).get("ok",false)):bool(codec->call("validate_snapshot",sections["structures"]));
+        if(!buildings_ok)return failure("Generated building region is missing or damaged");
         auto water=owner("NativeWaterRegionStore");
         if(water.is_null()||!bool(water->call("open_store",path+String(".water"))))return failure("Generated water storage is unavailable");
         const PackedByteArray expanded=water->call("expand_water_snapshot",sections["volumetric_water"]);water->call("close");
         if(expanded.is_empty())return failure("Generated water checkpoint is missing or damaged");
-        archive->call("release");
+        if(regional)archive->call("release");else raw->release();
         Dictionary hashes,sizes;const Array names=sections.keys();
         for(int i=0;i<names.size();i++){const String name=names[i];const PackedByteArray bytes=sections[name];hashes[name]=digest(bytes);sizes[name]=bytes.size();}
         Dictionary out;out["ok"]=true;out["root_digest"]=digest(canonical);out["section_digests"]=hashes;out["section_bytes"]=sizes;out["root_bytes"]=canonical.size();out["terrain"]=field;out["model_assets"]=assets.size();out["places"]=Array(plan["places"]).size();out["roads"]=Array(plan["roads"]).size();out["milliseconds"]=(Time::get_singleton()->get_ticks_usec()-began)/1000.0;out["scope"]="Native binary integrity and saved identity; visual and traversal qualification run separately.";return out;

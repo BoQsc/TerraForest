@@ -175,6 +175,97 @@ all within their unchanged limits. `final_verification.json` records that closur
 both source-matching native builds, the functional/strict distinction and the
 separate failed C1 fixture. No storage allowance remains elevated.
 
+## Roads, foundations, map and publication batches (2026-11-28, in progress)
+
+`NativeGenerationEarthworks` compiles the road/foundation command stream,
+selects regional road exits and executes bounded foundation/approach surveys,
+including the original cut/fill and grade acceptance checks. Offline sign
+footings and outdoor objects query the frozen native terrain directly. Mutable
+world callers retain their revision-aware queue. Road profiles compute horizontal
+geometry once per column; generation checkpoints every 2,048 commands instead
+of 64, preserving cancellation, rollback and paged terrain.
+
+`NativeGenerationMaps` captures bounded native scene inputs, then rasterizes
+against the unchanged terrain on a worker while the save runs. Its native cache
+publisher certifies pixels against the durable root and restored component
+identities. Cancellation, changed owners/revisions/transforms, unavailable
+regions and incomplete replies reject publication. All four map pixel hashes
+match the earlier generator on the full Metropolis fixture.
+
+The first generated root retains complete native structure/model records in
+TFSB. Later edited saves retain the ordinary regional format and backup rules.
+The inspector and map certificates accept both forms. Model-store publication
+uses bounded native workers; portable publication copies and flushes at most
+128 paths per batch, joining every worker before the commit journal advances.
+No durability or validation step is omitted. Shutdown skips a second save only
+when the previous save succeeded and terrain epoch/revision and all captured
+addon bytes still match. Dirty, invalid, pending and queued-edit shutdowns keep
+the original barriers; 44 async-save assertions cover these cases.
+
+Ordinary run `reports/metropolis_world/20261127T203905800884Z` completed all
+109 creation/interaction/fresh-restore assertions. Its creation exit retains
+the intermittent zero-reference ObjectDB warning, so **strict acceptance fails**.
+It measures **119.416 s Generate-to-play**, including a cold 30.097 s planning
+stage, all generation, durable publication and the first playable world load.
+The generation stage alone is 70.584 s. Saving takes 1.464 s, the subsequent map
+stage 4.414 s and unchanged shutdown finalization 0.152 s. Portable publication
+is 0.182 s for 39 files (formerly 3,760), and native verification is 0.920 s.
+The earlier cold-plan run `20261127T195756432588Z` measured 134.056 s end to end
+and passed all 109 assertions with clean exits. The older 96.088 s number was
+only the generation stage with a warm plan; it is not an end-to-end baseline.
+
+The final run `reports/metropolis_world/20261128T103705614198Z` measures
+**89.903 s Generate-to-play with a cached placement plan**, including 44.134 s
+in generation and 39.174 s in first-play loading. It passes all 109 functional
+assertions and preserves the same four map hashes. All three exits retain the
+zero-reference warning, so strict acceptance still fails. This is not a cold
+timing improvement against the preceding run. Saving is 1.448 s, the remaining
+map stage 3.944 s, finalization 0.191 s, portable publication 0.195 s and native
+verification 0.918 s. No screenshots were allocated; rendered checks and frame
+waits are unchanged.
+
+The source transfers 308 already loaded authoring/script resources across the
+scene boundary, with one bounded consumer and explicit cancellation cleanup.
+First-play building registration drops from 5.128 s to 21 ms; resource loading
+is 5 ms and scene startup 3.349 s. Startup yields after an 8 ms work budget
+instead of after every small setup step. The native approach and resource
+lifetime regressions pass. The first handoff trial failed because it read the
+preparation owner after release; retaining the resources before release fixes
+that error, and the final integrated run exercises the correction.
+
+Cold-plan trials compare every serialized field after excluding only the
+intentionally changed library fingerprint. The native approach migration passed
+that exact comparison in `reports/checks/20261127T205438041344Z`. Additional
+height-cache, exclusion-index and connectivity-shortcut trials were rejected:
+they preserved output where completed but did not materially reduce the hard
+village connection search; the height-cache trial was stopped after regression.
+Their logs remain evidence. These experimental terrain-planner changes are not
+in the retained implementation.
+
+The **30-second whole-path target remains open**. The remaining work is the
+repeated native connection search, generation-scene initialization, first-load
+render/collision preparation, remaining script-based planning/placement owners,
+and Variant-based placement-plan records. Do not move required work outside the
+Generate-to-play timer or weaken site/contact rules to close the target. Closure
+requires a cold ordinary UI generation, durable save, unchanged content/map
+proof, fresh restore, repeatable clean exits and a measured total below 30 s on
+the stated machine. Source timing does not qualify an installed export.
+
+`reports/native_stage_batches_20261127/` retains admission and comparisons.
+Earlier storage rejections, malformed test fixtures, an isolated-build include
+layout failure, failed resource-handoff trial and the transient checkpoint-pin
+retirement assertion remain visible; subsequent passing checks do not erase
+those failures. Both configurations of all three changed native libraries match
+their current source. Ten launcher tests and startup-index freshness pass.
+
+The final fixture is cold-retained with reconstruction verification. The failed
+handoff private stage and two failed/superseded thin native build trials remain
+receipt-owned and bounded; archive capacity is nearly full. Their ownership,
+preserved upstream notices and archival return trigger are recorded in
+`reports/native_stage_batches_20261127/retention_pending.json`. The failed
+handoff capture has a documented `.retain` pin. No archive allowance was raised,
+and the temporary approved QA report/world allowance ended with its launcher.
+
 ## Thirty-second target and reusable pieces
 
 Under 30 seconds is an engineering target, not a proven bound for this world or
@@ -209,8 +300,8 @@ inspector's `native-check`. It checks recipe/seed/generator identity, every
 referenced terrain, structure/model, water and location-baseline checkpoint,
 and the root/section hashes. It acquires the existing save lease and rechecks the
 root before traversal. It releases stores on success and all failure paths.
-This entry point supports current generated regional worlds; it is not a migration
-tool for historical inline-only roots, and does not semantically validate every
+This entry point supports current generated compact and regional worlds; it is
+not a migration tool for historical inline-only roots, and does not semantically validate every
 optional gameplay component. Fresh gameplay restore remains a separate gate.
 
 ## Remaining native migration work

@@ -6,6 +6,14 @@
 
 ## Metropolis recipe — 2026-11-27
 
+2026-11-28 native road/foundation batches, save/map publication and resource
+reuse pass 109 integrated functional assertions with unchanged map hashes.
+The complete Generate-to-play measurement is 89.903 s with a cached plan;
+the preceding cold run is 119.416 s. **The 30-second whole-path target is open**,
+and intermittent zero-reference exit warnings still fail strict acceptance.
+Exact evidence, failed trials and remaining work are recorded in the
+[native generation contract](../../docs/NATIVE_GENERATION.md#roads-foundations-map-and-publication-batches-2026-11-28-in-progress).
+
 Native processing migration is in progress under
 [NATIVE_GENERATION.md](../../docs/NATIVE_GENERATION.md). Outdoor placement, the
 ordinary main-building pass and generated-world storage verification now run in

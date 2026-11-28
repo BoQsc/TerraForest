@@ -9,6 +9,7 @@ func clear_store(path:String)->void:
  for name:String in DirAccess.get_files_at(path):DirAccess.remove_absolute(path.path_join(name))
  DirAccess.remove_absolute(path)
 func run()->void:
+ check_profiles()
  var path:=ProjectSettings.globalize_path("user://generation_staging_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()])
  var packets:Array=[]
  for i in 40:
@@ -48,3 +49,27 @@ func run()->void:
  legacy=null;staged=null;core=null;unused=null;broken=null;oversized=null;cancelled=null;capture=null;store.close();store=null
  for suffix:String in ["","_rejected","_oversized"]:clear_store(path+suffix)
  print("TERRAIN_GENERATION_STAGING failures=",failures);quit(1 if failures else 0)
+
+func check_profiles()->void:
+ var packets:Array=[]
+ for profile in [0,1,2,3,4,5,6,7,12]:
+  var a:=Vector3(90+profile*12,68,100)
+  var packet:=Codec.graded_bed(a,a+Vector3(8,0 if profile&1 else 1.25,6),2.5,3,4,4)
+  packet.resize(52 if profile else 48);packet.encode_float(44,0 if profile==12 else 2)
+  if profile:packet.encode_u32(48,profile)
+  packets.append(packet)
+ var coefficients:=PackedFloat64Array([0,0,0.8,68, 0,0,0.8,68.8, 0,0,0.8,69.6])
+ var curve:=Codec.curved_road_bed(Vector3(140,68.8,140),Vector3(146,69.6,148),3,2,4,coefficients,1)
+ curve.encode_float(44,2);packets.append(curve)
+ var mineral:=Codec.brush(Vector3(144,70,141),Vector3(144,68,141),1.6,4,true,8)
+ mineral.encode_u32(0,41);packets.append(mineral)
+ var reference:=fresh();var before:Dictionary=reference.bake_generated_earthworks(packets)
+ check(before.get("ok",false),"mixed graded profiles establish ordinary terrain oracle")
+ if not before.get("ok",false):print(before)
+ var expected:=raw(reference)
+ for optimized:bool in [false,true]:
+  var path:=ProjectSettings.globalize_path("user://generation_profile_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()])
+  var candidate:=fresh();var reply:Dictionary=candidate.bake_generated_earthworks_staged(packets,path,512,2048,-1,-1,optimized)
+  check(reply.get("ok",false) and raw(candidate)==expected,"exact sloped/capped/rectangular/cut/arched/curved/mineral bytes; optimized="+str(optimized))
+  check((reply.get("road_columns",0)>0)==optimized,"column optimization executes only on the selected native path")
+  candidate=null;clear_store(path)

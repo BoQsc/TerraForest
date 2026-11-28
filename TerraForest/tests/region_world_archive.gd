@@ -14,6 +14,8 @@ func check(ok: bool,label: String) -> void:
 
 func run() -> void:
 	var path := ProjectSettings.globalize_path("res://reports/root_%d_%d" % [OS.get_process_id(),Time.get_ticks_usec()])
+	for arg:String in OS.get_cmdline_user_args():
+		if arg.begins_with("--check-evidence-dir="):path=arg.trim_prefix("--check-evidence-dir=").path_join("region_fixture")
 	DirAccess.make_dir_recursive_absolute(path)
 	var store: RefCounted = ClassDB.instantiate("NativeBlockRegionStore")
 	var world: Node3D = ClassDB.instantiate("NativeBlockWorld")
@@ -71,6 +73,7 @@ func run() -> void:
 	check_partial(path.path_join("partial.trw"))
 	check_models(path.path_join("models.trw"),empty)
 	check_parallel_models(path.path_join("parallel_models.trw"),empty)
+	check_compact_initial(path.path_join("compact_initial.trw"),original,newer)
 	check_partial_models(path.path_join("partial_models.trw"))
 	var file := FileAccess.open("res://reports/region_world_archive.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks":checks,"failures":failures,"scope":"Native full and partial structure envelopes, checkpoint references and world-root publication; automatic paging is not exercised."},"  "))
@@ -155,8 +158,11 @@ func check_models(path: String,blocks: PackedByteArray) -> void:
 	for i in 20:
 		batch.upsert_instances(PackedInt64Array([1]),PackedFloat32Array([1,0,0,i+2,0,1,0,0,0,0,1,0]))
 		sections.structures=codec.encode(blocks,{"test/root_model":batch.capture_snapshot()})
-		all_ok=adapter.publish(path,adapter.encode(sections))==OK and all_ok
-		all_ok=adapter.decode(adapter.read(path+".bak")).sections.structures==before and adapter.storage_stats().model_checkpoints<=2 and all_ok
+		var error:int=adapter.publish(path,adapter.encode(sections))
+		var backup_matches:bool=adapter.decode(adapter.read(path+".bak")).sections.structures==before
+		var pins:int=adapter.storage_stats().model_checkpoints
+		if error!=OK or not backup_matches or pins>2:print("MODEL_SAVE_DIAGNOSTIC ",{"iteration":i,"error":error,"backup_matches":backup_matches,"pins":pins})
+		all_ok=error==OK and backup_matches and pins<=2 and all_ok
 		before=sections.structures
 	check(all_ok,"20 model saves preserve exact backup and retire only unreferenced model pins")
 	var canonical: PackedByteArray=adapter.read(path)
@@ -192,7 +198,7 @@ func check_parallel_models(path:String,blocks:PackedByteArray)->void:
 	var original:PackedByteArray=sections.structures
 	check(adapter.acquire(path) and adapter.publish_sections(path,sections)==OK,"multiple model jobs publish one compound root")
 	var profile:Dictionary=adapter.publication_profile()
-	check(profile.model_jobs==9 and profile.model_workers>=1 and profile.model_workers<=4,"model publication has a bounded worker count")
+	check(profile.model_jobs==9 and profile.model_workers>=1 and profile.model_workers<=mini(9,mini(12,OS.get_processor_count())),"initial model publication has a bounded worker count")
 	check(adapter.decode(adapter.read(path)).sections.structures==original,"concurrent model jobs preserve exact asset order and snapshot bytes")
 	var canonical:PackedByteArray=adapter.read(path)
 	for i in batches.size():
@@ -206,6 +212,7 @@ func check_parallel_models(path:String,blocks:PackedByteArray)->void:
 	guard.close()
 	check(adapter.publish_sections(path,sections)==OK and adapter.decode(adapter.read(path)).sections.structures==sections.structures,"retry after draining failed model jobs publishes exact state")
 	check(adapter.decode(adapter.read(path+".bak")).sections.structures==original,"parallel publication preserves exact backup state")
+	check(adapter.publication_profile().model_workers<=4,"ordinary saves retain the four-worker ceiling")
 	adapter.release()
 	check(adapter.acquire(path) and adapter.decode(adapter.read(path)).sections.structures==sections.structures,"parallel publication reopens with exact state")
 	adapter.release()
@@ -317,3 +324,31 @@ func check_partial(path: String) -> void:
 	check(adapter.acquire(path) and adapter.decode(adapter.read(path)).sections.structures==expected,"partial demolition survives root and sidecar reopen")
 	adapter.release()
 	world.free()
+
+func check_compact_initial(path:String,blocks:PackedByteArray,newer:PackedByteArray)->void:
+	var raw:RefCounted=ClassDB.instantiate("NativeWorldArchive")
+	var codec:RefCounted=ClassDB.instantiate("NativeStructuresSnapshot");codec.configure_assets(PackedStringArray(["test/compact"]))
+	var model:Node3D=ClassDB.instantiate("NativeStaticBatch");model.configure_collision_only();model.configure_asset("test/compact",BoxMesh.new())
+	model.upsert_transforms(PackedInt64Array([1]),[Transform3D(Basis.IDENTITY,Vector3(3,5,7))])
+	var model_bytes:PackedByteArray=model.capture_snapshot()
+	var original:PackedByteArray=codec.encode(blocks,{"test/compact":model_bytes})
+	var sections:Dictionary={"terrain":PackedByteArray([1]),"structures":original}
+	var adapter:RefCounted=ClassDB.instantiate("NativeRegionWorldArchive")
+	check(adapter.configure(raw,codec,true,true,true) and adapter.acquire(path),"compact generation adapter configured")
+	check(adapter.publish(path,adapter.encode(sections))==OK,"complete native first-save records publish directly")
+	var first:PackedByteArray=adapter.read(path)
+	check(raw.decode(first).sections.structures==original and adapter.decode(first).sections.structures==original,"compact publication and metadata-first read preserve all record bytes")
+	check(adapter.publication_profile().compact_initial and adapter.storage_stats().model_stores==0,"first compact save creates no per-model stores")
+	var inspect:RefCounted=ClassDB.instantiate("NativeStructuresSnapshot")
+	check(inspect.inspect_resident(original).ok and not inspect.inspect_reference(original).ok,"inspector distinguishes compact native records from regional references")
+	var damaged:PackedByteArray=original.duplicate();damaged[damaged.size()-1]^=1
+	check(not inspect.inspect_resident(damaged).ok,"compact inspector rejects changed inner record bytes")
+	var certificates:Dictionary=adapter.map_certificates()
+	check(certificates.ok and certificates.blocks_identity=="snapshot-v1|"+blocks.slice(blocks.size()-32).hex_encode() and certificates.models["test/compact"]=="snapshot-v1|"+model_bytes.slice(model_bytes.size()-32).hex_encode(),"compact first-play map certificates match restored native identities")
+	adapter.release()
+	check(adapter.acquire(path) and adapter.decode(adapter.read(path)).sections.structures==original,"compact root survives fresh lease and reopen")
+	sections.structures=codec.encode(newer,{"test/compact":model_bytes})
+	check(adapter.publish(path,adapter.encode(sections))==OK and codec.inspect_reference(raw.decode(adapter.read(path)).sections.structures).ok,"next save transitions to regional storage")
+	check(raw.decode(adapter.read(path+".bak")).sections.structures==original,"regional transition retains the complete compact backup")
+	check(adapter.map_certificates().ok,"regional map certification works after compact transition")
+	adapter.release();model.free()

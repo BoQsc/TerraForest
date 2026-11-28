@@ -5,6 +5,8 @@ func check(value:bool,label:String)->void:
  if not value:failures+=1;print("FAIL ",label)
 func _initialize()->void:
  var folder:=ProjectSettings.globalize_path("user://publication_test_%d"%Time.get_ticks_usec())
+ for arg:String in OS.get_cmdline_user_args():
+  if arg.begins_with("--check-evidence-dir="):folder=arg.trim_prefix("--check-evidence-dir=").path_join("publication_fixture")
  DirAccess.make_dir_recursive_absolute(folder)
  var archive=ClassDB.instantiate("NativeWorldArchive")
  var bytes:PackedByteArray=archive.encode({"terrain":PackedByteArray([1,2,3])})
@@ -18,6 +20,7 @@ func _initialize()->void:
   var path:=source+"."+suffix+"/nested";DirAccess.make_dir_recursive_absolute(path)
   var file:=FileAccess.open(path.path_join("data.bin"),FileAccess.WRITE);file.store_buffer(PackedByteArray([9,8,7]));file.close()
  var result:Dictionary=copier.clone_world(folder,"source","copy")
+ check(result.get("copy_workers",0)>=1 and result.copy_workers<=mini(4,OS.get_processor_count()),"bounded native file publication workers")
  check(result.ok and result.get("files",0)==4 and result.get("bytes",0)==12,"native store copy")
  check(FileAccess.get_file_as_bytes(folder.path_join("copy.trw"))==bytes,"canonical equality")
  for suffix:String in ["regions","models","water","terrain"]:check(FileAccess.get_file_as_bytes(folder.path_join("copy.trw."+suffix+"/nested/data.bin"))==PackedByteArray([9,8,7]),"store equality")

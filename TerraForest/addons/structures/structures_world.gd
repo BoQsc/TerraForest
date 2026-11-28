@@ -5,6 +5,7 @@ signal obstacles_changed(bounds: AABB)
 var _block_change_bounds:=AABB()
 var _block_content_revision:=0
 ## Scene/persistence integration only. Storage, validation and rendering are native.
+var generation_only:=false
 var blocks: Node3D
 var _models: Dictionary = {}
 var object_definitions: Dictionary = {}
@@ -253,6 +254,7 @@ func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 	if not mesh.has_meta("world_render_region_span") and maxf(size.x,maxf(size.y,size.z))<=4.0:
 		mesh.set_meta("world_render_region_span",2)
 	var collection: Node3D = ClassDB.instantiate("NativeStaticBatch")
+	if generation_only:collection.configure_collision_only()
 	if not collection.configure_asset(asset_id,mesh):
 		collection.free()
 		return null

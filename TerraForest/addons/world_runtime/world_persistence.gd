@@ -1,6 +1,7 @@
 extends RefCounted
 ## Main-thread registration/capture only. Packing, checksums, validation and disk
 ## publication run in native code on the terrain-owned worker.
+var compact_initial:=false # Complete native record batch for the first generated root.
 var last_capture: Dictionary = {}
 var _restore_names:Array=[]
 var _restore_sections:Dictionary={}
@@ -71,7 +72,7 @@ func attach(terrain: Node) -> Error:
 	var archive: RefCounted = ClassDB.instantiate("NativeWorldArchive")
 	if _region_structures:
 		var adapter: RefCounted = ClassDB.instantiate("NativeRegionWorldArchive")
-		if not adapter.configure(archive,_providers["structures"]["validator"],_metadata_first,_model_metadata_first):
+		if not adapter.configure(archive,_providers["structures"]["validator"],_metadata_first,_model_metadata_first,compact_initial):
 			return ERR_INVALID_PARAMETER
 		archive = adapter
 	_terrain = terrain

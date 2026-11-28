@@ -124,7 +124,9 @@ def retain_captures():
             continue
         members = sorted(p.relative_to(folder).as_posix() for p in folder.rglob('*')
                          if p.is_file() and p.name in CAPTURE_NAMES)
-        if members:
+        # A no-captures run keeps tiny inventory comparison records like logs;
+        # it must not evict an image set just by writing those records.
+        if any(member.endswith('.png') for member in members):
             completed.append((folder, members))
     if len(completed) <= 2:
         return []
@@ -159,6 +161,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot')
     parser.add_argument('--verbose-engine', action='store_true')
+    parser.add_argument('--no-captures', action='store_true', help='Keep every rendered functional check and frame wait; omit new PNG captures for performance verification')
     parser.add_argument('--diagnostic-exit-warning', action='store_true', help='Continue after completed assertions plus the known zero-reference exit warning; strict result still fails')
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--approved-headroom', action='store_true')
@@ -169,7 +172,7 @@ def main():
     if args.approved_headroom:
         storage.LIMITS['reports'] += 256 * 2**20
         storage.LIMITS['owned_worlds'] += 256 * 2**20
-    allocation = dict(report_bytes=160 * 2**20, world_bytes=224 * 2**20)
+    allocation = dict(report_bytes=(8 if args.no_captures else 160) * 2**20, world_bytes=224 * 2**20)
     if args.dry_run:
         try:
             admission = storage.admit(ROOT, **allocation)
@@ -196,10 +199,11 @@ def main():
               'test_sha256': digest(ROOT / 'tests/production_buildings.gd'),
               'native_sha256': {p.relative_to(ROOT).as_posix(): digest(p)
                                 for p in sorted((ROOT / 'addons').glob('*/bin/*.dll'))},
-              'baseline_limits': baseline, 'approved_headroom': args.approved_headroom,
+              'baseline_limits': baseline, 'approved_headroom': args.approved_headroom, 'captures': not args.no_captures,
               'admission': admission, 'phases': []}
     shared = ['--metropolis', '--metropolis-evidence=' + folder.as_posix(),
               '--session-evidence-dir=' + folder.as_posix(), '--isolated-render']
+    if args.no_captures: shared.append('--no-captures')
     for name, extra in [('create', ['--create-production']), ('interact', []), ('restore', ['--restore-production'])]:
         phase = folder / name
         phase.mkdir()

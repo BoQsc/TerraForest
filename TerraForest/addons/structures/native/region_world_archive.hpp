@@ -23,10 +23,11 @@ class NativeRegionWorldArchive : public RefCounted {
     Dictionary publication_profile_; // Save-worker owned diagnostics.
     mutable std::map<String,Ref<NativeModelRegionStore>> model_stores_;
     mutable std::mutex model_mutex_;
+    mutable std::map<String,std::shared_ptr<std::mutex>> model_open_mutexes_;
     Ref<NativeModelRegionStore> model_store(const String &asset,bool create) const;
     Dictionary decode_mode(const PackedByteArray &bytes,bool metadata_first,bool model_metadata_first) const;
 
-    bool metadata_first_=false,model_metadata_first_=false;
+    bool metadata_first_=false,model_metadata_first_=false,compact_initial_=false;
     int64_t published_index_revision_=0;
     PackedInt32Array published_keys_;
     PackedByteArray published_checksums_,published_checkpoint_;
@@ -78,7 +79,7 @@ protected:
 public:
     ~NativeRegionWorldArchive();
     Dictionary publication_profile() const {return publication_profile_.duplicate();}
-    bool configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first=false,bool model_metadata_first=false);
+    bool configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first=false,bool model_metadata_first=false,bool compact_initial=false);
     bool acquire(const String &absolute_path);
     void release();
     PackedByteArray encode(const Dictionary &sections) const;

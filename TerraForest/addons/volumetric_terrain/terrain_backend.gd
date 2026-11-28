@@ -150,6 +150,10 @@ var _publication_epoch:=-1 # Terrain-worker owned frozen source identity.
 var _publication_revision:=-1
 var _publication_apply_us:=0
 var _publication_capture_us:=0
+var _publication_components:Dictionary={}
+var _durable_components:Dictionary={}
+var _durable_epoch:=-1
+var _durable_revision:=-1
 
 func publication_pending() -> bool:
 	mutex.lock();var value:=_save_reserved;mutex.unlock();return value
@@ -1045,6 +1049,10 @@ func _finish_publication(wait:bool=false) -> void:
 			# Do not permit a later incremental save against the wrong checkpoint.
 			write_allowed=false;result.success=false;result.message="ERROR: world saved but terrain baseline changed; reopen required before further saves"
 	_last_save_success=result.success
+	if result.success:
+		_durable_components=_publication_components
+		_durable_epoch=_publication_epoch;_durable_revision=_publication_revision
+	_publication_components={}
 	# Terrain edits may have progressed since capture. Never certify those newer
 	# derived packets under the identity of this older, now-durable save.
 	var stats:PackedByteArray=_call(Codec.command(0))
@@ -1064,10 +1072,22 @@ func _begin_publication(apply_us:int) -> bool:
 	var capture:RefCounted=native.capture_storage_snapshot()
 	if capture==null:return false
 	var sections:Dictionary=components.duplicate();sections["terrain"]=capture
+	_publication_components=components.duplicate()
 	_publication_epoch=component_epoch;_publication_revision=capture.stats().revision;_publication_apply_us=apply_us
 	_publication_capture_us=Time.get_ticks_usec()-captured_at
 	mutex.lock();_publication_done=false;mutex.unlock()
 	return publication_thread.start(_publish_frozen.bind(sections,null,ProjectSettings.globalize_path(save_path),snapshot_codec),Thread.PRIORITY_NORMAL)==OK
+
+func _shutdown_save() -> String:
+	# The worker has joined publication and drained accepted mutations. Godot's
+	# native packed-array equality compares every captured byte, including opaque
+	# addon state; revision/epoch additionally cover terrain edits and resets.
+	# Ordinary dirty exits still publish through the same durable save path.
+	if _last_save_success and snapshot_codec!=null and not temporary and _snapshot_writable() and write_allowed and _component_capture_valid and component_epoch==_durable_epoch and components==_durable_components:
+		var stats:PackedByteArray=_call(Codec.command(0))
+		if Codec.reply_ok(stats) and stats.decode_u32(12)==_durable_revision and FileAccess.file_exists(save_path):
+			return "World already saved and verified; unchanged shutdown capture"
+	return _save()
 
 func _save() -> String:
 	_save_write_stages={}
@@ -1123,6 +1143,7 @@ func _save() -> String:
 		_flush_current_packets()
 		_save_write_stages["cache_us"]=Time.get_ticks_usec()-phase_begin
 		_last_save_success = true
+		_durable_components=components.duplicate();_durable_epoch=component_epoch;_durable_revision=capture.stats().revision
 		return "World saved and verified; terrain and addon state published together"
 	var tmp: String = save_path + ".tmp.%d" % OS.get_process_id()
 	var file: FileAccess = FileAccess.open(tmp, FileAccess.WRITE)
@@ -1207,7 +1228,7 @@ func _load() -> String:
 			if temporary:initial_earthworks_result=native.bake_generated_earthworks(_initial_earthworks)
 			else:
 				var page_limit:int=native.residency_stats().resident_limit
-				initial_earthworks_result=native.bake_generated_earthworks_staged(_initial_earthworks,ProjectSettings.globalize_path(save_path)+".terrain",page_limit,64,build_epoch)
+				initial_earthworks_result=native.bake_generated_earthworks_staged(_initial_earthworks,ProjectSettings.globalize_path(save_path)+".terrain",page_limit,2048,build_epoch)
 			if not initial_earthworks_result.get("ok",false):write_allowed=false;return "ERROR: offline earthworks rejected: "+str(initial_earthworks_result.get("reason","native bake failed"))
 			_initial_terrain_checkpoint=initial_earthworks_result.get("checkpoint",PackedByteArray())
 			initial_earthworks_result.erase("checkpoint")
@@ -1875,7 +1896,7 @@ func _run() -> void:
 			_apply_components(_shutdown_snapshot)
 			set_input_active(false)
 			_flush_current_packets()
-			print("[TerrainRewrite] ", _save())
+			print("[TerrainRewrite] ", _shutdown_save())
 			return
 		if job.is_empty():
 			continue

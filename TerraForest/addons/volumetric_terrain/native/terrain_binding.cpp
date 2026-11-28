@@ -144,7 +144,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("survey_surface_map"), &TerrainCore::survey_surface_map);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
         godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks","packets"), &TerrainCore::bake_generated_earthworks);
-        godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks_staged","packets","directory","resident_limit","checkpoint_commands","expected_epoch","test_stop_at_checkpoint"), &TerrainCore::bake_generated_earthworks_staged,DEFVAL(MAX_PAGES),DEFVAL(64),DEFVAL(-1),DEFVAL(-1));
+        godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks_staged","packets","directory","resident_limit","checkpoint_commands","expected_epoch","test_stop_at_checkpoint","optimized"), &TerrainCore::bake_generated_earthworks_staged,DEFVAL(MAX_PAGES),DEFVAL(64),DEFVAL(-1),DEFVAL(-1),DEFVAL(true));
         godot::ClassDB::bind_method(godot::D_METHOD("generation_bake_progress"),&TerrainCore::generation_bake_progress);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_generated_lake_surfaces","records"), &TerrainCore::survey_generated_lake_surfaces);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_patch","size","x","z","width","height"), &TerrainCore::survey_patch);
@@ -511,9 +511,9 @@ public:
     // Unpublished generation only. Durable private checkpoints make clean pages
     // evictable without publishing a compound-world root or losing prior edits.
     godot::Dictionary generation_bake_progress()const{return generation_progress_.read();}
-    godot::Dictionary bake_generated_earthworks_staged(const godot::Array &packets,const godot::String &directory,int64_t limit=MAX_PAGES,int64_t batch=64,int64_t expected_epoch=-1,int64_t test_stop_at_checkpoint=-1){
+    godot::Dictionary bake_generated_earthworks_staged(const godot::Array &packets,const godot::String &directory,int64_t limit=MAX_PAGES,int64_t batch=64,int64_t expected_epoch=-1,int64_t test_stop_at_checkpoint=-1,bool optimized=true){
         godot::Dictionary result;result["ok"]=false;result["completed"]=0;
-        if(packets.is_empty()||packets.size()>16384||limit<8||limit>MAX_PAGES||batch<1||batch>256||expected_epoch< -1||expected_epoch>0xffffffffll||test_stop_at_checkpoint< -1||test_stop_at_checkpoint>8193||!directory.is_absolute_path()){
+        if(packets.is_empty()||packets.size()>16384||limit<8||limit>MAX_PAGES||batch<1||batch>16384||expected_epoch< -1||expected_epoch>0xffffffffll||test_stop_at_checkpoint< -1||test_stop_at_checkpoint>8193||!directory.is_absolute_path()){
             result["reason"]="Invalid staged generation bounds";return result;
         }
         std::vector<godot::PackedByteArray> commands;int64_t total=0;
@@ -536,6 +536,7 @@ public:
         if(!store->open_store(directory,true)){result["reason"]="Cannot create private terrain staging store";return result;}
         const int seed=world_.seed;const auto generator=world_.generator_id;
         const u32 epoch=expected_epoch>=0?uint32_t(expected_epoch):terrain_build_epoch(&world_);const auto started=std::chrono::steady_clock::now();
+        uint64_t apply_us=0,checkpoint_us=0;
         godot::PackedByteArray reference;int completed=0,checkpoints=0,retries=0,checkpoint_revision=-1;
         int64_t capture_high=0;
         generation_progress_.publish(GenerationBakeProgress::RUNNING,GenerationBakeProgress::APPLYING,completed,int(commands.size()),checkpoints);
@@ -543,20 +544,28 @@ public:
             if(terrain_build_epoch(&world_)!=epoch)return false;
             if(checkpoint_revision==world_.revision)return true;
             generation_progress_.publish(GenerationBakeProgress::RUNNING,GenerationBakeProgress::CHECKPOINT,completed,int(commands.size()),checkpoints);
+            const auto checkpoint_start=std::chrono::steady_clock::now();
             auto capture=capture_storage_snapshot_locked();if(capture.is_null())return false;
             capture_high=std::max(capture_high,int64_t(capture->stats()["sample_bytes"]));
             auto next=store->publish_capture(capture,reference,checkpoints==test_stop_at_checkpoint?(checkpoints==0?0:1):-1);
             if(next.size()!=40||terrain_build_epoch(&world_)!=epoch||!commit_storage_snapshot_locked(capture,next))return false;
             reference=next;checkpoint_revision=world_.revision;++checkpoints;
+            checkpoint_us+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-checkpoint_start).count();
             generation_progress_.publish(GenerationBakeProgress::RUNNING,GenerationBakeProgress::APPLYING,completed,int(commands.size()),checkpoints);return true;
         };
         snapshot_epoch_.fetch_add(1);active_command_.store(28,std::memory_order_relaxed);
         bool good=checkpoint()&&mount_storage_checkpoint_locked(directory,reference,limit);
+        // Mount installs a fresh World. Set the private optimization after that
+        // transaction, and always clear it before exposing ordinary editing.
+        world_.generation_road_columns=optimized;world_.generation_road_columns_count=0;
+        struct ColumnGuard {World &world;~ColumnGuard(){world.generation_road_columns=false;}} column_guard{world_};
         for(const auto &packet:commands){
             if(!good||terrain_build_epoch(&world_)!=epoch){good=false;break;}
             bool retryable=false;
             auto apply=[&](){
+                const auto apply_start=std::chrono::steady_clock::now();
                 tr_oom=false;Bytes response;process_request(world_,packet.ptr(),int(packet.size()),response);
+                apply_us+=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-apply_start).count();
                 bool ok=!tr_oom&&response.n>=12&&response.p[8]==0;retryable=response.n>=12&&response.p[8]==2;response.release();return ok;
             };
             good=apply();
@@ -578,6 +587,9 @@ public:
         result["resident_high"]=residency_?residency_->resident_high():0;
         result["worker_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();
         result["storage"]=store->stats();
+        result["apply_us"]=int64_t(apply_us);result["checkpoint_us"]=int64_t(checkpoint_us);
+        result["road_columns_optimized"]=optimized;result["road_columns"]=int64_t(world_.generation_road_columns_count);
+        world_.generation_road_columns=false;
         if(!good){
             generation_progress_.publish(terrain_build_epoch(&world_)!=epoch?GenerationBakeProgress::CANCELLED:GenerationBakeProgress::FAILED,GenerationBakeProgress::NONE,completed,int(commands.size()),checkpoints);
             // Only immutable staging products may remain. No canonical root was

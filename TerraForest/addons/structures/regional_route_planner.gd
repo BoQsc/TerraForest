@@ -43,16 +43,4 @@ static func central_connection(core,town:Dictionary,layout:Dictionary,market:Dic
  return last
 
 static func arrival_points(site:Dictionary,reserved:Array,south:bool)->Array:
- var points:Array=[]
- for road:Dictionary in site.roads:
-  for point:Vector3 in [road.start,road.finish]:
-   if points.has(point):continue
-   var blocked:=false
-   for area:Rect2 in reserved:
-    # Matches native road-corridor clearance exactly.
-    if area.grow(6).has_point(Vector2(point.x,point.z)):blocked=true;break
-   if not blocked:points.append(point)
- points.sort_custom(func(a:Vector3,b:Vector3):
-  if a.z==b.z:return a.x>b.x
-  return a.z>b.z if south else a.z<b.z)
- return points.slice(0,8)
+ return ClassDB.instantiate("NativeGenerationEarthworks").arrival_points(site.roads,reserved,south)

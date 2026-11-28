@@ -19,8 +19,10 @@ invalid far-proxy projection; the integrated guard passes exact nearby compariso
 Physical walking passes 189 m with 192 verified frames; human standing/walking validation passed on 2026-11-28.
 
 [Native generation and binary inspection](../docs/NATIVE_GENERATION.md) now cover
-outdoor placement, ordinary main-building placement and generated-world storage
-verification. Migration of remaining generation passes and component schemas is
+outdoor placement, ordinary main-building placement, road/foundation batches,
+save/map publication and generated-world storage verification. Generate-to-play
+is 89.903 s with a cached plan; the complete 30-second target remains open.
+Migration of remaining generation passes and component schemas is
 open; scoped timing and
 exact-output checks do not establish whole-world quality or clean exit acceptance.
 

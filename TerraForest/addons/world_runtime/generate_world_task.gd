@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://addons/world_runtime/scene_task.gd"
 # Production world creation. Developer review uses the compatibility wrapper.
+var generation_maps:RefCounted
+var native_map_started:=0
 var qualification:=false
 var capture_review_photographs:=false # Explicit review subclasses only; never normal generation.
 var seed_value:=42
@@ -19,6 +21,7 @@ func progress(stage:String,completed:int=0,total:int=0,details:Dictionary={})->v
  if generation_screen!=null:generation_screen.update_stage(stage,completed,total,details)
 func _initialize()->void:run.call_deferred()
 func _finalize()->void:
+ if generation_maps!=null:generation_maps.cancel();generation_maps=null
  if planning_worker!=null and planning_worker.is_started():planning_worker.wait_to_finish()
 func wait_generation_data(game:Node,seconds:float)->bool:
  var deadline:=Time.get_ticks_msec()+int(seconds*1000);var next_poll:=0;var previous:Dictionary={}
@@ -97,6 +100,7 @@ func run()->void:
  var arguments:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
  var plan_progress:=preload("res://addons/world_runtime/world_plan_progress.gd").new()
  var resources:=preload("res://addons/world_runtime/startup_resources.gd").new()
+ var warmed:Array[Resource]=[]
  var authoring_ready:bool=await resources.prepare_authoring(self,func(done:int,total:int):
   resources.cancelled=cancelled()
   progress("Planning terrain, streets and building sites",0,0,{"activity":"Loading building resources · %d / %d"%[done,total]}))
@@ -130,7 +134,7 @@ func run()->void:
  var connection:Dictionary=prepared.connection
  var sites:Array=prepared.get("sites",[plan,market])
  print("WORLD_PLAN digest=",prepared.plan_digest," cache_hit=",prepared.cache_hit," ms=",prepared.worker_ms," planning_frames=",planning_frames)
- FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"options":world_options,"cache_profile":prepared.get("cache_profile",{}),"independent_resources":{"started":resources.independent_started,"completed":resources.independent_completed,"peak_pending":resources.peak_pending}}))
+ FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"options":world_options,"cache_profile":prepared.get("cache_profile",{}),"planning_phases":plan_progress.timings(),"independent_resources":{"started":resources.independent_started,"completed":resources.independent_completed,"peak_pending":resources.peak_pending}}))
 
  if cancelled():quit(2);return
  if not await resources.prepare(self,"res://demo/world.gd",func(done:int,total:int):progress("Initializing generated terrain data",done,total,{"activity":"Loading game resources · %d / %d"%[done,total]})):quit(1);return
@@ -152,18 +156,24 @@ func run()->void:
   if not introduction_room.ok:print("INTRODUCTION_ROOM_UNAVAILABLE ",introduction_room.reason);game.free();quit(1);return
   introduction_spawn=introduction_room.position
  if not qualification and not game.configure_generation_spawn(introduction_spawn):print("GENERATION_SPAWN_REJECTED");game.free();quit(1);return
- if not qualification:game.terrain.diagnostics_pause_streaming=true
+ if not qualification:
+  game.generation_only=true;game.structures.generation_only=true;game.persistence.compact_initial=true
+  game.terrain.diagnostics_pause_streaming=true
  if not qualification:game.terrain.backend.capture_generation_meshes=true
  if native_lakes and not game.terrain.backend.configure_initial_lake_bake():print("OFFLINE_LAKE_JOB_UNAVAILABLE");game.free();quit(1);return
  if offline_grading:
   var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(works.segments,prepared.get("material_deposits",[]))
-  if not game.terrain.backend.configure_initial_earthworks(packets,prepared.plan_digest,not qualification):print("OFFLINE_PACKETS_REJECTED");game.free();quit(1);return
+  if not game.terrain.backend.configure_initial_earthworks(packets,prepared.plan_digest):print("OFFLINE_PACKETS_REJECTED");game.free();quit(1);return
   progress("Baking roads, foundations and connected mineral veins before terrain loading")
  game.lakes.offline_preparation=true;game.model_region_paging=false;game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
  while is_instance_valid(game) and result<0 and not game.startup_complete:
   progress("Initializing generated terrain data",0,0,{"activity":game.startup_stage})
   await process_frame
  if result>=0 or not is_instance_valid(game):return
+ FileAccess.open(output_dir.path_join("generation_startup.json"),FileAccess.WRITE).store_string(JSON.stringify({"stages_ms":game.startup_timings,"resource_slowest":resources.slowest},"  "))
+ if not qualification and bake and root.has_meta("terraforest_scene_task"):
+  warmed=resources.retained.duplicate()
+  warmed.append(game.get_script());warmed.append(preload("res://addons/structures/pack_render_mesh.gd"))
  resources=null
  if not qualification:
   game.set_process_input(false);game.set_process_unhandled_input(false);game.set_process_unhandled_key_input(false);game.set_process_shortcut_input(false)
@@ -174,8 +184,6 @@ func run()->void:
  progress("Initializing generated terrain data" if not qualification else "Loading terrain and collision")
  if offline_grading and not qualification:
   progress("Building roads and foundations",0,works.segments.size())
-  await process_frame
-  if not game.terrain.backend.admit_initial_generation():print("OFFLINE_JOB_ADMISSION_REJECTED");game.free();quit(1);return
  var initialized:bool=await ready_world(game) if qualification else await wait_generation_data(game,60)
  if not initialized or game.terrain.backend.world_generator!=generator:print("WRONG_WORLD");quit(1);return
  if not reopen and not world_options.is_empty() and not game.world_recipe.configure(world_options):print("WORLD_RECIPE_SAVE_FAILED");game.free();quit(1);return
@@ -522,6 +530,20 @@ func run()->void:
    if cancelled() or Time.get_ticks_msec()>water_deadline or not str(water_state.equilibrium_failure).is_empty() or not str(water_state.occupancy_failure).is_empty():
     print("GENERATION_WATER_NOT_READY ",JSON.stringify(water_state));game.free();quit(1);return
    await process_frame
+  if not qualification:
+   progress("Preparing native map inputs")
+   var atlas:Node=game.world_map
+   atlas.warming=true;atlas.refresh_world();atlas.set_survey_processing(false)
+   if not await wait_until(func():return atlas.worker==null and atlas.updates.image!=null,30):print("NATIVE_MAP_BASE_FAILED");game.free();quit(1);return
+   generation_maps=ClassDB.instantiate("NativeGenerationMaps");native_map_started=Time.get_ticks_usec()
+   if not generation_maps.start(game,atlas.updates.image.get_data()):print("NATIVE_MAP_ADMISSION_FAILED");game.free();quit(1);return
+   while not generation_maps.sources_ready():
+    if cancelled():generation_maps.cancel()
+    if generation_maps.advance():
+     if not generation_maps.get_result().get("ok",false):print("NATIVE_MAP_SOURCE_FAILED ",generation_maps.get_result());game.free();quit(1);return
+    if not generation_maps.sources_ready():await process_frame
+   # All scene-owned map input is now frozen; only the native terrain reader and
+   # private rasters remain. Durable save can overlap that computation safely.
   progress("Saving generated world")
   if qualification:
    var file=FileAccess.open(output_dir.path_join("terrain_lot_region_expected.bin"),FileAccess.WRITE)
@@ -529,7 +551,6 @@ func run()->void:
    var manifest:=FileAccess.open(output_dir.path_join("world_signature.json"),FileAccess.WRITE)
    manifest.store_string(JSON.stringify({"seed":seed_value,"generator":generator,"signature":snapshot_signature(game)}));manifest.close()
   else:
-   saved_map_stamps={"blocks":game.world_map.block_survey.current_stamp(),"models":game.world_map.model_survey.current_stamp(),"water":game.world_map.water_survey.current_stamp(),"terrain":game.terrain.density_revision}
    var saved:Dictionary={"done":false,"ok":false}
    game.terrain.save_completed.connect(func(ok:bool):saved.done=true;saved.ok=ok,CONNECT_ONE_SHOT)
    var save_started:=Time.get_ticks_usec()
@@ -538,9 +559,12 @@ func run()->void:
    save_map_profile["save"]={"wall_ms":(Time.get_ticks_usec()-save_started)/1000.0,"capture":game.persistence.last_capture,"backend":game.terrain.backend.save_profile()}
    progress("Caching the saved world map")
    if not await bake_map_layers(game):game.free();quit(1);return
+  progress("Finalizing the saved world")
   game.shutdown_requested=true
   if not await game.terrain.shutdown_after_edits():print("BAKE_SAVE_FAILED");game.free();quit(1);return
  if not qualification and bake:print("GENERATION_MESH_HANDOFF staged=",game.terrain.backend.publish_generation_meshes())
+ if not warmed.is_empty():
+  preload("res://addons/world_runtime/generation_mesh_handoff.gd").retain_resources(warmed)
  progress("World generation complete")
  print("TERRAIN_LOT_WORLD_REVIEW failures=0 buildings=" if qualification else "WORLD_GENERATED failures=0 buildings=",all_lots.size()+prepared.get("watchtowers",{}).get("sites",[]).size()," edits=",completed_edits)
  game.free();quit()
@@ -576,6 +600,44 @@ func prepare_arrival(game:Node,point:Vector3,fixed_height:bool)->bool:
  return not cancelled()
 
 func bake_map_layers(game:Node)->bool:
+ if qualification:return await bake_map_layers_legacy(game)
+ while not generation_maps.advance():
+  if cancelled():generation_maps.cancel()
+  await process_frame
+ var outcome:Dictionary=generation_maps.get_result()
+ if not outcome.get("ok",false):print("NATIVE_MAP_GENERATION_FAILED ",outcome);return false
+ var atlas:Node=game.world_map
+ var pixels:PackedByteArray=generation_maps.terrain_pixels()
+ var identity:String=game.terrain.backend.snapshot_id+"|"+game.terrain.backend.survey_compatibility
+ if not game.terrain.backend.cache_valid:return false
+ if not generation_maps.begin_publication(ProjectSettings.globalize_path(game.terrain.backend.save_path),game.terrain.backend.snapshot_codec,game.terrain.save_slot,identity):return false
+ while not generation_maps.advance():
+  if cancelled():generation_maps.cancel()
+  await process_frame
+ outcome=generation_maps.get_result()
+ if not outcome.get("ok",false):print("NATIVE_MAP_PUBLICATION_FAILED ",outcome);return false
+ atlas.updates.image=Image.create_from_data(1024,1024,false,Image.FORMAT_RGBA8,pixels)
+ atlas.updates.displayed=Image.create_from_data(1024,1024,false,Image.FORMAT_RGBA8,atlas.surface_pixels(pixels))
+ atlas.texture.update(atlas.updates.displayed)
+ atlas.updates.cache_identity=identity;atlas.updates.cache_revision=game.terrain.density_revision
+ atlas.updates.identity_checked=true;atlas.updates.cache_saved=true;atlas.updates.dirty.clear();atlas.updates.pending.clear();atlas.updates.cache_writes+=1
+ atlas.water_survey.cache_namespace="water-map-v2"
+ var layers:Array=[atlas.water_survey,atlas.block_survey,atlas.model_survey]
+ var observations:Dictionary={"terrain":{"pixels_sha256":preload("res://addons/world_runtime/survey_cache.gd").digest(pixels).hex_encode()}}
+ for index in 3:
+  var layer:Node=layers[index]
+  var data:PackedByteArray=generation_maps.layer_pixels(index)
+  layer.publish(data)
+  observations[layer.caption]={"pixels_sha256":preload("res://addons/world_runtime/survey_cache.gd").digest(data).hex_encode()}
+ var certified:=true
+ atlas.warming=false;atlas.set_survey_processing(false)
+ save_map_profile["native_maps"]=outcome
+ save_map_profile["map_overlap_wall_ms"]=(Time.get_ticks_usec()-native_map_started)/1000.0
+ save_map_profile["certified"]=certified;save_map_profile["layers"]=observations
+ FileAccess.open(output_dir.path_join("generation_save_map.json"),FileAccess.WRITE).store_string(JSON.stringify(save_map_profile,"  "))
+ return certified
+
+func bake_map_layers_legacy(game:Node)->bool:
  var map_started:=Time.get_ticks_usec()
  var ready_times:Dictionary={}
  game.app_focused=true

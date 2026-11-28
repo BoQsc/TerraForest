@@ -641,10 +641,22 @@
     "res://addons/volumetric_terrain/surface_tokens.gd",
     "res://addons/world_runtime/coverage_window.gd"
   ],
+  "res://addons/world_ecosystem/filtered_detail.gd": [
+    "res://addons/world_ecosystem/filtered_stone.gdshader",
+    "res://addons/world_ecosystem/filtered_fern.gd",
+    "res://addons/world_ecosystem/filtered_fern.gdshader"
+  ],
+  "res://addons/world_ecosystem/filtered_fern.gd": [
+    "res://addons/world_ecosystem/filtered_fern.gdshader"
+  ],
+  "res://addons/world_ecosystem/filtered_grass.gd": [
+    "res://addons/world_ecosystem/filtered_grass.gdshader"
+  ],
   "res://addons/world_ecosystem/ground_catalog.gd": [],
   "res://addons/world_ecosystem/ground_cover.gd": [
     "res://addons/world_ecosystem/ground_catalog.gd",
     "res://addons/volumetric_terrain/surface_tokens.gd",
+    "res://addons/world_ecosystem/filtered_grass.gd",
     "res://addons/world_ecosystem/boulder_material.tres",
     "res://addons/world_ecosystem/woodland_mesh.gd",
     "res://addons/world_ecosystem/boulder_horizon.gd"
@@ -653,12 +665,19 @@
     "res://addons/world_ecosystem/ground_catalog.gd"
   ],
   "res://addons/world_ecosystem/ground_preview.gd": [],
+  "res://addons/world_ecosystem/opaque_lod_fade.gd": [],
+  "res://addons/world_ecosystem/representation_fade.gd": [],
   "res://addons/world_ecosystem/woodland_authoring.gd": [
     "res://addons/volumetric_terrain/surface_tokens.gd",
     "res://addons/volumetric_terrain/generated_layout.gd"
   ],
   "res://addons/world_ecosystem/woodland_mesh.gd": [
-    "res://addons/world_ecosystem/woodland.gdshader"
+    "res://addons/world_ecosystem/opaque_lod_fade.gd",
+    "res://addons/world_ecosystem/woodland.gdshader",
+    "res://addons/world_ecosystem/filtered_grass.gd",
+    "res://addons/world_ecosystem/filtered_fern.gd",
+    "res://addons/world_ecosystem/filtered_detail.gd",
+    "res://addons/world_ecosystem/representation_fade.gd"
   ],
   "res://addons/world_ecosystem/world_ecosystem.gd": [
     "res://addons/volumetric_terrain/surface_tokens.gd",
@@ -714,6 +733,7 @@
     "res://addons/world_runtime/world_generation_plan.gd",
     "res://addons/world_runtime/generation_earthworks.gd",
     "res://addons/world_runtime/introduction_spawn.gd",
+    "res://addons/structures/pack_render_mesh.gd",
     "res://addons/world_runtime/loading_diagnostics.gd",
     "res://addons/structures/site_preparation.gd",
     "res://addons/characters/runtime/house_sleepers.gd",
@@ -727,6 +747,7 @@
     "res://addons/volumetric_water/coastal_inlet.gd",
     "res://addons/structures/civic_catalog.gd",
     "res://addons/world_runtime/location_capture.gd",
+    "res://addons/world_runtime/generation_mesh_handoff.gd",
     "res://addons/world_runtime/coverage_window.gd",
     "res://addons/world_runtime/survey_patch_cache.gd"
   ],
@@ -744,9 +765,7 @@
     "res://addons/world_runtime/survey_patch_cache.gd",
     "res://addons/world_runtime/generation_mesh_handoff.gd"
   ],
-  "res://addons/world_runtime/generation_earthworks.gd": [
-    "res://addons/volumetric_terrain/mesh_codec.gd"
-  ],
+  "res://addons/world_runtime/generation_earthworks.gd": [],
   "res://addons/world_runtime/generation_mesh_handoff.gd": [],
   "res://addons/world_runtime/generation_progress.gd": [],
   "res://addons/world_runtime/generation_screen.gd": [

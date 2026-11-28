@@ -32,6 +32,21 @@ Large stores are referenced through native sections and companion paths such as
 exact layout, identities and dependencies. The inspector does not claim that
 checking a root checksum validates every companion store or physical world rule.
 
+## Compact first generation
+
+Fresh generated worlds can store the complete native TFSB structure/model
+snapshot directly in the compound root. This preserves the existing canonical
+record encoding and avoids creating thousands of small per-model store files
+before first play. Structure/model records remain native binary records.
+A subsequent edited save can publish regional references, retaining the compact
+root as the ordinary backup. Existing regional saves remain supported.
+
+The native inspector distinguishes complete resident records from regional
+references and validates either form before publication. Map certificates use
+the exact restored block/model snapshot hashes for resident records. Terrain,
+water and location-baseline companions still belong to the portable world; a
+small root is not a self-contained substitute for those companions.
+
 ## Inspector commands
 
 Run from the project directory, supplying an explicit root file:
@@ -52,7 +67,7 @@ the engine's native component/companion validation and fresh restore.
 
 `native-check` launches one headless source-engine process, using the same native
 verifier as ordinary world publication. It checks current regional terrain,
-structure/model, water and location-baseline references, recipe and world identity.
+resident or regional structure/model records, water and location-baseline references, recipe and world identity.
 Close that world first: the native verifier requires its save lease. It does not
 create a new world or copy the save. The root hash must remain unchanged. A
 2 MiB storage admission covers its receipt, logs and JSON under

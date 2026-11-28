@@ -1,3 +1,26 @@
+## Native generation batches and whole-path latency — 2026-11-28
+
+Road/foundation packets, approach surveys, frozen outdoor queries, map raster
+and cache publication now use native batches. Initial structure/model storage
+uses complete compact records; portable publication has bounded copy/flush
+workers. An unchanged shutdown capture no longer repeats the durable save.
+The final source Metropolis run `20261128T103705614198Z` passes all 109 functional
+checks and preserves all four map pixel hashes, but all three exits retain
+the known zero-reference ObjectDB warning. Generate-to-play is 89.903 seconds
+with a cached placement plan; the earlier cold run was 119.416 seconds.
+**the complete 30-second target and complete native migration are not achieved**.
+
+Remaining work is repeated native route search, duplicate initialization and
+first-load preparation, residual script planning/placement, and compact typed
+plan records. Resource-handoff integration passes, reducing first-play building
+registration from 5.128 s to 21 ms; first-play loading still takes 39.174 s. Continue from
+these measured costs rather than adding ineffective caches or weakening world
+quality. Closure requires the ordinary cold Generate-to-play path below 30 s,
+unchanged generated content, durable publication, fresh restore and repeatable
+clean exits. No export or new visual approval is claimed. The current evidence,
+rejected trials and exact remaining contract are in
+[NATIVE_GENERATION.md](NATIVE_GENERATION.md#roads-foundations-map-and-publication-batches-2026-11-28-in-progress).
+
 ## Strict walking-performance qualification — 2026-11-28
 
 Open: establish and resolve every critical walking interval against the

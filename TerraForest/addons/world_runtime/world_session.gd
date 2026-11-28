@@ -12,6 +12,8 @@ var last_error:=""
 var stage_timings:Dictionary={}
 var continue_started_ms:=0
 var continue_consumed:=false
+func _exit_tree()->void:
+	MeshHandoff.publish(null)
 func _dedicated()->bool:
 	var main:Script=get_tree().get_script()
 	return main!=null and main.resource_path=="res://addons/world_runtime/dedicated_main.gd"
@@ -81,6 +83,8 @@ func open_world(command:PackedStringArray)->bool:
 	if arguments.is_empty():last_error="World launch settings are missing";return false
 	transitioning=true
 	var generation:="--generation-handoff" in arguments
+	# Keep preparation inputs alive until the new scene owns its resources.
+	var warmed:Array[Resource]=preload("res://addons/world_runtime/generation_mesh_handoff.gd").consume_resources()
 	var baseline:=94.0 if generation else 0.0
 	var range:=.48 if generation else 8.0
 	var started_ms:=continue_started_ms if continue_started_ms>0 else preload("res://addons/world_runtime/loading_timer.gd").unix_milliseconds()
@@ -100,6 +104,7 @@ func open_world(command:PackedStringArray)->bool:
 		await _failed("Game resources could not be loaded");return false
 	var scene:=load(path) as PackedScene
 	stage_timings={"resources_ms":(Time.get_ticks_usec()-started)/1000.0}
+	stage_timings["generation_retained_resources"]=warmed.size()
 	stage_timings["slowest_resource"]=resources.slowest
 	if scene==null:await _failed("Game resources could not be loaded");return false
 	Options.set_arguments(arguments)
@@ -113,6 +118,7 @@ func open_world(command:PackedStringArray)->bool:
 		await get_tree().process_frame
 	if not is_instance_valid(game) or game!=get_tree().current_scene:return false
 	stage_timings["ready_ms"]=(Time.get_ticks_usec()-started)/1000.0
+	warmed.clear()
 	game.loading_panel.reset(started_ms,baseline+range)
 	# The game's loading UI now owns presentation; keep the cover across the gap.
 	if is_instance_valid(cover):cover.queue_free();cover=null

@@ -150,6 +150,8 @@ var startup_tick:int
 var startup_complete:=false
 var startup_stage:="Starting world services"
 var startup_cooperative:=false
+var _startup_yield_deadline:=0
+var generation_only:=false # Data creation uses planned prefab assets, not editor catalogs.
 var startup_worker:Thread
 var _occlusion_viewport:Viewport
 var _previous_occlusion:=false
@@ -160,7 +162,9 @@ func _startup_step(stage:String)->void:
 	var now:=Time.get_ticks_usec()
 	startup_timings[startup_stage]=(now-startup_tick)/1000.0
 	startup_stage=stage
-	if startup_cooperative:await get_tree().process_frame
+	if startup_cooperative and now>=_startup_yield_deadline:
+		await get_tree().process_frame
+		_startup_yield_deadline=Time.get_ticks_usec()+8000
 	startup_tick=Time.get_ticks_usec()
 func configure_generation_spawn(point:Vector3)->bool:
 	if is_inside_tree() or not point.is_finite() or point.x<0 or point.x>2000 or point.z<0 or point.z>2000:return false
@@ -315,7 +319,11 @@ func _ready() -> void:
 		await _startup_step("Connecting "+step[0])
 		if not step[1].call():
 			push_error("World persistence initialization failed: "+step[0]);_abort_startup(2);return
-	_setup_prefabs()
+	if not generation_only:_setup_prefabs()
+	else:
+		# Keep preconstructed Nodes owned while omitting editor asset factories.
+		add_child(capture_selection);add_child(prefab_preview);add_child(shape_preview)
+		capture_selection.hide();prefab_preview.hide();shape_preview.hide()
 	await _startup_step("Initializing terrain and collision")
 	terrain.density_batch_ready.connect(foundation_check.receive)
 	structures.blocks.configure_history(16*1024*1024,128)

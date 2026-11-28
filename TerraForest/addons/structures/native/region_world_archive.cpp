@@ -13,7 +13,7 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure_checkpoint_retention","lease_limit"),&NativeRegionWorldArchive::configure_checkpoint_retention);
     ClassDB::bind_method(D_METHOD("retain_read_checkpoint","asset","checkpoint"),&NativeRegionWorldArchive::retain_read_checkpoint);
     ClassDB::bind_method(D_METHOD("release_read_checkpoint","lease"),&NativeRegionWorldArchive::release_read_checkpoint);
-    ClassDB::bind_method(D_METHOD("configure","archive","structures_codec","metadata_first","model_metadata_first"),&NativeRegionWorldArchive::configure,DEFVAL(false),DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("configure","archive","structures_codec","metadata_first","model_metadata_first","compact_initial"),&NativeRegionWorldArchive::configure,DEFVAL(false),DEFVAL(false),DEFVAL(false));
     ClassDB::bind_method(D_METHOD("acquire","absolute_path"),&NativeRegionWorldArchive::acquire);
     ClassDB::bind_method(D_METHOD("release"),&NativeRegionWorldArchive::release);
     ClassDB::bind_method(D_METHOD("encode","sections"),&NativeRegionWorldArchive::encode);
@@ -48,10 +48,10 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("storage_stats"),&NativeRegionWorldArchive::storage_stats);
 }
 NativeRegionWorldArchive::~NativeRegionWorldArchive(){release();}
-bool NativeRegionWorldArchive::configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first,bool model_metadata_first) {
+bool NativeRegionWorldArchive::configure(const Ref<RefCounted> &archive,const Ref<NativeStructuresSnapshot> &codec,bool metadata_first,bool model_metadata_first,bool compact_initial) {
     if(archive_.is_valid()||archive.is_null()||codec.is_null()||archive->get_class()!=StringName("NativeWorldArchive"))return false;
     if(model_metadata_first&&!metadata_first)return false;
-    archive_=archive;codec_=codec;metadata_first_=metadata_first;model_metadata_first_=model_metadata_first;return true;
+    archive_=archive;codec_=codec;metadata_first_=metadata_first;model_metadata_first_=model_metadata_first;compact_initial_=compact_initial;return true;
 }
 bool NativeRegionWorldArchive::acquire(const String &path) {
     if(archive_.is_null()||!path_.is_empty()||!path.is_absolute_path()||path.begins_with("res://")||path.begins_with("user://"))return false;
@@ -75,20 +75,28 @@ void NativeRegionWorldArchive::release() {
     join_region_reads();
     {std::lock_guard<std::mutex> lock(read_mutex_);published_keys_=PackedInt32Array();published_checksums_=PackedByteArray();published_checkpoint_=PackedByteArray();published_models_.clear();read_checkpoint_leases_.clear();read_checkpoint_refs_.clear();}
     if(store_.is_valid()){store_->close();store_.unref();}
-    {std::lock_guard<std::mutex> lock(model_mutex_);for(auto &entry:model_stores_)entry.second->close();model_stores_.clear();}
+    {std::lock_guard<std::mutex> lock(model_mutex_);for(auto &entry:model_stores_)entry.second->close();model_stores_.clear();model_open_mutexes_.clear();}
     if(!path_.is_empty()&&archive_.is_valid())archive_->call("release");path_=String();
 }
 Ref<NativeModelRegionStore> NativeRegionWorldArchive::model_store(const String &asset,bool create) const {
-    std::lock_guard<std::mutex> lock(model_mutex_);
-    auto found=model_stores_.find(asset);if(found!=model_stores_.end())return found->second;
-    if(path_.is_empty())return {};
+    // A save owns lifecycle and drains every job before release. Serialize opens
+    // for the same asset, but never hold the directory-map lock during disk I/O.
+    std::shared_ptr<std::mutex> asset_mutex;String root;
+    {
+        std::lock_guard<std::mutex> lock(model_mutex_);
+        auto found=model_stores_.find(asset);if(found!=model_stores_.end())return found->second;
+        if(path_.is_empty())return {};root=path_;
+        auto &entry=model_open_mutexes_[asset];if(!entry)entry=std::make_shared<std::mutex>();asset_mutex=entry;
+    }
+    std::lock_guard<std::mutex> open(*asset_mutex);
+    {std::lock_guard<std::mutex> lock(model_mutex_);auto found=model_stores_.find(asset);if(found!=model_stores_.end())return found->second;}
     Ref<HashingContext> hash;hash.instantiate();hash->start(HashingContext::HASH_SHA256);hash->update(asset.to_utf8_buffer());
-    const String folder=(path_+String(".models")).path_join(hash->finish().hex_encode());
+    const String folder=(root+String(".models")).path_join(hash->finish().hex_encode());
     if(!create&&!FileAccess::file_exists(folder.path_join("catalog.tfrc")))return {};
     if(create&&DirAccess::make_dir_recursive_absolute(folder)!=OK)return {};
     Ref<NativeModelRegionStore> model;model.instantiate();
     if(!bool(model->open_store(folder,asset)["ok"]))return {};
-    model_stores_.emplace(asset,model);return model;
+    {std::lock_guard<std::mutex> lock(model_mutex_);model_stores_.emplace(asset,model);}return model;
 }
 PackedByteArray NativeRegionWorldArchive::encode(const Dictionary &sections) const {
     if(archive_.is_null())return {};return archive_->call("encode",sections);
@@ -137,13 +145,17 @@ Dictionary NativeRegionWorldArchive::map_certificates() const {
  PackedByteArray canonical=archive_->call("read",path_);Dictionary root=decode_mode(canonical,true,true);
  if(!bool(root.get("ok",false)))return out;Dictionary sections=root["sections"];
  if(!sections.has("structures"))return out;PackedByteArray bytes=sections["structures"];
- Dictionary bootstrap=codec_->decode_bootstrap(bytes);if(!bool(bootstrap.get("ok",false)))return out;
+ Dictionary bootstrap=codec_->decode_bootstrap(bytes);
+ const bool resident=!bool(bootstrap.get("ok",false));
+ if(resident)bootstrap=codec_->decode(bytes);
+ if(!bool(bootstrap.get("ok",false)))return out;
  Dictionary models=bootstrap["models"],identities;Array keys=models.keys();
- for(int64_t i=0;i<keys.size();i++){PackedByteArray metadata=models[keys[i]];identities[keys[i]]=String("metadata-v1|")+metadata.slice(metadata.size()-32).hex_encode();}
+ for(int64_t i=0;i<keys.size();i++){PackedByteArray metadata=models[keys[i]];identities[keys[i]]=String(resident?"snapshot-v1|":"metadata-v1|")+metadata.slice(metadata.size()-32).hex_encode();}
  // This is the exact startup representation's identity, without constructing
  // scene nodes or changing current residency. Derived cache work can run offline.
  if(PackedByteArray(archive_->call("read",path_))!=canonical)return out;
- out["ok"]=true;out["blocks_identity"]=String("bootstrap-v1|")+bytes.slice(bytes.size()-32).hex_encode();out["models"]=identities;return out;
+ const PackedByteArray block_identity_bytes=resident?PackedByteArray(bootstrap["blocks"]):bytes;
+ out["ok"]=true;out["blocks_identity"]=String(resident?"snapshot-v1|":"bootstrap-v1|")+block_identity_bytes.slice(block_identity_bytes.size()-32).hex_encode();out["models"]=identities;return out;
 }
 bool NativeRegionWorldArchive::reference_in_file(const String &path,std::set<String> &keep,std::map<String,std::set<String>> &model_keep) const {
     if(!FileAccess::file_exists(path))return true;
@@ -219,6 +231,17 @@ int64_t NativeRegionWorldArchive::publish_sections(const String &path,const Dict
     if(partial)structure=codec_->decode_storage(sections["structures"]);
     if(!bool(structure["ok"]))return ERR_INVALID_DATA;
     mark("validate_sections_us");
+    if(compact_initial_&&!FileAccess::file_exists(path_)) {
+        // A fresh generation already owns a complete bounded TFSB record batch.
+        // Publish that established binary representation directly, avoiding
+        // thousands of small regional files and a second copy at publication.
+        // Later saves use the regional path below, including backup retention.
+        if(partial)return ERR_INVALID_DATA;
+        const PackedByteArray bytes=archive_->call("encode",sections);if(bytes.is_empty())return ERR_INVALID_DATA;
+        const int64_t error=archive_->call("publish",path,bytes);
+        publication_profile_["compact_initial"]=true;publication_profile_["structure_bytes"]=PackedByteArray(sections["structures"]).size();
+        mark("root_publish_us");return error;
+    }
     // Failed previous saves can leave extra pins. Retire only after validating
     // both published roots, before allocating another pin.
     if(!retire_unreferenced())return ERR_FILE_CORRUPT;
@@ -233,16 +256,17 @@ int64_t NativeRegionWorldArchive::publish_sections(const String &path,const Dict
     // an error so current/backup checkpoint retention remains authoritative.
     struct ModelJob {
         String asset;Ref<NativeModelRegionStore> store;PackedByteArray snapshot;
-        PublishedModelIndex index;int64_t error=OK;
+        PublishedModelIndex index;int64_t error=OK;uint64_t open_us=0;
     };
     std::vector<ModelJob> jobs; jobs.reserve(keys.size());
     for(int64_t i=0;i<keys.size();++i) {
-        String asset=keys[i];auto model=model_store(asset,true);if(model.is_null())return ERR_CANT_OPEN;
-        jobs.push_back({asset,model,models[asset],{},OK});
+        String asset=keys[i];jobs.push_back({asset,{},models[asset],{},OK});
     }
     mark("models_open_us");
-    auto publish_model=[](ModelJob &job)->int64_t {
-        auto &model=job.store;
+    auto publish_model=[this](ModelJob &job)->int64_t {
+        const auto began=Time::get_singleton()->get_ticks_usec();
+        job.store=model_store(job.asset,true);job.open_us=Time::get_singleton()->get_ticks_usec()-began;
+        auto &model=job.store;if(model.is_null())return ERR_CANT_OPEN;
         String parsed_asset;Dictionary state;
         Dictionary stored=NativeStructuresSnapshot::parse_model_storage(job.snapshot,parsed_asset,&state)?
             model->publish_storage_state(state["resident"],state["unavailable_keys"],state["unavailable_checksums"]):model->publish_snapshot(job.snapshot);
@@ -255,14 +279,19 @@ int64_t NativeRegionWorldArchive::publish_sections(const String &path,const Dict
         job.index={model_index["keys"],model_index["checksums"],model_pin["checkpoint"]};
         return OK;
     };
-    const size_t worker_count=std::min<size_t>(jobs.size(),std::min<size_t>(4,std::max<size_t>(1,std::thread::hardware_concurrency()/2)));
+    const bool initial_publication=!FileAccess::file_exists(path_);
+    const size_t concurrency=initial_publication?std::min<size_t>(12,std::max<size_t>(1,std::thread::hardware_concurrency())):std::min<size_t>(4,std::max<size_t>(1,std::thread::hardware_concurrency()/2));
+    const size_t worker_count=std::min<size_t>(jobs.size(),concurrency);
     publication_profile_["model_workers"]=int64_t(worker_count);
     publication_profile_["model_jobs"]=int64_t(jobs.size());
     std::atomic<size_t> next{0};std::vector<std::thread> workers;
     auto run=[&](){for(;;){size_t i=next.fetch_add(1);if(i>=jobs.size())return;jobs[i].error=publish_model(jobs[i]);}};
-    // The existing save worker participates; at most three additional threads.
+    // The save worker participates. Fresh creation may use up to eleven more
+    // independent I/O workers; ordinary gameplay retains its four-worker limit.
     for(size_t i=1;i<worker_count;++i)workers.emplace_back(run);
     run();for(auto &worker:workers)worker.join();
+    uint64_t open_total=0,open_max=0;for(const auto &job:jobs){open_total+=job.open_us;open_max=std::max(open_max,job.open_us);}
+    publication_profile_["models_open_worker_us"]=int64_t(open_total);publication_profile_["models_open_max_us"]=int64_t(open_max);
     for(auto &job:jobs) {
         if(job.error!=OK)return job.error;
         model_indexes.emplace(job.asset,job.index);

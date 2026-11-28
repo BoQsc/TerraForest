@@ -36,6 +36,7 @@ void NativeStructuresSnapshot::_bind_methods() {
     ClassDB::bind_method(D_METHOD("encode_reference","checkpoint","models"),&NativeStructuresSnapshot::encode_reference);
     ClassDB::bind_method(D_METHOD("decode_reference","bytes"),&NativeStructuresSnapshot::decode_reference);
     ClassDB::bind_method(D_METHOD("inspect_reference","bytes"),&NativeStructuresSnapshot::inspect_reference);
+    ClassDB::bind_method(D_METHOD("inspect_resident","bytes"),&NativeStructuresSnapshot::inspect_resident);
     ClassDB::bind_method(D_METHOD("encode_storage","resident","keys","checksums","models","checkpoint"),&NativeStructuresSnapshot::encode_storage,DEFVAL(PackedByteArray()));
     ClassDB::bind_method(D_METHOD("encode_metadata","checkpoint","keys","checksums","models"),&NativeStructuresSnapshot::encode_metadata);
     ClassDB::bind_method(D_METHOD("decode_storage","bytes"),&NativeStructuresSnapshot::decode_storage);
@@ -116,6 +117,9 @@ bool NativeStructuresSnapshot::parse(const PackedByteArray &bytes,Dictionary *re
 }
 Dictionary NativeStructuresSnapshot::inspect_reference(const PackedByteArray &bytes) const {
  Dictionary result;result["ok"]=false;parse(bytes,&result,REFERENCE,true);return result;
+}
+Dictionary NativeStructuresSnapshot::inspect_resident(const PackedByteArray &bytes) const {
+ Dictionary result;result["ok"]=false;parse(bytes,&result,RESIDENT,true);return result;
 }
 const char *NativeStructuresSnapshot::magic(Mode mode) {
     switch(mode){case RESIDENT:return "TFSB\1\0\0\0";case REFERENCE:return "TFSR\1\0\0\0";case STORAGE:return "TFSP\1\0\0\0";case CHECKPOINT_STORAGE:return "TFSQ\1\0\0\0";case BOOTSTRAP:return "TFSU\1\0\0\0";}

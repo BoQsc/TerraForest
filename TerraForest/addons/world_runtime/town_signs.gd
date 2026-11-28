@@ -135,6 +135,8 @@ func publish(game:Node,seed_value:int,generator:int,sites:Array,network:Dictiona
 	sync_labels();return true
 
 func survey(terrain:Node,points:PackedVector3Array)->Dictionary:
+	if terrain.diagnostics_pause_streaming and terrain.world_ready and not terrain.pending_edit:
+		return ClassDB.instantiate("NativeGenerationEarthworks").sample_ground(terrain,points)
 	# Query the edited density field. Vegetation's natural-root surface sampler
 	# deliberately rejects graded roots and is not a ground-placement contract.
 	var tokens:Dictionary={};var replies:Dictionary={}

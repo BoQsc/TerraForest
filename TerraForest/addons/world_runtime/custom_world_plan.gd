@@ -194,6 +194,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   for lot:Dictionary in site.lots:
    var bounds:AABB=lot.bounds
    reserved.append(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(2));building_count+=1
+ if progress!=null:progress.record("Selecting regional road exits")
  var exits:Array=[];var streets:Array=[]
  for site:Dictionary in sites:
   var points:=PackedVector3Array(Routes.arrival_points(site,reserved,true))

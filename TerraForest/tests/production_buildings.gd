@@ -39,9 +39,12 @@ func run()->void:
 		check(browser.world_style.get_item_text(browser.world_style.selected)==("Metropolis & inhabited region" if metropolis else "Connected countryside"),"normal selected recipe has its public UI identity")
 		check(browser.selected_options()==(Recipe.METROPOLIS if metropolis else Recipe.DEFAULTS),"unchanged normal UI settings reach generation")
 		await photograph("create_world")
+		var generation_clicked:=Time.get_ticks_usec()
 		browser.generate_button.pressed.emit()
 		var status_path:String=browser.preparation_status
-		if metropolis:FileAccess.open(folder.path_join("request.json"),FileAccess.WRITE).store_string(JSON.stringify({"slot":selected_slot,"status":status_path,"pid":OS.get_process_id()}))
+		if metropolis:
+			var request:=FileAccess.open(folder.path_join("request.json"),FileAccess.WRITE)
+			request.store_string(JSON.stringify({"slot":selected_slot,"status":status_path,"pid":OS.get_process_id()}));request.close()
 		await wait_for(func():
 			if game_ready():return true
 			if browser_ready() and current_scene.preparation_pid<0 and FileAccess.file_exists(status_path):
@@ -50,6 +53,8 @@ func run()->void:
 			return false,520)
 		if not check(game_ready(),"normal Generate & play creates and opens the civic world"):
 			print("PRODUCTION_GENERATION_STATUS ",FileAccess.get_file_as_string(status_path));await finish();return
+		var generate_to_play_us:=Time.get_ticks_usec()-generation_clicked
+		FileAccess.open(folder.path_join("generate_to_play.json"),FileAccess.WRITE).store_string(JSON.stringify({"microseconds":generate_to_play_us,"target_microseconds":30000000,"performance_passed":generate_to_play_us<30000000,"first_play_startup_ms":current_scene.startup_timings,"first_play_session":root.get_node("WorldSession").stage_timings,"loading_us":Time.get_ticks_usec()-current_scene.loading_started_us,"scope":"Generate button through playable-world readiness, including planning, all generation, durable publication and first world load."}))
 		var state:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(status_path))
 		var receipt:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(state.report).path_join("run.json")))
 		var ordinary:=true
@@ -185,6 +190,7 @@ func photograph(name:String)->void:
 	var destination:String=folder if capture_prefix.is_empty() else folder.path_join(capture_prefix)
 	DirAccess.make_dir_recursive_absolute(destination)
 	await RenderingServer.frame_post_draw
+	if "--no-captures" in OS.get_cmdline_user_args():return
 	root.get_texture().get_image().save_png(destination.path_join(name+".png"))
 
 func finish()->void:

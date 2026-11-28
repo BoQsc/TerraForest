@@ -137,6 +137,8 @@ struct TerrainEditWrites {
 struct World {
  TerrainEditWrites *edit_writes=nullptr; // Command-scoped, never serialized.
  EditHeightCache *edit_height_cache=nullptr; // Non-owning, never serialized.
+ bool generation_road_columns=false; // Private staged bake only.
+ u64 generation_road_columns_count=0;
  BuildControl *build_control=nullptr;
  Map pages_by_key,blocks; List<Page> pages; List<Cave> caves; List<List<u32>> block_columns;
  u32 *edit_columns=nullptr;

@@ -30,6 +30,15 @@ func _initialize()->void:
  check(not cache.accepts("b".repeat(64),"native-codec-style") and not cache.accepts(identity,"changed-style"),"Changed checkpoint or renderer cannot reuse cached geometry")
  Handoff.publish(cache)
  check(Handoff.consume()==cache and Handoff.consume()==null,"Handoff transfers ownership once")
+ var resources:Array[Resource]=[BoxMesh.new()];var retained:WeakRef=weakref(resources[0])
+ check(Handoff.retain_resources(resources),"generation resources admitted for one scene transition")
+ resources.clear()
+ check(retained.get_ref()!=null,"handoff retains weak ResourceLoader inputs")
+ var consumed:Array[Resource]=Handoff.consume_resources()
+ check(consumed.size()==1 and Handoff.consume_resources().is_empty(),"resource handoff transfers once")
+ consumed.clear();check(retained.get_ref()==null,"consumed resource owner releases normally")
+ resources.append(BoxMesh.new());retained=weakref(resources[0]);Handoff.retain_resources(resources);resources.clear();Handoff.publish(null)
+ check(retained.get_ref()==null,"cancelled generation releases retained resources")
  backend.snapshot_id=identity;backend.cache_valid=true;backend._startup_meshes=cache
  backend._execute_mesh(job)
  var reused:Dictionary=backend.poll()[0]

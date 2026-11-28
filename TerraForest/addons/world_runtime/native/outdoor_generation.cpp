@@ -41,7 +41,7 @@ class NativeOutdoorGeneration : public RefCounted {
     std::vector<int> support_indices;
     std::vector<Vector2i> spans;
     std::map<int,Trees> trees;
-    Ref<RefCounted> scatter,harvest,water,fleet;
+    Ref<RefCounted> scatter,harvest,water,fleet,offline_core;
     uint64_t game_id=0,terrain_id=0,blocks_id=0;
     int64_t seed=0,tree_seed=0,token=0,epoch=0,density_revision=0,surface_revision=0;
     double tree_density=0;
@@ -69,6 +69,31 @@ class NativeOutdoorGeneration : public RefCounted {
     bool stable() const {
         auto *owner=terrain();
         return owner&&!bool(owner->get("stopping"))&&int64_t(owner->get("epoch"))==epoch&&int64_t(owner->get("density_revision"))==density_revision;
+    }
+    bool offline_current() const {
+        if(offline_core.is_null())return false;
+        auto *owner=terrain();if(!stable()||!bool(owner->get("world_ready"))||!bool(owner->get("diagnostics_pause_streaming"))||bool(owner->get("pending_edit")))return false;
+        PackedByteArray p;p.resize(4);p.encode_u32(0,0);const PackedByteArray r=offline_core->call("execute",p);
+        return r.size()>=16&&r.decode_u32(0)==0x32505254&&r.decode_u32(8)==0&&r.decode_u32(12)==uint64_t(density_revision);
+    }
+    bool offline_query(bool surface){
+        if(!offline_current())return false;
+        if(surface){
+            PackedByteArray p;p.resize(8);p.encode_u32(0,17);p.encode_u32(4,points.size());p.append_array(points.to_byte_array());
+            const PackedByteArray r=offline_core->call("execute",p);
+            if(r.size()!=16+points.size()*24||r.decode_u32(0)!=0x32505254||r.decode_u32(8)!=0||r.decode_u32(12)!=points.size())return false;
+            positions.resize(points.size());normals.resize(points.size());
+            for(int i=0;i<points.size();++i){Vector3 point,normal;for(int a=0;a<3;++a){point[a]=r.decode_float(16+i*12+a*4);normal[a]=r.decode_float(16+points.size()*12+i*12+a*4);}positions.set(i,point);normals.set(i,normal);}
+        }else{
+            densities.clear();
+            for(int offset=0;offset<points.size();offset+=512){
+                const int count=std::min<int>(512,points.size()-offset);PackedByteArray p;p.resize(12);p.encode_u32(0,31);p.encode_u32(4,density_revision);p.encode_u32(8,count);p.append_array(points.slice(offset,offset+count).to_byte_array());
+                const PackedByteArray r=offline_core->call("execute",p);
+                if(r.size()!=20+count*4||r.decode_u32(0)!=0x32505254||r.decode_u32(8)!=0||r.decode_u32(12)!=uint64_t(density_revision)||r.decode_u32(16)!=count)return false;
+                densities.append_array(r.slice(20).to_float32_array());
+            }
+        }
+        return offline_current();
     }
     static bool road_contact(const Road &road,Vector3 point,double margin){
         const Vector2 delta(road.b.x-road.a.x,road.b.z-road.a.z),offset(point.x-road.a.x,point.z-road.a.z);
@@ -260,7 +285,7 @@ class NativeOutdoorGeneration : public RefCounted {
             }
             result["placements"]=diagnostic;result["skipped"]=skipped;result["target_per_lot"]=TARGET;result["density_requests"]=requests;result["density_samples"]=samples;if(!placements.empty()&&terrain())terrain()->set("changed_since_save",true);}
         Dictionary profile;const char *names[]={"candidates_us","surface_wait_us","filter_us","support_pack_us","density_wait_us","insertion_us"};
-        for(int i=0;i<6;i++)profile[names[i]]=int64_t(timing[i]);profile["total_us"]=int64_t(now()-started);profile["implementation"]="native-v1";result["profile"]=profile;
+        for(int i=0;i<6;i++)profile[names[i]]=int64_t(timing[i]);profile["total_us"]=int64_t(now()-started);profile["implementation"]=offline_core.is_valid()?"native-frozen-v2":"native-v1";result["profile"]=profile;
     }
 protected:
     static void _bind_methods(){
@@ -304,6 +329,10 @@ public:
         for(int i=0;i<locations.size();i++){const Dictionary row=locations[i];protected_bounds.push_back(row["bounds"]);}
         for(int i=0;i<input_lots.size();i++){if(input_lots[i].get_type()!=Variant::DICTIONARY)return false;Lot lot;if(!load_lot(input_lots[i],lot))return false;lots.push_back(lot);}
         if(!connect_owner(member(game,"terrain"),identity,false))return false;
+        if(bool(lake->get("offline_preparation"))&&bool(terrain()->get("diagnostics_pause_streaming"))){
+            offline_core=Ref<RefCounted>(Object::cast_to<RefCounted>(member(backend,"native")));
+            if(!offline_current()){disconnect();return false;}
+        }
         game_id=game->get_instance_id();blocks_id=blocks->get_instance_id();phase=LOT;return true;
     }
     bool start_support(Object *owner,const TypedArray<AABB> &input,int64_t identity){
@@ -318,7 +347,7 @@ public:
         // asynchronous reply or the owner-thread quantum, never once per object.
         for(int step=0;step<512;step++){
             if(advance_one())return true;
-            if(phase==SURFACE||phase==DENSITY||now()-began>=4000)return false;
+            if(((phase==SURFACE||phase==DENSITY)&&offline_core.is_null())||now()-began>=8000)return false;
         }
         return false;
     }
@@ -337,6 +366,7 @@ public:
         }
         if(phase==SURFACE||phase==DENSITY){
             const bool surface=phase==SURFACE;
+            if(!sent&&offline_core.is_valid()){sent=received=true;failed=!offline_query(surface);}
             if(!sent)sent=surface?bool(terrain()->call("request_surface_batch",points,token)):bool(terrain()->call("request_density_scan",points,token,0,true));
             if(!received){if(now()>=deadline){fail("Outdoor terrain survey timed out");return true;}return false;}
             timing[surface?1:4]+=now()-wait_started;
@@ -358,7 +388,7 @@ public:
                     if(points.size()+part.size()>LIMIT)break;
                     spans.push_back(Vector2i(points.size(),part.size()));points.append_array(part);++support_cursor;
                 }
-                ++requests;samples+=points.size();timing[3]+=now()-work;begin_wait(DENSITY);sent=bool(terrain()->call("request_density_scan",points,token,0,true));return false;
+                ++requests;samples+=points.size();timing[3]+=now()-work;begin_wait(DENSITY);if(offline_core.is_null())sent=bool(terrain()->call("request_density_scan",points,token,0,true));return false;
             }
             if(support_only){finish();return true;}phase=INSERT;
         }

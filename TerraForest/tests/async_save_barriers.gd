@@ -9,6 +9,7 @@ class GatedArchive extends RefCounted:
  var entered:=false
  var active:=false
  var early_release:=false
+ var publications:=0
  func arm():
   lock.lock();armed=true;entered=false;lock.unlock()
  func pending()->bool:
@@ -23,16 +24,51 @@ class GatedArchive extends RefCounted:
   lock.lock();var wait:=armed;armed=false;active=true;entered=wait;lock.unlock()
   if wait:gate.wait()
   var error:int=raw.publish(path,bytes)
-  lock.lock();active=false;lock.unlock();return error
+  lock.lock();active=false;publications+=1;lock.unlock();return error
+func evidence_path(name:String)->String:
+ for arg:String in OS.get_cmdline_user_args():
+  if arg.begins_with("--check-evidence-dir="):return arg.trim_prefix("--check-evidence-dir=").path_join(name+".trw")
+ return "user://worlds/async_barrier_%d_%s.trw"%[OS.get_process_id(),name]
+func shutdown_case(mode:String)->void:
+ inventory=ClassDB.instantiate("NativePlayerInventory");inventory.register_item(101,999);inventory.grant(101,1,0)
+ var backend=Backend.new();backend.world_generator=3;backend.disk_cache.enabled=false
+ var codec:=GatedArchive.new();codec.raw=ClassDB.instantiate("NativeWorldArchive")
+ backend.snapshot_codec=codec;backend.snapshot_capture=capture;backend.snapshot_validators={"player_loadout":inventory}
+ var path:=evidence_path("shutdown_"+mode);backend.save_path=path
+ check(backend.start(false)==OK,"shutdown "+mode+" worker starts")
+ check(backend.submit({"kind":"save"}),"shutdown "+mode+" initial save admitted")
+ var saved:=false;var deadline:=Time.get_ticks_msec()+10000
+ while not saved and Time.get_ticks_msec()<deadline:
+  for r:Dictionary in backend.poll():saved=saved or (r.get("operation")=="save" and r.get("success",false))
+  await process_frame
+ check(saved,"shutdown "+mode+" initial root durable")
+ var before:PackedByteArray=codec.raw.read(ProjectSettings.globalize_path(path))
+ if mode=="component":inventory.grant(101,1,inventory.snapshot().revision)
+ if mode=="terrain":check(backend.submit(edit_job(),true),"shutdown preserves accepted terrain edit")
+ if mode=="invalid":backend.snapshot_capture=func():return {"epoch":0,"sections":{"player_loadout":PackedByteArray([0])}}
+ backend.stop()
+ var after:PackedByteArray=codec.raw.read(ProjectSettings.globalize_path(path));var decoded:Dictionary=codec.raw.decode(after)
+ check(decoded.ok,"shutdown "+mode+" root validates")
+ check(codec.publications==(1 if mode in ["unchanged","invalid"] else 2),"shutdown "+mode+" publishes exactly when dirty and valid")
+ if mode in ["unchanged","invalid"]:check(before==after,"shutdown "+mode+" preserves exact root")
+ check(backend._last_save_success==(mode!="invalid"),"shutdown "+mode+" reports durable status")
+ if mode=="component":check(decoded.sections.player_loadout==inventory.capture_storage_snapshot(),"shutdown captures component change without terrain edit")
+ if mode=="terrain":
+  var core=ClassDB.instantiate("TerrainCore");var packet:=Codec.command(5)
+  packet.append_array(preload("res://tests/terrain_storage_support.gd").expand(path,decoded.sections.terrain))
+  check(Codec.reply_ok(core.execute(packet)) and core.execute(Codec.command(0)).decode_u32(12)>0,"shutdown saved accepted terrain revision")
+ preload("res://tests/terrain_storage_support.gd").cleanup(path)
+ for suffix in ["",".bak",".lock"]:DirAccess.remove_absolute(ProjectSettings.globalize_path(path+suffix))
 func run()->void:
  GDExtensionManager.load_extension("res://addons/volumetric_terrain/terrain_core.gdextension")
  GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
  GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
+ for mode:String in ["unchanged","component","terrain","invalid"]:await shutdown_case(mode)
  inventory=ClassDB.instantiate("NativePlayerInventory");inventory.register_item(101,999);inventory.grant(101,1,0)
  var backend=Backend.new();backend.native=ClassDB.instantiate("TerrainCore");backend.world_generator=3
  var codec:=GatedArchive.new();codec.raw=ClassDB.instantiate("NativeWorldArchive")
  backend.snapshot_codec=codec;backend.snapshot_capture=capture;backend.snapshot_validators={"player_loadout":inventory};backend.disk_cache.enabled=false
- var path:="user://worlds/async_barrier_%d_%d.trw"%[OS.get_process_id(),Time.get_ticks_usec()]
+ var path:=evidence_path("async_barrier")
  DirAccess.make_dir_recursive_absolute("user://worlds");backend.save_path=path
  check(backend.start(false)==OK,"worker starts")
  var deadline:=Time.get_ticks_msec()+10000;var started:=false

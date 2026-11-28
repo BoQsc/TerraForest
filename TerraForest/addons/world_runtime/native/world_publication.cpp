@@ -3,11 +3,14 @@
 #include "location_baseline.hpp"
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/file_access.hpp>
+#include <godot_cpp/classes/time.hpp>
 #include <filesystem>
 #include <atomic>
 #include <fstream>
 #include <array>
 #include <vector>
+#include <thread>
+#include <algorithm>
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -58,6 +61,7 @@ static bool retire_generation_files(const fs::path &base,const fs::path &source,
 }
 Dictionary NativeWorldArchive::clone_world(const String &root,const String &source,const String &destination,int64_t test_stop_after,bool retire_source) const {
  Dictionary result;result["ok"]=false;result["created"]=false;
+ const auto started=Time::get_singleton()->get_ticks_usec();
  auto fail=[&](const char *reason){result["reason"]=reason;return result;};
  if(test_stop_after < -1 || test_stop_after > 5)return fail("Invalid publication stop phase");
  if(!root.is_absolute_path()||root.begins_with("user://")||root.begins_with("res://")||!slot_name(source)||!slot_name(destination)||source.nocasecmp_to(destination)==0)return fail("Invalid publication path or slot");
@@ -92,6 +96,26 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
  DWORD written=0;BOOL journal_ok=WriteFile(handle,encoded.get_data(),encoded.length(),&written,nullptr)&&written==encoded.length()&&FlushFileBuffers(handle);CloseHandle(handle);
  if(!journal_ok)return fail("Cannot flush publication journal");
  uint64_t bytes=0,files=0;
+ struct Copy {fs::path source,destination;};std::vector<Copy> copies;
+ // Bounded path batches keep publication memory independent of world size.
+ uint64_t copy_us=0;size_t max_copy_workers=0;
+ auto copy_batch=[&]()->bool {
+  const auto copy_started=Time::get_singleton()->get_ticks_usec();
+  std::atomic<size_t> next_copy{0};std::atomic<bool> copy_failed{false};
+  const size_t copy_workers=std::min<size_t>(copies.size(),std::min<size_t>(12,std::max<size_t>(1,std::thread::hardware_concurrency())));
+  max_copy_workers=std::max(max_copy_workers,copy_workers);
+  auto copy_files=[&](){for(;;){
+   const auto index=next_copy.fetch_add(1);if(index>=copies.size()||copy_failed.load())return;const auto &job=copies[index];
+   std::error_code local_error;fs::copy_file(job.source,job.destination,fs::copy_options::none,local_error);
+   if(local_error){copy_failed.store(true);return;}
+   HANDLE copied=CreateFileW(job.destination.c_str(),GENERIC_WRITE,FILE_SHARE_READ,nullptr,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,nullptr);
+   if(copied==INVALID_HANDLE_VALUE){copy_failed.store(true);return;}
+   const BOOL flushed=FlushFileBuffers(copied);CloseHandle(copied);if(!flushed){copy_failed.store(true);return;}
+  }};
+  std::vector<std::thread> pool;for(size_t i=1;i<copy_workers;++i)pool.emplace_back(copy_files);copy_files();for(auto &worker:pool)worker.join();
+  copy_us+=Time::get_singleton()->get_ticks_usec()-copy_started;copies.clear();return !copy_failed.load();
+ };
+
  for(const char *suffix:{".regions",".models",".water",".terrain"}){
   auto from=fs::u8path((original+suffix).utf8().get_data()),to=stage/fs::path(suffix+1);
   bool present=fs::exists(from,error);if(error)return fail("Cannot inspect source store");if(!present)continue;
@@ -104,18 +128,16 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
    if(fs::is_directory(status)){fs::create_directory(output,error);}
    else if(fs::is_regular_file(status)){
     auto size=entry.file_size(error);if(error||size>256ull*1024*1024||++files>1000000||bytes+size>512ull*1024*1024*1024)return fail("Publication storage budget exceeded");
-    bytes+=size;fs::copy_file(entry.path(),output,fs::copy_options::none,error);
-    if(error)return fail("Store copy failed; staging retained");
-    // Root publication must not get ahead of the copied authoritative file data.
-    HANDLE copied=CreateFileW(output.c_str(),GENERIC_WRITE,FILE_SHARE_READ,nullptr,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,nullptr);
-    if(copied==INVALID_HANDLE_VALUE)return fail("Cannot flush staged file");
-    BOOL flushed=FlushFileBuffers(copied);CloseHandle(copied);
-    if(!flushed)return fail("Staged file flush failed");
+    bytes+=size;copies.push_back({entry.path(),output});
+    if(copies.size()==128&&!copy_batch())return fail("Store copy or flush failed; incomplete staging retained");
    }else return fail("Store contains unsupported entries");
    if(error)return fail("Store copy failed; staging retained");it.increment(error);
   }
   if(error)return fail("Store enumeration failed; staging retained");
  }
+ // Incomplete copying never exposes a staged root to recovery or promotion.
+ if(!copy_batch())return fail("Store copy or flush failed; incomplete staging retained");
+ result["copy_workers"]=int64_t(max_copy_workers);result["copy_us"]=int64_t(copy_us);
  if(!baselines.empty()){
   const String directory=original+".baselines";const auto from=fs::u8path(directory.utf8().get_data()),to=stage/"baselines";
   fs::create_directory(to,error);if(error)return fail("Cannot create staged baselines");
@@ -157,7 +179,7 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
   result["source_retired"]=retired;
   if(!retired)result["retention_reason"]=reason;
  }
- return result;
+ result["total_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-started);return result;
 }
 static bool same_file(const fs::path &a,const fs::path &b,std::error_code &error){
  if(!ordinary_path(a)||!ordinary_path(b))return false;

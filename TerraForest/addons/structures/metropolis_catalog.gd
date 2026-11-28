@@ -236,6 +236,7 @@ static func locate(core:RefCounted,road_grid:int,variant:int,progress:RefCounted
 			if not fitted.get("ok",false):
 				print("METROPOLIS_SITE_REJECTION ",JSON.stringify({"quarter":block,"block":part,"road_rejections":fitted.get("road_rejections",{}),"lot_rejections":fitted.get("lot_rejections",{}),"street_candidates":fitted.get("street_candidates",0),"best_missing":fitted.get("best_missing",0)}))
 				fitted["reason"]=TITLES[block]+" / block %d: "%[part+1]+str(fitted.get("reason","No terrain-fitting site"));return fitted
+			if progress!=null:progress.record("Compiling %s / block %d"%[TITLES[block],part+1])
 			var prepared:=Planner.earthworks(fitted)
 			if not prepared.get("ok",false):return prepared
 			occupied.append(prepared.bounds);parts.append(fitted);all_roads.append_array(fitted.roads);all_lots.append_array(fitted.lots)
@@ -254,6 +255,7 @@ static func locate(core:RefCounted,road_grid:int,variant:int,progress:RefCounted
 		site["recipe_kind"]="metropolis";site["metro_block"]=block
 		site["town"]=0 if block<3 else block-2;site["district"]=block if block<3 else 0
 		site["title"]=TITLES[block];site["introduction_home"]=false
+		if progress!=null:progress.record("Compiling complete "+TITLES[block])
 		var earthworks:=Planner.earthworks(site)
 		if not earthworks.get("ok",false):return earthworks
 		sites.append(site)

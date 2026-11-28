@@ -23,14 +23,7 @@ static func streets(core,center:Vector3,source:Array=[],road_grid:int=0)->Dictio
  return core.plan_streets(roads,junctions)
 
 static func heights(core,points:PackedVector3Array)->PackedFloat32Array:
- var result:=PackedFloat32Array()
- for start in range(0,points.size(),256):
-  var batch:PackedVector3Array=points.slice(start,mini(start+256,points.size()))
-  var query:=Codec.command(37,[batch.size()]);query.append_array(batch.to_byte_array())
-  var reply:PackedByteArray=core.execute(query)
-  if not Codec.reply_ok(reply) or reply.size()!=12+batch.size()*8:return PackedFloat32Array()
-  for i in batch.size():result.append(reply.decode_float(12+i*8))
- return result
+ return ClassDB.instantiate("NativeGenerationEarthworks").heights(core,points)
 
 static func translated_recipe(source:Array,from:Vector3,to:Vector3)->Array:
  # Catalog recipes place immutable prefab resources on an integer translated
@@ -83,24 +76,7 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
  return result
 
 static func _access_quality(core,lot:Dictionary)->Dictionary:
- var paths:=access_segments(lot)
- var probes:=PackedVector3Array()
- for path:Dictionary in paths:
-  var start:Vector3=path.start
-  var finish:Vector3=path.finish
-  var horizontal:=Vector2(finish.x-start.x,finish.z-start.z)
-  var steps:=ceili(horizontal.length()*2)
-  if steps<1 or steps>128:return {"status":"rejected","reason":"Invalid access span"}
-  var across:=Vector3(-horizontal.y,0,horizontal.x).normalized()
-  if absf(finish.y-start.y)>horizontal.length()*.25:return {"status":"rejected","reason":"Approach exceeds 25% grade"}
-  for index in range(steps+1):
-   for side in [-1.0,0.0,1.0]:probes.append(start.lerp(finish,float(index)/steps)+across*float(path.half_width)*side)
- var raw:=heights(core,probes)
- if raw.size()!=probes.size():return {"status":"rejected","reason":"Incomplete approach survey"}
- var fill:=0.0;var cut:=0.0
- for i in raw.size():
-  fill=maxf(fill,probes[i].y-raw[i]);cut=maxf(cut,raw[i]-probes[i].y)
- return {"status":"pass" if fill<=Quality.MAX_FILL and cut<=Quality.MAX_CUT else "rejected","max_fill":fill,"max_cut":cut,"samples":raw.size()}
+ return ClassDB.instantiate("NativeGenerationEarthworks").access_quality(core,access_segments(lot))
 
 static func access_segments(lot:Dictionary)->Array:
  var paths:Array=[lot.entrance.segment]+lot.get("vehicle_paths",[])
@@ -173,6 +149,8 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
  for bounds:AABB in occupied:
   protected.areas.append(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(12))
  var attempts:=0;var reasons:Dictionary={};var best_missing:=12;var grid_rejections:=0
+ var timing:Dictionary={"streets":0,"lots":0,"grid":0,"earthworks":0,"connection":0};var trials:=0
+ var measured:=Time.get_ticks_usec()
  var lot_rejections:Dictionary={}
  var candidates:Array=[]
  var offsets:Array=[0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]
@@ -192,7 +170,9 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
   # Conservative recipe envelope includes shifted plots, paths and shoulders.
   if not footprint_clear(AABB(candidate-Vector3(envelope.x*.5,0,envelope.y*.5),Vector3(envelope.x,256,envelope.y)),protected.areas):
    reasons["Reserved lake, POI or neighboring site"]=int(reasons.get("Reserved lake, POI or neighboring site",0))+1;continue
+  measured=Time.get_ticks_usec()
   var roads:Dictionary=streets(core,candidate,street_provider.call(candidate) if street_provider.is_valid() else [],road_grid)
+  timing.streets+=Time.get_ticks_usec()-measured
   if not roads.ok:
    reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
   # A permitted excavation is not necessarily a desirable location. Rank all
@@ -208,7 +188,9 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
  for candidate:Dictionary in candidates:
   var recipe:Array=translated_recipe(source,source_center,candidate.center)
   for variant in range(1 if recipe_provider.is_valid() else (12 if protected.distributed else 4)):
+   trials+=1;measured=Time.get_ticks_usec()
    var lots:Dictionary=plan(core,candidate.center,candidate.roads.segments,variant,recipe,not recipe_provider.is_valid())
+   timing.lots+=Time.get_ticks_usec()-measured
    best_missing=mini(best_missing,lots.rejected.size())
    for rejected:Variant in lots.rejected:
     var label:String=str(rejected.get("label",rejected)) if rejected is Dictionary else str(rejected)
@@ -219,16 +201,24 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
      lot_rejections[key]=int(lot_rejections.get(key,0))+int(lots.rejection_reasons[label][reason])
    if lots.ok:
     var checked:Dictionary={"ok":true,"lots":lots.lots,"roads":candidate.roads.segments}
-    if not grid_roads_fit(core,checked,road_grid):grid_rejections+=1;continue
+    measured=Time.get_ticks_usec()
+    var fits:=grid_roads_fit(core,checked,road_grid)
+    timing.grid+=Time.get_ticks_usec()-measured
+    if not fits:grid_rejections+=1;continue
+    measured=Time.get_ticks_usec()
     var works:Dictionary=earthworks(checked)
+    timing.earthworks+=Time.get_ticks_usec()-measured
     if not works.ok or not footprint_clear(works.bounds,protected.areas):continue
     var accepted:Dictionary={"ok":true,"center":candidate.center,"lots":lots.lots,"roads":candidate.roads.segments,"attempts":attempts,"variant":variant,"reservation_owner":protected.owner,
     "site_cost":candidate.cost,"mean_earthwork":candidate.roads.mean_earthwork,"max_cut":candidate.roads.max_cut,"max_fill":candidate.roads.max_fill,"ranked_candidates":candidates.size()}
     if site_gate.is_valid():
+     measured=Time.get_ticks_usec()
      var connection:Dictionary=site_gate.call(accepted)
+     timing.connection+=Time.get_ticks_usec()-measured
      if not connection.get("ok",false):
       reasons["No safe connection to accepted city streets"]=int(reasons.get("No safe connection to accepted city streets",0))+1;continue
      accepted["site_connection"]=connection
+    if "--plan-diagnostics" in OS.get_cmdline_user_args():print("LOT_SEARCH_PROFILE ",JSON.stringify({"center":center,"trials":trials,"microseconds":timing}))
     return accepted
  return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"lot_rejections":lot_rejections,"best_missing":best_missing,"grid_rejections":grid_rejections,"street_candidates":candidates.size()}
 

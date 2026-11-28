@@ -942,6 +942,37 @@ static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float sh
  }
  return mx(edge,mx(p.y-top,top-depth-p.y));
 }
+// Generation stamps revisit one horizontal column at many Y levels. Preserve
+// the original scalar field exactly while computing its road projection once.
+struct RoadBedColumn {
+ float top,edge,depth,shoulder,drop,scale;bool cut,mask;
+ float sample(float y)const{
+  if(mask&&edge<=0)return mx(y-top,top-depth-y);
+  if(shoulder>0){
+   if(cut)return mx(edge-shoulder,mx(y-top,(top-depth-y+drop)/scale));
+   return mx(edge-shoulder,mx((y-top+drop)/scale,top-depth-y));
+  }
+  return mx(edge,mx(y-top,top-depth-y));
+ }
+};
+static RoadBedColumn road_bed_column(float x,float z,V3 a,V3 b,float width,float depth,float shoulder,const float *curve,int curve_count,int curve_index,float curve_offset,bool cut,bool rectangular,bool level_caps,bool mask=false){
+ V3 axis={b.x-a.x,0,b.z-a.z},offset={x-a.x,0,z-a.z};
+ float along=dot(offset,axis)/dot(axis,axis),t=clampf(along,0.f,1.f);
+ V3 nearest={a.x+axis.x*t,0,a.z+axis.z*t};
+ float top=a.y+(b.y-a.y)*(level_caps?t:along);
+ if(curve){
+  float position=along+curve_index;int section=imx(0,imn(curve_count-1,fl(position)));float t=position-section;const float*c=curve+section*4;
+  if(position<0)top=c[3]+c[2]*position;
+  else if(position>curve_count)top=c[0]+c[1]+c[2]+c[3]+(3*c[0]+2*c[1]+c[2])*(position-curve_count);
+  else top=((c[0]*t+c[1])*t+c[2])*t+c[3];
+  top+=curve_offset;
+ }
+ float edge=length(V3{x-nearest.x,0,z-nearest.z})-width;
+ if(rectangular){float span=length(axis),side=ab(offset.x*axis.z-offset.z*axis.x)/span;edge=mx(side-width,mx(-along*span,(along-1.f)*span));}
+ float drop=shoulder>0?depth*clampf(edge/shoulder,0.f,1.f):0;
+ float scale=shoulder>0?__builtin_sqrtf(1.f+(depth/shoulder)*(depth/shoulder)):1;
+ return {top,edge,depth,shoulder,drop,scale,cut,mask};
+}
 bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes,float depth,float clearance,float shoulder,u32 *removed_samples,const float *curve,int curve_count,int curve_index,bool paid_sample){
  if(removed_samples)zero_bytes(removed_samples,16*sizeof(u32));
  changes=0;radius=clampf(radius,0.5f,64.f);
@@ -968,11 +999,19 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
   float h=edit_height(x,z);int lastpy=-1,idx=-1,reference=0;bool present=false;u32 key=0;
   float arch_floor=shape==8?a.y+(b.y-a.y)*clampf(dot(V3{float(x)-a.x,0,float(z)-a.z},arch_axis)*arch_inverse,0,1)-depth:0;
+  const bool graded=shape==2||(shape>=5&&shape<=7),rectangular=shape==5||shape==7,level_caps=shape==6||shape==7;
+  const bool fast_road=graded&&generation_road_columns;
+  if(fast_road)++generation_road_columns_count;
+  RoadBedColumn bed{},air{},paving{};
+  if(fast_road){
+   bed=road_bed_column(float(x),float(z),a,b,radius,depth,shoulder,curve,curve_count,curve_index,0,false,rectangular,level_caps);
+   if(clearance>0)air=road_bed_column(float(x),float(z),a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,shoulder,curve,curve_count,curve_index,clearance,true,rectangular,level_caps,rectangular&&!add);
+   if(material==4)paving=road_bed_column(float(x),float(z),a,b,radius,mn(depth,1.5f),0,curve,curve_count,curve_index,0,false,rectangular,level_caps);
+  }
   for(int y=y0;y<=y1;y++){
-   bool graded=shape==2||(shape>=5&&shape<=7),rectangular=shape==5||shape==7,level_caps=shape==6||shape==7;
-   V3 p={float(x),float(y),float(z)};float brush=graded?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index,0,false,rectangular,level_caps):(shape==1?box_distance(p,b,radius):(point_sphere?length(p-a)-radius:capsule(p,a,b,radius)));
+   V3 p={float(x),float(y),float(z)};float brush=fast_road?bed.sample(float(y)):graded?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index,0,false,rectangular,level_caps):(shape==1?box_distance(p,b,radius):(point_sphere?length(p-a)-radius:capsule(p,a,b,radius)));
    if(shape==8)brush=mx(brush,arch_floor-p.y);
-   float cut=graded&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,shoulder,curve,curve_count,curve_index,clearance,true,rectangular,level_caps,rectangular&&!add):SDF_BAND+1;
+   float cut=fast_road&&clearance>0?air.sample(float(y)):graded&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,shoulder,curve,curve_count,curve_index,clearance,true,rectangular,level_caps,rectangular&&!add):SDF_BAND+1;
    if(brush>SDF_BAND&&cut>SDF_BAND)continue;
    int py=y>>4;if(py!=lastpy){key=page_key(x>>4,py,z>>4);idx=pages_by_key.get(key);int virtual_page=idx<0?planned.get(key):-1;present=idx>=0||virtual_page>=0;reference=idx>=0?idx:-1-virtual_page;lastpy=py;}
    int j=(x&15)+16*((z&15)+16*(y&15));float old=idx<0?base(p,h):float(pages[idx].d[j])/SDF_SCALE;if(idx<0&&present)old=float(quant(old))/SDF_SCALE;
@@ -986,7 +1025,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    // Paving an already graded solid surface is still a material edit. Keep
    // cut walls, air and protected bedrock outside this repaint operation.
    bool pavement=graded&&material==4;
-   bool paved_surface=!pavement||road_bed_field(p,a,b,radius,mn(depth,1.5f),0,curve,curve_count,curve_index,0,false,rectangular,level_caps)<=0;
+   bool paved_surface=!pavement||(fast_road?paving.sample(float(y)):road_bed_field(p,a,b,radius,mn(depth,1.5f),0,curve,curve_count,curve_index,0,false,rectangular,level_caps))<=0;
    bool repaint=graded&&add&&paved_surface&&brush<=0&&q<=0&&y>3&&(!present||(idx<0?base_material(p,h):pages[idx].mat[j])!=material);
    if(shape==4){
     if(brush>0||q>=0||y<=3)continue;

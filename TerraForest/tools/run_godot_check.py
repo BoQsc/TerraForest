@@ -76,11 +76,16 @@ def planned_report_bytes(command):
     if any(str(value) == "res://tests/vegetation_shading.gd" for value in command):
         return 24 * 2**20  # Driver caps nine encoded frames at 20 MiB; no saved world.
     scripts = {Path(str(arg)).name for arg in command if str(arg).endswith(".gd")}
+    if scripts in ({"async_save_barriers.gd"}, {"generation_mesh_handoff.gd"}):
+        return 8 * 2**20  # Self-cleaning native archive/shutdown fixtures under the run receipt.
     if scripts == {"approved_large_house.gd"} and "--headless" in command:
         return 6 * 2**20  # Two bounded native terrain/plan fixtures and logs; no saved world.
-    if len(scripts) == 1 and scripts <= {"extensive_lakes.gd", "world_inspector.gd", "world_inspector_native.gd", "generation_buildings.gd", "generation_contact_policy.gd", "terrain_block_contract.gd", "terrain_block_catalog.gd", "production_building_catalog.gd"}:
+    if scripts == {"generation_earthworks.gd"} and "--metropolis-plan-only" in command:
+        return 34 * 2**20  # One bounded 32 MiB compiled plan plus assertions and timing rows.
+    if len(scripts) == 1 and scripts <= {"native_world_publication.gd", "generation_maps.gd", "generation_earthworks.gd", "terrain_generation_staging.gd", "generation_survey_equivalence.gd", "extensive_lakes.gd", "world_inspector.gd", "world_inspector_native.gd", "generation_buildings.gd", "generation_contact_policy.gd", "terrain_block_contract.gd", "terrain_block_catalog.gd", "production_building_catalog.gd"}:
         return 2 * 2**20  # Native/cold-plan assertions and JSON; no saved world or captures.
     if scripts == {"production_buildings.gd"} and "--metropolis" in command:
+        if "--no-captures" in command: return 8 * 2**20  # Same rendered checks/frame waits, JSON/logs and tiny inventory fixtures only.
         return (16 if "--restore-production" in command else 160) * 2**20  # Restore has one counter view; creation/interact include site views.
     if scripts == {"metropolis_recipe.gd"}:
         return (16 if "--browser-capture" in command else 2) * 2**20  # 1920x1080 browser, 256-square map, JSON/logs; no world.
@@ -90,6 +95,8 @@ def planned_report_bytes(command):
         return 2 * 2**20  # Bounded assertions and logs; no new saved world or image.
     if scripts == {"world_browser_responsiveness.gd"}:
         return 8 * 2**20  # One 1080p RGB browser image, small timing JSON and logs.
+    if scripts in ({"region_world_archive.gd"}, {"model_region_store.gd"}):
+        return 24 * 2**20  # Bounded native sidecars: receipt-owned region fixture or self-cleaning model tree.
     if scripts == {"model_horizon.gd"}:
         return 2 * 2**20  # Small receipt-owned native fixture and result JSON; large density case stays in memory.
     if scripts in ({"object_pack_render_mesh.gd"}, {"zombie_render_mesh.gd"}):
@@ -217,7 +224,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
-                world_bytes = 0 if any(test in command for test in ("res://tests/static_lod_cache.gd", "res://tests/walking_performance.gd", "res://tests/vegetation_final_handoffs.gd", "res://tests/vegetation_shadow_bands.gd", "res://tests/vegetation_handoffs.gd", "res://tests/vegetation_near_transitions.gd", "res://tests/vegetation_fullframe.gd", "res://tests/vegetation_transitions.gd", "res://tests/vegetation_lab.gd", "res://tests/vegetation_gameplay.gd", "res://tests/extensive_lakes.gd", "res://tests/outdoor_support_batches.gd", "res://tests/world_inspector.gd", "res://tools/world_inspector_native.gd", "res://tests/generation_buildings.gd", "res://tests/approved_large_house.gd", "res://tests/generation_contact_policy.gd", "res://tests/terrain_block_contract.gd", "res://tests/terrain_block_catalog.gd", "res://tests/production_building_catalog.gd", "res://tests/metropolis_recipe.gd", "res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
+                world_bytes = 0 if any(test in command for test in ("res://tests/async_save_barriers.gd", "res://tests/generation_earthworks.gd", "res://tests/generation_maps.gd", "res://tests/generation_mesh_handoff.gd", "res://tests/generation_survey_equivalence.gd", "res://tests/model_region_store.gd", "res://tests/native_world_publication.gd", "res://tests/region_world_archive.gd", "res://tests/terrain_generation_staging.gd", "res://tests/static_lod_cache.gd", "res://tests/walking_performance.gd", "res://tests/vegetation_final_handoffs.gd", "res://tests/vegetation_shadow_bands.gd", "res://tests/vegetation_handoffs.gd", "res://tests/vegetation_near_transitions.gd", "res://tests/vegetation_fullframe.gd", "res://tests/vegetation_transitions.gd", "res://tests/vegetation_lab.gd", "res://tests/vegetation_gameplay.gd", "res://tests/extensive_lakes.gd", "res://tests/outdoor_support_batches.gd", "res://tests/world_inspector.gd", "res://tools/world_inspector_native.gd", "res://tests/generation_buildings.gd", "res://tests/approved_large_house.gd", "res://tests/generation_contact_policy.gd", "res://tests/terrain_block_contract.gd", "res://tests/terrain_block_catalog.gd", "res://tests/production_building_catalog.gd", "res://tests/metropolis_recipe.gd", "res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
                 result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command), world_bytes=world_bytes)
             if any(str(arg).startswith('--lab-run-id=') for arg in command) and '--lab-visual-only' not in command and '--lab-wait-idle' not in command:
                 # Admission/retention can take time. Recheck immediately before
