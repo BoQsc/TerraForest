@@ -1,3 +1,15 @@
+## Strict walking-performance qualification — 2026-11-28
+
+Open: establish and resolve every critical walking interval against the
+[61 FPS / 20% headroom lab contract](../issues/runtime-performance/WALKING_LAB.md).
+The compact source-gameplay lab retains all frames, physical traversal, save/build
+identity and negative-control gates. A native mesh-switch GPU readback is reproduced and a bounded CPU-cache candidate
+is tested locally: lightweight route p99 improves 39.783 to 24.832 ms, but
+352/2,168 frames still exceed 16.667 ms. Commit/push of this source checkpoint was
+authorized on 2026-11-28; normal-play human acceptance remains open. Return with repeated causal comparisons,
+normal-desktop pacing, the full route matrix and human validation. The approved
+vegetation appearance remains the baseline.
+
 ## Metropolis and inhabited-region recipe — 2026-11-27
 
 The additional ordinary starting recipe plans a 36-building city containing all

@@ -1,5 +1,15 @@
 # Runtime performance
 
+## Strict walking lab — 2026-11-28
+
+The [new lab contract](WALKING_LAB.md) treats every frame below 60 FPS as critical,
+with a 61 FPS budget and an initial 20% headroom target. Lightweight qualification
+and richer diagnostics are separate. The lab proved a 17–20 ms GPU readback in native vegetation LOD mesh switches.
+A local CPU-cache fix passes byte-identity and nearby-pixel controls and improves
+the walking tail, but critical frames remain. The user authorized commit/push of
+this source checkpoint on 2026-11-28; whole-world headroom and human acceptance
+remain open.
+
 ## Corpse restoration and terrain publication - 2026-11-26
 
 The [latest investigation](corpse-publication-2026-11-26.md) removes discarded

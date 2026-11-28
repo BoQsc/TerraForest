@@ -1,5 +1,11 @@
 # Visual issue tracker
 
+[Strict walking-performance lab](runtime-performance/WALKING_LAB.md) now treats
+every sub-60 FPS walking frame as critical and separates 61 FPS capacity,
+headroom, diagnostics and presentation. It has proved and locally fixed a native
+LOD mesh-switch GPU readback; remaining critical frames and human acceptance keep
+qualification open.
+
 **[★ Notable investigations](notable/README.md)** — unusual cases and reusable
 lessons, kept visible after resolution. The [vegetation flicker case](vegetation-lod/LESSONS.md)
 is starred; human source playtest confirmed the flicker improvement. The subsequent

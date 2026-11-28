@@ -55,7 +55,12 @@ void NativeStaticBatch::remove_render_members(const std::set<BlockKey> &keys) {
             target[13]=1;target[14]=0;target[15]=0;
         }
         Ref<MultiMesh> multi=batches.at(page)->get_multimesh();
-        if(multi->get_instance_count()!=int64_t(count))multi->set_instance_count(count);
+        if(multi->get_instance_count()!=int64_t(count)) {
+            multi->set_instance_count(count);
+            // Prime Godot's local transform cache before the authoritative buffer
+            // upload. A later LOD mesh swap otherwise synchronously reads the GPU.
+            if(count&&surface_lod_error>0)multi->set_instance_transform(0,Transform3D());
+        }
         multi->set_buffer(buffer);update_render_bounds(page,multi);render_bytes+=count*64;render_uploaded_bytes+=count*64;++uploads;
     }
     for(auto key:keys)if(!groups.count(key)){render_ids.erase(key);render_layout.erase(key);}
@@ -132,7 +137,12 @@ void NativeStaticBatch::upload_batch(RenderKey page,uint64_t limit) {
         }
         offset+=stride;
     }
-    multi->set_instance_count(count);multi->set_buffer(buffer);update_render_bounds(page,multi);
+    multi->set_instance_count(count);
+    // The full upload below overwrites this temporary transform byte-for-byte.
+    // Keeping a bounded CPU copy avoids Godot's mesh-switch GPU readback. Scope
+    // it to the batches that actually use surface LOD; ordinary props stay lean.
+    if(surface_lod_error>0)multi->set_instance_transform(0,Transform3D());
+    multi->set_buffer(buffer);update_render_bounds(page,multi);
     instance->set_cast_shadows_setting(page_casts_shadows(page)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     instance->set_position(Vector3(key.x*32,key.y*32,key.z*32));
     instance->set_visible(true);

@@ -1,3 +1,12 @@
+The [strict walking lab](../issues/runtime-performance/WALKING_LAB.md) admits
+2 MiB of reports and no saved-world/scratch allocation per run. It stores bounded
+packed cadence after measurement and keeps two ready `walking_performance`
+captures; older receipt-owned binaries/metadata/source identity are cold-retained
+with reconstruction checks. Logs and small analysis remain ready. No capture
+images or exports are generated.
+The companion `static_lod_cache` check admits 512 KiB of logs/receipt and zero
+world bytes; its GPU buffer checks write no image or geometry captures.
+
 # Development artifact retention
 
 The native world inspector's `native-check` admits 2 MiB of reports and zero

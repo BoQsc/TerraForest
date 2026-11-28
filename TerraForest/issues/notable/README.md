@@ -11,6 +11,7 @@ status and evidence. This index links to it so the history stays together.
 | Case | Why retain it | Current status | Lessons |
 | --- | --- | --- | --- |
 | [★ Vegetation flicker and invalid shader colours](../vegetation-lod/README.md) | A distance symptom hid a shared shader-domain fault; a subsequent stone proxy also lost its per-instance depth transform | Previous flicker fix human-approved. Stone transition/fade pass causal and physical gameplay checks; stone and near-fade snapshots approved for commit/push; latest vegetation fade/projection source human-verified on 2026-11-28; broader coverage and earlier GPU-tail target remain open | [Validated flicker case study](../vegetation-lod/LESSONS.md), [transition investigation](../vegetation-lod/TRANSITIONS.md), [near handoffs and camera-control lesson](../vegetation-lod/NEAR_HANDOFFS.md), [remaining species and tiers](../vegetation-lod/REMAINING_HANDOFFS.md), [proxy/horizon/shadow controls and cost](../vegetation-lod/FAR_HANDOFFS.md), [nearby bands from far-proxy projection](../vegetation-lod/SHADOW_BANDS.md) |
+| [★ LOD mesh switches and observer effects](../runtime-performance/WALKING_LAB.md) | A native mesh switch reads back GPU data; inspecting instance transforms can create a CPU cache and hide the stall from a lab | Causal control and local fix verified; overall FPS target still fails, human review pending | [Strict lab, controls and remaining work](../runtime-performance/WALKING_LAB.md) |
 
 ## Adding and maintaining a case
 
