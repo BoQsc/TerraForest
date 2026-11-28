@@ -1,3 +1,34 @@
+## Generation laboratory and island feedback — 2026-11-28
+
+Human feedback calls the island a good start but rejects arbitrary/underwhelming
+lakes, primitive terrain and empty countryside, and asks for stronger city/town
+planning. A first [native generation laboratory](GENERATION_LAB.md) now compiles
+original reusable coast, ridge, branching/curved basin, island, woodland and
+meadow modules from JSON into bounded portable LFP1 records. It supplies a 3D
+viewer, terrain/coverage maps, an inspector, seeded comparisons and native cost
+measurements without generating another saved world.
+
+The first winding-lake trial was visually rejected for opening to the sea despite
+passing the weaker mask checks. It is retained. The stronger actual-terrain flood
+gate and revised candidates pass 87 checks and inspected 3D/map previews. Programs
+are 13–14 KiB; seed-1703 compilation is about 0.15 ms and 257² raster/analysis about
+43 ms. These are component costs, not whole-generation or visual acceptance.
+The ridges still look artificial, and coverage colors are not populated scenery.
+
+The human launcher omitted ordinary content flags, including `--ground-cover`;
+this was a defect, not an intentional grass-free island. Its arguments now match
+the ordinary browser. The read-only check passes 11 assertions with a clean exit
+and unchanged hashes for every saved-world companion; its inspected image shows
+grass, ferns and trees. The first harness error is retained separately.
+The separate tree-density request remains a design/coverage review item.
+
+Remaining: physical-water/terrain integration under a new immutable identity,
+shore/countryside composition, connected city/town graph modules, broader seeds,
+human review and complete cold Generate-to-play below 30 s (last result 80.142 s).
+Return at this laboratory review; promotion requires physical basin/bridge/contact,
+save/reload and matched ground-level evidence. Existing generator 36 and the user's
+protected save are not reshaped. See the laboratory contract for exact gates.
+
 ## Inhabited island recipe and ordered playtest — 2026-11-28
 
 Implemented as the ordinary **Inhabited island · first playtest** recipe, with

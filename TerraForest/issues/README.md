@@ -40,6 +40,13 @@ Its protected save awaits human review. The inspected map retains a square coast
 straight lakes and fragmented streets. Cold Generate-to-play is 80.142 s; the
 30-second requirement, natural geography and missing infrastructure remain open.
 
+[Generation laboratory](../docs/GENERATION_LAB.md) now provides native reusable
+coast/ridge/lake/island/coverage modules, portable programs, an inspector and an
+interactive 3D comparison. Three revised lake studies pass 87 checks; the first
+sea-spill failure remains retained. This is unpromoted shape tooling, with city
+graphs, populated countryside and whole-path performance still open. Missing
+grass in the human island handoff was traced to omitted ordinary launch flags.
+
 [Three grand buildings](grand-buildings/README.md) adds a 60-flat block, a
 cathedral with two cellar levels and twin bell towers, and a ten-storey street
 tower with 58 flats and eight shops. They are additional construction choices;

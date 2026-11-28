@@ -49,6 +49,10 @@ small root is not a self-contained substitute for those companions.
 
 ## Inspector commands
 
+The separate laboratory's `LFP1` landform program and JSON inspector are described
+in [GENERATION_LAB.md](GENERATION_LAB.md). They are authoring/geometry tools, not a
+new saved-world format or a migration of existing terrain identities.
+
 The inhabited-island recipe uses `RCP1` version 9: eleven little-endian u32 words
 (44 bytes), consisting of magic, version, biome, settlements, districts, network,
 trails, road grid, material veins, introduction and profile. Profile 2 requires

@@ -6,6 +6,24 @@
 
 ## Inhabited island — 2026-11-28
 
+Human review: a good start, but lakes are arbitrary/unappealing, terrain and empty
+countryside are too primitive, and city/town planning needs authored variety.
+The missing grass came from omitted normal content flags in the human launcher,
+now corrected. The normal browser already supplies those flags. The requested
+tree-density improvement is separate from that regression.
+The corrected read-only island check passes 11 assertions and strict exit checks;
+all save companions remain byte-identical. Its inspected `island_grass_restored.png`
+is under `reports/generation_lab/20261128T122038255528Z_ecology`. This proves
+presence for the recorded view, not enough trees at every destination or 60 FPS.
+
+The [generation laboratory](../../docs/GENERATION_LAB.md) introduces reusable
+native landform programs and three lake studies, with 3D/map/coverage views and
+an inspector. The revised candidates pass 87 checks after an initial sea-spill
+defect was exposed by visual review. **Not promoted to gameplay**: ridges remain
+artificial, physical water/edited-world checks and city/wilderness modules are
+outstanding. The initial and revised receipts retain their images and hashes;
+the first inspected candidate capture is pinned for human comparison.
+
 A separate ordinary recipe uses the user's island survey/design reference and
 existing buildings: 36 buildings in three city quarters, two 16-building towns,
 four smaller communities and two lookouts, with connected roads and three bridges.

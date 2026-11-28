@@ -111,6 +111,15 @@ Keep both the archive manifests and shared chunks when backing up the evidence.
 
 ## Automatic lifecycle and storage admission
 
+The generation laboratory (`tools/run_generation_lab.py`) admits 4 MiB for
+headless/interactive output or 8 MiB for captured/real-world ecology checks, with
+zero new-world allocation. It reuses completed input hashes, keeps two ordinary
+ready runs and archives only unchanged receipt-owned outputs after exit. Pins,
+unknown outputs and player saves are protected. The first inspected landform
+candidate capture `reports/generation_lab/20261128T121320885025Z_capture` has a
+`.retain` pin while its human shape review is pending; later rejected trials are
+still preserved through verified cold retention. No archive allowance is raised.
+
 The gameplay capture launcher archives old completed worlds **after** gameplay
 ends, leaving two recent worlds ready to open. Startup benchmarks retain two
 recently used frozen builds; archival occurs before a new freeze and after a

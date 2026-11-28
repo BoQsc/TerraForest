@@ -1,7 +1,9 @@
 # Inhabited island — first human playtest
 
-Status: first recipe implemented and functionally verified, 2026-11-28; human
-review pending. Strict QA still rejects a shutdown reference warning. Existing
+Status: first recipe implemented and functionally verified, 2026-11-28. The human
+playtest calls it a good start, while requesting better lakes, vegetation and
+world organization; this is not full world-quality approval. Strict QA still
+rejects a shutdown reference warning. Existing
 saves and the Metropolis recipe retain their own identities.
 
 The user supplied a regional survey image and a design description on
@@ -113,6 +115,14 @@ timer still fails the 30-second target. Work must not move beyond readiness
 or drop content to make that timer pass.
 
 ## Outstanding design work
+
+The first human feedback now drives the [generation laboratory](GENERATION_LAB.md).
+The handoff launcher accidentally omitted the ordinary `--ground-cover` flag
+(and other ordinary content flags), explaining the reported missing grass. The
+launcher is corrected; the normal browser already enables this content. Tree
+density, authored countryside detail and attractive lake/town forms remain open.
+Native shape modules are being reviewed in a separate laboratory before physical
+world promotion; the user's saved island remains unchanged.
 
 Harbors/docks, railway/stations/yards, airstrip, major utilities, additional
 public services and agricultural fields require geography-aware composition

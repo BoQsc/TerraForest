@@ -19,6 +19,13 @@ from retained_artifacts import confined, digest
 from run import ROOT, parse_args
 
 
+def gameplay_arguments(slot):
+    """Keep the content flags used by demo/world_launch.gd's normal play route."""
+    return ['--world-slot=' + slot, '--world-generator=36', '--world-seed=1703',
+            '--ground-cover', '--actors', '--vehicle-fleet', '--max-fps=60',
+            '--gameplay-construction']
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('report', type=Path)
@@ -45,8 +52,8 @@ def main():
     if direct.is_file():
         engine = direct
     command = [str(engine), '--path', str(ROOT), '--windowed', '--resolution', '1600x900',
-               '--max-fps', '60', 'res://demo/world.tscn', '--', '--world-slot=' + slot,
-               '--world-generator=36', '--world-seed=1703', '--human-playtest']
+               '--max-fps', '60', 'res://demo/world.tscn', '--',
+               *gameplay_arguments(slot), '--human-playtest']
     if args.dry_run:
         print(json.dumps({'slot': slot, 'command': command, 'new_world': False,
                           'strict_qa_passed': receipt.get('passed', False)}))

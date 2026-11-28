@@ -23,6 +23,7 @@
 
 using namespace godot;
 namespace terraforest {void register_location_baseline();void register_outdoor_generation();void register_generated_world_verifier();void register_generation_buildings();void register_generation_maps();void register_generation_earthworks();}
+namespace terraforest {void register_landform_lab();}
 static void initialize(ModuleInitializationLevel level) {
     if (level == MODULE_INITIALIZATION_LEVEL_SCENE) {
         GDREGISTER_CLASS(terraforest::NativeEntityStore);
@@ -47,6 +48,7 @@ static void initialize(ModuleInitializationLevel level) {
         terraforest::register_generation_buildings();
         terraforest::register_generation_maps();
         terraforest::register_generation_earthworks();
+        terraforest::register_landform_lab();
         GDREGISTER_CLASS(terraforest::NativeDerivedCacheIndex);
         GDREGISTER_CLASS(terraforest::NativeResourceUsage);
         GDREGISTER_CLASS(terraforest::NativeRoadAnchors);
