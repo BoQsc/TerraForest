@@ -1,5 +1,15 @@
 # Native generation and binary world inspection
 
+Current lake/shore work and its full cold measurements are tracked in
+[SHORE_HABITATS.md](SHORE_HABITATS.md). Terrain 38 uses compiled shore guides,
+native bounded multi-source static filling and persisted binary habitat records;
+older field identities remain frozen. The final run passes 128 functional checks
+and measures **99.469 seconds cold**; interaction/restoration still warn at exit.
+Terrain/Blocks/Objects reuse their first-play map layers, but Water rebuilds and
+map readiness takes 10.139 s. This identifies a cache-identity follow-up alongside
+planning, initialization and landscape coverage. No sub-30-second or controlled
+whole-generation speedup claim is established.
+
 User direction, 2026-11-27: generation processing belongs in native code, with
 compact authoritative world storage and a readable inspector. JSON is an
 authoring/inspection interface; it is not the per-cell or per-object runtime.

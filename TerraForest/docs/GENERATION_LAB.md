@@ -6,7 +6,20 @@ and town/city planning. They rejected the lakes' arbitrary shapes and reported
 missing ground vegetation. This laboratory starts that work; it does not mark
 the island, full design vision or 30-second Generate-to-play target complete.
 
-## Refined shores and island promotion — 2026-11-28
+## Current shore-habitat refinement — 2026-11-28
+
+The [native shore-habitat record](SHORE_HABITATS.md) tracks LFP1 v3 and terrain
+38, the physical single-source fill defect, continuous dry-bank joins, persisted
+groves, legacy replay and complete cold performance. It supersedes the v2
+milestone below without rewriting its retained comparisons or saved terrain.
+Final capture `20261128T155137033435Z_capture` passes 91 checks; all three 3D
+views were inspected. The full ordinary island run passes 128 functional checks
+with vegetation enabled and takes 99.469 s cold. Strict shutdown warnings, broad
+world-quality acceptance and the 30-second requirement remain open. The final
+shore record includes rejected bank comparisons and the physical missing-arm
+diagnosis, which supersede the older angular-margin investigation below.
+
+## Historical refined shores and island promotion — 2026-11-28
 
 The second laboratory iteration adds asymmetric cove widths, a shallow littoral
 shelf, broad versus steep banks, dissected ridges, spurs and saddles, and variable
@@ -280,9 +293,10 @@ Next bounded modules should cover:
 
 Each addition must join this same laboratory with an authored intent, baseline,
 matched views, geometry/connection checks, native cost and a promotion gate.
-The next return trigger is human review of the promoted shore views and a matched
-diagnostic of the angular lake-2 margin. City planning and populated wilderness
-remain outstanding. Latest complete cold Generate-to-play is **94.855 s**,
+The next return trigger is human review of the terrain-38 shore views and the
+first-play water-map cache diagnosis. The scoped angular-margin fix is recorded
+in [SHORE_HABITATS.md](SHORE_HABITATS.md). City planning and populated wilderness
+remain outstanding. Latest complete cold Generate-to-play is **99.469 s**,
 failing the 30-second target.
 Cold route planning, scene initialization, landscape loading and map reuse remain
 required in parallel with this quality work; do not move work after readiness or

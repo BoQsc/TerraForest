@@ -1,4 +1,28 @@
-## Refined island shores and laboratory — 2026-11-28
+## Shore habitats and complete performance — 2026-11-28
+
+Scoped implementation: [SHORE_HABITATS.md](SHORE_HABITATS.md). Native terrain 38 and
+LFP1 v3 add broader banks and persisted woodland/meadow transitions. Physical
+probes establish that one fill source per catalog section omitted a returning
+lake arm; bounded native guide seeds correct that omission. The final laboratory
+passes 91 checks, the physical integration passes 87, and ordinary creation,
+interaction and fresh restoration pass 128 functional assertions. All six final
+lake views were inspected with vegetation enabled. The intermediate bank crease
+is corrected; its rejected trial remains retained. Full cold Generate-to-play
+is **99.469 s**, failing 30 s. Creation exits cleanly; interaction/restoration
+retain the zero-reference shutdown warning. Existing terrain-36 playtest files
+remain byte-identical. Broad smooth areas, full landscape/city authorship,
+other complete seeds and human approval remain outstanding.
+
+Next performance trigger: inspect first-play water-map revision/cache identity.
+Terrain/Blocks/Objects reuse their certified layers, but Water rebuilds; map
+readiness takes 10.139 s. Cold planning (16.136 s), scene initialization
+(13.409 s) and landscape coverage (16.184 s) also remain material. Closure needs
+the unchanged full cold timer below 30 s, clean exits, broader seed/contact/reload
+coverage and human ground/overview review. No content or readiness work may be
+removed to satisfy the timer. The older milestones below preserve their evidence;
+their angular-margin diagnosis is superseded by the scoped physical fix above.
+
+## Historical refined island shores and laboratory — 2026-11-28
 
 The [native laboratory](GENERATION_LAB.md) now supplies versioned LFP1 v2 lake
 curves, asymmetric coves, shallow shelves, variable banks, dissected ridges and

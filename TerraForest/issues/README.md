@@ -40,16 +40,17 @@ Human review called this a good start. Its original map retains a square coast,
 straight lakes and fragmented streets. Cold Generate-to-play is 80.142 s; the
 30-second requirement, natural geography and missing infrastructure remain open.
 
-[Generation laboratory](../docs/GENERATION_LAB.md) v2 now promotes curved lakes,
-shallow shelves, variable banks and ridge/coast primitives into new terrain-37
-**Inhabited island · varied shores** worlds. Existing human saves remain unchanged.
-The final run passes 116 functional assertions with vegetation enabled; strict
-shutdown checks still fail. Cold Generate-to-play is **94.855 s**, failing 30 s.
-All six shore/overview views were inspected: plain terrain, uneven planting and
-an angular lake-2 margin remain quality defects. See the [captioned evidence and
-next diagnostic](world-generator/README.md#inhabited-island--2026-11-28).
-City/town graphs, shore habitat composition, broader seeds and human approval are
-still open. Failed trials, including a resource-loading crash, remain retained.
+[Native shore habitats](world-generator/README.md#native-shore-habitats--2026-11-28)
+promote LFP1 v3 / terrain 38 into **Inhabited island · living shores** worlds.
+Bounded native filling restores the missing lake arm; continuous banks, rolling
+shoulders and persisted grove/meadow blends improve the shores. Existing human
+saves remain unchanged. The laboratory passes 91 checks and the full world
+passes 128 functional assertions with vegetation enabled. All six final lake
+views were inspected. Cold Generate-to-play is **99.469 s**, failing 30 s; strict
+shutdown warnings remain. First-play Water rebuilds its map layer while other
+layers reuse their caches. Broad smooth areas, city/town graphs, broader seeds
+and human approval remain open. Earlier angular-margin and bank-crease images,
+failed trials and the unexplained resource-loading crash remain retained.
 
 [Three grand buildings](grand-buildings/README.md) adds a 60-flat block, a
 cathedral with two cellar levels and twin bell towers, and a ten-storey street

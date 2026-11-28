@@ -20,7 +20,7 @@ Dictionary NativeGeneratedLakeBake::run(Object *core,const PackedByteArray &cata
     Dictionary result;result["ok"]=false;
     if(started.exchange(true)){result["reason"]="Offline lake jobs cannot be reused";return result;}
     const uint64_t began=Time::get_singleton()->get_ticks_usec();
-    int64_t patches=0,slices=0,steps=0,dry_regions_released=0;uint64_t peak_bytes=0;
+    int64_t patches=0,slices=0,steps=0,dry_regions_released=0,guide_seeds=0;uint64_t peak_bytes=0;
     auto failed=[&](int code,const String &reason){
         state.store(code,std::memory_order_relaxed);result["status"]=code;result["reason"]=reason;result["completed_sections"]=completed.load();result["regions"]=regions.load();result["peak_native_state_bytes"]=int64_t(peak_bytes);result["milliseconds"]=double(Time::get_singleton()->get_ticks_usec()-began)/1000;return result;
     };
@@ -39,6 +39,21 @@ Dictionary NativeGeneratedLakeBake::run(Object *core,const PackedByteArray &cata
     for(int i=0;i<records.size();++i){
         Dictionary record=records[i];Vector3 origin=record["origin"],seed=record["seed"];Vector3i cells=record["cells"];double spacing=record["spacing"],level=record["level"];
         if(!water->begin_fill(AABB(origin,Vector3(cells)*spacing),level,seed,-1))return failed(-2,"Generated lake bounds rejected");
+        // A curved lake can enter one bounded section several times. Those
+        // arms need not connect inside that section. Seed each compiled guide
+        // crossing into the SAME bounded fill; the visited set prevents repeat
+        // work and the existing physical connectivity/volume policy still owns
+        // every cell. Older immutable generators return no additional seeds.
+        PackedVector3Array sources=core->call("generated_lake_sources",AABB(origin,Vector3(cells)*spacing),level);
+        if(sources.size()>384)return failed(-2,"Generated lake source budget rejected");
+        for(int64_t source_index=0;source_index<sources.size();++source_index){
+            const Vector3 source=sources[source_index];if(!source.is_finite())return failed(-2,"Invalid generated lake source");
+            const Vector3i p=NativeRegionalWater::cell(source);
+            const auto &lo=water->fill.low;const auto &hi=water->fill.high;
+            if(p.x<lo.x||p.x>=hi.x||p.y<lo.y||p.y>=hi.y||p.z<lo.z||p.z>=hi.z||p.y*500>=water->fill.level)return failed(-2,"Generated lake source outside section");
+            const auto key=NativeRegionalWater::key(p);
+            if(water->fill.seen.insert(key).second){water->fill.queue.push_back(key);++guide_seeds;}
+        }
         // The same native authoring, connectivity and contact patch functions as
         // live creation. No mesher, flow, or different volume approximation.
         while(water->fill.running||!water->requests.empty()){
@@ -88,6 +103,7 @@ Dictionary NativeGeneratedLakeBake::run(Object *core,const PackedByteArray &cata
     // Keep the older direct-root generation contract unchanged.
     const int64_t snapshot_limit=compact_dry_regions?NativeRegionalWater::MAX_EXPANDED_BYTES:64*1024*1024;
     result["snapshot_bytes"]=snapshot.size();
+    result["guide_seeds"]=guide_seeds;
     if(snapshot.is_empty()||snapshot.size()>snapshot_limit)return failed(-5,"Generated lake snapshot exceeded its budget");
     if(interrupted())return failed(-4,"Offline lake job cancelled before publication");
     result["ok"]=true;result["status"]=2;result["dry_regions_released"]=dry_regions_released;result["snapshot"]=snapshot;result["lakes"]=records.size();result["regions"]=int64_t(water->regions.size());result["water_ml"]=int64_t(water->total);result["patches"]=patches;result["slices"]=slices;result["steps"]=steps;result["peak_native_state_bytes"]=int64_t(peak_bytes);result["snapshot_bytes"]=snapshot.size();result["milliseconds"]=double(Time::get_singleton()->get_ticks_usec()-began)/1000;

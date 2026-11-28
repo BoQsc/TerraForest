@@ -106,6 +106,11 @@ func _restore_groves(data:PackedByteArray)->bool:
 	if terrain!=null and vegetation!=null:reset()
 	return true
 
+func configure_shores(program:PackedByteArray)->bool:
+	if not _scatter().configure_shores(program):return false
+	reset()
+	return true
+
 func configure_groves(regions:PackedVector3Array)->bool:
 	if not _scatter().configure_groves(regions):return false
 	reset()

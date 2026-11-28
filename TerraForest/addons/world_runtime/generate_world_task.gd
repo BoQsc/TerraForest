@@ -82,12 +82,12 @@ func run()->void:
   if arg.begins_with("--progress-file="):progress_path=arg.trim_prefix("--progress-file=")
   if arg.begins_with("--cancel-file="):generation_cancel_path=arg.trim_prefix("--cancel-file=")
   if arg.begins_with("--preparation-output="):output_dir=arg.trim_prefix("--preparation-output=")
- if generator not in [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37] or seed_value<0 or seed_value>2147483647:quit(1);return
+ if generator not in [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38] or seed_value<0 or seed_value>2147483647:quit(1);return
  var recipe:=preload("res://addons/world_runtime/world_recipe.gd").from_arguments(PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
  if not recipe.ok:print("INVALID_WORLD_RECIPE");quit(1);return
  world_options=recipe.options
  if "--civic-review" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) and world_options.is_empty():world_options=preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.duplicate()
- var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
+ var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38]
  DirAccess.make_dir_recursive_absolute(output_dir)
  if not qualification:
   generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=generation_cancel_path;root.add_child(generation_screen)
@@ -188,6 +188,8 @@ func run()->void:
  if not initialized or game.terrain.backend.world_generator!=generator:print("WRONG_WORLD");quit(1);return
  if not reopen and not world_options.is_empty() and not game.world_recipe.configure(world_options):print("WORLD_RECIPE_SAVE_FAILED");game.free();quit(1);return
  if native_lakes and not game.terrain.backend.initial_lakes_result.get("ok",false):print("OFFLINE_LAKE_DATA_FAILED ",game.terrain.backend.initial_lakes_result);game.free();quit(1);return
+ if not reopen and generator==38:
+  if not game.ecosystem.configure_shores(game.terrain.backend.native.shore_habitat_program()):print("SHORE_HABITAT_CONFIGURATION_FAILED");game.free();quit(1);return
  progress("Loading water sources")
  if not await wait_until(func():return game.lakes.statistics().ready==game.lakes.statistics().lakes and not game.lakes.capture_snapshot().is_empty(),120):print("GENERATED_WATER_BAKE_FAILED ",game.lakes.statistics());game.free();quit(1);return
  if not qualification:

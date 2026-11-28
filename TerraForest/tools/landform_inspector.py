@@ -13,7 +13,7 @@ def inspect(data):
     if len(data) < 40 or len(data) > 40 + 512 * 48:
         raise ValueError('Invalid landform program length')
     magic, version, seed, extent, base, sea, count, reserved = struct.unpack_from('<IIIfffII', data)
-    if magic != 0x3150464c or version not in (1, 2) or reserved or not 1 <= count <= 512 or len(data) != 40 + count * 48:
+    if magic != 0x3150464c or version not in (1, 2, 3) or reserved or not 1 <= count <= 512 or len(data) != 40 + count * 48:
         raise ValueError('Invalid landform program header')
     checksum = 14695981039346656037
     for value in data[:-8]:

@@ -19,11 +19,17 @@ terms and provenance remain unchanged.
 
 ## Separate recipe and native geography
 
-The ordinary creation menu now selects **Inhabited island · varied shores**,
-using immutable terrain 37 and the promoted laboratory guides described in
-[the laboratory record](GENERATION_LAB.md). The first human fixture retains
+The ordinary creation menu now selects **Inhabited island · living shores**,
+using terrain 38 and the native bank/woodland composition described in
+[the shoreline record](SHORE_HABITATS.md). The first human fixture retains
 terrain 36 and its original geometry. Both use RCP1 version 9, profile 2.
 The historical first-playtest evidence below refers to 36.
+The final terrain-38 run passes 128 functional creation/interaction/restoration
+checks with vegetation enabled. All six lake views were inspected; the missing
+physical arm and dry-bank crease are corrected, while broader smooth terrain
+and town/city composition remain open. Full cold Generate-to-play is 99.469 s;
+the 30-second target and strict shutdown cleanup still fail. See the shoreline
+record for exact evidence and the first-play water-map cache follow-up.
 Earlier recipe bytes and terrain fields remain supported. JSON remains an
 authoring/inspection view; runtime generation and restoration use binary bytes.
 
@@ -54,7 +60,7 @@ alternative routes where terrain permits, and fit at least two large bridges
 and one small crossing with usable approaches on both banks. New road grading
 must never relax terrain/contact rules just to admit a seed.
 
-## Refined shores — terrain 37
+## Historical refined shores — terrain 37
 
 The laboratory's selected curves, shallow shelves, variable banks and more
 varied ridge/coast fields now reach the ordinary recipe. Physical catalog

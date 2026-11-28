@@ -2,7 +2,7 @@
 """Inspect the native TFWORLD1 container; JSON is an inspection/editing view only.
 
 Root integrity is checked independently of Godot. Component semantic validation
-currently covers generated-region metadata and recipe records. Companion stores
+currently covers generated-region metadata, recipe and native grove/shore records. Companion stores
 and other component schemas still require the engine's complete restore validator.
 """
 import argparse
@@ -139,7 +139,7 @@ def region(data):
     if not 24 <= len(data) <= 512*1024:
         raise ValueError('Invalid generated-region size')
     magic, version, seed, generator, count, road_count = struct.unpack_from('<6I', data)
-    if magic != 0x31524754 or version != 1 or seed > 0x7fffffff or not 17 <= generator <= 37 or count > 256 or road_count > 8192:
+    if magic != 0x31524754 or version != 1 or seed > 0x7fffffff or not 17 <= generator <= 38 or count > 256 or road_count > 8192:
         raise ValueError('Unsupported generated-region header')
     def position(p):
         return all(math.isfinite(v) for v in p) and 0 <= p[0] <= 2000 and 0 <= p[1] <= 250 and 0 <= p[2] <= 2000
@@ -170,14 +170,40 @@ def region(data):
     return {'version': version, 'seed': seed, 'generator': generator, 'places': places, 'roads': roads}
 
 
+def groves(data, full=False):
+    if not 8<=len(data)<=10000:raise ValueError('Invalid grove packet size')
+    magic,count=struct.unpack_from('<2I',data)
+    prefix=8+12*count
+    if magic not in (0x31565247,0x32565247) or count>32 or prefix>len(data):raise ValueError('Invalid grove header')
+    regions=[]
+    for at in range(8,prefix,12):
+        x,r,z=struct.unpack_from('<3I',data,at)
+        if not (2<=x<=1998 and 2<=z<=1998 and 4<=r<=64):raise ValueError('Invalid grove region')
+        regions.append({'x':x,'z':z,'radius':r})
+    value={'version':1 if magic==0x31565247 else 2,'groves':regions if full else len(regions)}
+    if magic==0x31565247:
+        if prefix!=len(data):raise ValueError('Trailing grove bytes')
+        return value
+    if len(data)<prefix+20 or struct.unpack_from('<I',data,prefix)[0]!=len(data)-prefix-4:raise ValueError('Invalid shore packet size')
+    shore=data[prefix+4:];mark,version,n,seed=struct.unpack_from('<4I',shore)
+    if mark!=0x31524853 or version!=1 or n>384 or seed>0x7fffffff or len(shore)!=16+24*n:raise ValueError('Invalid shore header')
+    segments=[]
+    for at in range(16,len(shore),24):
+        ax,az,aw,bx,bz,bw=struct.unpack_from('<6f',shore,at)
+        if not all(math.isfinite(v) for v in (ax,az,aw,bx,bz,bw)) or min(ax,az,bx,bz)<0 or max(ax,az,bx,bz)>2000 or min(aw,bw)<=0 or max(aw,bw)>128 or math.hypot(bx-ax,bz-az)<.0001:raise ValueError('Invalid shore guide')
+        segments.append({'a':[ax,az,aw],'b':[bx,bz,bw]})
+    value['shores']={'format':'SHR1','version':1,'seed':seed,'bytes':len(shore),'segments':segments if full else len(segments)}
+    return value
+
+
 def describe(data, full=False):
     sections = decode(data)
     result = {'format': 'TFWORLD1', 'version': 1, 'bytes': len(data), 'sha256': sha(data), 'container_integrity': 'passed',
               'scope': 'Root envelope plus supported metadata schemas. Companion stores and other component semantics require engine restore validation.', 'sections': []}
     for name, (offset, payload) in sections.items():
         row = {'name': name, 'offset': offset, 'bytes': len(payload), 'sha256': sha(payload), 'semantic_validation': 'not implemented'}
-        if name in ('world_recipe_v1', 'generated_region'):
-            value = recipe(payload) if name == 'world_recipe_v1' else region(payload)
+        if name in ('world_recipe_v1', 'generated_region', 'tree_groves_v1'):
+            value = recipe(payload) if name == 'world_recipe_v1' else groves(payload,full) if name == 'tree_groves_v1' else region(payload)
             row['semantic_validation'] = 'passed'
             if name == 'generated_region' and value and not full:
                 value = {**value, 'places': len(value['places']), 'roads': len(value['roads'])}

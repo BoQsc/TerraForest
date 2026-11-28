@@ -16,6 +16,20 @@ def fixture():
 
 
 class InspectorTests(unittest.TestCase):
+    def test_native_shore_and_legacy_grove_packets(self):
+        old=struct.pack('<5I',0x31565247,1,1000,24,800)
+        self.assertEqual(inspector.groves(old)['version'],1)
+        shore=struct.pack('<4I6f',0x31524853,1,1,1703,100,100,12,130,150,14)
+        new=struct.pack('<3I',0x32565247,0,len(shore))+shore
+        value=next(row for row in inspector.describe(inspector.encode({'terrain':b'opaque','tree_groves_v1':new}),True)['sections'] if row['name']=='tree_groves_v1')
+        self.assertEqual(value['semantic_validation'],'passed')
+        self.assertEqual(len(value['decoded']['shores']['segments']),1)
+        for at in (0,4,8,12,16,20,24,28,36):
+            bad=bytearray(new);struct.pack_into('<I',bad,at,0xffffffff)
+            with self.assertRaises(ValueError):inspector.groves(bad)
+        for bad in (new[:-1],new+b'\0',old+b'\0'):
+            with self.assertRaises(ValueError):inspector.groves(bad)
+
     def test_roundtrip_preserves_all_native_sections(self):
         data=fixture();parts=inspector.decode(data)
         self.assertEqual(inspector.encode({name:payload for name,(_,payload) in parts.items()}),data)

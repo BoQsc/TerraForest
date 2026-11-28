@@ -145,3 +145,23 @@ stale fingerprints and untouched opaque sections. `tests/world_inspector.gd`
 checks the same original/edited fixture with native encoders and validators.
 These prove the documented schema boundary; they do not validate arbitrary
 unknown components or accept an entire generated world's visual/performance quality.
+
+## Native shoreline habitat records
+
+New terrain 38 stores the existing `tree_groves_v1` component with a GRV2
+payload. GRV1 remains readable and keeps its original bytes: an 8-byte magic/count
+header followed by up to 32 integer X/radius/Z triples. GRV2 appends a 32-bit
+byte count and an SHR1 program. SHR1 has a 16-byte magic/version/count/seed header
+and at most 384 six-float guide segments (endpoint X/Z/width pairs). Native
+validation bounds coordinates, widths, finite values, segment lengths and exact
+size before replacing live state. The world container supplies integrity hashes.
+
+The native scatter builds 64 m spatial bins once on restoration and samples
+nearby guides without per-object script processing. Existing candidate trial
+counts, random draw order and IDs remain unchanged. Terrain 37 and older worlds
+retain their stored GRV1 data and original landscape fields.
+
+`world_inspector.py inspect` validates both grove versions and reports guide
+counts/seed/bytes; `--full` exposes endpoint records as JSON for inspection.
+This does not authorize editing physical guide records independently of the
+terrain or regeneration of existing saves.

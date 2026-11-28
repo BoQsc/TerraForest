@@ -38,7 +38,7 @@ func run()->void:
 		selected_slot=("Island_1703_" if inhabited_island else "Metropolis_1703_" if metropolis else "CivicTown_1703_")+Crypto.new().generate_random_bytes(4).hex_encode()
 		browser.name_field.text=selected_slot;browser.seed_field.value=1703;browser.world_tabs.current_tab=1
 		if metropolis:preload("res://demo/world_creation_panel.gd").apply_style(browser,7 if inhabited_island else 6)
-		check(browser.world_style.get_item_text(browser.world_style.selected)==("Inhabited island · varied shores" if inhabited_island else "Metropolis & inhabited region" if metropolis else "Connected countryside"),"normal selected recipe has its public UI identity")
+		check(browser.world_style.get_item_text(browser.world_style.selected)==("Inhabited island · living shores" if inhabited_island else "Metropolis & inhabited region" if metropolis else "Connected countryside"),"normal selected recipe has its public UI identity")
 		check(browser.selected_options()==(Recipe.INHABITED_ISLAND if inhabited_island else Recipe.METROPOLIS if metropolis else Recipe.DEFAULTS),"unchanged normal UI settings reach generation")
 		await photograph("create_world")
 		var generation_clicked:=Time.get_ticks_usec()
@@ -56,6 +56,11 @@ func run()->void:
 		if not check(game_ready(),"normal Generate & play creates and opens the civic world"):
 			print("PRODUCTION_GENERATION_STATUS ",FileAccess.get_file_as_string(status_path));await finish();return
 		var generate_to_play_us:=Time.get_ticks_usec()-generation_clicked
+		var atlas:Node=current_scene.world_map
+		var map_reuse:Dictionary={"terrain":{"cache_hits":atlas.updates.cache_hits,"patches":atlas.updates.patches,"cache_writes":atlas.updates.cache_writes}}
+		for overlay:Node in [atlas.water_survey,atlas.block_survey,atlas.model_survey]:
+			map_reuse[overlay.caption]={"cache_hits":overlay.cache_hits,"fast_cache_hits":overlay.fast_cache_hits,"cache_writes":overlay.cache_writes,"builds":overlay.builds,"source_calls":overlay.source_calls,"visibility_calls":overlay.visibility_calls}
+		FileAccess.open(folder.path_join("first_play_map_reuse.json"),FileAccess.WRITE).store_string(JSON.stringify(map_reuse,"  "))
 		check(current_scene.ground_enabled and current_scene.ground_cover.is_processing(),"ordinary Generate-to-play keeps ground vegetation enabled")
 		var state:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(status_path))
 		var receipt:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(state.report).path_join("run.json")))
@@ -115,10 +120,15 @@ func run()->void:
 	await finish()
 
 func inspect_lakes(game:Node)->void:
+	if inhabited_island:
+		var habitat:PackedByteArray=game.ecosystem._scatter().capture_storage_snapshot()
+		check(habitat.size()>4624 and habitat.decode_u32(0)==0x32565247,"ordinary world restores native shoreline habitat")
+		if restoration:check(habitat==FileAccess.get_file_as_bytes(folder.path_join("expected_shore_habitat.bin")),"shoreline guide bytes survive durable save and fresh-process reload")
+		else:FileAccess.open(folder.path_join("expected_shore_habitat.bin"),FileAccess.WRITE).store_buffer(habitat)
 	var lake_core=ClassDB.instantiate("TerrainCore");lake_core.execute(LakeCodec.command(6,[1703,game.terrain.backend.world_generator]))
 	var definitions:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(lake_core,game.terrain.backend.world_generator)
 	var audit:Dictionary=planned.get("lake_audit",{})
-	check(game.terrain.backend.world_generator==(37 if inhabited_island else 33) and int(audit.get("extensive_count",0))>=3,"normal UI publishes the coast profile with three audited long lakes")
+	check(game.terrain.backend.world_generator==(38 if inhabited_island else 33) and int(audit.get("extensive_count",0))>=3,"normal UI publishes the coast profile with three audited long lakes")
 	for index in mini(3,audit.get("lakes",[]).size()):
 		var lake:Dictionary=audit.lakes[index];var center:Vector3=lake.center
 		# A branching/crescent lake can have dry land at its geometric center.
@@ -158,10 +168,13 @@ func inspect_lakes(game:Node)->void:
 				game.teleport(eye,eye.y);game.set_physics_process(false);game._clear_motion();game.fly=true
 				check(await wait_for(func():return not game.loading_active,90),"refined lake shore landscape resident")
 				game.camera.global_position=eye;game.camera.look_at(center+Vector3.UP*.4)
-				for frame in 90:await process_frame
+				await settle_lake_view(game,index,"shore")
 				await photograph("island_lake_"+str(index)+"_shore")
 				game.camera.global_position=center+Vector3(170,160,170);game.camera.look_at(center)
-				for frame in 45:await process_frame
+				if index==2:
+					for frame in 45:await process_frame
+					await photograph("island_lake_2_before_view_residency")
+				await settle_lake_view(game,index,"overview")
 				await photograph("island_lake_"+str(index)+"_overview")
 		if index==0 and not restoration and not inhabited_island:
 			var along:=Vector3.RIGHT if lake_bounds.size.x>lake_bounds.size.z else Vector3.BACK
@@ -177,7 +190,25 @@ func inspect_lakes(game:Node)->void:
 			game.camera.global_position=center+Vector3(240,220,240);game.camera.look_at(center)
 			for frame in 45:await process_frame
 			await photograph("long_lake_generated_overview")
+	game.terrain.render_view=Vector3.INF
 	game.set_physics_process(true)
+
+func settle_lake_view(game:Node,index:int,kind:String)->void:
+	# Match the ordinary overview controller: detached review cameras must tell
+	# the native planner where they are, then wait for completed geometry.
+	game.terrain.render_view=game.camera.global_position
+	game.terrain.render_projection_scale=clampf(float(root.size.y)/1080.0*tan(deg_to_rad(75.0)*.5)/tan(deg_to_rad(game.camera.fov)*.5),.25,2.0)
+	game.terrain.schedule_timer=-1.0
+	for frame in 3:await process_frame
+	check(await wait_for(func():
+		var water:Dictionary=game.lakes.water.runtime_state()
+		return game.terrain.backend.queued()==0 and game.terrain.in_flight.is_empty() and game.terrain.staging.is_empty() and game.terrain.preparation.is_empty() and water.dirty_meshes==0 and not water.mesh_batch_active and not water.mesh_publish_pending,90),"lake "+str(index)+" "+kind+" render work completed")
+	var evidence:Dictionary={"camera":str(game.camera.global_position),"focus":str(game.terrain.focus),"render_view":str(game.terrain.render_view),"projection_scale":game.terrain.render_projection_scale,"terrain":game.terrain.loading_state(game.player.global_position,true),"visible_cut":game.terrain.visible_cut.size(),"water":game.lakes.water.runtime_state(),"vegetation_enabled":game.ground_enabled}
+	var species:Array=[]
+	for batch:Node in game.ground_cover.batches:species.append(batch.get_ids().size())
+	evidence["species_counts"]=species
+	if kind=="shore":check(game.ground_enabled and species.size()>=9 and species[2]>0,"lake "+str(index)+" has enabled and populated natural grass")
+	FileAccess.open(folder.path_join("lake_%d_%s_view.json"%[index,kind]),FileAccess.WRITE).store_string(JSON.stringify(evidence,"  "))
 
 func inspect_metropolis(game:Node)->void:
 	var landmarks:=0
@@ -228,6 +259,7 @@ func photograph(name:String)->void:
 	DirAccess.make_dir_recursive_absolute(destination)
 	await RenderingServer.frame_post_draw
 	if "--no-captures" in OS.get_cmdline_user_args():return
+	if "--lake-captures-only" in OS.get_cmdline_user_args() and name!="first_play" and not name.begins_with("island_lake_"):return
 	root.get_texture().get_image().save_png(destination.path_join(name+".png"))
 
 func finish()->void:

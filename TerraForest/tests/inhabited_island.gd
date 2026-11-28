@@ -30,7 +30,7 @@ func legacy_samples()->Dictionary:
  for z in range(0,2001,40):
   for x in range(0,2001,40):points.append(Vector3(x,0,z))
  var batch:RefCounted=ClassDB.instantiate("NativeGenerationEarthworks")
- for generator:int in [1,19,33,35,36]:
+ for generator:int in [1,19,33,35,36,37]:
   for seed_number:int in [0,1703,901]:
    var core:RefCounted=ClassDB.instantiate("TerrainCore")
    check(Codec.reply_ok(core.execute(Codec.command(6,[seed_number,generator]))),"legacy field admitted %d/%d"%[generator,seed_number])
@@ -41,13 +41,14 @@ func legacy_samples()->Dictionary:
  return output
 func run()->void:
  if folder.is_empty():quit(2);return
+ if "--lake-margin-probe" in OS.get_cmdline_user_args():lake_margin_probe();finish();return
  if "--bake-lakes-only" in OS.get_cmdline_user_args():water_checks();finish();return
  if "--legacy-reference" in OS.get_cmdline_user_args():
   var file:=FileAccess.open(folder.path_join("legacy.json"),FileAccess.WRITE);file.store_string(JSON.stringify(legacy_samples()));file.close();finish();return
  var reference:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/island_legacy_terrain.json")).hashes
  for argument:String in OS.get_cmdline_user_args():
   if argument.begins_with("--legacy-reference-file="):reference=JSON.parse_string(FileAccess.get_file_as_string(argument.trim_prefix("--legacy-reference-file=")))
- check(legacy_samples()==reference,"new island leaves all fifteen legacy terrain lattices byte-identical")
+ check(legacy_samples()==reference,"new island leaves all eighteen legacy terrain lattices byte-identical")
  var codec:=Recipe.codec();var bytes:=Recipe.encode(Recipe.INHABITED_ISLAND)
  check(bytes.size()==44 and bytes.decode_u32(4)==9 and codec.decode(bytes)==Recipe.INHABITED_ISLAND,"native version-9 recipe round trip")
  var old:=Recipe.encode(Recipe.METROPOLIS)
@@ -66,7 +67,7 @@ func run()->void:
   check(assets.size()==(12 if district<3 else 16 if district<5 else 4),"reusable district building count "+str(district))
  check(total==84,"native composition retains 84 buildings")
  var core:RefCounted=ClassDB.instantiate("TerrainCore")
- check(Codec.reply_ok(core.execute(Codec.command(6,[seed_value,37]))),"new immutable island terrain admitted")
+ check(Codec.reply_ok(core.execute(Codec.command(6,[seed_value,38]))),"new immutable island terrain admitted")
  var points:=PackedVector3Array()
  for t in range(0,2001,40):points.append(Vector3(t,0,0));points.append(Vector3(t,0,2000));points.append(Vector3(0,0,t));points.append(Vector3(2000,0,t))
  var heights:PackedFloat32Array=ClassDB.instantiate("NativeGenerationEarthworks").heights(core,points)
@@ -75,7 +76,7 @@ func run()->void:
  check(submerged,"all island boundaries are below the surrounding sea")
  water_checks()
  if "--preview-only" in OS.get_cmdline_user_args():
-  var preview:Dictionary=load("res://addons/world_runtime/world_generation_plan.gd").preview(seed_value,37,true,true,true,folder.path_join("surface_cache"),Recipe.INHABITED_ISLAND)
+  var preview:Dictionary=load("res://addons/world_runtime/world_generation_plan.gd").preview(seed_value,38,true,true,true,folder.path_join("surface_cache"),Recipe.INHABITED_ISLAND)
   check(preview.get("ok",false) and preview.get("building_count",0)==86,"ordinary preview resolves the complete island recipe")
   if preview.get("ok",false):
    check(Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,preview.pixels).save_png(folder.path_join("preview.png"))==OK,"bounded island preview image retained")
@@ -92,8 +93,8 @@ func water_checks()->void:
  var water_rows:Array=[]
  for water_seed:int in [1703,901,42]:
   var water_core:RefCounted=ClassDB.instantiate("TerrainCore")
-  water_core.execute(Codec.command(6,[water_seed,37]))
-  var definitions:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(water_core,37)
+  water_core.execute(Codec.command(6,[water_seed,38]))
+  var definitions:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(water_core,38)
   check(definitions.get("ok",false),"refined native lake catalog "+str(water_seed))
   if not definitions.get("ok",false):continue
   check(not ClassDB.instantiate("NativeLakeCatalog").encode(definitions.records).is_empty(),"physical water accepts all curved basin sections")
@@ -158,6 +159,87 @@ func water_checks()->void:
   check(closed,"curved shores close before physical catalog limits")
   audit.erase("points");audit["seed"]=water_seed;water_rows.append(audit)
  FileAccess.open(folder.path_join("curved_lakes.json"),FileAccess.WRITE).store_string(JSON.stringify(water_rows,"  "))
+
+func lake_margin_probe()->void:
+ # Diagnostic-only sampling and image presentation, never runtime generation.
+ var generator:=37
+ for arg:String in OS.get_cmdline_user_args():
+  if arg.begins_with("--shore-generator="):generator=int(arg.trim_prefix("--shore-generator="))
+ var core:RefCounted=ClassDB.instantiate("TerrainCore")
+ check(Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))),"shore probe native field admitted")
+ var records:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(core,generator)
+ var audit:Dictionary=core.survey_generated_lake_surfaces(records.records)
+ var meta:Array=[]
+ for index in 3:
+  var center:Vector3=audit.lakes[index].center
+  var origin:=center-Vector3(320,0,320);var points:=PackedVector3Array()
+  for z in 321:
+   for x in 321:points.append(origin+Vector3(x*2,0,z*2))
+  var start:=Time.get_ticks_usec()
+  var heights:PackedFloat32Array=ClassDB.instantiate("NativeGenerationEarthworks").heights(core,points)
+  check(heights.size()==points.size(),"complete native lake grid "+str(index))
+  var elapsed:=Time.get_ticks_usec()-start
+  for arg:String in OS.get_cmdline_user_args():
+   if arg.begins_with("--shore-reference="):
+    var reference:PackedByteArray=FileAccess.get_file_as_bytes(arg.trim_prefix("--shore-reference=").path_join("lake_%d_heights.bin"%index))
+    check(heights.to_byte_array()==reference,"indexed native shore samples remain byte-identical "+str(index))
+  FileAccess.open(folder.path_join("lake_%d_heights.bin"%index),FileAccess.WRITE).store_buffer(heights.to_byte_array())
+  var image:=Image.create(321,321,false,Image.FORMAT_RGB8)
+  for z in 321:
+   for x in 321:
+    var at:=x+z*321;var h:float=heights[at]
+    var dx:float=heights[mini(x+1,320)+z*321]-heights[maxi(x-1,0)+z*321]
+    var dz:float=heights[x+mini(z+1,320)*321]-heights[x+maxi(z-1,0)*321]
+    var light:=clampf(.8+(dx+dz)*.07,.25,1.2)
+    var color:=Color(.13,.41,.55) if h<center.y else Color(.4,.55,.24)*light
+    image.set_pixel(x,z,color)
+  image.save_png(folder.path_join("lake_%d_native_field.png"%index))
+  if index==2:
+   var sections:Array=[]
+   for section:Dictionary in records.records:
+    if absf(section.level-center.y)<.001 and Vector2(section.seed.x-center.x,section.seed.z-center.z).length()<400:sections.append(section)
+   var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode(sections)
+   var baked:Dictionary=ClassDB.instantiate("NativeGeneratedLakeBake").run(core,catalog,core.execute(Codec.command(0)).decode_u32(12),core.execute(Codec.command(13)).decode_u32(12),30000,true)
+   check(baked.get("ok",false),"diagnostic physical lake bake")
+   if baked.get("ok",false):
+    var water:RefCounted=ClassDB.instantiate("NativeRegionalWater")
+    check(water.restore_snapshot(baked.snapshot),"diagnostic native water restored")
+    var wet_points:=0;var dry_field_water:=0;var missing:=0;var deep_missing:Array=[]
+    var bounds:=AABB(sections[0].origin,Vector3(sections[0].cells)*sections[0].spacing)
+    for section:Dictionary in sections:bounds=bounds.merge(AABB(section.origin,Vector3(section.cells)*section.spacing))
+    for z in 321:
+     for x in 321:
+      var point:Vector3=points[x+z*321];point.y=center.y-.05
+      var wet:bool=water.depth_at(point)>.001
+      if wet:wet_points+=1
+      if wet and heights[x+z*321]>center.y+.05:dry_field_water+=1
+      if wet:image.set_pixel(x,z,Color(.08,.35,.8))
+      elif heights[x+z*321]<center.y:image.set_pixel(x,z,Color(.8,.3,.2));missing+=1
+      if not wet and bounds.has_point(point) and heights[x+z*321]<center.y-.65 and deep_missing.size()<2048:deep_missing.append([point.x,point.z,heights[x+z*321]])
+    image.save_png(folder.path_join("lake_2_physical_water.png"))
+    baked.erase("snapshot");baked["wet_points"]=wet_points;baked["dry_field_water"]=dry_field_water;baked["missing_field_points"]=missing
+    baked["deep_missing_inside_catalog"]=deep_missing;baked["probe_below_level_m"]=.05
+    if generator==38:check(deep_missing.is_empty() and int(baked.get("guide_seeds",0))>0,"all deep curved arms fill across native catalog sections")
+    elif generator==37 and seed_value==1703:check(not deep_missing.is_empty(),"legacy single-source section reproduces the clipped inner arm")
+    FileAccess.open(folder.path_join("lake_2_physical.json"),FileAccess.WRITE).store_string(JSON.stringify(baked,"  "))
+  meta.append({"lake":index,"generator":generator,"seed":seed_value,"origin":[origin.x,origin.z],"water_level":center.y,"size":321,"spacing_m":2,"native_us":elapsed,"audit":audit.lakes[index]})
+ FileAccess.open(folder.path_join("shore_field.json"),FileAccess.WRITE).store_string(JSON.stringify(meta,"  "))
+ if generator==38 and seed_value==1703:
+  # Fine finite differences across the observed inner-bank guide join. A broad
+  # slope is intentional; a metre-scale height jump at a guide switch is not.
+  var probes:=PackedVector3Array()
+  for z in 81:
+   for x in 81:probes.append(Vector3(1684+x*.25,0,1394+z*.25))
+  var field:PackedFloat32Array=ClassDB.instantiate("NativeGenerationEarthworks").heights(core,probes)
+  var bend:=0.0;var step_height:=0.0
+  for z in range(1,80):
+   for x in range(1,80):
+    var at:=x+z*81
+    for offset in [1,81]:
+     bend=maxf(bend,absf(field[at-offset]-2*field[at]+field[at+offset]))
+     step_height=maxf(step_height,absf(field[at+offset]-field[at]))
+  check(bend<.3,"dry bank joins contain no guide-switch height steps")
+  FileAccess.open(folder.path_join("shore_continuity.json"),FileAccess.WRITE).store_string(JSON.stringify({"spacing_m":.25,"samples":field.size(),"maximum_second_difference_m":bend,"maximum_adjacent_height_m":step_height,"bounds":[1684,1394,1704,1414]},"  "))
 
 func finish()->void:
  print("INHABITED_ISLAND checks=",checks," failures=",failures)

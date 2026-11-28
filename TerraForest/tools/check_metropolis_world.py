@@ -39,6 +39,8 @@ CAPTURE_NAMES.update(kind + '_generated_' + view + '.png'
                      for kind in ('grand_cathedral', 'courtyard_flats', 'street_tower')
                      for view in ('street', 'overview'))
 CAPTURE_NAMES.update(('long_lake_generated_shore.png', 'long_lake_generated_overview.png'))
+CAPTURE_NAMES.add('island_lake_2_before_view_residency.png')
+CAPTURE_NAMES.add('expected_shore_habitat.bin')
 CAPTURE_NAMES.update('metropolis_bridge_' + str(index) + '.png' for index in range(3))
 CAPTURE_NAMES.update('island_lake_' + str(index) + '_' + view + '.png'
                      for index in range(3) for view in ('shore', 'overview'))
@@ -175,19 +177,21 @@ def main():
     parser.add_argument('--keep-for-playtest', action='store_true', help='After all functional checks, protect the new island save for the requested human playtest')
     parser.add_argument('--verbose-engine', action='store_true')
     parser.add_argument('--no-captures', action='store_true', help='Keep every rendered functional check and frame wait; omit new PNG captures for performance verification')
+    parser.add_argument('--lake-captures-only', action='store_true', help='Keep every functional check; capture first play and the six lake views only (32 MiB reports)')
     parser.add_argument('--diagnostic-exit-warning', action='store_true', help='Continue after completed assertions plus the known zero-reference exit warning; strict result still fails')
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--approved-headroom', action='store_true')
     parser.add_argument('--archive-only', type=Path)
     parser.add_argument('--completion', choices=('run.json', 'recheck.json'), default='run.json')
     args = parser.parse_args()
+    if args.no_captures and args.lake_captures_only: parser.error('Choose one capture policy')
     if args.keep_for_playtest and not args.inhabited_island: parser.error("Human handoff currently requires --inhabited-island")
     family = "inhabited_island_world" if args.inhabited_island else "metropolis_world"
     baseline = dict(storage.LIMITS)
     if args.approved_headroom:
         storage.LIMITS['reports'] += 256 * 2**20
         storage.LIMITS['owned_worlds'] += 256 * 2**20
-    allocation = dict(report_bytes=(8 if args.no_captures else 160) * 2**20, world_bytes=224 * 2**20)
+    allocation = dict(report_bytes=(8 if args.no_captures else 32 if args.lake_captures_only else 160) * 2**20, world_bytes=224 * 2**20)
     if args.dry_run:
         try:
             admission = storage.admit(ROOT, **allocation)
@@ -214,11 +218,12 @@ def main():
               'test_sha256': digest(ROOT / 'tests/production_buildings.gd'),
               'native_sha256': {p.relative_to(ROOT).as_posix(): digest(p)
                                 for p in sorted((ROOT / 'addons').glob('*/bin/*.dll'))},
-              'baseline_limits': baseline, 'approved_headroom': args.approved_headroom, 'captures': not args.no_captures,
+              'baseline_limits': baseline, 'approved_headroom': args.approved_headroom, 'captures': not args.no_captures, 'lake_captures_only': args.lake_captures_only,
               'admission': admission, 'phases': []}
     shared = ['--metropolis', '--metropolis-evidence=' + folder.as_posix(),
               '--session-evidence-dir=' + folder.as_posix(), '--isolated-render']
     if args.no_captures: shared.append('--no-captures')
+    if args.lake_captures_only: shared.append('--lake-captures-only')
     if args.inhabited_island: shared.append('--inhabited-island')
     for name, extra in [('create', ['--create-production']), ('interact', []), ('restore', ['--restore-production'])]:
         phase = folder / name

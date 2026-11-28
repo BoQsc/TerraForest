@@ -9,6 +9,29 @@ world bytes; its GPU buffer checks write no image or geometry captures.
 
 # Development artifact retention
 
+Shore-habitat follow-up, 2026-11-28: the maintainer explicitly approved another
+128 MiB archive increase, **10.125 → 10.25 GiB**, and one-time +256 MiB each
+for reports and owned test worlds for this full shoreline QA run. Normal
+report/world limits remain unchanged; only its launcher process uses the extra
+headroom. `--lake-captures-only` admits 32 MiB reports instead of 160 MiB while
+retaining all creation/interaction/restoration assertions. First play, six lake
+views and one matched pre-residency diagnostic are the named image outputs.
+The new fixture uses the existing exact-receipt archive/verify/retire lifecycle;
+player saves and pins remain protected. In-memory scatter/grove checks declare
+512 KiB reports and zero worlds. Lab captures retain their existing 8 MiB
+allowance and two-ready lifecycle.
+
+Final terrain-38 verification retires its exact fixture (60,161,227 bytes) and
+verbose logs (2,637,602 bytes) under
+`reports/inhabited_island_world/20261128T155417394546Z/{world,logs}.archive.json`.
+Its final views are pinned until human review. The older terrain-37 image set
+is cold; only two exact baseline witnesses are restored into a new pinned
+`reports/shore_habitats_20261128/legacy_inspection` directory. Their original
+manifest/hash provenance and final normal-limit admission are recorded in
+`legacy_witnesses.archive.json` and `final_retention.json`. No player save was
+removed. The earlier statement that all six terrain-37 images remain ready is
+historical and superseded by this completed retention step.
+
 The native world inspector's `native-check` admits 2 MiB of reports and zero
 world/scratch bytes, then records a headless check under `reports/world_inspector/`.
 It retains small completed/failed logs and JSON with the receipt and verifies that

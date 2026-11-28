@@ -20,6 +20,8 @@ class LandformInspectorTests(unittest.TestCase):
         data=bytearray(fixture()[:-8]);struct.pack_into('<I',data,4,2)
         self.assertEqual(inspect(seal(data))['kernel_version'],2)
         struct.pack_into('<I',data,4,3)
+        self.assertEqual(inspect(seal(data))['kernel_version'],3)
+        struct.pack_into('<I',data,4,4)
         with self.assertRaises(ValueError):inspect(seal(data))
 
     def test_explicit_portable_fields(self):

@@ -16,11 +16,13 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
-#include "../../world_runtime/native/biome_field.hpp"
+#include "../../world_runtime/native/shore_habitat.hpp"
 namespace terraforest {
 using namespace godot;
 class NativeVegetationScatter : public RefCounted {
     GDCLASS(NativeVegetationScatter,RefCounted)
+    landforms::ShoreHabitat shore_habitat;
+    PackedByteArray shore_program;
     std::vector<Vector3> groves; // X/Z centre, Y radius; bounded offline-authored regions.
     static uint32_t read32(const uint8_t *p){return uint32_t(p[0])|(uint32_t(p[1])<<8)|(uint32_t(p[2])<<16)|(uint32_t(p[3])<<24);}
     static void write32(uint8_t *p,uint32_t v){for(int i=0;i<4;++i)p[i]=uint8_t(v>>(i*8));}
@@ -29,6 +31,7 @@ class NativeVegetationScatter : public RefCounted {
 protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("configure_groves","regions"),&NativeVegetationScatter::configure_groves);
+        ClassDB::bind_method(D_METHOD("configure_shores","program"),&NativeVegetationScatter::configure_shores);
         ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeVegetationScatter::capture_storage_snapshot);
         ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativeVegetationScatter::validate_snapshot);
         ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeVegetationScatter::restore_storage_snapshot);
@@ -59,25 +62,36 @@ public:
         for(int64_t i=0;i<regions.size();++i){if(!valid_grove(regions[i]))return false;staged.push_back(regions[i]);}
         groves.swap(staged);return true;
     }
+    bool configure_shores(const PackedByteArray &program){
+        landforms::ShoreHabitat next;
+        if(!next.decode(program.ptr(),program.size()))return false;
+        shore_habitat=std::move(next);shore_program=program;return true;
+    }
     PackedByteArray capture_storage_snapshot() const {
-        PackedByteArray out;out.resize(8+groves.size()*12);auto *p=out.ptrw();
-        write32(p,0x31565247);write32(p+4,uint32_t(groves.size()));
+        const size_t prefix=8+groves.size()*12;
+        PackedByteArray out;out.resize(prefix+(shore_program.is_empty()?0:4+shore_program.size()));auto *p=out.ptrw();
+        write32(p,shore_program.is_empty()?0x31565247:0x32565247);write32(p+4,uint32_t(groves.size()));
         for(size_t i=0;i<groves.size();++i){write32(p+8+i*12,uint32_t(groves[i].x));write32(p+12+i*12,uint32_t(groves[i].y));write32(p+16+i*12,uint32_t(groves[i].z));}
+        if(!shore_program.is_empty()){write32(p+prefix,shore_program.size());std::memcpy(p+prefix+4,shore_program.ptr(),shore_program.size());}
         return out;
     }
     bool validate_snapshot(const PackedByteArray &data) const {
-        // Pure validation: safe on the archive worker, no mutable state reads.
-        if(data.size()<8||data.size()>392)return false;
-        const auto *p=data.ptr();const auto count=read32(p+4);
-        if(read32(p)!=0x31565247||count>32||data.size()!=8+int64_t(count)*12)return false;
+        // Pure validation, including the bounded new native guide packet.
+        if(data.size()<8||data.size()>10000)return false;
+        const auto *p=data.ptr();const auto count=read32(p+4),magic=read32(p);const size_t prefix=8+size_t(count)*12;
+        if(count>32||prefix>size_t(data.size())||(magic!=0x31565247&&magic!=0x32565247))return false;
         for(uint32_t i=0;i<count;++i)if(!valid_grove(Vector3(read32(p+8+i*12),read32(p+12+i*12),read32(p+16+i*12))))return false;
-        return true;
+        if(magic==0x31565247)return prefix==size_t(data.size());
+        if(size_t(data.size())<prefix+4||read32(p+prefix)!=size_t(data.size())-prefix-4)return false;
+        landforms::ShoreHabitat next;return next.decode(p+prefix+4,data.size()-prefix-4);
     }
     bool restore_storage_snapshot(const PackedByteArray &data){
         if(!validate_snapshot(data))return false;
         const auto *p=data.ptr();std::vector<Vector3> staged;
         for(uint32_t i=0;i<read32(p+4);++i)staged.push_back(Vector3(read32(p+8+i*12),read32(p+12+i*12),read32(p+16+i*12)));
-        groves.swap(staged);return true;
+        landforms::ShoreHabitat next;PackedByteArray program;
+        if(read32(p)==0x32565247){const size_t at=12+size_t(read32(p+4))*12;program=data.slice(at);if(!next.decode(program.ptr(),program.size()))return false;}
+        groves.swap(staged);shore_habitat=std::move(next);shore_program=program;return true;
     }
 
     TypedArray<Vector2i> wanted_cells(Vector2i center,double radius_world,int64_t limit,bool circular=false) const {
@@ -155,6 +169,7 @@ public:
                     biome=std::max(biome,std::clamp((double(grove.y)-std::sqrt(dx*dx+dz*dz))/4.0,0.0,1.0));
                 }
                 if(biome_profile>0)biome=std::min(biome,biome_woodland(px,pz,uint32_t(seed),biome_profile));
+                if(!shore_program.is_empty())biome=shore_habitat.woodland(px,pz,biome);
                 if(roll>=density*biome||point.x<2||point.z<2||point.x>=1998||point.z>=1998)continue;
                 points.append(point);ids.append(1+(cell.y*32+cell.x)*36+z*6+x);
                 rotations.append(yaw);scales.append(scale);

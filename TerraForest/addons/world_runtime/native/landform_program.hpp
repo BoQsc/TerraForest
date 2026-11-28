@@ -3,13 +3,13 @@
 // Original authorable landform kernel. No Godot, GPU, file or scene dependencies.
 // Compile guide curves once; sampling uses fixed records and spatial bins.
 #include "biome_field.hpp"
-#include "landform_shapes.hpp"
+#include "shore_habitat.hpp"
 #include <array>
 #include <vector>
 #include <limits>
 #include <cstring>
 namespace terraforest::landforms {
-constexpr uint32_t MAGIC=0x3150464c, VERSION=2, MAX_SEGMENTS=512, MAX_FEATURES=32;
+constexpr uint32_t MAGIC=0x3150464c, VERSION=3, MAX_SEGMENTS=512, MAX_FEATURES=32;
 enum Kind:uint32_t { COAST, RIDGE, LAKE, ISLAND, WOODLAND, CLEARING };
 struct Point {float x=0,z=0,w=1;};
 struct Segment {uint32_t kind=0,id=0;Point a,b;float level=0,depth=0,bank=0,variation=0;};
@@ -45,7 +45,7 @@ struct Program {
   coast.clear();for(auto&b:bins)b.clear();
   for(size_t i=0;i<segments.size();i++){
    const auto&s=segments[i];if(s.kind==COAST){coast.push_back(uint16_t(i));continue;}
-   float reach=std::max(s.a.w,s.b.w)*1.2f+s.bank;
+   float reach=std::max(s.a.w,s.b.w)*1.2f+((version>=3&&s.kind==LAKE)?160.f:s.bank);
    int x0=std::clamp(int((std::min(s.a.x,s.b.x)-reach)*16/extent),0,15),x1=std::clamp(int((std::max(s.a.x,s.b.x)+reach)*16/extent),0,15);
    int z0=std::clamp(int((std::min(s.a.z,s.b.z)-reach)*16/extent),0,15),z1=std::clamp(int((std::max(s.a.z,s.b.z)+reach)*16/extent),0,15);
    for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++)bins[x+z*16].push_back(uint16_t(i));
@@ -59,15 +59,17 @@ struct Program {
   auto noise=[&](float scale,uint32_t salt){return float(biome_noise(x/scale,z/scale,seed^salt))*2-1;};
   Sample out;out.height=base+noise(210,31)*3+noise(65,47)*1.2f+noise(18,63)*.25f;
   std::array<float,MAX_FEATURES> radii; radii.fill(1e20f);
-  std::array<float,MAX_FEATURES> distances{},widths{};std::array<const Segment*,MAX_FEATURES> nearest{};uint32_t active=0;
+  std::array<float,MAX_FEATURES> distances{},widths{},wet_scales{},edges;edges.fill(1e20f);std::array<const Segment*,MAX_FEATURES> nearest{};uint32_t active=0;
   const auto&near=bins[std::clamp(int(x*16/extent),0,15)+16*std::clamp(int(z*16/extent),0,15)];
-  for(auto i:near){const auto&s=segments[i];float w;float d=distance(x,z,s,w);float q=d/w;if(q<radii[s.id]){radii[s.id]=q;distances[s.id]=d;widths[s.id]=w;nearest[s.id]=&s;active|=uint32_t(1)<<s.id;}}
+  for(auto i:near){const auto&s=segments[i];float w;float d=distance(x,z,s,w);float q=d/w;
+   if(version>=3&&s.kind==LAKE){if(!(active&(uint32_t(1)<<s.id)))wet_scales[s.id]=1+s.variation*(.72f*noise(58,173+s.id)+.28f*noise(19,197+s.id));edges[s.id]=std::min(edges[s.id],d-w*wet_scales[s.id]);}
+   if(q<radii[s.id]){radii[s.id]=q;distances[s.id]=d;widths[s.id]=w;nearest[s.id]=&s;active|=uint32_t(1)<<s.id;}}
   auto each=[&](auto fn){uint32_t mask=active;while(mask){int i=__builtin_ctz(mask);mask&=mask-1;fn(i,*nearest[i]);}};
   each([&](int i,const Segment&s){if(s.kind==RIDGE)out.height+=version==1?s.depth*smooth(1-radii[i]*radii[i])*(1+s.variation*noise(39,351+s.id)):shapes::ridge(radii[i],s.depth,s.variation,[&](float scale,uint32_t salt){return noise(scale,salt+s.id);});});
   float lake_level=0,shore_distance=10000;
   each([&](int i,const Segment&s){if(s.kind!=LAKE)return;
    if(version>=2){
-    out.height=shapes::lake(out.height,distances[i],widths[i],s.bank,s.level,s.depth,s.variation,[&](float scale,uint32_t salt){return noise(scale,salt+s.id);});
+    out.height=version>=3&&edges[i]>0?habitat_dry_ground(out.height,edges[i],s.level,[&](float scale,uint32_t salt){return noise(scale,salt+s.id);}):shapes::lake(out.height,distances[i],widths[i],s.bank,s.level,s.depth,s.variation,[&](float scale,uint32_t salt){return noise(scale,salt+s.id);});
     if(radii[i]<1.2f)lake_level=std::max(lake_level,s.level);
     shore_distance=std::min(shore_distance,std::abs(distances[i]-widths[i]));return;
    }
@@ -91,17 +93,21 @@ struct Program {
   out.water=std::max(out.water,lake_level);if(out.height>=out.water)out.water=0;
   out.trees=.08f+.42f*smooth((noise(130,129)+.2f)*1.2f);
   each([&](int i,const Segment&s){float weight=1-smooth((distances[i]-widths[i]) / s.bank);if(s.kind==WOODLAND)out.trees=std::max(out.trees,weight*.9f);if(s.kind==CLEARING)out.trees*=1-weight;});
+  if(version>=3)each([&](int i,const Segment&s){if(s.kind==LAKE)out.trees=habitat_woodland(out.trees,edges[i],[&](float scale,uint32_t salt){return noise(scale,salt);});});
+  // New shore woodland must respect intentionally authored clearings. Legacy
+  // kernels above retain their exact ordering and pixels.
+  if(version>=3)each([&](int i,const Segment&s){if(s.kind==CLEARING)out.trees*=smooth((distances[i]-widths[i])/s.bank);});
   out.grass=.78f+.18f*noise(28,291);out.grass*=.85f+.15f*std::min(shore_distance/30,1.f);
   if(out.water||shore<12){out.trees=0;out.grass=0;}else out.trees*=smooth((shore-12)/24);
   return out;
  }
  std::vector<uint8_t> encode()const{
-  if((version!=1&&version!=VERSION)||!valid())return {};std::vector<uint8_t>b(40+segments.size()*48,0);auto*p=b.data();put32(p,MAGIC);put32(p+4,version);put32(p+8,seed);putf(p+12,extent);putf(p+16,base);putf(p+20,sea);put32(p+24,uint32_t(segments.size()));
+  if((version<1||version>VERSION)||!valid())return {};std::vector<uint8_t>b(40+segments.size()*48,0);auto*p=b.data();put32(p,MAGIC);put32(p+4,version);put32(p+8,seed);putf(p+12,extent);putf(p+16,base);putf(p+20,sea);put32(p+24,uint32_t(segments.size()));
   for(size_t i=0;i<segments.size();i++){const auto&s=segments[i];auto*q=p+32+i*48;put32(q,s.kind);put32(q+4,s.id);float f[]={s.a.x,s.a.z,s.b.x,s.b.z,s.a.w,s.b.w,s.level,s.depth,s.bank,s.variation};for(int j=0;j<10;j++)putf(q+8+j*4,f[j]);}
   uint64_t sum=checksum(p,b.size()-8);put32(p+b.size()-8,uint32_t(sum));put32(p+b.size()-4,uint32_t(sum>>32));return b;
  }
  bool decode(const uint8_t*p,size_t n){
-  if(n<40||n>40+MAX_SEGMENTS*48||u32(p)!=MAGIC||(u32(p+4)!=1&&u32(p+4)!=VERSION)||u32(p+28)!=0||u32(p+24)>MAX_SEGMENTS||n!=40+u32(p+24)*48)return false;
+  if(n<40||n>40+MAX_SEGMENTS*48||u32(p)!=MAGIC||(u32(p+4)<1||u32(p+4)>VERSION)||u32(p+28)!=0||u32(p+24)>MAX_SEGMENTS||n!=40+u32(p+24)*48)return false;
   if(checksum(p,n-8)!=(uint64_t(u32(p+n-8))|uint64_t(u32(p+n-4))<<32))return false;
   Program next;next.version=u32(p+4);next.seed=u32(p+8);next.extent=f32(p+12);next.base=f32(p+16);next.sea=f32(p+20);
   for(size_t i=0;i<u32(p+24);i++){const auto*q=p+32+i*48;next.segments.push_back({u32(q),u32(q+4),{f32(q+8),f32(q+12),f32(q+24)},{f32(q+16),f32(q+20),f32(q+28)},f32(q+32),f32(q+36),f32(q+40),f32(q+44)});}

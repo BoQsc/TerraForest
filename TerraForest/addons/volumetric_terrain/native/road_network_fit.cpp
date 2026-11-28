@@ -94,7 +94,7 @@ Dictionary fit_generated_road_network(const World &world,const Array &source,con
     // Refined shores/foothills have relief between the 3 m grade stations.
     // Bound the correction against the adjacent half-stations too, in the
     // original curve's frame. Do not increase the final 2 m fill / 3 m cut cap.
-    const int envelope=world.generator_id==REFINED_ISLAND_GENERATOR_ID?1:0;
+    const int envelope=(world.generator_id==REFINED_ISLAND_GENERATOR_ID||world.generator_id==SHORE_HABITAT_GENERATOR_ID)?1:0;
     for(int interval=-envelope;interval<=envelope;++interval)for(int side=0;side<=count;++side){
      double sampled_fraction=std::clamp(fraction+interval*.5/divisions,0.,1.);
      double original_offset=value(edge.original,sampled_fraction)-original;

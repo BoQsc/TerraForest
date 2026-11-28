@@ -147,6 +147,8 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks_staged","packets","directory","resident_limit","checkpoint_commands","expected_epoch","test_stop_at_checkpoint","optimized"), &TerrainCore::bake_generated_earthworks_staged,DEFVAL(MAX_PAGES),DEFVAL(64),DEFVAL(-1),DEFVAL(-1),DEFVAL(true));
         godot::ClassDB::bind_method(godot::D_METHOD("generation_bake_progress"),&TerrainCore::generation_bake_progress);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_generated_lake_surfaces","records"), &TerrainCore::survey_generated_lake_surfaces);
+        godot::ClassDB::bind_method(godot::D_METHOD("shore_habitat_program"), &TerrainCore::shore_habitat_program);
+        godot::ClassDB::bind_method(godot::D_METHOD("generated_lake_sources","bounds","level"), &TerrainCore::generated_lake_sources);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_patch","size","x","z","width","height"), &TerrainCore::survey_patch);
         godot::ClassDB::bind_method(godot::D_METHOD("measure_material_surface","x","z","size","y_begin","y_end"), &TerrainCore::measure_material_surface);
         godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision","material_revision"), &TerrainCore::material_box, DEFVAL(-1));
@@ -168,6 +170,29 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::PackedVector3Array generated_lake_sources(const godot::AABB &bounds,double level){
+        std::lock_guard<std::mutex> lock(mutex_);godot::PackedVector3Array points;
+        if(world_.generator_id!=SHORE_HABITAT_GENERATOR_ID||!bounds.position.is_finite()||!bounds.size.is_finite()||!std::isfinite(level)||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return points;
+        const auto end=bounds.position+bounds.size;
+        for(int i=0;i<std::min(3,world_.basin_count);++i){
+            const auto &b=world_.basins[i];if(std::abs(b.level-level)>.001)continue;
+            const auto &field=world_.lake_fields[i];
+            for(unsigned j=0;j<field.count;++j){
+                const auto &s=field.segments[j];
+                float ax=b.x+(b.along_x?s.ax:s.az),az=b.z+(b.along_x?s.az:s.ax);
+                float dx=(b.along_x?s.bx-s.ax:s.bz-s.az),dz=(b.along_x?s.bz-s.az:s.bx-s.ax),lo=0,hi=1;
+                auto clip=[&](float a,float d,float lower,float upper){
+                    if(std::abs(d)<.00001f)return a>=lower&&a<upper;
+                    float first=(lower-a)/d,last=(upper-a)/d;if(first>last)std::swap(first,last);
+                    lo=std::max(lo,first);hi=std::min(hi,last);return lo<hi;
+                };
+                if(clip(ax,dx,bounds.position.x,end.x)&&clip(az,dz,bounds.position.z,end.z)){
+                    float t=(lo+hi)*.5f;points.append(godot::Vector3(ax+t*dx,level-.5,az+t*dz));
+                }
+            }
+        }
+        return points;
+    }
     godot::Dictionary field_patch_state(){
         std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary result;
         result["revision"]=world_.revision;result["epoch"]=int64_t(storage_epoch_);
@@ -601,6 +626,22 @@ public:
         }
         generation_progress_.publish(GenerationBakeProgress::COMPLETE,GenerationBakeProgress::NONE,completed,int(commands.size()),checkpoints);
         result["ok"]=true;result["revision"]=world_.revision;result["checkpoint"]=reference;return result;
+    }
+    godot::PackedByteArray shore_habitat_program(){
+        std::lock_guard<std::mutex> lock(mutex_);
+        if(world_.generator_id!=SHORE_HABITAT_GENERATOR_ID)return {};
+        unsigned count=0;for(int i=0;i<std::min(3,world_.basin_count);i++)count+=world_.lake_fields[i].count;
+        if(count>terraforest::landforms::ShoreHabitat::MAX_SEGMENTS)return {};
+        godot::PackedByteArray out;out.resize(16+count*24);out.encode_u32(0,terraforest::landforms::ShoreHabitat::MAGIC);out.encode_u32(4,1);out.encode_u32(8,count);out.encode_u32(12,world_.seed);
+        int at=16;
+        for(int i=0;i<std::min(3,world_.basin_count);i++){
+            const auto&b=world_.basins[i];const auto&field=world_.lake_fields[i];
+            for(unsigned j=0;j<field.count;j++){
+                const auto&s=field.segments[j];float values[]={b.x+(b.along_x?s.ax:s.az),b.z+(b.along_x?s.az:s.ax),s.aw,b.x+(b.along_x?s.bx:s.bz),b.z+(b.along_x?s.bz:s.bx),s.bw};
+                for(float value:values){out.encode_float(at,value);at+=4;}
+            }
+        }
+        return out;
     }
     godot::Dictionary survey_generated_lake_surfaces(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest::survey_generated_lake_surfaces(world_,records);return tr_oom?godot::Dictionary():result;}
     godot::Ref<NativeTerrainCapture> capture_storage_snapshot(){
