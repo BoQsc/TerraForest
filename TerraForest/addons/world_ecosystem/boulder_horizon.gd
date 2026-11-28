@@ -119,6 +119,7 @@ func accept_surface_page(data:Dictionary,points:PackedVector3Array,normals:Packe
 	var placed:Dictionary=native.place(data.ids,points,normals)
 	if not placed.ok:rejected+=1;_resample[data.key]=true;return
 	_samples[data.key]=placed;_resample.erase(data.key);_reconcile[data.key]=true
+	placed.road_probes=native.boulder_road_probes(placed.transforms)
 	if _exclusion_index!=null:
 		if placed.transforms.is_empty():
 			if not _exclusion_index.set_inactive(data.key):_exclusion_index=null
@@ -132,17 +133,11 @@ func _publish(key:Vector2i)->void:
 	if cover.structures!=null:structure_mask=cover.structures.overlap_mask(poses,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,0.8,0.8)))
 	if cover.water!=null:water_mask=cover.water.placement_mask(poses)
 	if (cover.structures!=null and structure_mask.size()!=mask.size()) or (cover.water!=null and water_mask.size()!=mask.size()):return
-	var probes:Array[Transform3D]=[]
-	for pose:Transform3D in poses:
-		probes.append(Transform3D(Basis.IDENTITY,pose.origin))
-		for side in 8:probes.append(Transform3D(Basis.IDENTITY,pose.origin+Vector3(cos(side*TAU/8),0,sin(side*TAU/8))*4.0))
+	var probes:Array=sample.get("road_probes",[])
 	var road_mask:PackedByteArray=cover.road_regions.placement_mask(probes,4.0) if cover.road_regions!=null else PackedByteArray()
 	if cover.road_regions!=null and road_mask.size()!=probes.size():return
-	for index in mask.size():
-		if (not structure_mask.is_empty() and structure_mask[index]) or (not water_mask.is_empty() and water_mask[index]):mask[index]=1
-		if not road_mask.is_empty():
-			for probe in 9:
-				if road_mask[index*9+probe]:mask[index]=1
+	mask=native.boulder_exclusion_mask(mask,structure_mask,water_mask,road_mask)
+	if mask.size()!=poses.size():rejected+=1;return
 	if _published.has(key) and sample.get("published_mask") == mask:
 		unchanged_publications+=1;_reconcile.erase(key);return
 	var shelters:Array=[]

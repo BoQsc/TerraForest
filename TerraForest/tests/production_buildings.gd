@@ -55,6 +55,12 @@ func run()->void:
 			return false,520)
 		if not check(game_ready(),"normal Generate & play creates and opens the civic world"):
 			print("PRODUCTION_GENERATION_STATUS ",FileAccess.get_file_as_string(status_path));await finish();return
+		var generate_to_readiness_us:=Time.get_ticks_usec()-generation_clicked
+		var loading_ready_us:int=Time.get_ticks_usec()-current_scene.loading_started_us
+		# Loading readiness can precede the entry presentation, which still blocks
+		# player actions. Keep both clocks; never label readiness alone as play.
+		if not check(await wait_for(func():return game_ready() and current_scene._arrival_photograph_ready() and not current_scene.needs_floor_spawn,30),"ordinary entry presentation finishes and player controls unblock"):
+			await finish();return
 		var generate_to_play_us:=Time.get_ticks_usec()-generation_clicked
 		var atlas:Node=current_scene.world_map
 		var map_reuse:Dictionary={"terrain":{"cache_hits":atlas.updates.cache_hits,"patches":atlas.updates.patches,"cache_writes":atlas.updates.cache_writes}}
@@ -63,10 +69,11 @@ func run()->void:
 		FileAccess.open(folder.path_join("first_play_map_reuse.json"),FileAccess.WRITE).store_string(JSON.stringify(map_reuse,"  "))
 		if inhabited_island:check(map_reuse.Water.fast_cache_hits==1 and map_reuse.Water.source_calls==0 and map_reuse.Water.visibility_calls==0,"first play reuses the certified water map without rebuilding")
 		check(current_scene.ground_enabled and current_scene.ground_cover.is_processing(),"ordinary Generate-to-play keeps ground vegetation enabled")
+		FileAccess.open(folder.path_join("first_play_native_loading.json"),FileAccess.WRITE).store_string(JSON.stringify({"objects":current_scene.structures.model_horizon_stats(),"forest":current_scene.ecosystem.coverage_status(),"boulders":current_scene.ground_cover.boulders.coverage_status(),"vegetation_enabled":current_scene.ground_enabled,"terrain":preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(current_scene)}))
 		var state:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(status_path))
 		var receipt:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(state.report).path_join("run.json")))
 		var plan_identity:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(state.report).path_join("generation_plan_identity.json")))
-		FileAccess.open(folder.path_join("generate_to_play.json"),FileAccess.WRITE).store_string(JSON.stringify({"microseconds":generate_to_play_us,"plan_cache_hit":plan_identity.get("cache_hit",null),"loading_stages":current_scene.loading_diagnostics.stages,"target_microseconds":30000000,"performance_passed":generate_to_play_us<30000000,"first_play_startup_ms":current_scene.startup_timings,"first_play_session":root.get_node("WorldSession").stage_timings,"loading_us":Time.get_ticks_usec()-current_scene.loading_started_us,"scope":"Generate button through playable-world readiness, including planning, all generation, durable publication and first world load."}))
+		FileAccess.open(folder.path_join("generate_to_play.json"),FileAccess.WRITE).store_string(JSON.stringify({"microseconds":generate_to_play_us,"readiness_microseconds":generate_to_readiness_us,"entry_presentation_microseconds":generate_to_play_us-generate_to_readiness_us,"entry_enabled":current_scene.player_view.entry.enabled,"controls_released":current_scene._arrival_photograph_ready() and not current_scene.needs_floor_spawn,"plan_cache_hit":plan_identity.get("cache_hit",null),"loading_stages":current_scene.loading_diagnostics.stages,"target_microseconds":30000000,"performance_passed":generate_to_play_us<30000000,"first_play_startup_ms":current_scene.startup_timings,"first_play_session":root.get_node("WorldSession").stage_timings,"loading_us":loading_ready_us,"scope":"Generate button through player-control release, including planning, all generation, durable publication, first world load and the ordinary unskipped entry presentation."}))
 		var ordinary:=true
 		for phase:Dictionary in receipt.phases:
 			for argument:String in phase.arguments:ordinary=ordinary and argument not in ["--civic-review","--building-expansion-review","--review-generation"]

@@ -1,15 +1,19 @@
 # Native generation and binary world inspection
 
 Current performance evidence is in [COLD_GENERATION_REUSE.md](COLD_GENERATION_REUSE.md).
-The full cold Generate-to-play path is **64.241 seconds**, down from 70.772 s,
-with vegetation enabled. Native street batches reuse unchanged surveys; main-thread
-render preparation overlaps planning. All map layers reuse certified caches.
-All 129 creation/interaction/restore checks and clean exits pass in this run.
-The earlier intermittent shutdown failure remains documented without a root-cause
-resolution claim. The 30-second target is still failed: planning, scene preparation
-and first-play object/landscape work remain material. This is one source-game
-comparison, not a universal timing claim. Terrain 38's quality/physical work
-remains in [SHORE_HABITATS.md](SHORE_HABITATS.md); older field identities stay frozen.
+The corrected full cold Generate-to-control path is **72.354 seconds**, including
+the ordinary entry presentation, with vegetation enabled. Earlier “Generate-to-play”
+results (including 64.241 s) measured loading readiness before controls unblocked.
+Native first-play object publication removes repeated uploads and queue scans;
+native vegetation batches reuse bounds/root/road probes. First-play loading is
+15.100 s versus the prior 16.526 s, but no overall speedup is demonstrated.
+The **30-second gate remains failed**: generation alone is 46.791 s. Native
+planning, scene/data preparation and landscape reuse remain material. Focused
+native equivalence/pressure checks pass; all 130 full functional
+assertions pass, but the known interaction shutdown leak rejects strict integration.
+The known intermittent zero-reference shutdown warning, human terrain/settlement
+quality approval and whole-frame performance remain open. Terrain 38's quality
+and physical work remain in [SHORE_HABITATS.md](SHORE_HABITATS.md).
 
 User direction, 2026-11-27: generation processing belongs in native code, with
 compact authoritative world storage and a readable inspector. JSON is an

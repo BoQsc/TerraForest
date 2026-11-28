@@ -276,10 +276,14 @@ func _replace_samples(key: Vector2i,ids: PackedInt64Array,transforms: Array[Tran
 	# Empty results must retire previously accepted roots as well as their cache.
 	var previous: Dictionary = _samples.get(key, {})
 	_samples[key] = {"ids": ids, "transforms": transforms, "active": previous.get("active", PackedInt64Array()), "active_transforms": previous.get("active_transforms", []), "published": previous.get("published", false)}
+	var prepared:Dictionary=_scatter().prepare_publication(transforms,vegetation.placement_bounds())
+	if prepared.is_empty():rejected_batches+=1;_resample[key]=true;return
+	_samples[key]["surface_roots"]=prepared.surface_roots
+	_samples[key]["exclusion_bounds"]=prepared.bounds
 	if _exclusion_index!=null:
 		if transforms.is_empty():
 			if not _exclusion_index.set_inactive(key):_exclusion_index=null
-		elif not _exclusion_index.set_unbounded(key):_exclusion_index=null
+		elif not _exclusion_index.set_bounds(key,prepared.bounds):_exclusion_index=null
 	_resample.erase(key)
 	_publish_samples(key)
 
@@ -310,12 +314,6 @@ func _water_changed(bounds: AABB) -> void:
 func _publish_samples(key: Vector2i) -> void:
 	var sample: Dictionary = _samples[key]
 	var transforms: Array[Transform3D] = sample["transforms"]
-	if structures!=null and not sample.has("exclusion_bounds") and not transforms.is_empty():
-		var prototype: AABB=vegetation.placement_bounds()
-		var bounds: AABB=transforms[0]*prototype
-		for i in range(1,transforms.size()): bounds=bounds.merge(transforms[i]*prototype)
-		sample["exclusion_bounds"]=bounds
-		if _exclusion_index!=null and not _exclusion_index.set_bounds(key,bounds):_exclusion_index=null
 	var mask := PackedByteArray()
 	if structures != null and not transforms.is_empty():
 		mask = structures.overlap_mask(transforms, vegetation.placement_bounds())
@@ -324,32 +322,24 @@ func _publish_samples(key: Vector2i) -> void:
 				rejected_batches += 1
 			_reconcile[key] = true
 			return
-	var ids := PackedInt64Array()
 	var water_mask:=PackedByteArray()
 	if water!=null and not transforms.is_empty():
 		# Tree rendering sinks roots by 20 cm. Water exclusion must probe the
 		# supported ground surface, not the solid soil below the lake bed.
-		var surface_roots:Array[Transform3D]=[]
-		for pose:Transform3D in transforms:
-			pose.origin.y+=0.2
-			surface_roots.append(pose)
-		water_mask=water.placement_mask(surface_roots)
+		water_mask=water.placement_mask(sample.surface_roots)
 		if water_mask.size()!=transforms.size():
 			rejected_batches+=1;_reconcile[key]=true;return
 	var road_mask:PackedByteArray=road_regions.placement_mask(transforms,2.0) if road_regions!=null else PackedByteArray()
 	if road_regions!=null and road_mask.size()!=transforms.size():rejected_batches+=1;_reconcile[key]=true;return
-	var accepted: Array[Transform3D] = []
 	var harvested:=PackedByteArray()
 	if harvest_state!=null:
 		harvested=harvest_state.mask(sample["ids"])
 		if harvested.size()!=transforms.size():
 			rejected_batches+=1;_reconcile[key]=true;return
-	for i in range(transforms.size()):
-		if harvest_state!=null and harvested[i]!=0: continue
-		if road_regions!=null and road_mask[i]!=0:continue
-		if (structures == null or mask[i] == 0) and (water==null or water_mask[i]==0):
-			ids.append(sample["ids"][i])
-			accepted.append(transforms[i])
+	var publication:Dictionary=_scatter().filter_publication(sample.ids,transforms,[mask,water_mask,road_mask,harvested])
+	if publication.is_empty():rejected_batches+=1;_reconcile[key]=true;return
+	var ids:PackedInt64Array=publication.ids
+	var accepted:Array[Transform3D]=publication.transforms
 	# Stable IDs survive terrain edits; support heights can still change.
 	# Compare the accepted transforms too, then let the renderer preserve each
 	# unchanged row and its LOD/fade state during an actual owner update.

@@ -40,11 +40,12 @@ class NativeModelHorizon : public Node {
     std::map<uint64_t,Collection> collections;
     std::map<uint64_t,DrawPage> pages;
     std::set<uint64_t> dirty;
-    std::deque<Seed> seeds;
+    std::deque<Seed> seeds,waiting;
     uint64_t next_page=1,byte_limit=128*1024*1024,records=0,rendered=0,gpu_bytes=0;
     uint64_t uploads=0,uploaded_bytes=0,reads=0,last_records=0,last_uploads=0,last_usec=0,shadow_cursor=0;
     uint64_t last_started_us=0,last_ended_us=0;
-    bool advancing=false,capacity_error=false;
+    bool advancing=false,capacity_error=false,preparing=false;
+    uint64_t seed_attempts=0,read_polls=0;
     int read_slots=0;
     String error;
     static constexpr uint64_t RECORD_CHARGE=512,PAGE_CHARGE=2048,SEED_CHARGE=256,READ_CHARGE=5600328;
@@ -69,6 +70,7 @@ public:
     ~NativeModelHorizon();
     bool configure(const Ref<NativeRegionWorldArchive> &archive,const Array &models,const Dictionary &checkpoints,int64_t bytes=128*1024*1024);
     void clear();
+    void set_preparing(bool value){preparing=value;}
     void advance(int64_t max_records=1024,int64_t max_uploads=2,int64_t max_usec=1500);
     void _process(double delta)override;
     Dictionary statistics()const;

@@ -1,3 +1,27 @@
+
+## First-play publication and actual control release — 2026-11-28
+
+[Current evidence](COLD_GENERATION_REUSE.md#native-first-play-publication-and-corrected-control-release-timer--2026-11-28)
+records **72.354 s cold Generate-to-control**, including the ordinary entry
+presentation, with vegetation enabled. The **30 s requirement remains failed**;
+there is no demonstrated overall speedup in this iteration. Earlier measurements
+labeled Generate-to-play ended at loading readiness, before controls unblocked.
+The corrected test retains both boundaries; historical raw evidence is preserved.
+
+Native model queues avoid scanning unstarted archive regions, upload each finished
+page once and use a bounded startup allowance. Native tree/boulder batches reuse
+bounds, water roots and road probes. First-play loading is 15.100 s versus the
+prior 16.526 s, but generation alone is 46.791 s. Planning, scene/data preparation
+and reused landscape packets still need work. Native equivalence and archive
+pressure checks pass; all 130 full functional
+assertions pass, but the known interaction shutdown leak rejects strict integration.
+
+Remaining closure needs the corrected full clock below 30 s across broader seeds,
+clean creation/save/reload, unchanged vegetation/content/readiness and native
+ownership/cancellation checks. The intermittent RefCounted exit warning, broad
+plain terrain, repetitive towns, human visual approval and whole-frame performance
+remain open. Original compiled-plan bytes and the user's saved world are protected.
+
 ## Planning and startup overlap — 2026-11-28
 
 [Native street batches and overlapping preparation](COLD_GENERATION_REUSE.md#planning-and-startup-overlap--2026-11-28)

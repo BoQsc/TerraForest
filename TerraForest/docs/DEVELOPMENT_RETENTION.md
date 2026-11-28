@@ -9,6 +9,64 @@ world bytes; its GPU buffer checks write no image or geometry captures.
 
 # Development artifact retention
 
+First-play publication QA (2026-11-28) uses the maintainer-approved one-time
+**+256 MiB reports and +256 MiB owned test worlds** for this optimization,
+including focused checks and corrections/rechecks. The limits are process-local
+and restored on exit. No archive increase was made: it remains **10.375 GiB**.
+The ordinary two-read native memory reservation is unchanged.
+
+Evidence is under `reports/firstplay_loading_20261128/`. Two readiness-timed full
+trials (`20261128T191801830217Z`, `20261128T193337777733Z` in
+`reports/inhabited_island_world/`) are cold-retained through each report's
+`world.archive.json`, `review_and_logs.archive.json` and
+`manifest_format.archive.json`. Early-trial images are unreviewed; all eight
+final-native images were inspected. The known strict shutdown failures remain
+recorded separately from passing functional assertions.
+
+The corrected control-release trial is `20261128T195031252970Z`. Its original
+creation succeeds; interaction initially cannot launch because physical free
+space temporarily drops to 1.53 GiB, below the unchanged 2 GiB reserve. Free
+space subsequently recovers without deleting project/user files. A same-fixture
+recheck uses unchanged test/native identities and `--no-captures`; its admission
+and source receipt are explicit. All 130 functional assertions pass;
+the interaction exit leak remains a strict failure. The same-fixture completion
+receipt cold-retires exactly 60,148,701 bytes via `world.archive.json`.
+Logs use `review_and_logs.archive.json`; the original manifest formatting is
+retained separately before lossless compaction.
+
+The cold-plan wrapper holds this iteration's exact compiled plan under a bounded
+32 MiB scratch allowance, forces fresh planning, then restores the original
+byte-for-byte in `finally`. `cold_plan_hold.json` records both identities and
+restoration. The new plan is compared in full against the prior build, then
+cold-retained as `measured_plan.archive.json`; no old plan or save is evicted.
+The rejected parser/preflight attempts and their recovery receipts remain ready.
+
+The model-horizon check admits 512 KiB for ordinary headless checks or 16 MiB
+with `--startup-pressure`, and zero saved-world allocation. Its 100,000-record
+fixture lives under the admitted report root and uses
+`reports/checks/20261128T193028956182Z/startup_pressure.archive.json` after exit.
+Hash-identical compiler-cache duplicates were compacted during the build with
+exact retained counterparts recorded in `build_cache_duplicates.json`.
+
+`metadata_retention.json` records lossless whitespace compaction of eight older,
+completed, unpinned world manifests; their original bytes are archived and their
+parsed manifests verified identical. `older_log_retention.json` records exact
+receipt-owned logs from two older completed metropolis runs, preserved through
+adjacent `older_loading_logs.archive.json` manifests. This is cold retention,
+not evidence deletion. The initial protected-save inventory allocation exceeded
+its small declaration; the original was immediately verified/cold-retained and
+the correction documented in `protected_save_before.archive.json`.
+
+The human saved-and-closed baseline has **4,070 files** (updated by the user from
+the older 4,059-file baseline). Its complete identity is protected; final
+retention verifies the same hashes, unchanged measured native/source inputs,
+restored plan and normal-budget admission. `final_retention.json`
+confirms those checks and successful normal admission: 2,164,516 report bytes
+and 32,617,080 archive bytes remain available. Final logs (2,564,117 bytes) and
+the new measured plan (16,518,588 bytes) are verified/cold-retained. No protected
+save, pin or original cached plan was retired.
+
+
 Startup-native QA (2026-11-28) used the maintainer's one-time **+256 MiB reports
 and +256 MiB owned worlds** allowance for its focused checks and complete cold
 creation/interaction/restoration run. The launcher and focused-check wrapper

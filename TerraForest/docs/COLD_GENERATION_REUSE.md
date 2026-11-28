@@ -1,4 +1,137 @@
-# First-play map reuse and native field reuse — 2026-11-28
+# Cold generation and first-play native reuse — 2026-11-28
+
+## Native first-play publication and corrected control-release timer — 2026-11-28
+
+**72.354259 s cold Generate-to-control, vegetation enabled; the 30 s gate fails.**
+The final cold creation is `reports/inhabited_island_world/20261128T195031252970Z`.
+Its loading-readiness clock is 69.368398 s, followed by 2.985861 s of the ordinary,
+unskipped entry presentation. `controls_released=true`, `entry_enabled=true`
+and `plan_cache_hit=false` are recorded. Generation alone takes 46.791466 s.
+There is no demonstrated end-to-end speedup in this iteration.
+
+**Measurement correction:** earlier entries on this page called the readiness
+clock “Generate-to-play.” That clock stopped while the default entry presentation
+still blocked player actions. Historical raw evidence remains unchanged, but all
+such earlier values describe Generate-to-readiness, not actual control release.
+The test now retains both clocks and asserts the entry/floor-spawn gates have
+cleared. It does not skip the presentation or reduce runtime readiness. There is
+no measured prior-build control-release baseline for a like-for-like comparison.
+“Cold” means a fresh process and absent compiled placement plan, not a reboot or
+an empty operating-system/driver cache. These are source-game measurements.
+
+### Native changes and unchanged contracts
+
+- Native model bootstrap keeps unstarted regions separate from admitted reads,
+  polls only outstanding tickets and refills freed slots in the same quantum.
+  It retains the original two-read window and fixed read-memory reservation.
+  The initial-loading allowance is 8,192 records / eight uploads / 3 ms; ordinary
+  play keeps 1,024 / two / 1.5 ms. Time quanta are soft limits between calls.
+- A never-visible partial draw page waits until full or its collection finishes
+  seeding, avoiding repeated uploads of a growing buffer. Already-visible edits
+  and removals retain immediate publication. Cancellation, epochs, checkpoint
+  leases and the native byte limit remain enforced.
+- Native vegetation publication builds transformed bounds and water-root poses
+  once per surface result, then merges four exclusion masks in a bounded batch.
+  Boulders cache their nine road probes; native code merges their exclusion masks.
+  The eight circular offsets use engine-native trig once to preserve exact legacy
+  axis rounding. Script scene bridges no longer run those per-object loops.
+
+No density, terrain field, lake shape, coverage radius, collision, canonical save
+format or content was reduced. First-play readiness still requires the existing
+local coverage; global forest/boulder streaming can continue afterward. The
+pipeline is not yet entirely native.
+
+### Measured results
+
+| Boundary | Prior build | Final native visual trial | Final cold control trial |
+| --- | ---: | ---: | ---: |
+| Generate-to-readiness | 64.241 s | 65.662 s | 69.368 s |
+| Generate-to-control | Not measured | Not measured | 72.354 s |
+| Generation profile total | 41.093 s | 45.228 s | 46.791 s |
+| Planning | 12.129 s | 13.409 s | 14.450 s |
+| Generation scene/data initialization | 9.172 s | 12.148 s | 10.342 s |
+| First-play loading to readiness | 16.526 s | 13.723 s | 15.100 s |
+| First-play landscape stage | 8.595 s | 10.713 s | 11.255 s |
+| Separate object-visual tail | 5.250 s | None | None |
+
+Prior evidence is `20261128T182839716684Z`; final-native visual evidence is
+`20261128T193337777733Z`, under `reports/inhabited_island_world/`.
+The missing separate object tail means work overlapped landscape loading; it
+does not mean objects cost zero. Overlapping stages must not be summed into an
+alternative total. Single runs vary, and the integrated readiness result regressed.
+
+Both final-native trials publish all 9,480 records in 136 collections / 1,892
+pages, with 1,892 uploads and exactly 455,040 transform bytes (48 per record).
+There are no pending regions, changes or uploads, and no object-horizon errors.
+Charged storage is 19,929,232 bytes within 128 MiB. First play already has canonical
+model transforms resident: its zero archive reads are not an archive-I/O speedup.
+The visual trial still needs 226 terrain worker builds versus seven generation
+mesh handoffs; derived terrain cache records zero hits / 1,658 misses, read-only.
+This identifies repeated landscape work that the present change does not remove.
+Creation and the same-fixture interaction peak at 4.77 / 4.98 GiB private commit,
+respectively, triggering the existing provisional RAM warning. No memory-budget
+or whole-frame performance qualification follows from the loading improvement.
+
+### Verification, rejected trials and open gates
+
+The native publication equivalence check passes 75 cases, plus the existing 576
+byte comparisons across 72 legacy scatter cases and eight invalid inputs:
+`reports/checks/20261128T191412073034Z`. Three earlier failed trig-rounding trials
+remain retained (`191038011356Z`, `191149440517Z`, `191248598812Z`, same date).
+The correction caches engine-native offsets instead of independently rounded math.
+
+The model-horizon check passes 86 assertions at
+`reports/checks/20261128T193028956182Z`, including 100,000 archived records within
+64 MiB, 16 regions read exactly once, mutation/removal, exact transforms, and
+cancellation/checkpoint cleanup. Its large fixture uses `startup_pressure.archive.json`.
+An earlier driver edit overlapped preflight; that receipt is explicitly unqualified
+in `preflight_driver_correction.json`. The unchanged-driver repeat and final
+86-check result supersede it. Debug/release DLLs are rebuilt from the measured
+source; receipts are under `reports/firstplay_loading_20261128/`.
+
+The early six-read / larger-quantum trial (`20261128T191801830217Z`) measured
+61.623 s readiness and passed 129 functional assertions, but reproduced the known
+zero-reference RefCounted shutdown leak. Its images were not reviewed. That
+policy was rejected in favor of the original two-read memory reservation; the
+faster early time must not be presented as the final implementation's result.
+
+The final-native visual trial passes all 129 functional assertions (8 / 89 / 32),
+but interaction and restoration reproduce that shutdown warning; strict integration
+fails. All eight images were inspected: grass, ferns, trees, boulders and water
+remain present. Broad plain terrain and repetitive settlement planning remain
+unaccepted; sampled image HUDs do not establish whole-world 60 FPS. The visible
+entry presentation in the first-play image exposed the timing-boundary defect.
+
+The corrected driver's first attempt failed parsing before generation (explicit
+integer annotation corrected); the original cached plan was restored. The final
+cold creation passes nine assertions, including control release. Its interaction
+launch was rejected by a transient physical-disk reserve failure, not gameplay:
+1.53 GiB free versus the unchanged 2 GiB reserve. The original failed receipt is
+preserved; the same fixture was rechecked after free space recovered.
+No new world was generated for this continuation. `recheck.json` passes all
+130 functional assertions (9 create / 89 interaction / 32 restoration). Creation
+and restoration exit cleanly; interaction repeats the zero-reference RefCounted
+warning, so `passed=false` remains the strict result. The original launch rejection
+and source/test identities are preserved alongside the same-fixture recheck.
+The transient disk pressure is an additional limit on interpreting this single
+latency observation as representative performance.
+Complete compiled-plan equivalence passes all four assertions at
+`reports/checks/20261128T200341932702Z`: both checksums validate, and the
+entire decoded payload matches the prior build after removing only the deliberate
+native-library recipe identity and existing observation-time fields.
+
+Remaining performance work is native planning/scene preparation and reuse of
+landscape data across generation and first play. Closure requires a complete cold
+Generate-to-control result below 30 s, unchanged content/readiness and vegetation,
+clean creation/save/reload and broader seed evidence. The intermittent exit leak,
+whole-frame performance and human lake/settlement quality approval remain open.
+The final receipt at `reports/firstplay_loading_20261128/final_retention.json`
+verifies all 4,070 protected human-save file hashes, unchanged measured source/DLLs,
+exact restoration of the original compiled plan and successful normal-budget
+admission. Only the owned test fixture, its logs and the new measured plan were
+cold-retained; manifests preserve every byte. Temporary report/world allowances
+have ended, and the archive limit remains 10.375 GiB.
+
 
 **Partial performance improvement: 84.626608 s cold Generate-to-play. The
 30-second requirement remains failed.** The unchanged timer includes the normal

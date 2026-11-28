@@ -12,6 +12,7 @@
 #include <godot_cpp/variant/vector2i.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/transform3d.hpp>
+#include <godot_cpp/variant/aabb.hpp>
 #include <unordered_set>
 #include <algorithm>
 #include <vector>
@@ -40,8 +41,35 @@ protected:
         ClassDB::bind_method(D_METHOD("world_cells","center"),&NativeVegetationScatter::world_cells);
         ClassDB::bind_method(D_METHOD("candidates","cell","seed","density","natural_region","biome_profile"),&NativeVegetationScatter::candidates,DEFVAL(false),DEFVAL(0));
         ClassDB::bind_method(D_METHOD("place_surface","ids","points","normals","rotations","scales","min_up"),&NativeVegetationScatter::place_surface);
+        ClassDB::bind_method(D_METHOD("prepare_publication","transforms","prototype"),&NativeVegetationScatter::prepare_publication);
+        ClassDB::bind_method(D_METHOD("filter_publication","ids","transforms","masks"),&NativeVegetationScatter::filter_publication);
     }
 public:
+    Dictionary prepare_publication(const TypedArray<Transform3D> &poses,const AABB &prototype) const {
+        if(poses.size()>4096||!prototype.position.is_finite()||!prototype.get_end().is_finite())return {};
+        AABB bounds;TypedArray<Transform3D> roots;
+        roots.resize(poses.size());
+        for(int64_t i=0;i<poses.size();++i){
+            Transform3D pose=poses[i];if(!pose.is_finite())return {};
+            const AABB box=pose.xform(prototype);bounds=i?bounds.merge(box):box;
+            pose.origin.y+=0.2;roots[i]=pose;
+        }
+        Dictionary result;result["bounds"]=bounds;result["surface_roots"]=roots;return result;
+    }
+    Dictionary filter_publication(const PackedInt64Array &ids,const TypedArray<Transform3D> &poses,const Array &masks) const {
+        const int64_t count=ids.size();if(count>4096||poses.size()!=count||masks.size()!=4)return {};
+        PackedByteArray decoded[4];
+        for(int i=0;i<4;++i){
+            if(masks[i].get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
+            decoded[i]=masks[i];if(!decoded[i].is_empty()&&decoded[i].size()!=count)return {};
+        }
+        PackedInt64Array accepted;TypedArray<Transform3D> transforms;
+        for(int64_t i=0;i<count;++i){
+            bool excluded=false;for(const auto &mask:decoded)if(!mask.is_empty()&&mask[i]){excluded=true;break;}
+            if(!excluded){accepted.append(ids[i]);transforms.append(poses[i]);}
+        }
+        Dictionary result;result["ids"]=accepted;result["transforms"]=transforms;return result;
+    }
     TypedArray<Vector2i> world_cells(Vector2i center) const {
         const int center_x=std::clamp(center.x,0,31),center_z=std::clamp(center.y,0,31);
         std::vector<Vector2i> cells;

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "scatter.hpp"
+#include <array>
+#include <godot_cpp/variant/utility_functions.hpp>
 namespace terraforest {
 class NativeGroundCover : public RefCounted {
     GDCLASS(NativeGroundCover,RefCounted)
@@ -15,8 +17,33 @@ protected:
         ClassDB::bind_method(D_METHOD("boulder_rows","row","large"),&NativeGroundCover::boulder_rows,DEFVAL(true));
         ClassDB::bind_method(D_METHOD("boulder_candidates","owner","seed"),&NativeGroundCover::boulder_candidates);
         ClassDB::bind_method(D_METHOD("pack_boulders","ids","transforms","excluded","shelters"),&NativeGroundCover::pack_boulders);
+        ClassDB::bind_method(D_METHOD("boulder_road_probes","transforms"),&NativeGroundCover::boulder_road_probes);
+        ClassDB::bind_method(D_METHOD("boulder_exclusion_mask","removed","structures","water","roads"),&NativeGroundCover::boulder_exclusion_mask);
     }
 public:
+    TypedArray<Transform3D> boulder_road_probes(const TypedArray<Transform3D> &poses) const {
+        TypedArray<Transform3D> probes;if(poses.size()>64)return probes;
+        // Use the engine-native trig once for exact legacy rounding at the axes.
+        // Cache the eight offsets; no per-object trig or script callbacks.
+        static const auto offsets=[] {std::array<Vector3,8> out;for(int i=0;i<8;++i)out[i]=Vector3(UtilityFunctions::cos(i*6.283185307179586/8),0,UtilityFunctions::sin(i*6.283185307179586/8))*4.0;return out;}();
+        probes.resize(poses.size()*9);
+        for(int i=0;i<poses.size();++i){
+            Transform3D pose=poses[i];if(!pose.is_finite())return {};
+            probes[i*9]=Transform3D(Basis(),pose.origin);
+            for(int side=0;side<8;++side)probes[i*9+side+1]=Transform3D(Basis(),pose.origin+offsets[side]);
+        }
+        return probes;
+    }
+    PackedByteArray boulder_exclusion_mask(const PackedByteArray &removed,const PackedByteArray &structures,const PackedByteArray &water,const PackedByteArray &roads) const {
+        const auto count=removed.size();
+        if(count>64||(!structures.is_empty()&&structures.size()!=count)||(!water.is_empty()&&water.size()!=count)||(!roads.is_empty()&&roads.size()!=count*9))return {};
+        PackedByteArray mask=removed;auto *out=mask.ptrw();
+        for(int64_t i=0;i<count;++i){
+            if((!structures.is_empty()&&structures[i])||(!water.is_empty()&&water[i]))out[i]=1;
+            if(!roads.is_empty())for(int p=0;p<9;++p)if(roads[i*9+p]){out[i]=1;break;}
+        }
+        return mask;
+    }
     Dictionary boulder_candidates(Vector2i owner,int64_t seed) const {
         PackedInt64Array ids;PackedVector3Array points;
         if(owner.x>=0&&owner.y>=0&&owner.x<32&&owner.y<32) {

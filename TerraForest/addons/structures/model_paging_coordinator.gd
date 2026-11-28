@@ -77,6 +77,7 @@ func _measured_step(_delta:float)->void:
 		if not structures.enable_region_paging(archive):return
 		if not structures.enable_model_paging(archive,history):return
 	if structures._model_scheduler!=null:
+		if structures._model_horizon!=null:structures._model_horizon.set_preparing(terrain.initial_loading)
 		last_state=structures.step_model_paging(focus.call())
 	if operation=="resume":
 		if structures._model_scheduler==null or structures.resume_model_paging():operation=""

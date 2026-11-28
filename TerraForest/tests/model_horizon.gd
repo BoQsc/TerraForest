@@ -56,6 +56,7 @@ func run()->void:
 	check(horizon.statistics().last_records<=3 and horizon.statistics().last_uploads<=1 and not horizon.statistics().ready,"initial publication respects record and upload budgets")
 	check(await drain(horizon) and horizon.represented_ids(batch)==ids,"all canonical models acquire visible ownership without a distance cutoff")
 	check(batch.render_stats().resident_batches==0 and horizon.statistics().pages==4,"no duplicate near renderer or per-instance scene nodes remain")
+	check(horizon.statistics().uploads==4 and horizon.statistics().uploaded_bytes==601*48,"bootstrap uploads each completed page once, including deferred partial pages")
 	var first:MultiMeshInstance3D=batch.get_child(0)
 	check(first.multimesh.mesh==mesh and first.multimesh.instance_count<=256,"draw pages share the exact source mesh in bounded batches")
 	if DisplayServer.get_name()!="headless":check(first.multimesh.get_instance_transform(0).origin.is_equal_approx(Vector3.ZERO+Vector3(0,1,0)),"native GPU buffer retains first canonical transform")
@@ -138,6 +139,28 @@ func run()->void:
 	horizon.set_process(false);horizon.advance(1,1,10000);horizon.clear()
 	for frame in 8:await process_frame
 	check(archive.region_read_stats().outstanding==0 and archive.region_read_stats().retained_checkpoint_keys==0,"clearing pending bootstrap discards native requests and checkpoint pins")
+	archive.join_region_reads()
+	check(batch.restore_snapshot(original) and batch.clear_instances(),"many-region startup fixture clears canonical source")
+	var scattered_ids:=PackedInt64Array();var scattered_poses:=PackedFloat32Array();var packets:Array[PackedByteArray]=[]
+	for index in 64:
+		scattered_ids.append(index+1);scattered_poses.append_array(pose(Vector3((index%8)*64+1,1,(index/8)*64+1)))
+	check(batch.upsert_instances(scattered_ids,scattered_poses) and archive.publish(path,archive.encode({"terrain":PackedByteArray([1]),"structures":codec.encode(blocks.capture_snapshot(),{ASSET:batch.capture_snapshot()})}))==OK,"64 archived visual regions use one immutable checkpoint")
+	for index in 64:packets.append(batch.capture_region(Vector3i((index%8)*2,0,(index/8)*2)))
+	var unloaded:=true
+	for packet:PackedByteArray in packets:unloaded=batch.unload_region(packet) and unloaded
+	pin=archive.published_model_index(ASSET).checkpoint
+	check(unloaded and archive.start_region_reads(8,64*1024*1024) and horizon.configure(archive,[batch],{ASSET:pin}),"startup reader binds metadata-only regions")
+	horizon.set_process(false);horizon.set_preparing(true)
+	var startup_before:Dictionary=horizon.statistics()
+	horizon.advance(1,1,10000)
+	check(horizon.statistics().preparing and horizon.statistics().read_slots<=2 and horizon.statistics().charged_bytes<=horizon.statistics().byte_limit,"startup retains the two-read window and byte bound")
+	check(await drain(horizon) and horizon.represented_ids(batch)==scattered_ids,"startup batching preserves every never-near archived identity")
+	var startup:Dictionary=horizon.statistics()
+	check(startup.reads-startup_before.reads==64 and startup.uploads-startup_before.uploads==64 and startup.uploaded_bytes-startup_before.uploaded_bytes==64*48,"startup reads and uploads each tiny source page exactly once")
+	var exact_startup:=true
+	for index in 64:exact_startup=exact_startup and horizon.visual_record(batch,index+1).transform.origin==Vector3((index%8)*64+1,1,(index/8)*64+1)
+	check(exact_startup and batch.stats().instances==0 and archive.region_read_stats().retained_checkpoint_keys==0,"startup leaves exact poses, no editable hydration and no checkpoint leases")
+	horizon.clear();horizon.set_preparing(false)
 	check(batch.restore_snapshot(original) and batch.clear_instances(),"dense pressure starts from clean canonical source")
 	ids.resize(100000);values.resize(1200000)
 	for index in 100000:
@@ -191,9 +214,40 @@ func run()->void:
 		exact=exact and visual.transform.origin.is_equal_approx(Vector3(positions[index],1,1)) and visual.node.multimesh.instance_count<=256
 	check(exact and wide.capture_snapshot()==wide_snapshot,"wider pages preserve exact world poses, page capacity and save bytes")
 	check(wide.remove_instances(PackedInt64Array([3])) and await drain(horizon) and horizon.represented_ids(wide)==PackedInt64Array([1,2,4,5,6,7,8]),"removing one wide-page object preserves all cross-region neighbors")
-	horizon.clear();wide.free();horizon.free();blocks.free();archive.join_region_reads();archive.release()
+	horizon.clear();wide.free()
+	if "--startup-pressure" in OS.get_cmdline_user_args():await startup_pressure(horizon,archive,codec,blocks,path,mesh)
+	horizon.free();blocks.free();archive.join_region_reads();archive.release()
 	var counter:RefCounted=ClassDB.instantiate("NativeModelRenderPage")
 	check(counter.live_pages()==0,"renderer teardown releases all native archived pages")
 	FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"archived":archived_stats,"dense":dense},"  "))
 	print("MODEL_HORIZON checks=",checks," failures=",failures)
 	quit(1 if failures else 0)
+
+func startup_pressure(horizon:Node,archive:RefCounted,codec:RefCounted,blocks:Node3D,path:String,mesh:Mesh)->void:
+	archive.join_region_reads()
+	var batch:Node3D=ClassDB.instantiate("NativeStaticBatch");root.add_child(batch)
+	check(batch.configure_asset(ASSET,mesh) and batch.configure_render_streaming(true,16,128,1048576,2,49152),"startup pressure uses ordinary native model ownership")
+	var ids:=PackedInt64Array();var values:=PackedFloat32Array()
+	for index in 100000:
+		ids.append(index+1);values.append_array(pose(Vector3((index%16)*64+1,1,1+(index/16)*.001)))
+	check(batch.upsert_instances(ids,values) and archive.publish(path,archive.encode({"terrain":PackedByteArray([1]),"structures":codec.encode(blocks.capture_snapshot(),{ASSET:batch.capture_snapshot()})}))==OK,"100000 archived records span sixteen regions")
+	var packets:Array[PackedByteArray]=[]
+	for index in 16:packets.append(batch.capture_region(Vector3i(index*2,0,0)))
+	var unloaded:=true
+	for packet:PackedByteArray in packets:unloaded=batch.unload_region(packet) and unloaded
+	var pin:PackedByteArray=archive.published_model_index(ASSET).checkpoint
+	check(unloaded and archive.start_region_reads(8,64*1024*1024) and horizon.configure(archive,[batch],{ASSET:pin},64*1024*1024),"bounded pressure fixture binds its archived records")
+	horizon.set_process(false);horizon.set_preparing(true)
+	var reads_before:int=horizon.statistics().reads
+	check(await drain(horizon,8192,16) and horizon.represented_ids(batch)==ids and horizon.statistics().reads-reads_before==16,"startup reads fitting world visuals once within the original memory reservation")
+	check(horizon.statistics().charged_bytes<=64*1024*1024 and horizon.statistics().rendered==100000 and batch.stats().instances==0,"startup pressure preserves the memory bound and avoids gameplay hydration")
+	horizon.clear()
+	check(horizon.configure(archive,[batch],{ASSET:pin}),"startup cancellation rebinds the same exact archive")
+	horizon.set_process(false);horizon.set_preparing(true);horizon.advance(1,1,10000)
+	var in_flight:int=horizon.statistics().read_slots
+	horizon.set_preparing(false);horizon.advance(1,1,10000)
+	check(horizon.statistics().read_slots<=maxi(2,in_flight),"returning to gameplay does not expand the admitted read window")
+	horizon.clear()
+	for frame in 8:await process_frame
+	check(archive.region_read_stats().outstanding==0 and archive.region_read_stats().retained_checkpoint_keys==0,"cancelling startup releases every read and checkpoint lease")
+	batch.free()

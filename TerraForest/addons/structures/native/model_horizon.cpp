@@ -8,6 +8,7 @@ namespace terraforest {
 void NativeModelHorizon::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure","archive","models","checkpoints","byte_limit"),&NativeModelHorizon::configure,DEFVAL(int64_t(128*1024*1024)));
     ClassDB::bind_method(D_METHOD("clear"),&NativeModelHorizon::clear);
+    ClassDB::bind_method(D_METHOD("set_preparing","value"),&NativeModelHorizon::set_preparing);
     ClassDB::bind_method(D_METHOD("advance","max_records","max_uploads","max_usec"),&NativeModelHorizon::advance,DEFVAL(1024),DEFVAL(2),DEFVAL(1500));
     ClassDB::bind_method(D_METHOD("statistics"),&NativeModelHorizon::statistics);
     ClassDB::bind_method(D_METHOD("process_frame_profile"),&NativeModelHorizon::process_frame_profile);
@@ -16,7 +17,7 @@ void NativeModelHorizon::_bind_methods() {
 }
 NativeStaticBatch *NativeModelHorizon::source(uint64_t identity)const{return Object::cast_to<NativeStaticBatch>(ObjectDB::get_instance(identity));}
 MultiMeshInstance3D *NativeModelHorizon::node(uint64_t identity)const{return Object::cast_to<MultiMeshInstance3D>(ObjectDB::get_instance(identity));}
-uint64_t NativeModelHorizon::charged_bytes()const{return records*RECORD_CHARGE+pages.size()*PAGE_CHARGE+seeds.size()*SEED_CHARGE+2*READ_CHARGE;}
+uint64_t NativeModelHorizon::charged_bytes()const{return records*RECORD_CHARGE+pages.size()*PAGE_CHARGE+(seeds.size()+waiting.size())*SEED_CHARGE+2*READ_CHARGE;}
 bool NativeModelHorizon::configure(const Ref<NativeRegionWorldArchive> &reader,const Array &models,const Dictionary &checkpoints,int64_t bytes) {
     if(advancing||!collections.empty()||reader.is_null()||models.size()>256||bytes<16*1024*1024||bytes>256*1024*1024)return false;
     std::map<uint64_t,Collection> staged;size_t regions=0;
@@ -44,7 +45,7 @@ bool NativeModelHorizon::configure(const Ref<NativeRegionWorldArchive> &reader,c
 }
 bool NativeModelHorizon::seed_collection(Collection &collection,NativeStaticBatch *batch) {
     const size_t count=batch->groups.size()+batch->unloaded_regions.size();
-    if(seeds.size()+count>65536||charged_bytes()+count*SEED_CHARGE>byte_limit){capacity_error=false;error="Model visual seed budget exceeded";return false;}
+    if(seeds.size()+waiting.size()+count>65536||charged_bytes()+count*SEED_CHARGE>byte_limit){capacity_error=false;error="Model visual seed budget exceeded";return false;}
     if(!batch->unloaded_regions.empty()) {
         collection.lease=archive->retain_read_checkpoint(batch->asset_id,collection.checkpoint);
         if(!collection.lease){capacity_error=false;error="Model visual checkpoint is unavailable";return false;}
@@ -55,11 +56,11 @@ bool NativeModelHorizon::seed_collection(Collection &collection,NativeStaticBatc
     collection.seeds=count;return true;
 }
 void NativeModelHorizon::cancel_seeds(uint64_t identity) {
-    for(auto it=seeds.begin();it!=seeds.end();) {
+    for(auto *queue:{&seeds,&waiting})for(auto it=queue->begin();it!=queue->end();) {
         if(it->collection!=identity){++it;continue;}
         if(it->ticket&&archive.is_valid())archive->discard_survey_region_read(it->ticket);
         if(it->ticket||it->data)--read_slots;
-        it=seeds.erase(it);
+        it=queue->erase(it);
     }
 }
 void NativeModelHorizon::remove_page(uint64_t identity) {
@@ -161,6 +162,7 @@ bool NativeModelHorizon::advance_seed(Seed &seed,Collection &collection,NativeSt
         ++last_records;return seed.offset==seed.data->records().size();
     }
     if(seed.ticket) {
+        ++read_polls;
         std::shared_ptr<ModelRenderPageData> data;
         Dictionary result=archive->take_model_render_read(seed.ticket,data);
         if(result.is_empty())return false;
@@ -248,21 +250,45 @@ void NativeModelHorizon::advance(int64_t max_records,int64_t max_uploads,int64_t
         }
         ++it;
     }
-    size_t stalled=0;
-    while(!seeds.empty()&&last_records<uint64_t(max_records)&&within_records()&&error.is_empty()) {
-        auto &seed=seeds.front();auto found=collections.find(seed.collection);auto *batch=source(seed.collection);
-        if(found==collections.end()||!batch)break;
-        const auto previous=last_records;
-        if(advance_seed(seed,found->second,batch)) {
-            if(seed.data)--read_slots;
-            batch->world_render_seeded.insert(seed.region);--found->second.seeds;seeds.pop_front();stalled=0;
-            if(!found->second.seeds){for(const auto &group:batch->groups)batch->world_render_seeded.insert(group.first);found->second.changed_during_seed.clear();if(found->second.lease)archive->release_read_checkpoint(found->second.lease);found->second.lease=0;}
-        } else if(last_records==previous) {
-            seeds.push_back(std::move(seeds.front()));seeds.pop_front();if(++stalled>=seeds.size())break;
-        } else stalled=0;
+    auto work_left=[&]{return last_records<uint64_t(max_records)&&within_records()&&error.is_empty();};
+    auto finish_seed=[&](std::deque<Seed> &queue,Collection &collection,NativeStaticBatch *batch) {
+        auto &seed=queue.front();if(seed.data)--read_slots;
+        batch->world_render_seeded.insert(seed.region);--collection.seeds;queue.pop_front();
+        if(!collection.seeds){for(const auto &group:batch->groups)batch->world_render_seeded.insert(group.first);collection.changed_during_seed.clear();if(collection.lease)archive->release_read_checkpoint(collection.lease);collection.lease=0;}
+    };
+    // Poll only admitted reads, not every unstarted region behind them. Refill
+    // freed slots in the same quantum; stop once all outstanding reads wait.
+    while(work_left()) {
+        bool progressed=false;size_t stalled=0;
+        while(!waiting.empty()&&work_left()&&stalled<waiting.size()) {
+            auto &seed=waiting.front();auto &collection=collections.at(seed.collection);auto *batch=source(seed.collection);
+            const auto previous=last_records;++seed_attempts;
+            if(advance_seed(seed,collection,batch)){finish_seed(waiting,collection,batch);progressed=true;stalled=0;}
+            else if(last_records!=previous){progressed=true;stalled=0;}
+            else {waiting.push_back(std::move(waiting.front()));waiting.pop_front();++stalled;}
+        }
+        stalled=0;
+        while(!seeds.empty()&&work_left()&&stalled<std::min(size_t(32),seeds.size())) {
+            auto &seed=seeds.front();auto &collection=collections.at(seed.collection);auto *batch=source(seed.collection);
+            // Resident seeds need no read reservation. An archive capacity wait
+            // cannot be helped by scanning thousands of other unloaded regions.
+            if(batch->unloaded_regions.count(seed.region)&&
+               read_slots>=2)break;
+            const auto previous=last_records;++seed_attempts;
+            if(advance_seed(seed,collection,batch)){finish_seed(seeds,collection,batch);progressed=true;stalled=0;}
+            else if(seed.ticket){waiting.push_back(std::move(seed));seeds.pop_front();progressed=true;stalled=0;}
+            else if(last_records!=previous){progressed=true;stalled=0;}
+            else {seeds.push_back(std::move(seeds.front()));seeds.pop_front();++stalled;}
+        }
+        if(!progressed)break;
     }
-    while(!dirty.empty()&&last_uploads<uint64_t(max_uploads)&&within()&&(error.is_empty()||capacity_error)) {
-        const auto identity=*dirty.begin();dirty.erase(dirty.begin());upload(identity);
+    for(auto it=dirty.begin();it!=dirty.end()&&last_uploads<uint64_t(max_uploads)&&within()&&(error.is_empty()||capacity_error);) {
+        const auto identity=*it;const auto &page=pages.at(identity);
+        // During bootstrap a partial, not-yet-visible page is still growing.
+        // Publish full pages immediately, then each final partial page once.
+        // Already-visible pages keep immediate mutation/removal semantics.
+        if(collections.at(page.collection).seeds&&page.drawn.empty()&&page.records.size()<PAGE_CAPACITY){++it;continue;}
+        it=dirty.erase(it);upload(identity);
     }
     auto shadow=pages.upper_bound(shadow_cursor);
     for(int count=0;count<128&&shadow!=pages.end()&&within();++count,++shadow){refresh_shadow(shadow->second);shadow_cursor=shadow->first;}
@@ -270,7 +296,9 @@ void NativeModelHorizon::advance(int64_t max_records,int64_t max_uploads,int64_t
     last_usec=Time::get_singleton()->get_ticks_usec()-began;advancing=false;
 }
 void NativeModelHorizon::_process(double){
-    last_started_us=Time::get_singleton()->get_ticks_usec();advance();last_ended_us=Time::get_singleton()->get_ticks_usec();
+    last_started_us=Time::get_singleton()->get_ticks_usec();
+    if(preparing)advance(8192,8,3000);else advance();
+    last_ended_us=Time::get_singleton()->get_ticks_usec();
 }
 Dictionary NativeModelHorizon::process_frame_profile()const {
     Dictionary out;out["available"]=archive.is_valid()&&last_ended_us!=0;
@@ -279,8 +307,9 @@ Dictionary NativeModelHorizon::process_frame_profile()const {
 Dictionary NativeModelHorizon::statistics()const {
     uint64_t changes=0;bool current=true;
     for(const auto &entry:collections)if(auto *batch=source(entry.first)){changes+=batch->world_render_changes.size();current=current&&batch->world_render_epoch==entry.second.epoch;}else current=false;
-    Dictionary out;out["active"]=archive.is_valid();out["ready"]=archive.is_valid()&&current&&seeds.empty()&&dirty.empty()&&!changes&&error.is_empty();out["error"]=error;
-    out["collections"]=int(collections.size());out["records"]=int64_t(records);out["rendered"]=int64_t(rendered);out["pages"]=int64_t(pages.size());out["pending_regions"]=int64_t(seeds.size());out["pending_changes"]=int64_t(changes);out["pending_uploads"]=int64_t(dirty.size());
+    Dictionary out;out["active"]=archive.is_valid();out["ready"]=archive.is_valid()&&current&&seeds.empty()&&waiting.empty()&&dirty.empty()&&!changes&&error.is_empty();out["error"]=error;
+    out["preparing"]=preparing;out["read_slots"]=read_slots;out["seed_attempts"]=int64_t(seed_attempts);out["read_polls"]=int64_t(read_polls);
+    out["collections"]=int(collections.size());out["records"]=int64_t(records);out["rendered"]=int64_t(rendered);out["pages"]=int64_t(pages.size());out["pending_regions"]=int64_t(seeds.size()+waiting.size());out["pending_changes"]=int64_t(changes);out["pending_uploads"]=int64_t(dirty.size());
     out["charged_bytes"]=int64_t(charged_bytes());out["byte_limit"]=int64_t(byte_limit);out["gpu_transform_bytes"]=int64_t(gpu_bytes);out["reads"]=int64_t(reads);out["uploads"]=int64_t(uploads);out["uploaded_bytes"]=int64_t(uploaded_bytes);out["last_records"]=int64_t(last_records);out["last_uploads"]=int64_t(last_uploads);out["last_usec"]=int64_t(last_usec);return out;
 }
 PackedInt64Array NativeModelHorizon::represented_ids(NativeStaticBatch *batch)const {
