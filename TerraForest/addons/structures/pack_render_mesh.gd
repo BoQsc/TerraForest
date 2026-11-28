@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 ## One cached render mesh per original pack mesh; unsupported PBR surfaces stay exact.
+static var native:RefCounted=ClassDB.instantiate("NativePackMesh")
 static var cache: Dictionary={}
 static var shaders: Dictionary={}
 static var defaults:=StandardMaterial3D.new()
@@ -129,8 +130,9 @@ static func prepare(source: Mesh) -> Mesh:
 		groups[key].append(index)
 	var merge_count:=0
 	for indices: Array in groups.values(): merge_count+=maxi(0,indices.size()-1)
-	if merge_count==0: return finish_mesh(source,source as ArrayMesh)
+	if merge_count==0: return finish_mesh(source,source as ArrayMesh,arrays_by_surface)
 	var result:=ArrayMesh.new()
+	var prepared_arrays:Array[Array]=[]
 	for key: int in groups:
 		var indices: Array=groups[key]
 		if indices.size()==1: retained.append(indices[0]);continue
@@ -138,7 +140,7 @@ static func prepare(source: Mesh) -> Mesh:
 		for surface: int in indices: use_shared=use_shared and shared_layers.has((source.surface_get_material(surface) as StandardMaterial3D).albedo_texture)
 		var images: Array[Image]=[];var layers: Dictionary={}
 		if use_shared: layers=shared_layers
-		var vertices:=PackedVector3Array();var normals:=PackedVector3Array();var uv:=PackedVector2Array();var pbr:=PackedVector2Array();var colors:=PackedColorArray();var faces:=PackedInt32Array()
+		var group_arrays:Array=[];var tints:=PackedColorArray();var properties:=PackedVector2Array()
 		for surface: int in indices:
 			var arrays:=arrays_by_surface[surface];var material: StandardMaterial3D=source.surface_get_material(surface)
 			var texture: Texture2D=material.albedo_texture
@@ -147,21 +149,13 @@ static func prepare(source: Mesh) -> Mesh:
 				if texture==null: image.fill(Color.WHITE)
 				else: image.convert(Image.FORMAT_RGBA8) # RGB8 -> RGBA8 adds opaque alpha, retaining RGB bytes.
 				layers[texture]=images.size();images.append(image)
-			var offset:=vertices.size();var count: int=arrays[Mesh.ARRAY_VERTEX].size()
-			vertices.append_array(arrays[Mesh.ARRAY_VERTEX]);normals.append_array(arrays[Mesh.ARRAY_NORMAL]);uv.append_array(arrays[Mesh.ARRAY_TEX_UV])
-			if int(layers[texture])>=256: return finish_mesh(source,source as ArrayMesh)
+			if int(layers[texture])>=256: return finish_mesh(source,source as ArrayMesh,arrays_by_surface)
 			var tint: Color=material.albedo_color;tint.a=float(layers[texture])/255.0
-			var shades:=PackedColorArray();shades.resize(count);shades.fill(tint);colors.append_array(shades)
-			var properties:=PackedVector2Array();properties.resize(count);properties.fill(Vector2(material.roughness,material.metallic));pbr.append_array(properties)
-			var original: PackedInt32Array=arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX]!=null else PackedInt32Array()
-			if original.is_empty():
-				original.resize(count)
-				for i in count: original[i]=i
-			for i in original.size(): original[i]+=offset
-			faces.append_array(original)
+			group_arrays.append(arrays);tints.append(tint);properties.append(Vector2(material.roughness,material.metallic))
 		var textures:=shared_texture if use_shared else Texture2DArray.new()
 		if not use_shared and textures.create_from_images(images)!=OK: cache[source]=source;return source
-		var arrays: Array=[];arrays.resize(Mesh.ARRAY_MAX);arrays[Mesh.ARRAY_VERTEX]=vertices;arrays[Mesh.ARRAY_NORMAL]=normals;arrays[Mesh.ARRAY_TEX_UV]=uv;arrays[Mesh.ARRAY_TEX_UV2]=pbr;arrays[Mesh.ARRAY_COLOR]=colors;arrays[Mesh.ARRAY_INDEX]=faces
+		var arrays:Array=native.merge(group_arrays,tints,properties)
+		if arrays.is_empty():return finish_mesh(source,source as ArrayMesh,arrays_by_surface)
 		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays)
 		var pbr_material: ShaderMaterial=shared_materials[key] if use_shared else ShaderMaterial.new()
 		if not use_shared: pbr_material.shader=common_shader(key);pbr_material.set_shader_parameter("surfaces",textures)
@@ -171,17 +165,23 @@ static func prepare(source: Mesh) -> Mesh:
 	result.resource_name=source.resource_name;result.custom_aabb=source.custom_aabb
 	return finish_mesh(source,result)
 
-static func finish_mesh(source: Mesh,mesh: ArrayMesh) -> Mesh:
+static func finish_mesh(source: Mesh,mesh: ArrayMesh,known_arrays:Array[Array]=[]) -> Mesh:
 	# Godot's core mesh processor retains the full-detail surface and adds index
 	# LODs. Work runs once during catalog preparation, never during player frames.
 	for key: StringName in source.get_meta_list(): mesh.set_meta(key,source.get_meta(key))
+	# Preserve the renderer's packed-normal roundtrip before native LODs. Read
+	# a newly merged mesh once; reuse that exact array for validation and LODs.
+	if known_arrays.is_empty():
+		for index in mesh.get_surface_count():known_arrays.append(mesh.surface_get_arrays(index))
 	for index in mesh.get_surface_count():
 		var material:=mesh.surface_get_material(index)
-		var arrays:=mesh.surface_get_arrays(index)
+		var arrays:=known_arrays[index]
 		if (material is ShaderMaterial and not shaders.values().has(material.shader)) or (arrays[Mesh.ARRAY_BONES]!=null and not arrays[Mesh.ARRAY_BONES].is_empty()):
 			cache[source]=mesh;return mesh
 	var began:=Time.get_ticks_usec()
-	var importer:=ImporterMesh.from_mesh(mesh)
+	var importer:=ImporterMesh.new()
+	for index in mesh.get_surface_count():
+		importer.add_surface(mesh.surface_get_primitive_type(index),known_arrays[index],[],{},mesh.surface_get_material(index),mesh.surface_get_name(index))
 	importer.generate_lods(60,0,[])
 	var result:=importer.get_mesh()
 	result.resource_name=source.resource_name;result.custom_aabb=(source as ArrayMesh).custom_aabb

@@ -22,6 +22,7 @@
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/worker_thread_pool.hpp>
+#include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
@@ -155,6 +156,8 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("geometry_cache_key","x","z","size","step"), &TerrainCore::geometry_cache_key);
         godot::ClassDB::bind_method(godot::D_METHOD("build_owned_region","x","z","size","step","y_begin","y_end","epoch"), &TerrainCore::build_owned_region);
         godot::ClassDB::bind_method(godot::D_METHOD("build_owned_column","x","z","size","step","epoch"), &TerrainCore::build_owned_column);
+        godot::ClassDB::bind_method(godot::D_METHOD("build_owned_columns","origins","step","epoch"), &TerrainCore::build_owned_columns);
+        godot::ClassDB::bind_method(godot::D_METHOD("refresh_mesh_visibility","arrays","epoch"), &TerrainCore::refresh_mesh_visibility);
         godot::ClassDB::bind_method(godot::D_METHOD("supports_isolated_worlds"), &TerrainCore::supports_isolated_worlds);
         godot::ClassDB::bind_method(godot::D_METHOD("build_variant"), &TerrainCore::build_variant);
         godot::ClassDB::bind_method(godot::D_METHOD("configure_height_cache","enabled"), &TerrainCore::configure_height_cache);
@@ -344,6 +347,72 @@ public:
         if(x<0||z<0||x>=2048||z>=2048||size<16||size>256||step<1||step>8)return {};
         std::lock_guard<std::mutex> lock(mutex_);
         tr_oom=false;auto result=terraforest::geometry_content_key(world_,int(x),int(z),int(size),int(step));return tr_oom?godot::Dictionary():result;
+    }
+    // Startup only: at most four 64 m owners, each with <=256 copied pages.
+    // Geometry lanes own every mutable cache. Shading stays on the authority in
+    // original owner order, preserving the exact lighting probe sequence.
+    godot::Array build_owned_columns(const godot::PackedVector2Array &origins,int64_t step,int64_t epoch) {
+        if(origins.size()<2||origins.size()>4||(step!=4&&step!=8)||epoch<0||epoch>0xffffffffLL)return {};
+        struct Lane {godot::Ref<TerrainCore> field;Mesh mesh;int x=0,z=0;bool ok=false;~Lane(){mesh.release();}};
+        std::array<Lane,4> lanes;
+        uint32_t revision;
+        {std::lock_guard<std::mutex> lock(mutex_);revision=world_.revision;}
+        for(int i=0;i<origins.size();++i){
+            const auto p=origins[i];
+            if(!p.is_finite()||p.x<0||p.y<0||p.x>=WORLD||p.y>=WORLD||p.x!=int(p.x)||p.y!=int(p.y)||int(p.x)%64||int(p.y)%64)return {};
+            auto &lane=lanes[i];lane.x=int(p.x);lane.z=int(p.y);
+            lane.field=copy_contact_field(godot::Rect2i(lane.x,lane.z,imn(64,WORLD-lane.x),imn(64,WORLD-lane.z)),revision,epoch,false,64,true,false);
+            if(lane.field.is_null())return {}; // Caller retains the serial path.
+            lane.field->world_.build_control=&control_;
+        }
+        struct Work {Lane *lanes;int step;uint32_t epoch;} work{lanes.data(),int(step),u32(epoch)};
+        auto run=[](void *opaque,u32 index){
+            auto &work=*static_cast<Work*>(opaque);auto &lane=work.lanes[index];tr_oom=false;
+            lane.ok=::build_owned_column(lane.field->world_,lane.x,lane.z,64,work.step,lane.mesh,work.epoch,true)&&!tr_oom;
+        };
+        auto *pool=godot::WorkerThreadPool::get_singleton();
+        auto task=pool?pool->add_native_group_task(run,&work,origins.size(),4,true,"Startup landscape owners"):-1;
+        if(task>=0)pool->wait_for_group_task_completion(task);else for(int i=0;i<origins.size();++i)run(&work,u32(i));
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;
+        if(world_.revision!=revision||terrain_build_epoch(&world_)!=u32(epoch))return {};
+        for(int i=0;i<origins.size();++i)if(!lanes[i].ok)return {};
+        godot::Array result;
+        for(int i=0;i<origins.size();++i){
+            auto &lane=lanes[i];shade_mesh(world_,lane.mesh,u32(epoch));
+            Bytes bytes;encode_mesh(lane.mesh,lane.x,lane.z,64,int(step),bytes);
+            if(tr_oom||terrain_build_epoch(&world_)!=u32(epoch)){bytes.release();return {};}
+            godot::PackedByteArray packet;packet.resize(bytes.n);if(bytes.n)copy_bytes(packet.ptrw(),bytes.p,bytes.n);
+            bytes.release();result.push_back(packet);
+        }
+        return result;
+    }
+    godot::Dictionary refresh_mesh_visibility(const godot::Array &source,int64_t epoch) {
+        using namespace godot;
+        Dictionary result;result["error"]="Visibility-only update failed";
+        if(source.size()!=godot::Mesh::ARRAY_MAX||epoch<0||epoch>0xffffffffLL||
+           source[godot::Mesh::ARRAY_VERTEX].get_type()!=Variant::PACKED_VECTOR3_ARRAY||
+           source[godot::Mesh::ARRAY_NORMAL].get_type()!=Variant::PACKED_VECTOR3_ARRAY||
+           source[godot::Mesh::ARRAY_TEX_UV2].get_type()!=Variant::PACKED_VECTOR2_ARRAY)return result;
+        PackedVector3Array positions=source[godot::Mesh::ARRAY_VERTEX],normals=source[godot::Mesh::ARRAY_NORMAL];
+        PackedVector2Array exact=source[godot::Mesh::ARRAY_TEX_UV2];
+        const int count=positions.size();if(count>2000000||normals.size()!=count||exact.size()!=count)return result;
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;
+        if(terrain_build_epoch(&world_)!=u32(epoch)){result.clear();result["cancelled"]=true;return result;}
+        ::Mesh mesh;mesh.v.resize(count);
+        if(tr_oom){mesh.release();return result;}
+        const auto *positions_in=positions.ptr(),*normals_in=normals.ptr();const auto *classes=exact.ptr();
+        for(int i=0;i<count;++i){
+            mesh.v[i].p={positions_in[i].x,positions_in[i].y,positions_in[i].z};
+            mesh.v[i].n={normals_in[i].x,normals_in[i].y,normals_in[i].z};mesh.v[i].material=classes[i].x;
+        }
+        shade_visibility(world_,mesh,u32(epoch));
+        if(terrain_build_epoch(&world_)!=u32(epoch)){mesh.release();result.clear();result["cancelled"]=true;return result;}
+        if(tr_oom){mesh.release();return result;}
+        PackedVector2Array visibility;visibility.resize(count);auto *values=visibility.ptrw();bool cavity=false;
+        for(int i=0;i<count;++i){values[i]=Vector2(mesh.v[i].sky,mesh.v[i].sun);cavity|=values[i].x<.999f;}
+        mesh.release();
+        Array arrays=source.duplicate();arrays[godot::Mesh::ARRAY_TEX_UV]=visibility;
+        result.clear();result["arrays"]=arrays;result["cavity_visibility"]=cavity;return result;
     }
     TerrainCore() {
         control_.parallel_edit=[](void (*work)(void*,u32),void *context,int count){
@@ -755,7 +824,7 @@ private:
         godot::Ref<TerrainFieldReader> reader;reader.instantiate();
         reader->field_=field;return reader;
     }
-    godot::Ref<TerrainCore> copy_contact_field(godot::Rect2i bounds,int64_t revision,int64_t epoch,bool borrow,int max_side=64){
+    godot::Ref<TerrainCore> copy_contact_field(godot::Rect2i bounds,int64_t revision,int64_t epoch,bool borrow,int max_side=64,bool load_pages=false,bool columns=true){
         std::lock_guard<std::mutex> lock(mutex_);
         if(revision!=world_.revision||epoch!=terrain_build_epoch(&world_)||
            bounds.size.x<=0||bounds.size.y<=0||bounds.size.x>max_side||bounds.size.y>max_side||
@@ -804,6 +873,8 @@ private:
         dst.caves.resize(world_.caves.n);if(tr_oom)return {};
         copy_bytes(dst.caves.p,world_.caves.p,sizeof(Cave)*dst.caves.n);
         dst.index_cave_columns();
+        // Only background startup reconstruction opts into residency I/O.
+        if(load_pages)world_.prepare_pages({float(x0),0,float(z0)},{float(x1),float(WORLD_Y-1),float(z1)});
         for(int z=z0/16;z<=z1/16;++z)for(int x=x0/16;x<=x1/16;++x){
             u32 mask=world_.edit_columns[x+WORLD_PAGE_COLUMNS*z];
             dst.edit_columns[x+WORLD_PAGE_COLUMNS*z]=mask;
@@ -831,7 +902,7 @@ private:
             for(int i=0;i<column.n;++i)
                 if(!dst.set_block(column[i],world_.blocks.get(column[i]))||tr_oom)return {};
         }
-        if(!copy_surface_columns(world_,dst,bounds.position.x,bounds.position.y,bounds.size.x,bounds.size.y))return {};
+        if(columns&&!copy_surface_columns(world_,dst,bounds.position.x,bounds.position.y,bounds.size.x,bounds.size.y))return {};
         return copy;
     }
 public:

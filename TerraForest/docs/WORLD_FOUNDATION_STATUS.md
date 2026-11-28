@@ -1,3 +1,21 @@
+## Startup native batches — 2026-11-28
+
+[COLD_GENERATION_REUSE.md](COLD_GENERATION_REUSE.md#startup-native-batches--2026-11-28)
+records bounded parallel coarse-landscape reconstruction, native cached lighting
+and model merging, reused LOD arrays, and local water invalidation. The full cold
+path is **70.772 s**, down from 84.627 s, with vegetation and readiness preserved.
+The 30 s target remains **failed**. Focused terrain/model/water checks pass
+216 / 238 / 20 assertions; the rejected normal/LOD trial remains documented.
+The full run passes 129 functional assertions, but all three phases retain the
+known zero-reference shutdown warning; strict integration remains rejected.
+
+Remaining: scene/render preparation, 12.400 s planning, generation/first-play
+work overlap, and a newly exposed 3.530 s object-visual tail. These are still
+material costs after this batch work; closure needs exact immutable ownership,
+stale/cancellation checks, unchanged content and the complete cold timer below
+30 s with clean creation/save/reload and broader seed evidence. Existing lake
+quality, human approval and whole-frame performance requirements remain open.
+
 ## First-play cache and native reuse — 2026-11-28
 
 [COLD_GENERATION_REUSE.md](COLD_GENERATION_REUSE.md) records the completed

@@ -7,9 +7,12 @@ var failures:=0
 var folder:=""
 var pixel_comparison: Dictionary={}
 var reference:=""
+var legacy_path:=""
+var legacy_differences:Dictionary={}
 func _initialize() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--check-evidence-dir="): folder=arg.trim_prefix("--check-evidence-dir=")
+		if arg.begins_with("--legacy-mesh-script="):legacy_path=arg.trim_prefix("--legacy-mesh-script=")
 		if arg.begins_with("--mesh-reference="): reference=arg.trim_prefix("--mesh-reference=")
 	run.call_deferred()
 func check(ok: bool,label: String) -> void:
@@ -24,6 +27,8 @@ func run() -> void:
 	check(Packs.discover(),"pack discovery succeeds")
 	var sources: Array=[]
 	for row: Dictionary in Packs.objects.values(): sources.append(load(row.directory+"/models/"+row.id+".tres"))
+	var legacy:Script=load(legacy_path) if not legacy_path.is_empty() else null
+	if legacy!=null:legacy.configure(sources)
 	var configure_started:=Time.get_ticks_usec()
 	RenderMesh.configure(sources)
 	var configure_us:=Time.get_ticks_usec()-configure_started
@@ -35,6 +40,14 @@ func run() -> void:
 		var mesh: Mesh=RenderMesh.prepare(source)
 		prepare_us+=Time.get_ticks_usec()-began
 		fingerprints[row.key]=fingerprint(mesh)
+		if legacy!=null:
+			var prior_mesh:Mesh=legacy.prepare(source)
+			var fields:Dictionary={}
+			for surface_index in mini(mesh.get_surface_count(),prior_mesh.get_surface_count()):
+				var old:Dictionary=RenderingServer.mesh_get_surface(prior_mesh.get_rid(),surface_index);var current:Dictionary=RenderingServer.mesh_get_surface(mesh.get_rid(),surface_index)
+				for field in old:
+					if field!="material" and var_to_bytes(old[field])!=var_to_bytes(current.get(field)):fields[str(field)]=true
+			if not fields.is_empty():legacy_differences[row.key]=fields.keys()
 		before+=source.get_surface_count();after+=mesh.get_surface_count()
 		lod_levels+=int(mesh.get_meta("pack_lod_levels",0))
 		check(mesh.get_aabb().is_equal_approx(source.get_aabb()) and triangle_count(source)==triangle_count(mesh),"unchanged bounds and triangle count: "+row.key)
@@ -45,14 +58,24 @@ func run() -> void:
 			var preserved:=false
 			for j in mesh.get_surface_count(): preserved=preserved or mesh.surface_get_material(j)==material
 			check(preserved,"unsupported material retained exactly: "+row.key+"/"+str(index))
+	var native:RefCounted=ClassDB.instantiate("NativePackMesh")
+	var triangle:Array=[];triangle.resize(Mesh.ARRAY_MAX)
+	triangle[Mesh.ARRAY_VERTEX]=PackedVector3Array([Vector3.ZERO,Vector3.RIGHT,Vector3.FORWARD]);triangle[Mesh.ARRAY_NORMAL]=PackedVector3Array([Vector3.UP,Vector3.UP,Vector3.UP]);triangle[Mesh.ARRAY_TEX_UV]=PackedVector2Array([Vector2.ZERO,Vector2.RIGHT,Vector2.DOWN])
+	var original:=var_to_bytes(triangle)
+	var merged:Array=native.merge([triangle,triangle],PackedColorArray([Color.WHITE,Color.RED]),PackedVector2Array([Vector2.ONE,Vector2.ZERO]))
+	check(merged.size()==Mesh.ARRAY_MAX and merged[Mesh.ARRAY_INDEX]==PackedInt32Array([0,1,2,3,4,5]) and merged[Mesh.ARRAY_COLOR][4]==Color.RED,"native merge supports unindexed surfaces and ordered offsets")
+	check(var_to_bytes(triangle)==original,"native merge never mutates source channels")
+	triangle[Mesh.ARRAY_INDEX]=PackedInt32Array([0,1,9])
+	check(native.merge([triangle],PackedColorArray([Color.WHITE]),PackedVector2Array([Vector2.ONE])).is_empty(),"native merge rejects invalid source indices")
 	check(after<before,"material surfaces are actually consolidated")
 	check(lod_levels>0,"distance-based index LODs are present without replacing full-detail surfaces")
+	if legacy!=null:check(legacy_differences.is_empty(),"all native buffers and LODs equal the in-process legacy path")
 	if not reference.is_empty():
 		var prior=JSON.parse_string(FileAccess.get_file_as_string(reference))
 		check(prior is Dictionary and prior.get("fingerprints",{})==fingerprints,"all render buffers, indices and LODs match the baseline exactly")
 	print("PACK_RENDER_SURFACES before=",before," after=",after)
 	if DisplayServer.get_name()!="headless": await compare_views()
-	FileAccess.open(folder.path_join("render_mesh.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"source_surfaces":before,"render_surfaces":after,"lod_levels":lod_levels,"pixels":pixel_comparison,"configure_us":configure_us,"prepare_us":prepare_us,"profile":RenderMesh.preparation_profile,"fingerprints":fingerprints}))
+	FileAccess.open(folder.path_join("render_mesh.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"legacy_differences":legacy_differences,"source_surfaces":before,"render_surfaces":after,"lod_levels":lod_levels,"pixels":pixel_comparison,"configure_us":configure_us,"prepare_us":prepare_us,"profile":RenderMesh.preparation_profile,"fingerprints":fingerprints}))
 	print("OBJECT_PACK_RENDER_MESH checks=",checks," failures=",failures);quit(1 if failures else 0)
 func fingerprint(mesh:Mesh)->String:
 	var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256)

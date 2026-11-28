@@ -875,14 +875,15 @@ void NativeRegionalWater::invalidate(const AABB &bounds,bool replace_water,int64
     if(!bounds.position.is_finite()||!bounds.size.is_finite())return;
     invalidate_regions(bounds.grow(0.5),replace_water,false,ticket);
 }
-void NativeRegionalWater::invalidate_buildings(const AABB &bounds){
+bool NativeRegionalWater::invalidate_buildings(const AABB &bounds){
     // Building hulls affect only intersected volume, unlike terrain sampling.
     // accept_patch/changed still invalidate adjacent mesh owners for seams.
+    const auto before=survey_revision_id();
     invalidate_regions(bounds,true,true);
+    return survey_revision_id()!=before;
 }
 void NativeRegionalWater::invalidate_regions(const AABB &bounds,bool replace_water,bool buildings,int64_t ticket){
     if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return;
-    cancel_mesh_batch();
     // Look up resident and cached regions by coordinate for local edits.
     // A map-wide invalidation still walks sparse entries only.
     const Vector3 span(2000,256,2000);
@@ -904,6 +905,7 @@ void NativeRegionalWater::invalidate_regions(const AABB &bounds,bool replace_wat
         affected.clear();
         for(const auto &[k,r]:regions)if(overlaps(k))affected.push_back(k);
     }
+    if(!affected.empty())cancel_mesh_batch();
     for(Key k:affected){
         Region &r=regions.at(k);
         if(r.valid||r.valid_before_edit!=ticket)r.valid_before_edit=r.valid&&!buildings?ticket:-1;

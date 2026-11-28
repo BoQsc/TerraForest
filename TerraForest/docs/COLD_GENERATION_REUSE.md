@@ -110,3 +110,107 @@ timings, hashes and test receipts remain ready. The maintainer approved temporar
 The protected human save `Island_1703_b743c970` retains all 4,059 original file
 hashes. `reports/cold_generation_20261128/final_retention.json` records normal
 storage headroom and the three functional assertion counts.
+
+
+## Startup native batches — 2026-11-28
+
+The follow-up keeps the same terrain profiles, readiness radius, vegetation,
+canonical saves and cold timer. It adds:
+
+- Four-lane native reconstruction for consecutive uncached 64 m coarse owners
+  during initial loading. Each lane has an independent density/page/block copy
+  (at most 256 copied edited pages, existing 32 m halo); the authority performs
+  lighting in original owner order. Cache hits are never reconstructed. Missing
+  snapshots, invalid inputs and superseded epochs retain the existing serial or
+  cancellation path. Interactive terrain work keeps the existing scheduler.
+- Native cached-mesh visibility packing and extraction; no per-vertex GDScript
+  class/channel conversion remains in this path.
+- Native pack vertex/index merging, with existing material support rules,
+  source resolution and full-detail geometry retained. LOD generation consumes
+  already-read arrays, preserving the packed-normal roundtrip while removing
+  its duplicate GPU read.
+- Water-contact and mesh invalidation only when construction overlaps an
+  existing water region. Receiver surveys still invalidate for all construction;
+  actual water intersections retain revision changes and occupancy cancellation.
+
+`region_stages.parallel_columns/parallel_batches` record batch use. Its native
+four-stage breakdown covers serial owners only; wall `build_us` includes both.
+Generation startup records pack surface-read and LOD counters.
+
+Full cold evidence: `reports/inhabited_island_world/20261128T171853338323Z`,
+seed 1703 / terrain 38, `plan_cache_hit=false`. Generate button through the same
+playable-world readiness gate measures **70.771693 s**, versus 84.626608 s:
+13.854915 s (16.4%) lower, **still failing the 30 s target**.
+
+| Measured stage | Previous run | Native-batch run |
+| --- | ---: | ---: |
+| Complete cold Generate-to-play | 84.627 s | 70.772 s |
+| Generation scene/data initialization | 20.717 s | 14.744 s |
+| Building-part registration (inside initialization) | 8.214 s | 4.292 s |
+| Quest-location water contacts | 6.615 s | 1.980 s |
+| First-play landscape coverage | 14.444 s | 10.386 s |
+| Complete first-play loading | 18.365 s | 16.496 s |
+
+The faster landscape stage exposes a 3.530 s world-object visual tail; its 4.058 s
+stage reduction must not be presented as the total loading reduction. Planning
+still consumes 12.400 s (native/planning worker 10.252 s). All three first-play
+map layers retain their fast cache hits, zero source/visibility calls and zero
+writes; terrain records zero map patches. These are single complete-run timings,
+not a multi-run latency guarantee.
+
+Focused evidence:
+
+- `reports/checks/20261128T171742552937Z`: 216 checks pass. Two seeds (1703, 901),
+  terrain 19/36/38, both 4/8 m steps, edited owner seams and clipped world edges.
+  All geometry, lighting and collision packets equal the serial path exactly;
+  cached visibility equals the old command path; stale/invalid inputs reject.
+  Across 24 probes, serial 755.968 ms versus parallel 414.741 ms (1.82x).
+- `reports/checks/20261128T171539701772Z`: 238 checks pass. All 110 model render
+  buffers and index LODs equal the in-process previous implementation. Bounds,
+  collision metadata, unsupported materials, source immutability and unindexed
+  input are covered. Headless preparation is 563.869 ms; the graphical full-run
+  scene timings above remain the relevant startup evidence.
+- `reports/checks/20261128T171329385356Z`: 20 water identity/locality checks pass.
+  Dry construction preserves a pending mesh publication and occupancy builder;
+  intersecting construction still invalidates water contacts. Edit receiver jobs
+  continue using the global building revision, separately from normal occupancy.
+
+Rejected model trial `reports/checks/20261128T171152945132Z` changed 99 packed
+normal/LOD outputs. Diagnostic `20261128T171420558437Z` isolated the difference
+in-process (its diagnostic-only pass is not an equivalence pass). Removing an
+extra renderer conversion changed inputs to LOD generation; the final path
+retains that conversion and removes only its duplicate read. The initial trial's
+post-run retention also hit normal report admission; the subsequently approved
+process-local QA allowance completed receipt-owned retention without deleting
+regression evidence.
+
+All six final lake views and first-play were inspected. Grass, ferns, trees and
+filled lake arms remain visible. Broad smooth terrain, simple settlements,
+transient arrival/collision waits and whole-frame performance remain open; these
+captures do not constitute human visual approval or a 60 FPS qualification.
+
+Remaining performance work: remove or reuse more scene/render preparation,
+move remaining route assembly into reusable native jobs, and overlap immutable
+landscape/object preparation with generation after its final density edit.
+The object-visual tail now needs its own bounded native startup scheduling.
+These require exact ownership/hash/cancellation and equivalent-output checks;
+simply moving the same work into first play cannot close the whole-path target.
+Closure still requires the unchanged complete cold timer below 30 s, clean exits,
+unchanged content/readiness/vegetation and broader full-seed coverage.
+
+
+The complete run passes 129 creation/interaction/restoration assertions (8/89/32).
+All three phases retain the known zero-reference RefCounted exit warning, so
+strict integration remains rejected; diagnostic continuation is not a waiver.
+The exact owned fixture is cold-retained (60,146,489 bytes) through
+`world.archive.json`. Reviewed lake captures/logs use
+`review_and_logs.archive.json`, and first-play uses `first_play.archive.json`.
+Normal report/world limits are restored after the approved process-local QA
+allowance; the archive limit remains 10.375 GiB. The protected human save is
+checked against its original 4,059 hashes in
+`reports/startup_native_20261128/retention_and_save_identity.json`.
+
+`metadata_retention.json` records lossless whitespace compaction of five
+unpinned world manifests (original bytes remain in adjacent
+`manifest_format.archive.json`) and receipt-owned focused-log retention.
+`final_retention.json` confirms normal storage admission after QA.

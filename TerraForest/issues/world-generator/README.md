@@ -4,6 +4,19 @@
 - User review: New UI and larger layouts not yet reviewed. Existing house approvals stay separate.
 - Request: Professional creation UI, controllable towns/cities, connected roads, offroads and biome choices; distributed lakes/settlements and faster generation/loading.
 
+## Native startup batches — 2026-11-28
+
+**Faster, still above the target.** [Complete evidence](../../docs/COLD_GENERATION_REUSE.md#startup-native-batches--2026-11-28)
+measures **70.771693 s cold Generate-to-play**, down from 84.626608 s with
+vegetation and readiness unchanged. Native parallel landscape reconstruction,
+cached lighting, model merging and local water invalidation preserve exact
+reference output. All 129 full functional assertions pass; the known shutdown
+warning still rejects strict integration. All six lake captures were inspected;
+earlier broad terrain/settlement quality and human approval remain open.
+Scene/render preparation, planning and the object-visual tail still prevent the
+30 s gate from closing. The owned fixture and captures are cold-retained through
+the full run's manifests; no existing player save was retired.
+
 ## First-play map and native reuse — 2026-11-28
 
 **Map rebuild fixed; overall performance remains partial.**

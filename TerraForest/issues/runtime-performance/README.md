@@ -1,5 +1,17 @@
 # Runtime performance
 
+## Cold generation startup — 2026-11-28
+
+[Native startup batch evidence](../../docs/COLD_GENERATION_REUSE.md#startup-native-batches--2026-11-28)
+reduces the full cold Generate-to-play measurement from 84.627 to **70.772 s**.
+Parallel terrain packets and model LODs remain byte-identical to their serial
+references; water preparation no longer restarts for unrelated construction.
+Vegetation remains enabled. The **30 s gate remains failed**, and the known
+zero-reference shutdown warning remains open. Scene initialization, planning,
+first-load object visuals and broader performance/visual acceptance still need
+work. This result does not qualify walking p99 or whole-world 60 FPS.
+
+
 ## Strict walking lab — 2026-11-28
 
 The [new lab contract](WALKING_LAB.md) treats every frame below 60 FPS as critical,

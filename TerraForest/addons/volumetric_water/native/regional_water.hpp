@@ -397,7 +397,7 @@ public:
     godot::Array next_requests(int64_t limit,bool ocean_only=true);
     bool accept_patch(const godot::Ref<NativeWaterTerrainPatch> &patch);
     void invalidate(const godot::AABB &bounds,bool replace_water=false,int64_t ticket=-1);
-    void invalidate_buildings(const godot::AABB &bounds);
+    bool invalidate_buildings(const godot::AABB &bounds);
     bool reuse_building_occupancy(const godot::Ref<NativeWaterTerrainPatch> &patch);
     void advance(int64_t budget,double seconds=1.0/60.0);
     bool begin_fill(const godot::AABB &bounds,double level,const godot::Vector3 &seed,int64_t amount);

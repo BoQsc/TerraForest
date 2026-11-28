@@ -1511,7 +1511,7 @@ func _execute_mesh(job: Dictionary, interactive: bool=false) -> void:
 	if _startup_meshes!=null:
 		if cache_valid and _startup_meshes.identity==snapshot_id:result=_startup_meshes.take(job.key)
 		else:_startup_meshes=null
-	if result.is_empty():result=_build(job.key,bool(job.get("base",false)),int(job.build_epoch),bool(job.get("relight_cache",false)),[],interactive)
+	if result.is_empty():result=_build(job.key,bool(job.get("base",false)),int(job.build_epoch),bool(job.get("relight_cache",false)),[],interactive,bool(job.get("startup",false)))
 	else:
 		handoff_hits+=1
 		result["cache_stats"]=disk_cache.counters()
@@ -1552,7 +1552,7 @@ func _service_interaction_mesh() -> void:
 func _owner_size(key:Vector3i,columns:bool)->int:
 	return mini(64 if columns else 32,key.z)
 
-func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, foreground: bool=false, columns: bool=false) -> Dictionary:
+func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, foreground: bool=false, columns: bool=false, startup: bool=false) -> Dictionary:
 	var begin:=Time.get_ticks_usec()
 	var size:=_owner_size(key,columns)
 	var step:=maxi(1,key.z/32)
@@ -1561,7 +1561,19 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 	var bytes:=0
 	var triangles:=0
 	var hits:=0
-	var stages: Dictionary={"key_us":0,"read_us":0,"build_us":0,"decode_us":0,"light_us":0,"write_us":0,"recipes_us":0,"native_ms":[0.0,0.0,0.0,0.0]}
+	var stages: Dictionary={"parallel_columns":0,"parallel_batches":0,"native_ms_serial_only":true,"key_us":0,"read_us":0,"build_us":0,"decode_us":0,"light_us":0,"write_us":0,"recipes_us":0,"native_ms":[0.0,0.0,0.0,0.0]}
+	var prefetched:Dictionary={}
+	var built_columns:Dictionary={}
+	if startup and columns and selected.is_empty() and not foreground and key.z>=128:
+		for pz in range(key.y,key.y+key.z,size):
+			for px in range(key.x,key.x+key.z,size):
+				var mark:=Time.get_ticks_usec()
+				var dependency:=str(native.geometry_cache_key(px,pz,size,step).get("key","")) if disk_cache.enabled else ""
+				var content:=("owned-column-v2:%s:0"%dependency).sha256_text() if not dependency.is_empty() else ""
+				stages.key_us+=Time.get_ticks_usec()-mark;mark=Time.get_ticks_usec()
+				var packet:PackedByteArray=disk_cache.load_packet(Vector3i(px,pz,size),content) if not content.is_empty() else PackedByteArray()
+				stages.read_us+=Time.get_ticks_usec()-mark
+				prefetched[Vector2i(px,pz)]={"content":content,"packet":packet}
 	for z in range(key.y,key.y+key.z,size):
 		for x in range(key.x,key.x+key.z,size):
 			var dependency: String=""
@@ -1576,7 +1588,7 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 				# including foreground meshes; it never services another mesh here.
 				_service_lake_slice(8000)
 				if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
-				if dependency.is_empty() and disk_cache.enabled:
+				if dependency.is_empty() and disk_cache.enabled and prefetched.is_empty():
 					var mark:=Time.get_ticks_usec()
 					dependency=str(native.geometry_cache_key(x,z,size,step).get("key",""))
 					stages.key_us+=Time.get_ticks_usec()-mark
@@ -1585,13 +1597,26 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 				var owner:=Vector3i(x,z,size)
 				var packet:=PackedByteArray()
 				var mark:=Time.get_ticks_usec()
-				if not content.is_empty(): packet=disk_cache.load_packet(owner,content)
+				if prefetched.has(Vector2i(x,z)):
+					content=prefetched[Vector2i(x,z)].content;packet=prefetched[Vector2i(x,z)].packet
+				elif not content.is_empty(): packet=disk_cache.load_packet(owner,content)
 				stages.read_us+=Time.get_ticks_usec()-mark
 				var cached:=not packet.is_empty()
 				mark=Time.get_ticks_usec()
-				if not cached: packet=native.build_owned_column(x,z,size,step,expected_build_epoch) if columns else native.build_owned_region(x,z,size,step,bottom,bottom+height,expected_build_epoch)
+				if not cached and not prefetched.is_empty() and not built_columns.has(Vector2i(x,z)):
+					var origins:=PackedVector2Array()
+					for nx in range(x,mini(x+4*size,key.x+key.z),size):
+						if not prefetched[Vector2i(nx,z)].packet.is_empty():break
+						origins.append(Vector2(nx,z))
+					if origins.size()>1:
+						var packets:Array=native.build_owned_columns(origins,step,expected_build_epoch)
+						stages.parallel_columns+=packets.size();stages.parallel_batches+=int(not packets.is_empty())
+						for index in packets.size():built_columns[Vector2i(origins[index])]=packets[index]
+				var batched:=built_columns.has(Vector2i(x,z))
+				if batched:packet=built_columns[Vector2i(x,z)];built_columns.erase(Vector2i(x,z))
+				if not cached and packet.is_empty(): packet=native.build_owned_column(x,z,size,step,expected_build_epoch) if columns else native.build_owned_region(x,z,size,step,bottom,bottom+height,expected_build_epoch)
 				stages.build_us+=Time.get_ticks_usec()-mark
-				if profile_regions and not cached:
+				if profile_regions and not cached and not batched:
 					var native_stages: PackedByteArray=_call(Codec.command(19))
 					for index in range(4): stages.native_ms[index]+=native_stages.decode_float(12+index*4)
 				if packet.is_empty():
@@ -1630,10 +1655,10 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 	if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
 	return {"key":key,"step":step,"bricks":parts,"brick_partial":not selected.is_empty(),"bytes":bytes,"triangles":triangles,"worker_ms":(Time.get_ticks_usec()-begin)/1000.0,"region_parts":parts.size(),"geometry_cache_hits":hits,"region_stages":stages}
 
-func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, relight_cache: bool = false, brick_bottoms: Array = [], foreground: bool=false) -> Dictionary:
+func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, relight_cache: bool = false, brick_bottoms: Array = [], foreground: bool=false, startup: bool=false) -> Dictionary:
 	if not foreground and not _input_active(): disk_cache.advance_accounting()
 	if region_terrain: return _build_regions(key,expected_build_epoch,brick_bottoms,foreground)
-	if local_terrain and key.z>32: return _build_regions(key,expected_build_epoch,brick_bottoms,foreground,true)
+	if local_terrain and key.z>32: return _build_regions(key,expected_build_epoch,brick_bottoms,foreground,true,startup)
 	if brick_terrain and key.z<=32 and key.x+key.z<=2000 and key.y+key.z<=2000:
 		return _build_bricks(key,expected_build_epoch,brick_bottoms)
 	var begin: int = Time.get_ticks_usec()
@@ -1729,31 +1754,7 @@ func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, re
 	return result
 
 func _refresh_visibility(source_arrays: Array, expected_build_epoch: int) -> Dictionary:
-	var arrays: Array = source_arrays.duplicate()
-	var positions: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
-	var exact: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV2]
-	var classes := PackedFloat32Array()
-	classes.resize(exact.size())
-	for i in range(exact.size()):
-		classes[i] = exact[i].x
-	var request: PackedByteArray = Codec.command(11, [expected_build_epoch, positions.size()])
-	request.append_array(positions.to_byte_array())
-	request.append_array(normals.to_byte_array())
-	request.append_array(classes.to_byte_array())
-	var reply: PackedByteArray = _call(request)
-	if not Codec.reply_ok(reply) or reply.size() != 16 + positions.size() * 8:
-		if reply.size() >= 12 and reply.decode_u32(8) == 4:
-			return {"cancelled": true}
-		return {"error": "Visibility-only update failed"}
-	var visibility: PackedVector2Array = Codec._packed_channel(reply, 16, positions.size(), 8, TYPE_PACKED_VECTOR2_ARRAY)
-	arrays[Mesh.ARRAY_TEX_UV] = visibility
-	var cavity: bool = false
-	for sample: Vector2 in visibility:
-		if sample.x < 0.999:
-			cavity = true
-			break
-	return {"arrays": arrays, "cavity_visibility": cavity}
+	return native.refresh_mesh_visibility(source_arrays,expected_build_epoch)
 
 func _relight(item: Dictionary, expected_build_epoch: int) -> Dictionary:
 	# Reuse geometry and colliders. Pack GPU attributes natively on this worker.

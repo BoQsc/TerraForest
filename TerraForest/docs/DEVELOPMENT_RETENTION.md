@@ -9,6 +9,22 @@ world bytes; its GPU buffer checks write no image or geometry captures.
 
 # Development artifact retention
 
+Startup-native QA (2026-11-28) used the maintainer's one-time **+256 MiB reports
+and +256 MiB owned worlds** allowance for its focused checks and complete cold
+creation/interaction/restoration run. The launcher and focused-check wrapper
+restore normal limits at exit. No archive increase was requested or applied;
+its limit remains 10.375 GiB. Evidence is
+`reports/inhabited_island_world/20261128T171853338323Z`; its exact new fixture
+(60,146,489 bytes) uses `world.archive.json`, reviewed lake images and logs use
+`review_and_logs.archive.json`, and first-play uses `first_play.archive.json`.
+No player save or pinned evidence was selected. Focused pack checks admit
+512 KiB headless reports and zero worlds; the native startup probe admits
+512 KiB and zero worlds. Older ordinary pack results follow their existing
+two-ready receipt lifecycle. The rejected model trial is retained and documented.
+Normal headroom and the original human-save hash comparison are recorded in
+`reports/startup_native_20261128/{final_retention,retention_and_save_identity}.json`.
+
+
 Cold-generation reuse QA (2026-11-28) has an explicit further **128 MiB** archive
 approval, taking the shared admission/chunk-store limit from 10.25 to 10.375 GiB.
 The complete run `reports/inhabited_island_world/20261128T163050039431Z` used the
@@ -713,3 +729,11 @@ no player save was moved. The same-fixture recheck helper now recognizes both
 regional families, refuses human/review pins, and allows explicit diagnostic
 continuation only after verified completed assertions plus the exact known
 zero-reference warning. Strict results stay failed; unrelated failures stop.
+
+Startup QA final retention also removes JSON whitespace from five unpinned
+Inhabited-island world manifests. Every original manifest is first archived
+byte-for-byte in its adjacent `manifest_format.archive.json`; parsed values and
+restoration data are unchanged. Seven completed focused-check log pairs use
+`startup_logs.archive.json`, leaving test receipts and compact summaries ready.
+`reports/startup_native_20261128/metadata_retention.json` records all exact paths,
+old/new hashes and the normal-limit admission. Pinned manifests were excluded.

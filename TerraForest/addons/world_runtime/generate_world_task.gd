@@ -170,7 +170,7 @@ func run()->void:
   progress("Initializing generated terrain data",0,0,{"activity":game.startup_stage})
   await process_frame
  if result>=0 or not is_instance_valid(game):return
- FileAccess.open(output_dir.path_join("generation_startup.json"),FileAccess.WRITE).store_string(JSON.stringify({"stages_ms":game.startup_timings,"resource_slowest":resources.slowest},"  "))
+ FileAccess.open(output_dir.path_join("generation_startup.json"),FileAccess.WRITE).store_string(JSON.stringify({"stages_ms":game.startup_timings,"resource_slowest":resources.slowest,"pack_mesh":preload("res://addons/structures/pack_render_mesh.gd").preparation_profile},"  "))
  if not qualification and bake and root.has_meta("terraforest_scene_task"):
   warmed=resources.retained.duplicate()
   warmed.append(game.get_script());warmed.append(preload("res://addons/structures/pack_render_mesh.gd"))

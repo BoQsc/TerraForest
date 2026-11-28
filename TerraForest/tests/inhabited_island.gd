@@ -42,6 +42,7 @@ func legacy_samples()->Dictionary:
 func run()->void:
  if folder.is_empty():quit(2);return
  if "--compare-plans" in OS.get_cmdline_user_args():compare_plans();finish();return
+ if "--startup-native-probe" in OS.get_cmdline_user_args():startup_native_probe();finish();return
  if "--cold-native-probe" in OS.get_cmdline_user_args():cold_native_probe();finish();return
  if "--lake-margin-probe" in OS.get_cmdline_user_args():lake_margin_probe();finish();return
  if "--bake-lakes-only" in OS.get_cmdline_user_args():water_checks();finish();return
@@ -322,3 +323,39 @@ func check_plan_paths(paths:PackedStringArray)->bool:
 func finish()->void:
  print("INHABITED_ISLAND checks=",checks," failures=",failures)
  quit(1 if failures else 0)
+
+func startup_native_probe()->void:
+ var timings:Array=[]
+ for generator:int in [19,36,38]:
+  for seed_number:int in [1703,901]:
+   for step:int in [4,8]:
+    for origin:Vector2i in [Vector2i(576,448),Vector2i(1792,1984)]:
+     var serial:RefCounted=ClassDB.instantiate("TerrainCore");var parallel:RefCounted=ClassDB.instantiate("TerrainCore")
+     for core:RefCounted in [serial,parallel]:
+      core.execute(Codec.command(6,[seed_number,generator]))
+      var height:PackedFloat32Array=ClassDB.instantiate("NativeGenerationEarthworks").heights(core,PackedVector3Array([Vector3(origin.x+64,0,origin.y+8)]))
+      core.execute(Codec.brush(Vector3(origin.x+63,height[0],origin.y+7),Vector3(origin.x+66,height[0]+2,origin.y+10),4.0,0,false,1))
+     var epoch:int=serial.execute(Codec.command(13)).decode_u32(12)
+     var origins:=PackedVector2Array();var expected:Array=[]
+     for i in 4:origins.append(Vector2(origin.x+64*i,origin.y))
+     var began:=Time.get_ticks_usec()
+     for point:Vector2 in origins:expected.append(serial.build_owned_column(point.x,point.y,64,step,epoch))
+     var serial_us:=Time.get_ticks_usec()-began;began=Time.get_ticks_usec()
+     var actual:Array=parallel.build_owned_columns(origins,step,epoch)
+     var parallel_us:=Time.get_ticks_usec()-began
+     check(actual.size()==expected.size(),"bounded native startup batch completes %d/%s"%[generator,origin])
+     for i in actual.size():check(not expected[i].is_empty() and actual[i]==expected[i],"parallel landscape preserves exact vertices, lighting and collision %d/%s/%d"%[generator,origin,i])
+     timings.append({"generator":generator,"seed":seed_number,"step":step,"origin":str(origin),"serial_us":serial_us,"parallel_us":parallel_us})
+     if not actual.is_empty():
+      var arrays:Array=Codec.decode_mesh(actual[0]).arrays
+      var positions:PackedVector3Array=arrays[Mesh.ARRAY_VERTEX];var normals:PackedVector3Array=arrays[Mesh.ARRAY_NORMAL];var exact:PackedVector2Array=arrays[Mesh.ARRAY_TEX_UV2]
+      var classes:=PackedFloat32Array()
+      for value:Vector2 in exact:classes.append(value.x)
+      var request:=Codec.command(11,[epoch,positions.size()]);request.append_array(positions.to_byte_array());request.append_array(normals.to_byte_array());request.append_array(classes.to_byte_array())
+      var reference:PackedByteArray=serial.execute(request)
+      var refreshed:Dictionary=parallel.refresh_mesh_visibility(arrays,epoch)
+      check(refreshed.has("arrays") and refreshed.arrays[Mesh.ARRAY_TEX_UV].to_byte_array()==reference.slice(16),"native cached lighting equals prior packet path %d/%s"%[generator,origin])
+      check(parallel.refresh_mesh_visibility(arrays,epoch+1).get("cancelled",false),"stale cached lighting cancelled")
+     check(parallel.build_owned_columns(origins,step,epoch+1).is_empty(),"stale startup batch rejected")
+     check(parallel.build_owned_columns(PackedVector2Array([Vector2(0,0),Vector2(1,0)]),step,epoch).is_empty(),"unaligned startup batch rejected")
+ FileAccess.open(folder.path_join("startup_native_probe.json"),FileAccess.WRITE).store_string(JSON.stringify(timings,"  "))

@@ -19,6 +19,7 @@
 #include "region_world_archive.hpp"
 #include "block_pager.hpp"
 #include "model_transfer_scheduler.hpp"
+#include "pack_mesh.hpp"
 #include <godot_cpp/godot.hpp>
 using namespace godot;
 namespace terraforest {void register_owner_bounds();}
@@ -47,6 +48,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeRegionWorldArchive);
         GDREGISTER_CLASS(terraforest::NativeBlockPager);
         GDREGISTER_CLASS(terraforest::NativeModelTransferScheduler);
+        GDREGISTER_CLASS(terraforest::NativePackMesh);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

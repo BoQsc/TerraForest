@@ -12,6 +12,7 @@ signal exclusion_changed(bounds:AABB)
 @export var terrain:Node3D
 var blocks:Node3D
 var _structure_revision:=0
+var _occupancy_structure_revision:=0
 var _builder_structure_revision:=-1
 @export_range(1,16) var max_lakes:int=16
 var _lakes:Dictionary={}
@@ -195,21 +196,26 @@ func _ready() -> void:
   blocks.cells_changed.connect(_building_changed)
   _structure_revision=blocks.survey_content_revision_id()
   blocks.changed.connect(func():_structure_revision=blocks.survey_content_revision_id())
+  # Normal occupancy batches use the narrower version; edit receivers retain
+  # the global structure revision, including newly created water regions.
  _epoch=terrain.epoch
 var location_reset_hold:=false
 var _held_buildings:=AABB()
 func _building_changed(bounds:AABB)->void:
+ _receiver_survey={}
  bounds=blocks.global_transform*bounds
  if location_reset_hold:
   _held_buildings=bounds if not _held_buildings.has_volume() else _held_buildings.merge(bounds)
   return
- water.invalidate_buildings(bounds);_occupancy_failure="";_discard_builder()
+ if not water.invalidate_buildings(bounds):return
+ _occupancy_structure_revision+=1;_occupancy_failure="";_discard_builder()
  _settle_committed_edit(bounds,0)
 func release_location_reset()->void:
  location_reset_hold=false
  if _held_buildings.has_volume():
-  water.invalidate_buildings(_held_buildings);_occupancy_failure="";_discard_builder()
-  _settle_committed_edit(_held_buildings,0)
+  if water.invalidate_buildings(_held_buildings):
+   _occupancy_structure_revision+=1;_occupancy_failure="";_discard_builder()
+   _settle_committed_edit(_held_buildings,0)
  _held_buildings=AABB()
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:
  if _lakes.size()>=max_lakes:return 0
@@ -525,7 +531,7 @@ func _measured_step(delta:float)->void:
      _prepare_terrain_batch(water.next_requests(8 if ocean_only else 32,ocean_only),sampling_revision)
    if _builder==null or _revision!=sampling_revision:
     _builder=ClassDB.instantiate("NativeWaterTerrainPatch");_builder.configure(request.coordinate);_builder_reused=false;_revision=sampling_revision
-    _builder_structure_revision=_structure_revision
+    _builder_structure_revision=_occupancy_structure_revision
     if blocks!=null:
      var hull_started:=Time.get_ticks_usec()
      var solids:Dictionary=_structure_hulls(AABB(Vector3(request.coordinate)*4,Vector3(4,4,4)))
@@ -847,7 +853,7 @@ func _prepare_terrain_batch(coordinates:Array,sampling_revision:int) -> void:
  _discard_builder()
  _builder_reused=false
  _revision=sampling_revision
- _builder_structure_revision=_structure_revision
+ _builder_structure_revision=_occupancy_structure_revision
  var hull_started:=Time.get_ticks_usec()
  for coordinate:Vector3i in coordinates:
   var patch:RefCounted=ClassDB.instantiate("NativeWaterTerrainPatch")
@@ -1152,7 +1158,7 @@ func _slice_ready(token:int,status:int,epoch_id:int,revision:int) -> void:
    if int(info.status)<0:_slice_failure=info
  if token!=_token:return
  _busy=false
- if _builder==null or _builder_structure_revision!=_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.water_sampling_revision() or status==-4:_discard_builder();return
+ if _builder==null or _builder_structure_revision!=_occupancy_structure_revision or epoch_id!=terrain.epoch or revision!=terrain.water_sampling_revision() or status==-4:_discard_builder();return
  if status==0:return
  if status==1 and terrain.pending_edit and _settlement_ticket!=terrain.edit_ticket:
   _prepared_slice={"token":token,"epoch":epoch_id,"revision":revision}

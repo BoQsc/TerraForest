@@ -1669,7 +1669,7 @@ func _schedule() -> Dictionary:
 		if in_flight.get(key, Vector2i(-1, -1)) == version or staging_versions.get(key, Vector2i(-1, -1)) == version:
 			continue
 		var accepted: bool = backend.submit({"kind": "mesh", "key": key,
-			"stamp": version.y, "epoch": epoch, "base": not _tile_modified(key), "relight_cache": _tile_light_modified(key)})
+			"stamp": version.y, "epoch": epoch, "startup": initial_loading, "base": not _tile_modified(key), "relight_cache": _tile_light_modified(key)})
 		if accepted:
 			in_flight[key] = version
 			available -= 1
