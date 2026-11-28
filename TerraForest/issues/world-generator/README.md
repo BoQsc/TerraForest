@@ -4,6 +4,17 @@
 - User review: New UI and larger layouts not yet reviewed. Existing house approvals stay separate.
 - Request: Professional creation UI, controllable towns/cities, connected roads, offroads and biome choices; distributed lakes/settlements and faster generation/loading.
 
+## First-play map and native reuse — 2026-11-28
+
+**Map rebuild fixed; overall performance remains partial.**
+[Evidence and remaining work](../../docs/COLD_GENERATION_REUSE.md): the full
+cold path is **84.626608 s** versus the earlier 99.468834 s. Water, Blocks,
+Objects and terrain reuse saved maps with no rebuild queries. Native exact
+height sampling, prefab hashing and immutable retry inputs remove repeated
+work. All 129 functional checks pass; the zero-reference exit warning still
+rejects strict integration. The 30-second requirement, scene/landscape startup,
+remaining native migration and human quality approval remain open.
+
 ## Native shore habitats — 2026-11-28
 
 **Partial refinement; human visual approval and broader world quality remain
@@ -20,8 +31,8 @@ ordinary final run `reports/inhabited_island_world/20261128T155417394546Z` passe
 128 functional creation/interaction/fresh-restore assertions. All six lake views
 were inspected. **Cold Generate-to-play is 99.468834 s**, failing 30 s. Creation
 exits cleanly; interaction and restoration retain the known zero-reference
-shutdown warning. First-play Water rebuilds its map layer despite terrain,
-Blocks and Objects cache hits; investigate that revision identity next.
+shutdown warning. That baseline's first-play Water rebuild is fixed by the
+newer entry above; the original measurements remain retained.
 
 ![Final rounded inner arm and continuous banks](../../reports/inhabited_island_world/20261128T155417394546Z/island_lake_2_overview.png)
 

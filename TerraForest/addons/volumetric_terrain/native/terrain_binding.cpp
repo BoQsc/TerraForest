@@ -157,6 +157,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("build_owned_column","x","z","size","step","epoch"), &TerrainCore::build_owned_column);
         godot::ClassDB::bind_method(godot::D_METHOD("supports_isolated_worlds"), &TerrainCore::supports_isolated_worlds);
         godot::ClassDB::bind_method(godot::D_METHOD("build_variant"), &TerrainCore::build_variant);
+        godot::ClassDB::bind_method(godot::D_METHOD("configure_height_cache","enabled"), &TerrainCore::configure_height_cache);
         godot::ClassDB::bind_method(godot::D_METHOD("executing_command"), &TerrainCore::executing_command);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit","x","z","size","token","revision"), &TerrainCore::experimental_snapshot_submit);
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_snapshot_submit_brick","x","z","size","token","revision","y_begin","y_end"), &TerrainCore::experimental_snapshot_submit_brick);
@@ -492,6 +493,7 @@ public:
     void experimental_snapshot_stop(){std::lock_guard<std::mutex> lock(mutex_);if(snapshot_worker_)snapshot_worker_->stop();}
     bool supports_isolated_worlds() const {return true;}
     int64_t executing_command() const {return active_command_.load(std::memory_order_relaxed);}
+    void configure_height_cache(bool enabled){std::lock_guard<std::mutex> lock(mutex_);world_.height_cache_enabled=enabled;}
     godot::String build_variant() const {
 #ifdef DEBUG_ENABLED
         return "template_debug";
@@ -775,6 +777,10 @@ private:
         dst.revision=world_.revision;dst.contact_revision=dst.revision;dst.surface_style=world_.surface_style;dst.cache_mesh_heights=true;
         dst.profile_mesh=world_.profile_mesh;
         dst.regional_roads=world_.regional_roads;dst.site_count=world_.site_count;dst.basin_count=world_.basin_count;
+        dst.immutable_height_identity=world_.immutable_height_identity;
+        dst.height_cache_enabled=world_.height_cache_enabled;
+        copy_bytes(dst.island_ridges,world_.island_ridges,sizeof(dst.island_ridges));
+        copy_bytes(dst.lake_fields,world_.lake_fields,sizeof(dst.lake_fields));
         copy_bytes(dst.sites,world_.sites,sizeof(dst.sites));
         copy_bytes(dst.road_points,world_.road_points,sizeof(dst.road_points));
         copy_bytes(dst.buildable_weights,world_.buildable_weights,sizeof(dst.buildable_weights));

@@ -17,21 +17,9 @@ const Metropolis=preload("res://addons/structures/metropolis_catalog.gd")
 # Hash loaded content: exported .tres paths are remapped to binary resources.
 # Include planning metadata (entrances, surface offsets, trader anchor), not just cells.
 static func prefab_fingerprint(asset:Resource)->String:
- var metadata:Array=[]
- var keys:=PackedStringArray(asset.get_meta_list());keys.sort()
- for key:String in keys:metadata.append([key,asset.get_meta(key)])
- return Survey.digest(var_to_bytes(canonical_value([asset.get_records(),asset.get_model_attachments(),metadata]))).hex_encode()
+ return ClassDB.instantiate("NativeGenerationEarthworks").prefab_fingerprint(asset)
 static func canonical_value(value:Variant)->Variant:
- if value is Dictionary:
-  var ordered:Dictionary={};var keys:Array=value.keys();keys.sort_custom(func(a,b):return str(a)<str(b))
-  for key in keys:ordered[canonical_value(key)]=canonical_value(value[key])
-  return ordered
- if value is Array:
-  var ordered:Array=[]
-  for item in value:ordered.append(canonical_value(item))
-  return ordered
- if value is StringName:return str(value)
- return value
+ return ClassDB.instantiate("NativeGenerationEarthworks").canonical_value(value)
 static func read_plan(path:String,key:String,profile:Dictionary={})->Dictionary:
  var began:=Time.get_ticks_usec()
  var file:=FileAccess.open(path,FileAccess.READ)
@@ -71,7 +59,7 @@ static func read_plan(path:String,key:String,profile:Dictionary={})->Dictionary:
  value["mineral_plan_ms"]=0.0
  profile["hydrate_ms"]=(Time.get_ticks_usec()-began)/1000.0
  return value
-static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null,civic_review:bool=false,rejected_intro_sites:Array=[])->Dictionary:
+static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null,civic_review:bool=false,rejected_intro_sites:Array=[],context:Dictionary={})->Dictionary:
  var started:=Time.get_ticks_usec()
  var cache_profile:Dictionary={}
  var encoded:=Recipe.encode(options)
@@ -79,35 +67,45 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38]:return {"ok":false,"reason":"Unsupported world recipe"}
  if progress!=null:progress.record("Checking the binary placement-plan cache",0,0,"Seed %d / terrain %d / recipe v%d"%[seed_value,generator,VERSION])
  if int(options.get("profile",0))==2 and generator not in [36,37,38]:return {"ok":false,"reason":"Inhabited island requires its island terrain profile"}
- var core=ClassDB.instantiate("TerrainCore")
- var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
- var terrain_library:="res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll" if suffix=="template_release" else "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
- var key:="%d|%d|%d|%s|%s|%s"%[VERSION,seed_value,generator,encoded.hex_encode(),FileAccess.get_sha256(terrain_library),FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)]
- key+="|civic-r1" if civic_review else "|approved-e2-civic"
- if int(options.get("introduction",0))==1:key+="|"+FileAccess.get_sha256("res://addons/vehicle_runtime/bin/vehicle_runtime.windows.%s.x86_64.dll"%suffix)
- key+="|"+FileAccess.get_sha256(Exploration.PATH)
- for mine_layout:Dictionary in Exploration.load_catalog():
-  if mine_layout.id=="coal_mine":key+="|"+prefab_fingerprint(Exploration.prefab(mine_layout))
- key+="|"+prefab_fingerprint(Watchtowers.asset())
- if not civic_review:
-  for id:String in preload("res://addons/structures/expansion_catalog.gd").IDS:key+="|"+prefab_fingerprint(preload("res://addons/structures/expansion_catalog.gd").asset(id))
- if int(options.get("profile",0)) in [1,2]:
-  for block in 3:
-   for asset:Resource in Metropolis.sources(block):key+="|"+prefab_fingerprint(asset)
- if civic_review:
-  for id:String in Civic.IDS:key+="|"+prefab_fingerprint(load("res://addons/structures/prefabs/civic_review_"+id+".tres"))
- var path:=folder.path_join("recipe_%d_%s.bin"%[VERSION,Survey.digest(key.to_utf8_buffer()).hex_encode()])
- cache_profile["identity_ms"]=(Time.get_ticks_usec()-started)/1000.0
- var cached:=read_plan(path,key,cache_profile)
- if not cached.is_empty():cached["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0;cached["cache_profile"]=cache_profile;return cached
- if not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {"ok":false,"reason":"Native terrain initialization failed"}
- var lake_audit:Dictionary={}
- if generator>=32:
-  var lakes:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(core,generator)
-  lake_audit=core.survey_generated_lake_surfaces(lakes.records)
-  lake_audit.erase("points")
-  if not lake_audit.get("ok",false) or int(lake_audit.get("extensive_count",0))<3:return {"ok":false,"reason":"The landscape could not fit three connected long lakes","lake_audit":lake_audit}
- var layout:=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
+ var core:RefCounted
+ var key:String
+ var path:String
+ var lake_audit:Dictionary
+ if context.is_empty():
+  core=ClassDB.instantiate("TerrainCore")
+  var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
+  var terrain_library:="res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll" if suffix=="template_release" else "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
+  key="%d|%d|%d|%s|%s|%s"%[VERSION,seed_value,generator,encoded.hex_encode(),FileAccess.get_sha256(terrain_library),FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)]
+  key+="|civic-r1" if civic_review else "|approved-e2-civic"
+  if int(options.get("introduction",0))==1:key+="|"+FileAccess.get_sha256("res://addons/vehicle_runtime/bin/vehicle_runtime.windows.%s.x86_64.dll"%suffix)
+  key+="|"+FileAccess.get_sha256(Exploration.PATH)
+  for mine_layout:Dictionary in Exploration.load_catalog():
+   if mine_layout.id=="coal_mine":key+="|"+prefab_fingerprint(Exploration.prefab(mine_layout))
+  key+="|"+prefab_fingerprint(Watchtowers.asset())
+  if not civic_review:
+   for id:String in preload("res://addons/structures/expansion_catalog.gd").IDS:key+="|"+prefab_fingerprint(preload("res://addons/structures/expansion_catalog.gd").asset(id))
+  if int(options.get("profile",0)) in [1,2]:
+   for block in 3:
+    for asset:Resource in Metropolis.sources(block):key+="|"+prefab_fingerprint(asset)
+  if civic_review:
+   for id:String in Civic.IDS:key+="|"+prefab_fingerprint(load("res://addons/structures/prefabs/civic_review_"+id+".tres"))
+  path=folder.path_join("recipe_%d_%s.bin"%[VERSION,Survey.digest(key.to_utf8_buffer()).hex_encode()])
+  cache_profile["identity_ms"]=(Time.get_ticks_usec()-started)/1000.0
+  var cached:=read_plan(path,key,cache_profile)
+  if not cached.is_empty():cached["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0;cached["cache_profile"]=cache_profile;return cached
+  if not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {"ok":false,"reason":"Native terrain initialization failed"}
+  lake_audit={}
+  if generator>=32:
+   var lakes:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(core,generator)
+   lake_audit=core.survey_generated_lake_surfaces(lakes.records)
+   lake_audit.erase("points")
+   if not lake_audit.get("ok",false) or int(lake_audit.get("extensive_count",0))<3:return {"ok":false,"reason":"The landscape could not fit three connected long lakes","lake_audit":lake_audit}
+  context.merge({"core":core,"key":key,"path":path,"lake_audit":lake_audit,"cache_profile":cache_profile})
+ else:
+  core=context.core;key=context.key;path=context.path;lake_audit=context.lake_audit;cache_profile=context.cache_profile
+  cache_profile["input_reuses"]=int(cache_profile.get("input_reuses",0))+1
+ if not context.has("layout"):context["layout"]=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
+ var layout:Dictionary=context.layout
  var sites:Array=[];var occupied:Array=[];var works:Dictionary={"ok":true,"segments":[],"bounds":AABB()}
  var distributed:=generator>=24
  var introduction_home:bool=int(options.get("introduction",0))==1 and not civic_review
@@ -129,7 +127,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    site=Planner.locate(core,hint,civic_occupied,Rect2(),Civic.recipe.bind(civic_review,introduction_home),Civic.streets,Vector2(180,224),road_grid,true) if town==0 and primary_civic else (Market.locate(core,hint,occupied[0],civic_review,road_grid,true) if town==1 else Planner.locate(core,hint,occupied,Rect2(),Callable(),Callable(),Vector2(150,200),road_grid,true))
   if not site.get("ok",false):
    site["reason"]="Settlement %d: %s"%[town+1,site.get("reason","Site fitting failed")]
-   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review,rejected_intro_sites) if distributed or town==2 else site
+   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review,rejected_intro_sites,context) if distributed or town==2 else site
   site["recipe_kind"]="civic" if town==0 and primary_civic else ("market" if town==1 else "neighborhood");site["town"]=town;site["district"]=0;site["introduction_home"]=introduction_home and site.recipe_kind=="civic"
   var earthworks:=Planner.earthworks(site)
   if not earthworks.get("ok",false):return earthworks
@@ -167,18 +165,18 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   if not site.get("ok",false):
    site["reason"]="Settlement %d district %d: %s"%[town+1,district+1,site.get("reason","Site fitting failed")]
    site["hint"]=hint;site["search_area"]=search_area
-   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review,rejected_intro_sites)
+   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review,rejected_intro_sites,context)
   site["recipe_kind"]="civic" if civic_district else ("city" if district==1 else "neighborhood");site["town"]=town;site["district"]=district;site["introduction_home"]=introduction_home and civic_district
   var earthworks:=Planner.earthworks(site)
   if not earthworks.get("ok",false):return earthworks
   occupied.append(earthworks.bounds);sites.append(site);works.bounds=works.bounds.merge(earthworks.bounds);works.segments.append_array(earthworks.segments)
  if int(options.get("profile",0)) in [1,2]:
   var metropolitan:=Metropolis.locate(core,road_grid,layout_variant,progress,int(options.get("profile",1)),seed_value)
-  if not metropolitan.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,metropolitan,progress,civic_review,rejected_intro_sites)
+  if not metropolitan.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,metropolitan,progress,civic_review,rejected_intro_sites,context)
   sites=metropolitan.sites;occupied=metropolitan.occupied;works=metropolitan.works
  if introduction_home:
   var spawn:=preload("res://addons/world_runtime/introduction_spawn.gd").select(sites)
-  if not spawn.ok:return retry(seed_value,generator,options,folder,layout_variant,started,spawn,progress,civic_review,rejected_intro_sites)
+  if not spawn.ok:return retry(seed_value,generator,options,folder,layout_variant,started,spawn,progress,civic_review,rejected_intro_sites,context)
  var protected:=Planner.reservations(core,layout.sites[hints[0]].position)
  if not protected.get("ok",false):return {"ok":false,"reason":"Native route reservations unavailable"}
  var reserved:Array=protected.areas.duplicate()
@@ -204,7 +202,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   exits.append(points);streets.append_array(site.roads)
  if progress!=null:progress.record("Connecting %d districts and planning offroads"%sites.size(),0,0,"Native A* / shared crossing grades / up to %d wilderness trails"%[options.trails*sites.size()])
  var network:Dictionary=core.plan_region_network(exits,reserved,options.network,options.trails,seed_value,streets,7.5 if int(options.get("profile",0)) in [1,2] else 5.0)
- if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review,rejected_intro_sites)
+ if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review,rejected_intro_sites,context)
  var normalization:Dictionary={"enabled":false}
  if int(options.get("road_grid",0))>0:
   if progress!=null:progress.record("Planning build-friendly road grades",0,0,("Native footprint rules" if int(options.road_grid)==3 else "Native connected grades" if int(options.road_grid)==2 else "Native road normalization")+" / protected entrances / full-width cut and fill survey")
@@ -219,7 +217,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
     print("REGION_GRADE_REJECTION ",JSON.stringify({"reason":normalization.get("reason",""),"position":str(normalization.get("position","")),"owner":failed_road.get("normalization_owner",0),"start":str(failed_road.get("start","")),"finish":str(failed_road.get("finish","")),"reroute":normalization.has("reroute_position")}))
    if not connected:return normalization
    if not normalization.has("reroute_position") or attempt%3==2:
-    if network_mode==0:return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review,rejected_intro_sites)
+    if network_mode==0:return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review,rejected_intro_sites,context)
     network_mode-=1;exclusions=reserved.duplicate()
     if progress!=null:progress.record("Rejecting optional road loops that exceed terrain limits",options.network-network_mode,options.network,"All districts still required / no relaxation of earthworks or crossing rules")
    else:
@@ -227,8 +225,8 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
     exclusions.append(Rect2(Vector2(failed.x-4,failed.z-4),Vector2(8,8)))
     if progress!=null:progress.record("Replanning a road that failed its terrain limits",attempt+1,9,"Connected grades / alternate native corridor / no silent fallback")
    network=core.plan_region_network(exits,exclusions,network_mode,options.trails,seed_value,streets,7.5 if int(options.get("profile",0)) in [1,2] else 5.0)
-   if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review,rejected_intro_sites)
-  if not normalization.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review,rejected_intro_sites)
+   if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review,rejected_intro_sites,context)
+  if not normalization.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review,rejected_intro_sites,context)
   network["accepted_network_mode"]=network_mode
   network["optional_loops_reduced"]=network_mode<int(options.network)
   normalization["reroute_exclusions"]=exclusions.size()-reserved.size()
@@ -267,7 +265,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   result["metropolis_audit"]=Recipe.codec().audit_island(sites,result.get("bridges",[])) if int(options.get("profile",0))==2 else Metropolis.audit(sites,result.get("bridges",[]))
   if not result.metropolis_audit.ok:
    if "--plan-diagnostics" in OS.get_cmdline_user_args():print("METROPOLIS_AUDIT_REJECTION ",JSON.stringify(result.metropolis_audit))
-   return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"Metropolis content, bridge or regional coverage requirements were not met","metropolis_audit":result.metropolis_audit},progress,civic_review,rejected_intro_sites)
+   return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"Metropolis content, bridge or regional coverage requirements were not met","metropolis_audit":result.metropolis_audit},progress,civic_review,rejected_intro_sites,context)
  if generator>=29:
   if progress!=null:progress.record("Fitting small mines and caves",0,0,"Native bounded hillside search / authored rooms / roof cover and dry approaches")
   var layouts:=Exploration.load_catalog()
@@ -282,7 +280,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    for place:Dictionary in roads.places:
     if place.id==250:trader=place.position;break
    var stop_survey:Dictionary=journey.round_trip_stops(trader,80)
-   if not stop_survey.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"Trader route survey failed: "+str(stop_survey.get("reason","unavailable"))},progress,civic_review,rejected_intro_sites)
+   if not stop_survey.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"Trader route survey failed: "+str(stop_survey.get("reason","unavailable"))},progress,civic_review,rejected_intro_sites,context)
    road_stops=stop_survey.stops
    if "--plan-diagnostics" in OS.get_cmdline_user_args():
     var physical_component:PackedVector3Array=journey.connected_stops(trader,80)
@@ -293,7 +291,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
     for stop:Vector3 in road_stops:stop_bounds=stop_bounds.expand(stop)
     print("MINE_STOP_DIAGNOSTIC ",{"seed":seed_value,"terrain":generator,"variant":layout_variant,"legal_stops":road_stops.size(),"physical_stops":journey.get_stops().size(),"bounds":stop_bounds,"trader":trader,"states":stop_survey.states})
    if progress!=null:progress.record("Finding mine access with a return route",road_stops.size(),journey.get_stops().size(),"Surveying only stops the trader can drive to and return from")
-   if road_stops.is_empty():return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"The trader needs road stops with a legal forward route out and back"},progress,civic_review,rejected_intro_sites)
+   if road_stops.is_empty():return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"The trader needs road stops with a legal forward route out and back"},progress,civic_review,rejected_intro_sites,context)
   var exploration:Dictionary={}
   var connected:bool=journey==null
   var route_reason:="No terrain-fitted coal mine near a connected road"
@@ -331,7 +329,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    rejected_intro_sites=rejected_intro_sites.duplicate()
    for site:Dictionary in sites:
     if site.recipe_kind=="civic":rejected_intro_sites.append(Planner.earthworks(site).bounds.grow(32))
-   return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"No terrain-fitted coal mine with a connected trader round trip. "+route_reason},progress,civic_review,rejected_intro_sites)
+   return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"No terrain-fitted coal mine with a connected trader round trip. "+route_reason},progress,civic_review,rejected_intro_sites,context)
   result["exploration"]=exploration
   for location:Dictionary in exploration.sites:
    var layout_entry:Dictionary=layouts.filter(func(value:Dictionary):return value.id==location.id)[0]
@@ -387,16 +385,17 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   var file:=FileAccess.open(temporary,FileAccess.WRITE)
   if file!=null:
    file.store_buffer(checksum);file.store_buffer(bytes);file.close()
-   if not read_plan(temporary,key).is_empty():result.cache_persisted=DirAccess.rename_absolute(temporary,path)==OK
+   if FileAccess.get_file_as_bytes(temporary)==checksum+bytes:result.cache_persisted=DirAccess.rename_absolute(temporary,path)==OK
    if FileAccess.file_exists(temporary):DirAccess.remove_absolute(temporary)
  result["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0
+ result["cache_profile"]=cache_profile
  result["cache_path"]=path
  return result
-static func retry(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int,started:int,failure:Dictionary,progress:RefCounted,civic_review:bool=false,rejected_intro_sites:Array=[])->Dictionary:
+static func retry(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int,started:int,failure:Dictionary,progress:RefCounted,civic_review:bool=false,rejected_intro_sites:Array=[],context:Dictionary={})->Dictionary:
  if "--plan-diagnostics" in OS.get_cmdline_user_args():print("LAYOUT_RETRY_DIAGNOSTIC ",{"variant":layout_variant,"reason":failure.get("reason"),"isolated_district":failure.get("isolated_district"),"route_attempts":failure.get("route_attempts"),"crossing_rejections":failure.get("crossing_rejections")})
  var elapsed:float=(Time.get_ticks_usec()-started)/1000.0
  if layout_variant>=3:failure["worker_ms"]=elapsed;return failure
- var result:=build(seed_value,generator,options,folder,layout_variant+1,progress,civic_review,rejected_intro_sites)
+ var result:=build(seed_value,generator,options,folder,layout_variant+1,progress,civic_review,rejected_intro_sites,context)
  result["worker_ms"]=float(result.get("worker_ms",0))+elapsed
  return result
 static func locate_expansion(core:RefCounted,hint:Vector3,occupied:Array,area:Rect2,district:int,civic:bool=false,road_grid:int=0,introduction_home:bool=false,global_search:bool=false)->Dictionary:

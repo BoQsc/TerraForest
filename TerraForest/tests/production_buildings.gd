@@ -61,6 +61,7 @@ func run()->void:
 		for overlay:Node in [atlas.water_survey,atlas.block_survey,atlas.model_survey]:
 			map_reuse[overlay.caption]={"cache_hits":overlay.cache_hits,"fast_cache_hits":overlay.fast_cache_hits,"cache_writes":overlay.cache_writes,"builds":overlay.builds,"source_calls":overlay.source_calls,"visibility_calls":overlay.visibility_calls}
 		FileAccess.open(folder.path_join("first_play_map_reuse.json"),FileAccess.WRITE).store_string(JSON.stringify(map_reuse,"  "))
+		if inhabited_island:check(map_reuse.Water.fast_cache_hits==1 and map_reuse.Water.source_calls==0 and map_reuse.Water.visibility_calls==0,"first play reuses the certified water map without rebuilding")
 		check(current_scene.ground_enabled and current_scene.ground_cover.is_processing(),"ordinary Generate-to-play keeps ground vegetation enabled")
 		var state:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(status_path))
 		var receipt:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(state.report).path_join("run.json")))

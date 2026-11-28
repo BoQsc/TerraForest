@@ -46,9 +46,10 @@ Bounded native filling restores the missing lake arm; continuous banks, rolling
 shoulders and persisted grove/meadow blends improve the shores. Existing human
 saves remain unchanged. The laboratory passes 91 checks and the full world
 passes 128 functional assertions with vegetation enabled. All six final lake
-views were inspected. Cold Generate-to-play is **99.469 s**, failing 30 s; strict
-shutdown warnings remain. First-play Water rebuilds its map layer while other
-layers reuse their caches. Broad smooth areas, city/town graphs, broader seeds
+views were inspected. The subsequent [native reuse pass](../docs/COLD_GENERATION_REUSE.md)
+fixes first-play Water rebuilding and measures **84.627 s** versus 99.469 s,
+still failing 30 s. All layers now reuse certified maps; 129 functional checks
+pass, while strict shutdown warnings remain. Broad smooth areas, city/town graphs, broader seeds
 and human approval remain open. Earlier angular-margin and bank-crease images,
 failed trials and the unexplained resource-loading crash remain retained.
 

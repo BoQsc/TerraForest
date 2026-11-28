@@ -42,6 +42,7 @@ var additional_surface_candidates:Callable
 var additional_surface_ready:Callable
 # Host may defer distant startup work; normal streaming retains all owners.
 var admit_owner:Callable
+var loading_active:Callable
 
 func coverage_status()->Dictionary:
 	return {"enabled":world_coverage,"ready":not world_coverage or (_wanted.size()==1024 and resident.size()==1024 and _reconcile.is_empty() and _resample.is_empty() and _pending_cells.is_empty()),"owners":resident.size(),"total":1024 if world_coverage else _wanted.size(),"pending":_pending_cells.size(),"reconcile":_reconcile.size(),"resample":_resample.size(),"rejected":rejected_batches}
@@ -179,7 +180,10 @@ func _step(_delta: float) -> void:
 		_last_radius = stream_radius
 		_last_limit = max_resident_cells
 		_refresh(cell)
-	if terrain.pending_edit or _requests.size() >= 2:
+	# Fill the existing bounded native terrain queue during loading. Gameplay
+	# retains its smaller admission window; no collision/readiness work is skipped.
+	var request_limit:=8 if loading_active.is_valid() and loading_active.call() else 2
+	if terrain.pending_edit or _requests.size() >= request_limit:
 		return
 	if resident.size() == _wanted.size() and _resample.is_empty():
 		return
@@ -210,7 +214,7 @@ func _step(_delta: float) -> void:
 			_requests[_token] = candidates
 			_pending_cells[key] = _token
 			admitted+=1
-		if not submitted or not world_coverage or admitted>=8 or _requests.size()>=2:break
+		if not submitted or not world_coverage or admitted>=8 or _requests.size()>=request_limit:break
 
 func _refresh(center: Vector2i) -> void:
 	var candidates: Array[Vector2i] = _scatter().world_cells(center) if world_coverage else _scatter().wanted_cells(center, stream_radius, max_resident_cells, true)

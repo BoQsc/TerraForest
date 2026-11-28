@@ -41,6 +41,8 @@ func legacy_samples()->Dictionary:
  return output
 func run()->void:
  if folder.is_empty():quit(2);return
+ if "--compare-plans" in OS.get_cmdline_user_args():compare_plans();finish();return
+ if "--cold-native-probe" in OS.get_cmdline_user_args():cold_native_probe();finish();return
  if "--lake-margin-probe" in OS.get_cmdline_user_args():lake_margin_probe();finish();return
  if "--bake-lakes-only" in OS.get_cmdline_user_args():water_checks();finish();return
  if "--legacy-reference" in OS.get_cmdline_user_args():
@@ -241,6 +243,82 @@ func lake_margin_probe()->void:
   check(bend<.3,"dry bank joins contain no guide-switch height steps")
   FileAccess.open(folder.path_join("shore_continuity.json"),FileAccess.WRITE).store_string(JSON.stringify({"spacing_m":.25,"samples":field.size(),"maximum_second_difference_m":bend,"maximum_adjacent_height_m":step_height,"bounds":[1684,1394,1704,1414]},"  "))
 
+func reference_canonical(value:Variant)->Variant:
+ if value is Dictionary:
+  var result:Dictionary={};var keys:Array=value.keys();keys.sort_custom(func(a,b):return str(a)<str(b))
+  for key in keys:result[reference_canonical(key)]=reference_canonical(value[key])
+  return result
+ if value is Array:
+  var result:Array=[]
+  for item in value:result.append(reference_canonical(item))
+  return result
+ return str(value) if value is StringName else value
+func cold_native_probe()->void:
+ var core:RefCounted=ClassDB.instantiate("TerrainCore")
+ var batch:RefCounted=ClassDB.instantiate("NativeGenerationEarthworks")
+ var points:=PackedVector3Array()
+ for z in range(1280,1345):
+  for x in range(1536,1601):points.append(Vector3(x+.125,0,z+.375))
+ var timings:Array=[]
+ for generator:int in [19,36,37,38]:
+  for seed_number:int in [1703,901,1703]:
+   core.execute(Codec.command(6,[seed_number,generator]))
+   core.configure_height_cache(false)
+   var began:=Time.get_ticks_usec();var expected:PackedFloat32Array=batch.heights(core,points);var uncached:=Time.get_ticks_usec()-began
+   core.configure_height_cache(true);began=Time.get_ticks_usec()
+   var first:PackedFloat32Array=batch.heights(core,points);var second:PackedFloat32Array=batch.heights(core,points)
+   var cached:=Time.get_ticks_usec()-began
+   check(expected.to_byte_array()==first.to_byte_array() and expected.to_byte_array()==second.to_byte_array(),"exact native height reuse across seed/profile changes %d/%d"%[generator,seed_number])
+   timings.append({"generator":generator,"seed":seed_number,"samples":points.size(),"uncached_us":uncached,"cold_and_reused_us":cached})
+ for generator:int in [36,37,38]:
+  core.execute(Codec.command(6,[1703,generator]))
+  core.configure_height_cache(false) # Reader equivalence must not borrow authority cache hits.
+  var revision:int=core.field_patch_state().revision;var epoch:int=core.execute(Codec.command(13)).decode_u32(12)
+  for origin:Vector2i in [Vector2i(624,480),Vector2i(1456,640),Vector2i(1584,1328)]:
+   var surface:PackedFloat32Array=batch.heights(core,PackedVector3Array([Vector3(origin.x,0,origin.y)]))
+   var reader:RefCounted=core.capture_edit_field(Rect2i(origin-Vector2i(8,8),Vector2i(32,32)),revision,epoch)
+   var packet:=Codec.command(43,[revision,epoch,origin.x,floori(surface[0]/4)*4,origin.y])
+   var expected:PackedByteArray=core.execute(packet)
+   check(reader!=null and Codec.reply_ok(expected) and reader.execute(packet)==expected,"sealed native reader preserves island ridge/lake contacts %d/%s"%[generator,origin])
+ var asset:Resource=ClassDB.instantiate("NativeBlockPrefab")
+ asset.configure(PackedInt32Array([0,0,0,1,1,0,0,65]));asset.set_meta("z",{&"nested":[&"name",{"b":2,"a":1}]});asset.set_meta("a",Vector3(1,2,3))
+ var metadata:Array=[];var keys:=PackedStringArray(asset.get_meta_list());keys.sort()
+ for key:String in keys:metadata.append([key,asset.get_meta(key)])
+ var fields:Array=[asset.get_records(),asset.get_model_attachments(),metadata]
+ var expected:PackedByteArray=var_to_bytes(reference_canonical(fields))
+ var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256);hash.update(expected)
+ check(var_to_bytes(batch.canonical_value(fields))==expected and batch.prefab_fingerprint(asset)==hash.finish().hex_encode(),"native planning fingerprint preserves prior canonical bytes and metadata")
+ asset.set_meta("a",Vector3(1,3,3));check(batch.prefab_fingerprint(asset)!=preload("res://addons/world_runtime/survey_cache.gd").digest(expected).hex_encode(),"planning metadata changes invalidate native fingerprint")
+ FileAccess.open(folder.path_join("cold_native_probe.json"),FileAccess.WRITE).store_string(JSON.stringify(timings,"  "))
+func compare_plans()->void:
+ var paths:PackedStringArray=[]
+ for argument:String in OS.get_cmdline_user_args():
+  if argument.begins_with("--plan-before="):paths.insert(0,argument.trim_prefix("--plan-before="))
+  if argument.begins_with("--plan-after="):paths.append(argument.trim_prefix("--plan-after="))
+ if not check_plan_paths(paths):return
+ var plans:Array=[]
+ for path:String in paths:
+  var bytes:=FileAccess.get_file_as_bytes(path)
+  var valid:bool=bytes.size()>32 and preload("res://addons/world_runtime/survey_cache.gd").digest(bytes.slice(32))==bytes.slice(0,32)
+  check(valid,"compiled plan checksum verified")
+  if not valid:return
+  var plan:Dictionary=bytes_to_var(bytes.slice(32))
+  plan.erase("recipe_key") # Native-library identity deliberately changes.
+  for section:String in ["exploration","watchtowers"]:
+   if plan.has(section):plan[section].erase("worker_ms")
+  plans.append(plan)
+ var differences:Array=[]
+ for key in plans[0]:
+  if not plans[1].has(key) or var_to_bytes(plans[0][key])!=var_to_bytes(plans[1][key]):differences.append(key)
+ for key in plans[1]:
+  if not plans[0].has(key):differences.append(key)
+ check(differences.is_empty(),"complete cold-plan payload unchanged apart from native identity and observation timings")
+ FileAccess.open(folder.path_join("plan_equivalence.json"),FileAccess.WRITE).store_string(JSON.stringify({"paths":paths,"differences":differences},"  "))
+func check_plan_paths(paths:PackedStringArray)->bool:
+ var valid:=paths.size()==2
+ for path:String in paths:valid=valid and FileAccess.file_exists(path)
+ check(valid,"both retained compiled plans available")
+ return valid
 func finish()->void:
  print("INHABITED_ISLAND checks=",checks," failures=",failures)
  quit(1 if failures else 0)

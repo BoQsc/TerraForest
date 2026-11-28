@@ -1,5 +1,11 @@
 # Curved lake fills and native shore habitats
 
+The subsequent [native reuse measurement](COLD_GENERATION_REUSE.md) fixes the
+first-play water-map rebuild and reduces the full cold path to 84.627 s, still
+above 30 s. This document retains the earlier 99.469 s shoreline baseline and
+its separate quality evidence. Current archive capacity is 10.375 GiB following
+the explicitly approved cold-path QA increment.
+
 2026-11-28. New ordinary **Inhabited island · living shores** worlds use terrain
 38 and LFP1 v3. Earlier terrain IDs and laboratory kernels remain immutable.
 Original implementation and tests are AI-assisted 0BSD work; the frozen v2

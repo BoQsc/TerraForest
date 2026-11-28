@@ -7,6 +7,7 @@
 #include "generation_contact.hpp"
 #include <array>
 #if defined(TERRAFOREST_TYPED_BRIDGE)
+#include <atomic>
 #include <chrono>
 #include <algorithm>
 #include <memory>
@@ -229,7 +230,35 @@ static float cached_height(const World &world,EditHeightCache *storage,int x,int
  entry.value=world.height(float(x),float(z));entry.key=key;return entry.value;
 }
 float World::edit_height(int x,int z)const{return cached_height(*this,edit_height_cache,x,z);}
+#if defined(TERRAFOREST_TYPED_BRIDGE)
+// Exact immutable field reuse across planning, contacts, maps and mesh sampling.
+// Thread-local direct mapping: bounded 768 KiB, no shared lock or per-query allocation.
+// Mutable voxel edits are evaluated by their existing owners after this base field.
+namespace {
+struct HeightMemo {u64 identity=0,coordinates=0;float value=0;bool developed=false;};
+thread_local std::array<HeightMemo,32768> height_memo;
+std::atomic<u64> next_height_identity{1};
+struct HeightConfiguration {
+ World &world;
+ explicit HeightConfiguration(World &w):world(w){world.immutable_height_identity=0;}
+ ~HeightConfiguration(){world.immutable_height_identity=next_height_identity.fetch_add(1,std::memory_order_relaxed);}
+};
+}
+#endif
 float World::height(float x,float z,bool developed)const{
+#if defined(TERRAFOREST_TYPED_BRIDGE)
+ if(height_cache_enabled&&immutable_height_identity){
+  u32 a,b;copy_bytes(&a,&x,4);copy_bytes(&b,&z,4);
+  const u64 coordinates=u64(a)|(u64(b)<<32);
+  auto &entry=height_memo[hash32(a^hash32(b)^u32(developed)*0x9e3779b9u)&32767];
+  if(entry.identity==immutable_height_identity&&entry.coordinates==coordinates&&entry.developed==developed)return entry.value;
+  const float value=uncached_height(x,z,developed);
+  entry={immutable_height_identity,coordinates,value,developed};return value;
+ }
+#endif
+ return uncached_height(x,z,developed);
+}
+float World::uncached_height(float x,float z,bool developed)const{
  float h=inland_height(x,z,developed);
   if((generator_id==REFINED_ISLAND_GENERATOR_ID||generator_id==SHORE_HABITAT_GENERATOR_ID)){
    float dx=mn(x,float(WORLD)-x),dz=mn(z,float(WORLD)-z),edge=mn(dx,dz);
@@ -530,6 +559,9 @@ void World::init(int p_seed,u32 generator){
  index_cave_columns();
 }
 void World::init_generator(int p_seed,u32 generator){
+#if defined(TERRAFOREST_TYPED_BRIDGE)
+ HeightConfiguration configuration(*this); // Do not cache partially constructed geography.
+#endif
  seed=p_seed;generator_id=(generator==INHABITED_ISLAND_GENERATOR_ID||(generator==REFINED_ISLAND_GENERATOR_ID||generator==SHORE_HABITAT_GENERATOR_ID))?generator:surrounding_coast(generator)||generator==BUILDABLE_REGION_GENERATOR_ID||distributed_region(generator)?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;

@@ -1,5 +1,9 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
+class Backend extends RefCounted:
+ var world_generator:=38
+class Terrain extends Node3D:
+ var backend:=Backend.new()
 var failures:=0
 func check(ok:bool,label:String)->void:
  if not ok:failures+=1
@@ -33,4 +37,14 @@ func run()->void:
  var frozen=water.capture_storage_snapshot(catalog.encode([],1))
  var saved:PackedByteArray=frozen.serialize_snapshot() if frozen is RefCounted else frozen
  check(saved==packet and water.survey_revision_id()==revision and water.survey_cache_identity()==identity,"storage capture does not turn persistence into a water edit")
+ var terrain:=Terrain.new()
+ var lakes=load("res://addons/volumetric_water/lake_world.gd").new()
+ lakes.terrain=terrain
+ check(lakes.prepare() and lakes.restore_snapshot(packet),"ordinary island lake bridge restores certified state")
+ var restored_identity:String=lakes.water.survey_cache_identity()
+ lakes.water.set_western_ocean(false);lakes.water.set_surrounding_ocean(true)
+ check(not restored_identity.is_empty() and lakes.water.survey_cache_identity()==restored_identity,"first island ocean configuration preserves restored map certificate")
+ lakes.water.set_surrounding_ocean(false)
+ check(lakes.water.survey_cache_identity().is_empty(),"actual ocean configuration change invalidates certified water map")
+ lakes.free();terrain.free()
  print("WATER_MAP_IDENTITY failures=",failures);quit(1 if failures else 0)

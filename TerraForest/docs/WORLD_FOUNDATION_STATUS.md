@@ -1,4 +1,23 @@
-## Shore habitats and complete performance — 2026-11-28
+## First-play cache and native reuse — 2026-11-28
+
+[COLD_GENERATION_REUSE.md](COLD_GENERATION_REUSE.md) records the completed
+first-play water-map fix, exact native height reuse, immutable retry inputs and
+native prefab fingerprints. The full cold path measures **84.627 s**, down from
+99.469 s but still failing 30 s. All map layers now reuse their certified data
+with zero source/visibility calls. The complete run passes 129 functional
+creation/interaction/restoration assertions; all three phases retain the known
+zero-reference shutdown warning, so strict integration remains rejected.
+
+Remaining: native batches for coarse landscape reconstruction and render-resource
+preparation, remaining route assembly, and generation-time water contacts. These
+remain on the critical path after map reuse; they need immutable-input ownership,
+cancel/stale rejection and equivalent-output verification before concurrency is
+enabled. Closure requires the unchanged cold Generate-to-play boundary below
+30 s, clean exits, preserved content/readiness and broader seed validation.
+No full-native or performance-completion claim is made. Earlier lake quality and
+human-review requirements below remain open.
+
+## Shore habitats and earlier performance baseline — 2026-11-28
 
 Scoped implementation: [SHORE_HABITATS.md](SHORE_HABITATS.md). Native terrain 38 and
 LFP1 v3 add broader banks and persisted woodland/meadow transitions. Physical
@@ -13,14 +32,12 @@ retain the zero-reference shutdown warning. Existing terrain-36 playtest files
 remain byte-identical. Broad smooth areas, full landscape/city authorship,
 other complete seeds and human approval remain outstanding.
 
-Next performance trigger: inspect first-play water-map revision/cache identity.
-Terrain/Blocks/Objects reuse their certified layers, but Water rebuilds; map
-readiness takes 10.139 s. Cold planning (16.136 s), scene initialization
-(13.409 s) and landscape coverage (16.184 s) also remain material. Closure needs
-the unchanged full cold timer below 30 s, clean exits, broader seed/contact/reload
-coverage and human ground/overview review. No content or readiness work may be
-removed to satisfy the timer. The older milestones below preserve their evidence;
-their angular-margin diagnosis is superseded by the scoped physical fix above.
+The first-play water-map follow-up is completed by the newer entry above; this
+baseline's 10.139 s map-readiness wait remains historical evidence. Its cold
+planning, scene initialization and landscape coverage findings still motivate
+the remaining native work. No content or readiness work may be removed to
+satisfy the timer. The older milestones below preserve their evidence; their
+angular-margin diagnosis is superseded by the scoped physical fix above.
 
 ## Historical refined island shores and laboratory — 2026-11-28
 

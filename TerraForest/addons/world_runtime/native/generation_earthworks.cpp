@@ -3,6 +3,9 @@
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/object.hpp>
+#include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/classes/hashing_context.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 #include <algorithm>
 #include <cmath>
 #include <set>
@@ -11,6 +14,17 @@ using namespace godot;
 namespace terraforest {
 class NativeGenerationEarthworks : public RefCounted {
     GDCLASS(NativeGenerationEarthworks,RefCounted)
+    static Variant canonical(const Variant &value){
+        if(value.get_type()==Variant::DICTIONARY){
+            const Dictionary input=value;Array keys=input.keys();
+            std::vector<Variant> order;order.reserve(keys.size());for(int i=0;i<keys.size();++i)order.push_back(keys[i]);
+            std::sort(order.begin(),order.end(),[](const Variant&a,const Variant&b){return UtilityFunctions::str(a)<UtilityFunctions::str(b);});
+            Dictionary out;for(const auto &key:order)out[canonical(key)]=canonical(input[key]);return out;
+        }
+        if(value.get_type()==Variant::ARRAY){const Array input=value;Array out;out.resize(input.size());for(int i=0;i<input.size();++i)out[i]=canonical(input[i]);return out;}
+        if(value.get_type()==Variant::STRING_NAME)return String(value);
+        return value;
+    }
     static void endpoints(PackedByteArray &p,const Vector3 &a,const Vector3 &b){for(int axis=0;axis<3;++axis){p.encode_float(4+axis*4,a[axis]);p.encode_float(16+axis*4,b[axis]);}}
 protected:
     static void _bind_methods(){
@@ -21,8 +35,18 @@ protected:
         ClassDB::bind_method(D_METHOD("compile","segments","deposits"),&NativeGenerationEarthworks::compile);
         ClassDB::bind_method(D_METHOD("ordered","segments"),&NativeGenerationEarthworks::ordered);
         ClassDB::bind_method(D_METHOD("curve_prefix","segment"),&NativeGenerationEarthworks::curve_prefix);
+        ClassDB::bind_method(D_METHOD("canonical_value","value"),&NativeGenerationEarthworks::canonical_value);
+        ClassDB::bind_method(D_METHOD("prefab_fingerprint","asset"),&NativeGenerationEarthworks::prefab_fingerprint);
     }
 public:
+    Variant canonical_value(const Variant &value)const{return canonical(value);}
+    String prefab_fingerprint(const Ref<Resource> &asset)const{
+        if(asset.is_null()||!asset->has_method("get_records")||!asset->has_method("get_model_attachments"))return {};
+        PackedStringArray keys=asset->get_meta_list();keys.sort();Array metadata;
+        for(int i=0;i<keys.size();++i){Array row;row.push_back(keys[i]);row.push_back(asset->get_meta(keys[i]));metadata.push_back(row);}
+        Array fields;fields.push_back(asset->call("get_records"));fields.push_back(asset->call("get_model_attachments"));fields.push_back(metadata);
+        Ref<HashingContext> hash;hash.instantiate();hash->start(HashingContext::HASH_SHA256);hash->update(UtilityFunctions::var_to_bytes(canonical(fields)));return hash->finish().hex_encode();
+    }
     Dictionary access_quality(const Ref<RefCounted> &core,const Array &paths) const {
         auto reject=[](const char *reason){Dictionary d;d["status"]="rejected";d["reason"]=reason;return d;};
         if(paths.size()>32)return reject("Invalid access span");

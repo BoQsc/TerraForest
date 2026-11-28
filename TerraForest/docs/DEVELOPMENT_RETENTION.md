@@ -9,6 +9,19 @@ world bytes; its GPU buffer checks write no image or geometry captures.
 
 # Development artifact retention
 
+Cold-generation reuse QA (2026-11-28) has an explicit further **128 MiB** archive
+approval, taking the shared admission/chunk-store limit from 10.25 to 10.375 GiB.
+The complete run `reports/inhabited_island_world/20261128T163050039431Z` used the
+separately approved process-local +256 MiB report and owned-world allowances.
+Its receipt-owned fixture is cold-retained in `world.archive.json`; reviewed
+lake captures and verbose logs use `review_and_logs.archive.json`, with first-play
+in `first_play.archive.json`, leaving timings and receipts ready. Normal
+report/world limits are unchanged. `final_retention.json` in the evidence folder
+below records normal admission headroom after this final capture was retained.
+`reports/cold_generation_20261128/retention_and_save_identity.json` records
+retention and the protected human save's exact file comparison. No existing
+player save or pinned review was retired.
+
 Shore-habitat follow-up, 2026-11-28: the maintainer explicitly approved another
 128 MiB archive increase, **10.125 → 10.25 GiB**, and one-time +256 MiB each
 for reports and owned test worlds for this full shoreline QA run. Normal

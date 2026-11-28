@@ -151,6 +151,11 @@ func restore_snapshot(bytes:PackedByteArray,prepared:RefCounted=null) -> bool:
  if not decoded.ok:return false
  var restore_begin:=Time.get_ticks_usec()
  clear(prepared!=null);_next_id=decoded.next_id
+ # Configure the same world before installing its certified native snapshot.
+ # Applying these flags on the first process tick would invalidate that identity.
+ if terrain!=null:
+  water.set_western_ocean(terrain.backend.world_generator==18)
+  water.set_surrounding_ocean(terrain.backend.world_generator in [19,21,23,25,27,29,31,33,35,36,37,38])
  last_restore_profile={"scene_clear_us":Time.get_ticks_usec()-restore_begin}
  restore_begin=Time.get_ticks_usec()
  var cached:bool=bytes.decode_u32(0)==0x31575256

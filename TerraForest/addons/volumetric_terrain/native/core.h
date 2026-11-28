@@ -159,6 +159,8 @@ struct World {
  const Page *resident_page(int index)const;
  bool prepare_pages(V3 lo,V3 hi);
  u32 generator_id=TERRAIN_GENERATOR_ID;
+ u64 immutable_height_identity=0; // Derived configuration identity, never serialized.
+ bool height_cache_enabled=true;
  struct IslandRidge {float x,z,axis_x,axis_z,length,width,height;};
  IslandRidge island_ridges[3]{}; // Derived once from seed, never stored as a second terrain authority.
  terraforest::landforms::IslandLakeField lake_fields[12]{};
@@ -200,6 +202,7 @@ struct World {
  bool set_block(u32 key,int material);void erase_block(u32 key);
  bool has_geology()const{return generator_id==3||generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id>=REGIONAL_WORLD_GENERATOR_ID;}
  float height(float x,float z,bool developed=true)const;
+ float uncached_height(float x,float z,bool developed=true)const;
  float edit_height(int x,int z)const;
  float inland_height(float x,float z,bool developed)const;
  float regional_height(float x,float z,float original)const;
