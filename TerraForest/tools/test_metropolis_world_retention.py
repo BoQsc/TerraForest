@@ -8,6 +8,48 @@ import unittest
 from unittest.mock import patch
 
 import check_metropolis_world as target
+import recheck_metropolis_world as recheck
+
+
+class RecheckAdmission(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.folder = Path(self.temporary.name)
+        (self.folder / 'create').mkdir()
+        self.original = {'purpose': target.REPORT_FAMILIES['inhabited_island_world'],
+                         'phases': [{'phase': 'create', 'result': {'passed': True}}]}
+
+    def test_island_creation_is_accepted_but_other_family_is_rejected(self):
+        self.assertTrue(recheck.validated_creation(self.folder, self.original, 'inhabited_island_world')['result']['passed'])
+        with self.assertRaises(ValueError):
+            recheck.validated_creation(self.folder, self.original, 'metropolis_world')
+
+    def test_protected_human_save_and_review_pin_are_rejected(self):
+        self.original['human_playtest_owned'] = True
+        with self.assertRaises(ValueError):
+            recheck.validated_creation(self.folder, self.original, 'inhabited_island_world')
+        self.original['human_playtest_owned'] = False
+        (self.folder / '.retain').write_text('Human review')
+        with self.assertRaises(ValueError):
+            recheck.validated_creation(self.folder, self.original, 'inhabited_island_world')
+
+    def test_diagnostic_exception_requires_exact_completed_cleanup_evidence(self):
+        result = {'passed': False, 'exit_code': 0, 'timed_out': False,
+                  'diagnostics': ['WARNING: 1 ObjectDB instance was leaked at exit (run with --verbose for details).']}
+        self.original['phases'][0]['result'] = result
+        log = self.folder / 'create/console.log'
+        log.write_text('PRODUCTION_BUILDINGS checks=7 failures=0 slot=Island_1703_abcdef12\n'
+                       'Leaked instance: RefCounted:42 - Reference count: 0\n')
+        with self.assertRaises(ValueError):
+            recheck.validated_creation(self.folder, self.original, 'inhabited_island_world')
+        admitted = recheck.validated_creation(self.folder, self.original, 'inhabited_island_world', True)
+        self.assertTrue(admitted['cleanup_warning_only'])
+        self.assertFalse(admitted['result']['passed'])
+        self.assertNotIn('cleanup_warning_only', self.original['phases'][0])
+        log.write_text('PRODUCTION_BUILDINGS checks=7 failures=1 slot=Island_1703_abcdef12\n')
+        with self.assertRaises(ValueError):
+            recheck.validated_creation(self.folder, self.original, 'inhabited_island_world', True)
 
 
 class FixtureRetention(unittest.TestCase):

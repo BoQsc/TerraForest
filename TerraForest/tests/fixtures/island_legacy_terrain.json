@@ -1,6 +1,6 @@
 {
   "license": "CC0-1.0",
-  "provenance": "Original TerraForest native terrain lattice observations, captured before island field 36 was compiled, checkout 71cee5c6; seed/generator keys, 51x51 points at 40 m spacing; SHA256 of native PackedFloat32Array bytes.",
+  "provenance": "Original TerraForest native terrain lattice observations, captured before island field 36 was compiled, checkout 71cee5c6. Generator 36 fingerprints were added from unchanged adcfbad9 before field 37 was compiled (reports/shoreline_refinement_20261128/legacy_before/legacy.json); seed/generator keys, 51x51 points at 40 m spacing; SHA256 of native PackedFloat32Array bytes.",
   "hashes": {
     "1/0": "43e196546994bb72fd88dba3c0029d202f0adc271d90ef6c4728caaf9e6d7c6a",
     "1/1703": "833a75f81f01cbe93cd771631ed2e2f53441351d27a17ead8a91231139e2846f",
@@ -13,6 +13,9 @@
     "33/901": "74fcea7a22a91b2686fa7d2c51b6d8a758012a13e86ade40327c5161108b7343",
     "35/0": "278c5e97667d1cc9bfad76191f787370efdee6ddd1e96bfe49dae29a843543b7",
     "35/1703": "31c72f1534014fb910da024b1517ecf8d7a5893deae0ccf1d51c87492345bccd",
-    "35/901": "6cd173904de83bdfc98f4f877c12471f921172ef42be8a2d09b4390aa63ecfea"
+    "35/901": "6cd173904de83bdfc98f4f877c12471f921172ef42be8a2d09b4390aa63ecfea",
+    "36/0": "e2da78761e18a5f3ad9b5e736af32a5349274040ec2ffa7d65bddde8ccf9b940",
+    "36/1703": "d7027b775b9331cd7ce5bbeee7c44a686fb61766d8cae370f13efb104e811b62",
+    "36/901": "8801ca13739ff90dddb97a6c3f29d63d2aa678c1907a1dd7184fe3ea023fdb06"
   }
 }

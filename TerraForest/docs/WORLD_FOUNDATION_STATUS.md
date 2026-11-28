@@ -1,37 +1,45 @@
-## Generation laboratory and island feedback — 2026-11-28
+## Refined island shores and laboratory — 2026-11-28
 
-Human feedback calls the island a good start but rejects arbitrary/underwhelming
-lakes, primitive terrain and empty countryside, and asks for stronger city/town
-planning. A first [native generation laboratory](GENERATION_LAB.md) now compiles
-original reusable coast, ridge, branching/curved basin, island, woodland and
-meadow modules from JSON into bounded portable LFP1 records. It supplies a 3D
-viewer, terrain/coverage maps, an inspector, seeded comparisons and native cost
-measurements without generating another saved world.
+The [native laboratory](GENERATION_LAB.md) now supplies versioned LFP1 v2 lake
+curves, asymmetric coves, shallow shelves, variable banks, dissected ridges and
+coastal transitions. New ordinary **Inhabited island · varied shores** worlds use
+immutable terrain 37 and frozen original guide data. Saved terrain 36 and the
+protected human save remain unchanged. No runtime JSON or per-cell GDScript
+processing was introduced. Existing v1 programs reproduce their retained pixels.
 
-The first winding-lake trial was visually rejected for opening to the sea despite
-passing the weaker mask checks. It is retained. The stronger actual-terrain flood
-gate and revised candidates pass 87 checks and inspected 3D/map previews. Programs
-are 13–14 KiB; seed-1703 compilation is about 0.15 ms and 257² raster/analysis about
-43 ms. These are component costs, not whole-generation or visual acceptance.
-The ridges still look artificial, and coverage colors are not populated scenery.
+Three laboratory compositions pass 87 capture checks; the v1 replay passes in
+86 headless checks. The physical integration preserves 15 legacy terrain
+fingerprints, fits roads within the unchanged earthwork policy, and bakes all 15
+water sections. Canonical stored-precision contacts prevent false overfill on
+reload; dry regenerable region compaction preserves wet records and quantities.
+The final focused water check passes 22 assertions, including exact quantities
+and zero pending/settling regions after reload. Its final rerun
+`reports/checks/20261128T143650734434Z` also separates distant equal-level
+lakes when checking catalog enclosure; all 22 assertions pass.
 
-The human launcher omitted ordinary content flags, including `--ground-cover`;
-this was a defect, not an intentional grass-free island. Its arguments now match
-the ordinary browser. The read-only check passes 11 assertions with a clean exit
-and unchanged hashes for every saved-world companion; its inspected image shows
-grass, ferns and trees. The first harness error is retained separately.
-The separate tree-density request remains a design/coverage review item.
+`reports/inhabited_island_world/20261128T141848823804Z` passes 116 functional
+creation/interaction/fresh-restore assertions with vegetation enabled. Strict
+QA still fails the known zero-reference ObjectDB warning in the latter two
+processes. Complete cold-plan Generate-to-play is **94.855 s**, failing 30 s.
+A preceding resource-loading access violation (`20261128T141446226312Z`) remains
+unexplained; successful retry is not a crash fix. Evidence, rejected trials and
+cold-fixture restoration metadata are linked from the laboratory record.
 
-Remaining: physical-water/terrain integration under a new immutable identity,
-shore/countryside composition, connected city/town graph modules, broader seeds,
-human review and complete cold Generate-to-play below 30 s (last result 80.142 s).
-Return at this laboratory review; promotion requires physical basin/bridge/contact,
-save/reload and matched ground-level evidence. Existing generator 36 and the user's
-protected save are not reshaped. See the laboratory contract for exact gates.
+All six final lake views were inspected: ground vegetation is present and the
+three outlines differ, but smooth banks, broad plain areas and inconsistent
+planting remain. Lake 2's near margin has an angular patch in the overview;
+first reproduce it with matched resident-terrain/water diagnostics. Human
+approval, broader fitted-world seeds, shore/countryside compositions, distinct
+connected town/city graphs, continuous drainage and missing infrastructure remain
+open. The laboratory's coverage masks are proposals, not production density edits.
+Return at the next lake-margin diagnostic/human review, then compose reusable
+shore habitats and settlement graphs. Closure needs ground and overview review,
+physical contacts/edits/reload, wider seeds, clean exits and the complete cold
+path below 30 s without removing content or shifting work after readiness.
 
 ## Inhabited island recipe and ordered playtest — 2026-11-28
 
-Implemented as the ordinary **Inhabited island · first playtest** recipe, with
+Historical first milestone: **Inhabited island · first playtest**, with
 native terrain 36 and version-9 recipe profile 2 preserving prior saved identities.
 The first seed has 36 city buildings, two 16-building towns, four four-building
 communities and two lookouts. Native/legacy checks pass; ordinary creation,

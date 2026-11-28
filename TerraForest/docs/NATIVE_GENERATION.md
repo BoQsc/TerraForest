@@ -333,6 +333,40 @@ Return to these entries as each owner is converted. Do not introduce another
 GDScript generation loop while extending the pipeline, and do not reduce content,
 readiness, support or save durability to improve a timing number.
 
+## Refined island physical water and cold path — 2026-11-28
+
+Terrain 37 consumes frozen compiled guide records and bounded native spatial
+bins. LFP1 v2 adds shelf/cove/bank/ridge/coast primitives while retaining exact
+version-1 replay. JSON remains the authoring surface; no runtime JSON reader or
+per-cell script generation was added. Laboratory sampling is richer and slower
+than v1 (53.5–57.7 ms for 257² versus about 43 ms), not a claimed speedup.
+
+The physical bake releases only dry regenerable sampled regions between completed
+sections, preserving every wet record and quantity. Generation 37's packed handoff
+uses the existing 160 MiB expanded-water allowance; the 64 MiB on-disk section and
+128 MiB bake-state limits remain unchanged. Native contact triangles are rounded
+to their existing float32 storage precision before fill allocation, preventing
+false overcapacity on reload. Saved quantities are not clamped. The focused full
+15-section bake/restore passes 22 checks, exact volume and zero pending/settling
+regions; its 4.396 s component time is not Generate-to-play.
+
+Final ordinary cold-plan run `reports/inhabited_island_world/20261128T141848823804Z`
+measures **94.855197 s** from Generate through playable readiness, vegetation on,
+including durable save and map publication. Planning costs 16.032 s; initial
+scene/data 21.695 s; water sources 3.202 s; buildings 4.567 s; final water contacts
+7.852 s; save 2.399 s; maps 4.748 s; first-play loading 19.654 s, of which landscape
+coverage is 17.227 s. These stages include waiting and IO, not only CPU work.
+The two task-owned plan caches were held before startup and exactly restored;
+`generate_to_play.json` confirms the miss. No work was moved after readiness.
+
+The 116 functional assertions pass. Interaction and restoration retain the
+zero-reference shutdown warning, and an earlier resource-loading access violation
+remains unexplained. Strict exit acceptance, whole-path performance below 30 s,
+and the remaining migration backlog stay open. Continue from cold route planning,
+scene initialization, contact reuse and first-play landscape preparation, retaining
+content and physical correctness. [The laboratory record](GENERATION_LAB.md)
+separates the inspected visual defects from these engineering checks.
+
 ## World representation and inspector
 
 See [BINARY_WORLD_FORMAT.md](BINARY_WORLD_FORMAT.md). The current root is a native

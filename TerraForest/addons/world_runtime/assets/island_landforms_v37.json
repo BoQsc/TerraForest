@@ -1,0 +1,192 @@
+{
+  "schema": "terraforest.landform-library.v1",
+  "license": "CC0-1.0",
+  "provenance": "Original TerraForest authoring data, created with Codex for the user's 2026-11-28 world-generation laboratory request. No imported reference art or third-party implementation. Frozen promotion of the reviewed winding, branching and horseshoe guides for immutable generator 37. Further laboratory edits must not change this saved field.",
+  "modules": {
+    "winding_valley": {
+      "kind": "lake",
+      "level": 53,
+      "depth": 10,
+      "bank": 38,
+      "variation": 0.18,
+      "closed": false,
+      "paths": [
+        [
+          [
+            -222,
+            -61,
+            12
+          ],
+          [
+            -165,
+            -97,
+            49
+          ],
+          [
+            -98,
+            -54,
+            25
+          ],
+          [
+            -37,
+            12,
+            36
+          ],
+          [
+            33,
+            27,
+            29
+          ],
+          [
+            99,
+            54,
+            68
+          ],
+          [
+            157,
+            21,
+            30
+          ],
+          [
+            191,
+            -12,
+            12
+          ]
+        ]
+      ]
+    },
+    "branching_basin": {
+      "kind": "lake",
+      "level": 53,
+      "depth": 12,
+      "bank": 36,
+      "variation": 0.18,
+      "closed": false,
+      "paths": [
+        [
+          [
+            -170,
+            126,
+            13
+          ],
+          [
+            -118,
+            100,
+            24
+          ],
+          [
+            -79,
+            52,
+            37
+          ],
+          [
+            -27,
+            20,
+            83
+          ],
+          [
+            49,
+            -13,
+            52
+          ],
+          [
+            110,
+            -70,
+            30
+          ],
+          [
+            163,
+            -103,
+            13
+          ]
+        ],
+        [
+          [
+            -27,
+            20,
+            62
+          ],
+          [
+            -81,
+            -25,
+            36
+          ],
+          [
+            -94,
+            -74,
+            25
+          ],
+          [
+            -129,
+            -122,
+            12
+          ]
+        ],
+        [
+          [
+            49,
+            -13,
+            40
+          ],
+          [
+            116,
+            4,
+            34
+          ],
+          [
+            155,
+            50,
+            24
+          ],
+          [
+            185,
+            67,
+            11
+          ]
+        ]
+      ]
+    },
+    "horseshoe_basin": {
+      "kind": "lake",
+      "level": 53,
+      "depth": 8,
+      "bank": 42,
+      "variation": 0.16,
+      "closed": false,
+      "paths": [
+        [
+          [
+            -180,
+            50,
+            40
+          ],
+          [
+            -140,
+            -90,
+            65
+          ],
+          [
+            -15,
+            -130,
+            50
+          ],
+          [
+            110,
+            -50,
+            45
+          ],
+          [
+            140,
+            70,
+            62
+          ],
+          [
+            70,
+            145,
+            32
+          ]
+        ]
+      ]
+    }
+  }
+}

@@ -6,6 +6,140 @@ and town/city planning. They rejected the lakes' arbitrary shapes and reported
 missing ground vegetation. This laboratory starts that work; it does not mark
 the island, full design vision or 30-second Generate-to-play target complete.
 
+## Refined shores and island promotion — 2026-11-28
+
+The second laboratory iteration adds asymmetric cove widths, a shallow littoral
+shelf, broad versus steep banks, dissected ridges, spurs and saddles, and variable
+coastal shelves. The winding composition is the strongest inspected shape study;
+branching and crescent compositions provide distinct headlands and approaches.
+The renderer remains a field study: its colors are not populated vegetation.
+
+`reports/generation_lab/20261128T123717426482Z_capture` passes 87 checks and
+retains inspected views at matched cameras. At seed 1703, compilation is
+0.159–0.170 ms and full 257² native sampling/analysis is 53.5–57.7 ms. Programs
+are 17,320–19,624 bytes. These richer fields cost more than the first lab kernel;
+this is not a generation speedup. The following headless regression
+`20261128T124457483606Z_checks` passes 86 checks, including byte-identical pixels
+from the retained version-1 program. Previous rejected trials remain retained.
+
+LFP1's header now explicitly selects kernel **1 or 2**. New programs use 2;
+old programs retain the original sampling behavior. The independent inspector
+reports `kernel_version` and rejects unknown versions. The record layout and
+existing size/count limits are unchanged.
+
+The promotion uses immutable native terrain **37**, selected by the ordinary
+**Inhabited island · varied shores** recipe. Existing terrain 36 and the protected
+human save are unchanged. `assets/island_landforms_v37.json` (under world_runtime)
+freezes the promoted original CC0 guide data independently of future laboratory
+experiments. `tools/compile_island_landforms.py --check` verifies its generated
+native constants. Sampling uses fixed segment records, spatial bins and the same
+version-2 lake/ridge/coast primitives as the laboratory. No JSON parsing or
+GDScript cell generation was added to the runtime. Future changes to these frozen
+fields require a new terrain identity.
+
+The initial native integration check passes 71 assertions across three seeds,
+including all 15 old terrain fingerprints and closed physical catalog margins.
+At seed 1703 the connected main lakes measure 588 / 534 / 398 m and
+18,636 / 27,212 / 16,164 square metres. This is sampled geometry evidence,
+not whole-world visual acceptance.
+
+Two rejected full-creation trials are preserved. `20261128T124707709518Z` exposed
+road fill exceeding 2 m between grade stations; the native fitter now constrains
+terrain at adjacent half-stations too. `20261128T125025163503Z` exposed a coarse
+catalog section exceeding the actual 0.5 m water-job volume cap; new sections are
+split within that cap. Neither the earthwork policy nor water limits were raised.
+The failed staging fixture was receipt-archived. Subsequent native water trials
+exposed the resident-state limit at 5 m and 2.8 m basin depths. The selected
+production basin is 3.25 m deep, with its water datum rounded down to a 4 m region
+boundary. This keeps the deep bed within one region layer while preserving the
+promoted horizontal guides and shallow shelf. Dry, unedited sampled regions are
+released between completed fill sections; wet quantities and contacts are kept.
+The matched control compares every wet region byte and 121 physical depth probes.
+
+The aligned trial `reports/checks/20261128T131008316140Z` completed all 15
+sections but failed a stale 64 MiB handoff check. A contact-pruning experiment
+(`20261128T131913955141Z`) removed zero contacts and was discarded. Generation 37
+now uses the existing 160 MiB expanded-water allowance already supported by the
+TFWG compressed region store. The 64 MiB on-disk section limit, 128 MiB bake
+state estimate and 8,192-region limit are unchanged. Earlier generation jobs keep
+their prior direct-root bound. This is a corrected format boundary, not a new
+water simulation or relaxed terrain-contact rule. The live native-state estimate
+is not process RAM; full QA records process memory separately.
+
+The test-harness parse failure `20261128T131441770461Z` and compiler-cache
+admission failure `20261128T130415203768Z` remain recorded. Exact duplicate
+compiler objects were retired only after matching current object hashes under
+the build lease (`reports/shoreline_refinement_20261128/compiler_duplicates.json`).
+The intermediate native check `reports/checks/20261128T134006757642Z` passes all
+80 assertions. Its complete 15-section bake takes 8.852 s and preserves
+107,183,157,942 mL through restoration. The 97,213,144-byte expanded snapshot
+holds 4,720 wet regions; 160 regenerable dry regions were released. These are
+native component measurements, not full creation or frame-rate results.
+The integrated trial `reports/inhabited_island_world/20261128T134156275843Z`
+then exposed a water-readiness timeout after publication preparation. The focused
+probe `20261128T134908927684Z` found 25 settling regions after restore. Replaying
+the general settlement path (`20261128T135143021738Z`) reached its existing graph
+budget; increasing that budget was rejected as the remedy for initialization.
+
+The cause was contact precision: new fills used double-precision clipped triangles,
+while saved contacts were float32. Tiny capacity changes on restore falsely
+classified a few authored cells as overfilled. Terrain contact preparation now
+rounds triangle coordinates to their existing stored precision *before* assigning
+water. Existing saved quantities remain authoritative and are never clamped.
+`20261128T135543110648Z` passes 22 focused assertions, including zero pending and
+settling regions after restoring the complete bake. The revised initial quantity
+is 107,183,157,939 mL (3 mL less than the earlier trial), and is exact on reload.
+The final enclosure check also separates adjacent catalog groups at equal water
+levels; `20261128T143650734434Z` passes all 22 focused checks with that stronger
+gate. The 15-section component bake took 4.396 s in the earlier focused run. Generic whole-lake edit
+transactions still retain their bounded graph policy; this is no promise of
+arbitrarily large excavation/redistribution.
+
+The later cached-plan trial `20261128T135706924040Z` reached play in 85.449 s,
+but its interaction harness incorrectly equated water elevation with lake identity
+and selected the wrong region at an exactly aligned waterline. Those tests now
+use adjacent physical catalog sections and the submerged region owner. Its old
+straight-lake ground camera was underground on curved terrain; new island checks
+use actual sampled dry banks. Failed evidence remains cold-retained. The first
+cold retry, `20261128T141446226312Z`, exited with native access violation
+`0xC0000005` during initial resource loading, before generation. That intermittent
+startup defect remains open; a successful retry does not explain or resolve it.
+
+Final complete evidence: `reports/inhabited_island_world/20261128T141848823804Z`.
+Ordinary creation, interaction and fresh-process restoration pass **7 + 79 + 30 =
+116 functional assertions**, with ground cover enabled and processing. Creation
+exits cleanly; interaction and restoration each retain the known zero-reference
+ObjectDB shutdown warning. **Strict QA fails.** Diagnostic continuation preserves
+those failures. The exact owned fixture is cold-retained in `world.archive.json`;
+the protected human save is untouched. The two task-owned placement caches were
+held before launch, the report confirms `plan_cache_hit: false`, and both original
+cache identities were restored afterward (`cold_plan_retry_hold.json`).
+
+**Complete cold-plan Generate-to-play is 94.855197 s**, including durable
+publication and first-play readiness; the 30 s target fails. Major stages include
+planning 16.032 s, initial scene/data 21.695 s, water sources 3.202 s, buildings
+4.567 s, final location-water contacts 7.852 s, save 2.399 s, saved maps 4.748 s,
+and first-play loading 19.654 s (landscape coverage 17.227 s). These are wall-time
+stages, not pure arithmetic costs. Peak sampled private commit is 4.63 / 4.90 /
+4.80 GiB across the three processes, warning-level results. This richer recipe
+is not a controlled speedup over the original 80.142 s terrain-36 baseline.
+
+All six final lake shore/overview captures were inspected. Ground views show
+water meeting banks, grass, ferns and trees. Overviews show curved, branching
+and crescent outlines, but still plain lowlands, sparse planting in places,
+smooth banks and an angular patch at the near end of lake 2. The latter needs a
+matched resident-terrain/water diagnostic before it can be attributed to shape,
+water publication or overview streaming. It is not accepted shoreline quality.
+Screenshots are not frame-time qualification. New tree-density composition,
+connected town/city modules and populated countryside remain outstanding.
+
+Final seed-1703 sampled lake areas are 18,632 / 27,188 / 16,136 square metres,
+with connected lengths 588 / 534 / 398 m. Only the laboratory's horizontal guide
+curves are promoted; production uses the surveyed, region-aligned water datum
+and 3.25 m depth described above, not the study's water level/depth parameters.
+The physical tests and integrated reload validate this production adaptation;
+new human visual approval and broader fitted-world seeds remain required.
+
 ## Run and edit
 
 From the project directory:
@@ -48,7 +182,7 @@ shore cells with complete square quads.
 
 ## Compact program and limits
 
-`LFP1` version 1 is explicit little-endian data, never a native struct dump.
+`LFP1` versions 1 and 2 use explicit little-endian data, never a native struct dump.
 The 32-byte header contains magic, version, seed, float extent, float base height,
 float sea level, segment count and a reserved zero word. Each 48-byte segment has
 u32 kind and feature ID, then ten float32 fields: start X/Z, end X/Z, start/end
@@ -124,12 +258,11 @@ native/QA identities and does not waive that guard after native changes.
 
 ## Promotion and next tools
 
-Do not replace saved generator 36 or silently reshape the human playtest world.
-Promotion needs an explicit new terrain identity/program storage boundary,
-the actual native static-water bake against the same field, edited terrain,
-bridge approaches, save/reload and ground-level review. The lab water surface
-is a geometric study, not the accepted volumetric-water simulation. A sampled
-flood check is not proof against sub-grid leaks.
+Saved generator 36 and the human playtest world remain unchanged. The scoped
+promotion above implements the new identity, physical bake, edited-world
+contacts, bridge approaches and save/reload gates. Laboratory water alone remains
+a geometric study; production uses the real volumetric simulation. Sampled
+flood checks are not proof against every sub-grid leak or every future edit.
 
 Next bounded modules should cover:
 
@@ -147,9 +280,10 @@ Next bounded modules should cover:
 
 Each addition must join this same laboratory with an authored intent, baseline,
 matched views, geometry/connection checks, native cost and a promotion gate.
-The next return trigger is this first shape/coverage review; implementation of
-city planning and populated wilderness remains outstanding. The earlier complete
-cold Generate-to-play result remains **80.142 s**, failing the 30-second target.
+The next return trigger is human review of the promoted shore views and a matched
+diagnostic of the angular lake-2 margin. City planning and populated wilderness
+remain outstanding. Latest complete cold Generate-to-play is **94.855 s**,
+failing the 30-second target.
 Cold route planning, scene initialization, landscape loading and map reuse remain
 required in parallel with this quality work; do not move work after readiness or
 remove content to make the timer pass.
@@ -160,8 +294,11 @@ The driver admits 4 MiB for headless/interactive logs and 8 MiB for captures or
 read-only ecology, with zero world allocation. It reuses completed outputs by
 source/native/input hash, retains two ordinary completed runs and respects pins.
 Only named, hash-matching receipt-owned outputs are archived after process exit;
-unknown/later-changed files and all player saves remain protected. Archive limits
-are unchanged. Interactive sessions keep their driver alive until the window
+unknown/later-changed files and all player saves remain protected.
+The maintainer approved a 128 MiB archive increase on 2026-11-28, from
+10 GiB to 10.125 GiB, after retention reached its limit. Report/world QA headroom
+is process-local and restores the normal limits at exit. Interactive sessions
+keep their driver alive until the window
 closes. Build receipts are under `reports/landform_lab_build_20261128/`.
 The three retention tests verify that old receipt-owned output can retire while
 pins, modified evidence and unknown files survive. The first inspected candidate

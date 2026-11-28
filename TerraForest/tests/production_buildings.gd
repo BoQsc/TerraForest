@@ -38,7 +38,7 @@ func run()->void:
 		selected_slot=("Island_1703_" if inhabited_island else "Metropolis_1703_" if metropolis else "CivicTown_1703_")+Crypto.new().generate_random_bytes(4).hex_encode()
 		browser.name_field.text=selected_slot;browser.seed_field.value=1703;browser.world_tabs.current_tab=1
 		if metropolis:preload("res://demo/world_creation_panel.gd").apply_style(browser,7 if inhabited_island else 6)
-		check(browser.world_style.get_item_text(browser.world_style.selected)==("Inhabited island · first playtest" if inhabited_island else "Metropolis & inhabited region" if metropolis else "Connected countryside"),"normal selected recipe has its public UI identity")
+		check(browser.world_style.get_item_text(browser.world_style.selected)==("Inhabited island · varied shores" if inhabited_island else "Metropolis & inhabited region" if metropolis else "Connected countryside"),"normal selected recipe has its public UI identity")
 		check(browser.selected_options()==(Recipe.INHABITED_ISLAND if inhabited_island else Recipe.METROPOLIS if metropolis else Recipe.DEFAULTS),"unchanged normal UI settings reach generation")
 		await photograph("create_world")
 		var generation_clicked:=Time.get_ticks_usec()
@@ -56,6 +56,7 @@ func run()->void:
 		if not check(game_ready(),"normal Generate & play creates and opens the civic world"):
 			print("PRODUCTION_GENERATION_STATUS ",FileAccess.get_file_as_string(status_path));await finish();return
 		var generate_to_play_us:=Time.get_ticks_usec()-generation_clicked
+		check(current_scene.ground_enabled and current_scene.ground_cover.is_processing(),"ordinary Generate-to-play keeps ground vegetation enabled")
 		var state:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(status_path))
 		var receipt:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(state.report).path_join("run.json")))
 		var plan_identity:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(state.report).path_join("generation_plan_identity.json")))
@@ -117,21 +118,54 @@ func inspect_lakes(game:Node)->void:
 	var lake_core=ClassDB.instantiate("TerrainCore");lake_core.execute(LakeCodec.command(6,[1703,game.terrain.backend.world_generator]))
 	var definitions:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(lake_core,game.terrain.backend.world_generator)
 	var audit:Dictionary=planned.get("lake_audit",{})
-	check(game.terrain.backend.world_generator==(36 if inhabited_island else 33) and int(audit.get("extensive_count",0))>=3,"normal UI publishes the coast profile with three audited long lakes")
+	check(game.terrain.backend.world_generator==(37 if inhabited_island else 33) and int(audit.get("extensive_count",0))>=3,"normal UI publishes the coast profile with three audited long lakes")
 	for index in mini(3,audit.get("lakes",[]).size()):
 		var lake:Dictionary=audit.lakes[index];var center:Vector3=lake.center
+		# A branching/crescent lake can have dry land at its geometric center.
+		# Choose the nearest physical catalog source, never invent a wet point.
+		var nearest:=INF;var source:=center;var selected:Dictionary={}
+		for section:Dictionary in definitions.records:
+			if absf(section.level-center.y)>.001:continue
+			var candidate:Vector3=Vector3(section.seed.x,section.level,section.seed.z)
+			var distance:=candidate.distance_squared_to(center)
+			if distance<nearest:nearest=distance;source=candidate;selected=section
+		# Equal water elevations do not identify a lake. Join only adjacent
+		# physical catalog sections around the selected source.
+		var lake_bounds:=AABB(selected.origin,Vector3(selected.cells)*selected.spacing)
+		var joined:Array=[selected.id]
+		for pass_index in definitions.records.size():
+			for section:Dictionary in definitions.records:
+				if section.id in joined or absf(section.level-center.y)>.001:continue
+				var bounds:=AABB(section.origin,Vector3(section.cells)*section.spacing)
+				if lake_bounds.grow(.01).intersects(bounds):lake_bounds=lake_bounds.merge(bounds);joined.append(section.id)
+		center=source
 		game.teleport(center+Vector3(0,5,0),center.y+5);game.set_physics_process(false);game._clear_motion();game.fly=true
 		game.camera.cull_mask&=~((1<<18)|(1<<19))
 		game.camera.global_position=center+Vector3(6,5,6);game.camera.look_at(center)
 		check(await wait_for(func():return not game.loading_active and game.lakes.water.depth_at(center-Vector3(0,.5,0))>.1,90),"restored real water fills long lake "+str(index))
-		var owner:=Vector3i((center/4).floor())
+		var owner:=Vector3i(((center-Vector3.UP*.0001)/4).floor())
 		check(await wait_for(func():return game.lakes._meshes.has(owner),90),"actual water render geometry reaches long lake "+str(index))
-		if index==0 and not restoration:
-			var bounds:=AABB(center,Vector3.ZERO)
-			for section:Dictionary in definitions.records:
-				if absf(section.level-center.y)<.001:bounds=bounds.merge(AABB(section.origin,Vector3(section.cells)*section.spacing))
-			var along:=Vector3.RIGHT if bounds.size.x>bounds.size.z else Vector3.BACK
-			var across:=Vector3.BACK if bounds.size.x>bounds.size.z else Vector3.RIGHT
+		if inhabited_island and not restoration:
+			var across:=Vector3.BACK if lake_bounds.size.x>lake_bounds.size.z else Vector3.RIGHT
+			var probes:=PackedVector3Array()
+			for step in 70:probes.append(center+across*float(step*2))
+			var heights:PackedFloat32Array=ClassDB.instantiate("NativeGenerationEarthworks").heights(game.terrain.backend.native,probes)
+			var bank:=-1
+			for step in heights.size()-3:
+				if heights[step]>center.y+.2:bank=step+2;break
+			if check(bank>=0,"actual dry shore found for lake "+str(index)):
+				var eye:Vector3=probes[bank];eye.y=heights[bank]+1.7
+				game.teleport(eye,eye.y);game.set_physics_process(false);game._clear_motion();game.fly=true
+				check(await wait_for(func():return not game.loading_active,90),"refined lake shore landscape resident")
+				game.camera.global_position=eye;game.camera.look_at(center+Vector3.UP*.4)
+				for frame in 90:await process_frame
+				await photograph("island_lake_"+str(index)+"_shore")
+				game.camera.global_position=center+Vector3(170,160,170);game.camera.look_at(center)
+				for frame in 45:await process_frame
+				await photograph("island_lake_"+str(index)+"_overview")
+		if index==0 and not restoration and not inhabited_island:
+			var along:=Vector3.RIGHT if lake_bounds.size.x>lake_bounds.size.z else Vector3.BACK
+			var across:=Vector3.BACK if lake_bounds.size.x>lake_bounds.size.z else Vector3.RIGHT
 			var low_view:Vector3=center-along*(float(lake.length_m)*.35)+Vector3.UP*3
 			game.teleport(low_view,low_view.y);game.set_physics_process(false);game._clear_motion();game.fly=true
 			await wait_for(func():return not game.loading_active,90)

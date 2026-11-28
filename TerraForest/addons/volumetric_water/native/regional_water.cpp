@@ -367,6 +367,10 @@ int64_t NativeWaterTerrainPatch::sample_boundary(Object *core,int64_t budget,int
             if(max_y<=bottom&&original.maximum()<=0&&original.ceiling==500)continue;
             if(min_y>=bottom+500&&original.capacity()==0)continue;
             auto out=column;for(auto &t:out)for(auto &p:t)p.y-=bottom;
+            // Contact packets store float32 vertices. Compute capacities from
+            // that same geometry before assigning water: rounding only on save
+            // can reduce a cell by one ml and falsely wake a whole lake on load.
+            for(auto &triangle:out)for(auto &point:triangle){point.x=float(point.x);point.z=float(point.z);point.y=float(point.y);}
             prepared->add(cell,std::move(out));
         }
     }

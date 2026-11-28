@@ -1194,11 +1194,11 @@ func _prepare_component_restores()->Dictionary:
 
 func _initialize_generated_components() -> bool:
 	components = {}
-	if world_generator in [4,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36] and snapshot_validators.has("volumetric_water"):
+	if world_generator in [4,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37] and snapshot_validators.has("volumetric_water"):
 		var fitted:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(native,world_generator)
 		if not fitted.get("ok",false):write_allowed=false;return false
 		var records:Array=fitted.records
-		if world_generator in [19,21,23,25,27,29,31,33,35,36]:print("GENERATED_LAKE_ADMISSION accepted=",records.size()," rejected=",fitted.rejected," samples=",fitted.height_samples)
+		if world_generator in [19,21,23,25,27,29,31,33,35,36,37]:print("GENERATED_LAKE_ADMISSION accepted=",records.size()," rejected=",fitted.rejected," samples=",fitted.height_samples)
 		# New worlds start from definitions, which the regional validator accepts.
 		# Encoding an empty regional snapshot here would mark unfilled lakes cached.
 		var catalog: RefCounted=ClassDB.instantiate("NativeLakeCatalog")
@@ -1210,7 +1210,7 @@ func _initialize_generated_components() -> bool:
 		if _initial_lake_bake!=null:
 			var revision:=_call(Codec.command(0));var epoch:=_call(Codec.command(13))
 			if not Codec.reply_ok(revision) or not Codec.reply_ok(epoch):write_allowed=false;return false
-			var baked:Dictionary=_initial_lake_bake.run(native,encoded,revision.decode_u32(12),epoch.decode_u32(12))
+			var baked:Dictionary=_initial_lake_bake.run(native,encoded,revision.decode_u32(12),epoch.decode_u32(12),30000,world_generator==37)
 			initial_lakes_result=baked.duplicate();initial_lakes_result.erase("snapshot")
 			print("OFFLINE_GENERATED_LAKES ",JSON.stringify(initial_lakes_result))
 			if not baked.get("ok",false):write_allowed=false;return false

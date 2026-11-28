@@ -16,13 +16,49 @@ all save companions remain byte-identical. Its inspected `island_grass_restored.
 is under `reports/generation_lab/20261128T122038255528Z_ecology`. This proves
 presence for the recorded view, not enough trees at every destination or 60 FPS.
 
-The [generation laboratory](../../docs/GENERATION_LAB.md) introduces reusable
-native landform programs and three lake studies, with 3D/map/coverage views and
-an inspector. The revised candidates pass 87 checks after an initial sea-spill
-defect was exposed by visual review. **Not promoted to gameplay**: ridges remain
-artificial, physical water/edited-world checks and city/wilderness modules are
-outstanding. The initial and revised receipts retain their images and hashes;
-the first inspected candidate capture is pinned for human comparison.
+The [generation laboratory](../../docs/GENERATION_LAB.md) now has v2 cove/shelf,
+variable-bank, ridge and coast primitives. Its selected horizontal lake guides
+are integrated as immutable terrain **37**, exposed by **Inhabited island · varied
+shores**. Runtime uses native fixed records and spatial bins. See the
+[native guide field](../../addons/world_runtime/native/island_lake_field.hpp),
+[versioned shape primitives](../../addons/world_runtime/native/landform_shapes.hpp)
+and [frozen authoring data](../../addons/world_runtime/assets/island_landforms_v37.json). The separate
+terrain-36 human save is unchanged. Version-1 laboratory replay remains exact;
+rejected sea-spill, water-budget and precision trials remain available.
+
+Final run `reports/inhabited_island_world/20261128T141848823804Z` passes **116
+functional assertions**, including ordinary creation, bridge/building checks,
+interaction and fresh save restoration, with ground cover enabled. Cold-plan
+Generate-to-play is **94.855197 s**, failing 30 s. Strict QA rejects the known
+zero-reference shutdown warning in interaction/restoration. A preceding native
+resource-loading crash remains unexplained; the successful retry is not a fix.
+
+All six lake views were inspected. Distinct curves and visible grass/ferns/trees
+are established, but broad plain areas, smooth banks and sparse planting remain.
+**Partial refinement; world quality is not accepted.** Lake 2 also has an angular
+near-margin patch in the overview. Reproduce that view with resident-terrain and
+water diagnostics before attributing it to shape, streaming or publication.
+Then add reusable shore habitat compositions and connected town/city graphs;
+require ground/overview review, physical edits/reload and broader fitted seeds.
+The coverage masks do not yet change production tree density. Human approval,
+continuous drainage, missing infrastructure and performance qualification remain.
+
+![Lake 2 shore with ordinary vegetation](../../reports/inhabited_island_world/20261128T141848823804Z/island_lake_2_shore.png)
+
+Inspected source-game capture, seed 1703, terrain 37: water meets the grassy bank;
+ferns and trees are visible. This is presence/contact evidence, not a density or
+frame-rate acceptance claim. The screenshot HUD is not a performance benchmark.
+
+![Lake 2 overview and unresolved angular margin](../../reports/inhabited_island_world/20261128T141848823804Z/island_lake_2_overview.png)
+
+Same run, aerial view: the long curved outline is integrated, while the angular
+near-margin patch and plain surroundings remain unresolved. These are unedited
+Godot captures made by `tests/production_buildings.gd`; inherited asset terms
+remain unchanged. The six lake images stay ready for review. Other captures are
+cold-retained under `review_captures.archive.json`, and the exact QA world under
+`world.archive.json`. Restore archived evidence into a new inspection directory.
+
+Historical first island milestone:
 
 A separate ordinary recipe uses the user's island survey/design reference and
 existing buildings: 36 buildings in three city quarters, two 16-building towns,

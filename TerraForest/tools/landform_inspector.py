@@ -13,7 +13,7 @@ def inspect(data):
     if len(data) < 40 or len(data) > 40 + 512 * 48:
         raise ValueError('Invalid landform program length')
     magic, version, seed, extent, base, sea, count, reserved = struct.unpack_from('<IIIfffII', data)
-    if magic != 0x3150464c or version != 1 or reserved or not 1 <= count <= 512 or len(data) != 40 + count * 48:
+    if magic != 0x3150464c or version not in (1, 2) or reserved or not 1 <= count <= 512 or len(data) != 40 + count * 48:
         raise ValueError('Invalid landform program header')
     checksum = 14695981039346656037
     for value in data[:-8]:
@@ -38,7 +38,7 @@ def inspect(data):
         segments.append(dict(kind=KINDS[kind], feature=identity, start=[ax, az, aw], end=[bx, bz, bw], level=level, depth=depth, bank=bank, variation=variation))
     if coast and (len(coast) < 4 or any(a[0] != b[0] or a[3:] != b[1:3] for a, b in zip(coast, coast[1:]+coast[:1]))):
         raise ValueError('Open coast chain')
-    return dict(schema='terraforest.landform-program.v1', bytes=len(data), seed=seed, extent=extent, base_height=base, sea_level=sea, segments=segments)
+    return dict(schema='terraforest.landform-program.v1', kernel_version=version, bytes=len(data), seed=seed, extent=extent, base_height=base, sea_level=sea, segments=segments)
 
 
 def main():

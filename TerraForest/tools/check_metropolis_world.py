@@ -40,6 +40,8 @@ CAPTURE_NAMES.update(kind + '_generated_' + view + '.png'
                      for view in ('street', 'overview'))
 CAPTURE_NAMES.update(('long_lake_generated_shore.png', 'long_lake_generated_overview.png'))
 CAPTURE_NAMES.update('metropolis_bridge_' + str(index) + '.png' for index in range(3))
+CAPTURE_NAMES.update('island_lake_' + str(index) + '_' + view + '.png'
+                     for index in range(3) for view in ('shore', 'overview'))
 
 def retire_fixture(folder, record, completion_name='run.json'):
     """Exact creation receipts only; changed or linked outputs remain untouched."""
@@ -240,7 +242,7 @@ def main():
     if record['human_playtest_owned']:
         (folder / '.retain').write_text('User-requested human playtest. Protect its save and review evidence; automatic retirement is forbidden.\n')
     (folder / 'run.json').write_text(json.dumps(record, indent=2))
-    if not record['functional_passed'] and record['phases'] and record['phases'][0]['result']['passed']:
+    if not record['functional_passed'] and record['phases'] and (record['phases'][0]['result']['passed'] or record['phases'][0].get('cleanup_warning_only')):
         retention = {'pending': True, 'reason': 'Passed creation retained for correction and same-fixture recheck',
                      'retry': 'Use recheck_metropolis_world.py with this exact report; --archive-only retires it explicitly'}
     else:

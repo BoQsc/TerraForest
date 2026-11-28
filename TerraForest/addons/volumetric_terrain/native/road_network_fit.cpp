@@ -91,10 +91,16 @@ Dictionary fit_generated_road_network(const World &world,const Array &source,con
    double low=original-.55,high=original+.55;
    if(!fixed){
     int count=int(std::ceil(2*extent/.5));
-    for(int side=0;side<=count;++side){
-     Vector3 point=position+across*(-extent+2*extent*side/count);
+    // Refined shores/foothills have relief between the 3 m grade stations.
+    // Bound the correction against the adjacent half-stations too, in the
+    // original curve's frame. Do not increase the final 2 m fill / 3 m cut cap.
+    const int envelope=world.generator_id==REFINED_ISLAND_GENERATOR_ID?1:0;
+    for(int interval=-envelope;interval<=envelope;++interval)for(int side=0;side<=count;++side){
+     double sampled_fraction=std::clamp(fraction+interval*.5/divisions,0.,1.);
+     double original_offset=value(edge.original,sampled_fraction)-original;
+     Vector3 point=edge.start.lerp(edge.finish,sampled_fraction)+across*(-extent+2*extent*side/count);
      if(point.x<1||point.z<1||point.x>1999||point.z>1999)return rejected("Road survey outside world",index);
-     double terrain=world.height(point.x,point.z,false);++samples;low=std::max(low,terrain-2.94);high=std::min(high,terrain+1.94);
+     double terrain=world.height(point.x,point.z,false)-original_offset;++samples;low=std::max(low,terrain-2.94);high=std::min(high,terrain+1.94);
     }
    }else{low=high=original;++fixed_count;}
    if(low>high){Dictionary failure=rejected("Corridor requires rerouting: no permitted cut/fill grade",index);failure["position"]=position;failure["low"]=low;failure["high"]=high;return failure;}

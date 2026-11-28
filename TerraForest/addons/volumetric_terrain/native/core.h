@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "platform.h"
+#include "../../world_runtime/native/island_lake_field.hpp"
 constexpr int WORLD=2000, WORLD_Y=256, PAGE=16, PAGE_SAMPLES=4096, MAX_PAGES=16384;
 constexpr int WORLD_PAGE_COLUMNS=WORLD/PAGE+1; // Inclusive boundary lattice.
 constexpr int MAX_AUTHORED_PAGES=WORLD_PAGE_COLUMNS*WORLD_PAGE_COLUMNS*17;
@@ -26,10 +27,11 @@ constexpr u32 DISTRIBUTED_NATURAL_COAST_GENERATOR_ID=27;
 constexpr u32 VARIED_LAKES_GENERATOR_ID=28;
 constexpr u32 EXTENSIVE_LAKES_GENERATOR_ID=32;
 constexpr u32 INHABITED_ISLAND_GENERATOR_ID=36; // New field; existing saved generator identities are immutable.
-constexpr u32 MAX_GENERATOR_ID=36;
+constexpr u32 REFINED_ISLAND_GENERATOR_ID=37;
+constexpr u32 MAX_GENERATOR_ID=37;
 inline bool distributed_region(u32 generator){return generator>=DISTRIBUTED_REGION_GENERATOR_ID&&generator<=MAX_GENERATOR_ID;}
-inline bool surrounding_coast(u32 generator){return generator==SURROUNDING_COAST_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID||generator==EMBED_COAST_GENERATOR_ID||generator==DISTRIBUTED_COAST_GENERATOR_ID||generator==DISTRIBUTED_NATURAL_COAST_GENERATOR_ID||generator==29||generator==31||generator==33||generator==35||generator==INHABITED_ISLAND_GENERATOR_ID;}
-inline bool buildable_ground(u32 generator){return (generator>=BUILDABLE_REGION_GENERATOR_ID&&generator<=DISTRIBUTED_COAST_GENERATOR_ID)||generator==28||generator==29||generator==32||generator==33||generator==INHABITED_ISLAND_GENERATOR_ID;}
+inline bool surrounding_coast(u32 generator){return generator==SURROUNDING_COAST_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID||generator==EMBED_COAST_GENERATOR_ID||generator==DISTRIBUTED_COAST_GENERATOR_ID||generator==DISTRIBUTED_NATURAL_COAST_GENERATOR_ID||generator==29||generator==31||generator==33||generator==35||generator==INHABITED_ISLAND_GENERATOR_ID||generator==REFINED_ISLAND_GENERATOR_ID;}
+inline bool buildable_ground(u32 generator){return (generator>=BUILDABLE_REGION_GENERATOR_ID&&generator<=DISTRIBUTED_COAST_GENERATOR_ID)||generator==28||generator==29||generator==32||generator==33||generator==INHABITED_ISLAND_GENERATOR_ID||generator==REFINED_ISLAND_GENERATOR_ID;}
 constexpr u32 COASTAL_REGION_GENERATOR_ID=18; // First western coastal inlet; prior fields immutable.
 constexpr u32 UNGRADED_REGION_GENERATOR_ID=17; // Natural regional field; roads and lots must be baked as edits.
 constexpr u32 SITED_REGION_GENERATOR_ID=16; // Surveyed outer settlements with preserved approach corridors.
@@ -158,6 +160,7 @@ struct World {
  u32 generator_id=TERRAIN_GENERATOR_ID;
  struct IslandRidge {float x,z,axis_x,axis_z,length,width,height;};
  IslandRidge island_ridges[3]{}; // Derived once from seed, never stored as a second terrain authority.
+ terraforest::landforms::IslandLakeField lake_fields[12]{};
  Basin basins[12]{};int basin_count=0;
  u16 basin_cells[64]{};
  // Immutable generator geometry, indexed by 64 m horizontal columns.

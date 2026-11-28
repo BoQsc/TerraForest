@@ -447,11 +447,11 @@ func _measured_step(delta:float)->void:
   _prepared_slice={}
   _slice_ready(prepared.token,1,prepared.epoch,prepared.revision)
  water.set_western_ocean(terrain.backend.world_generator==18)
- water.set_surrounding_ocean(terrain.backend.world_generator in [19,21,23,25,27,29,31,33,35,36])
- if terrain.backend.world_generator in [19,21,23,25,27,29,31,33,35,36] and _surrounding_ocean==null:
+ water.set_surrounding_ocean(terrain.backend.world_generator in [19,21,23,25,27,29,31,33,35,36,37])
+ if terrain.backend.world_generator in [19,21,23,25,27,29,31,33,35,36,37] and _surrounding_ocean==null:
   _surrounding_ocean=preload("res://addons/volumetric_water/ocean_presentation.gd").new()
   add_child(_surrounding_ocean);_surrounding_ocean.setup(_material)
- elif terrain.backend.world_generator not in [19,21,23,25,27,29,31,33,35,36] and _surrounding_ocean!=null:
+ elif terrain.backend.world_generator not in [19,21,23,25,27,29,31,33,35,36,37] and _surrounding_ocean!=null:
   _surrounding_ocean.queue_free();_surrounding_ocean=null;_material.set_shader_parameter("surrounding_ocean",false)
  if _surrounding_ocean==null or not _pending_bucket.is_empty() or not _pending_dev.is_empty():_ocean_admitting=false
  if _surrounding_ocean!=null and not _local_response_pending and not _local_publication_pending and not _busy and _builder==null and not terrain.pending_edit and _pending_bucket.is_empty() and _pending_dev.is_empty():
@@ -1248,6 +1248,7 @@ func preparation_ready()->bool:
 
 func statistics() -> Dictionary:
  var s:Dictionary=water.statistics();s.render_pages=_render_pages.statistics();s.lakes=_lakes.size();s.ready=0;s.outstanding_slices=int(_busy);s.resident_occupancy_bytes=s.resident_cell_bytes
+ s.preparation={"busy":_busy,"builder":_builder!=null,"ocean_admitting":_ocean_admitting,"local_response":_local_response_pending,"local_publication":_local_publication_pending,"cached_task":_cached_task,"offline":offline_preparation}
  s.ocean_boundary_exchange_ml=_ocean_exchange_ml
  for item:Dictionary in _lakes.values():
   if not item.dirty and item.failure.is_empty():s.ready+=1

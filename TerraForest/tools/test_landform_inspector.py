@@ -16,6 +16,12 @@ def fixture():
 
 
 class LandformInspectorTests(unittest.TestCase):
+    def test_kernel_version_is_explicit_and_unknown_versions_reject(self):
+        data=bytearray(fixture()[:-8]);struct.pack_into('<I',data,4,2)
+        self.assertEqual(inspect(seal(data))['kernel_version'],2)
+        struct.pack_into('<I',data,4,3)
+        with self.assertRaises(ValueError):inspect(seal(data))
+
     def test_explicit_portable_fields(self):
         result=inspect(fixture())
         self.assertEqual(result['seed'],1703)

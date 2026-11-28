@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=59
+const VERSION:=60
 const Watchtowers=preload("res://addons/exploration/watchtower_sites.gd")
 const Exploration=preload("res://addons/exploration/cave_layouts.gd")
 const Civic=preload("res://addons/structures/civic_catalog.gd")
@@ -76,9 +76,9 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var cache_profile:Dictionary={}
  var encoded:=Recipe.encode(options)
  if int(options.get("profile",0)) in [1,2] and int(options.get("introduction",0))!=0:return {"ok":false,"reason":"Metropolis uses its city start; the trader introduction belongs to the expedition recipe"}
- if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36]:return {"ok":false,"reason":"Unsupported world recipe"}
+ if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]:return {"ok":false,"reason":"Unsupported world recipe"}
  if progress!=null:progress.record("Checking the binary placement-plan cache",0,0,"Seed %d / terrain %d / recipe v%d"%[seed_value,generator,VERSION])
- if int(options.get("profile",0))==2 and generator!=36:return {"ok":false,"reason":"Inhabited island requires its island terrain profile"}
+ if int(options.get("profile",0))==2 and generator not in [36,37]:return {"ok":false,"reason":"Inhabited island requires its island terrain profile"}
  var core=ClassDB.instantiate("TerrainCore")
  var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
  var terrain_library:="res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll" if suffix=="template_release" else "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"

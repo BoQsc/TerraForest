@@ -12,7 +12,7 @@ import zlib
 from resource_limits import require_free_space
 
 CHUNK_BYTES = 1024 * 1024
-ARCHIVE_BUDGET = 10 * 1024**3
+ARCHIVE_BUDGET = 10 * 1024**3 + 128 * 1024**2  # Maintainer-approved lake QA retention, 2026-11-28.
 CAPTURE_BUDGET = 8 * 1024**3
 HEX = re.compile(r'[0-9a-f]{64}\Z')
 

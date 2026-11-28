@@ -7,7 +7,7 @@
       "kind": "coast",
       "level": 64,
       "depth": 0,
-      "bank": 32,
+      "bank": 45,
       "variation": 0,
       "closed": true,
       "paths": [
@@ -98,31 +98,75 @@
     "north_ridge": {
       "kind": "ridge",
       "level": 64,
-      "depth": 38,
+      "depth": 47,
       "bank": 32,
       "variation": 0.18,
       "closed": false,
       "paths": [
         [
           [
-            -230,
-            -175,
-            62
+            -242,
+            -176,
+            34
           ],
           [
-            -100,
-            -215,
-            80
-          ],
-          [
-            55,
             -165,
-            50
+            -202,
+            108
           ],
           [
-            180,
-            -205,
-            65
+            -82,
+            -175,
+            56
+          ],
+          [
+            24,
+            -224,
+            86
+          ],
+          [
+            128,
+            -178,
+            55
+          ],
+          [
+            202,
+            -214,
+            22
+          ]
+        ],
+        [
+          [
+            -165,
+            -202,
+            70
+          ],
+          [
+            -145,
+            -132,
+            44
+          ],
+          [
+            -208,
+            -95,
+            18
+          ]
+        ],
+        [
+          [
+            24,
+            -224,
+            60
+          ],
+          [
+            62,
+            -137,
+            40
+          ],
+          [
+            118,
+            -113,
+            17
           ]
         ]
       ]
@@ -130,31 +174,58 @@
     "south_ridge": {
       "kind": "ridge",
       "level": 64,
-      "depth": 24,
+      "depth": 34,
       "bank": 32,
       "variation": 0.18,
       "closed": false,
       "paths": [
         [
           [
-            -220,
-            230,
-            58
+            -236,
+            212,
+            22
           ],
           [
-            -80,
-            190,
-            67
+            -160,
+            243,
+            83
           ],
           [
-            65,
-            230,
-            43
+            -68,
+            184,
+            56
           ],
           [
-            180,
-            165,
-            50
+            30,
+            229,
+            105
+          ],
+          [
+            150,
+            201,
+            44
+          ],
+          [
+            214,
+            243,
+            23
+          ]
+        ],
+        [
+          [
+            30,
+            229,
+            70
+          ],
+          [
+            69,
+            154,
+            41
+          ],
+          [
+            132,
+            130,
+            16
           ]
         ]
       ]
@@ -164,39 +235,49 @@
       "level": 53,
       "depth": 10,
       "bank": 38,
-      "variation": 0.07,
+      "variation": 0.18,
       "closed": false,
       "paths": [
         [
           [
-            -230,
-            -60,
+            -222,
+            -61,
+            12
+          ],
+          [
+            -165,
+            -97,
+            49
+          ],
+          [
+            -98,
+            -54,
+            25
+          ],
+          [
+            -37,
+            12,
+            36
+          ],
+          [
+            33,
+            27,
+            29
+          ],
+          [
+            99,
+            54,
+            68
+          ],
+          [
+            157,
+            21,
             30
           ],
           [
-            -160,
-            -105,
-            55
-          ],
-          [
-            -85,
-            -55,
-            40
-          ],
-          [
-            0,
-            35,
-            54
-          ],
-          [
-            95,
-            50,
-            70
-          ],
-          [
-            185,
-            -10,
-            40
+            191,
+            -12,
+            12
           ]
         ]
       ]
@@ -206,68 +287,88 @@
       "level": 53,
       "depth": 12,
       "bank": 36,
-      "variation": 0.08,
+      "variation": 0.18,
       "closed": false,
       "paths": [
         [
           [
             -170,
-            130,
+            126,
+            13
+          ],
+          [
+            -118,
+            100,
+            24
+          ],
+          [
+            -79,
+            52,
+            37
+          ],
+          [
+            -27,
+            20,
+            83
+          ],
+          [
+            49,
+            -13,
+            52
+          ],
+          [
+            110,
+            -70,
             30
           ],
           [
-            -90,
-            75,
-            42
-          ],
-          [
-            -30,
-            10,
-            66
-          ],
-          [
-            65,
-            -35,
-            55
-          ],
-          [
-            170,
-            -100,
-            34
+            163,
+            -103,
+            13
           ]
         ],
         [
           [
-            -30,
-            10,
-            60
+            -27,
+            20,
+            62
           ],
           [
-            -85,
-            -50,
-            43
-          ],
-          [
-            -125,
-            -135,
-            25
-          ]
-        ],
-        [
-          [
-            65,
-            -35,
-            50
-          ],
-          [
-            130,
-            25,
+            -81,
+            -25,
             36
           ],
           [
-            185,
-            75,
+            -94,
+            -74,
+            25
+          ],
+          [
+            -129,
+            -122,
+            12
+          ]
+        ],
+        [
+          [
+            49,
+            -13,
+            40
+          ],
+          [
+            116,
+            4,
+            34
+          ],
+          [
+            155,
+            50,
             24
+          ],
+          [
+            185,
+            67,
+            11
           ]
         ]
       ]
@@ -277,7 +378,7 @@
       "level": 53,
       "depth": 8,
       "bank": 42,
-      "variation": 0.06,
+      "variation": 0.16,
       "closed": false,
       "paths": [
         [
@@ -395,7 +496,7 @@
     {
       "id": "winding_valley",
       "title": "Winding valley lake",
-      "intent": "A widening lake follows a valley; narrow reaches alternate with broad coves, forested slopes and open meadow approaches.",
+      "intent": "A widening lake follows a valley; narrow reaches alternate with broad coves, forested slopes and open meadow approaches. Refined shores alternate shallow shelves, sheltered coves and steeper wooded banks beneath dissected foothills.",
       "seed": 1703,
       "extent": 768,
       "base_height": 64,
@@ -469,7 +570,7 @@
     {
       "id": "branching_basin",
       "title": "Branching basin",
-      "intent": "Three connected arms meet around a central basin; headlands divide views and allow different arrivals.",
+      "intent": "Three connected arms meet around a central basin; headlands divide views and allow different arrivals. Refined shores alternate shallow shelves, sheltered coves and steeper wooded banks beneath dissected foothills.",
       "seed": 1703,
       "extent": 768,
       "base_height": 64,
@@ -543,7 +644,7 @@
     {
       "id": "horseshoe_basin",
       "title": "Horseshoe and island",
-      "intent": "A long crescent wraps a peninsula, with an island in its broad eastern reach and contrasting open and wooded shores.",
+      "intent": "A long crescent wraps a peninsula, with an island in its broad eastern reach and contrasting open and wooded shores. Refined shores alternate shallow shelves, sheltered coves and steeper wooded banks beneath dissected foothills.",
       "seed": 1703,
       "extent": 768,
       "base_height": 64,

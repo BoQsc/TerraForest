@@ -23,7 +23,7 @@ from landform_inspector import inspect
 from launch_recipe_playtest import gameplay_arguments
 
 FAMILY = ROOT/'reports/generation_lab'
-INPUTS = ['addons/world_runtime/assets/landform_library.json', 'addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll', 'tests/generation_lab.gd', 'tests/island_ecology.gd', 'demo/generation_lab.gd', 'demo/generation_lab.tscn', 'tools/run_generation_lab.py', 'tools/landform_inspector.py', 'tools/launch_recipe_playtest.py']
+INPUTS = ['tests/fixtures/landform_v1.lfp', 'tests/fixtures/landform_v1.json', 'addons/world_runtime/assets/landform_library.json', 'addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll', 'tests/generation_lab.gd', 'tests/island_ecology.gd', 'demo/generation_lab.gd', 'demo/generation_lab.tscn', 'tools/run_generation_lab.py', 'tools/landform_inspector.py', 'tools/launch_recipe_playtest.py']
 
 
 def world_identity(slot):

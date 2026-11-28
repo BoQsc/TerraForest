@@ -139,7 +139,7 @@ def region(data):
     if not 24 <= len(data) <= 512*1024:
         raise ValueError('Invalid generated-region size')
     magic, version, seed, generator, count, road_count = struct.unpack_from('<6I', data)
-    if magic != 0x31524754 or version != 1 or seed > 0x7fffffff or not 17 <= generator <= 36 or count > 256 or road_count > 8192:
+    if magic != 0x31524754 or version != 1 or seed > 0x7fffffff or not 17 <= generator <= 37 or count > 256 or road_count > 8192:
         raise ValueError('Unsupported generated-region header')
     def position(p):
         return all(math.isfinite(v) for v in p) and 0 <= p[0] <= 2000 and 0 <= p[1] <= 250 and 0 <= p[2] <= 2000

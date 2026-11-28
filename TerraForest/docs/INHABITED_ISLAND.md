@@ -1,4 +1,4 @@
-# Inhabited island — first human playtest
+# Inhabited island — recipe and human review
 
 Status: first recipe implemented and functionally verified, 2026-11-28. The human
 playtest calls it a good start, while requesting better lakes, vegetation and
@@ -19,12 +19,15 @@ terms and provenance remain unchanged.
 
 ## Separate recipe and native geography
 
-The ordinary creation menu gains **Inhabited island · first playtest**. Its
-native RCP1 recipe is version 9, profile 2, with immutable terrain generator 36.
+The ordinary creation menu now selects **Inhabited island · varied shores**,
+using immutable terrain 37 and the promoted laboratory guides described in
+[the laboratory record](GENERATION_LAB.md). The first human fixture retains
+terrain 36 and its original geometry. Both use RCP1 version 9, profile 2.
+The historical first-playtest evidence below refers to 36.
 Earlier recipe bytes and terrain fields remain supported. JSON remains an
 authoring/inspection view; runtime generation and restoration use binary bytes.
 
-The new native terrain field has broad lowlands, three asymmetric seeded ridges,
+The original terrain-36 field has broad lowlands, three asymmetric seeded ridges,
 an irregular coast around all four boundaries and the existing physically
 sampled long-lake system. Ridge parameters are derived once per field. It does
 not flatten one pad for a city. Individual streets, foundations and entrances
@@ -51,7 +54,32 @@ alternative routes where terrain permits, and fit at least two large bridges
 and one small crossing with usable approaches on both banks. New road grading
 must never relax terrain/contact rules just to admit a seed.
 
-## Verification and human review
+## Refined shores — terrain 37
+
+The laboratory's selected curves, shallow shelves, variable banks and more
+varied ridge/coast fields now reach the ordinary recipe. Physical catalog
+sections remain bounded; saved water uses canonical float32 contacts to avoid
+false overfill after restoration. Existing terrain-36 saves retain their shape.
+Production adapts the horizontal guides to a surveyed, region-aligned water
+datum and 3.25 m basin depth; the lab's study levels/depths are not copied.
+
+`reports/inhabited_island_world/20261128T141848823804Z` passes **116 functional
+assertions** through creation, interaction, durable save and fresh restoration.
+Vegetation is enabled. All six shore/overview captures were inspected: differing
+outlines and visible grass/ferns/trees are established, while plain lowlands,
+sparse planting, smooth banks and an angular lake-2 margin remain quality work.
+The near-margin artifact needs resident terrain/water diagnosis; the previews
+are not accepted natural scenery or a frame-rate qualification.
+
+Complete cold-plan Generate-to-play is **94.855197 s**, failing the 30 s target.
+Creation exits cleanly; interaction/restoration retain the known zero-reference
+ObjectDB warning, so **strict QA fails**. The preceding startup access violation
+is retained and unexplained. The owned QA fixture is cold-archived, not a new
+human save. See [laboratory evidence and limitations](GENERATION_LAB.md) for exact
+stages, rejected trials and archive receipts. The earlier human save below is
+still protected and unchanged.
+
+## Historical first verification and human review
 
 Component checks pass native recipe corruption rejection, old recipe
 compatibility, twelve byte-identical legacy terrain lattices, seeded hierarchy

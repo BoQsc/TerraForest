@@ -13,6 +13,7 @@ from cleanup_generation_copies import lease
 ADDONS = ['world_runtime','volumetric_water','volumetric_terrain','structures',
           'player_runtime','vehicle_runtime','vegetation_runtime']
 SHARED_HEADERS = {
+    'volumetric_terrain': ['world_runtime/native/' + name for name in ('landform_shapes.hpp','island_lake_modules.hpp','island_lake_field.hpp')],
     'volumetric_water': ['volumetric_terrain/native/' + name
                          for name in ('surface_cell.hpp','density_surface.hpp','platform.h')],
     'player_runtime': ['structures/native/block_word.hpp'],

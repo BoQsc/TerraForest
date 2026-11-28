@@ -9,20 +9,20 @@
 using namespace godot;
 namespace terraforest {
 void NativeGeneratedLakeBake::_bind_methods(){
-    ClassDB::bind_method(D_METHOD("run","core","catalog","revision","epoch","timeout_ms"),&NativeGeneratedLakeBake::run,DEFVAL(30000));
+    ClassDB::bind_method(D_METHOD("run","core","catalog","revision","epoch","timeout_ms","compact_dry_regions"),&NativeGeneratedLakeBake::run,DEFVAL(30000),DEFVAL(false));
     ClassDB::bind_method(D_METHOD("cancel"),&NativeGeneratedLakeBake::cancel);
     ClassDB::bind_method(D_METHOD("progress"),&NativeGeneratedLakeBake::progress);
 }
 Dictionary NativeGeneratedLakeBake::progress() const {
     Dictionary out;out["status"]=state.load(std::memory_order_relaxed);out["completed"]=completed.load(std::memory_order_relaxed);out["regions"]=regions.load(std::memory_order_relaxed);return out;
 }
-Dictionary NativeGeneratedLakeBake::run(Object *core,const PackedByteArray &catalog,int64_t revision,int64_t epoch,int64_t timeout_ms){
+Dictionary NativeGeneratedLakeBake::run(Object *core,const PackedByteArray &catalog,int64_t revision,int64_t epoch,int64_t timeout_ms,bool compact_dry_regions){
     Dictionary result;result["ok"]=false;
     if(started.exchange(true)){result["reason"]="Offline lake jobs cannot be reused";return result;}
     const uint64_t began=Time::get_singleton()->get_ticks_usec();
-    int64_t patches=0,slices=0,steps=0;uint64_t peak_bytes=0;
+    int64_t patches=0,slices=0,steps=0,dry_regions_released=0;uint64_t peak_bytes=0;
     auto failed=[&](int code,const String &reason){
-        state.store(code,std::memory_order_relaxed);result["status"]=code;result["reason"]=reason;result["milliseconds"]=double(Time::get_singleton()->get_ticks_usec()-began)/1000;return result;
+        state.store(code,std::memory_order_relaxed);result["status"]=code;result["reason"]=reason;result["completed_sections"]=completed.load();result["regions"]=regions.load();result["peak_native_state_bytes"]=int64_t(peak_bytes);result["milliseconds"]=double(Time::get_singleton()->get_ticks_usec()-began)/1000;return result;
     };
     if(!core||core->get_class()!=StringName("TerrainCore")||revision<0||revision>0xffffffffll||epoch<0||epoch>0xffffffffll||timeout_ms<1||timeout_ms>60000||catalog.size()>1100000)return failed(-1,"Invalid offline lake job");
     auto current=[&](uint32_t command,int64_t expected){
@@ -65,13 +65,32 @@ Dictionary NativeGeneratedLakeBake::run(Object *core,const PackedByteArray &cata
             peak_bytes=std::max(peak_bytes,bytes);regions.store(water->regions.size(),std::memory_order_relaxed);
             if(water->limit||bytes>128*1024*1024)return failed(-5,"Generated lake bake exceeded its storage budget");
         }
+        if(compact_dry_regions){
+            // Detached generation has no player edits, meshes or pending fill.
+            // Dry sampled terrain is regenerable cache, not water authority.
+            // Release it between sections; retain every nonzero water quantity
+            // and its contacts. A later section resamples immutable terrain.
+            for(auto it=water->regions.begin();it!=water->regions.end();){
+                const auto &region=it->second;bool wet=false;
+                for(int cell=0;cell<512&&!wet;++cell)wet=region.water[cell]!=0;
+                if(!wet&&region.valid&&!region.ocean_state&&!region.replace_water&&region.vacancies.empty()){
+                    it=water->regions.erase(it);++dry_regions_released;
+                }else ++it;
+            }
+            water->invalidate_snapshot();
+        }
         completed.store(i+1,std::memory_order_relaxed);
     }
     if(interrupted())return failed(-4,"Offline lake job cancelled or terrain changed");
     PackedByteArray snapshot=water->capture_streaming_snapshot(catalog);
-    if(snapshot.is_empty()||snapshot.size()>64*1024*1024)return failed(-5,"Generated lake snapshot exceeded its budget");
+    // New compact worlds publish TFWG compressed region packs. Their expanded
+    // worker representation already has a separate, bounded native allowance.
+    // Keep the older direct-root generation contract unchanged.
+    const int64_t snapshot_limit=compact_dry_regions?NativeRegionalWater::MAX_EXPANDED_BYTES:64*1024*1024;
+    result["snapshot_bytes"]=snapshot.size();
+    if(snapshot.is_empty()||snapshot.size()>snapshot_limit)return failed(-5,"Generated lake snapshot exceeded its budget");
     if(interrupted())return failed(-4,"Offline lake job cancelled before publication");
-    result["ok"]=true;result["status"]=2;result["snapshot"]=snapshot;result["lakes"]=records.size();result["regions"]=int64_t(water->regions.size());result["water_ml"]=int64_t(water->total);result["patches"]=patches;result["slices"]=slices;result["steps"]=steps;result["peak_native_state_bytes"]=int64_t(peak_bytes);result["snapshot_bytes"]=snapshot.size();result["milliseconds"]=double(Time::get_singleton()->get_ticks_usec()-began)/1000;
+    result["ok"]=true;result["status"]=2;result["dry_regions_released"]=dry_regions_released;result["snapshot"]=snapshot;result["lakes"]=records.size();result["regions"]=int64_t(water->regions.size());result["water_ml"]=int64_t(water->total);result["patches"]=patches;result["slices"]=slices;result["steps"]=steps;result["peak_native_state_bytes"]=int64_t(peak_bytes);result["snapshot_bytes"]=snapshot.size();result["milliseconds"]=double(Time::get_singleton()->get_ticks_usec()-began)/1000;
     state.store(2,std::memory_order_relaxed);return result;
 }
 }

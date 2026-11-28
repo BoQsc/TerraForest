@@ -57,7 +57,8 @@ The inhabited-island recipe uses `RCP1` version 9: eleven little-endian u32 word
 (44 bytes), consisting of magic, version, biome, settlements, districts, network,
 trails, road grid, material veins, introduction and profile. Profile 2 requires
 seven settlement groups, one district and introduction 0. Its immutable terrain
-generator is 36. Existing Metropolis profile 1 remains version 8; older recipes
+generator is 36 for the original playtest and 37 for the refined-shore recipe.
+Existing Metropolis profile 1 remains version 8; older recipes
 keep their versions. The inspector can decode/compile both without changing
 their byte layouts. A recipe remains input to generation; editing a save's
 recipe does not regenerate its physical content.

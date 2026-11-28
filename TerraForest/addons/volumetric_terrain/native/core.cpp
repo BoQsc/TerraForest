@@ -231,7 +231,16 @@ static float cached_height(const World &world,EditHeightCache *storage,int x,int
 float World::edit_height(int x,int z)const{return cached_height(*this,edit_height_cache,x,z);}
 float World::height(float x,float z,bool developed)const{
  float h=inland_height(x,z,developed);
-  if(surrounding_coast(generator_id)){
+  if(generator_id==REFINED_ISLAND_GENERATOR_ID){
+   float dx=mn(x,float(WORLD)-x),dz=mn(z,float(WORLD)-z),edge=mn(dx,dz);
+   if(edge<300.f){
+    float distance=edge;
+    if(dx<260.f&&dz<260.f)distance=260.f-root((260.f-dx)*(260.f-dx)+(260.f-dz)*(260.f-dz));
+    auto detail=[&](float scale,u32 salt){return noise(x/scale,z/scale,u32(seed)+salt);};
+    float shore=90.f+48.f*detail(235,331)+16.f*detail(71,347);
+    h=terraforest::landforms::shapes::coast(h,distance-shore,64.f,detail,40.f);
+   }
+  }else if(surrounding_coast(generator_id)){
    // One continuous border field, including corners. Only the outer 240 m
    // changes; settlements and the existing regional interior retain their field.
    float edge=mn(mn(x,z),mn(float(WORLD)-x,float(WORLD)-z));
@@ -253,20 +262,25 @@ float World::height(float x,float z,bool developed)const{
 float World::inland_height(float x,float z,bool developed)const{
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return 0;
  float h=49.f+noise(x/320.f,z/320.f,u32(seed))*20.f+noise(x/100.f,z/100.f,u32(seed)+1u)*8.f+noise(x/34.f,z/34.f,u32(seed)+2u)*2.5f;
- if(generator_id==INHABITED_ISLAND_GENERATOR_ID){
+ if((generator_id==INHABITED_ISLAND_GENERATOR_ID||generator_id==REFINED_ISLAND_GENERATOR_ID)){
   // Broad lowlands connect inhabited areas; three asymmetric narrow ridges
   // give the island landmarks without filling every quadrant with a massif.
   h=51.f+noise(x/460.f,z/430.f,u32(seed))*10.f+noise(x/145.f,z/145.f,u32(seed)+1u)*2.5f+noise(x/48.f,z/48.f,u32(seed)+2u)*.6f;
   for(const auto &ridge:island_ridges){
    float dx=x-ridge.x,dz=z-ridge.z,along=(dx*ridge.axis_x+dz*ridge.axis_z)/ridge.length,across=(-dx*ridge.axis_z+dz*ridge.axis_x)/ridge.width;
-   float radius=along*along+across*across;if(radius>=1.f)continue;
+   float radius=along*along+across*across;
+   if(generator_id==REFINED_ISLAND_GENERATOR_ID){
+    if(radius<1.7f)h+=terraforest::landforms::shapes::ridge(root(radius),ridge.height,.2f,[&](float scale,u32 salt){return noise(x/scale,z/scale,u32(seed)+salt);});
+    continue;
+   }
+   if(radius>=1.f)continue;
    float weight=(1.f-radius)*(1.f-radius);
    h+=weight*(ridge.height+7.f*noise(x/49.f,z/49.f,u32(seed)+73u));
   }
  }
  if(generator_id>=2){
   // Four seed-derived massifs, constant query work and no generated sample storage.
-  for(u32 i=0;i<(generator_id==INHABITED_ISLAND_GENERATOR_ID?0u:4u);i++){
+  for(u32 i=0;i<((generator_id==INHABITED_ISLAND_GENERATOR_ID||generator_id==REFINED_ISLAND_GENERATOR_ID)?0u:4u);i++){
    u32 a=hash32(u32(seed)^0x6d2b79f5u^(i*0x9e3779b9u)),b=hash32(a);
    float cx=350.f+float(i&1)*1000.f+float(a&255),cz=350.f+float(i>>1)*1000.f+float((a>>8)&255);
    if(generator_id>=NATURAL_REGION_GENERATOR_ID){
@@ -299,6 +313,12 @@ float World::inland_height(float x,float z,bool developed)const{
   while(candidates){
    int i=__builtin_ctz(candidates);candidates&=candidates-1;
    const auto &b=basins[i];float dx=x-b.x,dz=z-b.z,d2=dx*dx+dz*dz;
+   if(generator_id==REFINED_ISLAND_GENERATOR_ID){
+    float along=b.along_x?dx:dz,across=b.along_x?dz:dx;
+    if(ab(along)>b.half_length*1.5f||ab(across)>b.half_width*1.5f)continue;
+    h=lake_fields[i].height(along,across,h,b.level,b.depth,[&](float scale,u32 salt){return noise(x/scale,z/scale,u32(seed)+salt+u32(i)*71u);});
+    continue;
+   }
    if(b.half_length>0){
     float longitudinal=(b.along_x?dx:dz)/b.half_length;
     if(ab(longitudinal)>=1.25f)continue;
@@ -434,6 +454,7 @@ void World::scatter_extensive_lakes(){
   shape.half_length=tile==0?340.f:(tile==1?300.f:(tile==2?260.f:16.f+float(shape_key%8)));
   shape.half_width=tile==0?20.f:(tile==1?19.f:(tile==2?13.f:9.f+float((shape_key>>8)%5)));
   shape.depth=tile<3?2.6f:2.f;
+  if(generator_id==REFINED_ISLAND_GENERATOR_ID){shape.half_width=tile==0?64.f:(tile==1?68.f:(tile==2?60.f:18.f));shape.depth=tile<3?3.25f:2.f;}
   shape.kind=tile==0?1:(tile==2?2:0);
   shape.along_x=int((shape_key>>16)&1);
   float ex=(shape.along_x?shape.half_length:shape.half_width)*1.5f;
@@ -467,7 +488,21 @@ void World::scatter_extensive_lakes(){
    float cost=high-low+mx(high-75.f,0.f)*.2f;
    if(cost<best_cost){best_cost=cost;best=p;}
   }
-  if(best_cost<1e20f){shape.x=best.x;shape.z=best.z;shape.level=height(best.x,best.z)-2.f;basins[basin_count++]=shape;}
+  if(best_cost<1e20f){
+   shape.x=best.x;shape.z=best.z;shape.level=height(best.x,best.z)-2.f;
+   if(generator_id==REFINED_ISLAND_GENERATOR_ID){
+    // Select a water datum below all surrounding ground, before carving. This
+    // avoids an artificial retaining rim or an unbounded outlet to lower land.
+    float floor=255.f;
+    for(float a=-shape.half_length;a<=shape.half_length;a+=8.f)for(float c=-shape.half_width;c<=shape.half_width;c+=8.f)
+     floor=mn(floor,height(best.x+(shape.along_x?a:c),best.z+(shape.along_x?c:a)));
+    // Keep the shallow basin within one native 4 m water-brick layer.
+    // Selecting the datum downward preserves enclosure and the full outline.
+    shape.level=float(fl((floor-1.f)/4.f))*4.f;
+    lake_fields[basin_count].init(tile<3?u32(tile):0u,shape.half_length,shape.half_width,shape_key);
+   }
+   basins[basin_count++]=shape;
+  }
  }
  for(int lake=0;lake<basin_count;lake++){
   const auto &b=basins[lake];float ex=(b.along_x?b.half_length:b.half_width)*1.5f,ez=(b.along_x?b.half_width:b.half_length)*1.5f;
@@ -493,10 +528,10 @@ void World::init(int p_seed,u32 generator){
  index_cave_columns();
 }
 void World::init_generator(int p_seed,u32 generator){
- seed=p_seed;generator_id=generator==INHABITED_ISLAND_GENERATOR_ID?generator:surrounding_coast(generator)||generator==BUILDABLE_REGION_GENERATOR_ID||distributed_region(generator)?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
+ seed=p_seed;generator_id=(generator==INHABITED_ISLAND_GENERATOR_ID||generator==REFINED_ISLAND_GENERATOR_ID)?generator:surrounding_coast(generator)||generator==BUILDABLE_REGION_GENERATOR_ID||distributed_region(generator)?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;
- if(generator==INHABITED_ISLAND_GENERATOR_ID){
+ if(generator==INHABITED_ISLAND_GENERATOR_ID||generator==REFINED_ISLAND_GENERATOR_ID){
   const float centers[3][2]={{650,480},{1460,650},{470,1400}};
   for(u32 i=0;i<3;i++){
    u32 key=hash32(u32(seed)^0x14b7a931u^(i*0x9e3779b9u));float angle=float(key&1023)*.0012f+(i==1?1.f:0.f);
@@ -2817,8 +2852,21 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==27){
   if(n!=4){out.p[8]=1;return;}
+  auto section_count=[&](const Basin&b){
+   if(w.generator_id<EXTENSIVE_LAKES_GENERATOR_ID)return 1;
+   int half=int(__builtin_ceilf((b.half_length*1.05f+2)/2))*2,maximum=256;
+   if(w.generator_id==REFINED_ISLAND_GENERATOR_ID){
+    int across=int(__builtin_ceilf((b.half_width*1.05f+2)/2))*2;
+    float bottom=float(fl(b.level-b.depth))-1.f;
+    int vertical=int(__builtin_ceilf((b.level-bottom+1.f)/2.f))*2;
+    // The catalog's coarse grid is not the physical 0.5 m fill lattice.
+    // Split wider basins within the existing 2,097,152-cell fill-job cap.
+    maximum=imn(maximum,(2097152/(8*across*2*vertical))/2*2);
+   }
+   return int(__builtin_ceilf(float(half*2)/maximum));
+  };
   int record_count=0;
-  for(int i=0;i<w.basin_count;i++)record_count+=w.generator_id>=EXTENSIVE_LAKES_GENERATOR_ID?int(__builtin_ceilf((2*__builtin_ceilf((w.basins[i].half_length*1.05f+2)/2)*2)/256.f)):1;
+  for(int i=0;i<w.basin_count;i++)record_count+=section_count(w.basins[i]);
   out.u(record_count);
   for(int i=0;i<w.basin_count;i++){
    const auto &b=w.basins[i];
@@ -2827,11 +2875,12 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
     // Catalog pages stay bounded; the physical lake is never shortened to fit.
     int half=int(__builtin_ceilf((b.half_length*1.05f+2)/2))*2;
     int across=int(__builtin_ceilf((b.half_width*1.05f+2)/2))*2;
-    int parts=int(__builtin_ceilf(float(half*2)/256.f));float bottom=float(fl(b.level-b.depth))-1.f;
+    int parts=section_count(b);float bottom=float(fl(b.level-b.depth))-1.f;
     for(int part=0;part<parts;part++){
      int start=-half+2*((half*part)/parts),end=-half+2*((half*(part+1))/parts),length=end-start;
      int spacing=int(__builtin_ceilf(float(mx(length,across*2))/128.f));
      float s=clampf(0.f,float(start+2),float(end-2)),bend=b.kind==1?.28f*mx(0.f,1.f-s*s/(b.half_length*b.half_length))*b.half_width:0;
+     if(w.generator_id==REFINED_ISLAND_GENERATOR_ID)w.lake_fields[i].source(float(start),float(end),s,bend);
      out.vec({b.x+(b.along_x?start:-across),bottom,b.z+(b.along_x?-across:start)});
      out.u(int(__builtin_ceilf(float(b.along_x?length:across*2)/spacing)));out.u(int(mx(3.f,__builtin_ceilf((b.level-bottom+1.f)/spacing))));out.u(int(__builtin_ceilf(float(b.along_x?across*2:length)/spacing)));out.f(float(spacing));out.f(b.level);
      out.vec({b.x+(b.along_x?s:bend),b.level-.5f,b.z+(b.along_x?bend:s)});

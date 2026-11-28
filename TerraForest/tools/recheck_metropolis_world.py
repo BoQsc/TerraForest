@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: 0BSD
-"""Reuse an unretired, receipt-owned metropolis publication for interaction QA.
+"""Reuse an unretired, receipt-owned regional publication for interaction QA.
 
 Allocates no world, source copy or export. Admits 160 MiB for captures/receipts;
 successful completion cold-retires the exact fixture. Failed rechecks keep the
@@ -16,21 +16,38 @@ import check_metropolis_world as creation
 from retained_artifacts import confined, digest
 
 
+def validated_creation(folder, original, family, diagnostic_exit_warning=False):
+    """Allow only this family's completed creation; never mutate human fixtures."""
+    if original.get('human_playtest_owned') or any((folder / pin).exists() for pin in ('.retain', 'RETAIN_READY')):
+        raise ValueError('Protected human/review fixture cannot be used for mutating QA')
+    phases = original.get('phases', [])
+    first = dict(phases[0]) if phases else {}
+    if original.get('purpose') != creation.REPORT_FAMILIES[family] or first.get('phase') != 'create':
+        raise ValueError('Recheck requires a matching ordinary creation receipt')
+    result = first.get('result', {})
+    cleanup_only = diagnostic_exit_warning and creation.zero_reference_exit_only(result, folder / 'create')
+    if not result.get('passed') and not cleanup_only:
+        raise ValueError('Recheck requires passed creation or the verified diagnostic cleanup exception')
+    first['cleanup_warning_only'] = cleanup_only
+    return first
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('evidence', type=Path)
     parser.add_argument('--approved-headroom', action='store_true')
     parser.add_argument('--restore-only', action='store_true', help='Reuse a passed interaction with identical test/native inputs')
+    parser.add_argument('--diagnostic-exit-warning', action='store_true', help='Continue only after the recorded zero-reference cleanup warning; strict failure remains')
     args = parser.parse_args()
     creation.no_game_processes()
-    folder = confined(args.evidence.resolve(), creation.ROOT / 'reports/metropolis_world')
+    candidate = args.evidence.resolve()
+    family = candidate.parent.name
+    if family not in creation.REPORT_FAMILIES: raise ValueError('Unknown regional QA family')
+    folder = confined(candidate, creation.ROOT / 'reports' / family)
     if (folder / 'world.archive.json').exists():
         raise ValueError('Fixture is cold-retired; never recreate it under its old identity')
     original = json.loads((folder / 'run.json').read_text())
-    first = original.get('phases', [{}])[0]
-    if (original.get('purpose') != 'normal metropolis generation and fresh restore'
-            or first.get('phase') != 'create' or not first.get('result', {}).get('passed')):
-        raise ValueError('Recheck requires a passed ordinary creation receipt')
+    first = validated_creation(folder, original, family, args.diagnostic_exit_warning)
     request = json.loads((folder / 'request.json').read_text())
     published = json.loads((folder / 'world.json').read_text())
     userdata = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest'
@@ -97,19 +114,22 @@ def main():
                    '--metropolis-evidence=' + folder.as_posix(),
                    '--session-evidence-dir=' + folder.as_posix(), '--isolated-render',
                    '--metropolis-capture-prefix=' + stamp, *extra]
+        if family == 'inhabited_island_world': command.append('--inhabited-island')
         result = creation.execute(command, phase, 600, 'PRODUCTION_BUILDINGS checks=', isolated_render=True)
-        record['phases'].append({'phase': name, 'command': command, 'result': result})
+        cleanup_only = args.diagnostic_exit_warning and creation.zero_reference_exit_only(result, phase)
+        record['phases'].append({'phase': name, 'command': command, 'result': result, 'cleanup_warning_only': cleanup_only})
         creation.storage.register_worlds(command, phase)
         (folder / 'recheck.json').write_text(json.dumps(record, indent=2))
         frozen.write_text(json.dumps(record, indent=2))
         print(('PASS ' if result['passed'] else 'FAIL ') + name, flush=True)
-        if not result['passed']:
+        if not result['passed'] and not cleanup_only:
             break
     record['passed'] = len(record['phases']) == 3 and all(p['result']['passed'] for p in record['phases'])
+    record['functional_passed'] = len(record['phases']) == 3 and all(p['result']['passed'] or p.get('cleanup_warning_only') for p in record['phases'])
     (folder / 'recheck.json').write_text(json.dumps(record, indent=2))
     frozen.write_text(json.dumps(record, indent=2))
     retention = {'pending': True, 'reason': 'Failed recheck retains this same fixture for correction'}
-    if record['passed']:
+    if record['functional_passed']:
         try:
             retention = creation.retire_fixture(folder, record, 'recheck.json')
         except (OSError, ValueError) as error:

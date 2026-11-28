@@ -182,7 +182,7 @@ static func publish_generated(game:Node,progress:Callable,cancelled:Callable)->D
 	var deadline:=Time.get_ticks_msec()+120000
 	while not game.lakes.preparation_ready():
 		if not game.lakes._equilibrium_failure.is_empty() or not game.lakes._occupancy_failure.is_empty():return {"ok":false,"reason":"water_preparation_failed","water":game.lakes.statistics()}
-		if cancelled.call() or Time.get_ticks_msec()>deadline:return {"ok":false,"reason":"water_contacts_not_ready"}
+		if cancelled.call() or Time.get_ticks_msec()>deadline:return {"ok":false,"reason":"water_contacts_not_ready","water":game.lakes.statistics(),"runtime":game.lakes.water.runtime_state()}
 		await game.get_tree().process_frame
 	var store:RefCounted=game.persistence.location_baselines
 	var locations:Array=game.quests.store.get_locations();var evidence:Array=[]

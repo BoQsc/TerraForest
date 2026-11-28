@@ -18,6 +18,6 @@ protected:
 public:
     void cancel(){cancelled.store(true,std::memory_order_relaxed);}
     godot::Dictionary progress() const;
-    godot::Dictionary run(godot::Object *core,const godot::PackedByteArray &catalog,int64_t revision,int64_t epoch,int64_t timeout_ms=30000);
+    godot::Dictionary run(godot::Object *core,const godot::PackedByteArray &catalog,int64_t revision,int64_t epoch,int64_t timeout_ms=30000,bool compact_dry_regions=false);
 };
 }

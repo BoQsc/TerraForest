@@ -649,3 +649,31 @@ The projection-regression follow-up also verified lossless recompression of 678
 archive chunks, saving 3,146,800 bytes. Its receipt and temporary historical
 ready pins are documented in [SHADOW_BANDS.md](../issues/vegetation-lod/SHADOW_BANDS.md#physical-setup-rejection-and-evidence-retention); revisit pins after human review and
 adequate archive headroom. Original evidence and budgets remain unchanged.
+
+## Approved shoreline QA archive capacity — 2026-11-28
+
+The maintainer explicitly approved **128 MiB** additional retained-evidence
+capacity (10 GiB → 10.125 GiB) after the lake laboratory's archival step reached
+the existing limit. Admission and the chunk store share that limit. This retains
+completed comparisons and owned QA fixtures; it does not authorize deleting
+regression evidence, changing save ownership, or further budget increases.
+The separately approved +256 MiB report / +256 MiB owned-world allowance remains
+process-local to the refined island QA launcher and restores normal limits at exit.
+
+The final terrain-37 run is functionally complete, but strict cleanup rejects the
+known shutdown warning. Its exact owned fixture is archived in
+`reports/inhabited_island_world/20261128T141848823804Z/world.archive.json`.
+Final evidence retention keeps all six lake review images, first-play and the
+cathedral street image ready, with other captures in `review_captures.archive.json`.
+Completed, already-cold Metropolis fixtures' verbose logs were also losslessly
+retained under per-run `logs.archive.json`; their original receipts remain ready.
+`reports/shoreline_refinement_20261128/final_evidence_retention.json` records the
+exact files and ownership boundary. This restores normal admission without
+another budget increase or removal of regression evidence.
+
+Cold measurement held only two task-owned derived placement caches before launch.
+`cold_plan_retry_hold.json` records their identities and completed restoration;
+no player save was moved. The same-fixture recheck helper now recognizes both
+regional families, refuses human/review pins, and allows explicit diagnostic
+continuation only after verified completed assertions plus the exact known
+zero-reference warning. Strict results stay failed; unrelated failures stop.

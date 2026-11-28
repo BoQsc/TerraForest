@@ -16,6 +16,13 @@ func save_json(name:String,value:Variant)->void:
 func run()->void:
  if folder.is_empty():quit(2);return
  var native:RefCounted=ClassDB.instantiate("NativeLandformLab")
+ var old:PackedByteArray=FileAccess.get_file_as_bytes("res://tests/fixtures/landform_v1.lfp")
+ var baseline:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/landform_v1.json"))
+ var old_raster:Dictionary=native.raster(old,257,false)
+ check(old_raster.get("ok",false),"version-1 laboratory programs remain readable")
+ if old_raster.get("ok",false):
+  var hash:=HashingContext.new();hash.start(HashingContext.HASH_SHA256);hash.update(old_raster.pixels)
+  check(hash.finish().hex_encode()==baseline.pixels_sha256,"version-1 terrain and shore pixels remain byte-identical")
  var library:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://addons/world_runtime/assets/landform_library.json"))
  var rows:Array=[]
  for case:Dictionary in library.cases:
