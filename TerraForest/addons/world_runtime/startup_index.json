@@ -485,6 +485,7 @@
     "res://addons/structures/northern_lots.gd",
     "res://addons/structures/terrain_lot_planner.gd",
     "res://addons/structures/regional_route_planner.gd",
+    "res://addons/world_runtime/world_recipe.gd",
     "res://addons/structures/mansion/catalog.gd"
   ],
   "res://addons/structures/mine_catalog.gd": [],

@@ -32,6 +32,14 @@ planning, preview, final contacts, normal publication/trading and fresh restorat
 pass. Installed scope, intermittent exit cleanup, world-quality approval and the
 60 FPS target remain separately open.
 
+[Inhabited island first playtest](world-generator/README.md#inhabited-island--2026-11-28)
+adds a separate native geography/recipe with a three-quarter city, two towns,
+four smaller communities and three required bridges. All 109 functional
+creation/interaction/restore checks pass; strict shutdown cleanup still fails.
+Its protected save awaits human review. The inspected map retains a square coast,
+straight lakes and fragmented streets. Cold Generate-to-play is 80.142 s; the
+30-second requirement, natural geography and missing infrastructure remain open.
+
 [Three grand buildings](grand-buildings/README.md) adds a 60-flat block, a
 cathedral with two cellar levels and twin bell towers, and a ten-storey street
 tower with 58 flats and eight shops. They are additional construction choices;

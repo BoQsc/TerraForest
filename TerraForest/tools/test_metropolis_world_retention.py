@@ -92,6 +92,16 @@ class FixtureRetention(unittest.TestCase):
             target.retire_fixture(self.folder, self.record)
         self.assertTrue(self.payload.exists())
 
+    def test_human_playtest_is_never_automatically_retired(self):
+        self.record['human_playtest_owned'] = True
+        self.record['functional_passed'] = True
+        result = target.retire_fixture(self.folder, self.record)
+        self.assertTrue(result['protected'])
+        self.assertFalse(result['pending'])
+        self.assertTrue(self.payload.exists())
+        self.assertFalse((self.folder / 'world.archive.json').exists())
+        self.assertEqual(self.protected.read_bytes(), b'player save must survive')
+
 
 
 class ExitWarningScope(unittest.TestCase):

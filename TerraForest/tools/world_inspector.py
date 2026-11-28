@@ -98,12 +98,12 @@ def recipe(data):
     if magic != 0x31504352:
         raise ValueError('Invalid recipe magic')
     expected = {28: (1,), 32: ((values[5]+1 if len(values)>5 and values[5]>=2 else 2),),
-                36: (5, 6), 40: (7,), 44: (8,)}
-    if version not in expected[len(data)] or (len(values) >= 6 and values[5] > 3) or any(v > 1 for v in values[6:]):
+                36: (5, 6), 40: (7,), 44: ((9 if len(values)==9 and values[8]==2 else 8),)}
+    if version not in expected[len(data)] or (len(values) >= 6 and values[5] > 3) or any(v > 1 for v in values[6:8]) or (len(values)==9 and values[8]>2):
         raise ValueError('Unsupported recipe version or flags')
     biome, settlements, districts, network, trails = values[:5]
-    if len(values) == 9 and values[8] == 1:
-        valid = biome <= 2 and settlements == 7 and districts == 1 and network <= 2 and trails <= 2
+    if len(values) == 9 and values[8] in (1,2):
+        valid = biome <= 2 and settlements == 7 and districts == 1 and (values[8]!=2 or values[7]==0) and network <= 2 and trails <= 2
     else:
         expanded = version >= 6
         valid = (biome <= 2 and 1 <= settlements <= 3 and 1 <= districts <= (3 if expanded else 2)
@@ -127,7 +127,7 @@ def compile_recipe(document):
     if count==6 and values[5]>=2:version=values[5]+1
     if count==7:version=6 if values[2]>2 or values[3]>1 else 5
     if count==8:version=7
-    if count==9:version=8
+    if count==9:version=9 if values[8]==2 else 8
     data=struct.pack('<'+'I'*(count+2),0x31504352,version,*values)
     recipe(data)
     return data
@@ -139,7 +139,7 @@ def region(data):
     if not 24 <= len(data) <= 512*1024:
         raise ValueError('Invalid generated-region size')
     magic, version, seed, generator, count, road_count = struct.unpack_from('<6I', data)
-    if magic != 0x31524754 or version != 1 or seed > 0x7fffffff or not 17 <= generator <= 35 or count > 256 or road_count > 8192:
+    if magic != 0x31524754 or version != 1 or seed > 0x7fffffff or not 17 <= generator <= 36 or count > 256 or road_count > 8192:
         raise ValueError('Unsupported generated-region header')
     def position(p):
         return all(math.isfinite(v) for v in p) and 0 <= p[0] <= 2000 and 0 <= p[1] <= 250 and 0 <= p[2] <= 2000

@@ -24,12 +24,17 @@ class InspectorTests(unittest.TestCase):
         self.assertEqual(next(row for row in report['sections'] if row['name']=='generated_region')['decoded']['roads'][0]['width'],6)
 
     def test_both_supported_legacy_and_current_recipes(self):
-        for values,version in [([0,2,1,0,1],1),([0,2,1,0,1,0],2),([1,3,3,2,1,3,1],6),([1,7,1,2,1,3,1,0,1],8)]:
+        for values,version in [([0,2,1,0,1],1),([0,2,1,0,1,0],2),([1,3,3,2,1,3,1],6),([1,7,1,2,1,3,1,0,1],8),([1,7,1,2,1,3,1,0,2],9)]:
             data=struct.pack('<'+'I'*(len(values)+2),0x31504352,version,*values)
             self.assertEqual(inspector.recipe(data)['version'],version)
             document={'schema':'terraforest.recipe.v1','options':dict(zip(inspector.RECIPE_FIELDS,values))}
             self.assertEqual(inspector.compile_recipe(document),data)
         with self.assertRaises(ValueError):inspector.recipe(struct.pack('<7I',0x31504352,1,0,7,1,0,1))
+
+    def test_island_requires_its_version_and_no_introduction(self):
+        for version,introduction,profile in [(8,0,2),(9,0,1),(9,1,2),(9,0,3)]:
+            with self.assertRaises(ValueError):
+                inspector.recipe(struct.pack('<11I',0x31504352,version,1,7,1,2,1,3,1,introduction,profile))
 
     def test_json_recipe_cannot_coerce_or_hide_unknown_fields(self):
         options=dict(biome=0,settlements=2,districts=1,network=0,trails=1)

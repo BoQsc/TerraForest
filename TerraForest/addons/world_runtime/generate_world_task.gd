@@ -82,12 +82,12 @@ func run()->void:
   if arg.begins_with("--progress-file="):progress_path=arg.trim_prefix("--progress-file=")
   if arg.begins_with("--cancel-file="):generation_cancel_path=arg.trim_prefix("--cancel-file=")
   if arg.begins_with("--preparation-output="):output_dir=arg.trim_prefix("--preparation-output=")
- if generator not in [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35] or seed_value<0 or seed_value>2147483647:quit(1);return
+ if generator not in [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36] or seed_value<0 or seed_value>2147483647:quit(1);return
  var recipe:=preload("res://addons/world_runtime/world_recipe.gd").from_arguments(PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
  if not recipe.ok:print("INVALID_WORLD_RECIPE");quit(1);return
  world_options=recipe.options
  if "--civic-review" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) and world_options.is_empty():world_options=preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.duplicate()
- var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35]
+ var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36]
  DirAccess.make_dir_recursive_absolute(output_dir)
  if not qualification:
   generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=generation_cancel_path;root.add_child(generation_screen)
@@ -134,7 +134,7 @@ func run()->void:
  var connection:Dictionary=prepared.connection
  var sites:Array=prepared.get("sites",[plan,market])
  print("WORLD_PLAN digest=",prepared.plan_digest," cache_hit=",prepared.cache_hit," ms=",prepared.worker_ms," planning_frames=",planning_frames)
- FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"options":world_options,"cache_profile":prepared.get("cache_profile",{}),"planning_phases":plan_progress.timings(),"independent_resources":{"started":resources.independent_started,"completed":resources.independent_completed,"peak_pending":resources.peak_pending}}))
+ FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"cache_hit":prepared.cache_hit,"options":world_options,"cache_profile":prepared.get("cache_profile",{}),"planning_phases":plan_progress.timings(),"independent_resources":{"started":resources.independent_started,"completed":resources.independent_completed,"peak_pending":resources.peak_pending}}))
 
  if cancelled():quit(2);return
  if not await resources.prepare(self,"res://demo/world.gd",func(done:int,total:int):progress("Initializing generated terrain data",done,total,{"activity":"Loading game resources · %d / %d"%[done,total]})):quit(1);return

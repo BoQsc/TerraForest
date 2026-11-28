@@ -238,9 +238,10 @@ float World::height(float x,float z,bool developed)const{
    if(edge<240.f){
     float dx=mn(x,float(WORLD)-x),dz=mn(z,float(WORLD)-z);
     float corner=mx(32.f-ab(dx-dz),0.f)/32.f;
-    float distance=mn(dx,dz)-corner*corner*8.f;
+    float distance=mn(dx,dz)-corner*corner*(generator_id==INHABITED_ISLAND_GENERATOR_ID?34.f:8.f);
     float shore=70.f+18.f*noise(x/170.f,z/170.f,u32(seed)+331u)
                       +6.f*noise(x/43.f,z/43.f,u32(seed)+347u);
+    if(generator_id==INHABITED_ISLAND_GENERATOR_ID)shore=clampf(78.f+31.f*noise(x/245.f,z/245.f,u32(seed)+331u)+10.f*noise(x/61.f,z/61.f,u32(seed)+347u),38.f,112.f);
     float t=clampf(distance/(shore+26.f),0.f,1.f);
     float shelf=30.f+14.f*smooth(t);
     float inland=smooth(clampf((edge-140.f)/100.f,0.f,1.f));
@@ -252,9 +253,20 @@ float World::height(float x,float z,bool developed)const{
 float World::inland_height(float x,float z,bool developed)const{
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return 0;
  float h=49.f+noise(x/320.f,z/320.f,u32(seed))*20.f+noise(x/100.f,z/100.f,u32(seed)+1u)*8.f+noise(x/34.f,z/34.f,u32(seed)+2u)*2.5f;
+ if(generator_id==INHABITED_ISLAND_GENERATOR_ID){
+  // Broad lowlands connect inhabited areas; three asymmetric narrow ridges
+  // give the island landmarks without filling every quadrant with a massif.
+  h=51.f+noise(x/460.f,z/430.f,u32(seed))*10.f+noise(x/145.f,z/145.f,u32(seed)+1u)*2.5f+noise(x/48.f,z/48.f,u32(seed)+2u)*.6f;
+  for(const auto &ridge:island_ridges){
+   float dx=x-ridge.x,dz=z-ridge.z,along=(dx*ridge.axis_x+dz*ridge.axis_z)/ridge.length,across=(-dx*ridge.axis_z+dz*ridge.axis_x)/ridge.width;
+   float radius=along*along+across*across;if(radius>=1.f)continue;
+   float weight=(1.f-radius)*(1.f-radius);
+   h+=weight*(ridge.height+7.f*noise(x/49.f,z/49.f,u32(seed)+73u));
+  }
+ }
  if(generator_id>=2){
   // Four seed-derived massifs, constant query work and no generated sample storage.
-  for(u32 i=0;i<4;i++){
+  for(u32 i=0;i<(generator_id==INHABITED_ISLAND_GENERATOR_ID?0u:4u);i++){
    u32 a=hash32(u32(seed)^0x6d2b79f5u^(i*0x9e3779b9u)),b=hash32(a);
    float cx=350.f+float(i&1)*1000.f+float(a&255),cz=350.f+float(i>>1)*1000.f+float((a>>8)&255);
    if(generator_id>=NATURAL_REGION_GENERATOR_ID){
@@ -481,9 +493,16 @@ void World::init(int p_seed,u32 generator){
  index_cave_columns();
 }
 void World::init_generator(int p_seed,u32 generator){
- seed=p_seed;generator_id=surrounding_coast(generator)||generator==BUILDABLE_REGION_GENERATOR_ID||distributed_region(generator)?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
+ seed=p_seed;generator_id=generator==INHABITED_ISLAND_GENERATOR_ID?generator:surrounding_coast(generator)||generator==BUILDABLE_REGION_GENERATOR_ID||distributed_region(generator)?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;
+ if(generator==INHABITED_ISLAND_GENERATOR_ID){
+  const float centers[3][2]={{650,480},{1460,650},{470,1400}};
+  for(u32 i=0;i<3;i++){
+   u32 key=hash32(u32(seed)^0x14b7a931u^(i*0x9e3779b9u));float angle=float(key&1023)*.0012f+(i==1?1.f:0.f);
+   island_ridges[i]={centers[i][0]+float(int((key>>10)&255)-127),centers[i][1]+float(int((key>>18)&255)-127),__builtin_cosf(angle),__builtin_sinf(angle),300.f+float(key%100),115.f+float((key>>8)%45),65.f+float((key>>16)%35)};
+  }
+ }
  if(generator_id>=REGIONAL_WORLD_GENERATOR_ID){
   const u32 layout_seed=hash32(u32(seed)^0x71c9e15bu);
   const float cx=1000.f+float(int(layout_seed&63)-31),cz=1000.f+float(int((layout_seed>>8)&63)-31);

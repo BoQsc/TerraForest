@@ -268,6 +268,16 @@ and the temporary approved QA report/world allowance ended with its launcher.
 
 ## Thirty-second target and reusable pieces
 
+The separate [inhabited island first playtest](INHABITED_ISLAND.md), 2026-11-28,
+measures **80.142 s** for its complete cold-plan Generate-to-play path
+(`reports/inhabited_island_world/20261128T112502004352Z`). Generation is 49.771 s;
+first-play loading is 24.569 s. Cold planning is 7.120 s; generation scene/terrain
+initialization 19.686 s, first-play landscape coverage 12.873 s and first-play
+map preparation 8.530 s are the next profiling targets. This is a different
+recipe/content arrangement, not a same-output speedup over Metropolis.
+109 functional assertions pass, strict exit cleanup and the 30-second target
+fail. Continue the requested optimization after the first human layout review.
+
 Under 30 seconds is an engineering target, not a proven bound for this world or
 for Generate-to-player-control. Record these boundaries separately. The accepted
 109.224 s Metropolis creation baseline spends 21.792 s on roads/foundations,

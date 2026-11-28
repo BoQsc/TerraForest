@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: 0BSD
-"""Normal metropolis creation, interaction and fresh restore; archive its owned fixture.
+"""Normal regional-recipe creation, interaction and fresh restore.
+
+Archive the owned QA fixture, or protect a successful inhabited-island fixture
+for the explicitly requested human playtest with --keep-for-playtest.
 
 --approved-headroom records an explicit maintainer decision for this process only:
 256 MiB additional reports and 256 MiB additional owned-world capacity. It does
@@ -23,6 +26,9 @@ from retained_artifacts import Store, archive, confined, digest, retire
 from run import ROOT, parse_args
 from run_godot_check import execute, revision_metadata
 
+REPORT_FAMILIES = {'metropolis_world': 'normal metropolis generation and fresh restore',
+                   'inhabited_island_world': 'normal inhabited island generation and fresh restore'}
+
 CAPTURE_NAMES = {'create_world.png', 'first_play.png', 'trader_world_trade.png',
                  'trader_world_counter.png', 'grand_cathedral_generated_crypt.png',
                  'expected_player.bin', 'expected_stock.bin'}
@@ -38,6 +44,8 @@ CAPTURE_NAMES.update('metropolis_bridge_' + str(index) + '.png' for index in ran
 def retire_fixture(folder, record, completion_name='run.json'):
     """Exact creation receipts only; changed or linked outputs remain untouched."""
     no_game_processes()
+    if record.get('human_playtest_owned'):
+        return {'pending': False, 'protected': True, 'reason': 'Promoted to the requested human playtest; no automatic retirement'}
     if completion_name not in ('run.json', 'recheck.json'):
         raise ValueError('Unrecognized completed driver receipt')
     completion = folder / completion_name
@@ -48,7 +56,7 @@ def retire_fixture(folder, record, completion_name='run.json'):
         return {'pending': False, 'reason': 'No generation request was created'}
     request = json.loads(request_path.read_text())
     slot = request.get('slot', '')
-    if not re.fullmatch(r'Metropolis_1703_[0-9a-f]{8}', slot):
+    if not re.fullmatch(r'(?:Metropolis|Island)_1703_[0-9a-f]{8}', slot):
         raise ValueError('Invalid owned metropolis identity')
     userdata = Path(os.environ['APPDATA']) / 'Godot/app_userdata/TerraForest'
     status_name = request.get('status', '')
@@ -57,7 +65,7 @@ def retire_fixture(folder, record, completion_name='run.json'):
     state = json.loads(status_path.read_text())
     first = record.get('phases', [{}])[0]
     command = first.get('command', [])
-    if (record.get('purpose') != 'normal metropolis generation and fresh restore' or
+    if (record.get('purpose') not in REPORT_FAMILIES.values() or
             'passed' not in record or first.get('phase') != 'create' or
             first.get('result', {}).get('exit_code') is None or
             '--script' not in command or command[command.index('--script')+1] != 'res://tests/production_buildings.gd' or
@@ -113,13 +121,14 @@ def retire_fixture(folder, record, completion_name='run.json'):
 
 
 
-def retain_captures():
+def retain_captures(family="metropolis_world"):
+    if family not in REPORT_FAMILIES: raise ValueError("Unknown recipe capture family")
     completed = []
-    for receipt in sorted((ROOT / 'reports/metropolis_world').glob('*/run.json')):
+    for receipt in sorted((ROOT / 'reports' / family).glob('*/run.json')):
         record = json.loads(receipt.read_text())
-        if record.get('purpose') != 'normal metropolis generation and fresh restore' or 'passed' not in record:
+        if record.get('purpose') not in REPORT_FAMILIES.values() or 'passed' not in record:
             continue
-        folder = confined(receipt.parent, ROOT / 'reports/metropolis_world')
+        folder = confined(receipt.parent, ROOT / 'reports' / family)
         if any((folder / pin).exists() for pin in ('.retain', 'RETAIN_READY', 'captures.archive.json')):
             continue
         members = sorted(p.relative_to(folder).as_posix() for p in folder.rglob('*')
@@ -160,6 +169,8 @@ def zero_reference_exit_only(result, phase):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot')
+    parser.add_argument('--inhabited-island', action='store_true', help='Check the separate new island recipe')
+    parser.add_argument('--keep-for-playtest', action='store_true', help='After all functional checks, protect the new island save for the requested human playtest')
     parser.add_argument('--verbose-engine', action='store_true')
     parser.add_argument('--no-captures', action='store_true', help='Keep every rendered functional check and frame wait; omit new PNG captures for performance verification')
     parser.add_argument('--diagnostic-exit-warning', action='store_true', help='Continue after completed assertions plus the known zero-reference exit warning; strict result still fails')
@@ -168,6 +179,8 @@ def main():
     parser.add_argument('--archive-only', type=Path)
     parser.add_argument('--completion', choices=('run.json', 'recheck.json'), default='run.json')
     args = parser.parse_args()
+    if args.keep_for_playtest and not args.inhabited_island: parser.error("Human handoff currently requires --inhabited-island")
+    family = "inhabited_island_world" if args.inhabited_island else "metropolis_world"
     baseline = dict(storage.LIMITS)
     if args.approved_headroom:
         storage.LIMITS['reports'] += 256 * 2**20
@@ -181,7 +194,7 @@ def main():
             print(json.dumps({'admitted': False, 'planned': allocation, 'reason': str(error)}))
         return 0
     if args.archive_only:
-        folder = confined(args.archive_only.resolve(), ROOT / 'reports/metropolis_world')
+        folder = confined(args.archive_only.resolve(), ROOT / 'reports' / family)
         record = json.loads((folder / args.completion).read_text())
         result = retire_fixture(folder, record, args.completion)
         retention_name = 'recheck_retention.json' if args.completion == 'recheck.json' else 'retention.json'
@@ -189,13 +202,13 @@ def main():
         print(json.dumps(result))
         return int(result.get('pending', False))
     no_game_processes()
-    retain_captures()
+    retain_captures(family)
     admission = storage.admit(ROOT, **allocation)
     engine = parse_args(['--godot', args.godot] if args.godot else [])[0].godot
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
-    folder = ROOT / 'reports/metropolis_world' / stamp
+    folder = ROOT / 'reports' / family / stamp
     folder.mkdir(parents=True)
-    record = {**revision_metadata(), 'purpose': 'normal metropolis generation and fresh restore',
+    record = {**revision_metadata(), 'purpose': REPORT_FAMILIES[family],
               'test_sha256': digest(ROOT / 'tests/production_buildings.gd'),
               'native_sha256': {p.relative_to(ROOT).as_posix(): digest(p)
                                 for p in sorted((ROOT / 'addons').glob('*/bin/*.dll'))},
@@ -204,6 +217,7 @@ def main():
     shared = ['--metropolis', '--metropolis-evidence=' + folder.as_posix(),
               '--session-evidence-dir=' + folder.as_posix(), '--isolated-render']
     if args.no_captures: shared.append('--no-captures')
+    if args.inhabited_island: shared.append('--inhabited-island')
     for name, extra in [('create', ['--create-production']), ('interact', []), ('restore', ['--restore-production'])]:
         phase = folder / name
         phase.mkdir()
@@ -222,6 +236,9 @@ def main():
             print('Diagnostic continuation: completed assertions; zero-reference cleanup rejection preserved', flush=True)
     record['passed'] = len(record['phases']) == 3 and all(p['result']['passed'] for p in record['phases'])
     record['functional_passed'] = len(record['phases']) == 3 and all(p['result']['passed'] or p.get('cleanup_warning_only') for p in record['phases'])
+    record['human_playtest_owned'] = args.keep_for_playtest and record['functional_passed']
+    if record['human_playtest_owned']:
+        (folder / '.retain').write_text('User-requested human playtest. Protect its save and review evidence; automatic retirement is forbidden.\n')
     (folder / 'run.json').write_text(json.dumps(record, indent=2))
     if not record['functional_passed'] and record['phases'] and record['phases'][0]['result']['passed']:
         retention = {'pending': True, 'reason': 'Passed creation retained for correction and same-fixture recheck',
@@ -233,7 +250,7 @@ def main():
             retention = {'pending': True, 'reason': str(error), 'retry': 'Use --archive-only with this exact report'}
     (folder / 'retention.json').write_text(json.dumps(retention, indent=2))
     try:
-        retain_captures()
+        retain_captures(family)
     except OSError as error:
         print('Capture retention pending:', str(error))
     print(('PASS ' if record['passed'] else 'FAIL ') + str(folder))

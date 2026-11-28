@@ -15,6 +15,8 @@ const TITLES=["Cathedral & civic quarter","Foundry & apartment quarter","Needle 
 const EXTRA_IDS=["homestead_manor","house_c1","cottage_a2","shop_b1","shop_b2","workshop","tower_2","tower_3","tower_4"]
 static var _sources:Dictionary={}
 static var _market:Array=[]
+static var _island_sources:Dictionary={}
+const RegionRecipe=preload("res://addons/world_runtime/world_recipe.gd")
 
 static func generation_asset(source:Resource,id:String="")->Resource:
 	if source==null:return null
@@ -54,7 +56,10 @@ static func generation_asset(source:Resource,id:String="")->Resource:
 		asset.set_meta("cellar_volumes",[AABB(Vector3(33,1,1),Vector3(39,8,79)),AABB(Vector3(1,1,29),Vector3(103,8,23)),AABB(Vector3(23,1,56),Vector3(9,8,24))])
 	return asset
 
-static func sources(block:int)->Array:
+static func sources(block:int,profile:int=1)->Array:
+	if profile==2 and block>=3:
+		if not _island_sources.has(block):_island_sources[block]=RegionRecipe.codec().island_assets(block,sources(3),sources(1))
+		return _island_sources[block]
 	if block>=3:
 		if not _sources.has(3):_sources[3]=recipe(Vector3(1000,0,1000),3).map(func(lot:Dictionary):return lot.asset)
 		return _sources[3]
@@ -82,7 +87,8 @@ static func sources(block:int)->Array:
 	_sources[block]=result
 	return result
 
-static func recipe(center:Vector3,block:int)->Array:
+static func recipe(center:Vector3,block:int,profile:int=1)->Array:
+	if profile==2:return RegionRecipe.codec().asset_recipe(sources(block,profile))
 	if block>=3:
 		if _market.is_empty():
 			_market=Market.recipe(Vector3(1000,0,1000))
@@ -110,12 +116,12 @@ static func streets(center:Vector3,block:int)->Array:
 	for x in [-width,width]:result.append(Lots._segment(center+Vector3(x,0,rows.front()),center+Vector3(x,0,rows.back()),4 if block<3 else 3,3,4,0,4))
 	return result
 
-static func mini_sources(block:int,part:int)->Array:
+static func mini_sources(block:int,part:int,profile:int=1)->Array:
 	var count:=3 if block<3 else 4
-	return sources(block).slice(part*count,(part+1)*count)
+	return sources(block,profile).slice(part*count,(part+1)*count)
 
-static func mini_recipe(center:Vector3,block:int,part:int,heading:int=0)->Array:
-	var source:Array=mini_sources(block,part)
+static func mini_recipe(center:Vector3,block:int,part:int,heading:int=0,profile:int=1)->Array:
+	var source:Array=mini_sources(block,part,profile)
 	var result:Array=[]
 	# Frontages share the gentle side of a street; do not force a second row
 	# uphill merely to fill a rectangular grid. Routes join these real blocks.
@@ -142,21 +148,21 @@ static func mini_recipe(center:Vector3,block:int,part:int,heading:int=0)->Array:
 		result.append({"asset":asset,"origin":origin,"rotation":rotation,"street_z":center.z,"general_access":true,"label":asset.resource_name})
 	return result
 
-static func mini_streets(center:Vector3,heading:int=0,block:int=0,part:int=0)->Array:
+static func mini_streets(center:Vector3,heading:int=0,block:int=0,part:int=0,profile:int=1)->Array:
 	var axis:=Vector3.RIGHT
 	for turn in heading:axis=Vector3(-axis.z,0,axis.x)
 	var half:=90.0
 	if block>=3 or part>0:
-		var source:=mini_sources(block,part)
+		var source:=mini_sources(block,part,profile)
 		half=8.0+(source.size()-1)*6.0
 		for asset:Resource in source:half+=asset.placement_bounds(Vector3i.ZERO,0).size.x*.5
 		half=maxf(48,half)
 	return [Lots._segment(center-axis*half,center+axis*half,4,3,4,0,4)]
 
-static func mini_envelope(block:int,part:int,heading:int)->Vector2:
+static func mini_envelope(block:int,part:int,heading:int,profile:int=1)->Vector2:
 	if block<3 and part==0:return Vector2(204,204)
-	var width:float=40.0+(mini_sources(block,part).size()-1)*12.0;var depth:=0.0
-	for asset:Resource in mini_sources(block,part):
+	var width:float=40.0+(mini_sources(block,part,profile).size()-1)*12.0;var depth:=0.0
+	for asset:Resource in mini_sources(block,part,profile):
 		var bounds:AABB=asset.placement_bounds(Vector3i.ZERO,0)
 		width+=bounds.size.x;depth=maxf(depth,bounds.size.z)
 	var result:=Vector2(maxf(128,width),depth*2+48)
@@ -181,45 +187,48 @@ static func connect_mini(candidate:Dictionary,core:RefCounted,roads:Array,lots:A
 		if not arrivals.has(point):arrivals.append(point)
 	return core.plan_region_network([PackedVector3Array(points.slice(0,16)),arrivals],exclusions,0,0,0,roads+candidate.roads,7.5)
 
-static func locate(core:RefCounted,road_grid:int,variant:int,progress:RefCounted=null)->Dictionary:
+static func locate(core:RefCounted,road_grid:int,variant:int,progress:RefCounted=null,profile:int=1,seed_value:int=0)->Dictionary:
+	var island:Dictionary=RegionRecipe.codec().island_layout(seed_value) if profile==2 else {}
+	var hints:Array=island.hints if profile==2 else HINTS
+	var titles:Array=island.titles if profile==2 else TITLES
 	var sites:Array=[];var occupied:Array=[];var works:Dictionary={"ok":true,"segments":[],"bounds":AABB()}
 	var city_roads:Array=[];var city_lots:Array=[]
 	var relocation:=Vector3.ZERO
 	var heading:=0
-	var village_hints:Array=HINTS.slice(3)
-	var city_offsets:Array=[Vector3.ZERO,Vector3(380,0,0),Vector3(200,0,450)]
+	var village_hints:Array=hints.slice(3)
+	var city_offsets:Array=island.city_offsets if profile==2 else [Vector3.ZERO,Vector3(380,0,0),Vector3(200,0,450)]
 	for block in 9:
-		if progress!=null:progress.record("Fitting "+TITLES[block],block,9,"One large city and six outlying communities / per-lot terrain fitting")
-		var hint:Vector3=HINTS[0]+relocation+city_offsets[block] if block<3 else village_hints[block-3]
+		if progress!=null:progress.record("Fitting "+titles[block],block,9,"One large city and six outlying communities / per-lot terrain fitting")
+		var hint:Vector3=hints[0]+relocation+city_offsets[block] if block<3 else village_hints[block-3]
 		if block<3:hint+=[Vector3.ZERO,Vector3(24,0,24),Vector3(-24,0,24),Vector3(0,0,-24)][variant]
 		var site:Dictionary={}
 		# Independently fitted street blocks can straddle preserved open
 		# space. Their connecting roads use native routing around water/POIs.
 		var parts:Array=[];var all_roads:Array=[];var all_lots:Array=[]
-		var part_count:=4 if block<3 else 2
+		var part_count:int=int(island.parts[block]) if profile==2 else 4 if block<3 else 2
 		for part in part_count:
-			if progress!=null:progress.record("Fitting %s / block %d"%[TITLES[block],part+1],block*4+part if block<3 else 12+(block-3)*2+part,24,"Separate street grades and full foundation/entrance surveys")
-			var point:Vector3=hint+([Vector3(-105,0,-95),Vector3(105,0,-95),Vector3(-105,0,95),Vector3(105,0,95)][part] if block<3 else Vector3(0,0,-65 if part==0 else 65))
+			if progress!=null:progress.record("Fitting %s / block %d"%[titles[block],part+1],block*4+part if block<3 else 12+(block-3)*2+part,24,"Separate street grades and full foundation/entrance surveys")
+			var point:Vector3=hint+([Vector3(-105,0,-95),Vector3(105,0,-95),Vector3(-105,0,95),Vector3(105,0,95)][part] if part_count==4 else Vector3.ZERO if part_count==1 else Vector3(0,0,-65 if part==0 else 65))
 			var reach:=192 if block==0 and part==0 else 320
 			var area:=Rect2(Vector2(point.x-reach,point.z-reach),Vector2(reach*2,reach*2))
 			var gate:=connect_mini.bind(core,city_roads+all_roads,city_lots+all_lots)
-			var fitted:=Planner.locate(core,point,occupied,area,mini_recipe.bind(block,part,heading),mini_streets.bind(heading,block,part),mini_envelope(block,part,heading),road_grid,false,gate)
+			var fitted:=Planner.locate(core,point,occupied,area,mini_recipe.bind(block,part,heading,profile),mini_streets.bind(heading,block,part,profile),mini_envelope(block,part,heading,profile),road_grid,false,gate)
 			if not fitted.get("ok",false) and not (block==0 and part==0):
 				for turn in range(1,4):
 					var facing:=(heading+turn)%4
-					fitted=Planner.locate(core,point,occupied,area,mini_recipe.bind(block,part,facing),mini_streets.bind(facing,block,part),mini_envelope(block,part,facing),road_grid,false,gate)
+					fitted=Planner.locate(core,point,occupied,area,mini_recipe.bind(block,part,facing,profile),mini_streets.bind(facing,block,part,profile),mini_envelope(block,part,facing,profile),road_grid,false,gate)
 					if fitted.get("ok",false):break
 			if not fitted.get("ok",false) and block==0 and part==0:
 				if progress!=null:progress.record("Surveying a dry, gentle city anchor",0,1,"Bounded central-region search / preserve every requested landmark")
 				for direction in 4:
-					fitted=Planner.locate(core,point,occupied,Rect2(Vector2(128,128),Vector2(1744,1744)),mini_recipe.bind(block,part,direction),mini_streets.bind(direction),Vector2(204,204),road_grid,true)
+					fitted=Planner.locate(core,point,occupied,Rect2(Vector2(128,128),Vector2(1744,1744)),mini_recipe.bind(block,part,direction,profile),mini_streets.bind(direction,block,part,profile),Vector2(204,204),road_grid,true)
 					if fitted.get("ok",false):heading=direction;break
 				if fitted.get("ok",false):
 					relocation=fitted.center-point;hint+=relocation
 					var center:Vector3=fitted.center
 					var edges:Array=[center.x,center.z,2000-center.x,2000-center.z]
 					var edge:int=edges.find(edges.min())
-					if float(edges[edge])<320:
+					if profile==1 and float(edges[edge])<320:
 						var axis:=Vector3(0,0,1 if center.z<1000 else -1) if edge in [0,2] else Vector3(1 if center.x<1000 else -1,0,0)
 						city_offsets=[Vector3.ZERO,axis*340,axis*640]
 						if minf(center.x,2000-center.x)<400 and minf(center.z,2000-center.z)<400:
@@ -235,8 +244,8 @@ static func locate(core:RefCounted,road_grid:int,variant:int,progress:RefCounted
 							village_hints[index]=p
 			if not fitted.get("ok",false):
 				print("METROPOLIS_SITE_REJECTION ",JSON.stringify({"quarter":block,"block":part,"road_rejections":fitted.get("road_rejections",{}),"lot_rejections":fitted.get("lot_rejections",{}),"street_candidates":fitted.get("street_candidates",0),"best_missing":fitted.get("best_missing",0)}))
-				fitted["reason"]=TITLES[block]+" / block %d: "%[part+1]+str(fitted.get("reason","No terrain-fitting site"));return fitted
-			if progress!=null:progress.record("Compiling %s / block %d"%[TITLES[block],part+1])
+				fitted["reason"]=titles[block]+" / block %d: "%[part+1]+str(fitted.get("reason","No terrain-fitting site"));return fitted
+			if progress!=null:progress.record("Compiling %s / block %d"%[titles[block],part+1])
 			var prepared:=Planner.earthworks(fitted)
 			if not prepared.get("ok",false):return prepared
 			occupied.append(prepared.bounds);parts.append(fitted);all_roads.append_array(fitted.roads);all_lots.append_array(fitted.lots)
@@ -251,11 +260,12 @@ static func locate(core:RefCounted,road_grid:int,variant:int,progress:RefCounted
 		site={"ok":true,"center":center,"lots":all_lots,"roads":all_roads,"variant":0}
 		if not site.get("ok",false):
 			print("METROPOLIS_SITE_REJECTION ",JSON.stringify({"block":block,"attempts":site.get("attempts",0),"road_rejections":site.get("road_rejections",{}),"street_candidates":site.get("street_candidates",0),"best_missing":site.get("best_missing",0)}))
-			site["reason"]=TITLES[block]+": "+str(site.get("reason","No terrain-fitting site"));return site
-		site["recipe_kind"]="metropolis";site["metro_block"]=block
+			site["reason"]=titles[block]+": "+str(site.get("reason","No terrain-fitting site"));return site
+		site["recipe_kind"]="metropolis";site["metro_block"]=block;site["region_profile"]=profile
+		if profile==2:site["role"]=island.roles[block]
 		site["town"]=0 if block<3 else block-2;site["district"]=block if block<3 else 0
-		site["title"]=TITLES[block];site["introduction_home"]=false
-		if progress!=null:progress.record("Compiling complete "+TITLES[block])
+		site["title"]=titles[block];site["introduction_home"]=false
+		if progress!=null:progress.record("Compiling complete "+titles[block])
 		var earthworks:=Planner.earthworks(site)
 		if not earthworks.get("ok",false):return earthworks
 		sites.append(site)

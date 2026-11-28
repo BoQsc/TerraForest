@@ -217,9 +217,10 @@ func _saved_details_ready(slot:String,data:Dictionary,picture:Texture2D)->void:
 	if data.has("seed"):lines.append("Seed: "+str(int(data.seed)))
 	if data.has("generator"):
 		var id:int=int(data.generator)
-		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",22:"Grid-preferred inland",23:"Grid-preferred coast",28:"Varied lakes / build-friendly inland",29:"Varied lakes / build-friendly coast",30:"Varied lakes / natural inland",31:"Varied lakes / natural coast",32:"Long lakes / build-friendly inland",33:"Long lakes / build-friendly coast",34:"Long lakes / natural inland",35:"Long lakes / natural coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
+		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",22:"Grid-preferred inland",23:"Grid-preferred coast",28:"Varied lakes / build-friendly inland",29:"Varied lakes / build-friendly coast",30:"Varied lakes / natural inland",31:"Varied lakes / natural coast",32:"Long lakes / build-friendly inland",33:"Long lakes / build-friendly coast",34:"Long lakes / natural inland",35:"Long lakes / natural coast",36:"Inhabited island / lowlands and asymmetric ridges",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
 	if data.has("settlement_layout"):lines.append("Layout: "+str(data.settlement_layout).capitalize())
 	var options:Dictionary=data.get("world_options",{})
+	if int(options.get("profile",0))==2:lines.append("Inhabited island · one city, two towns and four smaller communities")
 	if int(options.get("profile",0))==1:lines.append("Metropolis · 3 city quarters and 6 outlying communities · required bridge crossings")
 	elif options.has_all(["settlements","districts","biome"]) and int(options.biome) in [0,1,2]:lines.append("%d settlements · %d districts · %s"%[int(options.settlements),int(options.settlements)*int(options.districts),["Woodland","Woodland & meadow mosaic","Open grassland with groves"][int(options.biome)]])
 	if options.has("road_grid"):lines.append("Road grid preference: "+("On" if int(options.road_grid)>0 else "Off"))
@@ -301,7 +302,8 @@ func _set_creation_busy(active:bool)->void:
 	for toggle:CheckBox in [ocean,buildable_ground,buildable_roads,material_veins,introduction]:toggle.disabled=active
 	for option:OptionButton in [preset,biome,settlement_count,district_count,road_network,offroads]:
 		option.disabled=active or (option!=preset and preset.get_selected_id()!=Launch.INTEGRATED_PRESET)
-	if generation_profile==1:settlement_count.disabled=true;district_count.disabled=true;introduction.disabled=true
+	if generation_profile in [1,2]:settlement_count.disabled=true;district_count.disabled=true;introduction.disabled=true
+	if generation_profile==2:ocean.disabled=true;buildable_ground.disabled=true
 	if not active:preparation_panel.show_idle();update_recipe_summary()
 
 func show_recovery()->void:
@@ -414,17 +416,18 @@ func _notification(what:int)->void:
 	request_quit()
 
 func selected_preview_key()->String:
-	return "%d/%d/%s"%[int(seed_field.value),Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed),preload("res://addons/world_runtime/world_recipe.gd").encode(selected_options()).hex_encode()] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
+	return "%d/%d/%s"%[int(seed_field.value),Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed,generation_profile),preload("res://addons/world_runtime/world_recipe.gd").encode(selected_options()).hex_encode()] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
 func selected_options()->Dictionary:
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:return {}
 	var options:Dictionary={"biome":biome.selected,"settlements":settlement_count.selected+1,"districts":district_count.selected+1,"network":road_network.selected,"trails":offroads.selected,"road_grid":preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.road_grid if buildable_roads.button_pressed else 0,"material_veins":int(material_veins.button_pressed),"introduction":int(introduction.button_pressed)}
-	if generation_profile==1:
-		options.settlements=7;options.districts=1;options["profile"]=1
+	if generation_profile in [1,2]:
+		options.settlements=7;options.districts=1;options["profile"]=generation_profile
 	return options
 func update_recipe_summary()->void:
 	var towns:=settlement_count.selected+1;var districts:=district_count.selected+1
 	recipe_summary.text="%d settlements · %d districts · %s"%[towns,towns*districts,biome.get_item_text(biome.selected)]
 	if generation_profile==1:recipe_summary.text="Large city · 6 outlying communities · 2 large bridges + 1 small"
+	if generation_profile==2:recipe_summary.text="Inhabited island · 1 city · 2 towns · 4 smaller communities"
 	recipe_summary.tooltip_text=recipe_summary.text
 func invalidate_preview()->void:
 	preload("res://demo/world_creation_panel.gd").sync_style(self)
@@ -449,13 +452,13 @@ func show_preview_failure(reason:String)->void:
 	preview_empty.show()
 	preview_status.text=reason
 	preview_status.tooltip_text=reason
-	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed) if preset.get_selected_id()==Launch.INTEGRATED_PRESET else preset.get_selected_id()
+	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed,generation_profile) if preset.get_selected_id()==Launch.INTEGRATED_PRESET else preset.get_selected_id()
 	push_warning("World preview failed: seed=%d terrain=%d recipe=%s reason=%s"%[int(seed_field.value),generator,str(selected_options()),reason])
 func start_preview()->void:
 	if preview_worker!=null or preview_loading or preparation_pid>=0 or photograph_pid>=0 or session.transitioning:return
 	reset_preview_message()
 	preview_due_ms=-1
-	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed)
+	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed,generation_profile)
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:generator=preset.get_selected_id()
 	if generator>=10000:preview_status.text="Select the current regional world to preview terrain.";return
 	preview_started=Time.get_ticks_msec();preview_key=selected_preview_key();preview_status.text="Surveying terrain, fitting districts and connecting roads…";preview_button.disabled=true;preview_empty.hide()
@@ -495,7 +498,7 @@ func poll_preview()->void:
 		var network:Dictionary=result.get("network",{})
 		preview_metrics.text="%d BUILDINGS  ·  %.2f km regional roads  ·  %.2f km trails"%[result.building_count,float(network.get("road_length_m",0))/1000,float(network.get("trail_length_m",0))/1000]
 		if result.has("options"):
-			var layout_description:String="Large city / 3 quarters · 6 outlying communities · 3 bridges.\n" if int(result.options.get("profile",0))==1 else "%d settlements / %d districts · %d trails · %d alternate routes.\n"%[result.options.settlements,result.options.settlements*result.options.districts,network.get("trail_count",0),network.get("loop_count",0)]
+			var layout_description:String="Inhabited island / 1 city, 2 towns, 4 smaller communities.\n" if int(result.options.get("profile",0))==2 else "Large city / 3 quarters · 6 outlying communities · 3 bridges.\n" if int(result.options.get("profile",0))==1 else "%d settlements / %d districts · %d trails · %d alternate routes.\n"%[result.options.settlements,result.options.settlements*result.options.districts,network.get("trail_count",0),network.get("loop_count",0)]
 			preview_status.text=layout_description+("Placement plan cached for generation." if result.get("plan_reusable",false) else "Deterministic plan ready; disk cache unavailable.")
 			if result.options.network>0 and network.get("loop_count",0)==0:preview_status.text+=" No additional inter-district route fits this plan."
 			elif network.get("optional_loops_reduced",false):preview_status.text+=" Optional loops reduced by terrain limits."

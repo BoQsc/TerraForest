@@ -1,0 +1,18 @@
+{
+  "license": "CC0-1.0",
+  "provenance": "Original TerraForest native terrain lattice observations, captured before island field 36 was compiled, checkout 71cee5c6; seed/generator keys, 51x51 points at 40 m spacing; SHA256 of native PackedFloat32Array bytes.",
+  "hashes": {
+    "1/0": "43e196546994bb72fd88dba3c0029d202f0adc271d90ef6c4728caaf9e6d7c6a",
+    "1/1703": "833a75f81f01cbe93cd771631ed2e2f53441351d27a17ead8a91231139e2846f",
+    "1/901": "a6feedcb9e3db00c4e34551ca3318ecf8b2693ccedea413a6267f650ed25bae8",
+    "19/0": "9d56f8c3b56d3391c24a784b36d110c860cf7684b00e3e0121b9124d0d83c725",
+    "19/1703": "4e6d086ef77d73e3d49e4af7b4a471f23a34e310c8ceecc26876317f38c5b225",
+    "19/901": "7b90155f7f0d06045463ac94c538577c97bd53dc68ec70738ef35a1f9e79e995",
+    "33/0": "aa40540be276860e9c68bafaa4f962f35e0b86c398fa715287a1f73145604657",
+    "33/1703": "96a3f2b2970f3b298c67e1f85c3a0ae021f74e1e2e92f3a8549e2d9d044ba327",
+    "33/901": "74fcea7a22a91b2686fa7d2c51b6d8a758012a13e86ade40327c5161108b7343",
+    "35/0": "278c5e97667d1cc9bfad76191f787370efdee6ddd1e96bfe49dae29a843543b7",
+    "35/1703": "31c72f1534014fb910da024b1517ecf8d7a5893deae0ccf1d51c87492345bccd",
+    "35/901": "6cd173904de83bdfc98f4f877c12471f921172ef42be8a2d09b4390aa63ecfea"
+  }
+}

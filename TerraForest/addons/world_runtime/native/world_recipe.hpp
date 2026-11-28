@@ -1,5 +1,6 @@
 #pragma once
 #include "biome_field.hpp"
+#include "inhabited_region.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
@@ -13,6 +14,10 @@ class NativeWorldRecipe : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("encode","options"),&NativeWorldRecipe::encode);
+        godot::ClassDB::bind_method(godot::D_METHOD("island_layout","seed"),&NativeWorldRecipe::island_layout);
+        godot::ClassDB::bind_method(godot::D_METHOD("island_assets","district","market","city"),&NativeWorldRecipe::island_assets);
+        godot::ClassDB::bind_method(godot::D_METHOD("asset_recipe","assets"),&NativeWorldRecipe::asset_recipe);
+        godot::ClassDB::bind_method(godot::D_METHOD("audit_island","sites","bridges"),&NativeWorldRecipe::audit_island);
         godot::ClassDB::bind_method(godot::D_METHOD("decode","data"),&NativeWorldRecipe::decode);
         godot::ClassDB::bind_method(godot::D_METHOD("coalesce_paving","regions"),&NativeWorldRecipe::coalesce_paving);
         godot::ClassDB::bind_method(godot::D_METHOD("validate_snapshot","data"),&NativeWorldRecipe::validate_snapshot);
@@ -21,6 +26,10 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("render_biomes","pixels","seed","profile","origin","width","size"),&NativeWorldRecipe::render_biomes,DEFVAL(godot::Vector2i()),DEFVAL(256),DEFVAL(256));
     }
 public:
+    godot::Dictionary island_layout(int64_t seed) const {return inhabited_layout(seed);}
+    godot::Array island_assets(int district,const godot::Array &market,const godot::Array &city) const {return inhabited_assets(district,market,city);}
+    godot::Array asset_recipe(const godot::Array &assets) const {return inhabited_asset_recipe(assets);}
+    godot::Dictionary audit_island(const godot::Array &sites,const godot::Array &bridges) const {return inhabited_audit(sites,bridges);}
     // Original 0BSD: adjacent districts share one destructible sidewalk cell.
     // Keep first ownership, reject different blocks, and expose no partial result.
     godot::Dictionary coalesce_paving(const godot::Array &regions) const {
@@ -63,7 +72,7 @@ public:
         if(count==7)bytes.encode_u32(4,5);
         if(count==7&&(bytes.decode_u32(16)>2||bytes.decode_u32(20)>1))bytes.encode_u32(4,6);
         if(count==8)bytes.encode_u32(4,7);
-        if(count==9)bytes.encode_u32(4,8);
+        if(count==9)bytes.encode_u32(4,bytes.decode_u32(40)==2?9:8);
         return validate_snapshot(bytes)?bytes:godot::PackedByteArray();
     }
     bool validate_snapshot(const godot::PackedByteArray &bytes) const {
@@ -73,10 +82,10 @@ public:
         if(bytes.size()==32&&(bytes.decode_u32(28)>3||bytes.decode_u32(4)!=(bytes.decode_u32(28)>=2?bytes.decode_u32(28)+1:2)))return false;
         if(bytes.size()==36&&((bytes.decode_u32(4)!=5&&bytes.decode_u32(4)!=6)||bytes.decode_u32(28)>3||bytes.decode_u32(32)>1))return false;
         if(bytes.size()==40&&(bytes.decode_u32(4)!=7||bytes.decode_u32(28)>3||bytes.decode_u32(32)>1||bytes.decode_u32(36)>1))return false;
-        if(bytes.size()==44&&(bytes.decode_u32(4)!=8||bytes.decode_u32(28)>3||bytes.decode_u32(32)>1||bytes.decode_u32(36)>1||bytes.decode_u32(40)>1))return false;
+        if(bytes.size()==44&&(bytes.decode_u32(4)!=(bytes.decode_u32(40)==2?9u:8u)||bytes.decode_u32(28)>3||bytes.decode_u32(32)>1||bytes.decode_u32(36)>1||bytes.decode_u32(40)>2))return false;
         const auto settlements=bytes.decode_u32(12),districts=bytes.decode_u32(16);
-        if(bytes.size()==44&&bytes.decode_u32(40)==1)
-            return bytes.decode_u32(8)<=2&&settlements==7&&districts==1&&bytes.decode_u32(20)<=2&&bytes.decode_u32(24)<=2;
+        if(bytes.size()==44&&bytes.decode_u32(40)>=1)
+            return bytes.decode_u32(8)<=2&&settlements==7&&districts==1&&(bytes.decode_u32(40)!=2||bytes.decode_u32(36)==0)&&bytes.decode_u32(20)<=2&&bytes.decode_u32(24)<=2;
         const bool expanded=bytes.decode_u32(4)>=6;
         return bytes.decode_u32(8)<=2&&settlements>=1&&settlements<=3&&districts>=1&&districts<=(expanded?3u:2u)
             &&settlements*districts<=(expanded?9u:6u)&&bytes.decode_u32(20)<=(expanded?2u:1u)&&bytes.decode_u32(24)<=2;

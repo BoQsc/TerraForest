@@ -3,6 +3,7 @@ extends "res://tests/civic_world.gd"
 const LakeCodec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const E2=preload("res://addons/structures/expansion_catalog.gd")
 var metropolis:=false
+var inhabited_island:=false
 var capture_prefix:=""
 
 func _physics_process(delta:float)->bool:
@@ -19,6 +20,7 @@ func _physics_process(delta:float)->bool:
 
 func run()->void:
 	metropolis="--metropolis" in OS.get_cmdline_user_args()
+	inhabited_island="--inhabited-island" in OS.get_cmdline_user_args()
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--metropolis-capture-prefix="):capture_prefix=argument.trim_prefix("--metropolis-capture-prefix=")
 	if not capture_prefix.is_empty() and not capture_prefix.is_valid_identifier():quit(2);return
@@ -26,18 +28,18 @@ func run()->void:
 	if metropolis:
 		for argument:String in OS.get_cmdline_user_args():
 			if argument.begins_with("--metropolis-evidence="):folder=argument.trim_prefix("--metropolis-evidence=")
-		if not folder.is_absolute_path() or not folder.contains("/reports/metropolis_world/"):push_error("Use the admitted metropolis launcher");quit(2);return
+		if not folder.is_absolute_path() or not folder.contains("/reports/inhabited_island_world/" if inhabited_island else "/reports/metropolis_world/"):push_error("Use the admitted metropolis launcher");quit(2);return
 	DirAccess.make_dir_recursive_absolute(folder)
 	restoration="--restore-production" in OS.get_cmdline_user_args()
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed
 	await wait_for(browser_catalog_ready)
 	var browser=current_scene
 	if "--create-production" in OS.get_cmdline_user_args():
-		selected_slot=("Metropolis_1703_" if metropolis else "CivicTown_1703_")+Crypto.new().generate_random_bytes(4).hex_encode()
+		selected_slot=("Island_1703_" if inhabited_island else "Metropolis_1703_" if metropolis else "CivicTown_1703_")+Crypto.new().generate_random_bytes(4).hex_encode()
 		browser.name_field.text=selected_slot;browser.seed_field.value=1703;browser.world_tabs.current_tab=1
-		if metropolis:preload("res://demo/world_creation_panel.gd").apply_style(browser,6)
-		check(browser.world_style.get_item_text(browser.world_style.selected)==("Metropolis & inhabited region" if metropolis else "Connected countryside"),"normal selected recipe has its public UI identity")
-		check(browser.selected_options()==(Recipe.METROPOLIS if metropolis else Recipe.DEFAULTS),"unchanged normal UI settings reach generation")
+		if metropolis:preload("res://demo/world_creation_panel.gd").apply_style(browser,7 if inhabited_island else 6)
+		check(browser.world_style.get_item_text(browser.world_style.selected)==("Inhabited island · first playtest" if inhabited_island else "Metropolis & inhabited region" if metropolis else "Connected countryside"),"normal selected recipe has its public UI identity")
+		check(browser.selected_options()==(Recipe.INHABITED_ISLAND if inhabited_island else Recipe.METROPOLIS if metropolis else Recipe.DEFAULTS),"unchanged normal UI settings reach generation")
 		await photograph("create_world")
 		var generation_clicked:=Time.get_ticks_usec()
 		browser.generate_button.pressed.emit()
@@ -54,9 +56,10 @@ func run()->void:
 		if not check(game_ready(),"normal Generate & play creates and opens the civic world"):
 			print("PRODUCTION_GENERATION_STATUS ",FileAccess.get_file_as_string(status_path));await finish();return
 		var generate_to_play_us:=Time.get_ticks_usec()-generation_clicked
-		FileAccess.open(folder.path_join("generate_to_play.json"),FileAccess.WRITE).store_string(JSON.stringify({"microseconds":generate_to_play_us,"target_microseconds":30000000,"performance_passed":generate_to_play_us<30000000,"first_play_startup_ms":current_scene.startup_timings,"first_play_session":root.get_node("WorldSession").stage_timings,"loading_us":Time.get_ticks_usec()-current_scene.loading_started_us,"scope":"Generate button through playable-world readiness, including planning, all generation, durable publication and first world load."}))
 		var state:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(status_path))
 		var receipt:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(state.report).path_join("run.json")))
+		var plan_identity:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(state.report).path_join("generation_plan_identity.json")))
+		FileAccess.open(folder.path_join("generate_to_play.json"),FileAccess.WRITE).store_string(JSON.stringify({"microseconds":generate_to_play_us,"plan_cache_hit":plan_identity.get("cache_hit",null),"loading_stages":current_scene.loading_diagnostics.stages,"target_microseconds":30000000,"performance_passed":generate_to_play_us<30000000,"first_play_startup_ms":current_scene.startup_timings,"first_play_session":root.get_node("WorldSession").stage_timings,"loading_us":Time.get_ticks_usec()-current_scene.loading_started_us,"scope":"Generate button through playable-world readiness, including planning, all generation, durable publication and first world load."}))
 		var ordinary:=true
 		for phase:Dictionary in receipt.phases:
 			for argument:String in phase.arguments:ordinary=ordinary and argument not in ["--civic-review","--building-expansion-review","--review-generation"]
@@ -68,7 +71,7 @@ func run()->void:
 		await photograph("first_play")
 		await finish();return
 	var saved=JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("slot.json")))
-	if not check(saved is Dictionary and str(saved.get("slot","")).begins_with("Metropolis_1703_" if metropolis else "CivicTown_1703_"),"integration owns its new world only"):await finish();return
+	if not check(saved is Dictionary and str(saved.get("slot","")).begins_with("Island_1703_" if inhabited_island else "Metropolis_1703_" if metropolis else "CivicTown_1703_"),"integration owns its new world only"):await finish();return
 	selected_slot=saved.slot
 	var selected:=-1
 	for index in browser.worlds.item_count:
@@ -114,7 +117,7 @@ func inspect_lakes(game:Node)->void:
 	var lake_core=ClassDB.instantiate("TerrainCore");lake_core.execute(LakeCodec.command(6,[1703,game.terrain.backend.world_generator]))
 	var definitions:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(lake_core,game.terrain.backend.world_generator)
 	var audit:Dictionary=planned.get("lake_audit",{})
-	check(game.terrain.backend.world_generator==33 and int(audit.get("extensive_count",0))>=3,"normal UI publishes the coast profile with three audited long lakes")
+	check(game.terrain.backend.world_generator==(36 if inhabited_island else 33) and int(audit.get("extensive_count",0))>=3,"normal UI publishes the coast profile with three audited long lakes")
 	for index in mini(3,audit.get("lakes",[]).size()):
 		var lake:Dictionary=audit.lakes[index];var center:Vector3=lake.center
 		game.teleport(center+Vector3(0,5,0),center.y+5);game.set_physics_process(false);game._clear_motion();game.fly=true

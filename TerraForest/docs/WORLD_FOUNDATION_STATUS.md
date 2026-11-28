@@ -1,3 +1,28 @@
+## Inhabited island recipe and ordered playtest — 2026-11-28
+
+Implemented as the ordinary **Inhabited island · first playtest** recipe, with
+native terrain 36 and version-9 recipe profile 2 preserving prior saved identities.
+The first seed has 36 city buildings, two 16-building towns, four four-building
+communities and two lookouts. Native/legacy checks pass; ordinary creation,
+interaction and fresh restoration pass 109 functional assertions. Strict QA
+still fails on a zero-reference shutdown warning in interaction/restoration.
+The exact save `Island_1703_b743c970` is protected for the requested human review.
+
+The inspected certified overview still shows a nearly square coast, very straight
+long lakes and separated street clusters. These are explicit design limitations,
+not an accepted reproduction of the reference. Ground-level and human review,
+broader seeds, continuous waterways and missing infrastructure remain open in
+the [island design and staged acceptance contract](INHABITED_ISLAND.md).
+
+The first complete cold-plan Generate-to-play is **80.142 s** in
+`reports/inhabited_island_world/20261128T112502004352Z`; the 30-second target fails.
+After human layout review, continue cold route planning, generation scene
+initialization (19.686 s), first-play landscape coverage (12.873 s) and map
+preparation (8.530 s). Preserve content and the complete timer boundary; this
+different recipe is not a controlled speedup comparison with Metropolis.
+Closure requires the complete cold path below 30 s and clean exits. No older
+requirement is superseded.
+
 ## Native generation batches and whole-path latency — 2026-11-28
 
 Road/foundation packets, approach surveys, frozen outdoor queries, map raster

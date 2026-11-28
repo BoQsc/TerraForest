@@ -10,14 +10,15 @@ const STYLES:=[
  {"name":"City region · experimental","detail":"Three connected districts around one center. Existing approved buildings; not a finished urban design.","values":[1,0,2,2,1,true]},
  {"name":"Regional belt · experimental","detail":"Nine terrain-fitted districts among woodland and clearings, linked by long roads and offroads. Some seeds may not fit.","values":[0,2,2,2,2,true]},
  {"name":"Frontier expedition","detail":"Six connected districts, a trader introduction and coal-mine expedition. Includes wilderness locations, sleepers, supplies, lakes and material veins.","values":[0,2,1,2,2,true]},
- {"name":"Metropolis & inhabited region","detail":"A 36-building city with Foundry Court, Saint Brigid Cathedral, Needle Street Tower and every medium building type. Three long lakes, six outlying communities, two large bridges and one small crossing are required; impossible sites fail the survey.","values":[1,3,3,2,1,true],"profile":1}
+ {"name":"Metropolis & inhabited region","detail":"A 36-building city with Foundry Court, Saint Brigid Cathedral, Needle Street Tower and every medium building type. Three long lakes, six outlying communities, two large bridges and one small crossing are required; impossible sites fail the survey.","values":[1,3,3,2,1,true],"profile":1},
+ {"name":"Inhabited island · first playtest","detail":"A new island landscape with broad lowlands, asymmetric ridges, long lakes and an irregular coast. One city, two distant towns and four smaller communities share connected roads, bridges and trails. Uses existing buildings; harbors, railway, airstrip and utility facilities come later.","values":[1,4,4,2,1,true],"profile":2}
 ]
 static func apply_style(host:Control,index:int)->void:
  if index<0:return
  if index>=STYLES.size():
-  if host.generation_profile==1:
+  if host.generation_profile in [1,2]:
    host.generation_profile=0;host.settlement_count.select(2);host.district_count.select(1)
-   host.settlement_count.disabled=false;host.district_count.disabled=false;host.introduction.disabled=false;host.invalidate_preview()
+   host.settlement_count.disabled=false;host.district_count.disabled=false;host.introduction.disabled=false;host.ocean.disabled=false;host.buildable_ground.disabled=false;host.invalidate_preview()
   return
  host.generation_profile=int(STYLES[index].get("profile",0))
  var values:Array=STYLES[index].values
@@ -25,8 +26,10 @@ static func apply_style(host:Control,index:int)->void:
  for field in controls.size():controls[field].select(values[field])
  host.ocean.set_pressed_no_signal(values[5])
  host.introduction.set_pressed_no_signal(index==5)
- host.settlement_count.disabled=host.generation_profile==1;host.district_count.disabled=host.generation_profile==1
- host.introduction.disabled=host.generation_profile==1
+ host.settlement_count.disabled=host.generation_profile in [1,2];host.district_count.disabled=host.generation_profile in [1,2]
+ host.introduction.disabled=host.generation_profile in [1,2]
+ host.ocean.disabled=host.generation_profile==2;host.buildable_ground.disabled=host.generation_profile==2
+ if host.generation_profile==2:host.ocean.set_pressed_no_signal(true);host.buildable_ground.set_pressed_no_signal(true)
  host.invalidate_preview()
 static func sync_style(host:Control)->void:
  if host.world_style==null:return
@@ -121,8 +124,8 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.buildable_roads=CheckBox.new();host.buildable_roads.text="Roads & shoulders";host.buildable_roads.button_pressed=true;grid_settings.add_child(host.buildable_roads)
  host.buildable_roads.tooltip_text="Plan roads and their support beds against building-block footprints before baking. Protect entrances and terrain-fit budgets. No terrain changes when placing blocks; gaps or deeper embedding can still occur on transitions."
  settings=category(categories,"Settlements");section(settings,"","Places & connections")
- host.settlement_count=choice(settings,"Settlements",["1 · isolated community","2 · linked communities","3 · regional network","7 · city and six communities"]);host.settlement_count.select(2)
- host.district_count=choice(settings,"Settlement scale",["Village · 1 district each","Town · 2 districts each","City layout · 3 districts (experimental)","Metropolis · 3 city districts + 6 villages"])
+ host.settlement_count=choice(settings,"Settlements",["1 · isolated community","2 · linked communities","3 · regional network","7 · city and six communities","Island · city, 2 towns, 4 communities"]);host.settlement_count.select(2)
+ host.district_count=choice(settings,"Settlement scale",["Village · 1 district each","Town · 2 districts each","City layout · 3 districts (experimental)","Metropolis · 3 city districts + 6 villages","Island · city quarters and separate towns"])
  host.district_count.select(1)
  host.road_network=choice(settings,"Regional roads",["Direct connections","One alternate route","Interconnected network"])
  host.road_network.select(2)
@@ -157,7 +160,7 @@ static func build(host:Control,tabs:TabContainer)->void:
  actions.add_child(host.preview_button);actions.move_child(host.preview_button,host.generate_button.get_index())
  for option:OptionButton in [host.preset,host.biome,host.settlement_count,host.district_count,host.road_network,host.offroads]:option.item_selected.connect(func(_index:int):
   if host.settlement_count.selected==3 or host.district_count.selected==3:
-   if host.generation_profile!=1:apply_style(host,6);return
+   if host.generation_profile not in [1,2]:apply_style(host,6);return
   host.invalidate_preview())
  host.ocean.toggled.connect(func(_value:bool):host.invalidate_preview())
  host.material_veins.toggled.connect(func(_value:bool):host.invalidate_preview())

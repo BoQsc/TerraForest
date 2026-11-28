@@ -4,6 +4,25 @@
 - User review: New UI and larger layouts not yet reviewed. Existing house approvals stay separate.
 - Request: Professional creation UI, controllable towns/cities, connected roads, offroads and biome choices; distributed lakes/settlements and faster generation/loading.
 
+## Inhabited island — 2026-11-28
+
+A separate ordinary recipe uses the user's island survey/design reference and
+existing buildings: 36 buildings in three city quarters, two 16-building towns,
+four smaller communities and two lookouts, with connected roads and three bridges.
+Native field 36 and binary recipe profile 2 remain distinct from Metropolis.
+109 creation/interaction/restore assertions pass; strict QA retains the known
+zero-reference shutdown warning. The exact save `Island_1703_b743c970` is protected
+for human review. Cold-plan Generate-to-play is 80.142 s, failing the 30 s target.
+
+The inspected certified map still has a nearly square coast, very straight long
+lakes and fragmented street clusters. These remain design defects for review,
+alongside missing continuous waterways and infrastructure. Human/ground-level
+acceptance and broad-seed validation are pending. Map provenance and exact
+pixel hashes are in `reports/inhabited_island_world/20261128T112502004352Z/map_decode.json`;
+`certified_map.png` combines the generated world's certified terrain/water/building
+rasters, without invented geographic features. The source image stays in the chat.
+See the [design, scope and acceptance record](../../docs/INHABITED_ISLAND.md).
+
 ## Metropolis recipe — 2026-11-27
 
 2026-11-28 native road/foundation batches, save/map publication and resource

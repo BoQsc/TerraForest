@@ -234,7 +234,7 @@ public:
         for(int i=0;i<names.size();++i){auto *owner=static_cast<Object*>(collections[names[i]]);if(!owner||!owner->is_class("NativeStaticBatch"))return false;Dictionary index=owner->call("survey_index");if(!bool(index.get("ready",false))||!resident(index))return false;models.push_back({String(names[i]),owner->get_instance_id(),index});}
         if(!current()||!field_current())return false;
         base_pixels=initial.duplicate();for(int layer=0;layer<3;++layer){rasters[layer].instantiate();rasters[layer]->configure(layer==0?256:512);}
-        int generator=backend->get("world_generator");ocean_done=!(generator>=19&&generator<=35&&(generator%2));
+        int generator=backend->get("world_generator");ocean_done=!((generator>=19&&generator<=35&&(generator%2))||generator==36);
         std::array<bool,4096> dirty{};Dictionary columns=terrain->get("modified_columns");Array keys=columns.keys();
         for(int i=0;i<keys.size();++i){if(keys[i].get_type()!=Variant::VECTOR2I)return false;Vector2i cell=keys[i];
             int x0=std::clamp(int(std::floor((cell.x*16.-8)*1024/2000/16)),0,63),x1=std::clamp(int(std::floor((cell.x*16.+24)*1024/2000/16)),0,63);

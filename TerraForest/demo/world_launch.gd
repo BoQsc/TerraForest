@@ -74,8 +74,8 @@ static func saved_catalog(directory: String="user://worlds",include_preparation:
 	slots.clear()
 	for row:Dictionary in rows:slots.append(row.slot)
 	return {"slots":slots,"dates":dates}
-static func terrain_generator(ocean:bool,buildable:bool)->int:
-	return (33 if ocean else 32) if buildable else (35 if ocean else 34)
+static func terrain_generator(ocean:bool,buildable:bool,profile:int=0)->int:
+	return 36 if profile==2 else (33 if ocean else 32) if buildable else (35 if ocean else 34)
 static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds",ocean:bool=true,layout:String="connected",buildable:bool=true,options:Dictionary={}) -> Dictionary:
 	if not valid_slot(slot):return {"ok":false,"reason":"Use 1–48 letters, digits or underscores; start with a letter or underscore."}
 	var canonical:=directory.path_join(slot+".trw")
@@ -94,7 +94,7 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 	elif not FileAccess.file_exists(canonical):return {"ok":false,"reason":"The selected save is no longer available. Refresh the list."}
 	if create and generator in [INTEGRATED_PRESET,LEGACY_INTEGRATED_PRESET]:
 		if generator==INTEGRATED_PRESET and options.is_empty():options=preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.duplicate()
-		var actual_generator:int=terrain_generator(ocean,buildable) if generator==INTEGRATED_PRESET else 13
+		var actual_generator:int=terrain_generator(ocean,buildable,int(options.get("profile",0))) if generator==INTEGRATED_PRESET else 13
 		var preparation:=engine_prefix()+PackedStringArray(["--headless","--script","res://addons/world_runtime/generation_job.gd","--","--destination="+slot,"--seed="+str(seed),"--generator="+str(actual_generator),"--settlement-layout="+layout])
 		if not options.is_empty():
 			var recipe:=preload("res://addons/world_runtime/world_recipe.gd").encode(options)
