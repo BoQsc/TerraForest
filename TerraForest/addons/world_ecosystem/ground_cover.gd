@@ -18,6 +18,7 @@ var shelter_source: Callable
 var picker: RefCounted
 var native: RefCounted
 var removed: RefCounted
+var _lod_metric:float=-1.0
 var grass_material: ShaderMaterial
 var grass_texture_enabled:=false
 var foliage_materials:Array[ShaderMaterial]=[]
@@ -115,7 +116,7 @@ func _ready() -> void:
 	if water!=null: water.exclusion_changed.connect(_exclusion_changed)
 
 func _mesh(species: int) -> Mesh:
-	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species,true,true,false,species in [0,1,2,3,4,5],species==2)
+	var mesh:=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species,true,true,false,species in [0,1,2,3,4,5],true,true)
 	var material:ShaderMaterial=mesh.surface_get_material(0)
 	material.set_shader_parameter("distance_fade_end",124.0)
 	material.set_shader_parameter("distance_fade_start",124.0-DISTANCE_FADE_WIDTH)
@@ -220,11 +221,15 @@ func _measured_step(_delta:float)->void:
 		material.set_shader_parameter("cover_eye",camera.global_position)
 		material.set_shader_parameter("cover_clock",Time.get_ticks_msec()/1000.0)
 	# Match the engine's projected mesh-LOD metric, including zoom/render scale.
-	# One uniform update; no per-plant CPU work or additional draw pass.
+	# Update shared material uniforms only when projection/resolution changes.
+	# No per-plant CPU work or additional draw pass.
 	var viewport:=camera.get_viewport()
 	var lod_pixels:=viewport.mesh_lod_threshold
 	var lod_metric:float=viewport.get_visible_rect().size.x*float(ProjectSettings.get_setting("rendering/scaling_3d/scale",1.0))/(maxf(lod_pixels,0.0001)*camera.get_camera_projection().get_lod_multiplier())
-	grass_material.set_shader_parameter("near_lod_metric",lod_metric if lod_pixels>0 and camera.projection==Camera3D.PROJECTION_PERSPECTIVE else 100000000.0)
+	lod_metric=lod_metric if lod_pixels>0 and camera.projection==Camera3D.PROJECTION_PERSPECTIVE else 100000000.0
+	if lod_metric!=_lod_metric:
+		_lod_metric=lod_metric
+		for material in foliage_materials:material.set_shader_parameter("near_lod_metric",lod_metric)
 	for batch in batches: batch.set_render_focus(camera.global_position)
 	if rock_collision!=null:rock_collision.set_collision_focus(collision_focus.global_position if collision_focus!=null else camera.global_position)
 	if fractures!=null:

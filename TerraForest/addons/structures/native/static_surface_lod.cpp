@@ -19,6 +19,8 @@ bool NativeStaticBatch::configure_surface_lod(const Ref<Mesh> &near_mesh,const R
         near_mesh.is_null()||far_mesh.is_null()||near_mesh->get_surface_count()!=1||far_mesh->get_surface_count()!=1||
         full.is_null()||near_array.is_null()||far_array.is_null()||full->get_custom_aabb().size==Vector3()||
         near_array->get_custom_aabb()!=full->get_custom_aabb()||far_array->get_custom_aabb()!=full->get_custom_aabb()))return false;
+    const double begin=error>0&&source_mesh.is_valid()?double(source_mesh->get_meta("surface_lod_begin",error)):error;
+    if(!std::isfinite(begin)||begin<0||begin>error)return false;
     surface_lod_near=near_mesh;surface_lod_far=far_mesh;surface_lod_error=error;
     surface_lod_dirty=true;
     for(auto &entry:batches)entry.second->get_multimesh()->set_mesh(source_mesh);
@@ -48,6 +50,10 @@ void NativeStaticBatch::update_surface_lod() {
         surface_lod_transform==parent_transform&&surface_lod_eye.distance_squared_to(eye)<0.25)return;
     surface_lod_dirty=false;surface_lod_uploads=uploads;surface_lod_metric=distance_per_error;
     surface_lod_eye=eye;surface_lod_transform=parent_transform;
+    // Per-root blends need both surfaces when ANY part of a page reaches the
+    // incoming band. The original end cutoff still retires opaque geometry.
+    const double begin=double(source_mesh->get_meta("surface_lod_begin",surface_lod_error));
+    const bool overlap=begin<surface_lod_error;
     for(auto &entry:batches) {
         auto *instance=entry.second;Ref<MultiMesh> multi=instance->get_multimesh();
         Ref<Mesh> desired=source_mesh;
@@ -61,7 +67,12 @@ void NativeStaticBatch::update_surface_lod() {
             const double distance=eye.distance_to(closest);
             // A one-metre guard keeps floating-point boundary differences on the
             // original mesh. Shadow-casting pages also retain the opaque caster.
-            if(distance<threshold-1.0)desired=surface_lod_near;
+            const Vector3 farthest(std::abs(eye.x-box.position.x)>std::abs(eye.x-end.x)?box.position.x:end.x,
+                std::abs(eye.y-box.position.y)>std::abs(eye.y-end.y)?box.position.y:end.y,
+                std::abs(eye.z-box.position.z)>std::abs(eye.z-end.z)?box.position.z:end.z);
+            const double near_distance=overlap?eye.distance_to(farthest):distance;
+            const double near_threshold=threshold*(begin/surface_lod_error);
+            if(near_distance<near_threshold-1.0)desired=surface_lod_near;
             else if(distance>threshold+1.0&&instance->get_cast_shadows_setting()==GeometryInstance3D::SHADOW_CASTING_SETTING_OFF)desired=surface_lod_far;
         }
         if(multi->get_mesh()!=desired)multi->set_mesh(desired);

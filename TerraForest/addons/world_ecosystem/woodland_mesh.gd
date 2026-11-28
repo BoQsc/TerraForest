@@ -221,7 +221,7 @@ func grass_horizon() -> void:
 		var base:Vector3=direction*0.035
 		tri(base-side*0.09,base+side*0.09,base+direction*0.22+Vector3.UP*0.36,Color("64773f"),Vector2.ZERO,Vector2.RIGHT,Vector2(0.5,1))
 
-static func build(species: int,with_lod: bool=true,extended_lod: bool=true,low_only:bool=false,filtered_far:bool=false,near_fade:bool=false) -> ArrayMesh:
+static func build(species: int,with_lod: bool=true,extended_lod: bool=true,low_only:bool=false,filtered_far:bool=false,near_fade:bool=false,seamless:bool=false) -> ArrayMesh:
 	if species<0 or species>8:return null
 	var asset=load("res://addons/world_ecosystem/woodland_mesh.gd").new()
 	var method: String=["stone_mesh","fern","grass","white_flower","gold_flower","violet_flower","bush","twigs","woody_bush"][species]
@@ -254,6 +254,10 @@ static func build(species: int,with_lod: bool=true,extended_lod: bool=true,low_o
 	var arrays:=[];arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX]=asset.vertices;arrays[Mesh.ARRAY_NORMAL]=asset.normals;arrays[Mesh.ARRAY_COLOR]=asset.colors;arrays[Mesh.ARRAY_TEX_UV]=asset.uvs;arrays[Mesh.ARRAY_INDEX]=indices
 	arrays[Mesh.ARRAY_TANGENT]=asset.tangents
+	var original_arrays:=arrays.duplicate();var original_lods:=lods.duplicate()
+	var fade_other:bool=near_fade and species!=2 and with_lod and not low_only
+	var fade_second:bool=(species in [6,7,8] or (species==1 and not filtered_far)) and extended_lod
+	if fade_other:preload("res://addons/world_ecosystem/opaque_lod_fade.gd").prepare(arrays,lods,fade_second)
 	var mesh:=ArrayMesh.new();mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],lods)
 	mesh.custom_aabb=AABB(Vector3(-0.4,-0.2 if species==0 else 0,-0.4),Vector3(0.8,0.4 if species==0 else (1.1 if species==8 else 0.75),0.8))
 	var material:=ShaderMaterial.new();material.shader=preload("res://addons/world_ecosystem/woodland.gdshader");material.set_shader_parameter("stone",species==0)
@@ -267,9 +271,11 @@ static func build(species: int,with_lod: bool=true,extended_lod: bool=true,low_o
 			material.set_shader_parameter("stone_"+channel,ImageTexture.create_from_image(image))
 	mesh.surface_set_material(0,material)
 	if filtered_far and with_lod and not low_only and species==2:
-		preload("res://addons/world_ecosystem/filtered_grass.gd").apply(mesh,arrays,lods,material,0.045,0.10,near_fade)
+		preload("res://addons/world_ecosystem/filtered_grass.gd").apply(mesh,arrays,lods,material,0.045,0.10,near_fade,seamless)
 	if filtered_far and with_lod and extended_lod and not low_only and species==1:
-		preload("res://addons/world_ecosystem/filtered_fern.gd").apply(mesh,arrays,lods,material)
+		preload("res://addons/world_ecosystem/filtered_fern.gd").apply(mesh,arrays,lods,material,0.04,seamless)
 	if filtered_far and with_lod and not low_only and species in [0,3,4,5]:
-		preload("res://addons/world_ecosystem/filtered_detail.gd").apply(mesh,arrays,lods,material,species)
+		preload("res://addons/world_ecosystem/filtered_detail.gd").apply(mesh,arrays,lods,material,species,seamless)
+	if fade_other:preload("res://addons/world_ecosystem/opaque_lod_fade.gd").finish(mesh,original_arrays,original_lods,material,fade_second)
+	if seamless:preload("res://addons/world_ecosystem/representation_fade.gd").apply(mesh,species)
 	return mesh

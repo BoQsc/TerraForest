@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: 0BSD
 shader_type spatial;
 render_mode cull_disabled, diffuse_burley;
+#include "res://addons/world_ecosystem/proxy_projection.gdshaderinc"
+const bool proxy_lod_transition = false;
+uniform float near_lod_metric = 703.74;
+uniform vec2 proxy_lod_edges = vec2(0.037,0.0448);
+varying flat float proxy_lod_weight;
 uniform sampler2D stone_color : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D stone_normal : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform vec3 stone_area_vectors[48];
@@ -26,13 +31,18 @@ varying vec2 point_px;
 void vertex(){
     stone_view_basis=mat3(MODELVIEW_MATRIX);
     vec3 origin=MODEL_MATRIX[3].xyz;
+    vec3 proxy_delta=origin-cover_eye;
+    vec2 proxy_limits=proxy_lod_edges*near_lod_metric;
+    proxy_lod_weight=proxy_lod_transition?smoothstep(proxy_limits.x*proxy_limits.x,proxy_limits.y*proxy_limits.y,dot(proxy_delta,proxy_delta)):1.0;
+
     float distance_weight=1.0-smoothstep(distance_fade_start,distance_fade_end,distance(origin.xz,cover_eye.xz));
     float age=cover_clock-INSTANCE_CUSTOM.x;
     coverage=distance_weight*(INSTANCE_CUSTOM.y>0.5?smoothstep(0.0,0.65,max(0.0,age)):1.0);
     // Fully faded instances need no projection or silhouette-area work.
-    if(coverage<=0.0){POSITION=vec4(2.0,2.0,2.0,1.0);}else{
+    if(coverage<=0.0 || (proxy_lod_transition && proxy_lod_weight<=0.0)){POSITION=vec4(2.0,2.0,2.0,1.0);}else{
     mat4 mvp=PROJECTION_MATRIX*MODELVIEW_MATRIX;
     vec4 center=mvp*vec4(0.0,0.0,0.0,1.0);
+    if (proxy_stone_in_view(center)) {
     vec3 row_w=vec3(mvp[0].w,mvp[1].w,mvp[2].w);
     vec3 jac_x=(vec3(mvp[0].x,mvp[1].x,mvp[2].x)*center.w-center.x*row_w)/(center.w*center.w)*VIEWPORT_SIZE.x*0.5;
     vec3 jac_y=(vec3(mvp[0].y,mvp[1].y,mvp[2].y)*center.w-center.y*row_w)/(center.w*center.w)*VIEWPORT_SIZE.y*0.5;
@@ -61,10 +71,15 @@ void vertex(){
     point_px=(UV*2.0-1.0)*extent;
     POSITION=vec4((center_px+point_px)/(VIEWPORT_SIZE*0.5)*center.w,center.z,center.w);
     variation=0.95+0.05*sin(dot(origin.xz,vec2(0.71,0.43))*3.7);
+    } else { POSITION=vec4(2.0,2.0,2.0,1.0); }
 }
 
 }
 void fragment(){
+    // Complement the opaque screen mask. Multiplying both representations by
+    // alpha would expose extra terrain in the middle of the transition.
+    if(proxy_lod_transition && fract(52.9829189*fract(dot(floor(FRAGCOORD.xy),vec2(0.06711056,0.00583715))))>=proxy_lod_weight)discard;
+
     vec2 delta=point_px;
     vec2 weighted=vec2(inverse_shape.x*delta.x+inverse_shape.y*delta.y,inverse_shape.y*delta.x+inverse_shape.z*delta.y);
     float radius=sqrt(max(dot(delta,weighted),0.0));

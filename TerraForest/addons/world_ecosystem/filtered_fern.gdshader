@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: 0BSD
 shader_type spatial;
 render_mode cull_disabled, diffuse_burley;
+#include "res://addons/world_ecosystem/proxy_projection.gdshaderinc"
+const bool proxy_lod_transition = false;
+uniform float near_lod_metric = 703.74;
+uniform vec2 proxy_lod_edges = vec2(0.037,0.0448);
+varying flat float proxy_lod_weight;
 uniform bool stone = false;
 uniform float grass_detail_strength : hint_range(0.0, 1.0) = 0.0;
 uniform vec3 grass_detail_mean = vec3(1.0);
@@ -41,6 +46,11 @@ void vertex(){
 vec2 filter_corner=UV;UV=UV2;
 
     vec3 origin = MODEL_MATRIX[3].xyz;
+    vec3 proxy_delta=origin-cover_eye;
+    vec2 proxy_limits=proxy_lod_edges*near_lod_metric;
+    proxy_lod_weight=proxy_lod_transition?smoothstep(proxy_limits.x*proxy_limits.x,proxy_limits.y*proxy_limits.y,dot(proxy_delta,proxy_delta)):1.0;
+
+    if(proxy_lod_transition && proxy_lod_weight<=0.0){POSITION=vec4(2.0,2.0,2.0,1.0);}else{
     float view_distance=distance(origin.xz,cover_eye.xz);
     float distance_weight = 1.0-smoothstep(distance_fade_start,distance_fade_end,view_distance);
     // Cheap canopy self-occlusion approximation, evaluated per vertex. It is
@@ -65,6 +75,7 @@ vec2 filter_corner=UV;UV=UV2;
     vec3 a=filter_bend(CUSTOM0.xyz,phase),b=filter_bend(CUSTOM1.xyz,phase),c=filter_bend(CUSTOM2.xyz,phase);
     mat4 mvp=PROJECTION_MATRIX*MODELVIEW_MATRIX;
     vec4 ca=mvp*vec4(a,1.0),cb=mvp*vec4(b,1.0),cc=mvp*vec4(c,1.0);
+    if (proxy_triangle_in_view(ca,cb,cc)) {
     vec2 pa=ca.xy/ca.w*VIEWPORT_SIZE*0.5,pb=cb.xy/cb.w*VIEWPORT_SIZE*0.5,pc=cc.xy/cc.w*VIEWPORT_SIZE*0.5;
     center_px=(pa+pb+pc)/3.0;
     vec2 da=pa-center_px,db=pb-center_px,dc=pc-center_px;
@@ -92,8 +103,14 @@ vec2 filter_corner=UV;UV=UV2;
     for(int bin=0;bin<5;bin++){projected_area+=abs(dot(projected_normal,filter_area_vectors[group+bin]));}
     amplitude=projected_area/(6.28318530718*sqrt(determinant));
 
+    } else { POSITION=vec4(2.0,2.0,2.0,1.0); }
+    }
 }
 void fragment(){
+    // Complement the opaque screen mask. Multiplying both representations by
+    // alpha would expose extra terrain in the middle of the transition.
+    if(proxy_lod_transition && fract(52.9829189*fract(dot(floor(FRAGCOORD.xy),vec2(0.06711056,0.00583715))))>=proxy_lod_weight)discard;
+
 
     // Opaque coverage dithering keeps depth writes and avoids alpha sorting/overdraw.
     float threshold=fract(52.9829189*fract(dot(floor(FRAGCOORD.xy),vec2(0.06711056,0.00583715))));

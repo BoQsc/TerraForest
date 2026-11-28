@@ -15,13 +15,15 @@ from PIL import Image, ImageChops, ImageFilter, ImageStat
 ROOT = Path(__file__).resolve().parents[1]
 FFMPEG = Path.home() / 'AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-9.0.2-full_build/bin/ffmpeg.exe'
 CAP = 16 * 2**20
+TOTAL_CAP = 20 * 2**20
+GAMEPLAY_RATE = "16M"
 METADATA_CAP = 2**20
 
 def check_output_budget(output):
     files=[p for p in output.iterdir() if p.is_file()]
     if sum(p.stat().st_size for p in files if p.suffix in ('.mp4','.png'))>CAP:
         raise ValueError('Full-frame media cap exceeded')
-    if sum(p.stat().st_size for p in files)>20*2**20:
+    if sum(p.stat().st_size for p in files)>TOTAL_CAP:
         raise ValueError('Admitted total report cap exceeded')
 
 def receive(sock, size):
@@ -121,7 +123,7 @@ def serve(listener, token, state):
                         if case not in writers:
                             # Review only: cap the 3.2-second gameplay movie below
                             # ~7 MiB even for dense grass; raw metrics are separate.
-                            rate_cap=['-maxrate','16M','-bufsize','2M'] if case=='gameplay' else []
+                            rate_cap=['-maxrate',GAMEPLAY_RATE,'-bufsize','1M'] if case=='gameplay' else []
                             quality='24' if case=='gameplay' else ('22' if variant in ('stone_transition','near_transition') else '18')
                             writers[case]=subprocess.Popen([str(FFMPEG),'-v','error','-f','rawvideo','-pixel_format','rgb24','-video_size','1920x1080','-framerate','60','-i','pipe:0','-an','-c:v','libx264','-preset','medium' if case=='gameplay' else 'veryfast','-crf',quality,*rate_cap,'-pix_fmt','yuv420p','-movflags','+faststart',str(output/(case+'.mp4'))],stdin=subprocess.PIPE)
                         writers[case].stdin.write(raw)
@@ -161,15 +163,24 @@ def serve(listener, token, state):
             writer.stdin.close(); writer.wait()
 
 def main():
+    global CAP, TOTAL_CAP, GAMEPLAY_RATE
     import argparse
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--gameplay',action='store_true')
     parser.add_argument('--stone-transitions',action='store_true')
     parser.add_argument('--approach-review',action='store_true')
     parser.add_argument('--near-transitions',action='store_true')
+    parser.add_argument('--cover-lods',action='store_true')
+    parser.add_argument('--seamless',action='store_true')
+    parser.add_argument('--near-bands',action='store_true')
     parser.add_argument('--near-parity',action='store_true')
     parser.add_argument('--near-cost-only',action='store_true')
     args=parser.parse_args()
+    if args.seamless:args.cover_lods=True
+    if args.gameplay and (args.cover_lods or args.near_bands):
+        CAP=9*2**20; TOTAL_CAP=12*2**20; GAMEPLAY_RATE="10M"
+    if args.gameplay and args.near_bands:
+        CAP=6*2**20; TOTAL_CAP=8*2**20; GAMEPLAY_RATE="6M"
     from run_vegetation_lab import active_render_jobs
     jobs=active_render_jobs()
     if isinstance(jobs,dict): jobs=[jobs]
@@ -183,6 +194,9 @@ def main():
         if args.stone_transitions:command.append('--stone-transition-review')
         if args.approach_review:command.append('--approach-review')
         if args.near_transitions:command.append('--near-transition-review')
+        if args.cover_lods:command.append('--cover-lod-review')
+        if args.seamless:command.append('--seamless-review')
+        if args.near_bands:command.append('--near-bands-review')
         if args.near_parity:command.append('--near-parity')
         if args.near_cost_only:command.append('--near-cost-only')
         observed=[];monitor_started=time.time()

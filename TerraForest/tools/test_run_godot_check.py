@@ -5,18 +5,26 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from pathlib import Path
-from run_godot_check import command_for, execute, verify_pack_native, planned_report_bytes, retain_grand_building_captures
+from run_godot_check import command_for, execute, verify_pack_native, planned_report_bytes, retain_object_captures
 
 
 class CheckLauncherTests(unittest.TestCase):
+    def test_vegetation_handoff_capture_bounds(self):
+        lab = ["godot", "--script", "res://tests/vegetation_final_handoffs.gd"]
+        self.assertEqual(planned_report_bytes(lab), 12 * 2**20)
+        self.assertEqual(planned_report_bytes(lab + ["--smoke"]), 2**20)
+        walk = ["godot", "--script", "res://tests/vegetation_gameplay.gd"]
+        self.assertEqual(planned_report_bytes(walk), 20 * 2**20)
+        self.assertEqual(planned_report_bytes(walk + ["--cover-lod-review", "--seamless-review"]), 12 * 2**20)
+
     def test_grand_capture_archival_waits_for_idle_but_preserves_real_failures(self):
         with patch("maintain_homestead_captures.maintain", side_effect=OSError("Maintenance requires idle gameplay/builds: player")):
-            result = retain_grand_building_captures()
+            result = retain_object_captures()
         self.assertTrue(result["pending"])
         self.assertIn("player", result["reason"])
         with patch("maintain_homestead_captures.maintain", side_effect=OSError("archive checksum mismatch")):
             with self.assertRaises(OSError):
-                retain_grand_building_captures()
+                retain_object_captures()
 
     def test_report_growth_is_declared_only_for_audited_checks(self):
         self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/house_furnishings.gd"]), 32 * 2**20)
@@ -47,6 +55,10 @@ class CheckLauncherTests(unittest.TestCase):
         self.assertEqual(planned_report_bytes(release + ["--water-object-contact", "--water-no-captures"]), 28 * 2**20)
         self.assertEqual(planned_report_bytes(release + ["--water-object-contact", "--water-no-captures", "--lossless-shore-views"]), 12 * 2**20)
         self.assertEqual(planned_report_bytes(release + ["--water-load-only", "--authoring-cut-angles"]), 20 * 2**20)
+
+    def test_near_band_capture_admission(self):
+        self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/vegetation_shadow_bands.gd"]), 3 * 2**20)
+        self.assertEqual(planned_report_bytes(["godot", "--script", "res://tests/vegetation_gameplay.gd", "--near-bands-review"]), 8 * 2**20)
 
     def test_pack_rejects_missing_or_mismatched_external_libraries(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -1,5 +1,5 @@
 {
-  "status": "Stone/distance-fade checkpoint accepted for commit and push after source playtest on 2026-11-28; near-LOD handoffs and rectangular patches remain open.",
+  "status": "Human-verified vegetation fades and foreground projection correction; approved for commit/push on 2026-11-28. Broader qualification and earlier GPU-tail target remain open.",
   "matrix_cases": 67,
   "unit_negative_controls_passed": 9,
   "engine_parser": "Godot 4.7.2 check-only passed for final gameplay driver; final rendered lab and production gameplay both pass",
@@ -16,9 +16,8 @@
   "human_approved": true,
   "block": null,
   "remaining": [
-    "Near-to-next-LOD transitions and distracting rectangular patches; new lab and human review before promotion",
-    "Incremental detail GPU p95 target <=.3ms: one clean group measured +.4005ms; no universal cost-pass claim",
-    "Broader views, FOV, resolution, light, terrain and other-species coverage before universal issue closure"
+    "Earlier detail GPU-tail target remains open; new overlap adds measured cost",
+    "Broader projection, lighting, terrain, fast travel, teleports, bulk edits and other transition systems before universal closure"
   ],
   "production_unchanged_since_lab_started": false,
   "integration_gate_run": "20261127T164801248443Z",
@@ -142,5 +141,119 @@
     "approval_date": "2026-11-28",
     "approval_scope": "User requested a snapshot commit and push after the source playtest launch; detailed visual acceptance and universal closure are not inferred.",
     "milestone_tag": "snapshot/near-lod-fade-2026-11-28"
+  },
+  "remaining_handoffs": {
+    "baseline_commit": "84d60efd",
+    "investigation": "REMAINING_HANDOFFS.md",
+    "status": "Accepted as part of the human-verified latest source snapshot, including the projection correction; broader qualification remains open.",
+    "committed": true,
+    "human_approved": true,
+    "lab_runs": [
+      "20261128T001456897900Z",
+      "20261128T001829198742Z",
+      "20261128T002253763721Z"
+    ],
+    "real_scene_run": "20261128T002409423934Z",
+    "failed_physical_run": "20261128T002911081900Z",
+    "remaining": [
+      "Broader coverage and GPU-tail target; proxy/horizon/shadow engineering continuation is recorded in far_handoffs"
+    ],
+    "evidence": "remaining-handoff-evidence.json",
+    "gameplay_run": "20261128T004314645305Z",
+    "gameplay_passed": true,
+    "continued_by": "far_handoffs",
+    "approval": {
+      "date": "2026-11-28",
+      "user_statement": "Let's commit and push now as human verified.",
+      "scope": "Latest source playtest: nearby bands absent while standing still and walking; current vegetation fade snapshot accepted. Broader projections and earlier GPU-tail target remain open.",
+      "milestone_tag": "playtest/vegetation-fades-2026-11-28",
+      "shared_native_binaries_included": false,
+      "native_restore_requirement": "Rebuild the structures addon from committed source for the surface_lod_begin page-overlap change; shared working DLLs also contain unrelated native work."
+    }
+  },
+  "far_handoffs": {
+    "investigation": "FAR_HANDOFFS.md",
+    "evidence": "far-handoff-evidence.json",
+    "status": "Accepted as part of the human-verified latest source snapshot, including the projection correction; broader qualification remains open.",
+    "human_approved": true,
+    "committed": true,
+    "baseline": "Preceding uncommitted opaque-tier candidate on 84d60efd",
+    "representation_lab": "20261128T075630530026Z",
+    "shadow_lab": "20261128T075817434927Z",
+    "full_scene": "20261128T080012838762Z",
+    "failed_physical": "20261128T081046903558Z",
+    "gameplay": "20261128T081702404738Z",
+    "gameplay_passed": true,
+    "remaining": [
+      "Earlier detail GPU-tail target remains open; new overlap adds measured cost",
+      "Broader projection, lighting, terrain, fast travel, teleports, bulk edits and other transition systems before universal closure"
+    ],
+    "approval": {
+      "date": "2026-11-28",
+      "user_statement": "Let's commit and push now as human verified.",
+      "scope": "Latest source playtest: nearby bands absent while standing still and walking; current vegetation fade snapshot accepted. Broader projections and earlier GPU-tail target remain open.",
+      "milestone_tag": "playtest/vegetation-fades-2026-11-28",
+      "shared_native_binaries_included": false,
+      "native_restore_requirement": "Rebuild the structures addon from committed source for the surface_lod_begin page-overlap change; shared working DLLs also contain unrelated native work."
+    }
+  },
+  "shadow_bands": {
+    "status": "Accepted as part of the human-verified latest source snapshot, including the projection correction; broader qualification remains open.",
+    "cause": "Missing pre-divide camera-plane and off-screen support checks in analytic far proxies; wind changes invalid projection while standing still.",
+    "integrated_lab_run": "20261128T090059765752Z",
+    "checks": 107,
+    "failures": 0,
+    "faulty_foreground_frames": 42,
+    "corrected_native_foreground_matches": 48,
+    "paired_gpu_median_ms": {
+      "baseline": 14.007,
+      "corrected": 8.382
+    },
+    "draw_calls": 3870,
+    "human_approved": true,
+    "committed": true,
+    "physical_gameplay_run": "20261128T091042690963Z",
+    "physical_gameplay_failures": [],
+    "travelled_m": 189.447848111391,
+    "grounded_frames": 2163,
+    "capture_frames": 192,
+    "independent_raw_hash_matches": 192,
+    "wrapper_retention_status": "Archive full after engine/analysis success; all evidence preserved and old capture explicitly pinned.",
+    "approval": {
+      "date": "2026-11-28",
+      "user_statement": "Let's commit and push now as human verified.",
+      "scope": "Latest source playtest: nearby bands absent while standing still and walking; current vegetation fade snapshot accepted. Broader projections and earlier GPU-tail target remain open.",
+      "milestone_tag": "playtest/vegetation-fades-2026-11-28",
+      "shared_native_binaries_included": false,
+      "native_restore_requirement": "Rebuild the structures addon from committed source for the surface_lod_begin page-overlap change; shared working DLLs also contain unrelated native work."
+    },
+    "commit_line_endings": {
+      "res://addons/world_ecosystem/filtered_grass.gdshader": {
+        "validated_sha256": "f3627389b88f7f8a27b35c18308b949050a50c87123e05d82cc21937fdedbcb7",
+        "committed_source_sha256": "d1684dbab64d18c0fc9f7e8174f5ec17861cbbc0f9e76d91bdcd0466a2732a95",
+        "normalized_sha256": "f3627389b88f7f8a27b35c18308b949050a50c87123e05d82cc21937fdedbcb7",
+        "scope": "Only inherited line endings restored; shader text is byte-identical after CRLF normalization."
+      },
+      "res://addons/world_ecosystem/filtered_fern.gdshader": {
+        "validated_sha256": "e01b8987f3cb910cae28f106976ccbaa07664817518b2ecd02a3f035933f0b68",
+        "committed_source_sha256": "1483bddbee5ced4c0d88dd50a6ec08d74d4dc9a319d5d612b32192edde6a0496",
+        "normalized_sha256": "e01b8987f3cb910cae28f106976ccbaa07664817518b2ecd02a3f035933f0b68",
+        "scope": "Only inherited line endings restored; shader text is byte-identical after CRLF normalization."
+      },
+      "res://addons/world_ecosystem/filtered_stone.gdshader": {
+        "validated_sha256": "e9d8b387fcb7ef186b6583ed58b458c2dd271fd3ed5c1567132bcf8a103fae28",
+        "committed_source_sha256": "4e09a9c8d48fffcd7137b357148a73420e834093daf85d726d99c866d66b5de6",
+        "normalized_sha256": "e9d8b387fcb7ef186b6583ed58b458c2dd271fd3ed5c1567132bcf8a103fae28",
+        "scope": "Only inherited line endings restored; shader text is byte-identical after CRLF normalization."
+      }
+    }
+  },
+  "approval": {
+    "date": "2026-11-28",
+    "user_statement": "Let's commit and push now as human verified.",
+    "scope": "Latest source playtest: nearby bands absent while standing still and walking; current vegetation fade snapshot accepted. Broader projections and earlier GPU-tail target remain open.",
+    "milestone_tag": "playtest/vegetation-fades-2026-11-28",
+    "shared_native_binaries_included": false,
+    "native_restore_requirement": "Rebuild the structures addon from committed source for the surface_lod_begin page-overlap change; shared working DLLs also contain unrelated native work."
   }
 }

@@ -576,3 +576,58 @@ chunk before retirement. Referenced archives and original captures were retained
 The current full-frame comparison and gameplay `20261127T234144741194Z` are
 explicitly pinned pending the requested human validation. Post-walk parser
 verification admitted 64 KiB and is retained with that gameplay receipt.
+
+Remaining-handoff validation (2026-11-28): `vegetation_handoffs` admits 12 MiB, no world, with bounded lossless packets and receipt-owned two-ready retention. Raw hash checks and exact repeats gate analysis. Two older completed metric artifacts were cold-retained with verified manifests: `reports/runtime_performance/20261109T072428340063Z_first_playtest_uncapped/frames.archive.json` (23,057,614 bytes) and `reports/terrain_edit_campaign/endurance_4800_initial.archive.json` (12,764,989 bytes). Full records remain restorable. Budgets, saves and source assets are unchanged. The current full-frame/physical cover comparison is pinned for human review. See `issues/vegetation-lod/REMAINING_HANDOFFS.md` for scope and failed attempts.
+
+The additional-species gameplay mode (`--cover-lod-review`) now admits 12 MiB: at most 9 MiB media and 1 MiB analysis, with the remaining allowance for logs/copied drivers and the gameplay report. It retains all 192 raw pixel measurements and hashes; only the review movie is capped at 10 Mbit/s. The GDScript writer separately bounds its owned outputs to 6 MiB. Failed reference `20261128T002911081900Z` is pinned for the corrected gate comparison; it is not a passing gameplay receipt. No global budget or image-count gate was raised.
+
+The cover walking run `20261128T004314645305Z` passes and is pinned for human review. The preceding no-launch run `20261128T003643186309Z` retains `archive_recovery.json`: only two unreferenced chunks from interrupted archival were removed, after matching their full raw bytes to unchanged live capture files. Recovery reclaimed 1,069,592 redundant bytes; published archives, original captures and all limits remain unchanged.
+
+
+Far-handoff validation (2026-11-28): `vegetation_final_handoffs` declares 12 MiB
+(1 MiB smoke), zero worlds and two-ready receipt-owned retention. Source moving
+comparison still admits 12 MiB, including its bounded native-size JPEG review;
+full-scene comparison admits 20 MiB. Successful human-review captures are pinned.
+The failed shader-identity walking reference is separately pinned until its
+corrected comparison is reviewed. No budget increase or source-save change.
+
+Verified recompression of existing content-addressed archive chunks saved
+4,083,438 bytes without changing raw hashes or manifest references; receipt
+`reports/artifact_retention/vegetation_fade_recompression_20261128.json`. Completed
+creation fixtures from later-failed location-baseline runs were cold-retained with
+zero new compressed payload, reclaiming 47,207,220 loose bytes. Failure logs and
+the latest passing fixtures remain ready. Their verified restoration manifests
+are `reports/location_baseline/20261102T174105330668Z/bulk.archive.json` and
+`reports/location_baseline/20261102T181359468541Z/bulk.archive.json`.
+
+A later automatic archive attempt reached the unchanged ceiling. Five unpublished
+chunks were proved absent from every local published archive manifest and equal
+to unchanged live captures, then only those duplicate chunks were removed
+(4,216,313 bytes). Recovery receipt:
+`reports/checks/20261128T081046903558Z/archive_recovery.json`. Original evidence,
+archives and saves remain intact. See `issues/vegetation-lod/FAR_HANDOFFS.md` for
+failed attempts, exact scope, review pins and closure conditions.
+
+### Nearby vegetation band investigation (2026-11-28)
+
+`vegetation_shadow_bands` admits 3 MiB reports and zero world/scratch bytes,
+with a 2.5 MiB driver payload cap. It reads the canonical save without publishing
+changes, retains native region hashes, compact luma motion, small previews, frozen
+sources and paired GPU metadata. `maintain_homestead_captures.py` owns retirement
+by completed runner receipt and keeps two ordinary ready runs; failed reproduction
+runs have explicit pins. The physical `--near-bands-review` full-frame path admits
+8 MiB (6 MiB media cap, 6 Mbit/s review video) and zero world bytes, sharing existing gameplay retention.
+User-supplied and selected review images are curated in the issue gallery with
+source hashes; original asset notices remain applicable.
+
+Before these runs, two identical completed mining traces matched the historical
+backup catalog and were cold-retained, freeing 14,781,578 loose bytes with only
+126,742 new compressed bytes. Restoration manifests are
+`reports/mining_visual/trace.archive.json` and
+`reports/mining_locality/c78caef9d8134842/0/visual/trace.archive.json`.
+No storage budget was increased and no player save was removed.
+
+The projection-regression follow-up also verified lossless recompression of 678
+archive chunks, saving 3,146,800 bytes. Its receipt and temporary historical
+ready pins are documented in [SHADOW_BANDS.md](../issues/vegetation-lod/SHADOW_BANDS.md#physical-setup-rejection-and-evidence-retention); revisit pins after human review and
+adequate archive headroom. Original evidence and budgets remain unchanged.

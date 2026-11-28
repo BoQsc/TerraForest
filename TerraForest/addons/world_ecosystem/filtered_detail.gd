@@ -2,7 +2,9 @@
 extends RefCounted
 # Shared startup-only far details. Authored near geometry, shadows and materials
 # stay intact; no new textures, per-instance CPU updates or temporal buffers.
-static func split(mesh: ArrayMesh,saved: Dictionary,arrays: Array,indices: PackedInt32Array,flags: int,material: ShaderMaterial,far_error: float) -> ShaderMaterial:
+static func split(mesh: ArrayMesh,saved: Dictionary,arrays: Array,indices: PackedInt32Array,flags: int,material: ShaderMaterial,far_error: float,seamless:bool=false) -> ShaderMaterial:
+	if seamless:
+		var base:=indices.duplicate();base.append_array(PackedInt32Array([0,0,0]));arrays[Mesh.ARRAY_INDEX]=base
 	var opaque_lods: Dictionary=saved.lods.duplicate();opaque_lods[far_error]=PackedInt32Array([0,0,0])
 	var near_only := ArrayMesh.new();near_only.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,saved.arrays,[],opaque_lods)
 	near_only.surface_set_material(0,saved.material);near_only.custom_aabb=saved.bounds
@@ -23,7 +25,7 @@ static func split(mesh: ArrayMesh,saved: Dictionary,arrays: Array,indices: Packe
 		if value!=null:material.set_shader_parameter(parameter,value)
 	return material
 
-static func install_stone(mesh: ArrayMesh,saved: Dictionary) -> ShaderMaterial:
+static func install_stone(mesh: ArrayMesh,saved: Dictionary,seamless:bool=false) -> ShaderMaterial:
 	var areas: Array[Vector3]=[];var low: PackedInt32Array=saved.lods.values()[0]
 	for i in range(0,low.size(),3):
 		var a: Vector3=saved.arrays[Mesh.ARRAY_VERTEX][low[i]];var b: Vector3=saved.arrays[Mesh.ARRAY_VERTEX][low[i+1]];var c: Vector3=saved.arrays[Mesh.ARRAY_VERTEX][low[i+2]]
@@ -35,7 +37,7 @@ static func install_stone(mesh: ArrayMesh,saved: Dictionary) -> ShaderMaterial:
 	arrays[Mesh.ARRAY_INDEX]=PackedInt32Array([0,0,0,0,0,0,0,0,0])
 	var material := ShaderMaterial.new();material.shader=preload("res://addons/world_ecosystem/filtered_stone.gdshader")
 	material.set_shader_parameter("stone_area_vectors",areas)
-	return split(mesh,saved,arrays,PackedInt32Array([0,2,1,0,3,2]),0,material,0.045)
+	return split(mesh,saved,arrays,PackedInt32Array([0,2,1,0,3,2]),0,material,0.045,seamless)
 
 static func flower_proxies(saved: Dictionary) -> Dictionary:
 	var original: PackedInt32Array=saved.lods.values()[0]
@@ -89,7 +91,7 @@ static func flower_proxies(saved: Dictionary) -> Dictionary:
 	normal_areas.resize(35)
 	return {"proxies":proxies,"normal_areas":normal_areas}
 
-static func install_flower(mesh: ArrayMesh,saved: Dictionary) -> ShaderMaterial:
+static func install_flower(mesh: ArrayMesh,saved: Dictionary,seamless:bool=false) -> ShaderMaterial:
 	var vertices := PackedVector3Array();var normals := PackedVector3Array();var colors := PackedColorArray()
 	var uvs := PackedVector2Array();var source_uvs := PackedVector2Array();var indices := PackedInt32Array()
 	var custom := [PackedFloat32Array(),PackedFloat32Array(),PackedFloat32Array()]
@@ -109,8 +111,8 @@ static func install_flower(mesh: ArrayMesh,saved: Dictionary) -> ShaderMaterial:
 	var flags := (Mesh.ARRAY_CUSTOM_RGBA_FLOAT<<Mesh.ARRAY_FORMAT_CUSTOM0_SHIFT)|(Mesh.ARRAY_CUSTOM_RGBA_FLOAT<<Mesh.ARRAY_FORMAT_CUSTOM1_SHIFT)|(Mesh.ARRAY_CUSTOM_RGBA_FLOAT<<Mesh.ARRAY_FORMAT_CUSTOM2_SHIFT)
 	var material := ShaderMaterial.new();material.shader=preload("res://addons/world_ecosystem/filtered_fern.gdshader")
 	material.set_shader_parameter("filter_area_vectors",groups.normal_areas)
-	return split(mesh,saved,arrays,indices,flags,material,0.04)
+	return split(mesh,saved,arrays,indices,flags,material,0.04,seamless)
 
-static func apply(mesh: ArrayMesh,authored: Array,lods: Dictionary,source_material: ShaderMaterial,species: int) -> ShaderMaterial:
+static func apply(mesh: ArrayMesh,authored: Array,lods: Dictionary,source_material: ShaderMaterial,species: int,seamless:bool=false) -> ShaderMaterial:
 	var saved := {"arrays":authored,"lods":lods,"material":source_material,"bounds":mesh.custom_aabb}
-	return install_stone(mesh,saved) if species==0 else install_flower(mesh,saved)
+	return install_stone(mesh,saved,seamless) if species==0 else install_flower(mesh,saved,seamless)

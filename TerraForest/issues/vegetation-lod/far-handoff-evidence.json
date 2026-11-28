@@ -1,0 +1,2383 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "updated": "2026-11-28",
+  "baseline_commit": "84d60efdecf8f838e4b86119c4a75af18def9b46",
+  "baseline_scope": "Includes preceding uncommitted opaque-tier fades; not the Git checkpoint alone.",
+  "human_approved": true,
+  "committed": true,
+  "status": "Human-verified latest source snapshot; scoped engine checks pass. Broader qualification, earlier GPU-tail target and archival capacity remain open.",
+  "percentile_method": "Nearest rank ceil(n*.95)-1; median averages middle pair.",
+  "representation_lab": {
+    "run": "20261128T075630530026Z",
+    "passed": true,
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "896dc37b2614a25df8106af9173b8072d6bc9e20d81c6341c5ed081529251a0a",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "ca32604e5cc50d0766a8fd928d4f4099d2485509a0ae9ace2913a008b05e94a3",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "36804ab7eb0be3310fa3de348d181e46240143584c098e5d2bc4ae67e2360cb0",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "a2a4227ec32c13bc23ea6c5419c14f2b8b3ef1e508040104ef45413b601c76b3",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "ccf98df29514b63514d7f2f7e4e63ec2b565b43b944a4dd39f7f88bae0242b80",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fb9f05c326c46a8c65309d32dcb013e2737d7998fa3da2388fd5c0592d35f89b",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "f0e3e9953689294f1080fe7856ec80ef97629b8684ce4c454da2459ed246bc72",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "79498abdedb70e4696cce5f9afdda5204f1625ab88431355bbaa3699080af702",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "771dce2887898233873374a54e604458db1c31f55439ca34eaef03ab73bb86ad",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee3dc45d4ff9ddcaf6dc8185440f693017718228de719282e8178280bcea67bf",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "86668d800cd7eeabbff0247437c9b165842e00e0402f68f86179ef020cac3c0a",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "6bd1b4a8d509970a5fc1e17bce1c8e5f729bf3b1a055c380367465423a32403d",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "e444e68dcacf7af9b1877b76f7c3462146f06187f1ae40e4d892bb6d6ffc4e4d",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "a0b9b9ef768b97b46ce8808c0d69480c8df921e96affa059a362ed5fc56a95d0"
+    },
+    "files": {
+      "run.json": "a2aa3ed012951a20182bdbf2ecd9a1e7c48bb0603f57924298c724fc168046a1",
+      "handoffs.json": "cb7fee69b8d7d541136774d83bfa567018ae159cdb0b02e4596bbf6d0b8d34e8",
+      "handoff_analysis.json": "ef1b6501ffd88dc19ec4f997d41c81dc2b540a9618127b86680ea67964733e90",
+      "transition.frames": "75a16dae28235c8877b822fe99865baafd2173aae523c5cb74c6d5a30757df1f"
+    },
+    "nearby_exact": {
+      "fern_filtered": true,
+      "flower_filtered": true,
+      "grass_filtered": true,
+      "grass_horizon": true,
+      "stone_filtered": true
+    },
+    "cases": {
+      "grass_filtered": {
+        "switches": [
+          {
+            "frame": 2,
+            "distance": 32.0683750101589,
+            "before": {
+              "after": 4
+            },
+            "after": {
+              "after": 2,
+              "before": 2
+            },
+            "contrast_step_percent": {
+              "source": 1.5593932062459155,
+              "held_before": 5.947670368793777,
+              "held_after": 5.095083821150646,
+              "no_optimization": 1.5593932062459155,
+              "candidate": 5.095083821150646
+            }
+          }
+        ],
+        "native_optimization_pixel_equal": true
+      },
+      "grass_horizon": {
+        "switches": [
+          {
+            "frame": 2,
+            "distance": 70.7741666892419,
+            "before": {
+              "after": 4
+            },
+            "after": {
+              "after": 2,
+              "before": 2
+            },
+            "contrast_step_percent": {
+              "source": -1.1189504528031302,
+              "held_before": 2.5222566146946366,
+              "held_after": 2.7637367987748203,
+              "no_optimization": -1.1189504528031302,
+              "candidate": 2.7637367987748203
+            }
+          }
+        ],
+        "native_optimization_pixel_equal": true
+      },
+      "fern_filtered": {
+        "switches": [
+          {
+            "frame": 2,
+            "distance": 28.5496666756968,
+            "before": {
+              "after": 4
+            },
+            "after": {
+              "after": 3,
+              "before": 1
+            },
+            "contrast_step_percent": {
+              "source": 1.1714244341360869,
+              "held_before": 2.1612134367032407,
+              "held_after": 5.451667507202812,
+              "no_optimization": 1.1714244341360869,
+              "candidate": 5.451667507202812
+            }
+          },
+          {
+            "frame": 3,
+            "distance": 27.5496666756968,
+            "before": {
+              "after": 3,
+              "before": 1
+            },
+            "after": {
+              "after": 2,
+              "before": 2
+            },
+            "contrast_step_percent": {
+              "source": 12.587913037040693,
+              "held_before": 15.567325238005683,
+              "held_after": 5.5893591935109646,
+              "no_optimization": 12.587913037040693,
+              "candidate": 5.566157007770364
+            }
+          }
+        ],
+        "native_optimization_pixel_equal": true
+      },
+      "flower_filtered": {
+        "switches": [
+          {
+            "frame": 3,
+            "distance": 27.5496666756968,
+            "before": {
+              "after": 4
+            },
+            "after": {
+              "after": 2,
+              "before": 2
+            },
+            "contrast_step_percent": {
+              "source": -8.014117325897688,
+              "held_before": 6.155822917883425,
+              "held_after": 7.290701868985756,
+              "no_optimization": -8.014117325897688,
+              "candidate": 7.277052520742134
+            }
+          }
+        ],
+        "native_optimization_pixel_equal": true
+      },
+      "stone_filtered": {
+        "switches": [
+          {
+            "frame": 2,
+            "distance": 32.0683750101589,
+            "before": {
+              "after": 4
+            },
+            "after": {
+              "after": 3,
+              "before": 1
+            },
+            "contrast_step_percent": {
+              "source": 11.13418435134392,
+              "held_before": 9.936133094171081,
+              "held_after": 10.9292170672758,
+              "no_optimization": 11.13418435134392,
+              "candidate": 10.9292170672758
+            }
+          },
+          {
+            "frame": 3,
+            "distance": 31.0683750101589,
+            "before": {
+              "after": 3,
+              "before": 1
+            },
+            "after": {
+              "after": 2,
+              "before": 2
+            },
+            "contrast_step_percent": {
+              "source": 4.426374158722469,
+              "held_before": 3.770214463291601,
+              "held_after": 3.498034403144955,
+              "no_optimization": 4.426374158722469,
+              "candidate": 3.506701055944977
+            }
+          }
+        ],
+        "native_optimization_pixel_equal": true
+      }
+    }
+  },
+  "shadow_lab": {
+    "run": "20261128T075817434927Z",
+    "passed": true,
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "896dc37b2614a25df8106af9173b8072d6bc9e20d81c6341c5ed081529251a0a",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "ca32604e5cc50d0766a8fd928d4f4099d2485509a0ae9ace2913a008b05e94a3",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "36804ab7eb0be3310fa3de348d181e46240143584c098e5d2bc4ae67e2360cb0",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "a2a4227ec32c13bc23ea6c5419c14f2b8b3ef1e508040104ef45413b601c76b3",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "ccf98df29514b63514d7f2f7e4e63ec2b565b43b944a4dd39f7f88bae0242b80",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fb9f05c326c46a8c65309d32dcb013e2737d7998fa3da2388fd5c0592d35f89b",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "f0e3e9953689294f1080fe7856ec80ef97629b8684ce4c454da2459ed246bc72",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "79498abdedb70e4696cce5f9afdda5204f1625ab88431355bbaa3699080af702",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "771dce2887898233873374a54e604458db1c31f55439ca34eaef03ab73bb86ad",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee3dc45d4ff9ddcaf6dc8185440f693017718228de719282e8178280bcea67bf",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "86668d800cd7eeabbff0247437c9b165842e00e0402f68f86179ef020cac3c0a",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "6bd1b4a8d509970a5fc1e17bce1c8e5f729bf3b1a055c380367465423a32403d",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "e444e68dcacf7af9b1877b76f7c3462146f06187f1ae40e4d892bb6d6ffc4e4d",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "a0b9b9ef768b97b46ce8808c0d69480c8df921e96affa059a362ed5fc56a95d0"
+    },
+    "files": {
+      "run.json": "8c20345beb430801ba12c08e71e413e4aac1b05c93130d50ce4baf053b659645",
+      "handoffs.json": "83b5bbda534f2985db470c3d4324426f2c76cd762ccd1c98d6820f3cd4d18ae5",
+      "handoff_analysis.json": "923527e9ae1bf661f4eb02af00d9e050c310915f3d23914b905ed5586a8c189d",
+      "transition.frames": "10a50e9647b1dd7d60499ee0db2793aaa73717436876a35ec2f314578309bb2f"
+    },
+    "nearby_exact": {
+      "fern_shadow": true,
+      "grass_shadow": true
+    },
+    "cases": {
+      "grass_shadow": {
+        "native_cutoff_pixel_equal": true,
+        "rows": [
+          {
+            "frame": 0,
+            "source_casters": 2,
+            "source_shadow_contrast": 58635,
+            "candidate_shadow_contrast": 13756,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 1,
+            "source_casters": 2,
+            "source_shadow_contrast": 88010,
+            "candidate_shadow_contrast": 32268,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 2,
+            "source_casters": 2,
+            "source_shadow_contrast": 114520,
+            "candidate_shadow_contrast": 49155,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 3,
+            "source_casters": 2,
+            "source_shadow_contrast": 109687,
+            "candidate_shadow_contrast": 64947,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 4,
+            "source_casters": 4,
+            "source_shadow_contrast": 174644,
+            "candidate_shadow_contrast": 95242,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 5,
+            "source_casters": 4,
+            "source_shadow_contrast": 168787,
+            "candidate_shadow_contrast": 118751,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 6,
+            "source_casters": 4,
+            "source_shadow_contrast": 207522,
+            "candidate_shadow_contrast": 139394,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 7,
+            "source_casters": 4,
+            "source_shadow_contrast": 259399,
+            "candidate_shadow_contrast": 185809,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 8,
+            "source_casters": 4,
+            "source_shadow_contrast": 233292,
+            "candidate_shadow_contrast": 148509,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 9,
+            "source_casters": 4,
+            "source_shadow_contrast": 233272,
+            "candidate_shadow_contrast": 169925,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 10,
+            "source_casters": 4,
+            "source_shadow_contrast": 256396,
+            "candidate_shadow_contrast": 210474,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 11,
+            "source_casters": 4,
+            "source_shadow_contrast": 252688,
+            "candidate_shadow_contrast": 178565,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 12,
+            "source_casters": 4,
+            "source_shadow_contrast": 251910,
+            "candidate_shadow_contrast": 190094,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          }
+        ],
+        "native_cutoff_frames": [
+          4
+        ]
+      },
+      "fern_shadow": {
+        "native_cutoff_pixel_equal": true,
+        "rows": [
+          {
+            "frame": 0,
+            "source_casters": 2,
+            "source_shadow_contrast": 647,
+            "candidate_shadow_contrast": 0,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 1,
+            "source_casters": 2,
+            "source_shadow_contrast": 220,
+            "candidate_shadow_contrast": 19,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 2,
+            "source_casters": 2,
+            "source_shadow_contrast": 558,
+            "candidate_shadow_contrast": 203,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 3,
+            "source_casters": 2,
+            "source_shadow_contrast": 45,
+            "candidate_shadow_contrast": 44,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 4,
+            "source_casters": 4,
+            "source_shadow_contrast": 896,
+            "candidate_shadow_contrast": 474,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 5,
+            "source_casters": 4,
+            "source_shadow_contrast": 139,
+            "candidate_shadow_contrast": 0,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 6,
+            "source_casters": 4,
+            "source_shadow_contrast": 635,
+            "candidate_shadow_contrast": 13,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 7,
+            "source_casters": 4,
+            "source_shadow_contrast": 1982,
+            "candidate_shadow_contrast": 1748,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 8,
+            "source_casters": 4,
+            "source_shadow_contrast": 10633,
+            "candidate_shadow_contrast": 10608,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 9,
+            "source_casters": 4,
+            "source_shadow_contrast": 10271,
+            "candidate_shadow_contrast": 9906,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 10,
+            "source_casters": 4,
+            "source_shadow_contrast": 19261,
+            "candidate_shadow_contrast": 19248,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 11,
+            "source_casters": 4,
+            "source_shadow_contrast": 6248,
+            "candidate_shadow_contrast": 6014,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          },
+          {
+            "frame": 12,
+            "source_casters": 4,
+            "source_shadow_contrast": 6793,
+            "candidate_shadow_contrast": 6655,
+            "cutoff_difference": {
+              "rgb_abs_sum": 0,
+              "pixels_over_8": 0,
+              "maximum": 0
+            }
+          }
+        ],
+        "native_cutoff_frames": [
+          4
+        ]
+      }
+    }
+  },
+  "full_scene": {
+    "run": "20261128T080012838762Z",
+    "passed": true,
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "896dc37b2614a25df8106af9173b8072d6bc9e20d81c6341c5ed081529251a0a",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "ca32604e5cc50d0766a8fd928d4f4099d2485509a0ae9ace2913a008b05e94a3",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "36804ab7eb0be3310fa3de348d181e46240143584c098e5d2bc4ae67e2360cb0",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "a2a4227ec32c13bc23ea6c5419c14f2b8b3ef1e508040104ef45413b601c76b3",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "ccf98df29514b63514d7f2f7e4e63ec2b565b43b944a4dd39f7f88bae0242b80",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fb9f05c326c46a8c65309d32dcb013e2737d7998fa3da2388fd5c0592d35f89b",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "f0e3e9953689294f1080fe7856ec80ef97629b8684ce4c454da2459ed246bc72",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "79498abdedb70e4696cce5f9afdda5204f1625ab88431355bbaa3699080af702",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "771dce2887898233873374a54e604458db1c31f55439ca34eaef03ab73bb86ad",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee3dc45d4ff9ddcaf6dc8185440f693017718228de719282e8178280bcea67bf",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "86668d800cd7eeabbff0247437c9b165842e00e0402f68f86179ef020cac3c0a",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "6bd1b4a8d509970a5fc1e17bce1c8e5f729bf3b1a055c380367465423a32403d",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "e444e68dcacf7af9b1877b76f7c3462146f06187f1ae40e4d892bb6d6ffc4e4d",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "a0b9b9ef768b97b46ce8808c0d69480c8df921e96affa059a362ed5fc56a95d0"
+    },
+    "files": {
+      "run.json": "9a81cf24c2b212f2b0cc57653791fac5a94414bf05329bec67f4443f64eb4ac6",
+      "vegetation_fullframe.json": "99c826370ffdda48f57a15cdad5515719bf8cb081bbe65c36ca6a073163e64d3",
+      "analysis.json": "e9bd24870a1bc1ba487930a0b445e1eba30846477a819ef1aeff94dddb64aff5",
+      "interference.json": "99e247acb1dcd9153821cafbfc31e449eb3c0b8e629c4a8cb6bfab652eedd69e"
+    },
+    "checks": 522,
+    "failures": 0,
+    "nearby_exact": true,
+    "source_repeat_exact": true,
+    "world_input": {
+      "camera_origin": "(1786.486, 51.38006, 1643.628)",
+      "materials": 13,
+      "pages_after": [
+        {
+          "bytes": 20800,
+          "pages": 197,
+          "shadows": 39
+        },
+        {
+          "bytes": 256640,
+          "pages": 343,
+          "shadows": 64
+        },
+        {
+          "bytes": 3528384,
+          "pages": 365,
+          "shadows": 30
+        },
+        {
+          "bytes": 3200,
+          "pages": 42,
+          "shadows": 4
+        },
+        {
+          "bytes": 2560,
+          "pages": 34,
+          "shadows": 4
+        },
+        {
+          "bytes": 3776,
+          "pages": 47,
+          "shadows": 10
+        },
+        {
+          "bytes": 30400,
+          "pages": 214,
+          "shadows": 49
+        },
+        {
+          "bytes": 20928,
+          "pages": 196,
+          "shadows": 45
+        },
+        {
+          "bytes": 18176,
+          "pages": 169,
+          "shadows": 39
+        }
+      ],
+      "pages_before": [
+        {
+          "bytes": 20800,
+          "pages": 197,
+          "shadows": 39
+        },
+        {
+          "bytes": 256640,
+          "pages": 343,
+          "shadows": 64
+        },
+        {
+          "bytes": 3528384,
+          "pages": 365,
+          "shadows": 30
+        },
+        {
+          "bytes": 3200,
+          "pages": 42,
+          "shadows": 4
+        },
+        {
+          "bytes": 2560,
+          "pages": 34,
+          "shadows": 4
+        },
+        {
+          "bytes": 3776,
+          "pages": 47,
+          "shadows": 10
+        },
+        {
+          "bytes": 30400,
+          "pages": 214,
+          "shadows": 49
+        },
+        {
+          "bytes": 20928,
+          "pages": 196,
+          "shadows": 45
+        },
+        {
+          "bytes": 18176,
+          "pages": 169,
+          "shadows": 39
+        }
+      ],
+      "population": 69511,
+      "sha256": "692507bdf037bb70dba01e37e0dbc88807d85f82453f8b2ab6fcf7c1f87165c9",
+      "slot": "Homestead_Valley"
+    },
+    "summary": {
+      "near_corrected": {
+        "mean_luma": 0.346645825768579,
+        "low_pixels": 1734.0,
+        "high_pixels": 5005.0,
+        "dark_impulses": 488.0,
+        "bright_impulses": 3182.0,
+        "local_dark_contrast": 27471.0,
+        "local_bright_contrast": 51757.0,
+        "negative_witness_pixels": 0.0,
+        "high_witness_pixels": 34495.0,
+        "nonfinite_witness_pixels": 0.0
+      },
+      "baseline_repeat": {
+        "mean_luma": 0.4512296337902445,
+        "low_pixels": 1476.0,
+        "high_pixels": 5056.0,
+        "dark_impulses": 597.0,
+        "bright_impulses": 3136.0,
+        "local_dark_contrast": 21183.0,
+        "local_bright_contrast": 37947.0,
+        "negative_witness_pixels": 0.0,
+        "high_witness_pixels": 10279.0,
+        "nonfinite_witness_pixels": 0.0
+      },
+      "baseline": {
+        "mean_luma": 0.4498699231042726,
+        "low_pixels": 1471.9375,
+        "high_pixels": 5056.645833333333,
+        "dark_impulses": 594.6458333333334,
+        "bright_impulses": 3123.7916666666665,
+        "local_dark_contrast": 22618.25,
+        "local_bright_contrast": 40357.854166666664,
+        "negative_witness_pixels": 0.0,
+        "high_witness_pixels": 10278.708333333334,
+        "nonfinite_witness_pixels": 0.0
+      },
+      "near_fade": {
+        "mean_luma": 0.4498097822438196,
+        "low_pixels": 1471.6875,
+        "high_pixels": 5056.645833333333,
+        "dark_impulses": 594.9166666666666,
+        "bright_impulses": 3123.7916666666665,
+        "local_dark_contrast": 21576.5625,
+        "local_bright_contrast": 38860.395833333336,
+        "negative_witness_pixels": 0.0,
+        "high_witness_pixels": 10274.333333333334,
+        "nonfinite_witness_pixels": 0.0
+      },
+      "near_baseline": {
+        "mean_luma": 0.346645825768579,
+        "low_pixels": 1734.0,
+        "high_pixels": 5005.0,
+        "dark_impulses": 488.0,
+        "bright_impulses": 3182.0,
+        "local_dark_contrast": 27471.0,
+        "local_bright_contrast": 51757.0,
+        "negative_witness_pixels": 0.0,
+        "high_witness_pixels": 34495.0,
+        "nonfinite_witness_pixels": 0.0
+      },
+      "no_cover": {
+        "mean_luma": 0.4513143808658366,
+        "low_pixels": 1467.3541666666667,
+        "high_pixels": 5056.6875,
+        "dark_impulses": 595.3958333333334,
+        "bright_impulses": 3124.9791666666665,
+        "local_dark_contrast": 10557.104166666666,
+        "local_bright_contrast": 21001.958333333332,
+        "negative_witness_pixels": 0.0,
+        "high_witness_pixels": 13174.666666666666,
+        "nonfinite_witness_pixels": 0.0
+      },
+      "page_witness": {
+        "mean_luma": 0.469901559852336,
+        "low_pixels": 1472.0,
+        "high_pixels": 5057.0,
+        "dark_impulses": 596.0,
+        "bright_impulses": 3124.0,
+        "local_dark_contrast": 26783.0,
+        "local_bright_contrast": 37513.0,
+        "negative_witness_pixels": 0.0,
+        "high_witness_pixels": 10642.0,
+        "nonfinite_witness_pixels": 0.0
+      }
+    },
+    "mean_brightness_change_percent": -0.013368499951715851,
+    "cost_groups": [
+      {
+        "group": 0,
+        "cases": {
+          "baseline": {
+            "n": 240,
+            "median": 8.232500076293945,
+            "p95": 9.24600028991699
+          },
+          "near_fade": {
+            "n": 240,
+            "median": 8.560500144958494,
+            "p95": 10.0620002746582
+          }
+        },
+        "delta_ms": {
+          "median": 0.328000068664549,
+          "p95": 0.8159999847412092
+        }
+      },
+      {
+        "group": 1,
+        "cases": {
+          "baseline": {
+            "n": 240,
+            "median": 8.526000022888184,
+            "p95": 9.50399971008301
+          },
+          "near_fade": {
+            "n": 240,
+            "median": 9.03849983215332,
+            "p95": 10.6719999313354
+          }
+        },
+        "delta_ms": {
+          "median": 0.5124998092651367,
+          "p95": 1.16800022125239
+        }
+      },
+      {
+        "group": 2,
+        "cases": {
+          "baseline": {
+            "n": 240,
+            "median": 8.46950006484985,
+            "p95": 9.61699962615967
+          },
+          "near_fade": {
+            "n": 240,
+            "median": 9.08999967575073,
+            "p95": 10.4029998779297
+          }
+        },
+        "delta_ms": {
+          "median": 0.6204996109008807,
+          "p95": 0.7860002517700302
+        }
+      }
+    ]
+  },
+  "gameplay": {
+    "run": "20261128T081702404738Z",
+    "passed": true,
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "896dc37b2614a25df8106af9173b8072d6bc9e20d81c6341c5ed081529251a0a",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "ca32604e5cc50d0766a8fd928d4f4099d2485509a0ae9ace2913a008b05e94a3",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "7f0b878fabc6a91ba5756bb31c6d3bdc0955f943b2dc4d71af7457c142781cb1",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "f77aaef110964e4af04ec3fd26125f12dab7c47bd34188a95e12826349ca8622",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "ccf98df29514b63514d7f2f7e4e63ec2b565b43b944a4dd39f7f88bae0242b80",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fb9f05c326c46a8c65309d32dcb013e2737d7998fa3da2388fd5c0592d35f89b",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "f0e3e9953689294f1080fe7856ec80ef97629b8684ce4c454da2459ed246bc72",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "79498abdedb70e4696cce5f9afdda5204f1625ab88431355bbaa3699080af702",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "771dce2887898233873374a54e604458db1c31f55439ca34eaef03ab73bb86ad",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee3dc45d4ff9ddcaf6dc8185440f693017718228de719282e8178280bcea67bf",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "86668d800cd7eeabbff0247437c9b165842e00e0402f68f86179ef020cac3c0a",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "6bd1b4a8d509970a5fc1e17bce1c8e5f729bf3b1a055c380367465423a32403d",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "e444e68dcacf7af9b1877b76f7c3462146f06187f1ae40e4d892bb6d6ffc4e4d",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "a0b9b9ef768b97b46ce8808c0d69480c8df921e96affa059a362ed5fc56a95d0"
+    },
+    "files": {
+      "run.json": "10ae1bb47cb24ccecad376288b39e05599fa2191f186b66dd3de19e79f461bdb",
+      "vegetation_gameplay.json": "041a5c9df0fca5736ff789f3d19e74b4088db14709a7ab564c78ec02b81685f8",
+      "analysis.json": "9d812eaa47ac21d7ab8a6594aca603b363df268067c4fa3155707af507d63383",
+      "interference.json": "e11465f8a3ac62b9d71376078acf88043c75912f45414d7ac0d435e2ea8e7177",
+      "gameplay.mp4": "49f2b3fc88d9465e0779df0919dc482e088e79e4dbeab6af2fdcd9eeb03f22bc",
+      "walking.png": "61419d9dc8d768724b589cb0541f8f1880ae214513f5c4da65e7c7b8111925f1",
+      "motion-review.jpg": "6d244d74b7f68acb1807645552eedcd8d53b703d05ccca801891f625e9ebc61e"
+    },
+    "travelled_m": 280.067094512284,
+    "grounded_frames": 3055,
+    "physics_frames": 3055,
+    "capture_frames": 192,
+    "initial_forest": {
+      "enabled": true,
+      "owners": 1024,
+      "pending": 0,
+      "ready": true,
+      "reconcile": 0,
+      "rejected": 0,
+      "resample": 0,
+      "total": 1024
+    },
+    "runtime_hashes": {
+      "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "7f0b878fabc6a91ba5756bb31c6d3bdc0955f943b2dc4d71af7457c142781cb1",
+      "res://addons/world_ecosystem/filtered_detail.gd": "b16ff300d3f20d93d94ec2c00949f3c59d5e7f38d459b2148bd263e299307075",
+      "res://addons/world_ecosystem/filtered_fern.gd": "22465ee50886b03418bf94e73f79903ebebb7de49c97d8361a1c461f6229be88",
+      "res://addons/world_ecosystem/filtered_fern.gdshader": "cf96d9eee2bef5b14e7840756242be9c2ff7a676767210557b441854c9590634",
+      "res://addons/world_ecosystem/filtered_grass.gd": "12a4b3f70d157198c49882f54f7ca317fd5cea8d0d723f3a72fa6ae98a848aa6",
+      "res://addons/world_ecosystem/filtered_grass.gdshader": "6d896412daf291f0addf1755440a99dc6409f1982838056f57eae76c103b5098",
+      "res://addons/world_ecosystem/filtered_stone.gdshader": "9cf85eb7c9fc107e6e93285743aa5bc6b65d6bb8f646c9449607bb5ed1e1d983",
+      "res://addons/world_ecosystem/ground_cover.gd": "866e8ce9f4ac5a91b5338a21a990575939138e22b65e0caaa57f84dd52dc7378",
+      "res://addons/world_ecosystem/opaque_lod_fade.gd": "48ec5ddb42adf02a28e4f8566bf4d79c2149ccecc520c29d840096a3b9e05452",
+      "res://addons/world_ecosystem/representation_fade.gd": "61e136641bb48e5428f008421cfa7ee32eab83d7161f0e6ed47f8b7e891e9178",
+      "res://addons/world_ecosystem/woodland.gdshader": "892977717c93f3340dbc7bf1b00a5d5f2242a1e52be68f6b3ea8fd5658d6ba8c",
+      "res://addons/world_ecosystem/woodland_mesh.gd": "55f94fdf712319db4f661f089249c9481ba0f4d1f9baa63570ddfe048f5e2e00",
+      "res://tests/fixtures/vegetation_capture.gd": "210f4ebc067cdc524dca4b15dd5e2ccd6e1c73d6d5f75570222cb70d1e2f4689",
+      "res://tests/vegetation_gameplay.gd": "d9972b605a68eb36ecd69389d8101be99b8393674eadbde52b0b60e7e18c7180"
+    },
+    "capture_frame_ids": [
+      1778,
+      1779,
+      1780,
+      1781,
+      1782,
+      1783,
+      1784,
+      1785,
+      1786,
+      1787,
+      1788,
+      1789,
+      1790,
+      1791,
+      1792,
+      1793,
+      1794,
+      1795,
+      1796,
+      1797,
+      1798,
+      1799,
+      1800,
+      1801,
+      1802,
+      1803,
+      1804,
+      1805,
+      1806,
+      1807,
+      1808,
+      1809,
+      1810,
+      1811,
+      1812,
+      1813,
+      1814,
+      1815,
+      1816,
+      1817,
+      1818,
+      1819,
+      1820,
+      1821,
+      1822,
+      1823,
+      1824,
+      1825,
+      1826,
+      1827,
+      1828,
+      1829,
+      1830,
+      1831,
+      1832,
+      1833,
+      1834,
+      1835,
+      1836,
+      1837,
+      1838,
+      1839,
+      1840,
+      1841,
+      1842,
+      1843,
+      1844,
+      1845,
+      1846,
+      1847,
+      1848,
+      1849,
+      1850,
+      1851,
+      1852,
+      1853,
+      1854,
+      1855,
+      1856,
+      1857,
+      1858,
+      1859,
+      1860,
+      1861,
+      1862,
+      1863,
+      1864,
+      1865,
+      1866,
+      1867,
+      1868,
+      1869,
+      1870,
+      1871,
+      1872,
+      1873,
+      1874,
+      1875,
+      1876,
+      1877,
+      1878,
+      1879,
+      1880,
+      1881,
+      1882,
+      1883,
+      1884,
+      1885,
+      1886,
+      1887,
+      1888,
+      1889,
+      1890,
+      1891,
+      1892,
+      1893,
+      1894,
+      1895,
+      1896,
+      1897,
+      1898,
+      1899,
+      1900,
+      1901,
+      1902,
+      1903,
+      1904,
+      1905,
+      1906,
+      1907,
+      1908,
+      1909,
+      1910,
+      1911,
+      1912,
+      1913,
+      1914,
+      1915,
+      1916,
+      1917,
+      1918,
+      1919,
+      1920,
+      1921,
+      1922,
+      1923,
+      1924,
+      1925,
+      1926,
+      1927,
+      1928,
+      1929,
+      1930,
+      1931,
+      1932,
+      1933,
+      1934,
+      1935,
+      1936,
+      1937,
+      1938,
+      1939,
+      1940,
+      1941,
+      1942,
+      1943,
+      1944,
+      1945,
+      1946,
+      1947,
+      1948,
+      1949,
+      1950,
+      1951,
+      1952,
+      1953,
+      1954,
+      1955,
+      1956,
+      1957,
+      1958,
+      1959,
+      1960,
+      1961,
+      1962,
+      1963,
+      1964,
+      1965,
+      1966,
+      1967,
+      1968,
+      1969
+    ],
+    "capture_rgb_sha256": [
+      "13ff7bcb661e073a6645e9ac54af612d03f386685e58a238cb415061e7d33f2e",
+      "dbc547c378eab20b680eed72493940a804a75bcefb071b7f3bcab48fc45ea28e",
+      "64c8e89865a12396958a20c31056d2277a7b6e12df29064b1d042c2166055b22",
+      "bd782f7cad16a85408d3b90eb71225077a65dd0457920c7570d900284a8c2b75",
+      "93107b3f9cd9fa855cabe2b5cf4afedb325b7fe566d164b9dc6b7445a82b81dd",
+      "b3557022322dba479adb3aaa78f89dc09a1e8143bd5c1aa051506b7ae03f7892",
+      "45007639b09334cac3cdd44463b676e0ce60e82c9fe95cb07fea1e90dd6ae69f",
+      "5d07c0a52a35e16f84dc21900ca951538b894d5ecddee6291cb7cb6d2bbc66d8",
+      "5d51f1d8d4ebe8dfa6ee722be8c44482d15513e5e4cc17bf0c3374c292724f57",
+      "f2f04024e4b6ba665273de989f883b8c94695a04dafed2673dce32e9f48b7a53",
+      "1802c0718acaed30171739ed2034650d5891395584f7714487cf6b8055ea5dc5",
+      "f1bbed167fd63ba2f65d2779acbb5070e5e089e4be2fad22ce2dde2dba714713",
+      "ee14d888595ba23ef706d77ad5650f1c1cb45b981fca4947cd29ecdfd0c021e2",
+      "5b69c4684bbc8b7866252bbc130556569fa3d04a063461b69d4190ea227f31ad",
+      "fe05c22def9a0665d5a90029b00a9a50bce738cdbf996801b21945683d5343e1",
+      "9dea342138e9beb906f1997d5278edcaeaa94924455c9e53678c3e67d652271a",
+      "fbc3cc4dbf8b1479744779af201f4a2d46a67f8cd224a32ef69d6b82070a3b2d",
+      "00cdffa505f103d02e291465f9883f92d0d5946ce2c242653122f8d4213673e5",
+      "38799fb26fe4fb9eb7d6d5d15d3f5386d9d3b0f68c74f50ab382848bf4dc0dd2",
+      "e5dc5dae1801bf685404ad78f31d60474216c1be7b511c8efb1002160238d902",
+      "95897a389ad6088e7ad951d4d582d135f3a8345176455a4fc5c68a34e3d7495c",
+      "c8e8198d80f631643abf79fd6fea42f6c55a57488698007be8e5714c38d4b7bb",
+      "a923dbcd496a8e68ca85b2847161ab9c73b2d83adc80ddb308be523fab5cf3e1",
+      "7d29d26190661d8eba5ed0e3872d9fb3a00c2b297b99bcfb064cbb773b705c28",
+      "603d234f57352747e1da7fc91b8a5e0ac9915a19052abbd27e0deef1287805c0",
+      "baa43bebc34ee7089b62f918f87986d39b912ea3fa90f5aca6de40775caff7e1",
+      "1cbbdb93b123381921c5fd5c199c2958f346f3c1a3d2a8a99c8ca59835f26d47",
+      "8177c22072a002cbbecf9b84e624cb248e58dbd02fe407d4ea27ffb0b080c2e6",
+      "8865a44ed84d8484215164f2d703eecdd9db8ec239ca91bdda2ef9f1130ca721",
+      "67ce52b24d38f8cb1b081187505dfb336093268e9f56a5ed201ec7e9c60ac6a5",
+      "da8229b7925d61b4ff1aba254dc25441609a5bf553c86ba05e4fd330ca17ede6",
+      "4ce66a9a0baffe52d66ec2cebfb28dbab89900dd669dafeb01f6c17b4cfcc3d7",
+      "2228e632d763f13cfa316c58393880564473cf8b1cfcd799d895232ee830eaac",
+      "aeed8ce9f65cf5cbb3ecbd0e70235698377381ed724dcffeeb95c6cfe65cbe5d",
+      "3d7f1c924be777819b435cf0a8d3ec70c61a0c945156a556c748b3aaed749531",
+      "1158a82154c2fe1c04d8e5568358df6bc2af6fd0bf27ea7defc4b0ee93c8e96f",
+      "001b61d25a0898d1014e39428c951b296bdb0a86486796f18990348b098628c8",
+      "b890c378e698dd2975ae04dffc719b2bfa69263ed655200794ad7252fa8dfee0",
+      "a902cc5116fd373e581e22efb601ff7a7a9f422e21f96523cac788211ccdedd8",
+      "96039d99be7b4276afb8618bab831e3cfedd9c3ce95f3e56729b340f2f6d5682",
+      "b6fd40a3cf93efae41c11a38b77fb9542d2fb820b536de008286aabac9d427bd",
+      "1020720cce476d73c65ffe49bd01f000f4082e2341679c794c9064d71610b7d1",
+      "a2dc3e391aa26a81f7be6aec2f2192f3b5fcb56f31f40eed785312c3f39fa6a2",
+      "9668fd84931d0f4ebc957b5058ffc49b8cd654a9deea9edf80050b1926077036",
+      "e3f932426247034050d96b27858d26b896d7f34ca3cf033b23e8d2de276ff00f",
+      "5e873d8fb86b9461989a7669499f4259ecf5f5e8581cc1197ea7b5eb85c0e6a1",
+      "9cdc41a10ee331da45becafc9888f93a729beae15a6917fe5068abca9723622e",
+      "d0e7721e95930a6aa58d404e1b98b9ba49cc70689ac302703698d79db780c075",
+      "4b0f026c19a92a6a01b095e8941db05b49f9c94cc6fdd0792bb662f8ee47e7a7",
+      "ed70b689321f0761b774778fd22668ae4089dbeeb13a5e72a816f05402e10c4e",
+      "e179d24daa84655d91254ba2b9855b17fadd55f45f5a4db1585863551928031a",
+      "f980a03bf824e446e7e874b4d23c4b2589e9a8c67e7b28ed0e05ad4d159f14a6",
+      "082e3246f0491d9bdc697ea5facdfa6bd2d72fda183bd4a8f2366631a349d0fe",
+      "1f13e1a6989c823755092dec0a672f9a7be442b6b9b7d26357803fdfa22c917b",
+      "b68ea9c761fcdb571a2dc565bb3348ea8fdfdf45f3361d7d48dedf07a41ec3a3",
+      "3bd6dd5d9aac08ed0e653cd26ffa610a5243d1eb89dd9be26e5b47b158439ec7",
+      "caf37e7836c65ccc9b55e66b4afc599f5d0dcfb53789d1cb0724f0cf6ab9adf3",
+      "964c6c6aab27e11691f34a7aa464560c4d8d98a5fa13b9aa373fa7016ae1a577",
+      "748c14ddab17e7cbfdfdb1ab69ca6f3330f142d4980829f7aeaa600b9d791947",
+      "7c0349dd4c0caaf8a6c535e2224071d33467a21e693c5a94bc5ac91b807d25fd",
+      "99da30be6c280232541282b69ae980482d54b0caea23a22c8c98e97d55479f71",
+      "2631a8af002ccc1a8c8fdda3124c5ea37bcf047c5179c9580233c8091324ce5b",
+      "976e1be490cf51d7e072ba346d457b7d46437ac4cdb11d47baab5b93e72e5a0a",
+      "74b7da11dcc5e5f3aec26d51359ffb7922d91a50ce6f8f220b088235935e4c4f",
+      "0dd2815d6817bda36f89098abb26911d65a38e6d33c13d5113ecad159be5fa3a",
+      "b5270418cce3f04566d0587d683de41d4f67cb329834a9d7519465ce7aa84528",
+      "ee48e7a97daa7e750141a16608ab6fdfa763bc2e5bdc7f58a7a7c28536217c3c",
+      "1bdb8cea5cff733337439ff38c604537e6844c88c6aee5fde7fc054722bb6c4b",
+      "920ef4e0cab1ed105fa3f782c72d848bc31475342c22c89a485c4864c06f6857",
+      "0b8aba998e46649851dea97d6a208770bf317277f69ebb8d7bcadf22cdb3feb9",
+      "2a9a2365e9b5c224c0b3ca58b73f97dc5940aa4e5b032108a659003898ceeec2",
+      "3900dac2daf6f77479e017d6fd6d59bdee253e67a7882759bc87d3e870662896",
+      "54b2bcfb1de1276f6c013bf9e856cb4b794b19177567a5a224eec8f7bd792cbc",
+      "eef1f2e2266bafecc87746404990772c134fd91eef5791ac5d9315bfff790109",
+      "25ee2f38ca1075ddc59f06b0c9015ae1bbc2900967f0d19346c03d7a54592d62",
+      "9e022d30dbbe9ddb30b657b094286b000a12f1fa2a6f5689a8dff71e992d2dd3",
+      "71aa8bfa6ab367910d3f77c9196e1734e6d3dc1057b273360c8cf424e6ae5048",
+      "638791f9690963c223b4b841c389d6446a40ce3043e9cf892ad1c7522f315cb5",
+      "9c42520fa8a04c7ea718871a726f53c11497bd75ef9381e28fa91249c00f4ded",
+      "108ca971bb67f00cccbd29877fb7eb52f36a179216eb2cf8e26a6c9e07f7f72b",
+      "3e9d7ade62f6c520792f9950d94baf455be9df77cb3d055ffeec8f025fb984ca",
+      "a56a03acb2d326418a577f10123df59a3b226cc6710375a8085f62f21e0708c0",
+      "ccbe893a9e9e568c922a0af64c105fbdf5523d4db1a7fdf485f462c6fae27713",
+      "4260a746825281a8b0fff098d2ec6612bbbb773e7df6ebe5e212dbbd4cfdf238",
+      "dc5f87f3cf6853117145610c9a5838dda7752a27ec571a5aa933e0ac0a53bfa6",
+      "2a48ae8615ca477a2dbe2f03bd7c87b42bcbdfb8b12265977883dbf5710a93df",
+      "e2c007e6179b5089553b73d37a1cc052f6073e09fd2ddf51f56bcbe823f18086",
+      "8a2244e780922e2702dbcea991ac11bdf56973b91c478cfda9761a18b0dc1608",
+      "1bcf8a6f23aac5b97f54937577281869c55ba302a6850c44d76f7f7037e8df3a",
+      "3b8bfa85ec2c7163e8027ce3b6345bb4ee2c8a5034353f41f87642e68266255d",
+      "eb62a6a4d43f0b70e17c2f67d5d29ee257653471217b2e0ca82cf5eb7fe987c5",
+      "b0d17d3da97522f28f5da0baebe46773debd77f1ae3b772bf04387211b5e7f67",
+      "508a049debeb2dcc433c25869036fefaefd9d614753c9468299330d32fecd475",
+      "1412c4d0e868089357676550b0c2f5c7ea3769df79a1d2c25a8bfde9e63c97a1",
+      "96a275b4f4851dd1e2ce67c19808cc2521ef8541aa2b78313ed747353b6bf0fa",
+      "f10b66c024853f293ced90f63ebbde9ce486173c21b0eef737c91edc621649df",
+      "5a6dd2a655284362270a9785f1c1af9a7606db2be6d5fc727e78d9165fc777ab",
+      "704bb0ca6a9ee71eb0633eec1bd5fbfd44547a5cfb7d18d43404a0799f5ea6e8",
+      "8d9404fa2900e7ee779f8e3b6a92f2c0740d7cbe2abcadbfb871897ab81db574",
+      "5e63fdd74efca720b5dedd8fb533035e72bf4287ff27ed78c79c98ec2f24225f",
+      "5b222e4cbfc6cbd11afaf817011ac061c253cfcd0047d2310ea8ac85f34a3a56",
+      "2e8812823d6cdab5963fecc5904d15d7946a291b8bb30efe5d9d6939c35f6839",
+      "f357e6da67035ce5f0916ede601030c9e988aeb2f0f6b2486043bcadf6e46dee",
+      "148b7fbf1a4e656bdbdc43a5482307ee50cfe72e71f15cd831f6bbdaa1e2530e",
+      "8017be6257624b12a2a613840da8e778f15ebfb8139dcbc702fdd877e77ae01c",
+      "a2c839b552b024740b041c9eafd161a4cfc190399b80110627fe62546c239ecb",
+      "b48c5b4550692c985401823cbe69c89985554e5f9ea06973cd47cec4180317e1",
+      "8ce4bb85428c2d46c885f644dbb56af943922c735c7191f15b430c88122b3f82",
+      "a5a49d9045c45b9979837a976186b638abd0e80df0bf88dfbac1ea584aaac21b",
+      "0f4492729b751684f7a944a9509ccc417d571c261e05c2c0ea7e280c0dbac54d",
+      "8c171b16a32fcd5b636349b0b8dbcf8282da3b83cbd22619339cbc9695e7f5e8",
+      "6c6b9bd8067b8997aea802388aff3920fc3afac342edad1a1b50c7c43262404f",
+      "b9f008e429ccf14c605e3b74dbee317f5f243b1d6383a83b51294b3f4c22b76a",
+      "7562a193192efb553ea8fe5b642aabf66fc925b59107fbbea9987d599e0bc403",
+      "0f9a329a87bb5b3116a02bad45034dfffe52afa21e72dc7b41b7ab2aac7026b9",
+      "cf0b2b675b5eff5e8071d105bb68b4fad6533992d0b06ef47ca3b345eba8f56d",
+      "6fb3829282d128b9567f87ffa5fd03b36979fe1b10c1688a2ba34aadd1382797",
+      "7e2a2e4763c569628927edb0a3e5a939b789f72c392e9b2cf685beb7d83e87d5",
+      "b0218cc26db260626cdad389f0e0d3e276509e5abc3151c5cb130712cdd34ee5",
+      "412d90ab4cba17b6192e5556c9ea5bc26e1278b8b569be025aa41ab97a884a24",
+      "ab27037300ae6669d7d9e1d380b684ca3ee299f499a968462acfc8dd912e5cfd",
+      "3e6d562a658032c25d8db03ba150242de816d32b6fcec4f71e5cfd414c636a95",
+      "984caefb8cc570e1d799fc15a231f04120231b4285d6d6a1dd08e316bffffdd4",
+      "7cc39f0e9223f6a739fbdf8774d40d6b140e962a064ed8233326b88e4199b80b",
+      "98dab0368053721a739cfe3e1c5d6fb0fce074386022581ad548d8cbfce3f252",
+      "ca844f6afcfa14a4983a82f386c176f120e69421964094af6923c60451b82942",
+      "1bdd84ea09be09f4e292ffa2c9add66786a232a2a43eb83ac6123804f6da82fe",
+      "c25bdcae62030ebbecdc49faa8e7c5ee5ec4532540e437079b3ddcca27288079",
+      "fd8020c9802b096f90064c74242d16c95d02c0d270ad74aae2f1fa7d63f82ec5",
+      "f4f33d748f8c1c071219c80098307ae22738a66fca3ed818b6ca62936c4634dc",
+      "78fc992bd8cfda6c675a223f432a8ce426321b0a4bfd810b8fe867ae3e4fe4e7",
+      "d7ffe85803bb962a332a6e002a80659283f50139fa3ee427f528944e6276f61e",
+      "5e9d83ae9510bd7d80dce574c8e49e057c14bc56f58aa8f08bdb5a46c2085020",
+      "a8d4548046c2e9dc82de1b09d6a0b1453c7537a9242a332540fe1864e1c7de88",
+      "6bc0766c95fe89de8339f0a814dd0cada6f0247d1347071d6b8c9827843aa097",
+      "f2aea6aa5365d070f916b8116493f62fa2dafacb4f80427edb4c94b24a9a502b",
+      "eada7cc7a18ce7f4d14a2e8c5c206155754d6775e706c28bc5525d8435678435",
+      "3c0369b14463cc7d8b96046efc87cdf225ae2d9e9b82162199192b8881bef5fe",
+      "8b80bd6da8e6bdf36defc93ae9405bf6408c48b57a2896d288dbf989859c93a4",
+      "bbbb49e09d27c26ccc552c5c2f4043994677290d7a2b95879fb4f2f35c82fbd9",
+      "89101938e4ca92dc14ef35ad5226f4c71f779126d455d7fb2a41770b47db5b84",
+      "8049a5bce04402923edf73033fbf52fa6f8d7c6bc86f65ef32b9fb88dec14568",
+      "27ff2d0398c76d594211ce25bdc09b56485df7d7d5b99fe2930c4721ad0c49b5",
+      "b2428fc7894ab333688897431cdb9d6896333c906531e665a11acbf8c60f0cb9",
+      "b504dc53ac3c322240fa68f8d5fc7b4b045b53bb3caa9172ff5e329eff8f621a",
+      "331ad9d6019e8246907c97c1e30eec9a67aa49fd0371f0a7a7c2791ab3a37cea",
+      "e4cab2bef690740fb3c741fd35bc0a1a4eef02c1a19ce8f5ea1a238dde418388",
+      "5d48c7e1bc7f56e7ea53c40d0d713650d9c4b8d0ca5d5c527ac523d3e04dad1b",
+      "4a76d405da8f64f45c0c32e12be3863581275d63cf4146441e0e363e65a15e5a",
+      "dab9344d8ceefbd43cd9634d4a85369b84bf3ecb6bb590b1b90ea19d1620da59",
+      "f6f8b220647c0b6630df5f2388431be85492078175c4343d1e982c3dbd00b633",
+      "8104a54a6bc8c4ffff68e7dfdc55e36eb9ffc0eb916c93f958bef14edbdb052f",
+      "6df56ecc273d67dd63e1da0a107d55c14acffc2002fde22c9408b99533afddc3",
+      "63358c97df7996625705c3a7cdddd815e09cc17e8c68ff4c16e986d55688f5e3",
+      "736d048ef7f6efd9894c0a0bf0c9172646e863ac135d2f0c32b8e79c68f51896",
+      "a0bd381c30f2e8f89895e6810213bb030098970b581e2488d0f465e120e6dcd6",
+      "a774c6131d3ada739aefcebed7ed9c9b6d7d7dfe8471003d2bd8a45c5949745d",
+      "44cf6fa3b6ebd849700e4ca9b604d3c60df6423468d1f0b43c4ccc176a1dd0fa",
+      "b9da8a248e82af0dd626b2b3afd6e691f7ee4d418854b1e69d785f90584fdde0",
+      "b9bb5934d479646fbc85a92307d13a96805ea76c3486f4e29739aa1e84ec324a",
+      "bfeff9cafb05ac29704f9905feefd3ecb53fffdbd3271d0da689c75da9f073a7",
+      "605a958a645bacd33ea314892256b823f5e9103249ca14d7269022099df83934",
+      "038cc356ca87b6c39bdae714394bd560724dc9d694144818ba31cf46b2a861f4",
+      "6d7f9795a6e8169779ebe13112f47a1d0b62b32e677de1af7571d8c1717057f8",
+      "db0b5b4d09f67127c86ea10ce5e02864e6fb534e0f113aa527ea7e6d46142811",
+      "4895e91c42de1d120375d165057d46829216f29da6714f87b4e32356b069da06",
+      "c07d5697b33082e5ea0188d785c0ab23226ade51c7b21a1b4666ca7641c8bce4",
+      "4c3fac8b9f7bfdf70882b9e2ac6b8c4aac0b5fa349bc32e312a8a2b6bc457681",
+      "6d1571f6961fa6085e96d2ff36a0934b88b0c65fad3e4255f6d8ff5606ce3c56",
+      "fa1d62aa2c0cb79832b66a689ace84950c301a1c14a06093f8b8024725201f82",
+      "46fa8d7f5460417cdb9426bbb2ad1eb26a008a81efc4d20e4b3aa8c4f6b8cf2a",
+      "c8ae788a6ee14993e3f26419feba951bb9624e13cfcf22d6b1eae4308c464dc6",
+      "2dc6930f38dbdb59c6ee806e50433c76da0a4a5b98cfca8deb8822d0e3055986",
+      "1c126af1671010831fc012e57136ce78bf6bbfb9639bff0b807fc46cdc93bb62",
+      "e110af04d9ce6fc5eba0a878f8df28fc80676f49c1383dda8ee0f904a5784f65",
+      "a45af8a8c583f75fe89480e0de53b14da261b2354b1dbb5cee1d14a7b8986858",
+      "b5a35bae8adb4c55226313793e7f593ecde97b1226623093659f105f20a3a52f",
+      "1e6b6820e5d92642cc0e56e7fd5ccc1e035d44585c3ff119fc22069051eb4130",
+      "ef65a84d0851d858f17afb43439a06d53a671bc08279e7b1621c09d9defb5528",
+      "8a777c49e59c4789ecd898529f9b06aa867cc326608d9f61ea46972c3014fdf3",
+      "178f0a23a8afe6e4fb690ed213ff6bfaf55b802eb8fdeff2241d7d5b8003a5ac",
+      "9d356ebfc074ff12886059c31027dbc333027c2715ec1f67946a782a0bee65dd",
+      "815527850f67592bc2df8e557c3c1dde02b8dbebf3cab9e98f2a46c101ac799e",
+      "9c02fae43e4d27b3fd7687d1d121811f520d3a24208247f5e338fa39deb62033",
+      "ac2130a388455e6f83740b18f881e97e9d9839dccb5e08602a13f89edc686eba",
+      "cfce9b0bb292866e5ccbc3085cb43cba65b0f8eb479ed80d22052770e633c5cf",
+      "a4516ddd869a17888764fbe4ad1e655af2649cad0a725ad7c9d60f94a95b81c5",
+      "f4009501ad98e4e17e2be0803c4c33e50da72eb34adeae287e40e4b11baea371",
+      "cc8af0d6afc9df0562fe0ae493e2cce2a27b4a5b9bdc6a365c86fefba51c464b",
+      "f3924b7864007811ccb6aa803525edbf70abc94ea86d354b8e3adece5b645db3",
+      "8ccdec22579e6d456672e3b047d708cf2d79cbe38fbd3fc7454427c7d3c31e50",
+      "a70c5721b33181fdac6fe3786af61a09a33e085510d2af097368e685215c6a03"
+    ],
+    "representation_band_frames": {
+      "0/proxy": 10,
+      "0/shadow": 184,
+      "1/proxy": 192,
+      "1/shadow": 192,
+      "2/horizon": 192,
+      "2/proxy": 192,
+      "2/shadow": 192,
+      "3/proxy": 48,
+      "3/shadow": 42,
+      "4/proxy": 58,
+      "4/shadow": 86,
+      "5/proxy": 46,
+      "5/shadow": 138,
+      "6/shadow": 192,
+      "7/shadow": 192,
+      "8/shadow": 192
+    },
+    "representation_events": [
+      {
+        "beyond": false,
+        "distance": 28.0567989349365,
+        "frame": 1,
+        "kind": "proxy",
+        "species": 1
+      },
+      {
+        "beyond": false,
+        "distance": 70.3684234619141,
+        "frame": 1,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 28.1116199493408,
+        "frame": 9,
+        "kind": "proxy",
+        "species": 3
+      },
+      {
+        "beyond": false,
+        "distance": 70.2522125244141,
+        "frame": 21,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 49.612621307373,
+        "frame": 29,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 53.1205101013184,
+        "frame": 29,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 55.9261474609375,
+        "frame": 29,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 68.3767013549805,
+        "frame": 29,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 59.0829315185547,
+        "frame": 29,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 51.5979385375977,
+        "frame": 29,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 59.7637672424316,
+        "frame": 29,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "beyond": false,
+        "distance": 31.63720703125,
+        "frame": 30,
+        "kind": "proxy",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 31.6473560333252,
+        "frame": 30,
+        "kind": "proxy",
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 51.723819732666,
+        "frame": 31,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 5
+      },
+      {
+        "casts": true,
+        "distance": 59.8180160522461,
+        "frame": 37,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 68.737419128418,
+        "frame": 37,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 56.0974082946777,
+        "frame": 37,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "beyond": false,
+        "distance": 70.3142166137695,
+        "frame": 40,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 70.3730163574219,
+        "frame": 55,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 28.0950603485107,
+        "frame": 59,
+        "kind": "proxy",
+        "species": 1
+      },
+      {
+        "beyond": false,
+        "distance": 28.1449413299561,
+        "frame": 61,
+        "kind": "proxy",
+        "species": 1
+      },
+      {
+        "beyond": false,
+        "distance": 31.6546783447266,
+        "frame": 61,
+        "kind": "proxy",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 28.1008682250977,
+        "frame": 63,
+        "kind": "proxy",
+        "species": 5
+      },
+      {
+        "casts": true,
+        "distance": 42.7249908447266,
+        "frame": 64,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 42.6645660400391,
+        "frame": 64,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 26.5543212890625,
+        "frame": 64,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 26.502685546875,
+        "frame": 64,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 70.3091354370117,
+        "frame": 68,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 52.3728218078613,
+        "frame": 83,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 67.71142578125,
+        "frame": 83,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "beyond": false,
+        "distance": 31.5693359375,
+        "frame": 84,
+        "kind": "proxy",
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 42.2879447937012,
+        "frame": 86,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 49.824577331543,
+        "frame": 86,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 27.9417362213135,
+        "frame": 86,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 38.7089691162109,
+        "frame": 86,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 27.9864139556885,
+        "frame": 88,
+        "kind": "proxy",
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 72.3696823120117,
+        "frame": 92,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 74.5217666625977,
+        "frame": 92,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 62.721851348877,
+        "frame": 92,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 55.9185104370117,
+        "frame": 92,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 67.4164428710938,
+        "frame": 92,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 52.2509765625,
+        "frame": 92,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "beyond": false,
+        "distance": 70.3101501464844,
+        "frame": 94,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 70.3173446655273,
+        "frame": 96,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 70.239990234375,
+        "frame": 103,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 28.1266307830811,
+        "frame": 104,
+        "kind": "proxy",
+        "species": 4
+      },
+      {
+        "beyond": false,
+        "distance": 70.2128829956055,
+        "frame": 106,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 70.369270324707,
+        "frame": 120,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 28.1216678619385,
+        "frame": 121,
+        "kind": "proxy",
+        "species": 4
+      },
+      {
+        "casts": true,
+        "distance": 52.4668312072754,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 54.7581634521484,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 53.346607208252,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 54.9094848632813,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 65.2786483764648,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 52.0558547973633,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 70.1784439086914,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "casts": true,
+        "distance": 67.6282119750977,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "casts": true,
+        "distance": 53.7444305419922,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "casts": true,
+        "distance": 51.5783576965332,
+        "frame": 122,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "casts": true,
+        "distance": 68.5071716308594,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 70.3719253540039,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 51.1775054931641,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 61.1643447875977,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 66.8668060302734,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 65.87109375,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 50.4972076416016,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "casts": true,
+        "distance": 51.125431060791,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 1
+      },
+      {
+        "beyond": false,
+        "distance": 70.3450088500977,
+        "frame": 141,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 70.2830047607422,
+        "frame": 141,
+        "kind": "horizon",
+        "species": 2
+      },
+      {
+        "casts": true,
+        "distance": 51.7974853515625,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 3
+      },
+      {
+        "casts": true,
+        "distance": 67.0878448486328,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 80.1379470825195,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 52.3304252624512,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 57.2767143249512,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 50.6330757141113,
+        "frame": 141,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "casts": true,
+        "distance": 78.3116302490234,
+        "frame": 142,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 74.3762283325195,
+        "frame": 142,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 53.7987861633301,
+        "frame": 142,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 64.3830795288086,
+        "frame": 142,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 65.060661315918,
+        "frame": 142,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 74.3633728027344,
+        "frame": 142,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 56.4017448425293,
+        "frame": 142,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 66.5802688598633,
+        "frame": 146,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "casts": true,
+        "distance": 56.3453559875488,
+        "frame": 146,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "beyond": false,
+        "distance": 31.5371208190918,
+        "frame": 147,
+        "kind": "proxy",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 31.6514892578125,
+        "frame": 147,
+        "kind": "proxy",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 31.544469833374,
+        "frame": 150,
+        "kind": "proxy",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 31.6626567840576,
+        "frame": 161,
+        "kind": "proxy",
+        "species": 2
+      },
+      {
+        "beyond": false,
+        "distance": 31.6139945983887,
+        "frame": 174,
+        "kind": "proxy",
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 65.3968353271484,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 62.9425964355469,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 58.705493927002,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 63.5049514770508,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 0
+      },
+      {
+        "casts": true,
+        "distance": 66.3262634277344,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 67.7240447998047,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 55.745922088623,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 58.8158493041992,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 6
+      },
+      {
+        "casts": true,
+        "distance": 48.1385040283203,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 64.8463973999023,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 50.5241661071777,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 7
+      },
+      {
+        "casts": true,
+        "distance": 66.7737121582031,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "casts": true,
+        "distance": 70.3958892822266,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "casts": true,
+        "distance": 56.4372482299805,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "casts": true,
+        "distance": 69.4856491088867,
+        "frame": 175,
+        "kind": "shadow",
+        "maximum_remaining_coverage": 0.0,
+        "species": 8
+      },
+      {
+        "beyond": false,
+        "distance": 28.0343017578125,
+        "frame": 176,
+        "kind": "proxy",
+        "species": 1
+      },
+      {
+        "beyond": false,
+        "distance": 31.6239013671875,
+        "frame": 183,
+        "kind": "proxy",
+        "species": 0
+      },
+      {
+        "beyond": false,
+        "distance": 28.0401611328125,
+        "frame": 188,
+        "kind": "proxy",
+        "species": 1
+      },
+      {
+        "beyond": false,
+        "distance": 28.1068572998047,
+        "frame": 188,
+        "kind": "proxy",
+        "species": 1
+      }
+    ],
+    "post_walk_near_control": {
+      "exact_local_restore": true,
+      "legacy_assignments": [
+        {
+          "same_pixels": false,
+          "same_transform": false
+        },
+        {
+          "same_pixels": false,
+          "same_transform": false
+        },
+        {
+          "same_pixels": false,
+          "same_transform": false
+        }
+      ],
+      "near_pixels_equal": true
+    },
+    "save_sha256": "692507bdf037bb70dba01e37e0dbc88807d85f82453f8b2ab6fcf7c1f87165c9",
+    "invalid_play_frames": 0,
+    "hash_crosscheck": true,
+    "event_counts": {
+      "proxy": 21,
+      "horizon": 12,
+      "shadow": 75
+    },
+    "all_observed_shadow_toggles_fully_faded": true,
+    "capture_duration_ms": 5040,
+    "capture_intervals_ms": {
+      "n": 191,
+      "median": 25,
+      "p95": 37
+    },
+    "moving_cost_groups": [
+      {
+        "group": 0,
+        "cases": {
+          "baseline": {
+            "n": 150,
+            "median": 6.4670000076293945,
+            "p95": 7.76100015640259
+          },
+          "candidate": {
+            "n": 151,
+            "median": 6.62799978256226,
+            "p95": 9.10700035095215
+          }
+        },
+        "delta_ms": {
+          "median": 0.16099977493286577,
+          "p95": 1.3460001945495605
+        }
+      },
+      {
+        "group": 1,
+        "cases": {
+          "baseline": {
+            "n": 150,
+            "median": 6.76599979400635,
+            "p95": 7.74100017547607
+          },
+          "candidate": {
+            "n": 151,
+            "median": 7.36700010299683,
+            "p95": 11.4580001831055
+          }
+        },
+        "delta_ms": {
+          "median": 0.6010003089904794,
+          "p95": 3.717000007629431
+        }
+      },
+      {
+        "group": 2,
+        "cases": {
+          "baseline": {
+            "n": 151,
+            "median": 6.7810001373291,
+            "p95": 8.11100006103516
+          },
+          "candidate": {
+            "n": 150,
+            "median": 7.2829999923706055,
+            "p95": 9.41300010681152
+          }
+        },
+        "delta_ms": {
+          "median": 0.5019998550415057,
+          "p95": 1.30200004577636
+        }
+      }
+    ],
+    "cost_scope": "Separate ABBA moving windows, no capture or per-instance witness work. Positions differ; contextual, not causal increment.",
+    "review": {
+      "inspected": true,
+      "format": "JPEG from H264 movie; native-size crops, not raw evidence",
+      "frame_pairs": [
+        [
+          103,
+          104
+        ],
+        [
+          95,
+          96
+        ],
+        [
+          140,
+          141
+        ]
+      ],
+      "crop": [
+        360,
+        350,
+        1560,
+        720
+      ]
+    }
+  },
+  "retained_failures": [
+    {
+      "run": "20261128T075158733757Z",
+      "reason": "Shader vertex return forbidden; fixed if/else",
+      "passed": false,
+      "run_sha256": "59452070abc1c8ce8a919a1a4cc4b625329db2b6f1a14533e61751183ac2bdd6"
+    },
+    {
+      "run": "20261128T075405542691Z",
+      "reason": "Endpoint metric differed between controls; equalized disabled LOD control, real nearby parity separate",
+      "passed": false,
+      "run_sha256": "f113346c74ce695a78d489346d06c5ef8f637c2a796710d69582a083dae23d19"
+    },
+    {
+      "run": "20261128T081046903558Z",
+      "reason": "Five obsolete shader resource-identity assertions; exact expected variant code, runtime ownership and clock/metric checks now required; post-run archive recovery retained",
+      "passed": false,
+      "run_sha256": "5449f68fee7e50804a7684bc97edb1189859c1e7d7c4e4d94bdb04548415ed34"
+    }
+  ],
+  "normalized_line_endings": [
+    {
+      "path": "addons/structures/native/static_surface_lod.cpp",
+      "before": "58838156901458acaf8d08560809202d1d49916b6c14d7cef02a92044552fec8",
+      "after": "e66faecbc6fc076156d0c4597526bd39452da858f0c7ca235848291f5465d9c6",
+      "normalized_equal": true
+    },
+    {
+      "path": "addons/world_ecosystem/filtered_grass.gd",
+      "before": "367d37e6832c1bef7fa83175c6772329cce71341c22f8f192b7b623453571897",
+      "after": "12a4b3f70d157198c49882f54f7ca317fd5cea8d0d723f3a72fa6ae98a848aa6",
+      "normalized_equal": true
+    },
+    {
+      "path": "addons/world_ecosystem/woodland.gdshader",
+      "before": "deb7544b605fbf4970809ff2accf5034e40f419a329d8b26b023667e4aa547bb",
+      "after": "892977717c93f3340dbc7bf1b00a5d5f2242a1e52be68f6b3ea8fd5658d6ba8c",
+      "normalized_equal": true
+    },
+    {
+      "path": "addons/world_ecosystem/woodland_mesh.gd",
+      "before": "fbbff7b981d2d33491d8e8d28dade106ccf3dd07ff2a84b8cfb5d9db70926b74",
+      "after": "55f94fdf712319db4f661f089249c9481ba0f4d1f9baa63570ddfe048f5e2e00",
+      "normalized_equal": true
+    },
+    {
+      "path": "tools/maintain_homestead_captures.py",
+      "before": "f54156f70d6c4733eef5edb6e3dcd0a0b6047624c1b6aa7ac001ce2a387165fb",
+      "after": "f3231240df60f1506eaf3c5c50416d5004e5e374fcd7982d08e906cedca64d89",
+      "normalized_equal": true
+    }
+  ],
+  "native_builds": {
+    "template_debug": {
+      "target": "template_debug",
+      "compiled_extension_sources": [
+        "static_surface_lod.cpp"
+      ],
+      "godot_cpp_sources_compiled": 0,
+      "binding_repair": {
+        "id": "dictionary_move_assignment_v1",
+        "source_sha256": "cbeecb1484782dc2896a57061e52d7d2c0d4a90f6db2e27186b5eb7aab7f4ecd",
+        "source_commit": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "signature": "5eb864435082cc30c9145313e0e85a06f1788eabd09c69cb3b1c07499aa7d7d7",
+        "object_sha256": "252183b6a84777accd11b0129971f00ac9fa657647c0029269c860a48e550347",
+        "compiled": false
+      },
+      "linked": true,
+      "seconds": 14.477561499981675,
+      "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll",
+      "sha256": "7f0b878fabc6a91ba5756bb31c6d3bdc0955f943b2dc4d71af7457c142781cb1",
+      "sdk": {
+        "api_version": "4.7",
+        "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "variant": "windows-x86_64-zig",
+        "compiler": "zig-0.16.0",
+        "platform": "windows",
+        "arch": "x86_64",
+        "targets": [
+          "template_debug",
+          "template_release"
+        ],
+        "precision": "single",
+        "created_unix": 1786965830
+      },
+      "addon": "structures",
+      "link_signature": "aa26f34f73cc249b11e300a0535d64e1bcb48642d44588a6722f9b3cd4415b48"
+    },
+    "template_release": {
+      "target": "template_release",
+      "compiled_extension_sources": [
+        "static_surface_lod.cpp"
+      ],
+      "godot_cpp_sources_compiled": 0,
+      "binding_repair": {
+        "id": "dictionary_move_assignment_v1",
+        "source_sha256": "cbeecb1484782dc2896a57061e52d7d2c0d4a90f6db2e27186b5eb7aab7f4ecd",
+        "source_commit": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "signature": "5f07fa1f85d14167630c93256c3e58aca297fff558e20d4b4546e1f1170c6946",
+        "object_sha256": "bc5fd7e4e7255a0653fd58d77114a9c43c7ca8b59ee20bb1c606da7173ea667b",
+        "compiled": false
+      },
+      "linked": true,
+      "seconds": 2.75913139997283,
+      "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\structures\\bin\\structures.windows.template_release.x86_64.dll",
+      "sha256": "f77aaef110964e4af04ec3fd26125f12dab7c47bd34188a95e12826349ca8622",
+      "sdk": {
+        "api_version": "4.7",
+        "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "variant": "windows-x86_64-zig",
+        "compiler": "zig-0.16.0",
+        "platform": "windows",
+        "arch": "x86_64",
+        "targets": [
+          "template_debug",
+          "template_release"
+        ],
+        "precision": "single",
+        "created_unix": 1786965830
+      },
+      "addon": "structures",
+      "link_signature": "6b4d915ca4269b84d3cc5cd732bd72bdc8f830a0bebf96ac59fe7a9dcf2af22b"
+    }
+  },
+  "source_paths": {
+    "addons/structures/native/static_surface_lod.cpp": "e66faecbc6fc076156d0c4597526bd39452da858f0c7ca235848291f5465d9c6",
+    "addons/world_ecosystem/representation_fade.gd": "61e136641bb48e5428f008421cfa7ee32eab83d7161f0e6ed47f8b7e891e9178",
+    "addons/world_ecosystem/representation_fade.gd.uid": "ebf2f7951f7152ddf6ad94d94f5b1d9162fcf37b1d1e47b8a747d7d1e57d8825",
+    "tests/vegetation_final_handoffs.gd": "a7f78db94bfb8a4d2d4394f641e163cead87627f81c5305636716c1391639700",
+    "tests/vegetation_final_handoffs.gd.uid": "cf953bf7976409594bd3991fac60b4608c0caf0bb7591b417fb986c88ed007ea",
+    "tests/vegetation_handoffs.gd": "5940596c46caf19875e4f591d3965b18a48a3f0a92810708d65e59f8d7845d82",
+    "tests/vegetation_handoffs.gd.uid": "8eb90ccefca522a9fe92fd01c8ef0c69f375fc6ec2c465f397bf16a05ff15f90",
+    "tools/analyze_vegetation_handoffs.py": "8a4412fb34b545978eda85f88ace47dd135984557f45da10453b91767c8d53e4"
+  },
+  "remaining": [
+    "Human moving judgment of grain, silhouettes, horizon density and shadow blend",
+    "Broader FOV/resolution/steep views/lighting/fast travel/teleports/bulk edits",
+    "Tree/boulder and other transition systems are not universally qualified",
+    "Earlier detail GPU p95 target remains open; new overlap costs +0.328 to +0.6205 ms median in the fixed scene"
+  ],
+  "retention": [
+    "reports/artifact_retention/vegetation_fade_recompression_20261128.json",
+    "reports/location_baseline/20261102T174105330668Z/bulk.archive.json",
+    "reports/location_baseline/20261102T181359468541Z/bulk.archive.json",
+    "reports/checks/20261128T081046903558Z/archive_recovery.json"
+  ],
+  "launcher_tests": {
+    "passed": 9,
+    "suite": "tools/test_run_godot_check.py"
+  },
+  "approval": {
+    "date": "2026-11-28",
+    "user_statement": "Let's commit and push now as human verified.",
+    "scope": "Latest source playtest: nearby bands absent while standing still and walking; current vegetation fade snapshot accepted. Broader projections and earlier GPU-tail target remain open.",
+    "milestone_tag": "playtest/vegetation-fades-2026-11-28",
+    "shared_native_binaries_included": false,
+    "native_restore_requirement": "Rebuild the structures addon from committed source for the surface_lod_begin page-overlap change; shared working DLLs also contain unrelated native work."
+  }
+}

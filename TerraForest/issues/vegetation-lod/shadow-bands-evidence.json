@@ -1,0 +1,191 @@
+{
+  "license": "CC0-1.0",
+  "status": "Human-verified latest source snapshot; scoped engine checks pass. Broader qualification, earlier GPU-tail target and archival capacity remain open.",
+  "lab_run": "20261128T090059765752Z",
+  "lab_checks": 107,
+  "lab_failures": 0,
+  "faulty_foreground_frames": 42,
+  "corrected_native_near_matches": 48,
+  "native_near_region": [
+    200,
+    480,
+    1520,
+    400
+  ],
+  "physical_run": "20261128T091042690963Z",
+  "physical_engine_failures": [],
+  "physical_travelled_m": 189.447848111391,
+  "grounded_frames": 2163,
+  "physics_frames": 2163,
+  "raw_capture_matches": 192,
+  "stationary_capture_frames": 96,
+  "runtime_hashes": {
+    "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "7f0b878fabc6a91ba5756bb31c6d3bdc0955f943b2dc4d71af7457c142781cb1",
+    "res://addons/world_ecosystem/filtered_detail.gd": "b16ff300d3f20d93d94ec2c00949f3c59d5e7f38d459b2148bd263e299307075",
+    "res://addons/world_ecosystem/filtered_fern.gd": "22465ee50886b03418bf94e73f79903ebebb7de49c97d8361a1c461f6229be88",
+    "res://addons/world_ecosystem/filtered_fern.gdshader": "e01b8987f3cb910cae28f106976ccbaa07664817518b2ecd02a3f035933f0b68",
+    "res://addons/world_ecosystem/filtered_grass.gd": "12a4b3f70d157198c49882f54f7ca317fd5cea8d0d723f3a72fa6ae98a848aa6",
+    "res://addons/world_ecosystem/filtered_grass.gdshader": "f3627389b88f7f8a27b35c18308b949050a50c87123e05d82cc21937fdedbcb7",
+    "res://addons/world_ecosystem/filtered_stone.gdshader": "e9d8b387fcb7ef186b6583ed58b458c2dd271fd3ed5c1567132bcf8a103fae28",
+    "res://addons/world_ecosystem/ground_cover.gd": "866e8ce9f4ac5a91b5338a21a990575939138e22b65e0caaa57f84dd52dc7378",
+    "res://addons/world_ecosystem/opaque_lod_fade.gd": "48ec5ddb42adf02a28e4f8566bf4d79c2149ccecc520c29d840096a3b9e05452",
+    "res://addons/world_ecosystem/proxy_projection.gdshaderinc": "ae0baf4d932af5cfdbdaecf9496f31cd720cae7c160879a9960503ee8a48e9fe",
+    "res://addons/world_ecosystem/representation_fade.gd": "61e136641bb48e5428f008421cfa7ee32eab83d7161f0e6ed47f8b7e891e9178",
+    "res://addons/world_ecosystem/woodland.gdshader": "892977717c93f3340dbc7bf1b00a5d5f2242a1e52be68f6b3ea8fd5658d6ba8c",
+    "res://addons/world_ecosystem/woodland_mesh.gd": "55f94fdf712319db4f661f089249c9481ba0f4d1f9baa63570ddfe048f5e2e00",
+    "res://tests/fixtures/vegetation_capture.gd": "210f4ebc067cdc524dca4b15dd5e2ccd6e1c73d6d5f75570222cb70d1e2f4689",
+    "res://tests/vegetation_gameplay.gd": "fc8622d44f6d3d3bfe4b12b52a2514733a7ca939108adf91564a5ddfe867dc13"
+  },
+  "paired_gpu_cost": [
+    {
+      "case": "baseline",
+      "cycle": 0,
+      "draws": 3870,
+      "gpu_p50_ms": 14.6840000152588,
+      "gpu_p95_ms": 15.0539999008179
+    },
+    {
+      "case": "current",
+      "cycle": 0,
+      "draws": 3870,
+      "gpu_p50_ms": 8.38700008392334,
+      "gpu_p95_ms": 8.57699966430664
+    },
+    {
+      "case": "current",
+      "cycle": 0,
+      "draws": 3870,
+      "gpu_p50_ms": 8.35599994659424,
+      "gpu_p95_ms": 8.5290002822876
+    },
+    {
+      "case": "baseline",
+      "cycle": 0,
+      "draws": 3870,
+      "gpu_p50_ms": 14.1840000152588,
+      "gpu_p95_ms": 14.6140003204346
+    },
+    {
+      "case": "baseline",
+      "cycle": 1,
+      "draws": 3870,
+      "gpu_p50_ms": 14.1750001907349,
+      "gpu_p95_ms": 14.9700002670288
+    },
+    {
+      "case": "current",
+      "cycle": 1,
+      "draws": 3870,
+      "gpu_p50_ms": 8.43099975585938,
+      "gpu_p95_ms": 8.66600036621094
+    },
+    {
+      "case": "current",
+      "cycle": 1,
+      "draws": 3870,
+      "gpu_p50_ms": 8.3769998550415,
+      "gpu_p95_ms": 8.58300018310547
+    },
+    {
+      "case": "baseline",
+      "cycle": 1,
+      "draws": 3870,
+      "gpu_p50_ms": 13.83899974823,
+      "gpu_p95_ms": 14.3339996337891
+    },
+    {
+      "case": "baseline",
+      "cycle": 2,
+      "draws": 3870,
+      "gpu_p50_ms": 13.5749998092651,
+      "gpu_p95_ms": 14.3079996109009
+    },
+    {
+      "case": "current",
+      "cycle": 2,
+      "draws": 3870,
+      "gpu_p50_ms": 8.36800003051758,
+      "gpu_p95_ms": 8.52999973297119
+    },
+    {
+      "case": "current",
+      "cycle": 2,
+      "draws": 3870,
+      "gpu_p50_ms": 8.50699996948242,
+      "gpu_p95_ms": 8.88199996948242
+    },
+    {
+      "case": "baseline",
+      "cycle": 2,
+      "draws": 3870,
+      "gpu_p50_ms": 13.753999710083,
+      "gpu_p95_ms": 14.5010004043579
+    },
+    {
+      "case": "baseline",
+      "cycle": 3,
+      "draws": 3870,
+      "gpu_p50_ms": 13.5290002822876,
+      "gpu_p95_ms": 14.2309999465942
+    },
+    {
+      "case": "current",
+      "cycle": 3,
+      "draws": 3870,
+      "gpu_p50_ms": 8.35700035095215,
+      "gpu_p95_ms": 8.55200004577637
+    },
+    {
+      "case": "current",
+      "cycle": 3,
+      "draws": 3870,
+      "gpu_p50_ms": 8.51599979400635,
+      "gpu_p95_ms": 8.8769998550415
+    },
+    {
+      "case": "baseline",
+      "cycle": 3,
+      "draws": 3870,
+      "gpu_p50_ms": 15.1149997711182,
+      "gpu_p95_ms": 15.4300003051758
+    }
+  ],
+  "failures_preserved": [
+    "20261128T083707316225Z",
+    "20261128T084205120483Z",
+    "20261128T085257719995Z",
+    "20261128T090320883722Z"
+  ],
+  "partial_guard_rejected": "20261128T085454418489Z",
+  "wrapper_retention_error": "Archive full after successful engine/analysis; original evidence and partial chunks retained; capacity pins documented in SHADOW_BANDS.md.",
+  "human_approved": true,
+  "committed": true,
+  "approval": {
+    "date": "2026-11-28",
+    "user_statement": "Let's commit and push now as human verified.",
+    "scope": "Latest source playtest: nearby bands absent while standing still and walking; current vegetation fade snapshot accepted. Broader projections and earlier GPU-tail target remain open.",
+    "milestone_tag": "playtest/vegetation-fades-2026-11-28",
+    "shared_native_binaries_included": false,
+    "native_restore_requirement": "Rebuild the structures addon from committed source for the surface_lod_begin page-overlap change; shared working DLLs also contain unrelated native work."
+  },
+  "commit_line_endings": {
+    "res://addons/world_ecosystem/filtered_grass.gdshader": {
+      "validated_sha256": "f3627389b88f7f8a27b35c18308b949050a50c87123e05d82cc21937fdedbcb7",
+      "committed_source_sha256": "d1684dbab64d18c0fc9f7e8174f5ec17861cbbc0f9e76d91bdcd0466a2732a95",
+      "normalized_sha256": "f3627389b88f7f8a27b35c18308b949050a50c87123e05d82cc21937fdedbcb7",
+      "scope": "Only inherited line endings restored; shader text is byte-identical after CRLF normalization."
+    },
+    "res://addons/world_ecosystem/filtered_fern.gdshader": {
+      "validated_sha256": "e01b8987f3cb910cae28f106976ccbaa07664817518b2ecd02a3f035933f0b68",
+      "committed_source_sha256": "1483bddbee5ced4c0d88dd50a6ec08d74d4dc9a319d5d612b32192edde6a0496",
+      "normalized_sha256": "e01b8987f3cb910cae28f106976ccbaa07664817518b2ecd02a3f035933f0b68",
+      "scope": "Only inherited line endings restored; shader text is byte-identical after CRLF normalization."
+    },
+    "res://addons/world_ecosystem/filtered_stone.gdshader": {
+      "validated_sha256": "e9d8b387fcb7ef186b6583ed58b458c2dd271fd3ed5c1567132bcf8a103fae28",
+      "committed_source_sha256": "4e09a9c8d48fffcd7137b357148a73420e834093daf85d726d99c866d66b5de6",
+      "normalized_sha256": "e9d8b387fcb7ef186b6583ed58b458c2dd271fd3ed5c1567132bcf8a103fae28",
+      "scope": "Only inherited line endings restored; shader text is byte-identical after CRLF normalization."
+    }
+  }
+}

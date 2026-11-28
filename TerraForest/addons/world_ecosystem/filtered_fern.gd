@@ -56,7 +56,7 @@ static func frond_proxies(saved: Dictionary) -> Dictionary:
 		normal_areas.append_array(bins)
 	return {"proxies":proxies,"normal_areas":normal_areas}
 
-static func apply(mesh: ArrayMesh,authored: Array,lods: Dictionary,source_material: ShaderMaterial,far_error := FAR_ERROR) -> ShaderMaterial:
+static func apply(mesh: ArrayMesh,authored: Array,lods: Dictionary,source_material: ShaderMaterial,far_error := FAR_ERROR,seamless := false) -> ShaderMaterial:
 	var saved := {"arrays":authored,"lods":lods,"material":source_material,"bounds":mesh.custom_aabb}
 	var inactive := PackedInt32Array([0,0,0])
 	var opaque_lods := {0.025:saved.lods[0.025],far_error:inactive}
@@ -81,7 +81,9 @@ static func apply(mesh: ArrayMesh,authored: Array,lods: Dictionary,source_materi
 	var arrays := [];arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX]=vertices;arrays[Mesh.ARRAY_NORMAL]=normals;arrays[Mesh.ARRAY_COLOR]=colors
 	arrays[Mesh.ARRAY_TEX_UV]=uvs;arrays[Mesh.ARRAY_TEX_UV2]=source_uvs
-	var empty_base := PackedInt32Array();empty_base.resize(indices.size()+3);arrays[Mesh.ARRAY_INDEX]=empty_base
+	var empty_base := PackedInt32Array();empty_base.resize(indices.size()+3)
+	if seamless:empty_base=indices.duplicate();empty_base.append_array(PackedInt32Array([0,0,0]))
+	arrays[Mesh.ARRAY_INDEX]=empty_base
 	arrays[Mesh.ARRAY_CUSTOM0]=custom[0];arrays[Mesh.ARRAY_CUSTOM1]=custom[1];arrays[Mesh.ARRAY_CUSTOM2]=custom[2]
 	var flags := (Mesh.ARRAY_CUSTOM_RGBA_FLOAT<<Mesh.ARRAY_FORMAT_CUSTOM0_SHIFT)|(Mesh.ARRAY_CUSTOM_RGBA_FLOAT<<Mesh.ARRAY_FORMAT_CUSTOM1_SHIFT)|(Mesh.ARRAY_CUSTOM_RGBA_FLOAT<<Mesh.ARRAY_FORMAT_CUSTOM2_SHIFT)
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],{far_error:indices},flags)

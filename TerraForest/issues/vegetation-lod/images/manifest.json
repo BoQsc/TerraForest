@@ -407,5 +407,23 @@
     "license": "CC0-1.0 for original capture contributions; underlying project asset terms unchanged",
     "scope": "Normal source gameplay with integrated far stones/flowers, no trial override. 194.182m physical movement, all 1024 forest cells, 8461 trees and live actors. 48 consecutive pixel-verified frames; measured intervals 15ms median / 32ms p95. Human review pending.",
     "provenance": "Exact admitted output copy. Native capture pixels, no rescaling/retouching or generated imagery. Full context and frames 0/15/31/47 inspected; raw evidence retained by receipt."
+  },
+  {
+    "file": "nearby-proxy-bands-user.png",
+    "source": "C:\\Users\\WINDOW~1\\AppData\\Local\\Temp\\codex-clipboard-b98425b3-57e8-4593-ba70-29934eb95e12.png",
+    "sha256": "0dc5a0a74606e8e001a67c66c72b0b2d83b09fbec87a9417349eacea4be9d688",
+    "scope": "User-provided unedited 1080p source-game screenshot, 2026-11-28; bands flicker even when stationary. Project screenshot; existing content provenance/licenses preserved."
+  },
+  {
+    "file": "nearby-proxy-bands-before.jpg",
+    "source": "TerraForest\\reports\\checks\\20261128T090059765752Z\\baseline_6.jpg",
+    "sha256": "7da8eb32ce02834bd9b316d6cf2e679d4a4369063e47c1daa9ac434dd0d9fde4",
+    "scope": "Matched saved Homestead Valley pose, fixed wind time 1.2 seconds, guard disabled; engineering reproduction, 480x270 preview."
+  },
+  {
+    "file": "nearby-proxy-bands-guarded.jpg",
+    "source": "TerraForest\\reports\\checks\\20261128T090059765752Z\\current_6.jpg",
+    "sha256": "b47afe7992f2db2ffaceff18606d24484627fc422d48145e013ed03560382904",
+    "scope": "Same pose, time, population and lighting; production guard enabled; 480x270 preview, not human-approved."
   }
 ]

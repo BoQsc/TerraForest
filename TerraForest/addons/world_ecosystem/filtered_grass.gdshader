@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: 0BSD
 shader_type spatial;
 render_mode cull_disabled, diffuse_burley;
+#include "res://addons/world_ecosystem/proxy_projection.gdshaderinc"
+const bool proxy_lod_transition = false;
+const bool horizon_lod_transition = false;
+uniform vec2 horizon_lod_edges = vec2(0.088,0.0998);
+varying flat float horizon_lod_weight;
+uniform float near_lod_metric = 703.74;
+uniform vec2 proxy_lod_edges = vec2(0.037,0.0448);
+varying flat float proxy_lod_weight;
 // Far-only Gaussian moment approximation of each authored triangle.
 // Area is normalized before opacity clamping and the finite 3-sigma crop.
 uniform vec3 cover_eye;
@@ -24,10 +32,19 @@ vec3 bend(vec3 point, float phase) {
 }
 void vertex() {
     vec3 origin=MODEL_MATRIX[3].xyz;
+    vec3 proxy_delta=origin-cover_eye;
+    vec2 proxy_limits=proxy_lod_edges*near_lod_metric;
+    proxy_lod_weight=proxy_lod_transition?smoothstep(proxy_limits.x*proxy_limits.x,proxy_limits.y*proxy_limits.y,dot(proxy_delta,proxy_delta)):1.0;
+
+    vec2 horizon_limits=horizon_lod_edges*near_lod_metric;
+    float horizon_mix=horizon_lod_transition?smoothstep(horizon_limits.x*horizon_limits.x,horizon_limits.y*horizon_limits.y,dot(proxy_delta,proxy_delta)):0.0;
+    horizon_lod_weight=horizon_lod_transition?(CUSTOM0.w<0.5?1.0-horizon_mix:horizon_mix):1.0;
+    if((proxy_lod_transition && proxy_lod_weight<=0.0) || (horizon_lod_transition && horizon_lod_weight<=0.0)){POSITION=vec4(2.0,2.0,2.0,1.0);}else{
     float phase=dot(origin.xz,vec2(0.71,0.43));
     vec3 a=bend(CUSTOM0.xyz,phase),b=bend(CUSTOM1.xyz,phase),c=bend(CUSTOM2.xyz,phase);
     mat4 mvp=PROJECTION_MATRIX*MODELVIEW_MATRIX;
     vec4 ca=mvp*vec4(a,1.0),cb=mvp*vec4(b,1.0),cc=mvp*vec4(c,1.0);
+    if (proxy_triangle_in_view(ca,cb,cc)) {
     vec2 pa=ca.xy/ca.w*VIEWPORT_SIZE*0.5,pb=cb.xy/cb.w*VIEWPORT_SIZE*0.5,pc=cc.xy/cc.w*VIEWPORT_SIZE*0.5;
     center_px=(pa+pb+pc)/3.0;
     vec2 da=pa-center_px,db=pb-center_px,dc=pc-center_px;
@@ -52,11 +69,17 @@ void vertex() {
     shade=root_shade*canopy;
     ao=mix(0.62,1.0,smoothstep(0.0,0.30,1.0/3.0));
     variation=0.95+0.05*sin(phase*3.7);
+    } else { POSITION=vec4(2.0,2.0,2.0,1.0); }
+    }
 }
 void fragment() {
+    // Complement the opaque screen mask. Multiplying both representations by
+    // alpha would expose extra terrain in the middle of the transition.
+    if(proxy_lod_transition && fract(52.9829189*fract(dot(floor(FRAGCOORD.xy),vec2(0.06711056,0.00583715))))>=proxy_lod_weight)discard;
+
     vec2 p=point_px-center_px;
     float q=inverse_cov.x*p.x*p.x+2.0*inverse_cov.y*p.x*p.y+inverse_cov.z*p.y*p.y;
-    ALPHA=clamp(amplitude*exp(-0.5*q),0.0,1.0)*visibility;
+    ALPHA=clamp(amplitude*exp(-0.5*q),0.0,1.0)*visibility*horizon_lod_weight;
     // Quad orientation is artificial; face the authored blade normal explicitly.
     if(dot(NORMAL,VIEW)<0.0) NORMAL=-NORMAL;
     ALBEDO=COLOR.rgb*variation*shade*0.90;

@@ -1,7 +1,9 @@
 # ★ Extended vegetation LOD
 
 - Starred: [Notable investigation](../notable/README.md); [investigation lessons](LESSONS.md). Human playtest confirmed the flicker improvement on 2026-11-27; remaining requirements stay open.
-- Status: Previous flicker fix human-approved and snapshotted. Stone proxy correction and broader distance fade pass lab and physical gameplay checks. The user accepted this result for commit/push on 2026-11-28; near handoffs, rectangular patches, broader coverage and the detail GPU-tail target remain open.
+- Status: Latest source vegetation fades and nearby projection correction **human-verified on 2026-11-28**, approved for commit/push. Tag `playtest/vegetation-fades-2026-11-28`. Broader coverage and the earlier GPU-tail target remain open.
+- Corrected regression: [nearby foreground bands](SHADOW_BANDS.md), caused by invalid far-proxy projection. 107 causal checks, 48 exact nearby comparisons, 189 m physical gameplay and human standing/walking review pass.
+- Source restoration: shared DLLs contain unrelated native work and are excluded. Rebuild the structures addon for the committed page-overlap change; this is not a packaged-release claim.
 - Updated: 2026-11-28. Original LOD implementation `e2d0e548`; follow-ups below.
 - Forests: existing 6592/192/12-triangle tiers retained; visibility 448 -> 576 m.
 - Native circular preload: 640 m, maximum 405 wanted owners, 441 admission cap;
@@ -46,6 +48,21 @@ the earlier GPU-tail target remain open. The user requested commit/push of this
 snapshot on 2026-11-28, tagged `snapshot/near-lod-fade-2026-11-28`. This approval
 is for a source checkpoint, not universal visual/performance closure. Shared
 native DLL changes remain excluded; restoring source requires a native rebuild.
+
+## Remaining cover handoffs - uncommitted experiment
+
+The [remaining-handoff audit](REMAINING_HANDOFFS.md) isolates substantial fern,
+bush, flower and twig batch switches missed by the grass-only fade. Adjacent
+opaque tiers now fade per plant in an uncommitted candidate. Fixed-population
+controls, real-scene nearby/brightness/cost checks, and a 280.342 m physical walk
+with 33 changed-LOD crossings pass. Nearby pixels remain exact; human validation
+is still required. The [far-handoff continuation](FAR_HANDOFFS.md) now covers the
+filtered proxies, grass horizon and grouped shadows. Its lab controls and 280.067 m
+physical walk pass, including 21 proxy / 12 horizon crossings and 75 shadow toggles
+at zero remaining coverage. Nearby pixels remain exact; mean brightness changes
+-0.01337%. Local median GPU overhead is +0.328 to +0.6205 ms, with increased tails.
+This remains uncommitted, pending human review; it does not make every transition
+seamless or close the earlier performance target.
 
 ## Human playtest and source snapshot — 2026-11-27
 

@@ -1,0 +1,888 @@
+{
+  "license": "CC0-1.0",
+  "line_endings_after_measurement": {
+    "addons/world_ecosystem/ground_cover.gd": {
+      "measured_sha256": "355303f30d4e3c43c34401bb6c91674d13c5f51822095803236f4ef5db0a6150",
+      "current_sha256": "b1e0df92a278d12b859c6aef38b89b2a37420653fee940ac7a780eca9ee3a063",
+      "normalized_sha256": "8d6fdb4e5b57e4ac1c8e1302fa2c2af56a7c5a5cebcca56a62d0ff6dbcec7c8d",
+      "scope": "Only unchanged lines regain their original HEAD line endings; executable text is identical after CRLF normalization. Modified lines, including unrelated tool hunks, are preserved byte-for-byte."
+    },
+    "tools/run_godot_check.py": {
+      "measured_sha256": "f0d9543135a5c01665ae1b4ea12905b3ae10972d7183707f429729bdf569b628",
+      "current_sha256": "e0dd63fe4f793c753906c022185513cf2979a5ef880f59eece164241c28529b4",
+      "normalized_sha256": "d90c3d76494898107a55d6cd7273573f4a0abcf03cbbb70d6e766aeb0c0d1d68",
+      "scope": "Only unchanged lines regain their original HEAD line endings; executable text is identical after CRLF normalization. Modified lines, including unrelated tool hunks, are preserved byte-for-byte."
+    }
+  },
+  "schema": 1,
+  "date": "2026-11-28",
+  "baseline_commit": "84d60efdecf8f838e4b86119c4a75af18def9b46",
+  "status": "Human-verified latest source snapshot; scoped engine checks pass. Broader qualification, earlier GPU-tail target and archival capacity remain open.",
+  "human_approved": true,
+  "committed": true,
+  "scope": "Additional opaque ground-cover handoffs. Existing near grass fade, original nearby geometry and lighting retained. Does not close filtered-proxy, grass horizon or shadow cutoff continuity.",
+  "labs": [
+    {
+      "run": "20261128T001829198742Z",
+      "receipt_sha256": "99adc08227e0af7d8916907ed970dbdcaa2fd88e5ad9adb2026d29702f8d14c2",
+      "packet_sha256": "c1b027d73b3eb544df979f4a6eff5c5c131217d4a7c983c0f30e3872ee6ef321",
+      "nearby_exact": {
+        "bush_near": true,
+        "fern_near": true,
+        "flower_near": true,
+        "stone_near": true
+      },
+      "events": {
+        "fern_near": {
+          "switches": [
+            {
+              "frame": 6,
+              "distance": 17.9935416723105,
+              "before": {
+                "after": 4
+              },
+              "after": {
+                "after": 3,
+                "before": 1
+              },
+              "contrast_step_percent": {
+                "source": 25.190600548368177,
+                "held_before": 1.4885615065990414,
+                "held_after": 1.6453907930406892,
+                "no_optimization": 25.190600548368177,
+                "candidate": 0.7551340594783986
+              }
+            },
+            {
+              "frame": 7,
+              "distance": 17.7935416723105,
+              "before": {
+                "after": 3,
+                "before": 1
+              },
+              "after": {
+                "after": 2,
+                "before": 2
+              },
+              "contrast_step_percent": {
+                "source": 17.328277742521216,
+                "held_before": 4.924823682639439,
+                "held_after": 6.514591091332995,
+                "no_optimization": 17.328277742521216,
+                "candidate": 4.689626008979764
+              }
+            }
+          ],
+          "optimization_pixel_equal": true
+        },
+        "bush_near": {
+          "switches": [
+            {
+              "frame": 7,
+              "distance": 17.7935416723105,
+              "before": {
+                "after": 4
+              },
+              "after": {
+                "after": 2,
+                "before": 2
+              },
+              "contrast_step_percent": {
+                "source": 32.1819433940672,
+                "held_before": 1.5202879154109854,
+                "held_after": 1.7338846468841593,
+                "no_optimization": 32.1819433940672,
+                "candidate": 1.734252588204199
+              }
+            }
+          ],
+          "optimization_pixel_equal": true
+        },
+        "flower_near": {
+          "switches": [
+            {
+              "frame": 7,
+              "distance": 14.2748333378484,
+              "before": {
+                "after": 4
+              },
+              "after": {
+                "after": 3,
+                "before": 1
+              },
+              "contrast_step_percent": {
+                "source": 19.27802086839448,
+                "held_before": 0.7982442355686126,
+                "held_after": -0.7557210003085393,
+                "no_optimization": 19.27802086839448,
+                "candidate": -0.7557179721434181
+              }
+            },
+            {
+              "frame": 8,
+              "distance": 14.0748333378484,
+              "before": {
+                "after": 3,
+                "before": 1
+              },
+              "after": {
+                "after": 2,
+                "before": 2
+              },
+              "contrast_step_percent": {
+                "source": 11.3936339968086,
+                "held_before": 0.18523118225585686,
+                "held_after": -2.3344921005987636,
+                "no_optimization": 11.3936339968086,
+                "candidate": -2.334886425116482
+              }
+            }
+          ],
+          "optimization_pixel_equal": true
+        },
+        "stone_near": {
+          "switches": [
+            {
+              "frame": 6,
+              "distance": 21.5122500067726,
+              "before": {
+                "after": 4
+              },
+              "after": {
+                "after": 3,
+                "before": 1
+              },
+              "contrast_step_percent": {
+                "source": 7.887059972461533,
+                "held_before": 2.433858603409027,
+                "held_after": 3.2733896458738863,
+                "no_optimization": 7.887059972461533,
+                "candidate": 3.493830773069749
+              }
+            },
+            {
+              "frame": 7,
+              "distance": 21.3122500067726,
+              "before": {
+                "after": 3,
+                "before": 1
+              },
+              "after": {
+                "after": 2,
+                "before": 2
+              },
+              "contrast_step_percent": {
+                "source": 4.361427218860082,
+                "held_before": 1.9107494972228483,
+                "held_after": 1.8306242434722462,
+                "no_optimization": 4.361427218860082,
+                "candidate": 1.8833445215186098
+              }
+            }
+          ],
+          "optimization_pixel_equal": true
+        }
+      }
+    },
+    {
+      "run": "20261128T002253763721Z",
+      "receipt_sha256": "e53c833a027da83eb17e1c98fcad69514b956350f95273fd4b6c4e56310e5228",
+      "packet_sha256": "ca0815297fedb4b84d35347bccb892ea0f30f6aba7a423d67a0e1ef0ed63d42d",
+      "nearby_exact": {
+        "bush_outer": true,
+        "twig_near": true,
+        "twig_outer": true,
+        "woody_near": true,
+        "woody_outer": true
+      },
+      "events": {
+        "twig_near": {
+          "switches": [
+            {
+              "frame": 4,
+              "distance": 14.4748333378484,
+              "before": {
+                "after": 4
+              },
+              "after": {
+                "after": 3,
+                "before": 1
+              },
+              "contrast_step_percent": {
+                "source": 40.409388804524035,
+                "held_before": 3.0585671048470884,
+                "held_after": 2.0954491936634794,
+                "no_optimization": 40.409388804524035,
+                "candidate": 2.095221530207448
+              }
+            },
+            {
+              "frame": 5,
+              "distance": 14.1748333378484,
+              "before": {
+                "after": 3,
+                "before": 1
+              },
+              "after": {
+                "after": 2,
+                "before": 2
+              },
+              "contrast_step_percent": {
+                "source": 24.76953996930111,
+                "held_before": 2.252282856087744,
+                "held_after": 4.1966167589468055,
+                "no_optimization": 24.76953996930111,
+                "candidate": 4.1966167589468055
+              }
+            }
+          ],
+          "optimization_pixel_equal": true
+        },
+        "woody_near": {
+          "switches": [
+            {
+              "frame": 5,
+              "distance": 17.6935416723105,
+              "before": {
+                "after": 4
+              },
+              "after": {
+                "after": 2,
+                "before": 2
+              },
+              "contrast_step_percent": {
+                "source": 31.41532792731555,
+                "held_before": 3.228952600626276,
+                "held_after": 2.7140594899485317,
+                "no_optimization": 31.41532792731555,
+                "candidate": 2.714028759759314
+              }
+            }
+          ],
+          "optimization_pixel_equal": true
+        },
+        "bush_outer": {
+          "switches": [
+            {
+              "frame": 5,
+              "distance": 56.3993333513935,
+              "before": {
+                "after": 4
+              },
+              "after": {
+                "after": 2,
+                "before": 2
+              },
+              "contrast_step_percent": {
+                "source": 1.5195867650139472,
+                "held_before": 0.5179508434309368,
+                "held_after": 0.7704054068953351,
+                "no_optimization": 1.5195867650139472,
+                "candidate": 0.7704054068953351
+              }
+            }
+          ],
+          "optimization_pixel_equal": true
+        },
+        "twig_outer": {
+          "switches": [
+            {
+              "frame": 4,
+              "distance": 56.6993333513935,
+              "before": {
+                "after": 4
+              },
+              "after": {
+                "after": 2,
+                "before": 2
+              },
+              "contrast_step_percent": {
+                "source": 3.4770354350947477,
+                "held_before": -1.670957400301161,
+                "held_after": -2.478174163527587,
+                "no_optimization": 3.4770354350947477,
+                "candidate": -2.4790385194901883
+              }
+            }
+          ],
+          "optimization_pixel_equal": true
+        },
+        "woody_outer": {
+          "switches": [
+            {
+              "frame": 5,
+              "distance": 56.3993333513935,
+              "before": {
+                "after": 4
+              },
+              "after": {
+                "after": 2,
+                "before": 2
+              },
+              "contrast_step_percent": {
+                "source": -0.7099122031992388,
+                "held_before": -0.3913902378796609,
+                "held_after": -0.26361694809835384,
+                "no_optimization": -0.7099122031992388,
+                "candidate": -0.263410997357652
+              }
+            }
+          ],
+          "optimization_pixel_equal": true
+        }
+      }
+    }
+  ],
+  "fixed_real_scene": {
+    "run": "20261128T002409423934Z",
+    "receipt_sha256": "737ee07cc1ddadcdf7e00b82f0b0ba95757cd81c060ba3a598af696f56bc4d10",
+    "failures": 0,
+    "checks": 522,
+    "brightness_percent": -0.010882681948676254,
+    "gpu_abba_groups": [
+      {
+        "baseline": {
+          "samples": 240,
+          "median_ms": 7.075000047683716,
+          "p95_ms": 7.46700000762939
+        },
+        "candidate": {
+          "samples": 240,
+          "median_ms": 7.212000131607055,
+          "p95_ms": 7.5479998588562
+        },
+        "median_delta_ms": 0.13700008392333896,
+        "p95_delta_ms": 0.0809998512268102
+      },
+      {
+        "baseline": {
+          "samples": 240,
+          "median_ms": 7.456499814987185,
+          "p95_ms": 7.98899984359741
+        },
+        "candidate": {
+          "samples": 240,
+          "median_ms": 7.38499999046326,
+          "p95_ms": 7.88399982452393
+        },
+        "median_delta_ms": -0.0714998245239249,
+        "p95_delta_ms": -0.10500001907348011
+      },
+      {
+        "baseline": {
+          "samples": 240,
+          "median_ms": 7.531999826431275,
+          "p95_ms": 8.07499980926514
+        },
+        "candidate": {
+          "samples": 240,
+          "median_ms": 7.534499883651735,
+          "p95_ms": 8.0649995803833
+        },
+        "median_delta_ms": 0.0025000572204598726,
+        "p95_delta_ms": -0.01000022888183949
+      }
+    ],
+    "scope": "Entire raw 1080p viewport; deterministic camera counterfactual, separate from physical gameplay. Paired GPU windows exclude readback; frozen local population only.",
+    "world_input": {
+      "camera_origin": "(1786.486, 51.38006, 1643.628)",
+      "materials": 13,
+      "pages_after": [
+        {
+          "bytes": 20800,
+          "pages": 197,
+          "shadows": 39
+        },
+        {
+          "bytes": 256640,
+          "pages": 343,
+          "shadows": 64
+        },
+        {
+          "bytes": 3528384,
+          "pages": 365,
+          "shadows": 30
+        },
+        {
+          "bytes": 3200,
+          "pages": 42,
+          "shadows": 4
+        },
+        {
+          "bytes": 2560,
+          "pages": 34,
+          "shadows": 4
+        },
+        {
+          "bytes": 3776,
+          "pages": 47,
+          "shadows": 10
+        },
+        {
+          "bytes": 30400,
+          "pages": 214,
+          "shadows": 49
+        },
+        {
+          "bytes": 20928,
+          "pages": 196,
+          "shadows": 45
+        },
+        {
+          "bytes": 18176,
+          "pages": 169,
+          "shadows": 39
+        }
+      ],
+      "pages_before": [
+        {
+          "bytes": 20800,
+          "pages": 197,
+          "shadows": 39
+        },
+        {
+          "bytes": 256640,
+          "pages": 343,
+          "shadows": 64
+        },
+        {
+          "bytes": 3528384,
+          "pages": 365,
+          "shadows": 30
+        },
+        {
+          "bytes": 3200,
+          "pages": 42,
+          "shadows": 4
+        },
+        {
+          "bytes": 2560,
+          "pages": 34,
+          "shadows": 4
+        },
+        {
+          "bytes": 3776,
+          "pages": 47,
+          "shadows": 10
+        },
+        {
+          "bytes": 30400,
+          "pages": 214,
+          "shadows": 49
+        },
+        {
+          "bytes": 20928,
+          "pages": 196,
+          "shadows": 45
+        },
+        {
+          "bytes": 18176,
+          "pages": 169,
+          "shadows": 39
+        }
+      ],
+      "population": 69511,
+      "sha256": "692507bdf037bb70dba01e37e0dbc88807d85f82453f8b2ab6fcf7c1f87165c9",
+      "slot": "Homestead_Valley"
+    }
+  },
+  "physical_gameplay": {
+    "run": "20261128T004314645305Z",
+    "receipt_sha256": "d8d17393df3e9f8e8ac4bb0b1c17c7774774f8eec078fa49a22ab581810715b5",
+    "report_sha256": "28c5bcb21f0830aac81b86dc913cf5e5007ea8d2bec2d4140c95f87b73db9412",
+    "failures": [],
+    "travelled_m": 280.34160514921,
+    "physics_frames": 3058,
+    "grounded_frames": 3058,
+    "invalid_play_frames": 0,
+    "forest": {
+      "enabled": true,
+      "owners": 1024,
+      "pending": 0,
+      "ready": true,
+      "reconcile": 0,
+      "rejected": 0,
+      "resample": 0,
+      "total": 1024
+    },
+    "raw_frames": 192,
+    "raw_hashes_independently_equal": true,
+    "consecutive_frame_ids": true,
+    "capture_interval_ms": {
+      "median": 21,
+      "p95": 30,
+      "span": 4139
+    },
+    "cover_crossings": [
+      {
+        "distance": 14.0228633880615,
+        "frame": 2,
+        "from": 2,
+        "species": 7,
+        "to": 1
+      },
+      {
+        "distance": 56.1515922546387,
+        "frame": 7,
+        "from": 3,
+        "species": 6,
+        "to": 2
+      },
+      {
+        "distance": 56.1466178894043,
+        "frame": 7,
+        "from": 3,
+        "species": 6,
+        "to": 2
+      },
+      {
+        "distance": 56.2791023254395,
+        "frame": 7,
+        "from": 3,
+        "species": 7,
+        "to": 2
+      },
+      {
+        "distance": 21.1098232269287,
+        "frame": 8,
+        "from": 2,
+        "species": 0,
+        "to": 1
+      },
+      {
+        "distance": 17.49951171875,
+        "frame": 34,
+        "from": 2,
+        "species": 1,
+        "to": 1
+      },
+      {
+        "distance": 56.1939392089844,
+        "frame": 35,
+        "from": 3,
+        "species": 7,
+        "to": 2
+      },
+      {
+        "distance": 56.2589530944824,
+        "frame": 40,
+        "from": 3,
+        "species": 6,
+        "to": 2
+      },
+      {
+        "distance": 56.2523193359375,
+        "frame": 49,
+        "from": 3,
+        "species": 6,
+        "to": 2
+      },
+      {
+        "distance": 17.5544128417969,
+        "frame": 53,
+        "from": 2,
+        "species": 1,
+        "to": 1
+      },
+      {
+        "distance": 17.5789165496826,
+        "frame": 59,
+        "from": 2,
+        "species": 1,
+        "to": 1
+      },
+      {
+        "distance": 56.1535797119141,
+        "frame": 63,
+        "from": 3,
+        "species": 7,
+        "to": 2
+      },
+      {
+        "distance": 17.5677642822266,
+        "frame": 103,
+        "from": 2,
+        "species": 1,
+        "to": 1
+      },
+      {
+        "distance": 56.2959747314453,
+        "frame": 105,
+        "from": 3,
+        "species": 6,
+        "to": 2
+      },
+      {
+        "distance": 56.2958869934082,
+        "frame": 107,
+        "from": 3,
+        "species": 8,
+        "to": 2
+      },
+      {
+        "distance": 17.5777626037598,
+        "frame": 120,
+        "from": 2,
+        "species": 8,
+        "to": 1
+      },
+      {
+        "distance": 56.2245445251465,
+        "frame": 122,
+        "from": 3,
+        "species": 8,
+        "to": 2
+      },
+      {
+        "distance": 56.2017669677734,
+        "frame": 123,
+        "from": 3,
+        "species": 8,
+        "to": 2
+      },
+      {
+        "distance": 56.2715911865234,
+        "frame": 126,
+        "from": 3,
+        "species": 7,
+        "to": 2
+      },
+      {
+        "distance": 56.242603302002,
+        "frame": 129,
+        "from": 3,
+        "species": 6,
+        "to": 2
+      },
+      {
+        "distance": 56.2847671508789,
+        "frame": 134,
+        "from": 3,
+        "species": 6,
+        "to": 2
+      },
+      {
+        "distance": 56.157829284668,
+        "frame": 134,
+        "from": 3,
+        "species": 7,
+        "to": 2
+      },
+      {
+        "distance": 56.1807594299316,
+        "frame": 145,
+        "from": 3,
+        "species": 7,
+        "to": 2
+      },
+      {
+        "distance": 56.2979736328125,
+        "frame": 146,
+        "from": 3,
+        "species": 7,
+        "to": 2
+      },
+      {
+        "distance": 56.2605667114258,
+        "frame": 149,
+        "from": 3,
+        "species": 6,
+        "to": 2
+      },
+      {
+        "distance": 17.5890960693359,
+        "frame": 160,
+        "from": 2,
+        "species": 6,
+        "to": 1
+      },
+      {
+        "distance": 56.2765045166016,
+        "frame": 162,
+        "from": 3,
+        "species": 6,
+        "to": 2
+      },
+      {
+        "distance": 17.5768871307373,
+        "frame": 165,
+        "from": 2,
+        "species": 6,
+        "to": 1
+      },
+      {
+        "distance": 17.5810546875,
+        "frame": 172,
+        "from": 2,
+        "species": 1,
+        "to": 1
+      },
+      {
+        "distance": 56.1812896728516,
+        "frame": 177,
+        "from": 3,
+        "species": 7,
+        "to": 2
+      },
+      {
+        "distance": 17.5226554870605,
+        "frame": 180,
+        "from": 2,
+        "species": 1,
+        "to": 1
+      },
+      {
+        "distance": 56.2539443969727,
+        "frame": 181,
+        "from": 3,
+        "species": 8,
+        "to": 2
+      },
+      {
+        "distance": 56.2287750244141,
+        "frame": 183,
+        "from": 3,
+        "species": 7,
+        "to": 2
+      }
+    ],
+    "visible_fade_band_frames_by_species": {
+      "0": 16,
+      "1": 127,
+      "5": 19,
+      "6": 186,
+      "7": 174,
+      "8": 126
+    },
+    "grass_boundary_crossings": 5,
+    "shadow_enable_events": 31,
+    "nearby_control": {
+      "exact_local_restore": true,
+      "legacy_assignments": [
+        {
+          "same_pixels": false,
+          "same_transform": false
+        },
+        {
+          "same_pixels": false,
+          "same_transform": false
+        },
+        {
+          "same_pixels": false,
+          "same_transform": false
+        }
+      ],
+      "near_pixels_equal": true
+    },
+    "runtime_hashes": {
+      "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "5fd4f5acf7c8d27af2b339952eb1b749754b1d0403670c4f5c3f969e4e9bb8ac",
+      "res://addons/world_ecosystem/filtered_detail.gd": "4496e24ccad732c472373d8549b72034d666388efbb1cd604f6c731fbee72342",
+      "res://addons/world_ecosystem/filtered_fern.gd": "ab1bafb4835e88f8f271816f5bbfdde1b16688f04ae7f4693b3c09108242a7c5",
+      "res://addons/world_ecosystem/filtered_fern.gdshader": "467f2fa3b97e976150e43432234d4cb73446a83a307aa3f17113e0a415f86ea7",
+      "res://addons/world_ecosystem/filtered_grass.gd": "f38d5a74e10e687cfa49002e95ca10160823ae13f16f0248069267563992861d",
+      "res://addons/world_ecosystem/filtered_grass.gdshader": "84bac82dc67bba22e43438072246093b2e0e2e466f5c28301ad6acda462485b5",
+      "res://addons/world_ecosystem/filtered_stone.gdshader": "02c458ee0d095ba48f38b7663cfdd7b1724a8e7cbc8724c45acc4644a5f5dfa5",
+      "res://addons/world_ecosystem/ground_cover.gd": "355303f30d4e3c43c34401bb6c91674d13c5f51822095803236f4ef5db0a6150",
+      "res://addons/world_ecosystem/opaque_lod_fade.gd": "48ec5ddb42adf02a28e4f8566bf4d79c2149ccecc520c29d840096a3b9e05452",
+      "res://addons/world_ecosystem/woodland.gdshader": "28e90530c5a1f2f012f83634e4ffe3239354c75b20ea851b4953953fdbe0bc5b",
+      "res://addons/world_ecosystem/woodland_mesh.gd": "ce09fd5e7db5ad864301c3e8a4d7a343350427ffe71269d493fcdec931d8dddc",
+      "res://tests/fixtures/vegetation_capture.gd": "210f4ebc067cdc524dca4b15dd5e2ccd6e1c73d6d5f75570222cb70d1e2f4689",
+      "res://tests/vegetation_gameplay.gd": "27357270a3b917cb0ae650e2c639384aa81395cdae1c44a8f00005232a6acd36"
+    },
+    "source_save_sha256": "692507bdf037bb70dba01e37e0dbc88807d85f82453f8b2ab6fcf7c1f87165c9",
+    "moving_abba_groups": [
+      {
+        "baseline": {
+          "samples": 152,
+          "median_ms": 6.189500093460085,
+          "p95_ms": 6.58199977874756
+        },
+        "candidate": {
+          "samples": 151,
+          "median_ms": 6.24599981307983,
+          "p95_ms": 6.52600002288818
+        },
+        "median_delta_ms": 0.05649971961974565,
+        "p95_delta_ms": -0.05599975585938033
+      },
+      {
+        "baseline": {
+          "samples": 152,
+          "median_ms": 6.356499910354615,
+          "p95_ms": 6.52299976348877
+        },
+        "candidate": {
+          "samples": 151,
+          "median_ms": 6.62400007247925,
+          "p95_ms": 6.97599983215332
+        },
+        "median_delta_ms": 0.2675001621246347,
+        "p95_delta_ms": 0.4530000686645499
+      },
+      {
+        "baseline": {
+          "samples": 151,
+          "median_ms": 6.44099998474121,
+          "p95_ms": 6.87599992752075
+        },
+        "candidate": {
+          "samples": 150,
+          "median_ms": 6.309499979019165,
+          "p95_ms": 6.77799987792969
+        },
+        "median_delta_ms": -0.131500005722045,
+        "p95_delta_ms": -0.09800004959106001
+      }
+    ],
+    "moving_cost_limit": "Real movement advances through different positions; matched frozen-scene comparison is the better isolated incremental-cost measurement. Neither is universal qualification.",
+    "media": {
+      "video": "gameplay.mp4",
+      "contact": "motion-review.png",
+      "context": "walking.png",
+      "scope": "Video/contact are compressed visual review; metrics/hash validation use uncompressed RGB. Movie encodes at 60 fps while capture spans 4.139 seconds; encoding rate is not measured game FPS."
+    },
+    "peak_test_ram_warning_gib": 5.82,
+    "scope": "Source gameplay with held W/D, physical collision, normal streaming and live actors. Scripted yaw steering and offscreen input admission only. Independent runs are not frame-identical. GPU comparison uses measure phases without image readback; capture_walk is excluded."
+  },
+  "retained_failures": {
+    "20261128T001014936068Z": "Packet cap; incomplete.",
+    "20261128T001228641962Z": "Obsolete LOD-introspection call and packet cap; invalid.",
+    "20261128T002911081900Z": "Physical walk complete but failed old stone-to-proxy gate outside changed opaque handoff scope; failed archive attempt preserved evidence.",
+    "20261128T003643186309Z": "No engine launch: archive budget over by unpublished duplicate chunks. Recovery reverified and removed only two redundant chunks; original captures retained."
+  },
+  "remaining": [
+    {
+      "item": "Filtered representation and horizon handoffs",
+      "why": "Separate opaque/transparent representations and native surface selection require coordinated overlap, coverage and shadow preservation. Current opaque buffer fade does not cover them.",
+      "next": "Controlled per-root representation overlap experiment; exact nearby/shadow parity, fixed-population motion and paired GPU tests before adoption."
+    },
+    {
+      "item": "Ground-cover shadow cutoffs",
+      "why": "31 hard shadow enable events witnessed; geometric fade does not establish their visual impact.",
+      "next": "Same-camera frozen caster/control sweep to isolate contribution; then compact shadow fade if justified."
+    },
+    {
+      "item": "Human moving review",
+      "why": "Numerical and scripted movement gates do not judge perceived grain/silhouette across views.",
+      "next": "Human validation completed on 2026-11-28; retain broader coverage and GPU-tail follow-ups."
+    },
+    {
+      "item": "Broader conditions and prior GPU-tail target",
+      "why": "Current cost data are local 1080p measurements.",
+      "next": "Different projection/resolution/dense scenes and prior detail-tail regression route."
+    }
+  ],
+  "percentile_method": "Nearest rank: sorted[ceil(0.95*N)-1].",
+  "launcher_unit_tests": {
+    "command": "python tools/test_run_godot_check.py",
+    "passed": 8
+  },
+  "approval": {
+    "date": "2026-11-28",
+    "user_statement": "Let's commit and push now as human verified.",
+    "scope": "Latest source playtest: nearby bands absent while standing still and walking; current vegetation fade snapshot accepted. Broader projections and earlier GPU-tail target remain open.",
+    "milestone_tag": "playtest/vegetation-fades-2026-11-28",
+    "shared_native_binaries_included": false,
+    "native_restore_requirement": "Rebuild the structures addon from committed source for the surface_lod_begin page-overlap change; shared working DLLs also contain unrelated native work."
+  }
+}

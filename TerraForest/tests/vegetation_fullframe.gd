@@ -10,6 +10,9 @@ var transition_review := false
 var transition_cost: Array = []
 var port := 0
 var frame_count := 48
+var seamless_review:=false
+var cover_review:=false
+var cover_pairs:Array=[]
 var near_review := false
 var near_meshes:Dictionary={}
 var near_page_witness:Array=[]
@@ -17,6 +20,13 @@ var near_parity := false
 var near_cost_only := false
 
 func select_near_mesh(candidate:bool) -> void:
+	if cover_review:
+		for species in cover_pairs.size():
+			var selected:ArrayMesh=cover_pairs[species][1 if candidate else 0]
+			var owner:Node=game.ground_cover.batches[species]
+			check(owner.configure_asset("ground_cover/%d/v1"%species,selected),"cover mesh selection")
+			check(preload("res://addons/world_ecosystem/filtered_grass.gd").configure_batch(owner,selected),"cover surface selection")
+		return
 	var mesh:ArrayMesh=near_meshes.candidate if candidate else near_meshes.baseline
 	var batch:Node=game.ground_cover.batches[2]
 	check(batch.configure_asset("ground_cover/2/v1",mesh),"grass mesh selection")
@@ -120,13 +130,22 @@ func compare(_label: String) -> void:
 	Engine.time_scale = 0.0
 	if near_review:
 		near_meshes.candidate=game.ground_cover.preview_meshes[2]
-		near_meshes.baseline=Asset.build(2,true,true,false,true,false)
+		near_meshes.baseline=Asset.build(2,true,true,false,true,cover_review)
 		var baseline:ArrayMesh=near_meshes.baseline
 		Asset.set_grass_detail(baseline.surface_get_material(0),true)
 		for surface in baseline.get_surface_count():
 			var mat:ShaderMaterial=baseline.surface_get_material(surface)
 			mat.set_shader_parameter("distance_fade_start",92.0);mat.set_shader_parameter("distance_fade_end",124.0)
 			all_materials.append(mat);original_shaders[mat]=mat.shader
+	if cover_review:
+		for species in 9:
+			var baseline:ArrayMesh=Asset.build(species,true,true,false,species in [0,1,2,3,4,5],true if seamless_review else species==2)
+			if species==2:Asset.set_grass_detail(baseline.surface_get_material(0),true)
+			cover_pairs.append([baseline,game.ground_cover.preview_meshes[species]])
+			for surface in baseline.get_surface_count():
+				var mat:ShaderMaterial=baseline.surface_get_material(surface)
+				mat.set_shader_parameter("distance_fade_start",92.0);mat.set_shader_parameter("distance_fade_end",124.0)
+				all_materials.append(mat);original_shaders[mat]=mat.shader
 	for mesh: ArrayMesh in game.ground_cover.preview_meshes:
 		for surface in mesh.get_surface_count():
 			var material := mesh.surface_get_material(surface) as ShaderMaterial
@@ -237,6 +256,8 @@ func run() -> void:
 		if argument.begins_with("--check-evidence-dir="): output = argument.trim_prefix("--check-evidence-dir=")
 		if argument=="--stone-transition-review":transition_review=true
 		if argument=="--near-transition-review":near_review=true
+		if argument=="--cover-lod-review":near_review=true;cover_review=true
+		if argument=="--seamless-review":near_review=true;cover_review=true;seamless_review=true
 		if argument=="--near-parity":near_review=true;near_parity=true
 		if argument=="--near-cost-only":near_review=true;near_cost_only=true
 		if argument.begins_with("--fullframe-port="): port = int(argument.trim_prefix("--fullframe-port="))
@@ -248,7 +269,8 @@ func run() -> void:
 	FileAccess.open(output.path_join("woodland.gdshader"),FileAccess.WRITE).store_string(FileAccess.get_file_as_string(AFTER))
 	Engine.max_fps = 60
 	await actual_world(slot)
-	results.merge({"checks":checks,"failures":failures,"transition_cost":transition_cost,"near_page_witness":near_page_witness,"near_review":near_review,"scope":"Entire raw 1080p viewport; deterministic camera counterfactual, separate from physical gameplay. Paired GPU windows exclude readback; frozen local population only."})
+	if cover_review:FileAccess.open(output.path_join("RETAIN_READY"),FileAccess.WRITE).store_string("Cover handoff comparison retained for human moving validation.\n")
+	results.merge({"seamless_review":seamless_review,"cover_lod_review":cover_review,"checks":checks,"failures":failures,"transition_cost":transition_cost,"near_page_witness":near_page_witness,"near_review":near_review,"scope":"Entire raw 1080p viewport; deterministic camera counterfactual, separate from physical gameplay. Paired GPU windows exclude readback; frozen local population only."})
 	FileAccess.open(output.path_join("vegetation_fullframe.json"),FileAccess.WRITE).store_string(JSON.stringify(results,"  "))
 	if not FileAccess.file_exists("res://tests/vegetation_fullframe.gd.uid"):
 		FileAccess.open("res://tests/vegetation_fullframe.gd.uid",FileAccess.WRITE).store_string(ResourceUID.id_to_text(ResourceUID.create_id())+"\n")

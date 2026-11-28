@@ -44,6 +44,18 @@ var capture_count := 48
 var fullframe_port := 0
 var fullframe_token := ""
 var fullframe_peer := StreamPeerTCP.new()
+var representation_band_frames:Dictionary={}
+var representation_page_states:Dictionary={}
+var representation_events:Array=[]
+var near_bands_review:=false
+var seamless_review:=false
+var cover_review:=false
+var cover_pairs:Array=[]
+var cover_page_states:Dictionary={}
+var cover_shadow_states:Dictionary={}
+var cover_shadow_crossings:Array=[]
+var cover_crossings:Array=[]
+var cover_band_frames:Dictionary={}
 var near_review := false
 var near_candidate:ArrayMesh
 var near_baseline:ArrayMesh
@@ -59,7 +71,7 @@ func check_near_after_walk() -> void:
 	game.process_mode=Node.PROCESS_MODE_DISABLED;Engine.time_scale=0.0
 	var saved_shaders:Dictionary={}
 	var mats:Array=game.ground_cover.foliage_materials.duplicate()
-	for mesh in [near_candidate,near_baseline]:
+	for mesh in ([near_candidate,near_baseline] if not cover_review else cover_pairs.map(func(pair):return pair[0])):
 		for surface in mesh.get_surface_count():
 			if not mats.has(mesh.surface_get_material(surface)):mats.append(mesh.surface_get_material(surface))
 	for mat:ShaderMaterial in mats:
@@ -99,7 +111,74 @@ func check_near_after_walk() -> void:
 	for mat in saved_shaders:mat.shader=saved_shaders[mat]
 	game.process_mode=Node.PROCESS_MODE_INHERIT;Engine.time_scale=1.0
 
+func witness_representations() -> void:
+	# Test-only inspection of real instance buffers; never enabled in cost windows.
+	var eye:Vector3=game.camera.global_position
+	var metric:float=game.ground_cover._lod_metric
+	for species in 9:
+		var mesh:ArrayMesh=game.ground_cover.preview_meshes[species]
+		var proxy:bool=mesh.has_meta("surface_lod_begin")
+		var first:float=mesh.get_meta("surface_lod_begin",0.0)*metric
+		var last:float=(float(mesh.get_meta("surface_lod_error",0.0))-.0002)*metric
+		var shadow_begin:float=16.0 if species==2 else 36.0
+		var shadow_end:float=24.0 if species==2 else 48.0
+		var found:=0;var wanted:=(1 if proxy else 0)|2|(4 if species==2 else 0)
+		for page in game.ground_cover.batches[species].get_children():
+			if not page is MultiMeshInstance3D or not page.visible:continue
+			var box:AABB=page.global_transform*page.multimesh.get_aabb()
+			if not game.camera.is_position_in_frustum(box.get_center()):continue
+			var d:float=eye.distance_to(eye.clamp(box.position,box.end))
+			if d>85.0:continue
+			var shadow_key:String=str(page.get_instance_id())+"shadow"
+			var casting:bool=page.cast_shadow!=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			if representation_page_states.has(shadow_key) and representation_page_states[shadow_key]!=casting:
+				var remaining:=0.0
+				for i in page.multimesh.instance_count:
+					var origin:Vector3=(page.global_transform*page.multimesh.get_instance_transform(i)).origin
+					remaining=maxf(remaining,1.0-smoothstep(shadow_begin,shadow_end,Vector2(origin.x-eye.x,origin.z-eye.z).length()))
+				representation_events.append({"frame":captured,"species":species,"kind":"shadow","casts":casting,"distance":d,"maximum_remaining_coverage":remaining})
+			representation_page_states[shadow_key]=casting
+			for kind in (["proxy","horizon"] if species==2 else (["proxy"] if proxy else [])):
+				var key:String=str(page.get_instance_id())+kind
+				var beyond:bool=d>(.10*metric if kind=="horizon" else last+.0002*metric)
+				if representation_page_states.has(key) and representation_page_states[key]!=beyond:representation_events.append({"frame":captured,"species":species,"kind":kind,"beyond":beyond,"distance":d})
+				representation_page_states[key]=beyond
+			if found==wanted:continue
+			var reach:float=d+box.size.length()
+			var potential:=0
+			if proxy and d<last and reach>first:potential|=1
+			if d<shadow_end and reach>shadow_begin:potential|=2
+			if species==2 and d<.0998*metric and reach>.088*metric:potential|=4
+			if (potential & ~found)==0:continue
+			for i in page.multimesh.instance_count:
+				var origin:Vector3=(page.global_transform*page.multimesh.get_instance_transform(i)).origin
+				if not game.camera.is_position_in_frustum(origin):continue
+				var distance:float=origin.distance_to(eye)
+				if proxy and distance>first and distance<last:found|=1
+				var flat:float=Vector2(origin.x-eye.x,origin.z-eye.z).length()
+				if flat>shadow_begin and flat<shadow_end:found|=2
+				if species==2 and distance>.088*metric and distance<.0998*metric:found|=4
+				if (potential & ~found)==0:break
+		for pair in [[1,"proxy"],[2,"shadow"],[4,"horizon"]]:
+			if found & int(pair[0]):
+				var key:String=str(species)+"/"+pair[1]
+				representation_band_frames[key]=int(representation_band_frames.get(key,0))+1
+
 func select_near(candidate:bool) -> void:
+	if cover_review:
+		near_cost_mode="candidate" if candidate else "baseline"
+		var cover:Node=game.ground_cover
+		for species in cover_pairs.size():
+			var selected:ArrayMesh=cover_pairs[species][1 if candidate else 0]
+			var previous_mesh:ArrayMesh=cover.preview_meshes[species]
+			for surface in previous_mesh.get_surface_count():cover.foliage_materials.erase(previous_mesh.surface_get_material(surface))
+			for surface in selected.get_surface_count():cover.foliage_materials.append(selected.surface_get_material(surface))
+			cover.preview_meshes[species]=selected
+			if species==2:cover.grass_material=selected.surface_get_material(0)
+			check(cover.batches[species].configure_asset("ground_cover/%d/v1"%species,selected),"cover comparison mesh")
+			check(preload("res://addons/world_ecosystem/filtered_grass.gd").configure_batch(cover.batches[species],selected),"cover comparison surfaces")
+		cover._lod_metric=-1.0
+		return
 	near_cost_mode="candidate" if candidate else "baseline"
 	var cover:Node=game.ground_cover
 	var mesh:ArrayMesh=near_candidate if candidate else near_baseline
@@ -120,7 +199,7 @@ func check(value: bool, message: String) -> void:
 
 func write_bytes(name: String, bytes: PackedByteArray) -> void:
 	evidence_bytes+=bytes.size()
-	if evidence_bytes>16*1024*1024:
+	if evidence_bytes>(6 if cover_review else 16)*1024*1024:
 		push_error("Gameplay evidence exceeds admitted capture cap");quit(1);return
 	FileAccess.open(output.path_join(name),FileAccess.WRITE).store_buffer(bytes)
 
@@ -199,6 +278,32 @@ func collect_frame() -> void:
 					var distance:float=origin.distance_to(eye)
 					if distance>.01705*metric and distance<.0198*metric and game.camera.is_position_in_frustum(origin):found_band=true;break
 		if found_band:near_band_frames+=1
+	if cover_review and phase=="capture_walk" and captured<capture_count:
+		var eye:Vector3=game.camera.global_position
+		var metric:float=game.ground_cover._lod_metric
+		for species in [0,1,3,4,5,6,7,8]:
+			var edges:Vector4=game.ground_cover.preview_meshes[species].surface_get_material(0).get_shader_parameter("cover_lod_edges")
+			var found_band:=false
+			for page in game.ground_cover.batches[species].get_children():
+				if not page is MultiMeshInstance3D or not page.visible:continue
+				var box:AABB=page.global_transform*page.multimesh.get_aabb()
+				if not game.camera.is_position_in_frustum(box.get_center()):continue
+				var d:float=eye.distance_to(eye.clamp(box.position,box.end))
+				if d>65:continue
+				var tier:int=1 if d<(edges.y+.0002)*metric else (2 if species not in [6,7,8] or d<.08*metric else 3)
+				var id:int=page.get_instance_id()
+				var casts:int=page.cast_shadow
+				if cover_shadow_states.has(id) and cover_shadow_states[id]!=casts:cover_shadow_crossings.append({"species":species,"frame":captured,"distance":d,"casts":casts})
+				cover_shadow_states[id]=casts
+				if cover_page_states.has(id) and cover_page_states[id]!=tier:cover_crossings.append({"species":species,"frame":captured,"from":cover_page_states[id],"to":tier,"distance":d})
+				cover_page_states[id]=tier
+				if not found_band:
+					for i in page.multimesh.instance_count:
+						var origin:Vector3=(page.global_transform*page.multimesh.get_instance_transform(i)).origin
+						var rd:float=origin.distance_to(eye)/metric
+						if ((rd>edges.x and rd<edges.y) or (species in [6,7,8] and rd>edges.z and rd<edges.w)) and game.camera.is_position_in_frustum(origin):found_band=true;break
+			if found_band:cover_band_frames[species]=int(cover_band_frames.get(species,0))+1
+	if seamless_review and phase=="capture_walk" and captured<capture_count:witness_representations()
 	if approach_review and phase=="capture_walk":
 		var mesh: ArrayMesh=game.ground_cover.preview_meshes[0]
 		var camera: Camera3D=game.camera
@@ -229,9 +334,10 @@ func walk(label: String, seconds: float, turn_speed := 0.0) -> void:
 	while Time.get_ticks_msec()<end:
 		game.app_focused=true
 		var now := Time.get_ticks_usec()
-		game.player.rotation.y+=turn_speed*(now-last)/1000000.0;last=now
+		game.player.rotation.y+=(0.0 if near_bands_review and label=="capture_walk" and captured<capture_count/2 else turn_speed)*(now-last)/1000000.0;last=now
 		await RenderingServer.frame_post_draw
 		frames+=1
+		if label=="capture_walk" and near_bands_review and captured==capture_count/2:key(KEY_W if approach_review else KEY_D,true)
 		if label=="capture_walk" and captured<capture_count:
 			capture_frame_ids.append(Engine.get_frames_drawn())
 			asynchronous.request(captured);captured+=1
@@ -245,6 +351,9 @@ func run() -> void:
 		if argument=="--opaque-control":control=true
 		if argument=="--approach-review":approach_review=true
 		if argument=="--near-transition-review":near_review=true
+		if argument=="--cover-lod-review":near_review=true;cover_review=true
+		if argument=="--near-bands-review":near_bands_review=true;approach_review=true
+		if argument=="--seamless-review":near_review=true;cover_review=true;seamless_review=true
 		if argument=="--previous-filter-control":previous_control=true
 		if argument=="--fern-trial":fern_trial=true
 		if argument=="--fern-cluster-trial":fern_cluster_trial=true
@@ -254,7 +363,7 @@ func run() -> void:
 	write_bytes("vegetation_gameplay.gd",FileAccess.get_file_as_bytes("res://tests/vegetation_gameplay.gd"))
 	write_bytes("vegetation_capture.gd",FileAccess.get_file_as_bytes("res://tests/fixtures/vegetation_capture.gd"))
 	runtime_hashes["res://tests/fixtures/vegetation_capture.gd"]=FileAccess.get_sha256("res://tests/fixtures/vegetation_capture.gd")
-	for path in ["res://addons/structures/bin/structures.windows.template_debug.x86_64.dll","res://addons/world_ecosystem/filtered_grass.gd","res://addons/world_ecosystem/filtered_grass.gdshader","res://addons/world_ecosystem/filtered_fern.gd","res://addons/world_ecosystem/filtered_fern.gdshader","res://addons/world_ecosystem/filtered_detail.gd","res://addons/world_ecosystem/filtered_stone.gdshader","res://addons/world_ecosystem/woodland_mesh.gd","res://addons/world_ecosystem/ground_cover.gd","res://addons/world_ecosystem/woodland.gdshader","res://tests/vegetation_gameplay.gd"]:
+	for path in ["res://addons/world_ecosystem/proxy_projection.gdshaderinc","res://addons/structures/bin/structures.windows.template_debug.x86_64.dll","res://addons/world_ecosystem/opaque_lod_fade.gd","res://addons/world_ecosystem/representation_fade.gd","res://addons/world_ecosystem/filtered_grass.gd","res://addons/world_ecosystem/filtered_grass.gdshader","res://addons/world_ecosystem/filtered_fern.gd","res://addons/world_ecosystem/filtered_fern.gdshader","res://addons/world_ecosystem/filtered_detail.gd","res://addons/world_ecosystem/filtered_stone.gdshader","res://addons/world_ecosystem/woodland_mesh.gd","res://addons/world_ecosystem/ground_cover.gd","res://addons/world_ecosystem/woodland.gdshader","res://tests/vegetation_gameplay.gd"]:
 		runtime_hashes[path]=FileAccess.get_sha256(path)
 	for name in ["filtered_fern.gd","filtered_fern.gdshader","filtered_detail.gd","filtered_stone.gdshader"]:write_bytes(name,FileAccess.get_file_as_bytes("res://addons/world_ecosystem/"+name))
 	var save := "user://worlds/"+slot+".trw"
@@ -284,25 +393,38 @@ func run() -> void:
 	initial_forest=game.ecosystem.coverage_status()
 	if near_review:
 		near_candidate=game.ground_cover.preview_meshes[2]
-		near_baseline=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(2,true,true,false,true,false)
+		near_baseline=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(2,true,true,false,true,cover_review)
 		preload("res://addons/world_ecosystem/woodland_mesh.gd").set_grass_detail(near_baseline.surface_get_material(0),game.ground_cover.grass_texture_enabled)
 		for surface in near_baseline.get_surface_count():
 			near_baseline.surface_get_material(surface).set_shader_parameter("distance_fade_start",92.0)
 			near_baseline.surface_get_material(surface).set_shader_parameter("distance_fade_end",124.0)
 		check(near_candidate.get_meta("near_lod_transition",false),"normal source enables per-plant near fade")
+	if cover_review:
+		for species in 9:
+			var baseline:ArrayMesh=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(species,true,true,false,species in [0,1,2,3,4,5],true if seamless_review else species==2)
+			if species==2:preload("res://addons/world_ecosystem/woodland_mesh.gd").set_grass_detail(baseline.surface_get_material(0),game.ground_cover.grass_texture_enabled)
+			for surface in baseline.get_surface_count():
+				baseline.surface_get_material(surface).set_shader_parameter("distance_fade_start",92.0)
+				baseline.surface_get_material(surface).set_shader_parameter("distance_fade_end",124.0)
+			cover_pairs.append([baseline,game.ground_cover.preview_meshes[species]])
+			if species!=2:check(game.ground_cover.preview_meshes[species].get_meta("opaque_lod_fade",false),"normal source smooths opaque species "+str(species))
 	check(initial_forest.owners==1024,"normal gameplay starts with all 1024 forest cells resident")
 	if not (control or previous_control or fern_trial or fern_cluster_trial):
 		var fern_mesh: ArrayMesh=game.ground_cover.preview_meshes[1]
 		check(fern_mesh.get_surface_count()==2 and fern_mesh.surface_get_array_len(1)==28,"normal source uses seven far fronds without a test override")
 		var far_material: ShaderMaterial=fern_mesh.surface_get_material(1)
-		check(far_material.shader==preload("res://addons/world_ecosystem/filtered_fern.gdshader") and game.ground_cover.foliage_materials.has(far_material),"normal runtime owns the production fern shader and camera/clock updates")
+		var fern_code:String=preload("res://addons/world_ecosystem/filtered_fern.gdshader").code.replace("const bool proxy_lod_transition = false;","const bool proxy_lod_transition = true;")
+		check(far_material.shader.code==fern_code and game.ground_cover.foliage_materials.has(far_material),"normal runtime owns the expected fern proxy variant and camera/clock updates")
+		check(far_material.get_shader_parameter("cover_clock")>0.0 and far_material.get_shader_parameter("near_lod_metric")==game.ground_cover._lod_metric,"production fern receives live clock and projection updates")
 		check(far_material.get_shader_parameter("distance_fade_start")==92.0 and far_material.get_shader_parameter("distance_fade_end")==124.0,"production far fern uses the normal visibility fade")
 		for species in [0,3,4,5]:
 			var detail_mesh: ArrayMesh=game.ground_cover.preview_meshes[species]
 			check(detail_mesh.get_surface_count()==2 and detail_mesh.surface_get_array_len(1)==(4 if species==0 else 16),"normal source uses bounded far detail geometry: "+str(species))
 			var detail_material: ShaderMaterial=detail_mesh.surface_get_material(1)
 			var expected: Shader=preload("res://addons/world_ecosystem/filtered_stone.gdshader") if species==0 else preload("res://addons/world_ecosystem/filtered_fern.gdshader")
-			check(detail_material.shader==expected and game.ground_cover.foliage_materials.has(detail_material),"production detail shader and clock ownership: "+str(species))
+			var expected_code:String=expected.code.replace("const bool proxy_lod_transition = false;","const bool proxy_lod_transition = true;")
+			check(detail_material.shader.code==expected_code and game.ground_cover.foliage_materials.has(detail_material),"production detail variant and clock ownership: "+str(species))
+			check(detail_material.get_shader_parameter("cover_clock")>0.0 and detail_material.get_shader_parameter("near_lod_metric")==game.ground_cover._lod_metric,"production detail receives live clock and projection updates: "+str(species))
 			check(detail_material.get_shader_parameter("distance_fade_start")==92.0 and detail_material.get_shader_parameter("distance_fade_end")==124.0,"production detail visibility fade: "+str(species))
 	if control or previous_control or fern_trial or fern_cluster_trial:
 		for species in [0,3,4,5]:
@@ -344,7 +466,7 @@ func run() -> void:
 		write_bytes("fern_filtered.gd",FileAccess.get_file_as_bytes("res://tests/fixtures/fern_filtered.gd"))
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	game.session_menu.set_open(approach_review);game._clear_motion();game.fly=false
-	game.camera.rotation.x=deg_to_rad(-12.0)
+	if not near_bands_review:game.camera.rotation.x=deg_to_rad(-12.0)
 	await walk("settling",6.0)
 	observe_preparation("after_settling")
 	if not playable():check(false,"scene remains playable after settling");await finish();return
@@ -373,13 +495,28 @@ func run() -> void:
 	captures.put_u32(capture_count)
 	capture_start=game.player.position
 	game.session_menu.set_open(false)
-	key(KEY_W if approach_review else KEY_D,true)
+	if not near_bands_review:key(KEY_W if approach_review else KEY_D,true)
 	await walk("capture_walk",6.0,0.0 if approach_review else 0.04)
 	if approach_review:
-		check(stone_page_transitions.any(func(row):return row.capture_index<capture_count),"visible stone LOD crossings exercised within captured physical approach")
+		if not (cover_review or near_bands_review):check(stone_page_transitions.any(func(row):return row.capture_index<capture_count),"visible stone LOD crossings exercised within captured physical approach")
 		check(game.player.position.distance_to(capture_start)>8.0,"capture advances physically rather than waiting or turning in place")
 	check(asynchronous.received==capture_count and not asynchronous.context.is_empty() and asynchronous.errors.is_empty(),"all bounded asynchronous captures complete before cost measurement")
-	key(KEY_W if approach_review else KEY_D,false);key(KEY_W,true)
+	key(KEY_W if approach_review else KEY_D,false)
+	if near_bands_review:
+		game.yaw=approach_heading();game.player.rotation.y=game.yaw
+		observe_preparation("near_bands_clear_departure")
+	key(KEY_W,true)
+	if cover_review:
+		var witnessed:Dictionary={}
+		for row in cover_crossings:witnessed[row.species]=true
+		check(witnessed.size()>=4 and cover_band_frames.size()>=4,"walking capture crosses at least four changed species with visible fading plants")
+		check(cover_crossings.any(func(row):return row.from==3 or row.to==3) and cover_crossings.any(func(row):return row.from==1 or row.to==1),"capture exercises both first and later opaque handoffs")
+	if seamless_review:
+		check(representation_band_frames.get("2/proxy",0)>60 and representation_band_frames.get("2/horizon",0)>60,"visible grass occupies both farther representation fade bands during walking")
+		check(representation_events.any(func(row):return row.kind=="proxy") and representation_events.any(func(row):return row.kind=="horizon"),"captured physical motion crosses proxy and horizon batch cutoffs")
+		var shadow_events:Array=representation_events.filter(func(row):return row.kind=="shadow")
+		check(representation_band_frames.get("2/shadow",0)>60 and not shadow_events.is_empty(),"walking exercises gradual shadow coverage and old grouped caster cutoffs")
+		check(shadow_events.all(func(row):return row.maximum_remaining_coverage==0.0),"every grouped shadow toggle occurs after all affected roots are fully faded")
 	if near_review:
 		check(near_band_frames>100,"visible plants occupy the near fade band during physical capture")
 		check(near_page_transitions.any(func(row):return row.capture_index<capture_count),"physical capture crosses the old rectangular near-LOD boundary")
@@ -446,12 +583,21 @@ func finish() -> void:
 	result["initial_forest"]=initial_forest
 	result["detail_render_pages"]=detail_render_pages
 	result["approach_review"]=approach_review
+	result["seamless_review"]=seamless_review
+	result["representation_band_frames"]=representation_band_frames
+	result["representation_events"]=representation_events
+	result["cover_lod_review"]=cover_review
+	result["cover_band_frames"]=cover_band_frames
+	result["cover_crossings"]=cover_crossings
+	result["cover_shadow_crossings"]=cover_shadow_crossings
 	result["near_transition_review"]=near_review
 	result["near_band_capture_frames"]=near_band_frames
 	result["near_page_transitions"]=near_page_transitions
 	result["post_walk_near_control"]=post_walk_near_control
 	result["stone_page_transitions"]=stone_page_transitions
 	result["preparation"]=preparation;result["invalid_play_frames"]=invalid_play_frames
+	result["near_bands_review"]=near_bands_review
+	result["stationary_wind_capture_frames"]=capture_count/2 if near_bands_review else 0
 	result["route_setup"]="One pre-measurement normal teleport/floor-snap to (1740,0,1700); settle with normal pause menu; select clear departure away from resident enemies; no position changes during measurement" if approach_review else "saved pose"
 	result["previous_filter_control"]=previous_control
 	result["mode"]="fern_cluster_trial" if fern_cluster_trial else ("fern_trial" if fern_trial else ("previous_filtered" if previous_control else ("opaque" if control else "runtime_grass_fern_details")))
@@ -466,6 +612,8 @@ func finish() -> void:
 	var identity := "res://tests/vegetation_gameplay.gd.uid"
 	if not FileAccess.file_exists(identity):FileAccess.open(identity,FileAccess.WRITE).store_string(ResourceUID.id_to_text(ResourceUID.create_id())+"\n")
 	identity="res://tests/fixtures/vegetation_capture.gd.uid"
+	if not FileAccess.file_exists(identity):FileAccess.open(identity,FileAccess.WRITE).store_string(ResourceUID.id_to_text(ResourceUID.create_id())+"\n")
+	identity="res://addons/world_ecosystem/opaque_lod_fade.gd.uid"
 	if not FileAccess.file_exists(identity):FileAccess.open(identity,FileAccess.WRITE).store_string(ResourceUID.id_to_text(ResourceUID.create_id())+"\n")
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame
 	print("VEGETATION_GAMEPLAY failures=",failures.size());quit(0 if failures.is_empty() else 1)

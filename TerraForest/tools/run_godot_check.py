@@ -41,7 +41,17 @@ BOUNDED_CONTRACT_REPORTS = {
 }
 
 def planned_report_bytes(command):
-    if "res://tests/vegetation_near_transitions.gd" in command:
+    if "res://tests/vegetation_shadow_bands.gd" in command:
+        return 3 * 2**20  # <=2.5 MiB near-ground controls, compact motion and metadata; no world.
+
+    if "res://tests/vegetation_final_handoffs.gd" in command:
+        return (1 if "--smoke" in command else 12) * 2**20
+
+    if "res://tests/vegetation_gameplay.gd" in command and "--near-bands-review" in command:
+        return 8 * 2**20  # Bounded 3.2-second stationary/moving full-frame review; zero new worlds.
+    if "res://tests/vegetation_gameplay.gd" in command and any(flag in command for flag in ("--cover-lod-review", "--near-bands-review")):
+        return 12 * 2**20  # All 192 raw measurements; 9 MiB bounded review media plus metadata.
+    if any(script in command for script in ("res://tests/vegetation_near_transitions.gd", "res://tests/vegetation_handoffs.gd")):
         return 12 * 2**20  # Near-LOD counterfactuals, fixed resident objects; no world.
     if "res://tests/vegetation_transitions.gd" in command:
         return 12 * 2**20  # Bounded resident-object lab; no saved world.
@@ -203,7 +213,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None, requ
         try:
             if game_process:
                 require_free_space(ROOT)
-                world_bytes = 0 if any(test in command for test in ("res://tests/vegetation_near_transitions.gd", "res://tests/vegetation_fullframe.gd", "res://tests/vegetation_transitions.gd", "res://tests/vegetation_lab.gd", "res://tests/vegetation_gameplay.gd", "res://tests/extensive_lakes.gd", "res://tests/outdoor_support_batches.gd", "res://tests/world_inspector.gd", "res://tools/world_inspector_native.gd", "res://tests/generation_buildings.gd", "res://tests/approved_large_house.gd", "res://tests/generation_contact_policy.gd", "res://tests/terrain_block_contract.gd", "res://tests/terrain_block_catalog.gd", "res://tests/production_building_catalog.gd", "res://tests/metropolis_recipe.gd", "res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
+                world_bytes = 0 if any(test in command for test in ("res://tests/vegetation_final_handoffs.gd", "res://tests/vegetation_shadow_bands.gd", "res://tests/vegetation_handoffs.gd", "res://tests/vegetation_near_transitions.gd", "res://tests/vegetation_fullframe.gd", "res://tests/vegetation_transitions.gd", "res://tests/vegetation_lab.gd", "res://tests/vegetation_gameplay.gd", "res://tests/extensive_lakes.gd", "res://tests/outdoor_support_batches.gd", "res://tests/world_inspector.gd", "res://tools/world_inspector_native.gd", "res://tests/generation_buildings.gd", "res://tests/approved_large_house.gd", "res://tests/generation_contact_policy.gd", "res://tests/terrain_block_contract.gd", "res://tests/terrain_block_catalog.gd", "res://tests/production_building_catalog.gd", "res://tests/metropolis_recipe.gd", "res://tests/vegetation_reconstruction.gd", "res://tests/vegetation_causes.gd", "res://tests/vegetation_shading.gd", "res://tests/vegetation_stability.gd", "res://tests/grand_buildings.gd", "res://tests/grand_buildings_world.gd")) else 128 * 2**20
                 result['development_storage'] = admit(ROOT, report_bytes=planned_report_bytes(command), world_bytes=world_bytes)
             if any(str(arg).startswith('--lab-run-id=') for arg in command) and '--lab-visual-only' not in command and '--lab-wait-idle' not in command:
                 # Admission/retention can take time. Recheck immediately before
@@ -366,9 +376,9 @@ def main(argv=None):
     if args.test == "physics_residency_world":
         from maintain_physics_captures import maintain
         maintain(apply=True)
-    if args.test in {"vegetation_near_transitions", "vegetation_transitions", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay", "vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+    if args.test in {"vegetation_handoffs", "vegetation_final_handoffs", "vegetation_shadow_bands", "vegetation_near_transitions", "vegetation_transitions", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay", "vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
         from maintain_homestead_captures import maintain
-        if args.test in {"grand_buildings", "metropolis_recipe", "vegetation_near_transitions", "vegetation_transitions", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay"}:
+        if args.test in {"grand_buildings", "metropolis_recipe", "vegetation_handoffs", "vegetation_final_handoffs", "vegetation_shadow_bands", "vegetation_near_transitions", "vegetation_transitions", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay"}:
             details["capture_retention_before"] = retain_object_captures()
         else:
             maintain(apply=True)
@@ -384,8 +394,8 @@ def main(argv=None):
         maintain(apply=True)
     if args.test == "physics_residency_world":
         maintain(apply=True)
-    if args.test in {"vegetation_near_transitions", "vegetation_transitions", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay", "vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
-        if args.test in {"grand_buildings", "metropolis_recipe", "vegetation_near_transitions", "vegetation_transitions", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay"}:
+    if args.test in {"vegetation_handoffs", "vegetation_final_handoffs", "vegetation_shadow_bands", "vegetation_near_transitions", "vegetation_transitions", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay", "vegetation_reconstruction", "vegetation_causes", "vegetation_stability", "homestead_pack", "homestead_02_pack", "homestead_03_pack", "homestead_04_pack", "homestead_05_pack", "homestead_06_pack", "homestead_07_pack", "homestead_08_pack", "homestead_09_pack", "homestead_10_pack", "outdoor_01_pack", "homestead_mansion", "grand_buildings", "metropolis_recipe", "house_furnishings", "house_population_world", "homestead_generated_world", "world_browser_responsiveness", "object_system_world", "object_rendering_world", "object_pack_render_mesh", "zombie_render_mesh", "model_horizon", "drop_key_standard"}:
+        if args.test in {"grand_buildings", "metropolis_recipe", "vegetation_handoffs", "vegetation_final_handoffs", "vegetation_shadow_bands", "vegetation_near_transitions", "vegetation_transitions", "vegetation_fullframe", "vegetation_lab", "vegetation_gameplay"}:
             details["capture_retention_after"] = retain_object_captures()
             manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
             if details["capture_retention_after"].get("pending"):

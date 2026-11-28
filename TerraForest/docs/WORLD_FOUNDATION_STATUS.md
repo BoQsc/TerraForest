@@ -47,6 +47,8 @@ street-to-interior traversal, excavation/contact and sustained crowded-street
 performance need a selected populated site and a requested integration pass;
 isolated engineering checks cannot close that acceptance requirement.
 
+Current vegetation regression: [nearby moving gray/shadow bands](../issues/vegetation-lod/SHADOW_BANDS.md) were reproduced as invalid far-proxy projection. The human-verified guard passes 107 causal checks with exact corrected nearby pixels and lower GPU time at the failing view. Physical gameplay passes 189 m with 192 independently verified frames. Human standing/walking validation passed on 2026-11-28; tag `playtest/vegetation-fades-2026-11-28`. Prior cutoff/parity passes did not cover this failure. Archive housekeeping is capacity-blocked with original evidence preserved; see the linked investigation.
+
 ## Distant vegetation speckles — 2026-11-27
 
 Starred for future learning: [investigation lessons](../issues/vegetation-lod/LESSONS.md)
@@ -72,6 +74,20 @@ this snapshot, tagged `snapshot/near-lod-fade-2026-11-28`; detailed visual feedb
 remains separate from checkpoint approval. The earlier
 detail GPU-tail target and broader coverage remain open.
 [Transition causes, controls, failures and acceptance](../issues/vegetation-lod/TRANSITIONS.md).
+[Remaining handoffs](../issues/vegetation-lod/REMAINING_HANDOFFS.md) now have
+fixed-population controls: near ferns/bushes/twigs make larger batch jumps than
+the later grass tiers. The opaque-tier fade preserves nearby pixels
+and passes a real-scene comparison at -0.01088% mean brightness. A 280.342 m
+normal physical walk passes with 33 changed-LOD crossings, exact nearby pixels
+and 192 independently hash-verified frames. The subsequent
+[proxy/horizon/shadow candidate](../issues/vegetation-lod/FAR_HANDOFFS.md) passes
+separate causal controls and a 280.067 m physical walk: 21 proxy crossings,
+12 horizon crossings and 75 observed shadow toggles after all affected roots
+have faded. Nearby parity remains exact and mean brightness changes -0.01337%.
+Fixed-scene median GPU cost rises +0.328 to +0.6205 ms; GPU tails, broader
+views/lighting remain open; human moving validation of the corrected combined source passed on 2026-11-28. Return gates and retained
+failures are recorded there. Commit/push is authorized for the human-verified snapshot. Shared native DLLs are excluded; source restoration requires rebuilding the structures addon.
+
 [Current scope and native rebuild requirement](../issues/vegetation-lod/README.md#human-playtest-and-source-snapshot--2026-11-27).
 The stage-by-stage measurements and earlier rejection below remain historical.
 
