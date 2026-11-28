@@ -549,3 +549,30 @@ player saves, storage limits and evidence are unchanged. Dense-grass 192-frame
 gameplay movies now use CRF24 with a 16 Mbit/s maximum and 2 Mbit buffer, bounding
 the review movie below roughly 7 MiB. Raw-image hashes and metrics are independent
 of this review-only compression.
+
+The near-LOD transition lab admits 12 MiB, with 9 MiB lossless
+1024x128 motion packets, up to 2 MiB for three full-view contexts and metadata,
+and 1 MiB for analysis/review within that admission. It creates no save, build
+or export. Receipt-owned retention keeps two ordinary ready runs in its own
+vegetation_near_transitions family. The lab does not mutate production resources;
+the separately implemented runtime fade is recorded in the issue tracker.
+
+Near-handoff continuation (2026-11-28): after the recorded human approvals,
+expired review pins on the previous shader/stone checkpoints were released.
+Receipt-owned retention cold-retained 28,785,312 bytes from gameplay runs
+`20261127T194151130183Z` and `20261127T194802773430Z`. A scoped one-ready
+override for the near-transition family cold-retained another 6,066,584 bytes
+from `20261127T224518006743Z`; the newer textured/shadowed fixture stayed ready.
+All reconstruction hashes and receipts were verified; no save or limit changed.
+Full-frame near-fade/camera diagnostics reuse the same 20 MiB admission and
+16 MiB media limit, including witness/difference images in the existing retention
+family. No new world, native build or export is allocated.
+
+The final near-handoff run hit the unchanged 10 GiB archive ceiling. Recovery
+scanned 1,532 manifest candidates and removed only 16 unpublished/unreferenced
+chunks (12,137,683 bytes), each reverified against an unchanged live source
+chunk before retirement. Referenced archives and original captures were retained;
+`reports/checks/20261127T232902522565Z/archive_recovery.json` records identities.
+The current full-frame comparison and gameplay `20261127T234144741194Z` are
+explicitly pinned pending the requested human validation. Post-walk parser
+verification admitted 64 KiB and is retained with that gameplay receipt.

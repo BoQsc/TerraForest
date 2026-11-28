@@ -59,8 +59,17 @@ and 32 m outer fade pass exact nearby parity and full-frame brightness checks.
 Final gameplay `20261127T221540936288Z` passes 220.169 m, all 2,162 ticks grounded,
 full forest/live actors and 192 raw-hash-verified frames with four stone LOD
 crossings. The user accepted this result for commit/push on 2026-11-28. Near-to-next-LOD
-handoffs and distracting rectangular vegetation patches now need an isolated
-comparison and human review before promotion. The earlier
+handoffs and distracting rectangular vegetation patches have an isolated
+[causal comparison](../issues/vegetation-lod/NEAR_HANDOFFS.md): 16 m grouped
+opaque LOD changes reproduce the patch effect. The short per-plant fade
+preserves exact nearby pixels and completes before the old grouped cutoff.
+A 312.75 m physical walk passes with 192 independently hash-verified consecutive
+frames, five captured boundary crossings and the complete forest. Brightness
+changes by 0.03537%; local median GPU increment is about 0.2 ms. Human moving
+review, broader views/tiers and the earlier detail-tail target remain required
+before universal closure. On 2026-11-28 the user authorized committing/pushing
+this snapshot, tagged `snapshot/near-lod-fade-2026-11-28`; detailed visual feedback
+remains separate from checkpoint approval. The earlier
 detail GPU-tail target and broader coverage remain open.
 [Transition causes, controls, failures and acceptance](../issues/vegetation-lod/TRANSITIONS.md).
 [Current scope and native rebuild requirement](../issues/vegetation-lod/README.md#human-playtest-and-source-snapshot--2026-11-27).

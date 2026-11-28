@@ -34,6 +34,19 @@ collision and source/save hashes are retained. [Moving review and limits](TRANSI
 rectangular-patch complaint. Shared DLLs are excluded; source restoration needs
 a native rebuild.
 
+## Near handoffs and rectangular patches - snapshot checkpoint
+
+The [near-handoff investigation](NEAR_HANDOFFS.md) proves grouped 16 m LOD
+changes. The per-plant fade finishes before the original batch
+cutoff, preserving exact nearby endpoints. A 312.75 m physical walk passes
+with 192 hash-verified consecutive frames and five captured near-boundary
+crossings. Mean display brightness changes by 0.03537%; local paired median
+GPU cost is about +0.2 ms. Human moving-play validation, broader coverage and
+the earlier GPU-tail target remain open. The user requested commit/push of this
+snapshot on 2026-11-28, tagged `snapshot/near-lod-fade-2026-11-28`. This approval
+is for a source checkpoint, not universal visual/performance closure. Shared
+native DLL changes remain excluded; restoring source requires a native rebuild.
+
 ## Human playtest and source snapshot — 2026-11-27
 
 After launching the latest project/source in Homestead Valley, the user reported:

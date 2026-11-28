@@ -122,5 +122,25 @@
     },
     "approval_scope": "Accepted for checkpoint/push, not universal visual or performance closure",
     "milestone_tag": "playtest/stone-transitions-2026-11-28"
+  },
+  "near_transition_followup": {
+    "investigation": "NEAR_HANDOFFS.md",
+    "evidence": "near-transition-evidence.json",
+    "baseline_commit": "b0c90fd8",
+    "coarse_run": "20261127T224204985941Z",
+    "refined_run": "20261127T224518006743Z",
+    "lab_passed": true,
+    "human_approved": false,
+    "committed": true,
+    "production_changed": true,
+    "normal_gameplay_tested": true,
+    "remaining": "Human moving review for grain/silhouette/first-handoff continuity; other species/tiers and broader views; earlier detail GPU-tail target remains open.",
+    "status": "Snapshot approved for commit/push; scoped causal lab, nearby parity and physical gameplay verified. Detailed visual feedback and broader qualification remain open.",
+    "gameplay_passed": true,
+    "gameplay_run": "20261127T234144741194Z",
+    "snapshot_approved": true,
+    "approval_date": "2026-11-28",
+    "approval_scope": "User requested a snapshot commit and push after the source playtest launch; detailed visual acceptance and universal closure are not inferred.",
+    "milestone_tag": "snapshot/near-lod-fade-2026-11-28"
   }
 }

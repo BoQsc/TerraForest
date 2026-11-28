@@ -53,7 +53,7 @@ def metrics(im):
     return dict(mean_luma=ImageStat.Stat(lum).mean[0]/255, low_pixels=count(low),high_pixels=count(high),dark_impulses=count(dark),bright_impulses=count(bright),local_dark_contrast=count(dark_contrast),local_bright_contrast=count(light_contrast),tiles=tiles,negative_witness_pixels=count(magenta),high_witness_pixels=count(yellow),nonfinite_witness_pixels=count(cyan)), speckle
 
 def serve(listener, token, state):
-    writers = {}; baseline = {}; rows = []; output = None
+    writers = {}; baseline = {}; previous_images = {}; rows = []; output = None
     planned_frames = 48; variant='shader_domain'
     try:
         listener.settimeout(600)
@@ -86,8 +86,22 @@ def serve(listener, token, state):
                         writers.clear();check_output_budget(output)
                     row, mask = metrics(im)
                     row.update(case=case,frame=frame,sha256=hashlib.sha256(raw).hexdigest(),camera=meta.get('camera'))
+                    if case in previous_images:
+                        step=ImageChops.difference(im,previous_images[case])
+                        row['frame_rgb_abs_sum']=sum(ImageStat.Stat(step).sum)
+                    previous_images[case]=im
+                    if variant=='near_parity':
+                        if case in ('baseline','baseline_no_shadow'):baseline[case]=raw
+                        else:
+                            ref='baseline_no_shadow' if case=='candidate_no_shadow' else 'baseline'
+                            diff=ImageChops.difference(im,Image.frombytes('RGB',im.size,baseline[ref]))
+                            row['difference_bbox']=diff.getbbox();row['scene_difference_bbox']=diff.crop((0,320,1920,900)).getbbox()
+                            row['difference_rgb_sum']=sum(ImageStat.Stat(diff).sum)
+                            row['max_channel_difference']=max(v[1] for v in ImageStat.Stat(diff).extrema)
+                            row['scene_max_channel_difference']=max(v[1] for v in ImageStat.Stat(diff.crop((0,320,1920,900))).extrema)
+                            if case=='near_fade':diff.point(lambda x:min(255,x*20)).save(output/'near_difference.png')
                     if case=='baseline': baseline[frame]=raw
-                    elif case in ('bounded_edge','bounded_interpolants','baseline_repeat','stone_corrected','stone_fade'):
+                    elif case in ('bounded_edge','bounded_interpolants','baseline_repeat','stone_corrected','stone_fade','near_fade'):
                         difference=ImageChops.difference(im,Image.frombytes('RGB',im.size,baseline[frame]))
                         channels=difference.split(); changed=ImageChops.lighter(ImageChops.lighter(channels[0],channels[1]),channels[2])
                         row['changed_pixels']=count(changed)
@@ -98,15 +112,17 @@ def serve(listener, token, state):
                         row['cover_bright_contrast']=count(ImageChops.subtract(covered,bare).point(lambda x:255 if x>=32 else 0))
                         row['cover_dark_contrast']=count(ImageChops.subtract(bare,covered).point(lambda x:255 if x>=32 else 0))
                     rows.append(row)
-                    if frame == 24 and case in (('baseline','stone_fade') if variant=='stone_transition' else ('baseline','bounded_interpolants','invalid_witness','no_cover')):
+                    if case=='page_witness':im.save(output/'page_witness.png')
+                    if variant=='near_parity' and case=='baseline':im.save(output/'near_context.png')
+                    if frame == 24 and case in (('baseline','near_fade') if variant=='near_transition' else (('baseline','stone_fade') if variant=='stone_transition' else ('baseline','bounded_interpolants','invalid_witness','no_cover'))):
                         im.save(output/f'{case}_{frame}.png')
                         if case=='baseline':mask.save(output/f'impulses_{frame}.png')
-                    if case in (('baseline','stone_fade') if variant=='stone_transition' else ('baseline','bounded_edge','bounded_interpolants','gameplay')):
+                    if case in (('baseline','near_fade') if variant=='near_transition' else (('baseline','stone_fade') if variant=='stone_transition' else ('baseline','bounded_edge','bounded_interpolants','gameplay'))):
                         if case not in writers:
                             # Review only: cap the 3.2-second gameplay movie below
                             # ~7 MiB even for dense grass; raw metrics are separate.
                             rate_cap=['-maxrate','16M','-bufsize','2M'] if case=='gameplay' else []
-                            quality='24' if case=='gameplay' else ('22' if variant=='stone_transition' else '18')
+                            quality='24' if case=='gameplay' else ('22' if variant in ('stone_transition','near_transition') else '18')
                             writers[case]=subprocess.Popen([str(FFMPEG),'-v','error','-f','rawvideo','-pixel_format','rgb24','-video_size','1920x1080','-framerate','60','-i','pipe:0','-an','-c:v','libx264','-preset','medium' if case=='gameplay' else 'veryfast','-crf',quality,*rate_cap,'-pix_fmt','yuv420p','-movflags','+faststart',str(output/(case+'.mp4'))],stdin=subprocess.PIPE)
                         writers[case].stdin.write(raw)
                     check_output_budget(output)
@@ -117,6 +133,9 @@ def serve(listener, token, state):
                     writers.clear()
                     expected={'gameplay':planned_frames} if rows and rows[0]['case']=='gameplay' else {**{case:48 for case in ('baseline','bounded_edge','bounded_interpolants','invalid_witness','bounded_witness','interpolant_witness','no_cover')},'baseline_repeat':1}
                     if variant=='stone_transition':expected={**{case:48 for case in ('baseline','stone_corrected','stone_fade','no_cover')},'baseline_repeat':1,'near_baseline':1,'near_corrected':1}
+                    if variant=='near_transition':expected={**{case:48 for case in ('baseline','near_fade','no_cover')},'baseline_repeat':1,'near_baseline':1,'near_corrected':1,'page_witness':1}
+                    if variant=='near_parity':expected={case:1 for case in ('baseline','same_baseline','near_fade','baseline_repeat','baseline_no_shadow','candidate_no_shadow','near_full')}
+                    if variant=='near_cost':expected={}
                     if {case:sum(r['case']==case for r in rows) for case in {r['case'] for r in rows}}!=expected:
                         raise ValueError('Incomplete counterfactual frame inventory')
                     if any([r['frame'] for r in rows if r['case']==case]!=list(range(n)) for case,n in expected.items()):
@@ -147,6 +166,9 @@ def main():
     parser.add_argument('--gameplay',action='store_true')
     parser.add_argument('--stone-transitions',action='store_true')
     parser.add_argument('--approach-review',action='store_true')
+    parser.add_argument('--near-transitions',action='store_true')
+    parser.add_argument('--near-parity',action='store_true')
+    parser.add_argument('--near-cost-only',action='store_true')
     args=parser.parse_args()
     from run_vegetation_lab import active_render_jobs
     jobs=active_render_jobs()
@@ -160,6 +182,9 @@ def main():
         command=[sys.executable,str(ROOT/'tools/run_godot_check.py'),test,'--isolated-render','--timeout','600','--require',test.upper()+' failures=0','--','--fullframe-port='+str(listener.getsockname()[1]),'--lab-run-id='+token,'--lab-visual-only']
         if args.stone_transitions:command.append('--stone-transition-review')
         if args.approach_review:command.append('--approach-review')
+        if args.near_transitions:command.append('--near-transition-review')
+        if args.near_parity:command.append('--near-parity')
+        if args.near_cost_only:command.append('--near-cost-only')
         observed=[];monitor_started=time.time()
         process=subprocess.Popen(command,cwd=ROOT)
         while process.poll() is None:

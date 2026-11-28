@@ -1,17 +1,36 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 const FAR_ERROR := 0.045
+static var near_transition_shader:Shader
 # Startup-only construction. Native pages retain ownership of instance buffers.
 # Near/low geometry and its opaque material are preserved. Far triangles become
 # analytic coverage quads; no atlas, temporal history or per-instance CPU updates.
-static func apply(mesh: ArrayMesh, authored: Array, original_lods: Dictionary, material: ShaderMaterial, far_error := FAR_ERROR, horizon_error := 0.10) -> ShaderMaterial:
+static func apply(mesh: ArrayMesh, authored: Array, original_lods: Dictionary, material: ShaderMaterial, far_error := FAR_ERROR, horizon_error := 0.10, near_fade := false) -> ShaderMaterial:
 	# Empty custom_aabb means automatic bounds. Freeze the original automatic box
 	# before splitting surfaces so every variant has exactly the same LOD distance.
 	mesh.custom_aabb=mesh.get_aabb()
 	var inactive := PackedInt32Array([0,0,0])
+	var shadow_authored:=authored
 	var opaque_lods := {0.02:original_lods[0.02],far_error:inactive,horizon_error:inactive}
+	if near_fade:
+		# Startup only. The native owner still submits one opaque surface. Low
+		# geometry replaces the pair only after every plant has finished fading.
+		authored=authored.duplicate(true)
+		var tiers:=PackedVector2Array();tiers.resize(authored[Mesh.ARRAY_VERTEX].size())
+		for index in original_lods[0.02]:tiers[index]=Vector2(1,0)
+		authored[Mesh.ARRAY_TEX_UV2]=tiers
+		var combined:PackedInt32Array=authored[Mesh.ARRAY_INDEX].duplicate()
+		combined.append_array(original_lods[0.02]);authored[Mesh.ARRAY_INDEX]=combined
+		opaque_lods={0.02:original_lods[0.02],far_error:inactive,horizon_error:inactive}
+		# Compile away the feature for every other species and ordinary asset.
+		# A single cached grass variant keeps all shared lighting expressions.
+		if near_transition_shader==null:
+			near_transition_shader=Shader.new()
+			near_transition_shader.code=material.shader.code.replace("const bool near_lod_transition = false;","const bool near_lod_transition = true;")
+		material.shader=near_transition_shader
+		mesh.set_meta("near_lod_transition",true)
 	var shadow := ArrayMesh.new()
-	shadow.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,authored,[],original_lods)
+	shadow.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,shadow_authored,[],original_lods)
 	shadow.custom_aabb=mesh.custom_aabb
 	var near_only := ArrayMesh.new()
 	# The shadow pass selects a LOD index through the main surface too. Retain its
@@ -20,7 +39,7 @@ static func apply(mesh: ArrayMesh, authored: Array, original_lods: Dictionary, m
 	near_only.surface_set_material(0,material)
 	near_only.custom_aabb=mesh.custom_aabb
 	var near_shadow := ArrayMesh.new()
-	near_shadow.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,authored,[],original_lods)
+	near_shadow.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,shadow_authored,[],original_lods)
 	near_shadow.custom_aabb=mesh.custom_aabb
 	near_only.shadow_mesh=near_shadow
 	mesh.clear_surfaces()

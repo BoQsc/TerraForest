@@ -12,6 +12,10 @@ uniform float distance_fade_start = 10000.0;
 uniform float distance_fade_end = 11000.0;
 uniform vec3 cover_eye = vec3(0.0);
 uniform float cover_clock = 0.0;
+// Enabled only for the grass mesh carrying complementary near/low geometry.
+const bool near_lod_transition = false;
+uniform float near_lod_metric = 703.74;
+varying flat float near_lod_cut;
 uniform float distant_self_shade : hint_range(0.0,1.0) = 0.28;
 varying float canopy_shade;
 varying float coverage;
@@ -19,6 +23,9 @@ varying float variation;
 varying float root_shade;
 void vertex() {
     vec3 origin = MODEL_MATRIX[3].xyz;
+    vec3 near_delta = origin-cover_eye;
+    float near_weight = near_lod_transition ? smoothstep(0.0002907025 * near_lod_metric * near_lod_metric, 0.00039204 * near_lod_metric * near_lod_metric, dot(near_delta,near_delta)) : 0.0;
+    near_lod_cut = UV2.x < 0.5 ? -near_weight : 1.0+near_weight;
     float view_distance=distance(origin.xz,cover_eye.xz);
     float distance_weight = 1.0-smoothstep(distance_fade_start,distance_fade_end,view_distance);
     // Cheap canopy self-occlusion approximation, evaluated per vertex. It is
@@ -40,11 +47,13 @@ void vertex() {
         VERTEX.x += sway * weight * weight * wind_strength;
         VERTEX.z += sway * weight * weight * 0.55 * wind_strength;
     }
+    if (near_lod_transition && (UV2.x < 0.5 ? near_weight >= 1.0 : near_weight <= 0.0)) VERTEX = vec3(0.0);
 }
 void fragment() {
     // Opaque coverage dithering keeps depth writes and avoids alpha sorting/overdraw.
     float threshold=fract(52.9829189*fract(dot(floor(FRAGCOORD.xy),vec2(0.06711056,0.00583715))));
     if(coverage<=threshold)discard;
+    if (near_lod_transition && (near_lod_cut <= 0.0 ? threshold < -near_lod_cut : threshold >= near_lod_cut-1.0)) discard;
     if (stone) {
         vec4 rock = texture(stone_color, UV);
         ALBEDO = rock.rgb * COLOR.rgb * variation;

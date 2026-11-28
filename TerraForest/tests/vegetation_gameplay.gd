@@ -44,6 +44,71 @@ var capture_count := 48
 var fullframe_port := 0
 var fullframe_token := ""
 var fullframe_peer := StreamPeerTCP.new()
+var near_review := false
+var near_candidate:ArrayMesh
+var near_baseline:ArrayMesh
+var near_cost_mode := "candidate"
+var near_page_states:Dictionary={}
+var near_page_transitions:Array=[]
+var near_band_frames:=0
+var post_walk_near_control:Dictionary={}
+
+func check_near_after_walk() -> void:
+	# All physical movement and timing have finished. This separate frozen
+	# comparison checks nearby appearance and the camera negative control.
+	game.process_mode=Node.PROCESS_MODE_DISABLED;Engine.time_scale=0.0
+	var saved_shaders:Dictionary={}
+	var mats:Array=game.ground_cover.foliage_materials.duplicate()
+	for mesh in [near_candidate,near_baseline]:
+		for surface in mesh.get_surface_count():
+			if not mats.has(mesh.surface_get_material(surface)):mats.append(mesh.surface_get_material(surface))
+	for mat:ShaderMaterial in mats:
+		saved_shaders[mat]=mat.shader
+		var frozen:=Shader.new();frozen.code=mat.shader.code.replace("shader_type spatial;","shader_type spatial;\nuniform float comparison_time=0.0;").replace("TIME","comparison_time")
+		mat.shader=frozen;mat.set_shader_parameter("cover_clock",1000000.0);mat.set_shader_parameter("comparison_time",0.0)
+	var camera:Camera3D=game.camera
+	var prior_local:=camera.transform
+	var eye:=camera.global_position
+	camera.global_transform=Transform3D(Basis.looking_at(Vector3(0,-1.6,-1.1)),eye)
+	for mat:ShaderMaterial in mats:mat.set_shader_parameter("cover_eye",camera.global_position)
+	var reference:=PackedByteArray()
+	for candidate in [false,true]:
+		select_near(candidate)
+		for batch in game.ground_cover.batches:batch.update_surface_lod()
+		for frame in 20:await RenderingServer.frame_post_draw
+		var view:=root.get_texture().get_image();view.convert(Image.FORMAT_RGB8)
+		var pixels:=view.get_region(Rect2i(0,320,1920,580)).get_data()
+		if not candidate:reference=pixels
+		else:post_walk_near_control["near_pixels_equal"]=pixels==reference
+	var fixed_local:=camera.transform
+	var fixed_global:=camera.global_transform
+	var negative:Array=[]
+	for iteration in 3:
+		camera.global_position=eye;camera.look_at(eye+Vector3(0,-1.6,-1.1))
+		for frame in 2:await RenderingServer.frame_post_draw
+		var view:=root.get_texture().get_image();view.convert(Image.FORMAT_RGB8)
+		negative.append({"same_transform":var_to_bytes(camera.global_transform)==var_to_bytes(fixed_global),"same_pixels":view.get_region(Rect2i(0,320,1920,580)).get_data()==reference})
+	camera.transform=fixed_local
+	for frame in 8:await RenderingServer.frame_post_draw
+	var restored:=root.get_texture().get_image();restored.convert(Image.FORMAT_RGB8)
+	post_walk_near_control["legacy_assignments"]=negative
+	post_walk_near_control["exact_local_restore"]=restored.get_region(Rect2i(0,320,1920,580)).get_data()==reference
+	check(post_walk_near_control.near_pixels_equal,"nearby pixels match baseline after normal gameplay")
+	check(post_walk_near_control.exact_local_restore,"exact local camera restore preserves nearby pixels")
+	camera.transform=prior_local
+	for mat in saved_shaders:mat.shader=saved_shaders[mat]
+	game.process_mode=Node.PROCESS_MODE_INHERIT;Engine.time_scale=1.0
+
+func select_near(candidate:bool) -> void:
+	near_cost_mode="candidate" if candidate else "baseline"
+	var cover:Node=game.ground_cover
+	var mesh:ArrayMesh=near_candidate if candidate else near_baseline
+	var previous_mesh:ArrayMesh=cover.preview_meshes[2]
+	for surface in previous_mesh.get_surface_count():cover.foliage_materials.erase(previous_mesh.surface_get_material(surface))
+	for surface in mesh.get_surface_count():cover.foliage_materials.append(mesh.surface_get_material(surface))
+	cover.preview_meshes[2]=mesh;cover.grass_material=mesh.surface_get_material(0)
+	check(cover.batches[2].configure_asset("ground_cover/2/v1",mesh),"near comparison changes only grass mesh")
+	check(preload("res://addons/world_ecosystem/filtered_grass.gd").configure_batch(cover.batches[2],mesh),"near comparison retains native surface LOD")
 
 func _initialize() -> void:
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
@@ -111,6 +176,29 @@ func collect_frame() -> void:
 		rows.append({"phase":phase,"frame_ms":(now-last_frame)/1000.0,"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()),"cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(root.get_viewport_rid()),"draws":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"position":[previous.x,previous.y,previous.z],"yaw":game.player.rotation.y,"grounded":game.player.is_on_floor(),"speed":game.player.velocity.length(),"cover_us":game.ground_cover.last_process_us,"batch_us":game.ground_cover.batches[2].render_frame_profile().process_us,"cover_pages":game.ground_cover.batches[2].render_stats().resident_batches,"actors":game.zombies.residents.size()})
 		rows[-1]["trees"]=game.vegetation.renderer.roots.size()
 		rows[-1]["forest_cells"]=game.ecosystem.resident.size()
+		rows[-1]["near_cost_mode"]=near_cost_mode
+	if near_review and phase=="capture_walk":
+		var metric:float=game.ground_cover.grass_material.get_shader_parameter("near_lod_metric")
+		var found_band:=false
+		for page in game.ground_cover.batches[2].get_children():
+			if not page is MultiMeshInstance3D or not page.visible:continue
+			var box:AABB=page.global_transform*page.multimesh.get_aabb()
+			if not game.camera.is_position_in_frustum(box.get_center()):continue
+			var eye:Vector3=game.camera.global_position
+			var d:float=eye.distance_to(eye.clamp(box.position,box.end))
+			if d>35:continue
+			var full:bool=d<.02*metric
+			var id:int=page.get_instance_id()
+			if near_page_states.has(id) and near_page_states[id]!=full:
+				near_page_transitions.append({"capture_index":captured,"page":id,"baseline_full":full,"distance":d,"bounds_min":str(box.position),"bounds_size":str(box.size),"screen_center":str(game.camera.unproject_position(box.get_center()))})
+			near_page_states[id]=full
+			# Test-only witness from real native instance buffers; never runtime work.
+			if not found_band and captured<capture_count:
+				for i in page.multimesh.instance_count:
+					var origin:Vector3=(page.global_transform*page.multimesh.get_instance_transform(i)).origin
+					var distance:float=origin.distance_to(eye)
+					if distance>.01705*metric and distance<.0198*metric and game.camera.is_position_in_frustum(origin):found_band=true;break
+		if found_band:near_band_frames+=1
 	if approach_review and phase=="capture_walk":
 		var mesh: ArrayMesh=game.ground_cover.preview_meshes[0]
 		var camera: Camera3D=game.camera
@@ -156,6 +244,7 @@ func run() -> void:
 		if argument.begins_with("--lab-run-id="):fullframe_token=argument.trim_prefix("--lab-run-id=")
 		if argument=="--opaque-control":control=true
 		if argument=="--approach-review":approach_review=true
+		if argument=="--near-transition-review":near_review=true
 		if argument=="--previous-filter-control":previous_control=true
 		if argument=="--fern-trial":fern_trial=true
 		if argument=="--fern-cluster-trial":fern_cluster_trial=true
@@ -193,6 +282,14 @@ func run() -> void:
 	if not await ready_within(func():return game.ecosystem.coverage_status().ready,45):
 		check(false,"whole source forest settles before gameplay measurement");await finish();return
 	initial_forest=game.ecosystem.coverage_status()
+	if near_review:
+		near_candidate=game.ground_cover.preview_meshes[2]
+		near_baseline=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(2,true,true,false,true,false)
+		preload("res://addons/world_ecosystem/woodland_mesh.gd").set_grass_detail(near_baseline.surface_get_material(0),game.ground_cover.grass_texture_enabled)
+		for surface in near_baseline.get_surface_count():
+			near_baseline.surface_get_material(surface).set_shader_parameter("distance_fade_start",92.0)
+			near_baseline.surface_get_material(surface).set_shader_parameter("distance_fade_end",124.0)
+		check(near_candidate.get_meta("near_lod_transition",false),"normal source enables per-plant near fade")
 	check(initial_forest.owners==1024,"normal gameplay starts with all 1024 forest cells resident")
 	if not (control or previous_control or fern_trial or fern_cluster_trial):
 		var fern_mesh: ArrayMesh=game.ground_cover.preview_meshes[1]
@@ -283,12 +380,22 @@ func run() -> void:
 		check(game.player.position.distance_to(capture_start)>8.0,"capture advances physically rather than waiting or turning in place")
 	check(asynchronous.received==capture_count and not asynchronous.context.is_empty() and asynchronous.errors.is_empty(),"all bounded asynchronous captures complete before cost measurement")
 	key(KEY_W if approach_review else KEY_D,false);key(KEY_W,true)
-	await walk("measure_walk",14.0)
+	if near_review:
+		check(near_band_frames>100,"visible plants occupy the near fade band during physical capture")
+		check(near_page_transitions.any(func(row):return row.capture_index<capture_count),"physical capture crosses the old rectangular near-LOD boundary")
+		for group in 3:
+			for sample in 4:
+				select_near(sample in [1,2])
+				await walk("warm_near",1.0)
+				await walk("measure_near_%d_%d"%[group,sample],1.25)
+		select_near(true)
+	else:await walk("measure_walk",14.0)
 	await walk("measure_turn",10.0,-0.10)
 	key(KEY_W,false);key(KEY_D,true)
 	await walk("measure_strafe",6.0)
 	key(KEY_D,false)
 	RenderingServer.frame_post_draw.disconnect(collect_frame);physics_frame.disconnect(physics_tick)
+	if near_review:await check_near_after_walk()
 	capture_times.assign(asynchronous.times)
 	if not asynchronous.context.is_empty():walking_context=Image.create_from_data(1920,1080,false,Image.FORMAT_RGBA8,asynchronous.context)
 	if not fullframe_port:
@@ -339,6 +446,10 @@ func finish() -> void:
 	result["initial_forest"]=initial_forest
 	result["detail_render_pages"]=detail_render_pages
 	result["approach_review"]=approach_review
+	result["near_transition_review"]=near_review
+	result["near_band_capture_frames"]=near_band_frames
+	result["near_page_transitions"]=near_page_transitions
+	result["post_walk_near_control"]=post_walk_near_control
 	result["stone_page_transitions"]=stone_page_transitions
 	result["preparation"]=preparation;result["invalid_play_frames"]=invalid_play_frames
 	result["route_setup"]="One pre-measurement normal teleport/floor-snap to (1740,0,1700); settle with normal pause menu; select clear departure away from resident enemies; no position changes during measurement" if approach_review else "saved pose"
@@ -351,6 +462,7 @@ func finish() -> void:
 	result["capture_errors"]=asynchronous.errors
 	result["capture_rgb_sha256"]=capture_hashes
 	write_bytes("vegetation_gameplay.json",JSON.stringify(result).to_utf8_buffer())
+	if near_review and failures.is_empty():write_bytes("RETAIN_READY","Uncommitted near-LOD candidate moving gameplay: retain ready for requested human playtest validation; release after approval/rejection and cold-retain verified evidence.\n".to_utf8_buffer())
 	var identity := "res://tests/vegetation_gameplay.gd.uid"
 	if not FileAccess.file_exists(identity):FileAccess.open(identity,FileAccess.WRITE).store_string(ResourceUID.id_to_text(ResourceUID.create_id())+"\n")
 	identity="res://tests/fixtures/vegetation_capture.gd.uid"

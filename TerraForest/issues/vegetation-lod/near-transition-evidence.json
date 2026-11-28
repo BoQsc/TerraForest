@@ -1,0 +1,394 @@
+{
+  "license": "CC0-1.0",
+  "status": "Snapshot approved for commit/push; scoped causal lab, nearby parity and physical gameplay verified. Detailed visual feedback and broader qualification remain open.",
+  "baseline_commit": "b0c90fd8",
+  "coarse_run": "20261127T224204985941Z",
+  "refined_run": "20261127T224518006743Z",
+  "grass_lods": 4,
+  "other_ground_cover_lods": 3,
+  "first_grass_geometry": {
+    "full_blades": 26,
+    "low_blades": 12,
+    "full_segments": 5,
+    "low_segments": 2,
+    "full_triangles": 468,
+    "low_triangles": 72
+  },
+  "resident_instances": 144,
+  "draw_partition_width_m": 16,
+  "fixed_controls": "No streaming, births, filtered quads or shadows; constant camera/time pairs and exact baseline repeat. Thus batching plus ordinary opaque LOD is sufficient to reproduce patch changes, but this does not exclude additional sources of the user-reported rectangles.",
+  "step_events": [
+    {
+      "distance_m": 14.525,
+      "step_m": 0.025,
+      "previous": {
+        "full": 0,
+        "low": 4
+      },
+      "current": {
+        "full": 1,
+        "low": 3
+      },
+      "contrast_change_percent": {
+        "source": 29.53554822033684,
+        "fixed_low": 0.46736995450264995,
+        "dither6": 0.35006229547791534
+      }
+    },
+    {
+      "distance_m": 14.4,
+      "step_m": 0.025,
+      "previous": {
+        "full": 1,
+        "low": 3
+      },
+      "current": {
+        "full": 2,
+        "low": 2
+      },
+      "contrast_change_percent": {
+        "source": 18.888690711572597,
+        "fixed_low": -0.30340131630192113,
+        "dither6": -0.345559417502006
+      }
+    }
+  ],
+  "endpoint_exact": {
+    "alpha6_0.0": false,
+    "alpha6_1.0": false,
+    "dither6_0.0": true,
+    "dither6_1.0": true
+  },
+  "alpha_decision": "Rejected: both fully established endpoint images differ from opaque references.",
+  "opaque_fade": "12-18 m per-instance complementary opaque screen coverage, one mesh/surface, no per-instance CPU update. Extra high+low geometry is submitted in the transition region. Frame-to-frame grain and low-mesh silhouette/density difference remain unqualified.",
+  "local_gpu_observations": [
+    {
+      "group": 0,
+      "stats": {
+        "source": {
+          "median_ms": 0.5070000141859055,
+          "p95_ms": 0.973999977111816
+        },
+        "dither6": {
+          "median_ms": 0.444999992847443,
+          "p95_ms": 0.53600001335144
+        }
+      },
+      "median_delta_ms": -0.06200002133846244,
+      "p95_delta_ms": -0.437999963760376
+    },
+    {
+      "group": 1,
+      "stats": {
+        "source": {
+          "median_ms": 0.45100000500679,
+          "p95_ms": 0.477999985218048
+        },
+        "dither6": {
+          "median_ms": 0.439000010490417,
+          "p95_ms": 0.46399998664856
+        }
+      },
+      "median_delta_ms": -0.011999994516373014,
+      "p95_delta_ms": -0.01399999856948797
+    },
+    {
+      "group": 2,
+      "stats": {
+        "source": {
+          "median_ms": 0.474999994039536,
+          "p95_ms": 0.488000005483627
+        },
+        "dither6": {
+          "median_ms": 0.465999990701675,
+          "p95_ms": 0.474000006914139
+        }
+      },
+      "median_delta_ms": -0.009000003337860996,
+      "p95_delta_ms": -0.01399999856948797
+    }
+  ],
+  "cost_scope": "Tiny fixed fixture; source and candidate in interleaved ABBA order. No image readbacks in timing windows; not full-world or universal incremental cost. Only launch-time engine exclusivity checked.",
+  "production_unchanged": false,
+  "new_experiment_committed": true,
+  "remaining": [
+    "Human moving playtest for dither grain, silhouette and rectangular first-handoff continuity",
+    "Other vegetation tiers/species and broader FOV/resolution/lighting/high-speed views before universal closure",
+    "Earlier detail GPU-tail target remains open; local near-fade measurements are not universal cost acceptance"
+  ],
+  "source_sha256": "7fe34a86d2a787d8a8741787879ff42aded7f574769a5b63d1e9ab0e7943dde5",
+  "review_sha256": "4440f024b6153add51c27fa41bb4eda474ee01f4cf8d912acd313fa852efd811",
+  "runtime_candidate": {
+    "nominal_band_m": [
+      12.0,
+      13.94
+    ],
+    "projected_error_band": [
+      0.01705,
+      0.0198
+    ],
+    "original_mesh_low_error": 0.02,
+    "extra_base_triangles": 72,
+    "added_draw_passes": 0,
+    "per_instance_cpu_update": false,
+    "other_species_shader_feature": "compiled out",
+    "production_lab": "20261127T232729276103Z",
+    "committed_shader_endpoint_parity": {
+      "full": true,
+      "low": true
+    },
+    "camera_control_run": "20261127T231734715248Z",
+    "camera_control_full_view_max_channel_difference": 0,
+    "short_band_cost_run": "20261127T232501245723Z",
+    "short_band_cost_gpu_p95_delta_ms": [
+      0.247,
+      0.359,
+      0.172
+    ],
+    "cost_scope": "Three interleaved groups in a frozen local world; not universal timing acceptance. One group exceeds a strict +0.3 ms allowance.",
+    "human_approved": false,
+    "normal_gameplay_passed": true
+  },
+  "attempts": [
+    {
+      "run": "20261127T225609005661Z",
+      "result": "Storage admission blocked before engine launch."
+    },
+    {
+      "run": "20261127T225906952290Z",
+      "result": "Storage admission blocked before engine launch."
+    },
+    {
+      "run": "20261127T230030739989Z",
+      "result": "Wide fade: near pixel gate failed; subsequent negative controls isolate a camera-test artifact. GPU increment too high."
+    },
+    {
+      "run": "20261127T230601966509Z",
+      "result": "Diagnostic only. Near terrain differences remain without shadows; not a passing parity gate."
+    },
+    {
+      "run": "20261127T230923161184Z",
+      "result": "Rejected comparison: baseline repeat differs."
+    },
+    {
+      "run": "20261127T231510553416Z",
+      "result": "Rejected comparison: even the untouched baseline differs; 1140 terrain nodes/transforms remain unchanged."
+    },
+    {
+      "run": "20261127T231734715248Z",
+      "result": "Complete-transform camera assignment gives exact baseline repeat and candidate near parity, with/without shadows."
+    },
+    {
+      "run": "20261127T232052416114Z",
+      "result": "Wide fade passes corrected visual checks; +0.02705% mean luma. GPU p95 increments +0.592/+0.948/+0.643 ms rejected in favor of shorter band."
+    },
+    {
+      "run": "20261127T232902522565Z",
+      "result": "Runtime visual controls passed; auxiliary negative-control restoration used an observed global matrix and failed. The post-walk control later passes using the exact saved local matrix. Post-run archival also hit capacity; recovery is recorded."
+    }
+  ],
+  "runtime_source_sha256": {
+    "addons/world_ecosystem/woodland.gdshader": "8a897fa39dae6145a2ec0b132a9e00d0905744cfff919c4e885517d85d1f7172",
+    "addons/world_ecosystem/woodland_mesh.gd": "322d6cb81b9e6d75404e1d5cd531cd6e72fe84bf938109ffaa3e64f28223c054",
+    "addons/world_ecosystem/filtered_grass.gd": "f38d5a74e10e687cfa49002e95ca10160823ae13f16f0248069267563992861d",
+    "addons/world_ecosystem/ground_cover.gd": "7e507ccdce26bba5766ce0e2bb05386d6b050edf848d38928fab906f5cf26095"
+  },
+  "gameplay": {
+    "run": "20261127T234144741194Z",
+    "passed": true,
+    "travelled_m": 312.752136390656,
+    "physics_ticks": 3013,
+    "grounded_ticks": 3006,
+    "invalid_play_frames": 0,
+    "forest_owners": 1024,
+    "raw_frames": 192,
+    "consecutive": true,
+    "independent_raw_hashes_equal": true,
+    "unique_frames": 192,
+    "near_band_frames": 192,
+    "crossings_within_capture": [
+      {
+        "baseline_full": true,
+        "bounds_min": "(1711.778, 47.44576, 1705.584)",
+        "bounds_size": "(15.10706, 1.203129, 6.747925)",
+        "capture_index": 3,
+        "distance": 14.0676860809326,
+        "page": 877096090833,
+        "screen_center": "(218.0781, 530.9242)"
+      },
+      {
+        "baseline_full": true,
+        "bounds_min": "(1711.511, 49.64919, 1663.648)",
+        "bounds_size": "(17.10303, 6.332821, 16.79785)",
+        "capture_index": 89,
+        "distance": 14.05517578125,
+        "page": 805709035360,
+        "screen_center": "(1874.674, 272.5384)"
+      },
+      {
+        "baseline_full": true,
+        "bounds_min": "(1695.579, 48.87424, 1679.531)",
+        "bounds_size": "(16.90662, 7.383049, 16.72314)",
+        "capture_index": 91,
+        "distance": 13.942626953125,
+        "page": 808242395062,
+        "screen_center": "(877.8618, 323.6559)"
+      },
+      {
+        "baseline_full": true,
+        "bounds_min": "(1695.556, 47.95989, 1695.495)",
+        "bounds_size": "(16.83655, 5.018211, 16.9624)",
+        "capture_index": 92,
+        "distance": 13.9179916381836,
+        "page": 879008693481,
+        "screen_center": "(215.376, 391.4728)"
+      },
+      {
+        "baseline_full": true,
+        "bounds_min": "(1695.675, 51.66838, 1663.49)",
+        "bounds_size": "(16.74487, 9.875221, 16.99451)",
+        "capture_index": 138,
+        "distance": 14.0515069961548,
+        "page": 805675480926,
+        "screen_center": "(1365.074, 178.7748)"
+      }
+    ],
+    "near_control": {
+      "exact_local_restore": true,
+      "legacy_assignments": [
+        {
+          "same_pixels": false,
+          "same_transform": false
+        },
+        {
+          "same_pixels": false,
+          "same_transform": false
+        },
+        {
+          "same_pixels": false,
+          "same_transform": false
+        }
+      ],
+      "near_pixels_equal": true
+    },
+    "save_sha256": "df577c0b8e89c175f9eee0311d4dca8b83d5d6aa5a325e297475ac4eadea8f1d",
+    "source_hashes": {
+      "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "5fd4f5acf7c8d27af2b339952eb1b749754b1d0403670c4f5c3f969e4e9bb8ac",
+      "res://addons/world_ecosystem/filtered_detail.gd": "4496e24ccad732c472373d8549b72034d666388efbb1cd604f6c731fbee72342",
+      "res://addons/world_ecosystem/filtered_fern.gd": "ab1bafb4835e88f8f271816f5bbfdde1b16688f04ae7f4693b3c09108242a7c5",
+      "res://addons/world_ecosystem/filtered_fern.gdshader": "467f2fa3b97e976150e43432234d4cb73446a83a307aa3f17113e0a415f86ea7",
+      "res://addons/world_ecosystem/filtered_grass.gd": "f38d5a74e10e687cfa49002e95ca10160823ae13f16f0248069267563992861d",
+      "res://addons/world_ecosystem/filtered_grass.gdshader": "84bac82dc67bba22e43438072246093b2e0e2e466f5c28301ad6acda462485b5",
+      "res://addons/world_ecosystem/filtered_stone.gdshader": "02c458ee0d095ba48f38b7663cfdd7b1724a8e7cbc8724c45acc4644a5f5dfa5",
+      "res://addons/world_ecosystem/ground_cover.gd": "7e507ccdce26bba5766ce0e2bb05386d6b050edf848d38928fab906f5cf26095",
+      "res://addons/world_ecosystem/woodland.gdshader": "8a897fa39dae6145a2ec0b132a9e00d0905744cfff919c4e885517d85d1f7172",
+      "res://addons/world_ecosystem/woodland_mesh.gd": "322d6cb81b9e6d75404e1d5cd531cd6e72fe84bf938109ffaa3e64f28223c054",
+      "res://tests/fixtures/vegetation_capture.gd": "210f4ebc067cdc524dca4b15dd5e2ccd6e1c73d6d5f75570222cb70d1e2f4689",
+      "res://tests/vegetation_gameplay.gd": "e34ccd7717ebecd3e0de30c0048c28a700da78d77a679bcff63ce1aebd4fce38"
+    },
+    "capture_duration_ms": 5307,
+    "review_sha256": "afbcf87e1311c5a4b6cf2443bf5853137664daeafcdd7358a0af600dc5c7eff9",
+    "gpu_groups": [
+      {
+        "baseline": {
+          "n": 151,
+          "median_ms": 5.36399984359741,
+          "p95_ms": 6.26800012588501
+        },
+        "candidate": {
+          "n": 151,
+          "median_ms": 5.31199979782104,
+          "p95_ms": 5.96400022506714
+        }
+      },
+      {
+        "baseline": {
+          "n": 150,
+          "median_ms": 5.03749990463257,
+          "p95_ms": 5.70900011062622
+        },
+        "candidate": {
+          "n": 151,
+          "median_ms": 5.26100015640259,
+          "p95_ms": 5.8600001335144
+        }
+      },
+      {
+        "baseline": {
+          "n": 150,
+          "median_ms": 5.061000108718875,
+          "p95_ms": 5.75299978256226
+        },
+        "candidate": {
+          "n": 151,
+          "median_ms": 4.69799995422363,
+          "p95_ms": 5.45300006866455
+        }
+      }
+    ],
+    "cost_scope": "Normal physical movement with actors and streaming, interleaved mesh controls. Windows visit different positions; this is not frame-identical cost proof. Captures and warmup are excluded, but the test-only 192-frame buffer remains allocated during timing."
+  },
+  "final_fullframe": {
+    "run": "20261127T232902522565Z",
+    "whole_run_passed": false,
+    "checks": 202,
+    "failures": 1,
+    "failure_scope": "Runtime visual controls passed; auxiliary negative-control restoration used an observed global matrix and failed. The post-walk control later passes using the exact saved local matrix. Post-run archival also hit capacity; recovery is recorded.",
+    "raw_frames": 148,
+    "baseline_repeat_changed_pixels": 0,
+    "mean_brightness_change_percent": 0.03536986831778055,
+    "gpu_groups": [
+      {
+        "baseline": {
+          "median_ms": 7.712499856948855,
+          "p95_ms": 8.60499954223633
+        },
+        "near_fade": {
+          "median_ms": 7.900500059127805,
+          "p95_ms": 8.5600004196167
+        }
+      },
+      {
+        "baseline": {
+          "median_ms": 7.9175000190734846,
+          "p95_ms": 8.63000011444092
+        },
+        "near_fade": {
+          "median_ms": 8.136499881744385,
+          "p95_ms": 8.73600006103516
+        }
+      },
+      {
+        "baseline": {
+          "median_ms": 7.664000034332275,
+          "p95_ms": 8.53800010681152
+        },
+        "near_fade": {
+          "median_ms": 7.884000062942505,
+          "p95_ms": 8.63899993896484
+        }
+      }
+    ]
+  },
+  "parser_verification": {
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+      "--headless",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--check-only",
+      "--script",
+      "res://tests/vegetation_fullframe.gd",
+      "--log-file",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261127T234144741194Z\\fullframe-parser.log"
+    ],
+    "exit_code": 0,
+    "source_sha256": "38e64a3c8ab537902114e0fb708150671a5531e6068a9ed70d098e3d1eaa1013",
+    "planned_report_bytes": 65536,
+    "scope": "Parser verification of refactored camera negative-control helper; physical post-walk control separately validates its exact-local-restore operation."
+  },
+  "snapshot_approved": true,
+  "approval_date": "2026-11-28",
+  "approval_scope": "User requested a snapshot commit and push after the source playtest launch; detailed visual acceptance and universal closure are not inferred.",
+  "milestone_tag": "snapshot/near-lod-fade-2026-11-28"
+}
